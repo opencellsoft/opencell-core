@@ -67,9 +67,6 @@ public abstract class PaymentMethod extends BaseEntity {
 
     @Column(name = "INFO_5",columnDefinition = "TEXT")
     private String info5;
-    
-    @Column(name = "BANK_CODE")
-    private String bankCode;
 
     public PaymentMethod() {
     }
@@ -160,14 +157,6 @@ public abstract class PaymentMethod extends BaseEntity {
 
 	public void setInfo5(String info5) {
 		this.info5 = info5;
-	}
-
-	public String getBankCode() {
-		return bankCode;
-	}
-
-	public void setBankCode(String bankCode) {
-		this.bankCode = bankCode;
 	}
 
 	public abstract void updateWith(PaymentMethod otherPaymentMethod);

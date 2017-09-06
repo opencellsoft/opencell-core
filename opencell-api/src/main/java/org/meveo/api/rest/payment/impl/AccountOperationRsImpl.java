@@ -16,6 +16,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.AccountOperationRs;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -111,6 +112,17 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
 		}
 
 		return result;
+	}
+
+	@Override
+	public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
 	}
 
 }

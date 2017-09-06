@@ -29,7 +29,7 @@ public class ProductInstanceDto extends BusinessDto {
 	@XmlElement(name = "productChargeInstance")
 	private List<ProductChargeInstanceDto> productChargeInstances = new ArrayList<>();
 
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	public ProductInstanceDto() {
 

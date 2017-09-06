@@ -1,7 +1,12 @@
 package org.meveo.service.billing.impl;
 
+
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;
@@ -25,13 +30,15 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 /**
- * A singleton service to handle synchronized calls. DO not change lock mode to Write
+ * A singleton service to handle synchronized calls. DO not change lock mode to
+ * Write
  * 
  * @author Andrius Karpavicius
  */
 @Singleton
 @Lock(LockType.WRITE)
 public class ServiceSingleton {
+
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
@@ -51,7 +58,7 @@ public class ServiceSingleton {
 
     @Inject
     private Logger log;
-
+    
     /**
      * Get invoice number sequence. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT.
      * 
@@ -218,4 +225,5 @@ public class ServiceSingleton {
         invoiceTypeService.create(invoiceType);
         return invoiceType;
     }
+
 }

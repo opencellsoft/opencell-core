@@ -29,7 +29,7 @@ public class OfferTemplate4_1Dto implements Serializable {
     private boolean disabled = false;
     private ServiceTemplatesDto serviceTemplates = new ServiceTemplatesDto();
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     private String bomCode;
 

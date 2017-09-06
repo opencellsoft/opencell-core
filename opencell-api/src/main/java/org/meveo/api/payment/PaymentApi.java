@@ -99,7 +99,7 @@ public class PaymentApi extends BaseApi {
         payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountCode(occTemplate.getAccountCode());
         payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(occTemplate.getDescription());
+        payment.setOccDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);

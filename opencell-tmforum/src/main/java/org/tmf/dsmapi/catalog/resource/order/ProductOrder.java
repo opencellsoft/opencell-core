@@ -6,16 +6,11 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.tmf.dsmapi.catalog.resource.RelatedParty;
 
@@ -63,8 +58,7 @@ public class ProductOrder implements Serializable {
      * Payment methods requested. Note: only the first one will be used.
      */
     @XmlElementWrapper(name = "paymentMethods")
-    @XmlElements({ @XmlElement(name = "card", type = CardPaymentMethodDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
-            @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
+    @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     private String dueDateDelayEL;

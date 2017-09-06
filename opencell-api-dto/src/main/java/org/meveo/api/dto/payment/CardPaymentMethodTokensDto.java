@@ -20,8 +20,19 @@ public class CardPaymentMethodTokensDto extends BaseResponse {
     @XmlElementWrapper(name = "cardPaymentMethods")
     @XmlElement(name = "cardPaymentMethod")
     private List<CardPaymentMethodDto> cardPaymentMethods = new ArrayList<CardPaymentMethodDto>();
+    
+    public CardPaymentMethodTokensDto() {					
+	}
+    
+    public CardPaymentMethodTokensDto(PaymentMethodTokensDto response) {
+		setActionStatus(response.getActionStatus());
+		for(PaymentMethodDto paymentMethodDto : response.getPaymentMethods()){
+			this.cardPaymentMethods.add(new CardPaymentMethodDto(paymentMethodDto))	;
+		}
+			
+	}
 
-    public List<CardPaymentMethodDto> getCardPaymentMethods() {
+	public List<CardPaymentMethodDto> getCardPaymentMethods() {
         return cardPaymentMethods;
     }
 

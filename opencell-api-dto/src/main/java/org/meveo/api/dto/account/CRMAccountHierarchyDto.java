@@ -9,18 +9,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.payment.CardPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
@@ -65,7 +60,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
      * We now use crmParentCode.
      */
     private String seller;
-    private String mandateIdentification = "";
+    private String mandateIdentification;
     private Date mandateDate;
 
     // customer account
@@ -77,8 +72,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
     private DunningLevelEnum dunningLevel;
 
     @XmlElementWrapper(name = "paymentMethods")
-    @XmlElements({ @XmlElement(name = "card", type = CardPaymentMethodDto.class), @XmlElement(name = "directDebit", type = DDPaymentMethodDto.class),
-            @XmlElement(name = "tip", type = TipPaymentMethodDto.class), @XmlElement(name = "other", type = OtherPaymentMethodDto.class) })
+    @XmlElement(name="methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     /**
@@ -115,7 +109,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
     private CustomFieldDto cfToAdd = new CustomFieldDto();
     private CustomFieldDto cfMapToAdd = new CustomFieldDto();
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     public String getCrmAccountType() {
         return crmAccountType;

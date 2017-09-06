@@ -65,15 +65,15 @@ public class XMLInvoiceGenerationJobBean {
         }
 
         log.info("billingRuns to process={}", billingRuns.size());
+        Long nbRuns = new Long(1);
+        Long waitingMillis = new Long(0);
+        nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
+        waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
 
         for (Long billingRunId : billingRuns) {
             try {
-
-                Long nbRuns = new Long(1);
-                Long waitingMillis = new Long(0);
                 try {
-                    nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
-                    waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                    
                     if (nbRuns == -1) {
                         nbRuns = (long) Runtime.getRuntime().availableProcessors();
                     }

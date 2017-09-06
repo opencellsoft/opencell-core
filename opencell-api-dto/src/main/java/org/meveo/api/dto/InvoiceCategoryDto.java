@@ -19,7 +19,7 @@ public class InvoiceCategoryDto extends BusinessDto {
 
 	private List<LanguageDescriptionDto> languageDescriptions;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	public InvoiceCategoryDto() {
 

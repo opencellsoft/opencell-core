@@ -43,14 +43,14 @@ public class EntityToDtoConverter {
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
         CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
         if (includeInheritedCF && (customFieldsDto == null || customFieldsDto.getCustomField().isEmpty())) {
-            if (customFieldsDto == null) {
-                customFieldsDto = new CustomFieldsDto();
-            }
             ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
             if (parentEntities != null) {
                 for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
                     CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
                     if (inheritedCustomFieldsDto != null) {
+                        if (customFieldsDto == null) {
+                            customFieldsDto = new CustomFieldsDto();
+                        }
                         customFieldsDto.getCustomField().addAll(inheritedCustomFieldsDto.getCustomField());
                     }
                 }
@@ -247,8 +247,8 @@ public class EntityToDtoConverter {
             if (parentEntities != null) {
                 for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
                     CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
-                    List<CustomFieldDto> inheritedCustomFieldList = inheritedCustomFieldsDto.getCustomField();
                     if (inheritedCustomFieldsDto != null) {
+                        List<CustomFieldDto> inheritedCustomFieldList = inheritedCustomFieldsDto.getCustomField();
                         for (CustomFieldDto cfDto : customFieldList) {
 
                             for (CustomFieldDto inheritedCFDto : inheritedCustomFieldList) {

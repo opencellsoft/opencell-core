@@ -432,11 +432,11 @@ public class OrderBean extends CustomFieldBean<Order> {
             entity = orderApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "order.sendToProcess.ok"));
             return "orderDetail";
-            
+
         } catch (BusinessException e) {
             log.error("Failed to send order for processing ", e);
             messages.error(new BundleKey("messages", "order.sendToProcess.ko"), e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName());
-            FacesContext.getCurrentInstance().validationFailed();            
+            FacesContext.getCurrentInstance().validationFailed();
         }
         return null;
     }
@@ -705,7 +705,30 @@ public class OrderBean extends CustomFieldBean<Order> {
             selectedOrderItem.resetMainOffering((ProductOffering) event.getObject());
             offerConfigurations = null;
 
-            offersTree = constructOfferItemsTreeAndConfiguration(true, true, null, null);
+            Map<String, Map<OrderProductCharacteristicEnum, Object>> subscriptionConfiguration = null;
+
+            if (selectedOrderItem.getMainOffering() instanceof OfferTemplate) {
+
+                OfferTemplate selectedOffer = (OfferTemplate) selectedOrderItem.getMainOffering();
+                Map<OrderProductCharacteristicEnum, Object> offerConfiguration = new HashMap<>();
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR, selectedOffer.getSubscriptionRenewal().getInitialyActiveFor());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT, selectedOffer.getSubscriptionRenewal().getInitialyActiveForUnit());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_AUTO_RENEW, selectedOffer.getSubscriptionRenewal().isAutoRenew());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL, selectedOffer.getSubscriptionRenewal().getDaysNotifyRenewal());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION, selectedOffer.getSubscriptionRenewal().getEndOfTermAction());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD,
+                    selectedOffer.getSubscriptionRenewal().isExtendAgreementPeriodToSubscribedTillDate());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR, selectedOffer.getSubscriptionRenewal().getRenewFor());
+                offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT, selectedOffer.getSubscriptionRenewal().getRenewForUnit());
+                if (selectedOffer.getSubscriptionRenewal().getTerminationReason() != null) {
+                    offerConfiguration.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON,
+                        selectedOffer.getSubscriptionRenewal().getTerminationReason().getCode());
+                }
+                subscriptionConfiguration = new HashMap<>();
+                subscriptionConfiguration.put(selectedOffer.getCode(), offerConfiguration);
+            }
+
+            offersTree = constructOfferItemsTreeAndConfiguration(true, true, subscriptionConfiguration, null);
         }
     }
 

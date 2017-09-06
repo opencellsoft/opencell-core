@@ -63,6 +63,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response findCategories(UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
 
@@ -100,13 +101,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
             responseBuilder = Response.ok().entity(categories);
 
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -116,6 +113,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response getCategory(String code, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("find category by code {}", code);
 
         Response.ResponseBuilder responseBuilder = null;
@@ -146,16 +144,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
             responseBuilder = Response.ok().entity(category);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -164,6 +155,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
     }
 
     public Response findProductOfferings(UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("find productOfferings ... ");
 
         Response.ResponseBuilder responseBuilder = null;
@@ -176,9 +168,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -188,6 +179,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response getProductOffering(String id, Date validFrom, Date validTo, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("find productOffering by id {}", id);
 
         Response.ResponseBuilder responseBuilder = null;
@@ -196,16 +188,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             ProductOffering productOffering = catalogApi.findProductOffering(id, validFrom, validTo, uriInfo, Category.createProto(uriInfo));
             responseBuilder = Response.ok().entity(productOffering);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -215,6 +200,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response findProductSpecifications(UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("find productSpecifications ... ");
 
         Response.ResponseBuilder responseBuilder = null;
@@ -227,9 +213,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 //            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
 //            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -239,6 +224,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response getProductSpecification(String id, Date validFrom, Date validTo, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("find productSpecification by id {}", id);
 
         Response.ResponseBuilder responseBuilder = null;
@@ -246,16 +232,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             ProductSpecification productSpecification = catalogApi.findProductSpecification(id, validFrom, validTo,  uriInfo);           
             responseBuilder = Response.ok().entity(productSpecification);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -265,22 +244,16 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Override
     public Response createOfferFromBOM(BomOfferDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
 
         try {
             businessOfferApi.createOfferFromBOM(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -290,22 +263,16 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response getProductTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("getProductTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
         	ProductTemplateDto productTemplateDto = productTemplateApi.find(code, validFrom, validTo);
             responseBuilder = Response.ok().entity(productTemplateDto);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -315,22 +282,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response createProductTemplate(ProductTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productTemplateApi.create(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -338,22 +300,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response createOrUpdateProductTemplate(ProductTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productTemplateApi.createOrUpdate(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -361,22 +318,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response updateProductTemplate(ProductTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productTemplateApi.update(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -384,22 +336,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response removeProductTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productTemplateApi.remove(code, validFrom, validTo);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -407,22 +354,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response listProductTemplate(String code, Date validFrom, Date validTo) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list(code, validFrom, validTo);
             responseBuilder = Response.ok().entity(listProductTemplate);
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -430,22 +372,16 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 	
 	@Override
 	public Response getProductChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("getProductChargeTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
         	ProductChargeTemplateDto productChargeTemplateDto = productChargeTemplateApi.find(code);
             responseBuilder = Response.ok().entity(productChargeTemplateDto);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
 
         Response response = responseBuilder.build();
@@ -455,22 +391,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response createProductChargeTemplate(ProductChargeTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productChargeTemplateApi.create(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -478,22 +409,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productChargeTemplateApi.createOrUpdate(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -501,22 +427,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response updateProductChargeTemplate(ProductChargeTemplateDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	productChargeTemplateApi.update(postData);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -524,22 +445,17 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response removeProductChargeTemplate(String code) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	 productChargeTemplateApi.remove(code);
             responseBuilder = Response.ok();
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -547,22 +463,18 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
 	@Override
 	public Response listProductChargeTemplate() {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 		Response.ResponseBuilder responseBuilder = null;
         try {
         	List<ProductChargeTemplateDto> listProductChargeTemplate = productChargeTemplateApi.list();
             responseBuilder = Response.ok().entity(listProductChargeTemplate);
 
-        } catch (ConstraintViolationException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
         }
+         catch (Exception e) {
+            processException(e, result);
+            responseBuilder.entity(result);
+        }
+
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;

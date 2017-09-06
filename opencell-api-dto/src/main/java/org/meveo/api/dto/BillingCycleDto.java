@@ -43,7 +43,7 @@ public class BillingCycleDto extends BusinessDto {
 
 	private String invoiceTypeCode;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 	
 	public BillingCycleDto() {
 

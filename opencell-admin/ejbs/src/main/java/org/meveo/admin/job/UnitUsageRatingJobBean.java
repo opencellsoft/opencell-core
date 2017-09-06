@@ -46,22 +46,29 @@ public class UnitUsageRatingJobBean {
     // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long edrId) {
+    	long startDate = System.currentTimeMillis();
         log.debug("Running with edrId={}", edrId);
-
         EDR edr = null;
         try {
             edr = edrService.findById(edrId);
+            log.debug("After findById:" + (System.currentTimeMillis() - startDate));
             if (edr == null) {
                 return;
             }
             usageRatingService.ratePostpaidUsage(edr);
             
+            log.debug("After ratePostpaidUsage:" + (System.currentTimeMillis() - startDate));
+            
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 edr = edrService.updateNoCheck(edr);
+                log.debug("After updateNoCheck:" + (System.currentTimeMillis() - startDate));
                 result.registerSucces();
+                log.debug("After registerSucces:" + (System.currentTimeMillis() - startDate));
             } else {
                 edr = edrService.updateNoCheck(edr);
+                log.debug("After updateNoCheck else:" + (System.currentTimeMillis() - startDate));
                 rejectededEdrProducer.fire(edr);
+                log.debug("After fire 2:" + (System.currentTimeMillis() - startDate));
                 result.registerError(edr.getId(), edr.getRejectReason());
                 result.addReport("EdrId : " + edr.getId() + " RejectReason : " + edr.getRejectReason());
             }

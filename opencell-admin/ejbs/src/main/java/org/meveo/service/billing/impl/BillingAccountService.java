@@ -226,14 +226,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) {
-
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
-
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, new Date(0), billingRun.getLastTransactionDate());
+        
         if (invoiceAmount != null) {
-
-            BigDecimal invoicingThreshold = billingRun.getBillingCycle() == null ? null : billingRun.getBillingCycle().getInvoicingThreshold();
+            BillingCycle billingCycle = billingRun.getBillingCycle();
+			BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
 
             log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
             if (invoicingThreshold != null) {
@@ -251,13 +250,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             billingAccount.setBrAmountWithoutTax(invoiceAmount);
 
             log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
-        } else {
-            log.debug("updateBillingAccountTotalAmounts invoiceAmount is null");
         }
-
+        
         billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+        
         updateNoCheck(billingAccount);
-
+        
         return true;
     }
 

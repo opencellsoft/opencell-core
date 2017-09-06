@@ -378,7 +378,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         if (entity.getQuoteItems() == null || entity.getQuoteItems().isEmpty()) {
             throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
         }
-        
+
         // Default quote item user account field to quote user account field value if applicable.
         // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
@@ -423,7 +423,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             entity = quoteApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "quote.sendToProcess.ok"));
 
-            return "quoteDetail";
+            return "quoteDetail&faces-redirect=true";
 
         } catch (BusinessException e) {
             log.error("Failed to send quote for processing ", e);
@@ -451,11 +451,30 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedQuoteItem.getMainOffering());
 
-        // Take offer characteristics from DTO
+        // Take offer characteristics from DTO or default them from offer
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
         Subscription subscriptionEntity = null;
         if (quoteItemDto != null && quoteItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(quoteItemDto.getProduct().getProductCharacteristic());
+        
+            // Default values from offer template if entering data for the first time
+        } else if (mainOffering instanceof OfferTemplate) {
+
+            OfferTemplate selectedOffer = (OfferTemplate) mainOffering;
+
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR, selectedOffer.getSubscriptionRenewal().getInitialyActiveFor());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_INITIALLY_ACTIVE_FOR_UNIT, selectedOffer.getSubscriptionRenewal().getInitialyActiveForUnit());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_AUTO_RENEW, selectedOffer.getSubscriptionRenewal().isAutoRenew());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_DAYS_NOTIFY_RENEWAL, selectedOffer.getSubscriptionRenewal().getDaysNotifyRenewal());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_END_OF_TERM_ACTION, selectedOffer.getSubscriptionRenewal().getEndOfTermAction());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_EXTEND_AGREEMENT_PERIOD,
+                selectedOffer.getSubscriptionRenewal().isExtendAgreementPeriodToSubscribedTillDate());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR, selectedOffer.getSubscriptionRenewal().getRenewFor());
+            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_FOR_UNIT, selectedOffer.getSubscriptionRenewal().getRenewForUnit());
+            if (selectedOffer.getSubscriptionRenewal().getTerminationReason() != null) {
+                mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SUBSCRIPTION_RENEW_TERMINATION_REASON,
+                    selectedOffer.getSubscriptionRenewal().getTerminationReason().getCode());
+            }
         }
 
         // Default subscription date field to quote date
@@ -832,7 +851,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 messages.info(new BundleKey("messages", "quote.createInvoices.ok"));
 
-                return "quoteDetail";
+                return "quoteDetail&faces-redirect=true";
 
             } catch (BusinessException e) {
                 log.error("Failed to generate invoices for quote {}", entity.getCode());
@@ -851,7 +870,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
                 messages.info(new BundleKey("messages", "quote.placeOrder.ok"));
 
-                return "orderDetail?objectId=" + order.getId();
+                return "/pages/order/orders/orderDetail.xhtml?edit=false&objectId=" + order.getId() + "&faces-redirect=true";
 
             } catch (Exception e) {
                 log.error("Failed to place an order for quote {}", entity.getCode());

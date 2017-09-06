@@ -39,6 +39,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result, Long ID_activeRecurringChargeInstance, Date maxDate) {
+		long startDate = System.currentTimeMillis();
 		log.debug("Running with activeRecurringChargeInstanceID={}", ID_activeRecurringChargeInstance);
 		try{
 			int nbRating=recurringChargeInstanceService.applyRecurringCharge(ID_activeRecurringChargeInstance,maxDate);
@@ -49,6 +50,7 @@ public class UnitRecurringRatingJobBean implements Serializable {
 			} else {
 				result.registerWarning(ID_activeRecurringChargeInstance+" not rated");
 			}
+			log.debug("After registerWarning:" + (System.currentTimeMillis() - startDate));	
 		} catch(BusinessException e){
             result.registerError(ID_activeRecurringChargeInstance, e.getMessage());
 		}

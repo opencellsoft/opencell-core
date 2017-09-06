@@ -29,7 +29,7 @@ public class CustomEntityInstanceDto implements Serializable {
 
     private boolean disabled;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     public CustomEntityInstanceDto() {
 

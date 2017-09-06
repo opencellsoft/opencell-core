@@ -53,8 +53,7 @@ public class CountryService extends PersistenceService<Country> {
 		}
 	}
 
-	public Country findByName(String countryName) {		
-		System.out.println("\n\n\n\n countryName:"+countryName);
+	public Country findByName(String countryName) {				
 		QueryBuilder qb = new QueryBuilder(Country.class, "c");
 		qb.startOrClause();
 		qb.addCriterion("descriptionEn", "=", countryName, false);		

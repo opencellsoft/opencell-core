@@ -16681,7 +16681,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <ws:createOrUpdateOfferTemplate>\r
          <offerTemplate code="${#Project#baseEntityPrefix}_OFFER1" description="Offer 1">\r
             <disabled>false</disabled>\r
-            <name>${#Project#baseEntityPrefix}_OFFER1</name>
+            <name>${#Project#baseEntityPrefix}_OFFER1</name>\r
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
@@ -16689,10 +16689,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE2"/>\r
                </offerServiceTemplate>\r
-               <offerServiceTemplate>
-                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>
-               </offerServiceTemplate>
-
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>\r
+               </offerServiceTemplate>\r
             </offerServiceTemplates>\r
          </offerTemplate>\r
       </ws:createOrUpdateOfferTemplate>\r
@@ -16888,6 +16887,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <offerServiceTemplates>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
+                  <mandatory>true</mandatory>
                </offerServiceTemplate>\r
                <offerServiceTemplate>\r
                   <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE2"/>\r
@@ -17989,6 +17989,73 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Create Offer 5 with renewal" id="ce7ced8a-525c-4f39-855a-284ba6d6f4f6">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>CatalogWsSoapBinding</con:interface>
+          <con:operation>createOrUpdateOfferTemplate</con:operation>
+          <con:request name="Create Offer 5 with renewal" id="106fb7fe-2a26-4916-8ed2-8b532cd2ff24">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateOfferTemplate>\r
+         <offerTemplate code="${#Project#baseEntityPrefix}_OFFER5" description="Offer 5">\r
+            <disabled>false</disabled>\r
+            <name>${#Project#baseEntityPrefix}_OFFER5</name>\r
+            <offerServiceTemplates>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE1"/>\r
+               </offerServiceTemplate>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE2"/>\r
+               </offerServiceTemplate>\r
+               <offerServiceTemplate>\r
+                  <serviceTemplate code="${#Project#baseEntityPrefix}_SERVICE3"/>\r
+               </offerServiceTemplate>\r
+            </offerServiceTemplates>\r
+            <renewalRule>\r
+               <initialyActiveFor>5</initialyActiveFor>\r
+               <initialyActiveForUnit>MONTH</initialyActiveForUnit>\r
+               <autoRenew>false</autoRenew>\r
+               <daysNotifyRenewal>10</daysNotifyRenewal>\r
+               <endOfTermAction>TERMINATE</endOfTermAction>\r
+               <terminationReasonCode>TERM_REASON_1</terminationReasonCode>\r
+               <renewFor>20</renewFor>\r
+               <renewForUnit>DAY</renewForUnit>\r
+               <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>\r
+            </renewalRule>\r
+         </offerTemplate>\r
+      </ws:createOrUpdateOfferTemplate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="6b7d21ee-49b9-491a-a3b8-c44030316b28"/>
+            <con:assertion type="Simple Contains" id="2eeea003-f524-482c-a2af-947b6ce76760" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username>meveo.admin</con:username>
+              <con:password>meveo.admin</con:password>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="f3993aae-300d-4399-8800-6b8cc77fea4b" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data setup - Create account hierarchy" searchProperties="true">
@@ -18364,6 +18431,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productSpecification</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="ec39229f-080b-4f11-889e-b03e103faf40" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:username>meveo.admin</con:username>
               <con:password>meveo.admin</con:password>
@@ -18389,6 +18461,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productSpecification/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="8ab3e5ad-cbc9-43eb-ac40-efab8765dcc6" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -18465,6 +18542,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="3f2b650d-ed8c-482e-988b-ad3f6a8e10dd" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -18486,6 +18568,47 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://localhost/opencell/api/rest/catalogManagement/productOffering/TM_2_OFFER1</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="e3a31a5c-9bea-4190-90c9-70e43a0d2af3" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="74eacf33-768b-4f0f-8b87-71067b46eed7" name="JsonPath Match">
+              <con:configuration>
+                <path>$.productOfferingPrice[?(@.name == '${#Project#baseEntityPrefix}_PRODUCT1')]</path>
+                <content>[{"priceType":"one time","price":{"taxIncludedAmount":"1.05","dutyFreeAmount":"1.00","taxRate":"5.00"},"name":"${#Project#baseEntityPrefix}_PRODUCT1","description":"${#Project#baseEntityPrefix}_PRODUCT1_DESCRIPTION"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="d98470c8-eb21-4b52-aec5-728d54415620" name="JsonPath Match 1">
+              <con:configuration>
+                <path>$.productOfferingPrice[?(@.name == '${#Project#baseEntityPrefix}_PRODUCT2')]</path>
+                <content>[{"priceType":"one time","price":{"taxIncludedAmount":"3.15","dutyFreeAmount":"3.00","taxRate":"5.00"},"name":"${#Project#baseEntityPrefix}_PRODUCT2","description":"${#Project#baseEntityPrefix}_PRODUCT2_DESCRIPTION"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="d98470c8-eb21-4b52-aec5-728d54415620" name="JsonPath Match 2">
+              <con:configuration>
+                <path>$.productOfferingPrice[?(@.name == '${#Project#baseEntityPrefix}_SERVICE1')]</path>
+                <content>[{"priceType":"one time","price":{"taxIncludedAmount":"10.50","dutyFreeAmount":"10.00","taxRate":"5.00"},"name":"${#Project#baseEntityPrefix}_SERVICE1","description":"Service 1"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="d98470c8-eb21-4b52-aec5-728d54415620" name="JsonPath Match 3">
+              <con:configuration>
+                <path>$.productOfferingPrice[?(@.name == '${#Project#baseEntityPrefix}_SERVICE1 MONTHLY')]</path>
+                <content>[{"priceType":"recurring","price":{"taxIncludedAmount":"10.50","dutyFreeAmount":"10.00","taxRate":"5.00"},"name":"${#Project#baseEntityPrefix}_SERVICE1 MONTHLY","description":"Service 1"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -18493,7 +18616,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="id" value="${#Project#baseEntityPrefix}_OFFER1" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="id" value="${#Project#baseEntityPrefix}_OFFER3" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
             <con:parameterOrder>
               <con:entry>id</con:entry>
@@ -18948,7 +19071,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>e1e6dfba-e193-45bf-b0ab-5559a90fae1a</con:value>
+              <con:value>548cef1b-d8f1-41d3-b1ce-f022e457d355</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -22777,7 +22900,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="31b18b57-75d0-4ac0-9454-b054623a5196" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="7e07366d-42b5-45b1-9648-af57bb027f68" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -23888,7 +24011,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="8ef721c9-0525-485a-ab6a-df3c9301a1a0" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="811a74b0-3173-4718-ae7d-d08109fa8826" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -24783,6 +24906,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="JsonPath Match" id="a25e1d04-eb95-4561-bfad-a1108cad290a" name="JsonPath Match 1">
+              <con:configuration>
+                <path>$.quoteItem[0].product.productCharacteristic</path>
+                <content>[{"name":"subscriptionCode","value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_SERVICE_1_SUB"},{"name":"subscriptionDate","value":"2016-01-25"},{"name":"subscriptionEndDate","value":"2016-02-22"},{"name":"initialyActiveFor","value":"2"},{"name":"initialyActiveForUnit","value":"MONTH"},{"name":"autoRenew","value":"true"},{"name":"renewFor","value":"1"},{"name":"renewForUnit","value":"MONTH"},{"name":"endOfTermAction","value":"TERMINATE"},{"name":"renewTerminationReason","value":"TERM_REASON_1"},{"name":"extendAgreementPeriodToSubscribedTillDate","value":"true"},{"name":"${#Project#baseEntityPrefix}_SUB_CF_STRING","value":"Subscription CF value"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:username/>
               <con:password/>
@@ -24907,7 +25039,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="00d34bb9-c0cc-403b-95f3-b3a8d94eb539" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="1e9b5a46-4004-4e61-8a89-d714523503ff" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -25000,8 +25132,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
-                <content>2016-01-27T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-01-27T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -25036,8 +25168,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-03-25T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-03-25T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -25348,6 +25480,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:wsaConfig mustUnderstand="NONE" version="200508"/>
             <con:wsrmConfig version="1.2"/>
           </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="delay" name="Delay" id="9fac943e-8cee-4dca-a777-a666ca947347">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
         </con:config>
       </con:testStep>
       <con:testStep type="request" name="Find Subscription after renewal" id="5da08597-0b26-4d1c-8c93-681c7981a4ff">
@@ -26484,12 +26622,762 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="restrequest" name="Create quote with renewal overriding offer renewal" id="0460e6ac-4a69-4aec-9486-8866e7f6ca14">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote with renewal overriding offer renewal" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_NOT_OFFER",
+   "quoteDate":"2016-01-25T15:50:48+08",
+   "billingAccount":[
+       {
+          "id":"${#Project#baseEntityPrefix}_UA"
+       }
+    ],
+   "quoteItem":[
+      {      	
+         "id":"01", 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER5"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_NOT_OFFER_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2016-01-25"
+               },
+               {
+                  "name":"subscriptionEndDate",
+                  "value":"2016-02-22"
+               },
+               {
+                  "name":"initialyActiveFor",
+                  "value":"2"
+               },
+               {
+                  "name":"initialyActiveForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"autoRenew",
+                  "value":"true"
+               },
+               {
+                  "name":"renewFor",
+                  "value":"1"
+               },
+               {
+                  "name":"renewForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"endOfTermAction",
+                  "value":"TERMINATE"
+               },
+               {
+                  "name":"renewTerminationReason",
+                  "value":"TERM_REASON_1"
+               },
+               {
+                  "name":"extendAgreementPeriodToSubscribedTillDate",
+                  "value":"true"
+               },               
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Count" id="93cf6ae4-e69f-4791-8077-528caaeac58b" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="81d62b39-a7e6-42e7-8d20-928c19e112ff" name="JsonPath Match">
+              <con:configuration>
+                <path>$.invoices[0].amountWithoutTax</path>
+                <content>60.0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="b212df3f-1c10-4b0c-8f53-6e81d0557c2e" name="JsonPath Match 1">
+              <con:configuration>
+                <path>$.quoteItem[0].product.productCharacteristic</path>
+                <content>[{"name":"subscriptionCode","value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_NOT_OFFER_SERVICE_1_SUB"},{"name":"subscriptionDate","value":"2016-01-25"},{"name":"subscriptionEndDate","value":"2016-02-22"},{"name":"initialyActiveFor","value":"2"},{"name":"initialyActiveForUnit","value":"MONTH"},{"name":"autoRenew","value":"true"},{"name":"renewFor","value":"1"},{"name":"renewForUnit","value":"MONTH"},{"name":"endOfTermAction","value":"TERMINATE"},{"name":"renewTerminationReason","value":"TERM_REASON_1"},{"name":"extendAgreementPeriodToSubscribedTillDate","value":"true"},{"name":"${#Project#baseEntityPrefix}_SUB_CF_STRING","value":"Subscription CF value"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create quote with offer renewal" id="797798c5-41eb-4103-938c-6a79aa4a72dc">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote with offer renewal" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_OFFER",
+   "quoteDate":"2016-01-25T15:50:48+08",
+   "billingAccount":[
+       {
+          "id":"${#Project#baseEntityPrefix}_UA"
+       }
+    ],
+   "quoteItem":[
+      {      	
+         "id":"01", 
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER5"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_OFFER_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2016-01-25"
+               },
+               {
+                  "name":"subscriptionEndDate",
+                  "value":"2016-02-22"
+               },             
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Count" id="93cf6ae4-e69f-4791-8077-528caaeac58b" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="81d62b39-a7e6-42e7-8d20-928c19e112ff" name="JsonPath Match">
+              <con:configuration>
+                <path>$.invoices[0].amountWithoutTax</path>
+                <content>60.0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="b212df3f-1c10-4b0c-8f53-6e81d0557c2e" name="JsonPath Match 1">
+              <con:configuration>
+                <path>$.quoteItem[0].product.productCharacteristic</path>
+                <content>[{"name":"subscriptionCode","value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Renew_OFFER_SERVICE_1_SUB"},{"name":"subscriptionDate","value":"2016-01-25"},{"name":"subscriptionEndDate","value":"2016-02-22"},{"name":"${#Project#baseEntityPrefix}_SUB_CF_STRING","value":"Subscription CF value"},{"name":"initialyActiveFor","value":"5"},{"name":"initialyActiveForUnit","value":"MONTH"},{"name":"endOfTermAction","value":"TERMINATE"},{"name":"autoRenew","value":"false"},{"name":"renewFor","value":"20"},{"name":"renewForUnit","value":"DAY"},{"name":"renewTerminationReason","value":"TERM_REASON_1"},{"name":"daysNotifyRenewal","value":"10"},{"name":"extendAgreementPeriodToSubscribedTillDate","value":"true"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create Product order with renewal overriding offer renewal" id="efb529c4-8b16-4edd-afb7-26cb6b7a936c">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create Product order with renewal overriding offer renewal" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order_Renew_NOT_OFFER",
+   "orderDate":"2015-10-25T15:50:48+08",
+   "orderItem":[
+      {      	
+         "id":"01",
+         "action":"add",
+         "billingAccount":[
+            {
+               "id":"${#Project#baseEntityPrefix}_UA"
+            }
+         ],         
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER5"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Order_Renew_NOT_OFFER_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2016-02-27"
+               },
+               {
+                  "name":"subscriptionEndDate",
+                  "value":"2016-02-22"
+               },
+               {
+                  "name":"initialyActiveFor",
+                  "value":"2"
+               },
+               {
+                  "name":"initialyActiveForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"autoRenew",
+                  "value":"true"
+               },
+               {
+                  "name":"renewFor",
+                  "value":"1"
+               },
+               {
+                  "name":"renewForUnit",
+                  "value":"MONTH"
+               },
+               {
+                  "name":"endOfTermAction",
+                  "value":"TERMINATE"
+               },
+               {
+                  "name":"renewTerminationReason",
+                  "value":"TERM_REASON_1"
+               },
+               {
+                  "name":"extendAgreementPeriodToSubscribedTillDate",
+                  "value":"true"
+               },
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {        	
+                  "type":"bundled",
+                  "product":{          
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"1"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="1496e4bd-ea2b-48d8-984c-8407a779ac9e" name="JsonPath Match">
+              <con:configuration>
+                <path>$.orderItem[0].product.productCharacteristic</path>
+                <content>[{"name":"subscriptionCode","value":"${#Project#entityPrefix}_${#TestSuite#index}_Order_Renew_NOT_OFFER_SERVICE_1_SUB"},{"name":"subscriptionDate","value":"2016-02-27"},{"name":"subscriptionEndDate","value":"2016-02-22"},{"name":"initialyActiveFor","value":"2"},{"name":"initialyActiveForUnit","value":"MONTH"},{"name":"autoRenew","value":"true"},{"name":"renewFor","value":"1"},{"name":"renewForUnit","value":"MONTH"},{"name":"endOfTermAction","value":"TERMINATE"},{"name":"renewTerminationReason","value":"TERM_REASON_1"},{"name":"extendAgreementPeriodToSubscribedTillDate","value":"true"},{"name":"${#Project#baseEntityPrefix}_SUB_CF_STRING","value":"Subscription CF value"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Create Product order with offer renewal" id="23660ba6-856d-438d-b597-1f049c080e13">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create Product order with offer renewal" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:request>{
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order_Renew_OFFER",
+   "orderDate":"2015-10-25T15:50:48+08",
+   "orderItem":[
+      {      	
+         "id":"01",
+         "action":"add",
+         "billingAccount":[
+            {
+               "id":"${#Project#baseEntityPrefix}_UA"
+            }
+         ],         
+         "productOffering":{
+            "id":"${#Project#baseEntityPrefix}_OFFER5"
+         },
+         "product":{
+            "productCharacteristic":[
+               {
+                  "name":"subscriptionCode",
+                  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Order_Renew_OFFER_SERVICE_1_SUB"
+               },
+               {
+                  "name":"subscriptionDate",
+                  "value":"2016-02-27"
+               },
+               {
+                  "name":"subscriptionEndDate",
+                  "value":"2016-02-22"
+               },
+               {
+                  "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
+                  "value":"Subscription CF value"
+               }
+            ],
+            "productRelationship":[
+               {       	
+                  "type":"bundled",
+                  "product":{           
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE1"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"2"
+                        },
+                        {
+                           "name":"subscriptionDate",
+                           "value":"2016-01-27"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Fifth|Fourth':150,'Fifth|Second':100}"
+                        }
+                     ]
+                  }
+               },
+               {        	
+                  "type":"bundled",
+                  "product":{          
+                     "productCharacteristic":[
+                        {
+                           "name":"serviceCode",
+                           "value":"${#Project#baseEntityPrefix}_SERVICE2"
+                        },
+                        {
+                           "name":"quantity",
+                           "value":"1"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
+                           "value":"Service CF value"
+                        },
+                        {
+                           "name":"${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
+                           "value":"{'Third|Fourth':15,'First|Second':10}"
+                        }
+                     ]
+                  }
+               }
+            ]
+         }
+      }
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="1496e4bd-ea2b-48d8-984c-8407a779ac9e" name="JsonPath Match">
+              <con:configuration>
+                <path>$.orderItem[0].product.productCharacteristic</path>
+                <content>[{"name":"subscriptionCode","value":"${#Project#entityPrefix}_${#TestSuite#index}_Order_Renew_OFFER_SERVICE_1_SUB"},{"name":"subscriptionDate","value":"2016-02-27"},{"name":"subscriptionEndDate","value":"2016-02-22"},{"name":"${#Project#baseEntityPrefix}_SUB_CF_STRING","value":"Subscription CF value"},{"name":"initialyActiveFor","value":"5"},{"name":"initialyActiveForUnit","value":"MONTH"},{"name":"endOfTermAction","value":"TERMINATE"},{"name":"autoRenew","value":"false"},{"name":"renewFor","value":"20"},{"name":"renewForUnit","value":"DAY"},{"name":"renewTerminationReason","value":"TERM_REASON_1"},{"name":"daysNotifyRenewal","value":"10"},{"name":"extendAgreementPeriodToSubscribedTillDate","value":"true"}]</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription for order with renewal overriding offer renewal" id="024ef627-a38e-4a14-8b01-cc42055f28ec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription for order with renewal overriding offer renewal" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Order_Renew_NOT_OFFER_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="XPath Match" id="dfddc1af-b35b-4f05-8b76-1c564db807ab" name="XPath Match">
+              <con:configuration>
+                <path>//subscription/renewalRule</path>
+                <content><![CDATA[<renewalRule xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <initialyActiveFor>2</initialyActiveFor>
+  <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+  <autoRenew>true</autoRenew>
+  <endOfTermAction>TERMINATE</endOfTermAction>
+  <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+  <renewFor>1</renewFor>
+  <renewForUnit>MONTH</renewForUnit>
+  <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+</renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription for order with offer renewal" id="c37c5c46-263e-402d-a765-a934495a47f4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription for order with offer renewal" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_Order_Renew_OFFER_SERVICE_1_SUB</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="XPath Match" id="dfddc1af-b35b-4f05-8b76-1c564db807ab" name="XPath Match">
+              <con:configuration>
+                <path>//subscription/renewalRule</path>
+                <content><![CDATA[<renewalRule>
+               <initialyActiveFor>5</initialyActiveFor>
+               <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+               <autoRenew>false</autoRenew>
+               <daysNotifyRenewal>10</daysNotifyRenewal>
+               <endOfTermAction>TERMINATE</endOfTermAction>
+               <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+               <renewFor>20</renewFor>
+               <renewForUnit>DAY</renewForUnit>
+               <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+            </renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create subscription" id="e11c9e08-8591-4846-849b-a2d32f26203e">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountWsSoapBinding</con:interface>
+          <con:operation>createCustomer</con:operation>
+          <con:request name="Create subscription" id="78b62f52-e128-4072-971f-02c3d4c4e3e8">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:create>
+         <subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB_RENEW_OFFER">
+            <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
+            <offerTemplate>${#Project#baseEntityPrefix}_OFFER5</offerTemplate>
+            <subscriptionDate>2016-03-01</subscriptionDate>
+         </subscription>
+      </ws:create>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="Simple Contains" name="Contains" id="a67c7e53-f712-404e-ba01-eaf27bb22b78">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find Subscription with offer renewal" id="ad314cfe-fc2e-4869-8f49-5254afc6d973">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>SubscriptionWsSoapBinding</con:interface>
+          <con:operation>findSubscription</con:operation>
+          <con:request name="Find Subscription with offer renewal" id="03614745-d791-4187-a28a-da9833308ae7">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/SubscriptionWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSubscription>\r
+         <subscriptionCode>${#Project#entityPrefix}_${#TestSuite#index}_SUB_RENEW_OFFER</subscriptionCode>\r
+      </ws:findSubscription>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="46d17b43-2c05-48f5-a669-e1233de7d27a"/>
+            <con:assertion type="XPath Match" id="dfddc1af-b35b-4f05-8b76-1c564db807ab" name="XPath Match">
+              <con:configuration>
+                <path>//subscription/renewalRule</path>
+                <content><![CDATA[<renewalRule>
+               <initialyActiveFor>5</initialyActiveFor>
+               <initialyActiveForUnit>MONTH</initialyActiveForUnit>
+               <autoRenew>false</autoRenew>
+               <daysNotifyRenewal>10</daysNotifyRenewal>
+               <endOfTermAction>TERMINATE</endOfTermAction>
+               <terminationReasonCode>TERM_REASON_1</terminationReasonCode>
+               <renewFor>20</renewFor>
+               <renewForUnit>DAY</renewForUnit>
+               <extendAgreementPeriodToSubscribedTillDate>true</extendAgreementPeriodToSubscribedTillDate>
+            </renewalRule>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>8</con:value>
+        <con:value>13</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -26510,9 +27398,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
    "orderDate":"2015-10-25T15:50:48+08",
-    "paymentMethods": [
+    "methodOfPayment": [
     	{
-	      "directDebit": {
+	      
+      	"paymentMethodType": "DIRECTDEBIT",
 	          "alias": "some alias",
 	          "bankCoordinates" : {
 				"bankCode" : "12456",
@@ -26527,8 +27416,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 				"issuerNumber" : "46789",
 				"issuerName" : "Some issuer",
 				"ics" : "5587"	          	
-	          }
-	      }
+          }
        }] ,
    "orderItem":[
       {      	
@@ -26810,7 +27698,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>3a4dc108-b089-4b28-a945-a23cb0cbc05f</orderNumber>
+            <orderNumber>83bffc84-ef43-4462-9d11-5a5f099fdcb4</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -26878,8 +27766,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000001</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000015</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -26987,7 +27875,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>3a4dc108-b089-4b28-a945-a23cb0cbc05f</orderNumber>
+            <orderNumber>83bffc84-ef43-4462-9d11-5a5f099fdcb4</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -27178,7 +28066,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>3a4dc108-b089-4b28-a945-a23cb0cbc05f</orderNumber>
+            <orderNumber>83bffc84-ef43-4462-9d11-5a5f099fdcb4</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -27246,8 +28134,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000002</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000016</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -27419,7 +28307,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>dab80bd2-49cd-4d6b-b2ee-10a6ff183dfe</orderNumber>
+            <orderNumber>b56afbe5-f5d8-4167-a83f-6eca1284635a</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -27487,8 +28375,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000003</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000017</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -27634,7 +28522,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>0be43532-569c-4816-b234-2cac60859a15</orderNumber>
+            <orderNumber>7a8457e7-4dee-47ca-a312-ba1f0db34023</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -27702,8 +28590,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000004</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000018</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -27838,7 +28726,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>e2cce914-1965-4ed2-852c-22b7cad5b45e</orderNumber>
+            <orderNumber>8b565fdb-9afb-43cd-a3cf-36cd8b0a3d6e</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -27906,8 +28794,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
    <soapenv:Header/>
    <soapenv:Body>
       <ws:findInvoiceByIdOrType>
-         	<invoiceNumber>000000005</invoiceNumber>
-         	<invoiceType>COM</invoiceType>
+         	<invoiceNumber>SellFact_000000019</invoiceNumber>
+         	<invoiceType>WS_BASE_TEST-Type</invoiceType>
          <includeTransations>true</includeTransations>
       </ws:findInvoiceByIdOrType>
    </soapenv:Body>
@@ -27949,12 +28837,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>14</con:value>
+        <con:value>17</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
-  <con:testSuite id="6809dbe0-41aa-461c-99a7-cd21e1c5ef56" name="Cleanup">
+  <con:testSuite id="6809dbe0-41aa-461c-99a7-cd21e1c5ef56" name="Cleanup" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="b3e2dbad-a406-4ec1-a741-e904ddce3cf7" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Data cleanup" searchProperties="true">

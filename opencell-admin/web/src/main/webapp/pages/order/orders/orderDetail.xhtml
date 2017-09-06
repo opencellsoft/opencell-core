@@ -57,8 +57,18 @@
                         <hftl:formField label="#{messages['order.category']}" field="category" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
                         <hftl:formField label="#{messages['order.dueDateDelayEL']}" field="dueDateDelayEL" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
 
-                        <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
-                        <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false" rendered="#{orderBean.entity.receivedFromApp!=null}" />
+                        <hftl:formField label="#{messages['order.receivedFromApp']}" field="receivedFromApp" edit="false"
+                            rendered="#{orderBean.entity.receivedFromApp!=null and orderBean.entity.quote==null}" />
+                        <hftl:formField label="#{messages['order.externalId']}" field="externalId" edit="false"
+                            rendered="#{orderBean.entity.receivedFromApp!=null and orderBean.entity.externalId!=null}" />
+
+                        <hftl:decorateFormField label="#{messages['order.quote']}" rendered="#{orderBean.entity.quote!=null}">
+                            <p:link outcome="quoteDetail" value="#{messages['order.quote']}">
+                                <f:param name="objectId" value="#{orderBean.entity.quote.id}" />
+                                <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                <f:param name="backView" value="/pages/order/orders/orderDetail?objectId=#{orderBean.entity.id}" />
+                            </p:link>
+                        </hftl:decorateFormField>
 
                         <p:fieldset legend="#{messages['order.processingInstructions']}" styleClass="clearBoth">
                             <hftl:formField label="#{messages['order.deliveryInstructions']}" field="deliveryInstructions" allowEdit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
@@ -253,7 +263,7 @@
 
                                                     <hftl:decorateFormField fieldId="subscriptionDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
-                                                        pattern="#{paramBean.dateFormat}" componentWidth="15">
+                                                        componentWidth="15">
                                                         <p:calendar id="subscriptionDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
                                                             required="#{itemConfiguration.isMain()}" pattern="#{paramBean.dateFormat}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
@@ -416,7 +426,7 @@
                                                     </h:panelGroup>
 
                                                     <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
-                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}" pattern="#{paramBean.dateFormat}">
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}">
                                                         <p:calendar id="subscriptionEndDate_#{itemStatus.index}" pattern="#{paramBean.dateFormat}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
@@ -471,10 +481,10 @@
 
                                                     <hftl:decorateFormField fieldId="terminationDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.TERMINATION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
-                                                        pattern="#{paramBean.dateFormat}" newLine="true"
+                                                        newLine="true"
                                                         rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD and (itemConfiguration.isOffer() or itemConfiguration.isService())}">
                                                         <p:calendar id="terminationDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_DATE]}"
-                                                            required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
+                                                            pattern="#{paramBean.dateFormat}" required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
@@ -510,8 +520,18 @@
 
                                                     <div class="clearLeft"></div>
                                                     <h:panelGroup id="cf_#{itemStatus.index}_panel">
-                                                        <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
-                                                            messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+
+                                                        <!-- custom fields -->
+                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) == 1}">
+                                                            <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                                messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                                                        </c:if>
+                                                        <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(itemConfiguration.entityForCFValues) > 1}">
+                                                            <p:tabView>
+                                                                <hftl:customFields prefix="cf_#{itemStatus.index}" backingBean="#{orderBean}" entity="#{itemConfiguration.entityForCFValues}"
+                                                                    messagesId=":orderForm:tabView:orderItemMessages" edit="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}" />
+                                                            </p:tabView>
+                                                        </c:if>
                                                     </h:panelGroup>
                                                 </p:tab>
                                             </c:forEach>

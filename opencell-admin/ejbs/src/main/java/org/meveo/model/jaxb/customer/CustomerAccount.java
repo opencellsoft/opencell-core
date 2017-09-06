@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.jaxb.account.Address;
+import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.account.Name;
 
 
@@ -86,7 +87,8 @@ import org.meveo.model.jaxb.account.Name;
     "tel2",
     "tradingCurrencyCode",
     "tradingLanguageCode",
-    "customFields"
+    "customFields",
+    "billingAccounts"
 })
 @XmlRootElement(name = "customerAccount")
 public class CustomerAccount {
@@ -119,7 +121,12 @@ public class CustomerAccount {
     protected String tradingLanguageCode;
     @XmlAttribute(name = "creditCategory")
     protected String creditCategory;
+    @XmlAttribute(name="ignoreCheck")
+    protected Boolean ignoreCheck;
     protected CustomFields customFields;
+    @XmlElement(required = false)
+    protected BillingAccounts billingAccounts;
+   
     
     public CustomerAccount(){}    
 
@@ -429,12 +436,34 @@ public class CustomerAccount {
         this.creditCategory = value;
     }
 
+	/**
+	 * @return the ignoreCheck
+	 */
+	public Boolean getIgnoreCheck() {
+		return ignoreCheck;
+	}
+
+	/**
+	 * @param ignoreCheck the ignoreCheck to set
+	 */
+	public void setIgnoreCheck(Boolean ignoreCheck) {
+		this.ignoreCheck = ignoreCheck;
+	}
+
 	public CustomFields getCustomFields() {
 		return customFields;
 	}
 
 	public void setCustomFields(CustomFields customFields) {
 		this.customFields = customFields;
+	}
+
+	public BillingAccounts getBillingAccounts() {
+		return billingAccounts;
+	}
+
+	public void setBillingAccounts(BillingAccounts billingAccounts) {
+		this.billingAccounts = billingAccounts;
 	}
 
 }

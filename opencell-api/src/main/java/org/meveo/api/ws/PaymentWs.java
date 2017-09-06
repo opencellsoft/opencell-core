@@ -7,26 +7,20 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
+import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.CheckPaymentMethodDto;
-import org.meveo.api.dto.payment.CheckPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.CheckPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.DDPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.DDPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodTokenDto;
-import org.meveo.api.dto.payment.TipPaymentMethodTokensDto;
-import org.meveo.api.dto.payment.WirePaymentMethodDto;
-import org.meveo.api.dto.payment.WirePaymentMethodTokenDto;
-import org.meveo.api.dto.payment.WirePaymentMethodTokensDto;
+import org.meveo.api.dto.payment.PaymentMethodDto;
+import org.meveo.api.dto.payment.PaymentMethodTokenDto;
+import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
+import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
+import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
@@ -81,6 +75,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Card payment DTO with Token id from payment gateway
      */
     @WebMethod
+    @Deprecated // Use addPaymentMthod operation
     public CardPaymentMethodTokenDto addCardPaymentMethod(@WebParam(name = "cardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
 
     /**
@@ -89,6 +84,7 @@ public interface PaymentWs extends IBaseWs {
      * @param cardPaymentMethod Card payment method DTO
      * @return Action status
      */
+    @Deprecated // Use updatePaymentMthod operation
     public ActionStatus updateCardPaymentMethod(@WebParam(name = "cardPaymentMethod") CardPaymentMethodDto cardPaymentMethod);
 
     /**
@@ -98,6 +94,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Action status
      */
     @WebMethod
+    @Deprecated // Use removePaymentMthod operation
     public ActionStatus removeCardPaymentMethod(@WebParam(name = "id") Long id);
 
     /**
@@ -108,6 +105,7 @@ public interface PaymentWs extends IBaseWs {
      * @return A list of card payment methods
      */
     @WebMethod
+    @Deprecated // Use listPaymentMthod operation
     public CardPaymentMethodTokensDto listCardPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
             @WebParam(name = "customerAccountCode") String customerAccountCode);
 
@@ -118,205 +116,81 @@ public interface PaymentWs extends IBaseWs {
      * @return Card payment DTO
      */
     @WebMethod
+    @Deprecated // Use findPaymentMthod operation
     public CardPaymentMethodTokenDto findCardPaymentMethod(@WebParam(name = "id") Long id);
 
 
     
     /************************************************************************************************/
-    /****                                 DirectDebit Payment Method                             ****/
+    /****                                  Payment Methods                                        ****/
     /************************************************************************************************/
     
     /**
-     * Add a new directDebit payment method. It will be marked as preferred.
+     * Add a new  payment method. It will be marked as preferred.
      * 
      * @param ddPaymentMethod DD payment method DTO
      * @return DD payment DTO with Token id from payment gateway
      */
     @WebMethod
-    public DDPaymentMethodTokenDto addDDPaymentMethod(@WebParam(name = "ddPaymentMethod") DDPaymentMethodDto ddPaymentMethod);
+    public PaymentMethodTokenDto addPaymentMethod(@WebParam(name = "paymentMethod") PaymentMethodDto paymentMethod);
 
     /**
-     * Update existing dd payment method.
+     * Update existing payment method.
      * 
      * @param ddPaymentMethod DD payment method DTO
      * @return Action status
      */
-    public ActionStatus updateDDPaymentMethod(@WebParam(name = "ddPaymentMethod") DDPaymentMethodDto ddPaymentMethod);
+    public ActionStatus updatePaymentMethod(@WebParam(name = "paymentMethod") PaymentMethodDto paymentMethod);
 
     /**
-     * Remove directDebit payment method. If it was marked as preferred, some other payment method will be marked as preferred
+     * Remove  payment method. If it was marked as preferred, some other payment method will be marked as preferred
      * 
      * @param id Id
      * @return Action status
      */
     @WebMethod
-    public ActionStatus removeDDPaymentMethod(@WebParam(name = "id") Long id);
+    public ActionStatus removePaymentMethod(@WebParam(name = "id") Long id);
 
     /**
-     * List available directDebit payment methods for a given customer account identified either by id or by code
+     * List available payment methods for a given customer account identified either by id or by code
      * 
      * @param customerAccountId Customer account id
      * @param customerAccountCode Customer account code
      * @return A list of dd payment methods
      */
     @WebMethod
-    public DDPaymentMethodTokensDto listDDPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
+    public PaymentMethodTokensDto listPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
             @WebParam(name = "customerAccountCode") String customerAccountCode);
 
     /**
-     * Retrieve directDebit payment method by its id
+     * Retrieve payment method by its id
      * 
      * @param id Id
      * @return DD payment DTO
      */
     @WebMethod
-    public DDPaymentMethodTokenDto findDDPaymentMethod(@WebParam(name = "id") Long id);
-    
-    /************************************************************************************************/
-    /****                                 Tip Payment Method                                     ****/
-    /************************************************************************************************/
-    /**
-     * Add a new tip payment method. It will be marked as preferred.
-     * 
-     * @param tipPaymentMethod Tip payment method DTO
-     * @return Tip payment DTO with Token id from payment gateway
-     */
-    @WebMethod
-    public TipPaymentMethodTokenDto addTipPaymentMethod(@WebParam(name = "tipPaymentMethod") TipPaymentMethodDto tipPaymentMethod);
-
-    /**
-     * Update existing tip payment method.
-     * 
-     * @param tipPaymentMethod Tip payment method DTO
-     * @return Action status
-     */
-    public ActionStatus updateTipPaymentMethod(@WebParam(name = "tipPaymentMethod") TipPaymentMethodDto tipPaymentMethod);
-
-    /**
-     * Remove tip payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
-     * @param id Id
-     * @return Action status
-     */
-    @WebMethod
-    public ActionStatus removeTipPaymentMethod(@WebParam(name = "id") Long id);
-
-    /**
-     * List available tip payment methods for a given customer account identified either by id or by code
-     * 
-     * @param customerAccountId Customer account id
-     * @param customerAccountCode Customer account code
-     * @return A list of tip payment methods
-     */
-    @WebMethod
-    public TipPaymentMethodTokensDto listTipPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
-            @WebParam(name = "customerAccountCode") String customerAccountCode);
-
-    /**
-     * Retrieve tip payment method by its id
-     * 
-     * @param id Id
-     * @return Tip payment DTO
-     */
-    @WebMethod
-    public TipPaymentMethodTokenDto findTipPaymentMethod(@WebParam(name = "id") Long id);
-    
-    /************************************************************************************************/
-    /****                                 Check Payment Method                                   ****/
-    /************************************************************************************************/
+    public PaymentMethodTokenDto findPaymentMethod(@WebParam(name = "id") Long id);
     
     /**
-     * Add a new check payment method. It will be marked as preferred.
-     * 
-     * @param checkPaymentMethod Check payment method DTO
-     * @return Check payment DTO with Token id from payment gateway
+     * Credit Category
      */
-    @WebMethod
-    public CheckPaymentMethodTokenDto addCheckPaymentMethod(@WebParam(name = "checkPaymentMethod") CheckPaymentMethodDto checkPaymentMethod);
+	@WebMethod
+	ActionStatus createCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
 
-    /**
-     * Update existing check payment method.
-     * 
-     * @param checkPaymentMethod Check payment method DTO
-     * @return Action status
-     */
-    public ActionStatus updateCheckPaymentMethod(@WebParam(name = "checkPaymentMethod") CheckPaymentMethodDto checkPaymentMethod);
+	@WebMethod
+	ActionStatus updateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
 
-    /**
-     * Remove check payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
-     * @param id Id
-     * @return Action status
-     */
-    @WebMethod
-    public ActionStatus removeCheckPaymentMethod(@WebParam(name = "id") Long id);
+	@WebMethod
+	ActionStatus createOrUpdateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
+	
+	@WebMethod
+	CreditCategoryResponseDto findCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
 
-    /**
-     * List available check payment methods for a given customer account identified either by id or by code
-     * 
-     * @param customerAccountId Customer account id
-     * @param customerAccountCode Customer account code
-     * @return A list of check payment methods
-     */
-    @WebMethod
-    public CheckPaymentMethodTokensDto listCheckPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
-            @WebParam(name = "customerAccountCode") String customerAccountCode);
-
-    /**
-     * Retrieve check payment method by its id
-     * 
-     * @param id Id
-     * @return Check payment DTO
-     */
-    @WebMethod
-    public CheckPaymentMethodTokenDto findCheckPaymentMethod(@WebParam(name = "id") Long id);
+	@WebMethod
+	CreditCategoriesResponseDto listCreditCategory();
+	
+	@WebMethod
+	ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
     
-    /************************************************************************************************/
-    /****                                 Wire Payment Method                                    ****/
-    /************************************************************************************************/
-    /**
-     * Add a new wire payment method. It will be marked as preferred.
-     * 
-     * @param wirePaymentMethod Wire payment method DTO
-     * @return Wire payment DTO with Token id from payment gateway
-     */
-    @WebMethod
-    public WirePaymentMethodTokenDto addWirePaymentMethod(@WebParam(name = "wirePaymentMethod") WirePaymentMethodDto wirePaymentMethod);
-
-    /**
-     * Update existing wire payment method.
-     * 
-     * @param wirePaymentMethod Wire payment method DTO
-     * @return Action status
-     */
-    public ActionStatus updateWirePaymentMethod(@WebParam(name = "wirePaymentMethod") WirePaymentMethodDto wirePaymentMethod);
-
-    /**
-     * Remove wire payment method. If it was marked as preferred, some other payment method will be marked as preferred
-     * 
-     * @param id Id
-     * @return Action status
-     */
-    @WebMethod
-    public ActionStatus removeWirePaymentMethod(@WebParam(name = "id") Long id);
-
-    /**
-     * List available wire payment methods for a given customer account identified either by id or by code
-     * 
-     * @param customerAccountId Customer account id
-     * @param customerAccountCode Customer account code
-     * @return A list of wire payment methods
-     */
-    @WebMethod
-    public WirePaymentMethodTokensDto listWirePaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
-            @WebParam(name = "customerAccountCode") String customerAccountCode);
-
-    /**
-     * Retrieve wire payment method by its id
-     * 
-     * @param id Id
-     * @return Wire payment DTO
-     */
-    @WebMethod
-    public WirePaymentMethodTokenDto findWirePaymentMethod(@WebParam(name = "id") Long id);
 }
+

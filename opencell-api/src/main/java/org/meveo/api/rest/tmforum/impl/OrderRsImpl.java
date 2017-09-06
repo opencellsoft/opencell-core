@@ -32,20 +32,19 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
     @Override
     public Response createProductOrder(ProductOrder productOrder, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            productOrder = orderApi.createProductOrder(productOrder);
+            productOrder = orderApi.createProductOrder(productOrder, null);
             responseBuilder = Response.status(Response.Status.CREATED).entity(productOrder);
 
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
+
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
@@ -54,6 +53,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
     @Override
     public Response getProductOrder(String orderId, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
 
@@ -63,14 +63,12 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
             responseBuilder = Response.ok().entity(productOrder);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (Exception e2) {
-            log.error("Failed to execute API", e2);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e2 instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e2.getMessage()));
+        } catch (Exception e) {
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
+
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
@@ -79,6 +77,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
     @Override
     public Response findProductOrders(UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
 
@@ -89,14 +88,15 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
             responseBuilder = Response.ok().entity(orders);
 
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+            // } catch (MeveoApiException e) {
+            // responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
+
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
@@ -105,6 +105,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
     @Override
     public Response updateProductOrder(String orderId, ProductOrder productOrder, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
 
@@ -113,17 +114,12 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
             productOrder = orderApi.updatePartiallyProductOrder(orderId, productOrder);
             responseBuilder = Response.ok().entity(productOrder);
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+
+
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
@@ -133,6 +129,7 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
     @SuppressWarnings("hiding")
     @Override
     public Response deleteProductOrder(String orderId, UriInfo info) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         Response.ResponseBuilder responseBuilder = null;
 
@@ -141,20 +138,11 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
 
             responseBuilder = Response.ok();
 
-        } catch (EntityDoesNotExistsException e) {
-            responseBuilder = Response.status(Response.Status.NOT_FOUND);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (ActionForbiddenException e) {
-            responseBuilder = Response.status(Response.Status.FORBIDDEN);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
-        } catch (MeveoApiException e) {
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
-            log.error("Failed to execute API", e);
-            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+            processException(e, result);
+            responseBuilder.entity(result);
         }
+        
 
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());

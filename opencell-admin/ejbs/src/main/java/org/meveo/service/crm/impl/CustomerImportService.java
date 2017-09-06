@@ -1,6 +1,9 @@
 package org.meveo.service.crm.impl;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -11,10 +14,15 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.TradingCurrency;
+import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
+import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.Title;
@@ -54,8 +62,15 @@ public class CustomerImportService extends ImportService {
 
     @Inject
     private CustomerAccountService customerAccountService;
+    
+    private  Map<String, Title> map = new HashMap<>();
+    
+    private  Map<String, TradingCurrency> tradingCurrencyMap = new HashMap<>(); 
+    
+    private  Map<String, TradingLanguage> tradingLanguageMap = new HashMap<>();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    
     public Customer createCustomer(org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) throws BusinessException {
         
         Customer customer = null;
@@ -69,8 +84,18 @@ public class CustomerImportService extends ImportService {
             customer.setSeller(seller);
 
             org.meveo.model.shared.Name name = new org.meveo.model.shared.Name();
-            Title title = titleService.findByCode(cust.getName().getTitle());
-            name.setTitle(title);
+            String tilteCode = cust.getName().getTitle();
+			Title existingTitle = map.get(tilteCode);
+			if (existingTitle == null) {
+            	Title title = titleService.findByCode(tilteCode);
+            	map.put(tilteCode, title);
+            	name.setTitle(title);
+            } else {
+            	name.setTitle(existingTitle);
+            }
+            
+            
+            
             name.setFirstName(cust.getName().getFirstName());
             name.setLastName(cust.getName().getLastName());
             customer.setName(name);
@@ -85,8 +110,16 @@ public class CustomerImportService extends ImportService {
         return customer;
     }
 
+    /**
+     * @param customer
+     * @param seller
+     * @param custAcc
+     * @param cust
+     * @param sell
+     * @throws BusinessException
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void createCustomerAccount(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
+    public CustomerAccount createCustomerAccount(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
             org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell) throws BusinessException {
 
         CustomerAccount customerAccount = new CustomerAccount();
@@ -97,6 +130,16 @@ public class CustomerImportService extends ImportService {
         customerAccount.setPassword(RandomStringUtils.randomAlphabetic(8));
         customerAccount.setDateStatus(new Date());
         customerAccount.setStatus(CustomerAccountStatusEnum.ACTIVE);
+        
+        String paymentMethod = custAcc.getPaymentMethod();
+        if (paymentMethod == null) {
+        	List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
+        	CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();
+        	checkPaymentMethod.setPaymentType(PaymentMethodEnum.CHECK);
+        	checkPaymentMethod.setCustomerAccount(customerAccount);
+        	checkPaymentMethod.setPreferred(true);
+			paymentMethods.add(checkPaymentMethod);
+        }
 
         Address address = new Address();
         if (custAcc.getAddress() != null) {
@@ -116,7 +159,7 @@ public class CustomerImportService extends ImportService {
         contactInformation.setMobile(custAcc.getTel2());
         customerAccount.setContactInformation(contactInformation);
         if (!StringUtils.isBlank(custAcc.getCreditCategory())) {
-            customerAccount.setCreditCategory(creditCategoryService.findByCode(custAcc.getCreditCategory()));
+            //customerAccount.setCreditCategory(creditCategoryService.findByCode(custAcc.getCreditCategory()));
         }
         customerAccount.setExternalRef1(custAcc.getExternalRef1());
         customerAccount.setExternalRef2(custAcc.getExternalRef2());
@@ -127,20 +170,50 @@ public class CustomerImportService extends ImportService {
             name.setFirstName(custAcc.getName().getFirstName());
             name.setLastName(custAcc.getName().getLastName());
             if (!StringUtils.isBlank(custAcc.getName().getTitle())) {
-                Title title = titleService.findByCode(custAcc.getName().getTitle().trim());
-                name.setTitle(title);
+                //Title title = titleService.findByCode(custAcc.getName().getTitle().trim());
+            	
+            	String tilteCode = custAcc.getName().getTitle();
+    			Title existingTitle = map.get(tilteCode);
+    			if (existingTitle == null) {
+                	Title title = titleService.findByCode(tilteCode);
+                	map.put(tilteCode, title);
+                	name.setTitle(title);
+                } else {
+                	name.setTitle(existingTitle);
+                }
             }
             customerAccount.setName(name);
         }
 
-        customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode()));
-        customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(custAcc.getTradingLanguageCode()));
+        //customerAccount.setTradingCurrency(tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode()));
+        //customerAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(custAcc.getTradingLanguageCode()));
+        
+        TradingCurrency existingTradingCurrency = tradingCurrencyMap.get(custAcc.getTradingCurrencyCode());
+        if (existingTradingCurrency == null) {
+        	TradingCurrency findByTradingCurrencyCode = tradingCurrencyService.findByTradingCurrencyCode(custAcc.getTradingCurrencyCode());
+			tradingCurrencyMap.put(custAcc.getTradingCurrencyCode(), findByTradingCurrencyCode);
+			customerAccount.setTradingCurrency(findByTradingCurrencyCode);
+        } else {
+        	customerAccount.setTradingCurrency(existingTradingCurrency);
+        }
+        
+        String tradingLanguageCode = custAcc.getTradingLanguageCode();
+		TradingLanguage tradingLanguage = tradingLanguageMap.get(tradingLanguageCode);
+        if (tradingLanguage == null) {
+        	TradingLanguage findByTradingLanguageCode = tradingLanguageService.findByTradingLanguageCode(tradingLanguageCode);
+			tradingLanguageMap.put(tradingLanguageCode, findByTradingLanguageCode);
+        } else {
+        	customerAccount.setTradingLanguage(tradingLanguage);
+        }
+        
         customerAccount.setCustomer(customer);
         customerAccountService.create(customerAccount);
         
         if (custAcc.getCustomFields() != null) {
             populateCustomFields(custAcc.getCustomFields().getCustomField(), customerAccount);
         }
+        
+        return customerAccount;
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

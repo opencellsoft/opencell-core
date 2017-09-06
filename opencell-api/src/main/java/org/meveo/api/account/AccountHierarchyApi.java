@@ -41,10 +41,7 @@ import org.meveo.api.dto.account.ParentEntitiesDto;
 import org.meveo.api.dto.account.ParentEntityDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.payment.DDPaymentMethodDto;
-import org.meveo.api.dto.payment.OtherPaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.api.dto.payment.TipPaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -317,10 +314,9 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
             // Start compatibility with pre-4.6 versions
-        } else if (postData.getPaymentMethod() != null && (postData.getPaymentMethod().intValue() == 1 || postData.getPaymentMethod().intValue() == 4)) {
+        } else if (postData.getPaymentMethod() != null ) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
-            customerAccountDto.getPaymentMethods()
-                .add(new OtherPaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+            customerAccountDto.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
 
@@ -502,7 +498,7 @@ public class AccountHierarchyApi extends BaseApi {
         } else if (postData.getPaymentMethod() != null && (postData.getPaymentMethod().intValue() == 1 || postData.getPaymentMethod().intValue() == 4)) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
             customerAccountDto.getPaymentMethods()
-                .add(new OtherPaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+                .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
 
@@ -659,7 +655,7 @@ public class AccountHierarchyApi extends BaseApi {
 
         if (customers != null) {
             for (Customer cust : customers) {
-                if (postData.getCustomFields() == null || postData.getCustomFields().getCustomField() == null) {
+                if (postData.getCustomFields() == null || postData.getCustomFields().isEmpty()) {
                     result.getCustomer().add(customerToDto(cust));
                 } else {
                     for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
@@ -947,7 +943,7 @@ public class AccountHierarchyApi extends BaseApi {
             sellerDto.setLanguageCode(postData.getLanguage());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -984,7 +980,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1026,26 +1022,14 @@ public class AccountHierarchyApi extends BaseApi {
 
             if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
                 customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
-
                 // Start compatibility with pre-4.6 versions
-            } else if (postData.getPaymentMethod() != null
-                    && (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER)) {
-                customerAccountDto.setPaymentMethods(new ArrayList<>());
-                customerAccountDto.getPaymentMethods().add(new OtherPaymentMethodDto(postData.getPaymentMethod()));
-
-            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && postData.getBankCoordinates() != null
-                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {            	
-                customerAccountDto.setPaymentMethods(new ArrayList<>());
-                customerAccountDto.getPaymentMethods().add(new DDPaymentMethodDto(postData.getBankCoordinates()));
-            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.TIP && postData.getBankCoordinates() != null
-                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-                customerAccountDto.setPaymentMethods(new ArrayList<>());
-                customerAccountDto.getPaymentMethods().add(new TipPaymentMethodDto(postData.getBankCoordinates()));
-            }
+            } else if (postData.getPaymentMethod() != null) {            	
+                customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData));                
+            }             
             // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1090,7 +1074,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1125,7 +1109,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1219,7 +1203,7 @@ public class AccountHierarchyApi extends BaseApi {
             sellerDto.setLanguageCode(postData.getLanguage());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Seller.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1256,7 +1240,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(Customer.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1300,24 +1284,13 @@ public class AccountHierarchyApi extends BaseApi {
                 customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
                 // Start compatibility with pre-4.6 versions
-            } else if (postData.getPaymentMethod() != null
-                    && (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER)) {
-                customerAccountDto.setPaymentMethods(new ArrayList<>());
-                customerAccountDto.getPaymentMethods().add(new OtherPaymentMethodDto(postData.getPaymentMethod()));
-
-            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT && postData.getBankCoordinates() != null
-                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-                customerAccountDto.setPaymentMethods(new ArrayList<>());
-                customerAccountDto.getPaymentMethods().add(new DDPaymentMethodDto(postData.getBankCoordinates()));
-            } else if (postData.getPaymentMethod() != null && postData.getPaymentMethod() == PaymentMethodEnum.TIP && postData.getBankCoordinates() != null
-                    && !StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-                customerAccountDto.setPaymentMethods(new ArrayList<>());
-                customerAccountDto.getPaymentMethods().add(new TipPaymentMethodDto(postData.getBankCoordinates()));
+            } else if (postData.getPaymentMethod() != null){              
+                customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData));
             }
             // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(CustomerAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1360,7 +1333,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(BillingAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1395,7 +1368,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setExternalRef2(postData.getExternalRef2());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
-            if (postData.getCustomFields() != null && postData.getCustomFields().getCustomField() != null) {
+            if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                 Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(UserAccount.class.getAnnotation(CustomFieldEntity.class).cftCodePrefix());
                 for (CustomFieldDto cfDto : postData.getCustomFields().getCustomField()) {
                     if (cfts.containsKey(cfDto.getCode())) {
@@ -1740,11 +1713,9 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         if (ca.getPaymentMethods() != null && !ca.getPaymentMethods().isEmpty()) {
-            dto.setPaymentMethods(new ArrayList<>());
-            PaymentMethodDto pmDto = null;
-            for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {
-                pmDto = PaymentMethodDto.toDto(paymentMethod);
-                dto.getPaymentMethods().add(pmDto);
+            dto.setPaymentMethods(new ArrayList<>());           
+            for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {               
+                dto.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
             }
 
             // Start compatibility with pre-4.6 versions
@@ -1954,5 +1925,19 @@ public class AccountHierarchyApi extends BaseApi {
             customerBrandService.create(customerBrand);
         }
     }
-
+    
+    private List<PaymentMethodDto> compatibilityPaymentMthod(CRMAccountHierarchyDto postData){
+    	List<PaymentMethodDto> listPaymentMethod = new ArrayList<PaymentMethodDto>();
+    	if (postData.getPaymentMethod() != null) {
+    		PaymentMethodDto paymentMethodDto = null;
+    		if(postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER){
+    			paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod());
+    		}else{
+    			paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(),postData.getBankCoordinates(),postData.getMandateIdentification(),postData.getMandateDate());
+    		}
+    		paymentMethodDto.validate();       
+    		listPaymentMethod.add(paymentMethodDto);
+    	} 
+    	return listPaymentMethod;
+    }
 }

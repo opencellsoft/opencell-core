@@ -27,7 +27,7 @@
 				<hftl:formField label="#{messages['accountOperation.invoiceNumber']}"
 					field="reference" disabled="true" />
 				<hftl:formField label="#{messages['order.number']}"
-					field="orderNumber" disabled="true"  />					
+					field="orderNumber" disabled="true"  />											
 				<hftl:formField label="#{messages['accountOperation.invoiceDate']}"
 					field="invoiceDate" disabled="true" />
 				<hftl:formField label="#{messages['accountOperation.dueDate']}"
@@ -42,6 +42,8 @@
 					field="amountWithoutTax" disabled="true" converter="bigDecimal4DigitsConverter" />
 				<hftl:formField label="#{messages['accountOperation.amountTax']}"
 					field="taxAmount" disabled="true" converter="bigDecimal4DigitsConverter"/>
+				<hftl:formField label="#{messages['paymentMethod.type']}"
+					field="paymentMethod" disabled="#{recordedInvoiceBean.entity.matchingStatus.name() ne 'O'}"  />	
 			</p:tab>
 				<hftl:customFields backingBean="#{recordedInvoiceBean}" messagesId=":formOccInvoice:messages" />
 			</p:tabView>	
