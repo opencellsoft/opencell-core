@@ -119,7 +119,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         String cardNumber = cardPaymentMethod.getCardNumber();
         cardNumber = cardNumber.replaceAll(" ", "");
 
-        cardPaymentMethod.setHiddenCardNumber(StringUtils.hideCardNumber(cardNumber));
+        cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
 
         String coutryCode = null;  
         if(!customerAccount.isTransient()){        	       
