@@ -26,6 +26,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.meveo.model.MultilanguageEntity;
@@ -74,6 +75,10 @@ public class OneShotChargeTemplate extends ChargeTemplate {
     @Type(type="numeric_boolean")
     @Column(name = "immediate_invoicing")
     private Boolean immediateInvoicing = false;
+    
+    @Column(name = "filter_expression", length = 2000)
+	@Size(max = 2000)
+	private String filterExpression = null;
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
         return oneShotChargeTemplateType;
@@ -93,6 +98,14 @@ public class OneShotChargeTemplate extends ChargeTemplate {
 
 	public String getChargeType() {
 		return CHARGE_TYPE;
+	}
+
+	public String getFilterExpression() {
+		return filterExpression;
+	}
+
+	public void setFilterExpression(String filterExpression) {
+		this.filterExpression = filterExpression;
 	}
 
 }

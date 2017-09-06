@@ -682,9 +682,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 	}
 	
-	public boolean isChargeMatch(RecurringChargeInstance activeRecurringChargeInstance, String filterExpression) throws BusinessException {
+	public boolean isChargeMatch(ChargeInstance chargeInstance, String filterExpression) throws BusinessException {
 		Map<Object, Object> userMap = new HashMap<Object, Object>();
-		userMap.put("ci", activeRecurringChargeInstance);
+		userMap.put("ci", chargeInstance);
 		if (StringUtils.isBlank(filterExpression)) {
 			return true;
 		}

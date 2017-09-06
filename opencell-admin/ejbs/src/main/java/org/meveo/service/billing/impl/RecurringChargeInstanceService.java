@@ -264,7 +264,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId);
 			
 			if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
-				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
+				log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
 				return nbRating;
 			}
 			
@@ -380,7 +380,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 .getQuantity(), fromDate, toDate);
         
 		if (!walletOperationService.isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
-			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
+			log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
 			return null;
 		}
 

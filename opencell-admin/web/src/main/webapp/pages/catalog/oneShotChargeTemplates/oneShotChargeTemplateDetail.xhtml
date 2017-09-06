@@ -63,10 +63,12 @@
 							field="unitMultiplicator" converter="bigDecimal12DigitsConverter" />
 						<hftl:formField label="#{messages['chargeTemplate.unitNbDecimal']}"
 							field="unitNbDecimal" />
-							<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />	
+							<hftl:formField label="#{messages['chargeTemplate.roundingMode']}" field="roundingMode" />
+						<hftl:formField
+							label="#{messages['recurringChargeTemplate.filterExpression']}"
+							field="filterExpression" textArea="true" rows="1" maxlength="2000" />
 
-
-						<hftl:formField id="invoiceSubCategorySelectedId"
+					<hftl:formField id="invoiceSubCategorySelectedId"
 								label="#{messages['charge.subCategory']}"
 							field="invoiceSubCategory" valueLabelField="code" required="true" listBean="#{invoiceSubCategoryBean}"/>
 <!-- 								popup="true" popupId="searchInvoiceSubCategoryPopup" /> -->

@@ -784,5 +784,11 @@
         </addColumn>
     </changeSet>
     
+    <changeSet id="#2586_20170906 Add filter expression to one-shot charge template" author="EdwardLegaspi">
+    	<addColumn tableName="cat_one_shot_charge_templ">
+    		<column name="filter_expression" type="varchar(2000)" />
+    	</addColumn>
+    </changeSet>
+    
      
 </databaseChangeLog> 
