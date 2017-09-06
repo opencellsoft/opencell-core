@@ -18,6 +18,7 @@ import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.CatMessages;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
@@ -152,11 +153,17 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			newOfferTemplate.setName(name);
 		}
 		
-		newOfferTemplate.setValidity(bomOffer.getValidityRaw());
+		newOfferTemplate.setValidity(bomOffer.getValidity());
 		if (validFrom != null) {
+		    if (newOfferTemplate.getValidity()==null){
+		        newOfferTemplate.setValidity(new DatePeriod());
+		    }
 			newOfferTemplate.getValidity().setFrom(validFrom);
 		}
 		if (validTo != null) {
+		    if (newOfferTemplate.getValidity()==null){
+                newOfferTemplate.setValidity(new DatePeriod());
+            }
 			newOfferTemplate.getValidity().setTo(validTo);
 		}
 		newOfferTemplate.setBusinessOfferModel(businessOfferModel);

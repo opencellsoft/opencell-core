@@ -92,12 +92,12 @@
                     <h:outputText value="#{e['appliesTo']}" converter="#{converter2}" />
                 </p:column>
                 <p:column headerText="#{messages['commons.validFrom']}" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'validity')}" width="15%">
-                    <h:outputText value="#{e.validityRaw.from}">
+                    <h:outputText value="#{e.validity.from}">
                         <f:convertDateTime pattern="#{paramBean.dateFormat}" />
                     </h:outputText>
                 </p:column>
                 <p:column headerText="#{messages['commons.validTo']}" rendered="#{ref:isClassHasField(genericEntityPickerBean.selectedEntityClass, 'validity')}" width="15%">
-                    <h:outputText value="#{e.validityRaw.to}">
+                    <h:outputText value="#{e.validity.to}">
                         <f:convertDateTime pattern="#{paramBean.dateFormat}" />
                     </h:outputText>
                 </p:column>

@@ -18,7 +18,6 @@
  */
 package org.meveo.model.crm;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -42,93 +41,90 @@ import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @CustomFieldEntity(cftCodePrefix = "CUST")
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_CUST")
 @Table(name = "crm_customer")
-public class Customer extends AccountEntity{
+public class Customer extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) Customer.class.getAnnotation(DiscriminatorValue.class)).value();
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne
-	@JoinColumn(name = "customer_category_id")
-	private CustomerCategory customerCategory;
+    @ManyToOne
+    @JoinColumn(name = "customer_category_id")
+    private CustomerCategory customerCategory;
 
-	@ManyToOne
-	@JoinColumn(name = "customer_brand_id")
-	private CustomerBrand customerBrand;
+    @ManyToOne
+    @JoinColumn(name = "customer_brand_id")
+    private CustomerBrand customerBrand;
 
-	@OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-	private List<CustomerAccount> customerAccounts = new ArrayList<CustomerAccount>();
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<CustomerAccount> customerAccounts;
 
-	@Embedded
-	private ContactInformation contactInformation = new ContactInformation();
+    @Embedded
+    private ContactInformation contactInformation;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
-	 
-	public Customer() {
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
+
+    public Customer() {
         accountType = ACCOUNT_TYPE;
     }
-	
-	public Seller getSeller() {
-		return seller;
-	}
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
+    public Seller getSeller() {
+        return seller;
+    }
 
-	public CustomerCategory getCustomerCategory() {
-		return customerCategory;
-	}
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
-	public void setCustomerCategory(CustomerCategory customerCategory) {
-		this.customerCategory = customerCategory;
-	}
+    public CustomerCategory getCustomerCategory() {
+        return customerCategory;
+    }
 
-	public CustomerBrand getCustomerBrand() {
-		return customerBrand;
-	}
+    public void setCustomerCategory(CustomerCategory customerCategory) {
+        this.customerCategory = customerCategory;
+    }
 
-	public void setCustomerBrand(CustomerBrand customerBrand) {
-		this.customerBrand = customerBrand;
-	}
+    public CustomerBrand getCustomerBrand() {
+        return customerBrand;
+    }
 
-	public List<CustomerAccount> getCustomerAccounts() {
-		return customerAccounts;
-	}
+    public void setCustomerBrand(CustomerBrand customerBrand) {
+        this.customerBrand = customerBrand;
+    }
 
-	public void setCustomerAccounts(List<CustomerAccount> customerAccounts) {
-		this.customerAccounts = customerAccounts;
-	}
+    public List<CustomerAccount> getCustomerAccounts() {
+        return customerAccounts;
+    }
 
-	public ContactInformation getContactInformation() {
-		if (contactInformation == null) {
-			contactInformation = new ContactInformation();
-		}
-		return contactInformation;
-	}
+    public void setCustomerAccounts(List<CustomerAccount> customerAccounts) {
+        this.customerAccounts = customerAccounts;
+    }
 
-	public void setContactInformation(ContactInformation contactInformation) {
-		this.contactInformation = contactInformation;
-	}
+    public ContactInformation getContactInformation() {
+        return contactInformation;
+    }
+
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
+    }
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[]{seller};
-	}
+        return new ICustomFieldEntity[] { seller };
+    }
 
-	@Override
-	public BusinessEntity getParentEntity() {
-		return seller;
-	}
-	
-	@Override
-	public Class<? extends BusinessEntity> getParentEntityType() {
-		return Seller.class;
-	}
-	
+    @Override
+    public BusinessEntity getParentEntity() {
+        return seller;
+    }
+
+    @Override
+    public Class<? extends BusinessEntity> getParentEntityType() {
+        return Seller.class;
+    }
+
 }

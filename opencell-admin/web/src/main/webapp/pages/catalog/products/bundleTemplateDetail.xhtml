@@ -54,12 +54,12 @@
 							<h:outputText value="#{prodT.description}" />
 						</p:column>
 						<p:column headerText="#{messages['commons.validFrom']}">
-							<h:outputText value="#{prodT.validityRaw.from}">
+							<h:outputText value="#{prodT.validity.from}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
 						<p:column headerText="#{messages['commons.validTo']}">
-							<h:outputText value="#{prodT.validityRaw.to}">
+							<h:outputText value="#{prodT.validity.to}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>

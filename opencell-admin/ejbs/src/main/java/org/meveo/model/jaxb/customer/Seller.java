@@ -39,8 +39,7 @@ import org.meveo.model.jaxb.account.Address;
  * Java class for anonymous complex type.
  * 
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType>
@@ -62,15 +61,8 @@ import org.meveo.model.jaxb.account.Address;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {  "code",
-		"description",
-		"tradingCurrencyCode",
-		"tradingCountryCode",
-		"tradingLanguageCode",
-		"address",
-		"currentInvoiceNb",
-		"invoicePrefix",
-		"customers" })
+@XmlType(name = "", propOrder = { "code", "description", "tradingCurrencyCode", "tradingCountryCode", "tradingLanguageCode", "address", "currentInvoiceNb", "invoicePrefix",
+        "customers" })
 @XmlRootElement(name = "seller")
 public class Seller {
 
@@ -90,92 +82,94 @@ public class Seller {
     protected Long currentInvoiceNb;
     @XmlElement()
     protected String invoicePrefix;
-    
+
     protected Customers customers;
-    
-    public Seller(){}
-    
-	public Seller(org.meveo.model.admin.Seller seller) {
-		if(seller!=null){
-			code=seller.getCode();
-			description=seller.getDescription();
-			tradingCurrencyCode=seller.getTradingCurrency()==null?"":seller.getTradingCurrency().getCurrencyCode();
-			tradingCountryCode=seller.getTradingCountry()==null?"":seller.getTradingCountry().getCountryCode();
-			tradingLanguageCode=seller.getTradingLanguage()==null?"":seller.getTradingLanguage().getLanguageCode();
-			address=new Address(seller.getAddress());
-	
-		}
-	}
 
-	public String getCode() {
-		return code;
-	}
+    public Seller() {
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public Seller(org.meveo.model.admin.Seller seller) {
+        if (seller != null) {
+            code = seller.getCode();
+            description = seller.getDescription();
+            tradingCurrencyCode = seller.getTradingCurrency() == null ? "" : seller.getTradingCurrency().getCurrencyCode();
+            tradingCountryCode = seller.getTradingCountry() == null ? "" : seller.getTradingCountry().getCountryCode();
+            tradingLanguageCode = seller.getTradingLanguage() == null ? "" : seller.getTradingLanguage().getLanguageCode();
+            if (seller.getAddress() != null) {
+                address = new Address(seller.getAddress());
+            }
+        }
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public String getTradingCurrencyCode() {
-		return tradingCurrencyCode;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public void setTradingCurrencyCode(String tradingCurrencyCode) {
-		this.tradingCurrencyCode = tradingCurrencyCode;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getTradingCountryCode() {
-		return tradingCountryCode;
-	}
+    public String getTradingCurrencyCode() {
+        return tradingCurrencyCode;
+    }
 
-	public void setTradingCountryCode(String tradingCountryCode) {
-		this.tradingCountryCode = tradingCountryCode;
-	}
+    public void setTradingCurrencyCode(String tradingCurrencyCode) {
+        this.tradingCurrencyCode = tradingCurrencyCode;
+    }
 
-	public String getTradingLanguageCode() {
-		return tradingLanguageCode;
-	}
+    public String getTradingCountryCode() {
+        return tradingCountryCode;
+    }
 
-	public void setTradingLanguageCode(String tradingLanguageCode) {
-		this.tradingLanguageCode = tradingLanguageCode;
-	}
+    public void setTradingCountryCode(String tradingCountryCode) {
+        this.tradingCountryCode = tradingCountryCode;
+    }
 
-	public Address getAddress() {
-		return address;
-	}
+    public String getTradingLanguageCode() {
+        return tradingLanguageCode;
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    public void setTradingLanguageCode(String tradingLanguageCode) {
+        this.tradingLanguageCode = tradingLanguageCode;
+    }
 
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
+    public Address getAddress() {
+        return address;
+    }
 
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	public String getInvoicePrefix() {
-		return invoicePrefix;
-	}
+    public Long getCurrentInvoiceNb() {
+        return currentInvoiceNb;
+    }
 
-	public void setInvoicePrefix(String invoicePrefix) {
-		this.invoicePrefix = invoicePrefix;
-	}
+    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+        this.currentInvoiceNb = currentInvoiceNb;
+    }
 
-	public Customers getCustomers() {
-		return customers;
-	}
+    public String getInvoicePrefix() {
+        return invoicePrefix;
+    }
 
-	public void setCustomers(Customers customers) {
-		this.customers = customers;
-	}
+    public void setInvoicePrefix(String invoicePrefix) {
+        this.invoicePrefix = invoicePrefix;
+    }
+
+    public Customers getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(Customers customers) {
+        this.customers = customers;
+    }
 }

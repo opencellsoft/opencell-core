@@ -154,9 +154,11 @@ public class UserBean extends CustomFieldBean<User> {
     @Override
     public User initEntity() {
         super.initEntity();
+
         if (entity.getName() == null) {
             entity.setName(new Name());
         }
+
         return entity;
     }
 

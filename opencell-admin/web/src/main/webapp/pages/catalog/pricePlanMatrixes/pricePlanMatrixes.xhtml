@@ -179,13 +179,13 @@
 				</f:facet>
 				<p:cellEditor>
 					<f:facet name="output">
-						<h:outputText value="#{entity.offerTemplate.code}  #{entity.offerTemplate.validityRaw.toString(paramBean.dateFormat)}" />
+						<h:outputText value="#{entity.offerTemplate.code}  #{entity.offerTemplate.validity.toString(paramBean.dateFormat)}" />
 					</f:facet>
 					<f:facet name="input">
 						<h:selectOneMenu value="#{entity.offerTemplate}" style="width:75%">
 							<f:selectItem itemLabel="" itemValue="" />
 							<f:selectItems value="#{offerTemplateBean.listAll()}" var="item"
-								itemLabel="#{item.code}  #{item.validityRaw.toString(paramBean.dateFormat)}" itemValue="#{item}" />
+								itemLabel="#{item.code}  #{item.validity.toString(paramBean.dateFormat)}" itemValue="#{item}" />
 							<hftl:objectConverter />
 						</h:selectOneMenu>
 					</f:facet>

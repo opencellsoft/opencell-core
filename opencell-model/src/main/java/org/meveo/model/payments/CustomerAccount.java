@@ -78,17 +78,17 @@ public class CustomerAccount extends AccountEntity {
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+    private List<BillingAccount> billingAccounts;
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<AccountOperation> accountOperations = new ArrayList<AccountOperation>();
+    private List<AccountOperation> accountOperations;
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ActionDunning> actionDunnings = new ArrayList<ActionDunning>();
+    private List<ActionDunning> actionDunnings;
 
     @Column(name = "date_status")
     @Temporal(TemporalType.TIMESTAMP)
@@ -99,7 +99,7 @@ public class CustomerAccount extends AccountEntity {
     private Date dateDunningLevel;
 
     @Embedded
-    private ContactInformation contactInformation = new ContactInformation();
+    private ContactInformation contactInformation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -126,7 +126,7 @@ public class CustomerAccount extends AccountEntity {
     private TradingLanguage tradingLanguage;
 
     @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
+    private List<PaymentMethod> paymentMethods;
 
     public Customer getCustomer() {
         return customer;
@@ -180,9 +180,6 @@ public class CustomerAccount extends AccountEntity {
     }
 
     public ContactInformation getContactInformation() {
-        if (contactInformation == null) {
-            contactInformation = new ContactInformation();
-        }
         return contactInformation;
     }
 
@@ -323,54 +320,54 @@ public class CustomerAccount extends AccountEntity {
 
         return cardPaymentMethods;
     }
-    
+
     public List<DDPaymentMethod> getDDPaymentMethods() {
         List<DDPaymentMethod> ddPaymentMethods = new ArrayList<>();
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (paymentMethod instanceof DDPaymentMethod) {
-                        ddPaymentMethods.add((DDPaymentMethod) paymentMethod);                    
+                    ddPaymentMethods.add((DDPaymentMethod) paymentMethod);
                 }
             }
         }
         return ddPaymentMethods;
     }
-    
-	public List<TipPaymentMethod> getTipPaymentMethods() {
+
+    public List<TipPaymentMethod> getTipPaymentMethods() {
         List<TipPaymentMethod> tipPaymentMethods = new ArrayList<>();
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (paymentMethod instanceof TipPaymentMethod) {
-                        tipPaymentMethods.add((TipPaymentMethod) paymentMethod);                    
+                    tipPaymentMethods.add((TipPaymentMethod) paymentMethod);
                 }
             }
         }
         return tipPaymentMethods;
-	}
-	
-	public List<WirePaymentMethod> getWirePaymentMethods() {
+    }
+
+    public List<WirePaymentMethod> getWirePaymentMethods() {
         List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (paymentMethod instanceof WirePaymentMethod) {
-                	wirePaymentMethods.add((WirePaymentMethod) paymentMethod);                    
+                    wirePaymentMethods.add((WirePaymentMethod) paymentMethod);
                 }
             }
         }
         return wirePaymentMethods;
-	}
-	
-	public List<CheckPaymentMethod> getCheckPaymentMethods() {
-		 List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
-	        if (paymentMethods != null) {
-	            for (PaymentMethod paymentMethod : paymentMethods) {
-	                if (paymentMethod instanceof CheckPaymentMethod) {
-	                	checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);                    
-	                }
-	            }
-	        }
-	        return checkPaymentMethods;
-		}
+    }
+
+    public List<CheckPaymentMethod> getCheckPaymentMethods() {
+        List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (paymentMethod instanceof CheckPaymentMethod) {
+                    checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return checkPaymentMethods;
+    }
 
     /**
      * Mark currently valid card payment as preferred
