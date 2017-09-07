@@ -1640,6 +1640,7 @@ public class AccountHierarchyApi extends BaseApi {
         if (account.getAddress() != null) {
             dto.setAddress(new AddressDto(account.getAddress()));
         }
+        dto.setCreated(account.getAuditable().getCreated());
 
         BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
 
