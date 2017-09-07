@@ -172,9 +172,9 @@ public class PaymentService extends PersistenceService<Payment> {
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
     	String coutryCode = null;
-    	if(!customerAccount.isTransient()){
-	    	customerAccount =  customerAccountService.refreshOrRetrieve(customerAccount);
-	    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
+    	//TODO : waiting #2830 
+    	if(!customerAccount.isTransient()){	    	
+	    	if(customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0){
 	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
 	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
 	    		}
