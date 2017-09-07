@@ -68,7 +68,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     private List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<>();
 
     @AttributeOverrides({ @AttributeOverride(name = "from", column = @Column(name = "valid_from")), @AttributeOverride(name = "to", column = @Column(name = "valid_to")) })
-    private DatePeriod validity = new DatePeriod();
+    private DatePeriod validity;
 
     @ImageType
     @Column(name = "image_path", length = 100)
@@ -92,7 +92,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @ManyToMany
     @JoinTable(name = "cat_product_offer_channels", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "channel_id"))
     @OrderColumn(name = "INDX")
-    private List<Channel> channels = new ArrayList<Channel>();
+    private List<Channel> channels = new ArrayList<>();
 
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {
@@ -137,29 +137,15 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     public void setName(String name) {
         this.name = name;
     }
-    
-    public DatePeriod getValidityRaw() {
-        return validity;
-    }
 
     public void setValidity(DatePeriod validity) {
         this.validity = validity;
     }
 
-    /**
-     * If validity is null (both dates are empty) then instantiate one. Note: Use it with care as it results in update calls to DB if validity was null before. Preferably use
-     * getValidityRaw() and check for null.
-     * 
-     * @return Existing or instantiated new validity
-     */
     public DatePeriod getValidity() {
-
-        if (validity == null) {
-            validity = new DatePeriod();
-        }
         return validity;
     }
-    
+
     public LifeCycleStatusEnum getLifeCycleStatus() {
         return lifeCycleStatus;
     }
@@ -215,10 +201,10 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
-        
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -230,7 +216,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         ProductOffering other = (ProductOffering) obj;
 
         if (id != null && other.getId() != null && id.equals(other.getId())) {
-             return true;
+            return true;
         }
         if (code == null) {
             if (other.getCode() != null) {
@@ -240,9 +226,9 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
             return false;
         }
 
-        if (validity != null && !validity.equals(other.getValidityRaw())) {
+        if (validity != null && !validity.equals(other.getValidity())) {
             return false;
-        } else if (validity == null && (other.getValidityRaw() != null && !other.getValidityRaw().isEmpty())) {
+        } else if (validity == null && (other.getValidity() != null && !other.getValidity().isEmpty())) {
             return false;
         }
 

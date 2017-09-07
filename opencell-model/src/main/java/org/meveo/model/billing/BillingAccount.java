@@ -21,7 +21,6 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,20 +99,20 @@ public class BillingAccount extends AccountEntity {
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<UserAccount> usersAccounts = new ArrayList<UserAccount>();
+    private List<UserAccount> usersAccounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Invoice> invoices = new ArrayList<Invoice>();
+    private List<Invoice> invoices = new ArrayList<>();
 
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<BillingRunList> billingRunLists = new ArrayList<BillingRunList>();
+    private List<BillingRunList> billingRunLists = new ArrayList<>();
 
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<InvoiceAgregate>();
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountRate;
@@ -160,7 +159,7 @@ public class BillingAccount extends AccountEntity {
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     // key is the counter template code
-    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
+    Map<String, CounterInstance> counters;
 
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;

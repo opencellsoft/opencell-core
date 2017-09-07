@@ -676,7 +676,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                         Class clazz = Class.forName(item.getItemClass());
                         if (clazz.isAnnotationPresent(VersionedEntity.class)) {
                             ApiVersionedService apiService = getApiVersionedService(item.getItemClass(), true);
-                            itemDto = apiService.findIgnoreNotFound(item.getItemCode(), item.getValidity().getFrom(), item.getValidity().getTo());
+                            itemDto = apiService.findIgnoreNotFound(item.getItemCode(), item.getValidity() != null ? item.getValidity().getFrom() : null,
+                                item.getValidity() != null ? item.getValidity().getTo() : null);
 
                         } else {
                             ApiService apiService = getApiService(clazz, true);

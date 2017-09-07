@@ -96,8 +96,12 @@ public class ExportAccountsJobBean {
             dto.setDescription(ba.getDescription());
             dto.setExternalRef1(ba.getExternalRef1());
             dto.setExternalRef2(ba.getExternalRef2());
-            dto.setName(new Name(ba.getName()));
-            dto.setAddress(new Address(ba.getAddress()));
+            if (ba.getName() != null) {
+                dto.setName(new Name(ba.getName()));
+            }
+            if (ba.getAddress() != null) {
+                dto.setAddress(new Address(ba.getAddress()));
+            }
             dto.setElectronicBilling(ba.getElectronicBilling() == null ? null : ba.getElectronicBilling() + "");
             dto.setEmail(ba.getEmail() == null ? null : ba.getEmail());
             dto.setTradingCountryCode(ba.getTradingCountry() == null ? null : ba.getTradingCountry().getCountryCode());
@@ -129,8 +133,12 @@ public class ExportAccountsJobBean {
             dto.setDescription(ua.getDescription());
             dto.setExternalRef1(ua.getExternalRef1());
             dto.setExternalRef2(ua.getExternalRef2());
-            dto.setName(new Name(ua.getName()));
-            dto.setAddress(new Address(ua.getAddress()));
+            if (ua.getName() != null) {
+                dto.setName(new Name(ua.getName()));
+            }
+            if (ua.getAddress() != null) {
+                dto.setAddress(new Address(ua.getAddress()));
+            }
             if (ua.getCfValues() != null) {
                 dto.setCustomFields(CustomFields.toDTO(ua.getCfValues().getValuesByCode()));
             }

@@ -30,6 +30,7 @@ import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.Name;
 import org.meveo.service.payments.impl.CustomerAccountService;
 //import org.richfaces.event.FileUploadEvent;
 //import org.richfaces.model.UploadedFile;
@@ -110,8 +111,7 @@ public class CustomerAccountImportAction implements Serializable {
 		List<CustomerAccount> list = new ArrayList<CustomerAccount>();
 		for (String[] customerAccountData : importCustomerAccountData) {
 			CustomerAccount customerAccount = new CustomerAccount();
-			customerAccount.setName(new org.meveo.model.shared.Name());
-			customerAccount.getName().setFirstName(customerAccountData[0]);
+			customerAccount.setName(new Name(null, customerAccountData[0],null));
 		}
 		return list;
 	}

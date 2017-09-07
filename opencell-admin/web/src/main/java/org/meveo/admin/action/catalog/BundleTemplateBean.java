@@ -16,6 +16,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
@@ -88,6 +89,10 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
             instantiateNewVersion();
             setObjectId(entity.getId());
             newVersion = false;
+        }
+
+        if (entity.getValidity() == null) {
+            entity.setValidity(new DatePeriod());
         }
 
         return entity;
@@ -328,7 +333,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "bundleTemplate.version.exists"),
-                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
             return false;
         }
 

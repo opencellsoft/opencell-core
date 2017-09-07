@@ -29,6 +29,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
@@ -114,6 +115,9 @@ public class CustomerApi extends AccountEntityApi {
         customer.setExternalRef2(postData.getExternalRef2());
 
         if (postData.getContactInformation() != null) {
+            if (customer.getContactInformation() == null) {
+                customer.setContactInformation(new ContactInformation());
+            }
             customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             customer.getContactInformation().setPhone(postData.getContactInformation().getPhone());
             customer.getContactInformation().setMobile(postData.getContactInformation().getMobile());
@@ -136,7 +140,7 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         customerService.create(customer);
-        
+
         return customer;
     }
 
@@ -207,6 +211,9 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         if (postData.getContactInformation() != null) {
+            if (customer.getContactInformation() == null) {
+                customer.setContactInformation(new ContactInformation());
+            }
             if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
                 customer.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             }
@@ -225,7 +232,6 @@ public class CustomerApi extends AccountEntityApi {
             customer.setBusinessAccountModel(businessAccountModel);
         }
 
-
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customer, false, checkCustomFields);
@@ -238,12 +244,11 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         customer = customerService.update(customer);
-        
+
         return customer;
     }
 
-    @SecuredBusinessEntityMethod(
-            validate = @SecureMethodParameter(entity = Customer.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
@@ -278,9 +283,7 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
-    @SecuredBusinessEntityMethod(
-            resultFilter = AccountDtoListFilter.class,
-            validate = @SecureMethodParameter(parser = NullParser.class))
+    @SecuredBusinessEntityMethod(resultFilter = AccountDtoListFilter.class, validate = @SecureMethodParameter(parser = NullParser.class))
     public CustomersDto filterCustomer(CustomerDto postData, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
 
         CustomerCategory customerCategory = null;

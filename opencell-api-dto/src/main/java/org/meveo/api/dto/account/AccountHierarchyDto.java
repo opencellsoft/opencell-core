@@ -171,8 +171,10 @@ public class AccountHierarchyDto implements Serializable {
 
     public AccountHierarchyDto(Customer customer, CustomFieldsDto customFieldInstances) {
         this.setCustomerId(customer.getCode());
-        this.setEmail(customer.getContactInformation().getEmail());
-        this.setPhoneNumber(customer.getContactInformation().getPhone());
+        if (customer.getContactInformation() != null) {
+            this.setEmail(customer.getContactInformation().getEmail());
+            this.setPhoneNumber(customer.getContactInformation().getPhone());
+        }
         if (customer.getSeller() != null) {
             this.sellerCode = customer.getSeller().getCode();
         }

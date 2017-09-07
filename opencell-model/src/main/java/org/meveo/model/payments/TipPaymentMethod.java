@@ -34,9 +34,9 @@ public class TipPaymentMethod extends PaymentMethod {
         setPreferred(preferred);
         this.customerAccount = customerAccount;
         this.bankCoordinates = bankCoordinates;
-	}
+    }
 
-	public BankCoordinates getBankCoordinates() {
+    public BankCoordinates getBankCoordinates() {
         return bankCoordinates;
     }
 

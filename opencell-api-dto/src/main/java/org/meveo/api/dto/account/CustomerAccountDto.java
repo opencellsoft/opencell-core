@@ -181,9 +181,6 @@ public class CustomerAccountDto extends AccountDto {
     }
 
     public ContactInformationDto getContactInformation() {
-        if (contactInformation == null) {
-            contactInformation = new ContactInformationDto();
-        }
         return contactInformation;
     }
 

@@ -102,8 +102,12 @@ public class ExportCustomersJobBean {
             if (cust.getCfValues() != null) {
                 dto.setCustomFields(CustomFields.toDTO(cust.getCfValues().getValuesByCode()));
             }
-            dto.setAddress(new Address(cust.getAddress()));
-            dto.setName(new Name(cust.getName()));
+            if (cust.getAddress() != null) {
+                dto.setAddress(new Address(cust.getAddress()));
+            }
+            if (cust.getName() != null) {
+                dto.setName(new Name(cust.getName()));
+            }
             dto.setCustomerAccounts(customerAccountsToDto(cust.getCustomerAccounts()));
         }
         return dto;
@@ -126,8 +130,12 @@ public class ExportCustomersJobBean {
             dto.setDescription(ca.getDescription());
             dto.setExternalRef1(ca.getExternalRef1());
             dto.setExternalRef2(ca.getExternalRef2());
-            dto.setName(new Name(ca.getName()));
-            dto.setAddress(new Address(ca.getAddress()));
+            if (ca.getName() != null) {
+                dto.setName(new Name(ca.getName()));
+            }
+            if (ca.getAddress() != null) {
+                dto.setAddress(new Address(ca.getAddress()));
+            }
             dto.setTradingCurrencyCode(ca.getTradingCurrency() == null ? null : ca.getTradingCurrency().getCurrencyCode());
             dto.setTradingLanguageCode(ca.getTradingLanguage() == null ? null : ca.getTradingLanguage().getLanguageCode());
             if (ca.getCfValues() != null) {

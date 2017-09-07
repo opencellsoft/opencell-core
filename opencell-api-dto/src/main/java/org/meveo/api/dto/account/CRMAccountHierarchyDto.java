@@ -42,9 +42,9 @@ public class CRMAccountHierarchyDto extends BaseDto {
     private String description;
     private String externalRef1;
     private String externalRef2;
-    private NameDto name = new NameDto();
-    private AddressDto address = new AddressDto();
-    private ContactInformationDto contactInformation = new ContactInformationDto();
+    private NameDto name;
+    private AddressDto address;
+    private ContactInformationDto contactInformation;
 
     private String language;
 

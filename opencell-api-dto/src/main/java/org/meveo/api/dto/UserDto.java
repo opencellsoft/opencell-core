@@ -39,131 +39,129 @@ import org.meveo.model.security.Role;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UserDto extends BaseDto {
 
-	private static final long serialVersionUID = -6633504145323452803L;
+    private static final long serialVersionUID = -6633504145323452803L;
 
-	@XmlElement(required = true)
-	private String username;
+    @XmlElement(required = true)
+    private String username;
 
-	@Deprecated
-	@XmlElement()
-	private String password;
+    @Deprecated
+    @XmlElement()
+    private String password;
 
-	@XmlElement(required = true)
-	private String email;
+    @XmlElement(required = true)
+    private String email;
 
-	private String firstName;
-	private String lastName;
+    private String firstName;
+    private String lastName;
 
-	@XmlElementWrapper(name="userRoles")
-    @XmlElement(name="userRole")
-	private List<String> roles;
-	
-	@XmlElementWrapper(name = "accessibleEntities")
-	@XmlElement(name = "accessibleEntity")
-	private List<SecuredEntityDto> securedEntities;
+    @XmlElementWrapper(name = "userRoles")
+    @XmlElement(name = "userRole")
+    private List<String> roles;
 
-	@Deprecated//use roles field
-	private String role;
+    @XmlElementWrapper(name = "accessibleEntities")
+    @XmlElement(name = "accessibleEntity")
+    private List<SecuredEntityDto> securedEntities;
+
+    @Deprecated // use roles field
+    private String role;
 
     @XmlElement()
     private String userLevel;
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public UserDto() {
-	}
-	
-	public UserDto(User user) {
-		if(user.getName()!=null){
-		firstName = user.getName().getFirstName();
-		lastName = user.getName().getLastName();	
-		}
-		username = user.getUserName();
-		email=user.getEmail();
+    public UserDto() {
+    }
 
-		if (user.getRoles() != null) {
-			roles = new ArrayList<String>();
-			for (Role r : user.getRoles()) {
-				roles.add(r.getName());
-				role=r.getName();
-			}
-		}
+    public UserDto(User user) {
+        if (user.getName() != null) {
+            firstName = user.getName().getFirstName();
+            lastName = user.getName().getLastName();
+        }
+        username = user.getUserName();
+        email = user.getEmail();
+
+        if (user.getRoles() != null) {
+            roles = new ArrayList<String>();
+            for (Role r : user.getRoles()) {
+                roles.add(r.getName());
+                role = r.getName();
+            }
+        }
 
         if (user.getUserLevel() != null) {
             userLevel = user.getUserLevel().getCode();
         }
 
+        if (user.getSecuredEntities() != null) {
+            this.securedEntities = new ArrayList<>();
+            SecuredEntityDto securedEntityDto = null;
+            for (SecuredEntity securedEntity : user.getSecuredEntities()) {
+                securedEntityDto = new SecuredEntityDto(securedEntity);
+                this.securedEntities.add(securedEntityDto);
+            }
+        }
+    }
 
-		if (user.getSecuredEntities() != null) {
-			this.securedEntities = new ArrayList<>();
-			SecuredEntityDto securedEntityDto = null;
-			for (SecuredEntity securedEntity : user.getSecuredEntities()) {
-				securedEntityDto = new SecuredEntityDto(securedEntity);
-				this.securedEntities.add(securedEntityDto);
-		}
-	}
-}
+    public String getFirstName() {
+        return firstName;
+    }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public List<String> getRoles() {
+        return roles;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
-	public List<String> getRoles() {
-		return roles;
-	}
+    public List<SecuredEntityDto> getSecuredEntities() {
+        return securedEntities;
+    }
 
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
-	
-	public List<SecuredEntityDto> getSecuredEntities() {
-		return securedEntities;
-	}
-	
-	public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
-		this.securedEntities = securedEntities;
-	}
+    public void setSecuredEntities(List<SecuredEntityDto> securedEntities) {
+        this.securedEntities = securedEntities;
+    }
 
-	/**
-	 * @return the role
-	 */
-	public String getRole() {
-		return role;
-	}
+    /**
+     * @return the role
+     */
+    public String getRole() {
+        return role;
+    }
 
-	/**
-	 * @param role the role to set
-	 */
-	public void setRole(String role) {
-		this.role = role;
-	}
+    /**
+     * @param role the role to set
+     */
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public String getUserLevel() {
         return userLevel;
@@ -174,8 +172,9 @@ public class UserDto extends BaseDto {
     }
 
     @Override
-	public String toString() {
-		return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel=" + userLevel  + ", securedEntities=" + securedEntities + " ]";
-	}
+    public String toString() {
+        return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel="
+                + userLevel + ", securedEntities=" + securedEntities + " ]";
+    }
 
 }

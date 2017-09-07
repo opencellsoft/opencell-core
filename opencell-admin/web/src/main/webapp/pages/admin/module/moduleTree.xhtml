@@ -20,12 +20,12 @@
                 <h:outputText value="#{item.itemEntity.description}" rendered="#{node.type eq 'item'}" />
             </p:column>
             <p:column headerText="#{messages['commons.validFrom']}" width="12%">
-                <h:outputText value="#{item.validityRaw.from}" rendered="#{node.type eq 'item'}">
+                <h:outputText value="#{item.validity.from}" rendered="#{node.type eq 'item'}">
                     <f:convertDateTime pattern="#{paramBean.dateFormat}" />
                 </h:outputText>
             </p:column>
             <p:column headerText="#{messages['commons.validTo']}" width="12%">
-                <h:outputText value="#{item.validityRaw.to}" rendered="#{node.type eq 'item'}">
+                <h:outputText value="#{item.validity.to}" rendered="#{node.type eq 'item'}">
                     <f:convertDateTime pattern="#{paramBean.dateFormat}" />
                 </h:outputText>
             </p:column>
@@ -50,12 +50,12 @@
                 <h:outputText value="#{item.description}" rendered="#{node.type eq 'item' and ref:hasField(item, 'description')}" />
             </p:column>
             <p:column headerText="#{messages['commons.validFrom']}" width="15%">
-                <h:outputText value="#{item.validityRaw.from}" rendered="#{node.type eq 'item' and ref:hasField(item, 'validity')}">
+                <h:outputText value="#{item.validity.from}" rendered="#{node.type eq 'item' and ref:hasField(item, 'validity')}">
                     <f:convertDateTime pattern="#{paramBean.dateFormat}" />
                 </h:outputText>
             </p:column>
             <p:column headerText="#{messages['commons.validTo']}" width="15%">
-                <h:outputText value="#{item.validityRaw.to}" rendered="#{node.type eq 'item' and ref:hasField(item, 'validity')}">
+                <h:outputText value="#{item.validity.to}" rendered="#{node.type eq 'item' and ref:hasField(item, 'validity')}">
                     <f:convertDateTime pattern="#{paramBean.dateFormat}" />
                 </h:outputText>
             </p:column>

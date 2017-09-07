@@ -10,7 +10,7 @@ import org.meveo.model.crm.ProviderContact;
 
 /**
  * 
- * @author Tyshan　Shi(tyshan@manaty.net)
+ * @author Tyshan Shi(tyshan@manaty.net)
  * @date Jun 3, 2016 1:28:29 AM
  *
  */
@@ -18,118 +18,118 @@ import org.meveo.model.crm.ProviderContact;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProviderContactDto extends BaseDto {
 
-	private static final long serialVersionUID = -763450889692487278L;
+    private static final long serialVersionUID = -763450889692487278L;
 
-	@XmlAttribute(required = true)
-	private String code;
-	@XmlAttribute
-	private String description;
-	private String firstName;
-	private String lastName;
-	private String email;
-	private String phone;
-	private String mobile;
-	private String fax;
-	private String genericMail;
-	
-	private AddressDto addressDto=new AddressDto();
-	
-	public ProviderContactDto(){
-		super();
-	}
-	public ProviderContactDto(ProviderContact providerContact){
-		this.code=providerContact.getCode();
-		this.description=providerContact.getDescription();
-		this.firstName=providerContact.getFirstName();
-		this.lastName=providerContact.getLastName();
-		this.email=providerContact.getEmail();
-		this.phone=providerContact.getPhone();
-		this.mobile=providerContact.getMobile();
-		this.fax=providerContact.getFax();
-		this.genericMail=providerContact.getGenericMail();
-		this.addressDto=new AddressDto(providerContact.getAddress());
-	}
+    @XmlAttribute(required = true)
+    private String code;
+    @XmlAttribute
+    private String description;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String phone;
+    private String mobile;
+    private String fax;
+    private String genericMail;
 
-	public String getCode() {
-		return code;
-	}
+    private AddressDto addressDto;
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public ProviderContactDto() {
+        super();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public ProviderContactDto(ProviderContact providerContact) {
+        this.code = providerContact.getCode();
+        this.description = providerContact.getDescription();
+        this.firstName = providerContact.getFirstName();
+        this.lastName = providerContact.getLastName();
+        this.email = providerContact.getEmail();
+        this.phone = providerContact.getPhone();
+        this.mobile = providerContact.getMobile();
+        this.fax = providerContact.getFax();
+        this.genericMail = providerContact.getGenericMail();
+        if (providerContact.getAddress() != null) {
+            this.addressDto = new AddressDto(providerContact.getAddress());
+        }
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getLastName() {
+        return lastName;
+    }
 
-	public String getPhone() {
-		return phone;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getMobile() {
-		return mobile;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setMobile(String mobile) {
-		this.mobile = mobile;
-	}
+    public String getPhone() {
+        return phone;
+    }
 
-	public String getFax() {
-		return fax;
-	}
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
 
-	public void setFax(String fax) {
-		this.fax = fax;
-	}
+    public String getMobile() {
+        return mobile;
+    }
 
-	public String getGenericMail() {
-		return genericMail;
-	}
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
 
-	public void setGenericMail(String genericMail) {
-		this.genericMail = genericMail;
-	}
+    public String getFax() {
+        return fax;
+    }
 
-	public AddressDto getAddressDto() {
-		if(addressDto==null){
-			addressDto=new AddressDto();
-		}
-		return addressDto;
-	}
+    public void setFax(String fax) {
+        this.fax = fax;
+    }
 
-	public void setAddressDto(AddressDto addressDto) {
-		this.addressDto = addressDto;
-	}
+    public String getGenericMail() {
+        return genericMail;
+    }
+
+    public void setGenericMail(String genericMail) {
+        this.genericMail = genericMail;
+    }
+
+    public AddressDto getAddressDto() {
+        return addressDto;
+    }
+
+    public void setAddressDto(AddressDto addressDto) {
+        this.addressDto = addressDto;
+    }
 }

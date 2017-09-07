@@ -72,9 +72,9 @@ public class ProductOfferingDto extends BusinessDto {
     public ProductOfferingDto(ProductOffering productOffering, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(productOffering);
 
-        if (productOffering.getValidityRaw() != null) {
-            this.setValidFrom(productOffering.getValidityRaw().getFrom());
-            this.setValidTo(productOffering.getValidityRaw().getTo());
+        if (productOffering.getValidity() != null) {
+            this.setValidFrom(productOffering.getValidity().getFrom());
+            this.setValidTo(productOffering.getValidity().getTo());
         }
 
         if (asLink) {

@@ -157,12 +157,12 @@
                             <h:outputText value="#{entity.productTemplate.description}" />
                         </p:column>                        
 						<p:column headerText="#{messages['commons.validFrom']}">
-							<h:outputText value="#{entity.productTemplate.validityRaw.from}">
+							<h:outputText value="#{entity.productTemplate.validity.from}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
 						<p:column headerText="#{messages['commons.validTo']}">
-							<h:outputText value="#{entity.productTemplate.validityRaw.to}">
+							<h:outputText value="#{entity.productTemplate.validity.to}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
@@ -285,8 +285,8 @@
 
                         <hftl:column label="#{messages['commons.name']}" field="name" />
                         <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
-                        <hftl:column label="#{messages['commons.validFrom']}" field="validityRaw.from" isDate="true" />
-                        <hftl:column label="#{messages['commons.validTo']}" field="validityRaw.to" isDate="true" />
+                        <hftl:column label="#{messages['commons.validFrom']}" field="validity.from" isDate="true" />
+                        <hftl:column label="#{messages['commons.validTo']}" field="validity.to" isDate="true" />
 
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton value="#{messages['offerTemplate.action.addProduct']}" action="#{offerTemplateBean.addProductTemplateToOffer(entity)}"

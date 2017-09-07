@@ -28,7 +28,6 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.shared.InterBankTitle;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
 
@@ -72,12 +71,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
             invoiceConfiguration.setProvider(entity);
             entity.setInvoiceConfiguration(invoiceConfiguration);
         }
+
         if (entity.getBankCoordinates() == null) {
             entity.setBankCoordinates(new BankCoordinates());
         }
-        if(entity.getInterBankTitle()==null){
-        	entity.setInterBankTitle(new InterBankTitle());
-        }
+
         return entity;
     }
 
@@ -104,4 +102,4 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         super.saveOrUpdate(killConversation);
         return "providerSelfDetail";
     }
-} 
+}
