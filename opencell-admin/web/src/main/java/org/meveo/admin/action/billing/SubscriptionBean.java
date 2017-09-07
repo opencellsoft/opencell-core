@@ -869,10 +869,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
         try {
+            entity = subscriptionService.attach(entity);
+
             serviceTemplates.add(serviceInstance.getServiceTemplate());
             serviceInstanceService.remove(serviceInstance.getId());
             serviceInstances.remove(serviceInstance);
             selectedServiceInstance = null;
+            subscriptionService.refresh(entity);
+
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Exception e) {
             log.error("exception when delete service instance!", e);

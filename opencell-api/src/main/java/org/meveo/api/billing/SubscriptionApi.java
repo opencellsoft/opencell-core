@@ -223,9 +223,6 @@ public class SubscriptionApi extends BaseApi {
 
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getOfferTemplate())) {
-            missingParameters.add("offerTemplate");
-        }
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -255,18 +252,23 @@ public class SubscriptionApi extends BaseApi {
             subscription.setUserAccount(userAccount);
         }
 
+        if (postData.getOfferTemplate() != null) {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
-        }
 
-        if (offerTemplate.isDisabled()) {
-            throw new MeveoApiException("Cannot subscribe to disabled offer");
+            } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
+                throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
+                
+            } else if (offerTemplate.isDisabled()) {
+                throw new InvalidParameterException("Cannot subscribe to disabled offer");
+            }
+            subscription.setOffer(offerTemplate);
         }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        subscription.setOffer(offerTemplate);
+
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
