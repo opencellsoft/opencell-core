@@ -22,7 +22,6 @@ public class CardPaymentMethod extends PaymentMethod {
     private static final long serialVersionUID = 8726571628074346184L;
 
     @Column(name = "token_id")
-    @NotNull
     private String tokenId;
 
     @Enumerated(EnumType.STRING)
