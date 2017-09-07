@@ -75,7 +75,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 		if (fromDueDate.after(toDueDate)) {
 			throw new BusinessEntityException("fromDueDate is after toDueDate");
 		}
-		List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoices(fromDueDate, toDueDate);
+		List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoicesToPay(fromDueDate, toDueDate,PaymentMethodEnum.DIRECTDEBIT);
 		if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
 			throw new BusinessEntityException("no invoices!");
 		}

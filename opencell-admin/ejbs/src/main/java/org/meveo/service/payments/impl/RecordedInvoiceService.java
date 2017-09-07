@@ -51,7 +51,7 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {
-		
+
 	public void addLitigation(Long recordedInvoiceId)
 			throws BusinessException {
 		if (recordedInvoiceId == null) {
@@ -130,7 +130,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 			CustomerAccount customerAccount, MatchingStatusEnum o,boolean dunningExclusion) {
 		List<RecordedInvoice> invoices = new ArrayList<RecordedInvoice>();
 		try {
-		    //FIXME Mbarek use NamedQuery
+			//FIXME Mbarek use NamedQuery
 			invoices = (List<RecordedInvoice>) getEntityManager()
 					.createQuery(
 							"from "
@@ -143,26 +143,24 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		} catch (Exception e) {
 
 		}
-		return invoices;
+		return invoices;		
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<RecordedInvoice> getInvoices(Date fromDueDate, Date toDueDate) throws Exception {
-		return getEntityManager()
-				.createQuery(
-						"from "
-								+ RecordedInvoice.class.getSimpleName()
-								+ " where matchingStatus=:matchingStatus and dueDate >=:fromDueDate and"
-								+ " dueDate<=:toDueDate and paymentMethod=:paymentMethod ")
-				.setParameter("fromDueDate", fromDueDate)
-				.setParameter("toDueDate", toDueDate)
-				.setParameter("matchingStatus", MatchingStatusEnum.O)
-				.setParameter("paymentMethod", PaymentMethodEnum.DIRECTDEBIT)
-				.getResultList();
+	public List<RecordedInvoice> getInvoicesToPay(Date fromDueDate, Date toDueDate,PaymentMethodEnum paymentMethodEnum ) throws Exception {
+		try {
+			return (List<RecordedInvoice>)getEntityManager().createNamedQuery("RecordedInvoice.listRecordedInvoiceToPayByDate")
+					.setParameter("payMethod", paymentMethodEnum)
+					.setParameter("fromDueDate", fromDueDate)
+					.setParameter("toDueDate", toDueDate)
+					.getResultList();
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
-	
+
 	public void generateRecordedInvoice(Invoice invoice) throws InvoiceExistException, ImportInvoiceException, BusinessException{
-	
+
 		CustomerAccount customerAccount = null;
 		RecordedInvoice recordedInvoice = new RecordedInvoice();
 		BillingAccount billingAccount = invoice.getBillingAccount();
@@ -184,7 +182,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		if (invoice.getInvoiceType() == null) {
 			throw new ImportInvoiceException("Invoice type is null");
 		}
-		
+
 		OCCTemplate invoiceTemplate = invoice.getInvoiceType().getOccTemplate();
 		if (invoiceTemplate == null) {
 			throw new ImportInvoiceException("Cant find OccTemplate");
@@ -246,41 +244,38 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		} catch (Exception e) {
 			log.error("error with invoice date", e);
 			throw new ImportInvoiceException("Error on invoiceDate");
-        }
+		}
 
-        PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-        if (preferedPaymentMethod != null) {
+		PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+		if (preferedPaymentMethod != null) {
 
-            recordedInvoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
-            BankCoordinates bankCoordiates = null;
-            if (preferedPaymentMethod instanceof DDPaymentMethod) {
-                bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-            } else if (preferedPaymentMethod instanceof TipPaymentMethod) {
-                bankCoordiates = ((TipPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-            }
+			recordedInvoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+			BankCoordinates bankCoordiates = null;
+			if (preferedPaymentMethod instanceof DDPaymentMethod) {
+				bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+			} else if (preferedPaymentMethod instanceof TipPaymentMethod) {
+				bankCoordiates = ((TipPaymentMethod) preferedPaymentMethod).getBankCoordinates();
+			}
 
-            if (bankCoordiates != null) {
-                recordedInvoice.setPaymentInfo(bankCoordiates.getIban());
-                recordedInvoice.setPaymentInfo1(bankCoordiates.getBankCode());
-                recordedInvoice.setPaymentInfo2(bankCoordiates.getBranchCode());
-                recordedInvoice.setPaymentInfo3(bankCoordiates.getAccountNumber());
-                recordedInvoice.setPaymentInfo4(bankCoordiates.getKey());
-                recordedInvoice.setPaymentInfo5(bankCoordiates.getBankName());
-                recordedInvoice.setPaymentInfo6(bankCoordiates.getBic());
-                recordedInvoice.setBillingAccountName(bankCoordiates.getAccountOwner());
-            }
-        }
-        recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
-        create(recordedInvoice);
-        invoice.setRecordedInvoice(recordedInvoice);
-    }
+			if (bankCoordiates != null) {
+				recordedInvoice.setPaymentInfo(bankCoordiates.getIban());
+				recordedInvoice.setPaymentInfo1(bankCoordiates.getBankCode());
+				recordedInvoice.setPaymentInfo2(bankCoordiates.getBranchCode());
+				recordedInvoice.setPaymentInfo3(bankCoordiates.getAccountNumber());
+				recordedInvoice.setPaymentInfo4(bankCoordiates.getKey());
+				recordedInvoice.setPaymentInfo5(bankCoordiates.getBankName());
+				recordedInvoice.setPaymentInfo6(bankCoordiates.getBic());
+				recordedInvoice.setBillingAccountName(bankCoordiates.getAccountOwner());
+			}
+		}
+		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
+		create(recordedInvoice);
+		invoice.setRecordedInvoice(recordedInvoice);
+	}
 
-    public List<Long> getAOidsToPay() {
-		QueryBuilder qb = new QueryBuilder(RecordedInvoice.class,"ao");
-		qb.addCriterionEnum("ao.paymentMethod", PaymentMethodEnum.CARD);
-		qb.addCriterionEnum("ao.matchingStatus",MatchingStatusEnum.O);
+	public List<Long> getAOidsToPay(PaymentMethodEnum paymentMethodEnum) {
 		try {
-			return qb.getIdQuery(getEntityManager()).getResultList();
+			return (List<Long>)getEntityManager().createNamedQuery("RecordedInvoice.listRecordedInvoiceIdsToPay").setParameter("payMethod", paymentMethodEnum).getResultList();
 		} catch (NoResultException e) {
 			return null;
 		}
