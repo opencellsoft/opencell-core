@@ -73,10 +73,10 @@ public class ProviderContact extends BusinessEntity {
     protected String genericMail;
 
     @Embedded
-    private Address address = new Address();
+    private Address address;
 
     public Address getAddress() {
-        return new Address();
+        return address;
     }
 
     public void setAddress(Address address) {

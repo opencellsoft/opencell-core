@@ -19,6 +19,7 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -98,20 +99,20 @@ public class BillingAccount extends AccountEntity {
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<UserAccount> usersAccounts;
+    private List<UserAccount> usersAccounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "billingAccount", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Invoice> invoices;
+    private List<Invoice> invoices = new ArrayList<>();
 
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<BillingRunList> billingRunLists;
+    private List<BillingRunList> billingRunLists = new ArrayList<>();
 
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<InvoiceAgregate> invoiceAgregates;
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @Column(name = "discount_rate", precision = NB_PRECISION, scale = NB_DECIMALS)
     private BigDecimal discountRate;

@@ -18,6 +18,7 @@
  */
 package org.meveo.model.crm;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -59,7 +60,7 @@ public class Customer extends AccountEntity {
     private CustomerBrand customerBrand;
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<CustomerAccount> customerAccounts;
+    private List<CustomerAccount> customerAccounts = new ArrayList<>();
 
     @Embedded
     private ContactInformation contactInformation;

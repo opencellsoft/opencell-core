@@ -18,7 +18,9 @@
  */
 package org.meveo.model.billing;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -78,10 +80,10 @@ public class UserAccount extends AccountEntity {
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<Subscription> subscriptions;
+    private List<Subscription> subscriptions = new ArrayList<>();
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
-    private List<InvoiceAgregate> invoiceAgregates;
+    private List<InvoiceAgregate> invoiceAgregates = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     // TODO : Add orphanRemoval annotation.
@@ -93,14 +95,14 @@ public class UserAccount extends AccountEntity {
     @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    Map<String, WalletInstance> prepaidWallets;
+    private Map<String, WalletInstance> prepaidWallets = new HashMap<>();
 
     @OneToMany(mappedBy = "userAccount", fetch = FetchType.LAZY)
     @MapKey(name = "code")
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     // key is the counter template code
-    Map<String, CounterInstance> counters;
+    private Map<String, CounterInstance> counters = new HashMap<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "termin_reason_id")

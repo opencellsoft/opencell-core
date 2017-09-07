@@ -598,7 +598,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             selectedBillingAccounts = selectedBillingAccounts + sep + baId;
             sep = ",";
-            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, lastTransactionDate)) {
+            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, null, lastTransactionDate)) {
                 isBillable = true;
             }
         }
@@ -716,7 +716,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
             selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
             sep = ",";
-            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
+            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), null, billingRun.getLastTransactionDate())) {
                 result = true;
                 break;
             }

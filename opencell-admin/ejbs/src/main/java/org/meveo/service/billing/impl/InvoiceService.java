@@ -268,8 +268,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
-
-        long startDate = System.currentTimeMillis();
         String prefix = invoicesToNumberInfo.getNumberingSequence().getPrefixEL();
         if (prefix != null && !StringUtils.isBlank(prefix)) {
             prefix = evaluatePrefixElExpression(prefix, invoice);
@@ -313,15 +311,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
-            Date lastTransactionDate) throws BusinessException {
-        long startDate = System.currentTimeMillis();
-
+	public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun,
+			Filter ratedTransactionFilter, String orderNumber, Date invoiceDate, Date firstTransactionDate,
+			Date lastTransactionDate) throws BusinessException {
+    	long startDate = System.currentTimeMillis();
         Invoice invoice = null;
 
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
             billingAccountId, billingRun != null ? billingRun.getId() : null, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
-
+        
+        if (firstTransactionDate == null) {
+			firstTransactionDate = new Date(0);
+		}
+        
         EntityManager em = getEntityManager();
         if (billingRun == null) {
             if (invoiceDate == null) {
@@ -338,7 +340,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
 
         if (billingAccount.getInvoicingThreshold() != null) {
-            BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, lastTransactionDate);
+            BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
             if (invoiceAmount == null) {
                 throw new BusinessException("Cant compute invoice amount");
             }
@@ -411,7 +413,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             create(invoice);
 
-            ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, lastTransactionDate);
+			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, ratedTransactionFilter,
+					orderNumber, firstTransactionDate, lastTransactionDate);
+            log.debug("created aggregates");
 
             // Note that rated transactions get updated in
             // ratedTransactionservice in case of Filter or orderNumber not empty
@@ -487,7 +491,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
         }
 
-        ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, null, false, true);
+        ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, null, null, false, true);
 
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -1058,7 +1062,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void produceInvoiceXmlInNewTransaction(Long invoiceId) throws BusinessException {
-        long startDate = System.currentTimeMillis();
         Invoice invoice = findById(invoiceId);
         produceInvoiceXml(invoice);
     }
@@ -1264,7 +1267,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws ImportInvoiceException
      * @throws InvoiceExistException
      */
-    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber, boolean isDraft,
+    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber, boolean isDraft,
             boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
         if (StringUtils.isBlank(billingAccount)) {
@@ -1273,6 +1276,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (StringUtils.isBlank(invoiceDate)) {
             throw new BusinessException("invoicingDate is null");
         }
+        
+        if (firstTransactionDate == null) {
+			firstTransactionDate = new Date(0);
+		}
 
         if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate) && StringUtils.isBlank(orderNumber)) {
             throw new BusinessException("lastTransactionDate or filter or orderNumber is null");
@@ -1287,7 +1294,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         ratedTransactionService.createRatedTransaction(billingAccount.getId(), invoiceDate);
         if (ratedTxFilter == null && StringUtils.isBlank(orderNumber)) {
-            if (!ratedTransactionService.isBillingAccountBillable(billingAccount, lastTransactionDate)) {
+            if (!ratedTransactionService.isBillingAccountBillable(billingAccount, firstTransactionDate, lastTransactionDate)) {
                 throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
             }
         }
@@ -1297,7 +1304,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, lastTransactionDate);
+		Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber,
+				invoiceDate, firstTransactionDate, lastTransactionDate);
         if (!isDraft) {
             assignInvoiceNumber(invoice);
         }

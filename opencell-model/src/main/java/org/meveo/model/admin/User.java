@@ -76,7 +76,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     private static final long serialVersionUID = 1L;
 
     @Embedded
-    private Name name = new Name();
+    private Name name;
 
     @Column(name = "username", length = 50, unique = true)
     @Size(max = 50)

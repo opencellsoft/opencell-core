@@ -22,8 +22,8 @@ public abstract class AccountDto extends BusinessDto {
 	
 	private String externalRef1;
 	private String externalRef2;
-	private NameDto name = new NameDto();
-	private AddressDto address = new AddressDto();
+	private NameDto name;
+	private AddressDto address;
 
 	@XmlElement(name = "businessAccountModel")
 	private BusinessEntityDto businessAccountModel;

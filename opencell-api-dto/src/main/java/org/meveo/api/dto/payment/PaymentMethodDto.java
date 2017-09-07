@@ -105,8 +105,6 @@ public class PaymentMethodDto extends BaseDto {
 
     public PaymentMethodDto(PaymentMethodEnum paymentType) {
         this.paymentMethodType = paymentType;
-        this.alias = "default";
-        this.preferred = true;
     }
 
     public PaymentMethodDto(PaymentMethodEnum paymentType, BankCoordinatesDto bankCoordinatesDto, String mandateIdentification, Date mandateDate) {
@@ -127,9 +125,9 @@ public class PaymentMethodDto extends BaseDto {
         this.info3 = paymentMethod.getInfo3();
         this.info4 = paymentMethod.getInfo4();
         this.info5 = paymentMethod.getInfo5();
-        if (paymentMethod.getCustomerAccount() != null) {
-            this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
-        }
+        // if (paymentMethod.getCustomerAccount() != null) {
+        // this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
+        // }
         if (paymentMethod instanceof DDPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.DIRECTDEBIT);
             this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
@@ -169,7 +167,7 @@ public class PaymentMethodDto extends BaseDto {
         this.info3 = cardPaymentMethodDto.getInfo3();
         this.info4 = cardPaymentMethodDto.getInfo4();
         this.info5 = cardPaymentMethodDto.getInfo5();
-        this.customerAccountCode = cardPaymentMethodDto.getCustomerAccountCode();
+        // this.customerAccountCode = cardPaymentMethodDto.getCustomerAccountCode();
         this.cardNumber = cardPaymentMethodDto.getCardNumber();
         this.owner = cardPaymentMethodDto.getOwner();
         this.cardType = cardPaymentMethodDto.getCardType();
@@ -189,7 +187,7 @@ public class PaymentMethodDto extends BaseDto {
             break;
 
         case DIRECTDEBIT:
-            pmEntity = new DDPaymentMethod(customerAccount, getAlias(),isPreferred(), getMandateDate(), getMandateIdentification(),
+            pmEntity = new DDPaymentMethod(customerAccount, getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
                 getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
             break;
 
@@ -212,7 +210,7 @@ public class PaymentMethodDto extends BaseDto {
         if (isPreferred()) {
             paymentMethod.setPreferred(true);
         } else {
-            paymentMethod.setPreferred(false);
+            // DO NOT set as not prefered. User must explicitly specify what payment method is preferred
         }
 
         if (!StringUtils.isBlank(getAlias())) {
@@ -277,6 +275,8 @@ public class PaymentMethodDto extends BaseDto {
                     ((DDPaymentMethod) paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getKey());
                 }
             }
+            break;
+        default:
             break;
         }
         return paymentMethod;

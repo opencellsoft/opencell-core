@@ -166,7 +166,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                customerAccount.getPaymentMethods().add(paymentMethodDto.fromDto(customerAccount));
+                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount));
             }
         }
 
@@ -297,7 +297,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
                 int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
                 if (index < 0) {
-                    customerAccount.getPaymentMethods().add(paymentMethodFromDto);
+                    customerAccount.addPaymentMethod(paymentMethodFromDto);
                     paymentMethodsFromDto.add(paymentMethodFromDto);
                 } else {
                     PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
@@ -330,10 +330,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
 
             PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount);
-            if (customerAccount.getPaymentMethods() == null) {
-                customerAccount.setPaymentMethods(new ArrayList<>());
-            }
-            customerAccount.getPaymentMethods().add(paymentMethodFromDto);
+            customerAccount.addPaymentMethod(paymentMethodFromDto);
         }
 
         if (businessAccountModel != null) {

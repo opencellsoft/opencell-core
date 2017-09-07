@@ -78,17 +78,17 @@ public class CustomerAccount extends AccountEntity {
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<BillingAccount> billingAccounts;
+    private List<BillingAccount> billingAccounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<AccountOperation> accountOperations;
+    private List<AccountOperation> accountOperations = new ArrayList<>();
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ActionDunning> actionDunnings;
+    private List<ActionDunning> actionDunnings = new ArrayList<>();
 
     @Column(name = "date_status")
     @Temporal(TemporalType.TIMESTAMP)
@@ -264,6 +264,13 @@ public class CustomerAccount extends AccountEntity {
 
     public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
         this.paymentMethods = paymentMethods;
+    }
+
+    public void addPaymentMethod(PaymentMethod paymentMethod) {
+        if (paymentMethods == null) {
+            paymentMethods = new ArrayList<>();
+        }
+        paymentMethods.add(paymentMethod);
     }
 
     /**

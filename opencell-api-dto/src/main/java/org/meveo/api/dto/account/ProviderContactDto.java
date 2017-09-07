@@ -32,7 +32,7 @@ public class ProviderContactDto extends BaseDto {
     private String fax;
     private String genericMail;
 
-    private AddressDto addressDto = new AddressDto();
+    private AddressDto addressDto;
 
     public ProviderContactDto() {
         super();
@@ -126,9 +126,6 @@ public class ProviderContactDto extends BaseDto {
     }
 
     public AddressDto getAddressDto() {
-        if (addressDto == null) {
-            addressDto = new AddressDto();
-        }
         return addressDto;
     }
 

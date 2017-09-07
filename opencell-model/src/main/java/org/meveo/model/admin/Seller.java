@@ -72,7 +72,7 @@ public class Seller extends BusinessCFEntity {
     private TradingLanguage tradingLanguage;
 
     @Embedded
-    private Address address = new Address();
+    private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_seller_id")

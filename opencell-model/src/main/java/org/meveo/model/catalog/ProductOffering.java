@@ -78,7 +78,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @ManyToMany
     @JoinTable(name = "cat_product_offer_digital_res", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "digital_resource_id"))
     @OrderColumn(name = "INDX")
-    private List<DigitalResource> attachments;
+    private List<DigitalResource> attachments = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     @Column(name = "life_cycle_status")
@@ -87,12 +87,12 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @ManyToMany
     @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))
     @OrderColumn(name = "INDX")
-    private List<BusinessAccountModel> businessAccountModels;
+    private List<BusinessAccountModel> businessAccountModels = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(name = "cat_product_offer_channels", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "channel_id"))
     @OrderColumn(name = "INDX")
-    private List<Channel> channels;
+    private List<Channel> channels = new ArrayList<>();
 
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {
