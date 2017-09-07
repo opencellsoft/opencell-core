@@ -413,30 +413,49 @@ public class CustomerAccount extends AccountEntity {
     }
 
     /**
-     * Ensure that one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card payment method
-     * if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
+     * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
+     * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
      * 
      * @return A preferred payment method
      */
-    public PaymentMethod ensureOnePreferredPaymentMethod() {
+    public void ensureOnePreferredPaymentMethod() {
         if (paymentMethods == null) {
-            return null;
+            return;
         }
 
+        PaymentMethod paymentMethodMatched = null;
+
         for (PaymentMethod paymentMethod : paymentMethods) {
+
+            // Ensure that only one payment method is preferred (the first one found, or in case of CC - the first valid if currently preffered CC is expired)
             if (paymentMethod.isPreferred()) {
-                // If currently preferred payment method has expired, select a new car
+                // If currently preferred payment method has expired, select a new valid card payment method if available. If not available - continue as is
                 if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
-                    return markCurrentlyValidCardPaymentAsPreferred();
+                    paymentMethodMatched = markCurrentlyValidCardPaymentAsPreferred();
+                    if (paymentMethodMatched == null) {
+                        paymentMethodMatched = paymentMethod;
+                    }
+                    break;
                 }
-                return paymentMethod;
+                paymentMethodMatched = paymentMethod;
+                break;
             }
+        }
+
+        if (paymentMethodMatched != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (!paymentMethod.equals(paymentMethodMatched)) {
+                    paymentMethod.setPreferred(false);
+                }
+            }
+
+            return;
         }
 
         // As no preferred payment method was found, mark the first available payment method as preferred
         paymentMethods.get(0).setPreferred(true);
 
-        return paymentMethods.get(0);
+        return;// paymentMethods.get(0);
     }
 
 }
