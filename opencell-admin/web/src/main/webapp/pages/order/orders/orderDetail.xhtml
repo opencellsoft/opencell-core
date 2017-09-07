@@ -263,7 +263,7 @@
 
                                                     <hftl:decorateFormField fieldId="subscriptionDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
-                                                        pattern="#{paramBean.dateFormat}" componentWidth="15">
+                                                        componentWidth="15">
                                                         <p:calendar id="subscriptionDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
                                                             required="#{itemConfiguration.isMain()}" pattern="#{paramBean.dateFormat}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
@@ -426,7 +426,7 @@
                                                     </h:panelGroup>
 
                                                     <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
-                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}" pattern="#{paramBean.dateFormat}">
+                                                        label="#{messages['order.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}">
                                                         <p:calendar id="subscriptionEndDate_#{itemStatus.index}" pattern="#{paramBean.dateFormat}"
                                                             value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
@@ -481,10 +481,10 @@
 
                                                     <hftl:decorateFormField fieldId="terminationDate_#{itemStatus.index}"
                                                         label="#{messages['order.config.'.concat(CharacteristicsEnum.TERMINATION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
-                                                        pattern="#{paramBean.dateFormat}" newLine="true"
+                                                        newLine="true"
                                                         rendered="#{orderBean.selectedOrderItem.action!=OrderItemActionEnum.ADD and (itemConfiguration.isOffer() or itemConfiguration.isService())}">
                                                         <p:calendar id="terminationDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.TERMINATION_DATE]}"
-                                                            required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
+                                                            pattern="#{paramBean.dateFormat}" required="#{orderBean.selectedOrderItem.action==OrderItemActionEnum.DELETE}"
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"

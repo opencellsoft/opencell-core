@@ -205,9 +205,9 @@
 
                                                     <hftl:decorateFormField fieldId="subscriptionDate_#{itemStatus.index}"
                                                         label="#{messages['quote.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName).concat(itemConfiguration.isMain()?'.main':itemConfiguration.isService()?'.service':'.product')]}"
-                                                        pattern="#{paramBean.dateFormat}" componentWidth="15">
+                                                        componentWidth="15">
                                                         <p:calendar id="subscriptionDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_DATE]}"
-                                                            required="#{itemConfiguration.isMain()}" rendered="#{quoteBean.quoteEditable}">
+                                                            required="#{itemConfiguration.isMain()}" rendered="#{quoteBean.quoteEditable}" pattern="#{paramBean.dateFormat}">
                                                             <p:ajax event="dateSelect" listener="#{quoteBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':' '}"
                                                                 process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" />
@@ -367,9 +367,9 @@
 
 
                                                     <hftl:decorateFormField fieldId="subscriptionEndDate_#{itemStatus.index}"
-                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}" pattern="#{paramBean.dateFormat}">
+                                                        label="#{messages['quote.config.'.concat(CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName)]}">
                                                         <p:calendar id="subscriptionEndDate_#{itemStatus.index}" value="#{itemConfiguration.characteristics[CharacteristicsEnum.SUBSCRIPTION_END_DATE]}"
-                                                            rendered="#{quoteBean.quoteEditable}">
+                                                            pattern="#{paramBean.dateFormat}" rendered="#{quoteBean.quoteEditable}">
                                                             <p:ajax event="dateSelect" listener="#{quoteBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':' '}"
                                                                 process="#{itemConfiguration.isMain()?':quoteForm:tabView:offerConfigurations':'@this'}" immediate="true" />

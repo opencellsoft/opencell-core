@@ -692,7 +692,7 @@
         <addForeignKeyConstraint baseColumnNames="quote_id" baseTableName="ord_order" constraintName="fk_order_quote" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
     </changeSet>
-
+    <!-- https://mariadb.com/kb/en/the-mariadb-library/drop-index/ -->
 	<changeSet id="performance_20170830" author="TienLanPHUNG">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>

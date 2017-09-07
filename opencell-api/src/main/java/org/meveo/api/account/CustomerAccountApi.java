@@ -211,13 +211,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
-        if(postData.getPaymentMethods() != null){
-        	for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-        		paymentMethodDto.validate();
-        	}
-        }
-
+       
         // check if already exists
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
         if (customerAccount == null) {
