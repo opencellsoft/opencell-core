@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingCountry;
@@ -30,26 +29,21 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 @Named
 public class TradingCountryService extends PersistenceService<TradingCountry> {
-	/**
-	 * Find TradingCountry by its trading country code.
-	 * 
-	 * @param tradingCountryCode
-	 *            Trading Country Code
-	 * @return Trading country found or null.
-	 * @throws ElementNotFoundException
-	 */
-	public TradingCountry findByTradingCountryCode(String tradingCountryCode) {
-		try {
-            log.info("findByTradingCountryCode tradingCountryCode={}", tradingCountryCode);
-			Query query = getEntityManager()
-					.createQuery(
-							"select b from TradingCountry b where b.country.countryCode = :tradingCountryCode");
-			query.setParameter("tradingCountryCode", tradingCountryCode);
-			return (TradingCountry) query.getSingleResult();
-			
-		} catch (NoResultException e) {
-            log.warn("findByTradingCountryCode billing cycle not found : tradingCountryCode={}", tradingCountryCode);
-			return null;
-		}
-	}
+
+    /**
+     * Find TradingCountry by its trading country code.
+     * 
+     * @param tradingCountryCode Trading Country Code
+     * @return Trading country found or null.
+     * @throws ElementNotFoundException
+     */
+    public TradingCountry findByTradingCountryCode(String tradingCountryCode) {
+        try {
+            return getEntityManager().createNamedQuery("TradingCountry.getByCode", TradingCountry.class).setParameter("tradingCountryCode", tradingCountryCode).getSingleResult();
+
+        } catch (NoResultException e) {
+            log.warn("Trading country not found : country={}", tradingCountryCode);
+            return null;
+        }
+    }
 }

@@ -37,6 +37,7 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
 		accountingCode=invoiceSubCategory.getAccountingCode();
 		customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
 	}
 
 	public String getInvoiceCategory() {
@@ -79,8 +80,8 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 	
 	@Override
 	public String toString() {
-		return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+        return "InvoiceSubCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceCategory=" + invoiceCategory + ", accountingCode=" + accountingCode
+                + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
 	}
 
-	
 }

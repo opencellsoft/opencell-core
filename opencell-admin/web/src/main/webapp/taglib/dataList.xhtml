@@ -120,7 +120,7 @@
     <c:if test="${empty showFullTextSearch}">
         <c:set var="showFullTextSearch" value="false" />
     </c:if>
-    
+
     <c:if test="${empty paginatorPosition}">
         <c:set var="paginatorPosition" value="both" />
     </c:if>
@@ -128,11 +128,11 @@
     <p:panel id="#{resultsId}_panel" width="100">
 
         <h:form id="#{formId}" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
-            <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}"
-                editMode="#{editMode}" widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}"
-                sortOrder="#{sortOrder}" paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true"  styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}"
-                first="#{backingBean.dataTableFirstAttribute}" reflow="true" paginatorPosition="#{paginatorPosition}">
+            <p:dataTable id="datatable_#{resultsId}" var="entity" scrollable="#{scrollable}" value="#{dataModel}" paginator="true" rows="10" editable="#{editable}" editMode="#{editMode}"
+                widgetVar="cellEntity_#{resultsId}" selection="#{backingBean.selectedEntities}" sortBy="#{'sortBy'}" sortField="#{sortBy}" sortOrder="#{sortOrder}"
+                paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
+                rowsPerPageTemplate="#{rowsPerPage}" lazy="true" resizableColumns="true" styleClass="custom-grid #{styleClass}" rowKey="#{entity.id}" first="#{backingBean.dataTableFirstAttribute}"
+                reflow="true" paginatorPosition="#{paginatorPosition}">
                 <p:ajax event="page" listener="#{backingBean.onPageChange}" />
                 <p:ajax event="toggleSelect" update="@this" process="@this" />
                 <p:ajax event="rowSelectCheckbox" />
@@ -140,13 +140,14 @@
                 <p:ajax event="rowSelect" />
                 <p:ajax event="rowUnselect" />
                 <c:if test="#{editable}">
-                	<p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}"/>
+                    <p:ajax event="cellEdit" listener="#{backingBean.onCellEdit}" />
                 </c:if>
 
                 <c:if test="${showFullTextSearch}">
                     <f:facet name="header">
                         <p:outputPanel>
-                            <p:inputText id="globalFilter" onkeyup="if (event.keyCode == 13) { PF('cellEntity_#{resultsId}').filter();return false;}" style="width:150px" placeholder="#{messages['commons.search']}" />
+                            <p:inputText id="globalFilter" onkeyup="if (event.keyCode == 13) { PF('cellEntity_#{resultsId}').filter();return false;}" style="width:150px"
+                                placeholder="#{messages['commons.search']}" />
                         </p:outputPanel>
                     </f:facet>
                 </c:if>
@@ -155,18 +156,16 @@
             </p:dataTable>
 
             <h:panelGroup rendered="#{dataModel !=null and dataModel.size()>0}">
-                <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{deleteManyButton}" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}"
-                    icon="ui-icon-trash" onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" ajax="false" />
+                <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{deleteManyButton}" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
+                    onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" ajax="false" />
 
                 <p:commandButton id="#{formId}buttonExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportButton}">
                     <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />
                 </p:commandButton>
                 <p:commandButton id="#{formId}buttonXlsxExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportXlsxButton}">
-                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true"
-                        selectionOnly="#{backingBean.selectedEntities.size()>0}" />
+                    <pe:exporter type="xlsx" target="datatable_#{resultsId}" fileName="data" pageOnly="false" skipComponents="true" selectionOnly="#{backingBean.selectedEntities.size()>0}" />
                 </p:commandButton>
-                <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv and backingBean.canUserUpdateEntity()}" type="button"
-                    onclick="PF('csvDialog').show();" />
+                <p:commandButton value="#{messages['commons.importCsv']}" rendered="#{importCsv and backingBean.canUserUpdateEntity()}" type="button" onclick="PF('csvDialog').show();" />
                 <p:commandButton id="#{formId}buttonCsvExport" value="#{messages['commons.exportCsv']}" ajax="false" rendered="#{exportToCsv}">
                     <l:dataExporter fileType="csv" source="datatable_#{resultsId}" fileName="#{fileName}" fileOptions="#{backingBean.csvOptions()}" />
                 </p:commandButton>
@@ -175,7 +174,7 @@
                         oncomplete="PF('exportParametersDialog').show()">
                         <f:setPropertyActionListener target="#{entityExportImportBean.selectedExportTemplate}" value="#{null}" />
                         <f:setPropertyActionListener target="#{entityExportImportBean.dataModelToExport}" value="#{dataModel}" />
-                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{backingBean.selectedEntities}" />                        
+                        <f:setPropertyActionListener target="#{entityExportImportBean.selectedEntitiesToExport}" value="#{backingBean.selectedEntities}" />
                     </p:commandButton>
                 </c:if>
 
@@ -193,8 +192,8 @@
                     </p:selectOneMenu>
                 </hftl:decorateFormField>
                 <div class="clearLeft">
-                    <p:fileUpload fileUploadListener="#{backingBean.handleFileUpload}" update="datatable_#{resultsId}" rendered="#{importCsv}" multiple="true" mode="advanced"
-                        dragDropSupport="true" fileLimit="5" process="@this #{formId}_strategy" />
+                    <p:fileUpload fileUploadListener="#{backingBean.handleFileUpload}" update="datatable_#{resultsId}" rendered="#{importCsv}" multiple="true" mode="advanced" dragDropSupport="true"
+                        fileLimit="5" process="@this #{formId}_strategy" />
                 </div>
             </p:dialog>
             <p:panel styleClass="buttons-set-data-table">

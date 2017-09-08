@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
@@ -54,6 +56,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.ApplicationProvider;
@@ -90,6 +93,9 @@ public abstract class BaseApi {
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
+
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
     protected List<String> missingParameters = new ArrayList<String>();
 
@@ -961,4 +967,43 @@ public abstract class BaseApi {
         }
     }
 
+    /**
+     * Convert multi language field DTO values into a map of values with language code as a key
+     * 
+     * @param translationInfos Multi langauge field DTO values
+     * @return Map of values with language code as a key
+     * @throws InvalidParameterException
+     */
+    protected Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues)
+            throws InvalidParameterException {
+        if (translationInfos == null || translationInfos.isEmpty()) {
+            return null;
+        }
+
+        List<String> supportedLanguages = tradingLanguageService.listLanguageCodes();
+
+        Map<String, String> values = null;
+        if (currentValues == null) {
+            values = new HashMap<>();
+        } else {
+            values = currentValues;
+        }
+
+        for (LanguageDescriptionDto translationInfo : translationInfos) {
+            if (!supportedLanguages.contains(translationInfo.getLanguageCode())) {
+                throw new InvalidParameterException("Language " + translationInfo.getLanguageCode() + " is not supported by the provider.");
+            }
+            if (StringUtils.isBlank(translationInfo.getDescription())) {
+                values.remove(translationInfo.getLanguageCode());
+            } else {
+                values.put(translationInfo.getLanguageCode(), translationInfo.getDescription());
+            }
+        }
+
+        if (values.isEmpty()) {
+            return null;
+        } else {
+            return values;
+        }
+    }
 }

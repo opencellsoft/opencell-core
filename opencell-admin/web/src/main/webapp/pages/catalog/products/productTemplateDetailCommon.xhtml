@@ -44,7 +44,8 @@
                 <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" />
                 <hftl:formField label="#{messages['productTemplate.family']}" field="businessProductModel" id="businessProductModel" valueLabelField="code"
                     listElements="#{businessProductModelBean.listAll()}" rendered="#{!mainBackingBean.edit and mainBackingBean.entity.businessProductModel != null}" />
-                <hftl:formLanguageFields entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" multiLang="true" />
+                <hftl:formLanguageFields field="description" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" />
+                <hftl:formLanguageFields field="longDescription" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
             </h:panelGrid>
             <p:panel>
                 <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>

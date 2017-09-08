@@ -61,7 +61,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
@@ -71,9 +70,6 @@ import org.meveo.service.script.ScriptInterface;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
-
-    @Inject
-    protected CatMessagesService catMessagesService;
 
     @Inject
     private EdrService edrService;
@@ -106,8 +102,6 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
-
-    private Map<String, String> descriptionMap = new HashMap<>();
 
     /*
      * public int getSharedQuantity(LevelEnum level, Provider provider, String chargeCode, Date chargeDate, RecurringChargeInstance recChargeInstance) { return
@@ -215,7 +209,6 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setParameter1(criteria1);
         walletOperation.setParameter2(criteria2);
         walletOperation.setParameter3(criteria3);
-        String description = null;
         if (chargeInstance != null) {
             walletOperation.setChargeInstance(chargeInstance);
             if (chargeInstance.getInvoicingCalendar() != null) {
@@ -223,19 +216,16 @@ public class RatingService extends BusinessService<WalletOperation> {
 
                 walletOperation.setInvoicingDate(chargeInstance.getInvoicingCalendar().nextCalendarDate(walletOperation.getOperationDate()));
             }
-            description = chargeInstance.getDescription();
         }
 
         walletOperation.setCode(chargeTemplate.getCode());
 
-        String key = chargeTemplate.getCode() + languageCode + description;
-        String messageDescriptionByCodeAndLanguage = descriptionMap.get(key);
-        if (messageDescriptionByCodeAndLanguage == null) {
-            messageDescriptionByCodeAndLanguage = catMessagesService.getMessageDescriptionByCodeAndLanguage(chargeTemplate.getCode(), languageCode, description);
-            descriptionMap.put(key, messageDescriptionByCodeAndLanguage);
+        String descTranslated = (chargeInstance == null || chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
+        if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(languageCode)) {
+            descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
         }
 
-        walletOperation.setDescription(messageDescriptionByCodeAndLanguage);
+        walletOperation.setDescription(descTranslated);
         walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : taxPercent);
         walletOperation.setCurrency(tCurrency.getCurrency());
         walletOperation.setStartDate(startdate);

@@ -17,7 +17,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -50,7 +49,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -84,7 +82,6 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -141,9 +138,6 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
-
-    @Inject
-    private CatMessagesService catMessagesService;
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -1333,13 +1327,6 @@ public class SubscriptionApi extends BaseApi {
             if (chargeTemplate.getOneShotChargeTemplateType() == type) {
                 OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
                     entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
-                List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-                for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode())) {
-                    languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-                }
-
-                oneshotChartTemplateDto.setLanguageDescriptions(languageDescriptions);
-
                 results.add(oneshotChartTemplateDto);
             }
         }

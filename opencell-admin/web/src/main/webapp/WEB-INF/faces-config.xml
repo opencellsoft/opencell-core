@@ -141,14 +141,8 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect />
 	</navigation-case>
 	<navigation-case>
-		<from-outcome>catMessagess</from-outcome>
-		<to-view-id>/pages/admin/catMessages/catMessagess.xhtml
-		</to-view-id>
-		<redirect />
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>catMessagesDetail</from-outcome>
-		<to-view-id>/pages/admin/catMessages/catMessagesDetail.xhtml
+		<from-outcome>multiLanguageFields</from-outcome>
+		<to-view-id>/pages/admin/multiLanguageField/multiLanguageFields.xhtml
 		</to-view-id>
 		<redirect />
 	</navigation-case>

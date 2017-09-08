@@ -168,6 +168,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
@@ -289,6 +290,10 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
+        
+        if (postData.getLanguageDescriptions() != null) {
+            pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));
+        }
         
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false);

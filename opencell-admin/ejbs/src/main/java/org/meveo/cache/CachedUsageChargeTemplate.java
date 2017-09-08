@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -21,6 +22,8 @@ public class CachedUsageChargeTemplate implements Serializable {
 
     private Long id;
     private String code;
+    private String description;
+    private Map<String, String> descriptionI18n;
     private Date lastUpdate;
     private int priority;
     private String filterExpression;
@@ -93,6 +96,22 @@ public class CachedUsageChargeTemplate implements Serializable {
         return code;
     }
 
+    public String getDescription() {
+        return description;
+    }
+    
+    public String getDescriptionOrCode() {
+        if (!StringUtils.isBlank(description)) {
+            return description;
+        } else {
+            return code;
+        }
+    }
+    
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+    
     public BigDecimal getUnitMultiplicator() {
         return unitMultiplicator;
     }
@@ -127,6 +146,8 @@ public class CachedUsageChargeTemplate implements Serializable {
 
         id = usageChargeTemplate.getId();
         code = usageChargeTemplate.getCode();
+        description = usageChargeTemplate.getDescription();
+        descriptionI18n = usageChargeTemplate.getDescriptionI18n();
         filterExpression = StringUtils.stripToNull(usageChargeTemplate.getFilterExpression());
         filter1 = StringUtils.stripToNull(usageChargeTemplate.getFilterParam1());
         filter2 = StringUtils.stripToNull(usageChargeTemplate.getFilterParam2());

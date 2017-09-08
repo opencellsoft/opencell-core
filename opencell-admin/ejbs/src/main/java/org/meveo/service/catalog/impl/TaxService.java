@@ -23,22 +23,20 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.meveo.model.billing.Tax;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Tax service implementation.
  */
 @Stateless
-public class TaxService extends MultilanguageEntityService<Tax> {
+public class TaxService extends BusinessService<Tax> {
 
-	public int getNbTaxesNotAssociated() {
-		return ((Long) getEntityManager().createNamedQuery("tax.getNbTaxesNotAssociated", Long.class)
-				.getSingleResult()).intValue();
-	}
+    public int getNbTaxesNotAssociated() {
+        return ((Long) getEntityManager().createNamedQuery("tax.getNbTaxesNotAssociated", Long.class).getSingleResult()).intValue();
+    }
 
-	public List<Tax> getTaxesNotAssociated() {
-		return (List<Tax>) getEntityManager().createNamedQuery("tax.getTaxesNotAssociated", Tax.class)
-				.getResultList();
-	}
+    public List<Tax> getTaxesNotAssociated() {
+        return (List<Tax>) getEntityManager().createNamedQuery("tax.getTaxesNotAssociated", Tax.class).getResultList();
+    }
 
 }

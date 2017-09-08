@@ -37,6 +37,7 @@ public class TaxDto extends BusinessDto {
 		percent = tax.getPercent();
 		accountingCode = tax.getAccountingCode();
 		customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(tax.getDescriptionI18n()));
 	}
 
 	public BigDecimal getPercent() {
@@ -59,12 +60,10 @@ public class TaxDto extends BusinessDto {
 		return languageDescriptions;
 	}
 
-	public void setLanguageDescriptions(
-			List<LanguageDescriptionDto> languageDescriptions) {
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
 		this.languageDescriptions = languageDescriptions;
 	}
 	
-
 	public CustomFieldsDto getCustomFields() {
 		return customFields;
 	}
@@ -75,8 +74,8 @@ public class TaxDto extends BusinessDto {
 
 	@Override
 	public String toString() {
-		return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode="
-				+ accountingCode + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
+        return "TaxDto [code=" + getCode() + ", description=" + getDescription() + ", percent=" + percent + ", accountingCode=" + accountingCode + ", languageDescriptions="
+                + languageDescriptions + ", customFields=" + customFields + "]";
 	}
 
 }

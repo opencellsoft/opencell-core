@@ -35,40 +35,40 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     private String inputUnitDescription;
     private String ratingUnitDescription;
     private BigDecimal unitMultiplicator;
-    private int unitNbDecimal=BaseEntity.NB_DECIMALS;
+    private int unitNbDecimal = BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
     private String revenueRecognitionRuleCode;
     private CustomFieldsDto customFields;
 
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
-    
     public ChargeTemplateDto() {
 
     }
-    
-    public ChargeTemplateDto(ChargeTemplate e, CustomFieldsDto customFieldInstances) {
-        super(e);
-        if (e.getInvoiceSubCategory() != null) {
-            invoiceSubCategory = e.getInvoiceSubCategory().getCode();
+
+    public ChargeTemplateDto(ChargeTemplate chargeTemplate, CustomFieldsDto customFieldInstances) {
+        super(chargeTemplate);
+        if (chargeTemplate.getInvoiceSubCategory() != null) {
+            invoiceSubCategory = chargeTemplate.getInvoiceSubCategory().getCode();
         }
-        disabled = e.isDisabled();
-        amountEditable = e.getAmountEditable();
-        if (e.getEdrTemplates() != null) {
+        disabled = chargeTemplate.isDisabled();
+        amountEditable = chargeTemplate.getAmountEditable();
+        if (chargeTemplate.getEdrTemplates() != null) {
             triggeredEdrs = new TriggeredEdrTemplatesDto();
-            for (TriggeredEDRTemplate edrTemplate : e.getEdrTemplates()) {
+            for (TriggeredEDRTemplate edrTemplate : chargeTemplate.getEdrTemplates()) {
                 triggeredEdrs.getTriggeredEdr().add(new TriggeredEdrTemplateDto(edrTemplate));
             }
         }
-        roundingModeDtoEnum = e.getRoundingMode();
+        roundingModeDtoEnum = chargeTemplate.getRoundingMode();
         customFields = customFieldInstances;
-        
-        inputUnitDescription = e.getInputUnitDescription();
-        ratingUnitDescription = e.getRatingUnitDescription();
-        unitNbDecimal = e.getUnitNbDecimal();
-        unitMultiplicator = e.getUnitMultiplicator();
-        roundingModeDtoEnum = e.getRoundingMode();
-        revenueRecognitionRuleCode = e.getRevenueRecognitionRule()==null?null:e.getRevenueRecognitionRule().getCode();
+
+        inputUnitDescription = chargeTemplate.getInputUnitDescription();
+        ratingUnitDescription = chargeTemplate.getRatingUnitDescription();
+        unitNbDecimal = chargeTemplate.getUnitNbDecimal();
+        unitMultiplicator = chargeTemplate.getUnitMultiplicator();
+        roundingModeDtoEnum = chargeTemplate.getRoundingMode();
+        revenueRecognitionRuleCode = chargeTemplate.getRevenueRecognitionRule() == null ? null : chargeTemplate.getRevenueRecognitionRule().getCode();
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(chargeTemplate.getDescriptionI18n()));
     }
 
     public List<LanguageDescriptionDto> getLanguageDescriptions() {
@@ -81,10 +81,10 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
 
     @Override
     public String toString() {
-        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled + ", amountEditable="
-                + amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription="
-                + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields=" + customFields + ", triggeredEdrs="
-                + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";
+        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled
+                + ", amountEditable=" + amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription
+                + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields="
+                + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";
     }
 
     public Boolean getAmountEditable() {
@@ -167,12 +167,12 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
         this.roundingModeDtoEnum = roundingModeDtoEnum;
     }
 
-	public String getRevenueRecognitionRuleCode() {
-		return revenueRecognitionRuleCode;
-	}
+    public String getRevenueRecognitionRuleCode() {
+        return revenueRecognitionRuleCode;
+    }
 
-	public void setRevenueRecognitionRuleCode(String revenueRecognitionRuleCode) {
-		this.revenueRecognitionRuleCode = revenueRecognitionRuleCode;
-	}
-    
+    public void setRevenueRecognitionRuleCode(String revenueRecognitionRuleCode) {
+        this.revenueRecognitionRuleCode = revenueRecognitionRuleCode;
+    }
+
 }

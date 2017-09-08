@@ -44,7 +44,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.ApplicationProvider;
@@ -56,10 +55,7 @@ import net.sf.jasperreports.engine.JRParameter;
 @Stateless
 public class PDFParametersConstruction {
 
-	private Logger log = LoggerFactory
-			.getLogger(PDFParametersConstruction.class);
-    @Inject
-    private CatMessagesService catMessagesService;
+    private Logger log = LoggerFactory.getLogger(PDFParametersConstruction.class);
         
 	@Inject
 	protected CustomFieldTemplateService customFieldTemplateService;
@@ -211,10 +207,16 @@ public class PDFParametersConstruction {
 		String name = "";
 		if (customerAccount.getName() != null) {
 		    name="";
-		    if (customerAccount.getName().getTitle() != null){
-		        name=catMessagesService.getMessageDescription(customerAccount.getName().getTitle(), billingAccountLanguage)+" ";
-		    }
-		    
+
+            if (customerAccount.getName().getTitle() != null) {
+                String descTranslated = customerAccount.getName().getTitle().getDescriptionOrCode();
+                if (customerAccount.getName().getTitle().getDescriptionI18n() != null
+                        && customerAccount.getName().getTitle().getDescriptionI18n().containsKey(billingAccountLanguage)) {
+                    descTranslated = customerAccount.getName().getTitle().getDescriptionI18n().get(billingAccountLanguage);
+                }
+                name = descTranslated + " ";
+            }
+
 			name += customerAccount.getName().getFirstName() == null ? ""
 					: (customerAccount.getName().getFirstName() + " ");
 			name += customerAccount.getName().getLastName() == null ? ""

@@ -20,7 +20,9 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -36,86 +38,90 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
-import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity(key = "menu.invoiceSubCategories", group = "InvoiceSubCategory")
-@ExportIdentifier({ "code"})
-@Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "billing_invoice_sub_cat", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_invoice_sub_cat_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INV_SUB_CAT")
 @NamedQueries({
-		@NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
-				+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"),
+        @NamedQuery(name = "invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", query = "select count(*) from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null)"
+                + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)"),
 
-		@NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
-				+ " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)") })
+        @NamedQuery(name = "invoiceSubCategory.getInvoiceSubCatNotAssociated", query = "from InvoiceSubCategory v where v.id not in (select c.invoiceSubCategory.id from ChargeTemplate c where c.invoiceSubCategory.id is not null) "
+                + " and v.id not in (select inv.invoiceSubCategory.id from InvoiceSubcategoryCountry inv where inv.invoiceSubCategory.id is not null)") })
 public class InvoiceSubCategory extends BusinessCFEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
+    @Column(name = "accounting_code", length = 255)
+    @Size(max = 255)
+    private String accountingCode;
 
-	@Column(name = "discount")
-	private BigDecimal discount;
+    @Column(name = "discount")
+    private BigDecimal discount;
 
-	@OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
-	private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = new ArrayList<InvoiceSubcategoryCountry>();
+    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
+    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = new ArrayList<InvoiceSubcategoryCountry>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoice_category_id")
-	private InvoiceCategory invoiceCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_category_id")
+    private InvoiceCategory invoiceCategory;
 
-	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
-		return invoiceSubcategoryCountries;
-	}
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
-	public void setInvoiceSubcategoryCountries(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
-		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
-	}
+    public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
+        return invoiceSubcategoryCountries;
+    }
 
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    public void setInvoiceSubcategoryCountries(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+        this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
+    }
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    public String getAccountingCode() {
+        return accountingCode;
+    }
 
-	public InvoiceCategory getInvoiceCategory() {
-		return invoiceCategory;
-	}
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
-		this.invoiceCategory = invoiceCategory;
-	}
+    public InvoiceCategory getInvoiceCategory() {
+        return invoiceCategory;
+    }
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
+    public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+        this.invoiceCategory = invoiceCategory;
+    }
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
+    public BigDecimal getDiscount() {
+        return discount;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return new ICustomFieldEntity[] { invoiceCategory };
-	}
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
-	@Override
-	public int hashCode() {
-		return id != null ? id.intValue() : super.hashCode();
-	}
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return new ICustomFieldEntity[] { invoiceCategory };
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public int hashCode() {
+        return id != null ? id.intValue() : super.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -123,15 +129,35 @@ public class InvoiceSubCategory extends BusinessCFEntity {
         } else if (!(obj instanceof InvoiceSubCategory)) {
             return false;
         }
-		
-		InvoiceSubCategory other = (InvoiceSubCategory) obj;
-		if (code == null) {
-			if (other.getCode() != null)
-				return false;
-		} else if (!code.equals(other.getCode()))
-			return false;
-		
-		return true;
-	}
 
+        InvoiceSubCategory other = (InvoiceSubCategory) obj;
+        if (code == null) {
+            if (other.getCode() != null)
+                return false;
+        } else if (!code.equals(other.getCode()))
+            return false;
+
+        return true;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
 }

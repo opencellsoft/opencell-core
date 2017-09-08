@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -36,7 +35,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.annotation.ImageType;
@@ -68,10 +66,6 @@ public class OfferTemplate extends ProductOffering {
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
     private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
-
-    @Size(max = 2000)
-    @Column(name = "long_description", columnDefinition = "TEXT")
-    private String longDescription;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -181,14 +175,6 @@ public class OfferTemplate extends ProductOffering {
 
     public void setPrefix(String prefix) {
         this.prefix = prefix;
-    }
-
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
     }
 
     public SubscriptionRenewal getSubscriptionRenewal() {

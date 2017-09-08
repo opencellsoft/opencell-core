@@ -72,7 +72,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.CustomerAccountService;
@@ -100,9 +99,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     @Inject
     private BillingAccountService billingAccountService;
-
-    @Inject
-    private CatMessagesService catMessagesService;
 
     @Inject
     private FilterService filterService;
@@ -400,17 +396,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
                 }
 
-                String code = invoiceSubCategory.getCode();
-                String invSubCatDescTranslated = descriptionMap.get(code);//
-                if (invSubCatDescTranslated == null) {
-                    invSubCatDescTranslated = catMessagesService.getMessageDescription(invoiceSubCategory, languageCode);
-                    descriptionMap.put(code, invSubCatDescTranslated);
-                }
-
                 SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
                 invoiceAgregateSubcat.setAuditable(billingAccount.getAuditable());
                 invoiceAgregateSubcat.setInvoice(invoice);
+
+                String translationSCKey = "SC_" + invoiceSubCategory.getCode() + "_" + languageCode;
+                String invSubCatDescTranslated = descriptionMap.get(translationSCKey);
+                if (invSubCatDescTranslated == null) {
+                    invSubCatDescTranslated = invoiceSubCategory.getDescriptionOrCode();
+                    if (invoiceSubCategory.getDescriptionI18n() != null && invoiceSubCategory.getDescriptionI18n().containsKey(languageCode)) {
+                        invSubCatDescTranslated = invoiceSubCategory.getDescriptionI18n().get(languageCode);
+                    }
+                    descriptionMap.put(translationSCKey, invSubCatDescTranslated);
+                }
+
                 invoiceAgregateSubcat.setDescription(invSubCatDescTranslated);
+
                 if (!isVirtual) {
                     invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
                 }
@@ -477,13 +478,26 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     invoiceAgregateCat = catInvoiceAgregateMap.get(invoiceCategoryId);
 
                 } else {
-                    String invCatDescTranslated = catMessagesService.getMessageDescription(invoiceSubCategory.getInvoiceCategory(), languageCode);
+
                     invoiceAgregateCat = new CategoryInvoiceAgregate();
                     invoiceAgregateCat.setInvoice(invoice);
                     if (!isVirtual) {
                         invoiceAgregateCat.setBillingRun(billingAccount.getBillingRun());
                     }
+
+                    String translationCKey = "C_" + invoiceSubCategory.getInvoiceCategory().getCode() + "_" + languageCode;
+                    String invCatDescTranslated = descriptionMap.get(translationCKey);
+                    if (invCatDescTranslated == null) {
+                        invCatDescTranslated = invoiceSubCategory.getInvoiceCategory().getDescriptionOrCode();
+                        if (invoiceSubCategory.getInvoiceCategory().getDescriptionI18n() != null
+                                && invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().containsKey(languageCode)) {
+                            invCatDescTranslated = invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().get(languageCode);
+                        }
+                        descriptionMap.put(translationCKey, invCatDescTranslated);
+                    }
+
                     invoiceAgregateCat.setDescription(invCatDescTranslated);
+
                     invoiceAgregateCat.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
                     catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateCat);
                 }

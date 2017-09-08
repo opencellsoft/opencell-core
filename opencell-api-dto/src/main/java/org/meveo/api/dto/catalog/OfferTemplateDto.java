@@ -27,8 +27,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
     @XmlAttribute()
     private Long id;
 
-    private String longDescription;
-
     private String bomCode;
 
     @Deprecated
@@ -72,7 +70,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public OfferTemplateDto(OfferTemplate offerTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(offerTemplate, customFieldsDto, asLink);
         id = offerTemplate.getId();
-        setLongDescription(offerTemplate.getLongDescription());
 
         if (offerTemplate.getBusinessOfferModel() != null) {
             setBomCode(offerTemplate.getBusinessOfferModel().getCode());
@@ -140,14 +137,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public boolean isCodeOnly() {
         return StringUtils.isBlank(getDescription()) && StringUtils.isBlank(bomCode) && StringUtils.isBlank(offerTemplateCategoryCode)
                 && (offerServiceTemplates == null || offerServiceTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
-    }
-
-    public String getLongDescription() {
-        return longDescription;
-    }
-
-    public void setLongDescription(String longDescription) {
-        this.longDescription = longDescription;
     }
 
     public SubscriptionRenewalDto getRenewalRule() {

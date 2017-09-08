@@ -195,7 +195,7 @@ public class ValueExpressionWrapper {
     }
 
     private ValueExpressionWrapper(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) {
-        if(userMap != null){
+        if(userMap != null && expression.contains("appProvider")){
         	Provider appProvider = ((ProviderService) EjbUtils.getServiceInterface("ProviderService")).getProvider();
         	userMap.put("appProvider", appProvider);
         }

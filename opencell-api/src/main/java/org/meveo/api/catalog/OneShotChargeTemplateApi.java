@@ -11,8 +11,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudApi;
-import org.meveo.api.MeveoApiErrorCodeEnum;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateWithPriceDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
@@ -23,13 +21,11 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
@@ -39,13 +35,10 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceSubCategoryCountryService;
 import org.meveo.service.billing.impl.RealtimeChargingService;
 import org.meveo.service.billing.impl.TradingCountryService;
-import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 import org.meveo.service.finance.RevenueRecognitionRuleService;
-
 
 @Stateless
 public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate, OneShotChargeTemplateDto> {
@@ -72,16 +65,10 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
-    private CatMessagesService catMessagesService;
-
-    @Inject
     private TriggeredEDRTemplateService triggeredEDRTemplateService;
 
     @Inject
     private RevenueRecognitionRuleService revenueRecognitionRuleService;
-    
-    @Inject
-    private TradingLanguageService tradingLanguageService;
 
     public OneShotChargeTemplate create(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -96,9 +83,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         }
 
         handleMissingParametersAndValidate(postData);
-        
-
-        
 
         // check if code already exists
         if (oneShotChargeTemplateService.findByCode(postData.getCode()) != null) {
@@ -108,26 +92,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         InvoiceSubCategory invoiceSubCategory = invoiceSubCategoryService.findByCode(postData.getInvoiceSubCategory());
         if (invoiceSubCategory == null) {
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
-        }
-
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-            }
         }
 
         OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
@@ -147,12 +111,12 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
-        
-        if(postData.getRevenueRecognitionRuleCode()!=null){
-        	RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
+
+        if (postData.getRevenueRecognitionRuleCode() != null) {
+            RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
+            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
         }
-        
+
         if (postData.getTriggeredEdrs() != null) {
             List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
@@ -179,17 +143,10 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw e;
         }
 
-        // create cat messages
-        if (postData.getLanguageDescriptions() != null) {
-            for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                CatMessages catMsg = new CatMessages(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(), ld.getDescription());
-
-                catMessagesService.create(catMsg);
-            }
-        }
+        chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         oneShotChargeTemplateService.create(chargeTemplate);
-        
+
         return chargeTemplate;
     }
 
@@ -206,9 +163,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         }
 
         handleMissingParametersAndValidate(postData);
-        
-
-        
 
         // check if code already exists
         OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.findByCode(postData.getCode());
@@ -221,40 +175,11 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityDoesNotExistsException(InvoiceSubCategory.class, postData.getInvoiceSubCategory());
         }
 
-        List<TradingLanguage> tradingLanguages = tradingLanguageService.list();
-        if (!tradingLanguages.isEmpty()) {
-            if (postData.getLanguageDescriptions() != null) {
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    boolean match = false;
-
-                    for (TradingLanguage tl : tradingLanguages) {
-                        if (tl.getLanguageCode().equals(ld.getLanguageCode())) {
-                            match = true;
-                            break;
-                        }
-                    }
-
-                    if (!match) {
-                        throw new MeveoApiException(MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, "Language " + ld.getLanguageCode() + " is not supported by the provider.");
-                    }
-                }
-
-                // create cat messages
-                for (LanguageDescriptionDto ld : postData.getLanguageDescriptions()) {
-                    CatMessages catMsg = catMessagesService.getCatMessages( chargeTemplate.getCode(),OneShotChargeTemplate.class.getSimpleName(), ld.getLanguageCode());
-
-                    if (catMsg != null) {
-                        catMsg.setDescription(ld.getDescription());
-                        catMessagesService.update(catMsg);
-                    } else {
-                        CatMessages catMessages = new CatMessages(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode(), ld.getLanguageCode(),
-                            ld.getDescription());
-                        catMessagesService.create(catMessages);
-                    }
-                }
-            }
+        if (postData.getLanguageDescriptions() != null) {
+            chargeTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), chargeTemplate.getDescriptionI18n()));
         }
-        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+
+        chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
         chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
@@ -270,10 +195,10 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         } else {
             chargeTemplate.setRoundingMode(RoundingModeEnum.NEAREST);
         }
-        
-        if(postData.getRevenueRecognitionRuleCode()!=null){
-        	RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
-        	chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
+
+        if (postData.getRevenueRecognitionRuleCode() != null) {
+            RevenueRecognitionRule revenueRecognitionScript = revenueRecognitionRuleService.findByCode(postData.getRevenueRecognitionRuleCode());
+            chargeTemplate.setRevenueRecognitionRule(revenueRecognitionScript);
         }
 
         if (postData.getTriggeredEdrs() != null) {
@@ -303,11 +228,13 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         }
 
         chargeTemplate = oneShotChargeTemplateService.update(chargeTemplate);
-        
+
         return chargeTemplate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -328,17 +255,10 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
         result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
 
-        List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-        for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName() , chargeTemplate.getCode())) {
-            languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-        }
-
-        result.setLanguageDescriptions(languageDescriptions);
-
         return result;
     }
 
-    public void remove(String code) throws MeveoApiException, BusinessException  {
+    public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("oneShotChargeTemplateCode");
@@ -356,7 +276,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
     public List<OneShotChargeTemplateWithPriceDto> listWithPrice(String languageCode, String countryCode, String currencyCode, String sellerCode, Date date)
             throws MeveoApiException {
-        
+
         Seller seller = sellerService.findByCode(sellerCode);
         TradingCurrency currency = tradingCurrencyService.findByTradingCurrencyCode(currencyCode);
         TradingCountry country = tradingCountryService.findByTradingCountryCode(countryCode);
@@ -381,7 +301,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
                     oneShotChargeDto.setTaxPercent(tax.getPercent() == null ? 0.0 : tax.getPercent().doubleValue());
                 }
                 try {
-                	BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller,null, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE,null, null, null, true);
+                    BigDecimal unitPrice = realtimeChargingService.getApplicationPrice(seller, null, currency, country, oneShotChargeTemplate, date, null, BigDecimal.ONE, null,
+                        null, null, true);
                     if (unitPrice != null) {
                         oneShotChargeDto.setUnitPriceWithoutTax(unitPrice.doubleValue());
                     }
@@ -397,8 +318,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         return oneShotChargeTemplatesWPrice;
     }
 
-    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {    	
-    	if (oneShotChargeTemplateService.findByCode(postData.getCode()) == null) {
+    public OneShotChargeTemplate createOrUpdate(OneShotChargeTemplateDto postData) throws MeveoApiException, BusinessException {
+        if (oneShotChargeTemplateService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {
             return update(postData);

@@ -2,6 +2,7 @@ package org.meveo.api.dto.catalog;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -10,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
 @XmlRootElement(name = "PricePlan")
@@ -55,6 +57,8 @@ public class PricePlanMatrixDto extends BusinessDto {
     
     private CustomFieldsDto customFields;
     
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     public PricePlanMatrixDto() {
 
     }
@@ -101,6 +105,7 @@ public class PricePlanMatrixDto extends BusinessDto {
             scriptInstance = pricePlan.getScriptInstance().getCode();
         }
         customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
     }
 
     public String getEventCode() {
@@ -321,4 +326,11 @@ public class PricePlanMatrixDto extends BusinessDto {
 		this.customFields = customFields;
 	}
     
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+}
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 }

@@ -21,8 +21,8 @@ package org.meveo.service.admin.impl;
 import javax.ejb.Stateless;
 import javax.inject.Named;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
+import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.service.base.PersistenceService;
 
@@ -30,17 +30,22 @@ import org.meveo.service.base.PersistenceService;
 @Named
 public class TradingCurrencyService extends PersistenceService<TradingCurrency> {
 
+    /**
+     * Find TradingCurrency by its trading currency code.
+     * 
+     * @param tradingCurrencyCode Trading currency code
+     * @return Trading currency found or null.
+     * @throws ElementNotFoundException
+     */
     public TradingCurrency findByTradingCurrencyCode(String tradingCurrencyCode) {
+
         try {
-            log.info("findByTradingCurrencyCode tradingCurrencyCode={}", tradingCurrencyCode);
-			Query query = getEntityManager()
-					.createQuery("select b from TradingCurrency b where b.currency.currencyCode = :tradingCurrencyCode ");
-			query.setParameter("tradingCurrencyCode", tradingCurrencyCode);
-			return (TradingCurrency) query.getSingleResult();
+            return getEntityManager().createNamedQuery("TradingCurrency.getByCode", TradingCurrency.class).setParameter("tradingCurrencyCode", tradingCurrencyCode)
+                .getSingleResult();
 
         } catch (NoResultException e) {
-            log.warn("findByTradingCurrencyCode not found : tradingCurrencyCode={}", tradingCurrencyCode );
-			return null;
-		}
-	}
+            log.warn("Trading currency not found : currency={}", tradingCurrencyCode);
+            return null;
+        }
+    }
 }
