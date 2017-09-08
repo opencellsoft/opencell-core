@@ -135,11 +135,11 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
     }
 
     @Override
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Integer from, Integer numberOfRows, String sortBy, SortOrder sortOrder) {
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(postData, new Paging(from, numberOfRows, sortBy, sortOrder));
+            result = walletApi.findOperations(postData, new Paging(offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

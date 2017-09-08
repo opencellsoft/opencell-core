@@ -72,15 +72,16 @@ public interface CustomerRs extends IBaseRs {
      * Filters are: category, seller, brand and provider
      * 
      * @param postData The customer's data
-     * @param firstRow Pagination - from record number. Deprecated, use "from" instead
-     * @param from Pagination - from record number
-     * @param numberOfRows Pagination - number of records to retrieve
+     * @param firstRow Pagination - from record number. Deprecated in v.4.7, use "from" instead
+     * @param numberOfRows Pagination - number of records to retrieve. Deprecated in v.4.7, use "limit" instead
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
      * @return
      */
     @POST
     @Path("/list")
-    CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow, @QueryParam("from") Integer from,
-            @QueryParam("numberOfRows") Integer numberOfRows);
+    CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow, @QueryParam("numberOfRows") @Deprecated Integer numberOfRows,
+            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 
     /**
      * Create a new customer brand

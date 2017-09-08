@@ -80,10 +80,10 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public CustomersResponseDto list(CustomerDto postData, Integer firstRow, Integer from, Integer numberOfRows) {
+    public CustomersResponseDto list(CustomerDto postData, Integer firstRow, Integer numberOfRows, Integer offset, Integer limit) {
 
         try {
-            return customerApi.filterCustomer(postData, new Paging(from != null ? from : firstRow, numberOfRows, null, null));
+            return customerApi.filterCustomer(postData, new Paging(offset != null ? offset : firstRow, limit != null ? limit : numberOfRows, null, null));
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());

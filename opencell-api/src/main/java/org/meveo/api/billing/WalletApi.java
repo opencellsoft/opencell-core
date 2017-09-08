@@ -480,7 +480,7 @@ public class WalletApi extends BaseApi {
         filters.put("parameter3", postData.getParameter3());
         filters.put("chargeInstance.subscription.code", postData.getSubscriptionCode());
 
-        PaginationConfiguration paginationConfig = new PaginationConfiguration(paging != null ? paging.getFrom() : null, paging != null ? paging.getNumberOfRows() : null, filters,
+        PaginationConfiguration paginationConfig = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
             null, Arrays.asList("wallet"), paging != null && paging.getSortBy() != null ? paging.getSortBy() : "id",
             paging != null && paging.getSortOrder() != null ? SortOrder.valueOf(paging.getSortOrder().name()) : SortOrder.ASCENDING);
 

@@ -13,12 +13,12 @@ public class Paging implements Serializable {
     /**
      * Pagination - from record number
      */
-    public Integer from;
+    public Integer offset;
 
     /**
      * Pagination - number of items to retrieve
      */
-    public Integer numberOfRows = 100;
+    public Integer limit = 100;
 
     /**
      * Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
@@ -43,28 +43,28 @@ public class Paging implements Serializable {
 
     }
 
-    public Paging(Integer from, Integer numberOfRows, String sortBy, SortOrder sortOrder) {
+    public Paging(Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
-        this.from = from;
-        this.numberOfRows = numberOfRows;
+        this.offset = offset;
+        this.limit = limit;
         this.sortBy = sortBy;
         this.sortOrder = sortOrder;
     }
 
-    public Integer getFrom() {
-        return from;
+    public Integer getOffset() {
+        return offset;
     }
 
-    public void setFrom(Integer from) {
-        this.from = from;
+    public void setOffset(Integer offset) {
+        this.offset = offset;
     }
 
-    public Integer getNumberOfRows() {
-        return numberOfRows;
+    public Integer getLimit() {
+        return limit;
     }
 
-    public void setNumberOfRows(Integer nrOfItems) {
-        this.numberOfRows = nrOfItems;
+    public void setLimit(Integer limit) {
+        this.limit = limit;
     }
 
     public String getSortBy() {

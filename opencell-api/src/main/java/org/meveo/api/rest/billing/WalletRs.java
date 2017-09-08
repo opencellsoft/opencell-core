@@ -156,15 +156,15 @@ public interface WalletRs extends IBaseRs {
      * Search for an operation with a given (example) code
      * 
      * @param postData The operation's data (FindWalletOperationsDto)
-     * @param from Pagination - from record number
-     * @param numberOfRows Pagination - number of records to retrieve
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
      * @return
      */
     @POST
     @Path("/operation/find")
-    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("from") Integer from, @QueryParam("numberOfRows") Integer numberOfRows,
+    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
