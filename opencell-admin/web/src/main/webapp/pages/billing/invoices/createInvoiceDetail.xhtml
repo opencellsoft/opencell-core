@@ -79,6 +79,7 @@
 
 								<hftl:formField field="dueDate" required="true"
 									label="#{messages['invoice.dueDate']}" />
+																
 							</p:panel>
 
 							<p:panel style="width: 50%; float: right;">
@@ -126,25 +127,50 @@
 						</p:fieldset>
 						<div style="clear: both"></div>
 <!-- Import RT here -->
-						<p:fieldset legend="Import"
-							style="float: left; width: 95%; margin-top: 10px;">						
+					<p:fieldset legend="Import"
+						style="float: left; width: 95%; margin-top: 10px;">
+
 						<p:panel id="ImportRTs">
-						<p:commandButton immediate="true"
-						    disabled = "#{creationInvoiceBean.entity.linkedInvoices.size() lt 1}"							
-							value="#{messages['action.invoice.importFromLinkedInvoices']}"
-							action="#{creationInvoiceBean.importFromLinkedInvoices}"
-							process=":formId:tabView @this"
-							update=":formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" />	
-							<h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
-						<p:commandButton immediate="true" rendered="#{creationInvoiceBean.detailed}"
-						    disabled = "#{creationInvoiceBean.entity.invoiceType.code ne invoiceTypeBean.commercialCode}"
-							value="#{messages['action.invoice.importOpenedRT']}"
-							action="#{creationInvoiceBean.importOpenedRT}"
-							process=":formId:tabView @this"
-							update=":formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" />
+							<p:panel>
+								<hftl:decorateFormField fieldId="startDate"
+									label="#{messages['billingRun.startDate']}">
+									<p:calendar id="startDate"
+										value="#{creationInvoiceBean.startDate}"
+										pattern="#{paramBean.dateFormat}">
+										<p:ajax update="startDate" event="dateSelect" />
+									</p:calendar>
+								</hftl:decorateFormField>
+								<hftl:decorateFormField fieldId="endDate"
+									label="#{messages['billingRun.endDate']}">
+									<p:calendar id="endDate" value="#{creationInvoiceBean.endDate}"
+										pattern="#{paramBean.dateFormat}">
+										<p:ajax update="endDate" event="dateSelect" />
+									</p:calendar>
+								</hftl:decorateFormField>
 							</p:panel>
-						</p:fieldset>						
-						<div style="clear: both"></div>
+							<p:panel>
+								<p:commandButton immediate="true"
+									disabled="#{creationInvoiceBean.entity.linkedInvoices.size() lt 1}"
+									value="#{messages['action.invoice.importFromLinkedInvoices']}"
+									action="#{creationInvoiceBean.importFromLinkedInvoices}"
+									process=":formId:tabView @this"
+									update=":formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" />
+								<h:outputText value="&#160;" />
+								<h:outputText value="&#160;" />
+								<h:outputText value="&#160;" />
+								<h:outputText value="&#160;" />
+								<h:outputText value="&#160;" />
+								<p:commandButton immediate="true"
+									rendered="#{creationInvoiceBean.detailed}"
+									disabled="#{creationInvoiceBean.entity.invoiceType.code ne invoiceTypeBean.commercialCode}"
+									value="#{messages['action.invoice.importOpenedRT']}"
+									action="#{creationInvoiceBean.importOpenedRT()}"
+									process="@this startDate endDate"
+									update="ImportRTs :formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" />
+							</p:panel>
+						</p:panel>
+					</p:fieldset>
+					<div style="clear: both"></div>
 <!-- detailed lines here -->
 						<p:fieldset legend="Detail"
 							style="float: left; width: 95%; margin-top: 10px;"

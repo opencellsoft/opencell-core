@@ -28,6 +28,7 @@ import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -77,7 +78,7 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateCustomer(@WebParam(name = "customer") CustomerDto postData);
 
     /**
-     * Search for a customer with a given code 
+     * Search for a customer with a given code
      * 
      * @param customerCode The customer's code
      * @return The customer's data
@@ -86,7 +87,7 @@ public interface AccountWs extends IBaseWs {
     GetCustomerResponseDto findCustomer(@WebParam(name = "customerCode") String customerCode);
 
     /**
-     * Remove customer with a given code 
+     * Remove customer with a given code
      * 
      * @param customerCode The customer's code
      * @return Request processing status
@@ -101,11 +102,12 @@ public interface AccountWs extends IBaseWs {
      * Retrieves a list of Customers filtered by code, customerCategory, seller, or customerBrand.
      * 
      * @param postData Contains filter parameters code, customerCategory, seller or customerBrand.
+     * @param paging Pagination criteria
      * @return
      */
     @WebMethod
-	CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData,
-			@WebParam(name = "firstRow") Integer firstRow, @WebParam(name = "numberOfRows") Integer numberOfRows);
+    CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData, @Deprecated @WebParam(name = "firstRow") Integer firstRow,
+            @Deprecated @WebParam(name = "numberOfRows") Integer numberOfRows, @WebParam(name = "paging") Paging paging);
 
     // customer brand
 
@@ -128,7 +130,7 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateCustomerBrand(@WebParam(name = "customerBrand") CustomerBrandDto postData);
 
     /**
-     * Remove existing customer brand with a given brand code 
+     * Remove existing customer brand with a given brand code
      * 
      * @param brandCode The brand's code
      * @return Request processing status
@@ -175,7 +177,7 @@ public interface AccountWs extends IBaseWs {
     ActionStatus createOrUpdateCustomerCategory(@WebParam(name = "customerCategory") CustomerCategoryDto postData);
 
     /**
-     * Remove an existing customer category with a given category code 
+     * Remove an existing customer category with a given category code
      * 
      * @param categoryCode The category's code
      * @return Request processing status
@@ -210,10 +212,11 @@ public interface AccountWs extends IBaseWs {
      * @return
      */
     @WebMethod
-    GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam( name = "calculateBalances") Boolean calculateBalances);
+    GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode,
+            @WebParam(name = "calculateBalances") Boolean calculateBalances);
 
     /**
-     * Remove customerAccount with a given code 
+     * Remove customerAccount with a given code
      * 
      * @param customerAccountCode The customer account's code
      * @return Request processing status
@@ -312,7 +315,7 @@ public interface AccountWs extends IBaseWs {
     ActionStatus updateUserAccount(@WebParam(name = "userAccount") UserAccountDto postData);
 
     @WebMethod
-	ActionStatus applyProduct(@WebParam(name = "applyProduct") ApplyProductRequestDto postData);
+    ActionStatus applyProduct(@WebParam(name = "applyProduct") ApplyProductRequestDto postData);
 
     @WebMethod
     GetUserAccountResponseDto findUserAccount(@WebParam(name = "userAccountCode") String userAccountCode);
@@ -398,12 +401,13 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ActionStatus cancelLitigation(@WebParam(name = "cancelLitigationRequest") LitigationRequestDto postData);
-    
+
     @WebMethod
-	AccountOperationResponseDto findAccountOperation(@WebParam(name = "id") Long id);
-    
+    AccountOperationResponseDto findAccountOperation(@WebParam(name = "id") Long id);
+
     @WebMethod
-    ActionStatus updatePaymentMethod(@WebParam(name = "customerAccountCode")String customerAccountCode,@WebParam(name = "aoId") Long aoId,@WebParam(name = "paymentMethod") PaymentMethodEnum paymentMethod);
+    ActionStatus updatePaymentMethod(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "aoId") Long aoId,
+            @WebParam(name = "paymentMethod") PaymentMethodEnum paymentMethod);
 
     // dunning
 
