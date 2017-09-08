@@ -9,13 +9,13 @@ import javax.ejb.Stateless;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.ProductOffering;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * @author Andrius Karpavicius
  */
 @Stateless
-public class GenericProductOfferingService<T extends ProductOffering> extends MultilanguageEntityService<T> {
+public class GenericProductOfferingService<T extends ProductOffering> extends BusinessService<T> {
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
 
@@ -38,7 +38,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
 
         for (ProductOffering version : versions) {
 
-            DatePeriod datePeriod = version.getValidityRaw();
+            DatePeriod datePeriod = version.getValidity();
 
             // Only periods with start and end dates that would be split into two parts are selected
             if (invalidOnly) {
@@ -104,10 +104,10 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
     @SuppressWarnings("unchecked")
     private void updateValidityOfPreviousVersions(T offering) throws BusinessException {
 
-        DatePeriod currentValidity = offering.getValidityRaw();
+        DatePeriod currentValidity = offering.getValidity();
 
-        List<ProductOffering> matchedVersions = getMatchingVersions(offering.getCode(), offering.getValidityRaw() != null ? offering.getValidityRaw().getFrom() : null,
-            offering.getValidityRaw() != null ? offering.getValidityRaw().getTo() : null, offering.getId(), false);
+        List<ProductOffering> matchedVersions = getMatchingVersions(offering.getCode(), offering.getValidity() != null ? offering.getValidity().getFrom() : null,
+            offering.getValidity() != null ? offering.getValidity().getTo() : null, offering.getId(), false);
 
         for (ProductOffering matchedVersion : matchedVersions) {
 
@@ -125,6 +125,9 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
      */
     protected void updateValidityOfVersion(ProductOffering matchedVersion, DatePeriod offeringValidity) {
 
+        if (matchedVersion.getValidity() == null) {
+            matchedVersion.setValidity(new DatePeriod());
+        }
         DatePeriod matchedValidity = matchedVersion.getValidity();
 
         // Latest version has no dates set, so invalidate other conflicting versions altogether
@@ -301,7 +304,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Mu
             .setParameter("code", code).setMaxResults(2).getResultList();
 
         // This is to overcome a problem of sorting in descending order where null is before non-empty date
-        if (latestVersions.size() > 1 && (latestVersions.get(0).getValidityRaw() == null || latestVersions.get(0).getValidityRaw().getFrom() == null)) {
+        if (latestVersions.size() > 1 && (latestVersions.get(0).getValidity() == null || latestVersions.get(0).getValidity().getFrom() == null)) {
             return latestVersions.get(1);
         } else {
             return latestVersions.get(0);

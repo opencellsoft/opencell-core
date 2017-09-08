@@ -51,116 +51,113 @@ import org.meveo.model.shared.Address;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SELLER")
-@ExportIdentifier({ "code"})
-@Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_seller_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "crm_seller", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "crm_seller_seq"), })
 public class Seller extends BusinessCFEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_currency_id")
-	private TradingCurrency tradingCurrency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency_id")
+    private TradingCurrency tradingCurrency;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_country_id")
-	private TradingCountry tradingCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_country_id")
+    private TradingCountry tradingCountry;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_language_id")
-	private TradingLanguage tradingLanguage;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_language_id")
+    private TradingLanguage tradingLanguage;
 
-	
-	@Embedded
-	private Address address = new Address();
+    @Embedded
+    private Address address;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "parent_seller_id")
-	private Seller seller;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_seller_id")
+    private Seller seller;
 
-	@OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "seller", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<InvoiceTypeSellerSequence> invoiceTypeSequence = new ArrayList<InvoiceTypeSellerSequence>();
-	
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "bam_id")
-	private BusinessAccountModel businessAccountModel;
-	
-	
-	public Seller() {
-		super();
-	}
 
-	public TradingCurrency getTradingCurrency() {
-		return tradingCurrency;
-	}
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bam_id")
+    private BusinessAccountModel businessAccountModel;
 
-	public void setTradingCurrency(TradingCurrency tradingCurrency) {
-		this.tradingCurrency = tradingCurrency;
-	}
+    public Seller() {
+        super();
+    }
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
+    public TradingCurrency getTradingCurrency() {
+        return tradingCurrency;
+    }
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
+    public void setTradingCurrency(TradingCurrency tradingCurrency) {
+        this.tradingCurrency = tradingCurrency;
+    }
 
-	public TradingLanguage getTradingLanguage() {
-		return tradingLanguage;
-	}
+    public TradingCountry getTradingCountry() {
+        return tradingCountry;
+    }
 
-	public void setTradingLanguage(TradingLanguage tradingLanguage) {
-		this.tradingLanguage = tradingLanguage;
-	}
+    public void setTradingCountry(TradingCountry tradingCountry) {
+        this.tradingCountry = tradingCountry;
+    }
 
-	public Address getAddress() {
-		return address;
-	}
+    public TradingLanguage getTradingLanguage() {
+        return tradingLanguage;
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    public void setTradingLanguage(TradingLanguage tradingLanguage) {
+        this.tradingLanguage = tradingLanguage;
+    }
 
+    public Address getAddress() {
+        return address;
+    }
 
-	public Seller getSeller() {
-		return seller;
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
+    public Seller getSeller() {
+        return seller;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		if (seller != null) {
-			return new ICustomFieldEntity[]{seller};
-		}
-		return new ICustomFieldEntity[]{new Provider()};
-	}
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        if (seller != null) {
+            return new ICustomFieldEntity[] { seller };
+        }
+        return new ICustomFieldEntity[] { new Provider() };
+    }
 
-	public List<InvoiceTypeSellerSequence> getInvoiceTypeSequence() {
+    public List<InvoiceTypeSellerSequence> getInvoiceTypeSequence() {
         return invoiceTypeSequence;
     }
-	
-	public void setInvoiceTypeSequence(List<InvoiceTypeSellerSequence> invoiceTypeSequence) {
+
+    public void setInvoiceTypeSequence(List<InvoiceTypeSellerSequence> invoiceTypeSequence) {
         this.invoiceTypeSequence = invoiceTypeSequence;
     }
 
-	public BusinessAccountModel getBusinessAccountModel() {
-		return businessAccountModel;
-	}
+    public BusinessAccountModel getBusinessAccountModel() {
+        return businessAccountModel;
+    }
 
-	public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
-		this.businessAccountModel = businessAccountModel;
-	}
+    public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
+        this.businessAccountModel = businessAccountModel;
+    }
 
-	@Override
-	public BusinessEntity getParentEntity() {
-		return seller;
-	}
-	
+    @Override
+    public BusinessEntity getParentEntity() {
+        return seller;
+    }
+
     public InvoiceTypeSellerSequence getInvoiceTypeSequenceByType(InvoiceType invoiceType) {
         for (InvoiceTypeSellerSequence seq : invoiceTypeSequence) {
             if (seq.getInvoiceType().equals(invoiceType)) {
@@ -169,14 +166,14 @@ public class Seller extends BusinessCFEntity {
         }
         return null;
     }
-    
-    public boolean isContainsInvoiceTypeSequence(InvoiceType invoiceType) {        
+
+    public boolean isContainsInvoiceTypeSequence(InvoiceType invoiceType) {
         InvoiceTypeSellerSequence seq = getInvoiceTypeSequenceByType(invoiceType);
         return seq != null;
     }
-	
-	@Override
-	public Class<? extends BusinessEntity> getParentEntityType() {
-		return Seller.class;
-	}    
+
+    @Override
+    public Class<? extends BusinessEntity> getParentEntityType() {
+        return Seller.class;
+    }
 }

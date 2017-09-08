@@ -26,53 +26,50 @@ import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.InvoiceCategory;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * InvoiceCategory service implementation.
  */
 @Stateless
-public class InvoiceCategoryService extends MultilanguageEntityService<InvoiceCategory> {
+public class InvoiceCategoryService extends BusinessService<InvoiceCategory> {
 
-	@Override
-	public InvoiceCategory findByCode(String code) {
-		if (code == null) {
-			return null;
-		}
+    @Override
+    public InvoiceCategory findByCode(String code) {
+        if (code == null) {
+            return null;
+        }
 
-		QueryBuilder qb = new QueryBuilder(InvoiceCategory.class, "c");
-		qb.addCriterion("code", "=", code, false);
+        QueryBuilder qb = new QueryBuilder(InvoiceCategory.class, "c");
+        qb.addCriterion("code", "=", code, false);
 
-		try {
-			return (InvoiceCategory) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        try {
+            return (InvoiceCategory) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-	public InvoiceCategory findByCode(EntityManager em, String code) {
-		if (code == null) {
-			return null;
-		}
+    public InvoiceCategory findByCode(EntityManager em, String code) {
+        if (code == null) {
+            return null;
+        }
 
-		QueryBuilder qb = new QueryBuilder(InvoiceCategory.class, "c");
-		qb.addCriterion("code", "=", code, false);
+        QueryBuilder qb = new QueryBuilder(InvoiceCategory.class, "c");
+        qb.addCriterion("code", "=", code, false);
 
-		try {
-			return (InvoiceCategory) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        try {
+            return (InvoiceCategory) qb.getQuery(em).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-	public int getNbInvCatNotAssociated() {
-		return ((Long) getEntityManager().createNamedQuery("invoiceCategory.getNbrInvoiceCatNotAssociated", Long.class)
-				.getSingleResult()).intValue();
-	}
+    public int getNbInvCatNotAssociated() {
+        return ((Long) getEntityManager().createNamedQuery("invoiceCategory.getNbrInvoiceCatNotAssociated", Long.class).getSingleResult()).intValue();
+    }
 
-	public List<InvoiceCategory> getInvoiceCatNotAssociated() {
-		return (List<InvoiceCategory>) getEntityManager()
-				.createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated", InvoiceCategory.class)
-				.getResultList();
-	}
+    public List<InvoiceCategory> getInvoiceCatNotAssociated() {
+        return (List<InvoiceCategory>) getEntityManager().createNamedQuery("invoiceCategory.getInvoiceCatNotAssociated", InvoiceCategory.class).getResultList();
+    }
 }

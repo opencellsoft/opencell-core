@@ -256,6 +256,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 	}
 
 	public int applyRecurringCharge(Long chargeInstanceId, Date maxDate) throws BusinessException {
+		long startDate = System.currentTimeMillis();
 		int MaxRecurringRatingHistory=Integer.parseInt(ParamBean.getInstance().getProperty("rating.recurringMaxRetry", "100"));
 		int nbRating=0;
 		
@@ -263,10 +264,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			RecurringChargeInstance activeRecurringChargeInstance = findById(chargeInstanceId);
 			
 			if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
-				log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
+				log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
 				return nbRating;
 			}
-
+			
 			RecurringChargeTemplate recurringChargeTemplate = (RecurringChargeTemplate) activeRecurringChargeInstance
 					.getRecurringChargeTemplate();
 			if (recurringChargeTemplate.getCalendar() == null) {
@@ -287,6 +288,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				
 			//If we recognize revenue we first delete all SCHEDULED wallet operations
 			if(appProvider.isRecognizeRevenue()){
+
 			  try {
 				log.debug("delete scheduled charges applications on chargeInstance {}", chargeInstanceId);
 				getEntityManager().createNamedQuery("WalletOperation.deleteScheduled")
@@ -295,6 +297,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 			  }catch (Exception e) {
 				log.error("error while trying to delete scheduled charges applications on chargeInstance {}", chargeInstanceId, e);
 			  }
+			  
 			}
 
 			while (applicationDate != null && nbRating<MaxRecurringRatingHistory && (applicationDate.getTime() <= maxDate.getTime())) {
@@ -307,6 +310,9 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 				} else {
 					walletOperationService.applyReccuringCharge(activeRecurringChargeInstance, false,recurringChargeTemplate,false);
 				}
+				
+				log.debug("After applyReccuringCharge:" + (System.currentTimeMillis() - startDate));
+				
 				log.debug("chargeDate {}, nextChargeDate {}, wo size {}",activeRecurringChargeInstance.getChargeDate()
 						,activeRecurringChargeInstance.getNextChargeDate(),activeRecurringChargeInstance.getWalletOperations().size());
 				//if (recurringChargeTemplate.getApplyInAdvance()) {
@@ -374,7 +380,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
                 .getQuantity(), fromDate, toDate);
         
 		if (!walletOperationService.isChargeMatch(chargeInstance, chargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
-			log.debug("IPIEL: not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
+			log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", chargeInstance.getCode());
 			return null;
 		}
 

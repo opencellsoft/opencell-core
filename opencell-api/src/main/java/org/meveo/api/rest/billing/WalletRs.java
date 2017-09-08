@@ -2,6 +2,7 @@ package org.meveo.api.rest.billing;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -17,6 +18,7 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -51,7 +53,7 @@ public interface WalletRs extends IBaseRs {
     ActionStatus updateWalletTemplate(WalletTemplateDto postData);
 
     /**
-     * Remove an existing wallet template with a given code 
+     * Remove an existing wallet template with a given code
      * 
      * @param walletTemplateCode The wallet template's code
      * @return Request processing status
@@ -59,9 +61,9 @@ public interface WalletRs extends IBaseRs {
     @DELETE
     @Path("/template/{walletTemplateCode}")
     ActionStatus removeWalletTemplate(@PathParam("walletTemplateCode") String walletTemplateCode);
-    
+
     /**
-     * Search for a wallet template with a given code 
+     * Search for a wallet template with a given code
      * 
      * @param walletTemplateCode The wallet template's code
      * @return A wallet template
@@ -81,7 +83,7 @@ public interface WalletRs extends IBaseRs {
     ActionStatus currentBalance(WalletBalanceDto postData);
 
     /**
-     * Gets the reserved balance amount given provider, seller, user account and date.  In wallet operation, status='RESERVED'.
+     * Gets the reserved balance amount given provider, seller, user account and date. In wallet operation, status='RESERVED'.
      * 
      * @param postData WalletBalanceDto
      * @return Request processing status
@@ -101,7 +103,7 @@ public interface WalletRs extends IBaseRs {
     ActionStatus openBalance(WalletBalanceDto postData);
 
     /**
-     * Create reservation for a given offer, user account, seller, provider and date. 
+     * Create reservation for a given offer, user account, seller, provider and date.
      * 
      * @param postData The reservation's data
      * @return Request processing status
@@ -111,7 +113,7 @@ public interface WalletRs extends IBaseRs {
     ActionStatus createReservation(WalletReservationDto postData);
 
     /**
-     * Updates a reservation. Same as create we just need to pass the id of the reservation. 
+     * Updates a reservation. Same as create we just need to pass the id of the reservation.
      * 
      * @param postData The reservation's data
      * @return Request processing status
@@ -151,14 +153,19 @@ public interface WalletRs extends IBaseRs {
     ActionStatus createOperation(WalletOperationDto postData);
 
     /**
-     * Search for an operation with a given (exemple) code 
+     * Search for an operation with a given (example) code
      * 
      * @param postData The operation's data (FindWalletOperationsDto)
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
      * @return
      */
     @POST
     @Path("/operation/find")
-    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData);
+    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * Create new or update an existing wallet template

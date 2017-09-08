@@ -54,7 +54,7 @@ public class PaymentDto extends BaseDto {
     private BigDecimal fees = BigDecimal.ZERO; 
     private String comment;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	/**
 	 * @return the customFields

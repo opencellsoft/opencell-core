@@ -19,7 +19,7 @@ public class InvoiceCategoryDto extends BusinessDto {
 
 	private List<LanguageDescriptionDto> languageDescriptions;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	public InvoiceCategoryDto() {
 
@@ -27,7 +27,8 @@ public class InvoiceCategoryDto extends BusinessDto {
 
 	public InvoiceCategoryDto(InvoiceCategory invoiceCategory, CustomFieldsDto customFieldInstances) {
 		super(invoiceCategory);
-		customFields = customFieldInstances;
+        customFields = customFieldInstances;
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceCategory.getDescriptionI18n()));
 	}
 
 	public List<LanguageDescriptionDto> getLanguageDescriptions() {

@@ -45,7 +45,7 @@ public class AccountOperationDto extends BaseDto {
 	private Date bankCollectionDate;
 	private Date depositDate;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 
 	/**
 	 * @return the customFields

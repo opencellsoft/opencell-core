@@ -18,6 +18,7 @@
  */
 package org.meveo.model.admin;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -33,51 +34,52 @@ import org.meveo.model.ExportIdentifier;
  * Currency entity.
  */
 @Entity
+@Cacheable
 @ExportIdentifier("currencyCode")
 @Table(name = "adm_currency")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_currency_seq"), })
 public class Currency extends AuditableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Currency code e.g. EUR for euros. */
-	@Column(name = "currency_code", length = 3, unique = true)
-	@Size(max = 3)
-	private String currencyCode;
+    /** Currency code e.g. EUR for euros. */
+    @Column(name = "currency_code", length = 3, unique = true)
+    @Size(max = 3)
+    private String currencyCode;
 
-	/** Currency name. */
-	@Column(name = "description_en", length = 255)
-	@Size(max = 255)
-	private String descriptionEn;
+    /** Currency name. */
+    @Column(name = "description_en", length = 255)
+    @Size(max = 255)
+    private String descriptionEn;
 
-	/** Flag field that indicates if it is system currency. */
-	@Type(type="numeric_boolean")
+    /** Flag field that indicates if it is system currency. */
+    @Type(type = "numeric_boolean")
     @Column(name = "system_currency")
-	private Boolean systemCurrency;
+    private Boolean systemCurrency;
 
-	public String getCurrencyCode() {
-		return currencyCode;
-	}
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
 
-	public String getDescriptionEn() {
-		return descriptionEn;
-	}
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
 
-	public void setDescriptionEn(String descriptionEn) {
-		this.descriptionEn = descriptionEn;
-	}
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
 
-	public Boolean getSystemCurrency() {
-		return systemCurrency;
-	}
+    public Boolean getSystemCurrency() {
+        return systemCurrency;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -85,34 +87,34 @@ public class Currency extends AuditableEntity {
         } else if (!(obj instanceof Currency)) {
             return false;
         }
-        
-		Currency other = (Currency) obj;
-		if (currencyCode == null) {
-			if (other.currencyCode != null)
-				return false;
-		} else if (!currencyCode.equals(other.currencyCode))
-			return false;
-		return true;
-	}
 
-	public String toString() {
-		return currencyCode;
-	}
+        Currency other = (Currency) obj;
+        if (currencyCode == null) {
+            if (other.currencyCode != null)
+                return false;
+        } else if (!currencyCode.equals(other.currencyCode))
+            return false;
+        return true;
+    }
 
-	public boolean isTransient() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public String toString() {
+        return currencyCode;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((currencyCode == null) ? 0 : currencyCode.hashCode());
-		return result;
-	}
+    public boolean isTransient() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	public void setSystemCurrency(Boolean systemCurrency) {
-		this.systemCurrency = systemCurrency;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((currencyCode == null) ? 0 : currencyCode.hashCode());
+        return result;
+    }
+
+    public void setSystemCurrency(Boolean systemCurrency) {
+        this.systemCurrency = systemCurrency;
+    }
 }

@@ -482,10 +482,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
-
+    	long startDate = System.currentTimeMillis();
         List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
             .getResultList();
-
         SubListCreator subListCreator = null;
 
         try {
@@ -512,14 +511,14 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 throw new BusinessException(e);
             }
         }
+        
     }
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
-
+    	long startDate = System.currentTimeMillis();
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
-
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
             Sequence sequence = serviceSingleton.reserveInvoiceNumbers(invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
@@ -529,10 +528,8 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         // Find and process invoices
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
-
             List<Long> invoices = invoiceService.getInvoiceIds(billingRun.getId(), invoicesToNumberInfo.getInvoiceTypeId(), invoicesToNumberInfo.getSellerId(),
                 invoicesToNumberInfo.getInvoiceDate());
-
             // Validate that what was retrieved as summary matches the details
             if (invoices.size() != invoicesToNumberInfo.getNrOfInvoices().intValue()) {
                 throw new BusinessException(
@@ -601,7 +598,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
             selectedBillingAccounts = selectedBillingAccounts + sep + baId;
             sep = ",";
-            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, lastTransactionDate)) {
+            if (!isBillable && ratedTransactionService.isBillingAccountBillable(currentBA, null, lastTransactionDate)) {
                 isBillable = true;
             }
         }
@@ -621,7 +618,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @SuppressWarnings("unchecked")
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis) throws Exception {
-
+    	long startDate = System.currentTimeMillis();
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
@@ -649,11 +646,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
                 log.info("Total billableBA:" + billableBA);
-
+                
                 billingRunExtensionService.updateBillingRun(billingRun, billingAccountIds.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
-
                     createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis);
                     billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
                 }
@@ -720,7 +716,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (RejectedBillingAccount ba : br.getRejectedBillingAccounts()) {
             selectedBillingAccounts = selectedBillingAccounts + sep + ba.getId();
             sep = ",";
-            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), billingRun.getLastTransactionDate())) {
+            if (!result && ratedTransactionService.isBillingAccountBillable(ba.getBillingAccount(), null, billingRun.getLastTransactionDate())) {
                 result = true;
                 break;
             }

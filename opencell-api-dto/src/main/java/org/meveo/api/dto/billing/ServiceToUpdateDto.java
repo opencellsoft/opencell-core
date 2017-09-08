@@ -23,7 +23,7 @@ public class ServiceToUpdateDto implements Serializable {
     private String code;
     private Date actionDate;    
     private Date endAgreementDate;
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
 	public String getCode() {
 		return code;

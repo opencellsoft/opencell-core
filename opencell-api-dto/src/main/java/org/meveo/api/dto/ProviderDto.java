@@ -51,43 +51,43 @@ public class ProviderDto extends BaseDto {
 		this(e, customFieldInstances, true);
 	}
 
-	public ProviderDto(Provider e, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
-		code = e.getCode();
+	public ProviderDto(Provider provider, CustomFieldsDto customFieldInstances, boolean loadProviderData) {
+		code = provider.getCode();
 		
 		if (loadProviderData) {			
-			description = e.getDescription();			
-			if (e.getCurrency() != null) {
-				currency = e.getCurrency().getCurrencyCode();
+			description = provider.getDescription();			
+			if (provider.getCurrency() != null) {
+				currency = provider.getCurrency().getCurrencyCode();
 			}
-			if (e.getCountry() != null) {
-				country = e.getCountry().getCountryCode();
+			if (provider.getCountry() != null) {
+				country = provider.getCountry().getCountryCode();
 			}
-			if (e.getLanguage() != null) {
-				language = e.getLanguage().getLanguageCode();
+			if (provider.getLanguage() != null) {
+				language = provider.getLanguage().getLanguageCode();
 			}
-			multiCurrency = e.getMulticurrencyFlag();
-			multiCountry = e.getMulticountryFlag();
-			multiLanguage = e.getMultilanguageFlag();
-			rounding = e.getRounding();
-			prepaidReservationExpirationDelayinMillisec = e.getPrepaidReservationExpirationDelayinMillisec();
-			discountAccountingCode = e.getDiscountAccountingCode();
-			email = e.getEmail();			
+			multiCurrency = provider.getMulticurrencyFlag();
+			multiCountry = provider.getMulticountryFlag();
+			multiLanguage = provider.getMultilanguageFlag();
+			rounding = provider.getRounding();
+			prepaidReservationExpirationDelayinMillisec = provider.getPrepaidReservationExpirationDelayinMillisec();
+			discountAccountingCode = provider.getDiscountAccountingCode();
+			email = provider.getEmail();			
 
-			this.setEnterprise(e.isEntreprise());
-			this.setLevelDuplication(e.isLevelDuplication());
+			this.setEnterprise(provider.isEntreprise());
+			this.setLevelDuplication(provider.isLevelDuplication());
 			
-			this.setRecognizeRevenue(e.isRecognizeRevenue());
+			this.setRecognizeRevenue(provider.isRecognizeRevenue());
 
-			if (e.getBankCoordinates() != null) {
-				this.setBankCoordinates(new BankCoordinatesDto(e.getBankCoordinates()));
+			if (provider.getBankCoordinates() != null) {
+				this.setBankCoordinates(new BankCoordinatesDto(provider.getBankCoordinates()));
 			}
 
-			if (e.getInvoiceConfiguration() != null) {
-				this.setInvoiceConfiguration(new InvoiceConfigurationDto(e.getInvoiceConfiguration()));
+			if (provider.getInvoiceConfiguration() != null) {
+				this.setInvoiceConfiguration(new InvoiceConfigurationDto(provider.getInvoiceConfiguration()));
 			}else{
 				this.setInvoiceConfiguration(new InvoiceConfigurationDto());
 			}
-			this.getInvoiceConfiguration().setDisplayFreeTransacInInvoice(e.isDisplayFreeTransacInInvoice());
+			this.getInvoiceConfiguration().setDisplayFreeTransacInInvoice(provider.isDisplayFreeTransacInInvoice());
 		}
 		
 		customFields = customFieldInstances;

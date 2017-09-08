@@ -42,11 +42,17 @@ public class JsonTypeDescriptor extends AbstractTypeDescriptor<Object> implement
 
     @Override
     public String toString(Object value) {
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK Json converter to string");
         return JacksonUtil.toString(value);
     }
 
     @Override
     public Object fromString(String string) {
+
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK Json converter from string");
+
         return JacksonUtil.fromString(string, jsonObjectClass);
     }
 

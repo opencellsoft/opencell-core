@@ -28,11 +28,9 @@ import org.meveo.admin.exception.ValidationException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -42,44 +40,41 @@ import org.meveo.service.base.PersistenceService;
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Inject
-    private CountryService countryService;
-
-    @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
 
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
 
-    	if (paymentMethod instanceof CardPaymentMethod) {
-    		CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;        	
-    		if(!cardPayment.isValidForDate(new Date())){
-    			throw new BusinessException("Cant add expired card");
-    		}        	
-    		obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
-    	}
+        if (paymentMethod instanceof CardPaymentMethod) {
+            CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+            if (!cardPayment.isValidForDate(new Date())) {
+                throw new BusinessException("Cant add expired card");
+            }
+            obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
+        }
 
-    	super.create(paymentMethod);
+        super.create(paymentMethod);
 
-    	// Mark other payment methods as not preferred
-    	if (paymentMethod.isPreferred()) {
-    		getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-    		.setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
-    	}
+        // Mark other payment methods as not preferred
+        if (paymentMethod.isPreferred()) {
+            getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
+                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+        }
     }
 
     @Override
     public PaymentMethod update(PaymentMethod entity) throws BusinessException {
         if (entity.isPreferred()) {
-        	if(entity instanceof CardPaymentMethod){
-        		if(!((CardPaymentMethod)entity).isValidForDate(new Date())){
-        			throw new BusinessException("Cant mark expired card as preferred");
-        		}
-        	}
+            if (entity instanceof CardPaymentMethod) {
+                if (!((CardPaymentMethod) entity).isValidForDate(new Date())) {
+                    throw new BusinessException("Cant mark expired card as preferred");
+                }
+            }
         }
         PaymentMethod paymentMethod = super.update(entity);
 
         // Mark other payment methods as not preferred
-        if (paymentMethod.isPreferred()) {        	
+        if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
                 .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
@@ -118,24 +113,38 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-
-        cardPaymentMethod.setHiddenCardNumber(cardPaymentMethod.getCardNumber().substring(cardPaymentMethod.getCardNumber().length() - 4));
-
-        String coutryCode = null;
-        Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
-        if (country != null) {
-            coutryCode = country.getCountryCode();
-        }
-        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
-            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-
         String cardNumber = cardPaymentMethod.getCardNumber();
         cardNumber = cardNumber.replaceAll(" ", "");
-        String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
-            StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-            cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
 
-        cardPaymentMethod.setTokenId(tockenID);
+        cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
+
+        String coutryCode = null;  //TODO : waiting #2830 
+        if(!customerAccount.isTransient()){        	       	       
+	    	if(customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0){
+	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
+	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
+	    		}
+	    	}
+        }
+        
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        try{
+        
+         gatewayPaymentInterface = gatewayPaymentFactory
+            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        }catch (Exception e) {
+        	log.warn("Cant find payment gateway");
+		}
+
+        if(gatewayPaymentInterface != null){
+	        String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
+	            StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
+	            cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
+	
+	        cardPaymentMethod.setTokenId(tockenID);
+        }else{
+        	cardPaymentMethod.setTokenId("no token");
+        }
     }
 
     public CardPaymentMethod findByTokenId(String tokenId) {

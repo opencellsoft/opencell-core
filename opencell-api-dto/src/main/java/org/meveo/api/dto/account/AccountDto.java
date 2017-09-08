@@ -22,12 +22,12 @@ public abstract class AccountDto extends BusinessDto {
 	
 	private String externalRef1;
 	private String externalRef2;
-	private NameDto name = new NameDto();
-	private AddressDto address = new AddressDto();
+	private NameDto name;
+	private AddressDto address;
 
 	@XmlElement(name = "businessAccountModel")
 	private BusinessEntityDto businessAccountModel;
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 	
 	@XmlTransient
 	protected boolean loaded = false;
@@ -40,13 +40,17 @@ public abstract class AccountDto extends BusinessDto {
 		initFromEntity(e, customFieldInstances);
 	}
 
-	public void initFromEntity(AccountEntity e, CustomFieldsDto customFieldInstances) {
-		setCode(e.getCode());
-		setDescription(e.getDescription());
-		setExternalRef1(e.getExternalRef1());
-		setExternalRef2(e.getExternalRef2());
-		setName(new NameDto(e.getName()));
-		setAddress(new AddressDto(e.getAddress()));
+	public void initFromEntity(AccountEntity account, CustomFieldsDto customFieldInstances) {
+		setCode(account.getCode());
+		setDescription(account.getDescription());
+		setExternalRef1(account.getExternalRef1());
+		setExternalRef2(account.getExternalRef2());
+        if (account.getName() != null) {
+            setName(new NameDto(account.getName()));
+        }
+        if (account.getAddress() != null) {
+            setAddress(new AddressDto(account.getAddress()));
+        }
 
         customFields = customFieldInstances;
 

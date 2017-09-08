@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.model.jaxb.customer.CustomFields;
+import org.meveo.model.jaxb.subscription.Subscriptions;
 
 
 /**
@@ -72,7 +73,8 @@ import org.meveo.model.jaxb.customer.CustomFields;
     "company",
     "name",
     "address",
-    "customFields"
+    "customFields",
+    "subscriptions"
 })
 @XmlRootElement(name = "userAccount")
 public class UserAccount {
@@ -94,8 +96,21 @@ public class UserAccount {
     protected CustomFields customFields;
     @XmlAttribute(name = "code")
     protected String code;
+    @XmlAttribute(name="ignoreCheck")
+    protected Boolean ignoreCheck;
+    @XmlElement(name = "subscriptions")
+    protected Subscriptions subscriptions;
     
-    public UserAccount(){}    
+    
+    public Subscriptions getSubscriptions() {
+		return subscriptions;
+	}
+
+	public void setSubscriptions(Subscriptions subscriptions) {
+		this.subscriptions = subscriptions;
+	}
+
+	public UserAccount(){}    
 
 	/**
      * Gets the value of the subscriptionDate property.
@@ -288,6 +303,20 @@ public class UserAccount {
     public void setCode(String value) {
         this.code = value;
     }
+
+	/**
+	 * @return the ignoreCheck
+	 */
+	public Boolean getIgnoreCheck() {
+		return ignoreCheck;
+	}
+
+	/**
+	 * @param ignoreCheck the ignoreCheck to set
+	 */
+	public void setIgnoreCheck(Boolean ignoreCheck) {
+		this.ignoreCheck = ignoreCheck;
+	}
 
 	public CustomFields getCustomFields() {
 		return customFields;

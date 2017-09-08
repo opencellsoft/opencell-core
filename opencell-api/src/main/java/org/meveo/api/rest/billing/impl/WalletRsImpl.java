@@ -12,6 +12,8 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
+import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -133,11 +135,11 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
     }
 
     @Override
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData) {
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(postData);
+            result = walletApi.findOperations(postData, new Paging(offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -72,9 +72,10 @@ public class AccountEntityApi extends BaseApi {
     }
 
     public void updateAccount(AccountEntity accountEntity, AccountDto postData, boolean checkCustomFields) throws MeveoApiException {
-        Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
+        
         if (postData.getAddress() != null) {
-
+            Address address = accountEntity.getAddress() == null ? new Address() : accountEntity.getAddress();
+            
             if (!StringUtils.isBlank(postData.getAddress().getAddress1())) {
                 address.setAddress1(postData.getAddress().getAddress1());
             }
@@ -101,8 +102,9 @@ public class AccountEntityApi extends BaseApi {
             accountEntity.setAddress(address);
         }
 
-        Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
         if (postData.getName() != null) {
+            Name name = accountEntity.getName() == null ? new Name() : accountEntity.getName();
+
             if (!StringUtils.isBlank(postData.getName().getFirstName())) {
                 name.setFirstName(postData.getName().getFirstName());
             }

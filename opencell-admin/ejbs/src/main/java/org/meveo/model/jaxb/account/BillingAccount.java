@@ -128,6 +128,8 @@ public class BillingAccount {
     protected String paymentMethod;
     @XmlAttribute(name = "billingCycle")
     protected String billingCycle;
+    @XmlAttribute(name="ignoreCheck")
+    protected Boolean ignoreCheck;
 
     public BillingAccount(){
     	
@@ -516,5 +518,19 @@ public class BillingAccount {
     public void setBillingCycle(String value) {
         this.billingCycle = value;
     }
+
+	/**
+	 * @return the ignoreCheck
+	 */
+	public Boolean getIgnoreCheck() {
+		return ignoreCheck;
+	}
+
+	/**
+	 * @param ignoreCheck the ignoreCheck to set
+	 */
+	public void setIgnoreCheck(Boolean ignoreCheck) {
+		this.ignoreCheck = ignoreCheck;
+	}
 
 }

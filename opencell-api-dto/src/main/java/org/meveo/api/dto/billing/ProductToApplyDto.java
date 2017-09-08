@@ -43,7 +43,7 @@ public class ProductToApplyDto implements Serializable {
 	@XmlElement(required = false)
 	private BigDecimal amountWithTax;
 
-    private CustomFieldsDto customFields = new CustomFieldsDto();
+    private CustomFieldsDto customFields;
 
     @XmlTransient
     // @ApiModelProperty(hidden = true)

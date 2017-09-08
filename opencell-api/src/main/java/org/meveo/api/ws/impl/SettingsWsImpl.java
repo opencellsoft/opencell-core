@@ -1,12 +1,15 @@
 package org.meveo.api.ws.impl;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 
 import org.meveo.api.BillingCycleApi;
 import org.meveo.api.CalendarApi;
-import org.meveo.api.CatMessagesApi;
 import org.meveo.api.CountryApi;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.CustomFieldTemplateApi;
@@ -15,6 +18,7 @@ import org.meveo.api.InvoiceSubCategoryApi;
 import org.meveo.api.InvoiceSubCategoryCountryApi;
 import org.meveo.api.InvoiceTypeApi;
 import org.meveo.api.LanguageApi;
+import org.meveo.api.MultiLanguageFieldApi;
 import org.meveo.api.OccTemplateApi;
 import org.meveo.api.PermissionApi;
 import org.meveo.api.ProviderApi;
@@ -148,7 +152,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     private RoleApi roleApi;
 
     @Inject
-    private CatMessagesApi catMessagesApi;
+    private MultiLanguageFieldApi multilanguageFieldApi;
 
     @Inject
     private TerminationReasonApi terminationReasonApi;
@@ -1262,23 +1266,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public ActionStatus createDescriptions(CatMessagesDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            catMessagesApi.createOrUpdate(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
+        return updateTranslations(Arrays.asList(postData));
     }
 
     @Override
     public ActionStatus updateDescriptions(CatMessagesDto postData) {
+        return updateTranslations(Arrays.asList(postData));
+    }
+
+    @Override
+    public ActionStatus updateTranslations(List<CatMessagesDto> translations) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            catMessagesApi.createOrUpdate(postData);
+            multilanguageFieldApi.update(translations);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1288,11 +1289,26 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public GetDescriptionsResponse findDescriptions(String entityClass, String code, String languageCode) {
-        GetDescriptionsResponse result = new GetDescriptionsResponse();
+
+        GetDescriptionsResponse response = new GetDescriptionsResponse();
+
+        DescriptionsResponseDto multiResponse = findTranslations(entityClass, code, null, null, null, languageCode);
+
+        response.setActionStatus(multiResponse.getActionStatus());
+        if (multiResponse.getCatMessages() != null && multiResponse.getCatMessages().getCatMessage() != null && multiResponse.getCatMessages().getCatMessage().size() > 0) {
+            response.setCatMessagesDto(multiResponse.getCatMessages().getCatMessage().get(0));
+        }
+        return response;
+    }
+
+    @Override
+    public DescriptionsResponseDto findTranslations(String entityClass, String code, Date validFrom, Date validTo, String fieldname, String languageCode) {
+
+        DescriptionsResponseDto result = new DescriptionsResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         try {
-            result.setCatMessagesDto(catMessagesApi.find(entityClass, code, languageCode));
+            result.setCatMessages(multilanguageFieldApi.find(entityClass, code, validFrom, validTo, fieldname, languageCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1302,10 +1318,15 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public ActionStatus removeDescriptions(String entityClass, String code, String languageCode) {
+        return removeTranslations(entityClass, code, null, null, null, languageCode);
+    }
+
+    @Override
+    public ActionStatus removeTranslations(String entityClass, String code, Date validFrom, Date validTo, String fieldname, String languageCode) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            catMessagesApi.remove(entityClass, code, languageCode);
+            multilanguageFieldApi.remove(entityClass, code, validFrom, validTo, fieldname, languageCode);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1315,23 +1336,21 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Override
     public ActionStatus createOrUpdateDescriptions(CatMessagesDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
-        try {
-            catMessagesApi.createOrUpdate(postData);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
+        return updateTranslations(Arrays.asList(postData));
     }
 
     @Override
     public DescriptionsResponseDto listDescriptions() {
+        return listTranslations(null, null, null);
+    }
+
+    @Override
+    public DescriptionsResponseDto listTranslations(String entityClass, String fieldname, String languageCode) {
+
         DescriptionsResponseDto result = new DescriptionsResponseDto();
 
         try {
-            result.setCatMessages(catMessagesApi.list());
+            result.setCatMessages(multilanguageFieldApi.list(entityClass, fieldname, languageCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -18,6 +18,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
@@ -99,6 +100,10 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             newVersion = false;
         }
 
+        if (entity.getValidity() == null) {
+            entity.setValidity(new DatePeriod());
+        }
+
         return entity;
     }
 
@@ -134,7 +139,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     }
 
     public String activateProduct() throws BusinessException {
-        if (entity.getValidityRaw() == null || entity.getValidityRaw().isValid()) {
+        if (entity.getValidity() == null || entity.getValidity().isValid()) {
             entity.setActive(true);
             return saveOrUpdate(false);
         } else {
@@ -145,7 +150,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     }
 
     public String saveAsDraft() throws BusinessException {
-        if (entity.getValidityRaw() == null || entity.getValidityRaw().isValid()) {
+        if (entity.getValidity() == null || entity.getValidity().isValid()) {
             entity.setActive(false);
             return saveOrUpdate(false);
         } else {
@@ -325,7 +330,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     public boolean displayStatus(ProductTemplate product) {
 
         if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(product.getLifeCycleStatus()))) {
-            return product.getValidityRaw() == null || product.getValidityRaw().isCorrespondsToPeriod(new Date());
+            return product.getValidity() == null || product.getValidity().isCorrespondsToPeriod(new Date());
         }
 
         return false;
@@ -401,20 +406,20 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "productTemplate.version.exists"),
-                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
             return false;
         }
 
         return true;
     }
-    
+
     public List<ProductTemplate> listActiveByDate(Date date) {
         return productTemplateService.listActiveByDate(date);
     }
 
     public LazyDataModel<ProductTemplate> listProductsForBundle(BundleTemplate bt, List<BundleProductTemplate> bundleProductTemplates) {
         filters.clear();
-        
+
         List<Long> ids = new ArrayList<>();
         for (BundleProductTemplate bpt : bundleProductTemplates) {
             ids.add(bpt.getProductTemplate().getId());
@@ -423,7 +428,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         if (!ids.isEmpty()) {
             filters.put("ne id", ids);
         }
-        
+
         @SuppressWarnings("rawtypes")
         List<Class> types = new ArrayList<>();
         types.add(ProductTemplate.class);

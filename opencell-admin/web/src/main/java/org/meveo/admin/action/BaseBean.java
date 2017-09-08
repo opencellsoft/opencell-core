@@ -51,9 +51,6 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.MultilanguageEntity;
-import org.meveo.model.billing.CatMessages;
-import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
@@ -65,7 +62,6 @@ import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.ApplicationProvider;
@@ -111,9 +107,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @Inject
     protected PermissionService permissionService;
-
-    @Inject
-    private CatMessagesService catMessagesService;
 
     @Inject
     private FilterService filterService;
@@ -164,9 +157,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Object identifier to load
      */
     private Long objectId;
-
-    /** Helper field to enter language related field values. */
-    protected Map<String, String> languageMessagesMap = new HashMap<String, String>();
 
     /**
      * Datamodel for lazy dataloading in datatable.
@@ -260,7 +250,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
                 entity = (T) getPersistenceService().findById(getObjectId(), formFieldsToFetch);
             }
 
-            loadMultiLanguageFields(entity);
             loadPartOfModules();
 
             // getPersistenceService().detach(entity);
@@ -298,25 +287,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         entity = null;
         setObjectId(null);
         return initEntity();
-    }
-
-    /**
-     * Load multi-language fields if applicable for a class (class contains annotation MultilanguageEntity)
-     * 
-     * @param entity Entity lo load fields for
-     */
-    protected void loadMultiLanguageFields(IEntity entity) {
-
-        if (!isMultilanguageEntity() || !(entity instanceof BusinessEntity)) {
-            return;
-        }
-
-        languageMessagesMap.clear();
-        BusinessEntity businessEntity = (BusinessEntity) entity;
-
-        for (CatMessages msg : catMessagesService.getCatMessagesList(catMessagesService.getEntityClass(clazz), businessEntity.getCode())) {
-            languageMessagesMap.put(msg.getLanguageCode(), msg.getDescription());
-        }
     }
 
     private boolean isPartOfModules() {
@@ -387,22 +357,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         String message = entity.isTransient() ? "save.successful" : "update.successful";
 
         entity = saveOrUpdate(entity);
-
-        // Save description translations
-        if (isMultilanguageEntity() && entity instanceof BusinessEntity) {
-
-            for (String languageKey : languageMessagesMap.keySet()) {
-                String description = languageMessagesMap.get(languageKey);
-                CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) entity, languageKey);
-                if (catMsg != null) {
-                    catMsg.setDescription(description);
-                    catMessagesService.update(catMsg);
-                } else {
-                    CatMessages catMessages = new CatMessages((BusinessEntity) entity, languageKey, description);
-                    catMessagesService.create(catMessages);
-                }
-            }
-        }
 
         if (killConversation) {
             endConversation();
@@ -800,6 +754,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
                 @Override
                 protected IPersistenceService<T> getPersistenceServiceImpl() {
+
                     return getPersistenceService();
                 }
 
@@ -909,8 +864,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         objectId = null;
     }
 
-    public List<TradingLanguage> getProviderLanguages() {
-        return tradingLanguageService.list();
+    public List<String> getProviderLanguages() {
+        return tradingLanguageService.listLanguageCodes();
     }
 
     public String getProviderLanguageCode() {
@@ -918,14 +873,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             return appProvider.getLanguage().getLanguageCode();
         }
         return "";
-    }
-
-    public Map<String, String> getLanguageMessagesMap() {
-        return languageMessagesMap;
-    }
-
-    public void setLanguageMessagesMap(Map<String, String> languageMessagesMap) {
-        this.languageMessagesMap = languageMessagesMap;
     }
 
     protected String getDefaultSort() {
@@ -978,10 +925,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void onPageChange(PageEvent event) {
         this.setDataTableFirstAttribute(((DataTable) event.getSource()).getFirst());
-    }
-
-    private boolean isMultilanguageEntity() {
-        return clazz.isAnnotationPresent(MultilanguageEntity.class);
     }
 
     /**
@@ -1068,7 +1011,11 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public List<Filter> getListFilters() {
+        if (clazz != null) {
         return filterService.findByPrimaryTargetClass(clazz.getName());
+        } else {
+            return null;
+    }
     }
 
     public void runListFilter() {

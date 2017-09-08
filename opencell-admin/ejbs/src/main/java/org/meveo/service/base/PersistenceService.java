@@ -57,14 +57,12 @@ import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.IdentifiableEnum;
-import org.meveo.model.MultilanguageEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
@@ -121,9 +119,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
-
-    @EJB
-    private CatMessagesService catMessagesService;
 
     /**
      * Constructor.
@@ -298,11 +293,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
         }
 
-        // Remove description translations
-        if (entity instanceof BusinessEntity && entity.getClass().isAnnotationPresent(MultilanguageEntity.class)) {
-            catMessagesService.batchRemove((BusinessEntity) entity);
-        }
-
         if (entity instanceof IImageUpload) {
             try {
                 ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
@@ -378,7 +368,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        log.debug("start of create {} entity={}", entity.getClass().getSimpleName(), entity);
+        //log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);

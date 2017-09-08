@@ -253,20 +253,17 @@
 						</p:fieldset>
 						<br />
 						<p:outputPanel column="2" id="buttonGenerate">
-							<p:button outcome="invoices"
-								value="#{messages['action.back']}">
-							</p:button>
-							<p:commandButton value="#{messages['invoice.generatePdf']}"
-								icon="ui-icon-refresh"
-								disabled="#{invoiceBean.pdfInvoiceAlreadyGenerated}"
-								action="#{invoiceBean.generatePdf()}"
-								update=":headerForm:tabView,buttonGenerate" />
-							<p:commandButton value="#{messages['invoice.generateXml']}"
-								icon="ui-icon-refresh"
-								disabled="#{invoiceBean.xmlInvoiceAlreadyGenerated}"
-								action="#{invoiceBean.generateXMLInvoice}"
-								update=":headerForm:tabView,buttonGenerate" />
-						</p:outputPanel> 
+                            <p:button value="#{messages['action.back']}" outcome="#{invoiceBean.back()}" includeViewParams="true">
+                                <c:if test="#{conversation.id != null}">
+                                    <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
+                                </c:if>
+                            </p:button>
+
+                            <p:commandButton value="#{messages['invoice.generatePdf']}" icon="ui-icon-refresh" disabled="#{invoiceBean.pdfInvoiceAlreadyGenerated}"
+                                action="#{invoiceBean.generatePdf()}" update=":headerForm:tabView,buttonGenerate" />
+                            <p:commandButton value="#{messages['invoice.generateXml']}" icon="ui-icon-refresh" disabled="#{invoiceBean.xmlInvoiceAlreadyGenerated}"
+                                action="#{invoiceBean.generateXMLInvoice}" update=":headerForm:tabView,buttonGenerate" />
+                        </p:outputPanel> 
 
 					<p:panel>
 						<h:panelGroup layout="block" styleClass="form-panel">

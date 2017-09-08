@@ -17,7 +17,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -50,7 +49,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -84,7 +82,6 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -127,25 +124,20 @@ public class SubscriptionApi extends BaseApi {
     @Inject
     private ChargeInstanceService<ChargeInstance> chargeInstanceService;
 
-	@Inject
-	private ProductTemplateService productTemplateService;
-	
     @Inject
-	private ProductInstanceService productInstanceService;
-    
+    private ProductTemplateService productTemplateService;
+
+    @Inject
+    private ProductInstanceService productInstanceService;
+
     @Inject
     private InvoiceService invoiceService;
-    
+
     @Inject
     private InvoiceTypeService invoiceTypeService;
-    
+
     @Inject
     private OrderService orderService;
-
-    @Inject
-    private CatMessagesService catMessagesService;
-    
-
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -162,7 +154,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("subscriptionDate");
         }
 
-        handleMissingParametersAndValidate(postData);        
+        handleMissingParametersAndValidate(postData);
 
         if (subscriptionService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Subscription.class, postData.getCode());
@@ -179,9 +171,9 @@ public class SubscriptionApi extends BaseApi {
                 postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
         }
 
-        if(offerTemplate.isDisabled()) {
-			throw new MeveoApiException("Cannot subscribe to disabled offer");
-		}
+        if (offerTemplate.isDisabled()) {
+            throw new MeveoApiException("Cannot subscribe to disabled offer");
+        }
 
         Subscription subscription = new Subscription();
         subscription.setCode(postData.getCode());
@@ -192,7 +184,11 @@ public class SubscriptionApi extends BaseApi {
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
-        subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(null, postData.getRenewalRule(), false));
+        if (postData.getRenewalRule() == null) {
+            subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), null, false));
+        } else {
+            subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(null, postData.getRenewalRule(), false));
+        }
 
         // populate customFields
         try {
@@ -221,9 +217,6 @@ public class SubscriptionApi extends BaseApi {
 
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getOfferTemplate())) {
-            missingParameters.add("offerTemplate");
-        }
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -252,19 +245,24 @@ public class SubscriptionApi extends BaseApi {
             }
             subscription.setUserAccount(userAccount);
         }
-        
+
+        if (postData.getOfferTemplate() != null) {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+
+            } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
+                throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
+                
+            } else if (offerTemplate.isDisabled()) {
+                throw new InvalidParameterException("Cannot subscribe to disabled offer");
+            }
+            subscription.setOffer(offerTemplate);
         }
-        
-        if(offerTemplate.isDisabled()) {
-			throw new MeveoApiException("Cannot subscribe to disabled offer");
-		}
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        subscription.setOffer(offerTemplate);
+
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -312,7 +310,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
-        
+
         subscription = subscriptionService.refreshOrRetrieve(subscription);
         subscription.getOffer().getOfferServiceTemplates().size();
 
@@ -404,7 +402,7 @@ public class SubscriptionApi extends BaseApi {
                 }
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
                 serviceInstance.setOrderNumber(orderNumber);
-                
+
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true);
@@ -412,10 +410,10 @@ public class SubscriptionApi extends BaseApi {
                     log.error("Failed to associate custom field instance to an entity: {} {}", serviceToActivateDto.getCode(), e.getMessage());
                     throw e;
                 } catch (Exception e) {
-                    log.error("Failed to associate custom field instance to an entity {}",serviceToActivateDto.getCode(), e);
+                    log.error("Failed to associate custom field instance to an entity {}", serviceToActivateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
                 }
-                
+
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance);
 
@@ -427,7 +425,7 @@ public class SubscriptionApi extends BaseApi {
                     throw e;
                 }
             }
-            
+
             // override price and description
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
@@ -438,20 +436,20 @@ public class SubscriptionApi extends BaseApi {
                             throw new EntityDoesNotExistsException(ChargeInstance.class, chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
                         if (chargeInstance.getChargeTemplate().getAmountEditable() != null && chargeInstance.getChargeTemplate().getAmountEditable()) {
-                            if(chargeInstanceOverrideDto.getAmountWithoutTax()!=null){
-                            	log.debug("override AmountWithoutTax:{}", chargeInstanceOverrideDto.getAmountWithoutTax());
-                            	chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
+                            if (chargeInstanceOverrideDto.getAmountWithoutTax() != null) {
+                                log.debug("override AmountWithoutTax:{}", chargeInstanceOverrideDto.getAmountWithoutTax());
+                                chargeInstance.setAmountWithoutTax(chargeInstanceOverrideDto.getAmountWithoutTax());
                             }
-                            if (!appProvider.isEntreprise() && chargeInstanceOverrideDto.getAmountWithTax()!=null) {
-                            	log.debug("override AmountWithTax:{}", chargeInstanceOverrideDto.getAmountWithTax());
+                            if (!appProvider.isEntreprise() && chargeInstanceOverrideDto.getAmountWithTax() != null) {
+                                log.debug("override AmountWithTax:{}", chargeInstanceOverrideDto.getAmountWithTax());
                                 chargeInstance.setAmountWithTax(chargeInstanceOverrideDto.getAmountWithTax());
                             }
-                            if(!StringUtils.isBlank(chargeInstanceOverrideDto.getDescription())){
-                            	log.debug("override description:{}", chargeInstanceOverrideDto.getDescription());
-                            	chargeInstance.setDescription(chargeInstanceOverrideDto.getDescription());
+                            if (!StringUtils.isBlank(chargeInstanceOverrideDto.getDescription())) {
+                                log.debug("override description:{}", chargeInstanceOverrideDto.getDescription());
+                                chargeInstance.setDescription(chargeInstanceOverrideDto.getDescription());
                             }
-                        } else{
-                        	log.warn("Charge with code {} is not overrideable", chargeInstanceOverrideDto.getChargeInstanceCode());
+                        } else {
+                            log.warn("Charge with code {} is not overrideable", chargeInstanceOverrideDto.getChargeInstanceCode());
                         }
                     } else {
                         log.warn("chargeInstance.code and amountWithoutTax must not be null.");
@@ -563,10 +561,10 @@ public class SubscriptionApi extends BaseApi {
                     log.error("Failed to associate custom field instance to an entity: {} {}", serviceToInstantiateDto.getCode(), e.getMessage());
                     throw e;
                 } catch (Exception e) {
-                    log.error("Failed to associate custom field instance to an entity {}",serviceToInstantiateDto.getCode(), e);
+                    log.error("Failed to associate custom field instance to an entity {}", serviceToInstantiateDto.getCode(), e);
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
                 }
-                
+
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance);
 
@@ -574,7 +572,7 @@ public class SubscriptionApi extends BaseApi {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
                     throw e;
                 }
-                
+
             }
         }
     }
@@ -621,28 +619,28 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
-        try {            
+        try {
             oneShotChargeInstanceService.oneShotChargeApplication(subscription, (OneShotChargeTemplate) oneShotChargeTemplate, postData.getWallet(), postData.getOperationDate(),
                 postData.getAmountWithoutTax(), postData.getAmountWithTax(), postData.getQuantity(), postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(),
-                postData.getDescription(),subscription.getOrderNumber(), true);
+                postData.getDescription(), subscription.getOrderNumber(), true);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
         }
     }
-    
-	public List<WalletOperationDto> applyProduct(ApplyProductRequestDto postData) throws MeveoApiException, BusinessException {
-		List<WalletOperationDto> result = new ArrayList<>();
-		if (StringUtils.isBlank(postData.getProduct())) {
-			missingParameters.add("product");
-		}
-		if (StringUtils.isBlank(postData.getSubscription())) {
-			missingParameters.add("subscription");
-		}
-		if (postData.getOperationDate() == null) {
-			missingParameters.add("operationDate");
-		}
 
-		handleMissingParametersAndValidate(postData);
+    public List<WalletOperationDto> applyProduct(ApplyProductRequestDto postData) throws MeveoApiException, BusinessException {
+        List<WalletOperationDto> result = new ArrayList<>();
+        if (StringUtils.isBlank(postData.getProduct())) {
+            missingParameters.add("product");
+        }
+        if (StringUtils.isBlank(postData.getSubscription())) {
+            missingParameters.add("subscription");
+        }
+        if (postData.getOperationDate() == null) {
+            missingParameters.add("operationDate");
+        }
+
+        handleMissingParametersAndValidate(postData);
 
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
         if (productTemplate == null) {
@@ -650,41 +648,41 @@ public class SubscriptionApi extends BaseApi {
                 postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), ParamBean.getInstance().getDateTimeFormat()));
         }
 
-		Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
-		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
-		}
+        Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
+        }
 
         if ((subscription.getStatus() != SubscriptionStatusEnum.ACTIVE) && (subscription.getStatus() != SubscriptionStatusEnum.CREATED)) {
-			throw new MeveoApiException("subscription is not ACTIVE or CREATED: ["+subscription.getStatus()+"]");
-		}
+            throw new MeveoApiException("subscription is not ACTIVE or CREATED: [" + subscription.getStatus() + "]");
+        }
 
-		List<WalletOperation> walletOperations = null;
+        List<WalletOperation> walletOperations = null;
 
-		try {
-			ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
-					StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), null);
+        try {
+            ProductInstance productInstance = new ProductInstance(null, subscription, productTemplate, postData.getQuantity(), postData.getOperationDate(), postData.getProduct(),
+                StringUtils.isBlank(postData.getDescription()) ? productTemplate.getDescriptionOrCode() : postData.getDescription(), null);
 
-			// populate customFields
-			try {
-				populateCustomFields(postData.getCustomFields(), productInstance, true);
-			} catch (MissingParameterException e) {
-				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-				throw e;
-			}
+            // populate customFields
+            try {
+                populateCustomFields(postData.getCustomFields(), productInstance, true);
+            } catch (MissingParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            }
 
-		    productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
+            productInstanceService.instantiateProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), false);
 
             walletOperations = productInstanceService.applyProductInstance(productInstance, postData.getCriteria1(), postData.getCriteria2(), postData.getCriteria3(), true, false);
-			for (WalletOperation walletOperation : walletOperations) {
-				result.add(new WalletOperationDto(walletOperation));
-			}
-		} catch (BusinessException e) {
-			throw new MeveoApiException(e.getMessage());
-		}
-		
-		return result;
-	}
+            for (WalletOperation walletOperation : walletOperations) {
+                result.add(new WalletOperationDto(walletOperation));
+            }
+        } catch (BusinessException e) {
+            throw new MeveoApiException(e.getMessage());
+        }
+
+        return result;
+    }
 
     public void terminateSubscription(TerminateSubscriptionRequestDto postData, String orderNumber) throws MeveoApiException {
 
@@ -698,7 +696,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("terminationDate");
         }
 
-        handleMissingParametersAndValidate(postData);        
+        handleMissingParametersAndValidate(postData);
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
         if (subscription == null) {
@@ -738,7 +736,7 @@ public class SubscriptionApi extends BaseApi {
             missingParameters.add("terminationDate");
         }
 
-        handleMissingParametersAndValidate(postData);        
+        handleMissingParametersAndValidate(postData);
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
         if (subscription == null) {
@@ -765,21 +763,21 @@ public class SubscriptionApi extends BaseApi {
             }
         }
     }
-    
+
     /**
      * @param userAccountCode user account code
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
     public SubscriptionsDto listByUserAccount(String userAccountCode) throws MeveoApiException {
-    	return this.listByUserAccount(userAccountCode, false);
-    	
+        return this.listByUserAccount(userAccountCode, false);
+
     }
 
     /**
      * @param userAccountCode user account code
      * @param mergedCF true/false (true if we want the merged CF in return)
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
     public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF) throws MeveoApiException {
@@ -808,16 +806,15 @@ public class SubscriptionApi extends BaseApi {
     /**
      * @param pageSize page size
      * @param pageNum page number
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
     public SubscriptionsListDto listAll(int pageSize, int pageNum) throws MeveoApiException {
 
-       return this.listAll(pageSize, pageNum, false);
+        return this.listAll(pageSize, pageNum, false);
 
     }
-    
-    
+
     /**
      * @param pageSize size of page
      * @param pageNum page number
@@ -826,7 +823,7 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException
      */
     public SubscriptionsListDto listAll(int pageSize, int pageNum, boolean mergedCF) throws MeveoApiException {
-    	
+
         SubscriptionsListDto result = new SubscriptionsListDto();
         Map<String, Object> filters = new HashMap<>();
         PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, "code", null);
@@ -840,20 +837,20 @@ public class SubscriptionApi extends BaseApi {
         return result;
 
     }
-    
+
     /**
      * @param subscriptionCode code of subscription to find
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionDto findSubscription(String subscriptionCode) throws MeveoApiException {
-    	return this.findSubscription(subscriptionCode, false);
+        return this.findSubscription(subscriptionCode, false);
     }
 
     /**
      * @param subscriptionCode code of subscription to find
      * @param mergedCF true/false
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO 
+     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF) throws MeveoApiException {
@@ -888,13 +885,13 @@ public class SubscriptionApi extends BaseApi {
             update(postData);
         }
     }
-    
+
     /**
      * @param subscription instance of Subscription to be mapped
      * @return instance of SubscriptionDto.
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription) {
-    	return this.subscriptionToDto(subscription, false);
+        return this.subscriptionToDto(subscription, false);
     }
 
     /**
@@ -926,17 +923,17 @@ public class SubscriptionApi extends BaseApi {
         dto.setEndAgreementDate(subscription.getEndAgreementDate());
 
         if (subscription.getAccessPoints() != null) {
-        	for (Access ac : subscription.getAccessPoints()) {
-        		CustomFieldsDto customFieldsDTO = null;
-        		if (mergedCF) {
-        			customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(ac,true);
-        		} else {
-        			customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac,true);
-        		}
+            for (Access ac : subscription.getAccessPoints()) {
+                CustomFieldsDto customFieldsDTO = null;
+                if (mergedCF) {
+                    customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(ac, true);
+                } else {
+                    customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, true);
+                }
 
-        		AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
-        		dto.getAccesses().getAccess().add(accessDto);
-        	}
+                AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
+                dto.getAccesses().getAccess().add(accessDto);
+            }
         }
 
         dto.setCustomFields(entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(subscription, true));
@@ -951,27 +948,27 @@ public class SubscriptionApi extends BaseApi {
                 ServiceInstanceDto serviceInstanceDto = null;
                 CustomFieldsDto customFieldsDTO = null;
                 if (mergedCF) {
-                	customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(serviceInstance,true);
+                    customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(serviceInstance, true);
                 } else {
-                	customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance,true);
+                    customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, true);
                 }
                 serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
-				dto.getServices().getServiceInstance().add(serviceInstanceDto);
+                dto.getServices().getServiceInstance().add(serviceInstanceDto);
             }
         }
-        
+
         if (subscription.getProductInstances() != null) {
-        	for (ProductInstance productInstance : subscription.getProductInstances()) {
-        		CustomFieldsDto customFieldsDTO = null;
-        		if (mergedCF) {
-        			customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(productInstance,true);
-        		} else {
-        			customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance,true);
-        		}
+            for (ProductInstance productInstance : subscription.getProductInstances()) {
+                CustomFieldsDto customFieldsDTO = null;
+                if (mergedCF) {
+                    customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(productInstance, true);
+                } else {
+                    customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, true);
+                }
 
-        		dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
+                dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
 
-        	}
+            }
         }
 
         return dto;
@@ -1002,7 +999,7 @@ public class SubscriptionApi extends BaseApi {
                 if (!StringUtils.isBlank(subscriptionDto.getUserAccount())) {
                     existedSubscriptionDto.setUserAccount(subscriptionDto.getUserAccount());
                 }
-                
+
                 if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
                     existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
                 }
@@ -1018,7 +1015,7 @@ public class SubscriptionApi extends BaseApi {
                     existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
                 }
 
-                if (!StringUtils.isBlank(subscriptionDto.getCustomFields())) {
+                if (subscriptionDto.getCustomFields()!=null && !subscriptionDto.getCustomFields().isEmpty()) {
                     existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
                 }
                 update(existedSubscriptionDto);
@@ -1113,248 +1110,236 @@ public class SubscriptionApi extends BaseApi {
 
     public void suspendSubscription(String subscriptionCode, Date suspensionDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		if (StringUtils.isBlank(subscriptionCode)) {
-			missingParameters.add("subscriptionCode");
-			handleMissingParameters();
-		}
-		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
-		}
-		subscriptionService.subscriptionSuspension(subscription, suspensionDate);
-	}
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+            handleMissingParameters();
+        }
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+        subscriptionService.subscriptionSuspension(subscription, suspensionDate);
+    }
 
-	/**
-	 * 
-	 * @param subscriptionCode
-	 * @param suspensionDate
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
-	 * @throws IncorrectSusbcriptionException
-	 * @throws IncorrectServiceInstanceException
-	 * @throws BusinessException
-	 */
+    /**
+     * 
+     * @param subscriptionCode
+     * @param suspensionDate
+     * @throws MissingParameterException
+     * @throws EntityDoesNotExistsException
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
+     */
     public void resumeSubscription(String subscriptionCode, Date suspensionDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-		if (StringUtils.isBlank(subscriptionCode)) {
-			missingParameters.add("subscriptionCode");
-			handleMissingParameters();
-		}
-		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
-		}
-		subscriptionService.subscriptionReactivation(subscription, suspensionDate);
-	}
-	
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+            handleMissingParameters();
+        }
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+        subscriptionService.subscriptionReactivation(subscription, suspensionDate);
+    }
+
     /**
      * 
      * @param suspendServicesRequestDto
      * @throws IncorrectSusbcriptionException
      * @throws IncorrectServiceInstanceException
      * @throws BusinessException
-     * @throws MeveoApiException 
+     * @throws MeveoApiException
      */
     public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
-		suspendOrResumeServices(provisionningServicesRequestDto, true);     
-	}	
-	
+        suspendOrResumeServices(provisionningServicesRequestDto, true);
+    }
+
     public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
-		suspendOrResumeServices(provisionningServicesRequestDto, false);
-	}	
-	
+        suspendOrResumeServices(provisionningServicesRequestDto, false);
+    }
+
     private void suspendOrResumeServices(OperationServicesRequestDto postData, boolean isToSuspend)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
-		if (postData == null  ) {
-			missingParameters.add("provisionningServicesRequestDto");
-		}
-		
-		if (StringUtils.isBlank(postData.getSubscriptionCode())) {
-			missingParameters.add("subscriptionCode");			
-		}	
-		for(ServiceToUpdateDto serviceToSuspendDto: postData.getServicesToUpdate()){
-			if (StringUtils.isBlank(serviceToSuspendDto.getCode())) {
-				missingParameters.add("serviceToSuspend.code");			
-			}
-		}
-		handleMissingParametersAndValidate(postData);
-		Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
-		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
-		}				
-		for(ServiceToUpdateDto serviceToSuspendDto: postData.getServicesToUpdate()){           
-        	ServiceInstance serviceInstanceToSuspend = serviceInstanceService.findByCodeAndSubscription(serviceToSuspendDto.getCode(), subscription); 
-        	if(serviceInstanceToSuspend == null){
-        		throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToSuspendDto.getCode());
-        	}
-        	if(isToSuspend){
-        		serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
-        	}else{
-        		serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
-        	}
-        }	        
-	}
-	
-	public void updateServiceInstance(UpdateServicesRequestDto postData) throws MeveoApiException, BusinessException {
-		if (postData.getServicesToUpdate() == null) {
-			missingParameters.add("servicesToUpdate");
-		}
-		if (StringUtils.isBlank(postData.getSubscriptionCode())) {
-			missingParameters.add("subscriptionCode");
-		}
+        if (postData == null) {
+            missingParameters.add("provisionningServicesRequestDto");
+        }
 
-		handleMissingParametersAndValidate(postData);
+        if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+            missingParameters.add("subscriptionCode");
+        }
+        for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
+            if (StringUtils.isBlank(serviceToSuspendDto.getCode())) {
+                missingParameters.add("serviceToSuspend.code");
+            }
+        }
+        handleMissingParametersAndValidate(postData);
+        Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+        }
+        for (ServiceToUpdateDto serviceToSuspendDto : postData.getServicesToUpdate()) {
+            ServiceInstance serviceInstanceToSuspend = serviceInstanceService.findByCodeAndSubscription(serviceToSuspendDto.getCode(), subscription);
+            if (serviceInstanceToSuspend == null) {
+                throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToSuspendDto.getCode());
+            }
+            if (isToSuspend) {
+                serviceInstanceService.serviceSuspension(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+            } else {
+                serviceInstanceService.serviceReactivation(serviceInstanceToSuspend, serviceToSuspendDto.getActionDate());
+            }
+        }
+    }
+
+    public void updateServiceInstance(UpdateServicesRequestDto postData) throws MeveoApiException, BusinessException {
+        if (postData.getServicesToUpdate() == null) {
+            missingParameters.add("servicesToUpdate");
+        }
+        if (StringUtils.isBlank(postData.getSubscriptionCode())) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        handleMissingParametersAndValidate(postData);
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscriptionCode());
         if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
-		}
+            throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscriptionCode());
+        }
 
-		for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
-			ServiceInstance serviceToUpdate = serviceInstanceService.findByCodeAndSubscription(serviceToUpdateDto.getCode(), subscription);
-			if (serviceToUpdateDto.getEndAgreementDate() != null) {
-				serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
-			}
+        for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
+            ServiceInstance serviceToUpdate = serviceInstanceService.findFirstByCodeSubscriptionAndStatus(serviceToUpdateDto.getCode(), subscription, InstanceStatusEnum.ACTIVE);
+            if (serviceToUpdate == null) {
+                throw new EntityDoesNotExistsException(ServiceInstance.class, serviceToUpdateDto.getCode());
+            }
 
-			// populate customFields
-			try {
-				populateCustomFields(serviceToUpdateDto.getCustomFields(), serviceToUpdate, false);
-			} catch (MissingParameterException e) {
-				log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-				throw e;
-			} catch (Exception e) {
-				log.error("Failed to associate custom field instance to an entity", e);
-				throw e;
-			}
+            if (serviceToUpdateDto.getEndAgreementDate() != null) {
+                serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
+            }
+
+            // populate customFields
+            try {
+                populateCustomFields(serviceToUpdateDto.getCustomFields(), serviceToUpdate, false);
+            } catch (MissingParameterException e) {
+                log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
+                throw e;
+            }
 
             serviceInstanceService.update(serviceToUpdate);
-		}
-	}
-	
-	public ServiceInstanceDto findServiceInstance(String subscriptionCode, String serviceInstanceCode)
-			throws MeveoApiException {
-		ServiceInstanceDto result = new ServiceInstanceDto();
+        }
+    }
 
-		if (StringUtils.isBlank(subscriptionCode)) {
-			missingParameters.add("subscriptionCode");
-		}
+    public ServiceInstanceDto findServiceInstance(String subscriptionCode, String serviceInstanceCode) throws MeveoApiException {
+        ServiceInstanceDto result = new ServiceInstanceDto();
 
-		if (StringUtils.isBlank(serviceInstanceCode)) {
-			missingParameters.add("serviceInstanceCode");
-		}
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
 
-		handleMissingParameters();
+        if (StringUtils.isBlank(serviceInstanceCode)) {
+            missingParameters.add("serviceInstanceCode");
+        }
 
-		ServiceInstance serviceInstance = serviceInstanceService.findBySubscriptionCodeAndCode(subscriptionCode,
-				serviceInstanceCode);
-		if (serviceInstance != null) {
-			result = new ServiceInstanceDto(serviceInstance,
-					entityToDtoConverter.getCustomFieldsWithInheritedDTO(serviceInstance, true));
-		}
+        handleMissingParameters();
 
-		return result;
-	}
+        ServiceInstance serviceInstance = serviceInstanceService.findBySubscriptionCodeAndCode(subscriptionCode, serviceInstanceCode);
+        if (serviceInstance != null) {
+            result = new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsWithInheritedDTO(serviceInstance, true));
+        }
 
-	public DueDateDelayDto getDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode,
-			String orderCode) throws MeveoApiException, BusinessException {
-		if (StringUtils.isBlank(subscriptionCode)) {
-			missingParameters.add("subscriptionCode");
-		}
+        return result;
+    }
 
-		Subscription subscription = subscriptionService.findByCode(subscriptionCode);
-		if (subscription == null) {
-			throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
-		}
-		
-		handleMissingParameters();
+    public DueDateDelayDto getDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode, String orderCode) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
 
-		DueDateDelayDto result = new DueDateDelayDto();
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
 
-		Invoice invoice = null;
-		if (!StringUtils.isBlank(invoiceNumber) && !StringUtils.isBlank(invoiceTypeCode)) {
-			InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
-			if (invoiceType != null) {
-				invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
-			}
-		}
+        handleMissingParameters();
 
-		Order order = null;
-		if (!StringUtils.isBlank(orderCode)) {
-			order = orderService.findByCode(orderCode);
-		}
+        DueDateDelayDto result = new DueDateDelayDto();
 
-		BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
-		BillingCycle billingCycle = billingAccount.getBillingCycle();
+        Invoice invoice = null;
+        if (!StringUtils.isBlank(invoiceNumber) && !StringUtils.isBlank(invoiceTypeCode)) {
+            InvoiceType invoiceType = invoiceTypeService.findByCode(invoiceTypeCode);
+            if (invoiceType != null) {
+                invoice = invoiceService.findByInvoiceNumberAndType(invoiceNumber, invoiceType);
+            }
+        }
 
-		Integer delay = billingCycle.getDueDateDelay();
-		String delayEL = billingCycle.getDueDateDelayEL();
-		DueDateDelayEnum delayOrigin = DueDateDelayEnum.BC;
-		if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
-			delay = invoiceService.evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
-			delayEL = order.getDueDateDelayEL();
-			delayOrigin = DueDateDelayEnum.ORDER;
-		} else {
-			if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-				delay = invoiceService.evaluateIntegerExpression(
-						billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
-				delayEL = billingAccount.getCustomerAccount().getDueDateDelayEL();
-				delayOrigin = DueDateDelayEnum.CA;
-			} else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-				delay = invoiceService.evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount,
-						invoice, null);
-				delayEL = billingCycle.getDueDateDelayEL();
-				delayOrigin = DueDateDelayEnum.ORDER;
-			}
-		}
+        Order order = null;
+        if (!StringUtils.isBlank(orderCode)) {
+            order = orderService.findByCode(orderCode);
+        }
 
-		result.setComputedDelay(delay);
-		result.setDelayEL(delayEL);
-		result.setDelayOrigin(delayOrigin);
-		
-		return result;
-	}
-	
-	/**
-	 * @param type of one shot charge (SUBSCRIPTION, TERMINATION, OTHER)
-	 * @return list of one shot charge template type other.s
-	 * 
-	 */
-	private List<OneShotChargeTemplateDto> getOneShotCharges(OneShotChargeTemplateTypeEnum type) {
-		List<OneShotChargeTemplateDto> results = new ArrayList<OneShotChargeTemplateDto>();
-		if (oneShotChargeTemplateService == null) {
-			return results;
-		}
-		
-		List<OneShotChargeTemplate> list = oneShotChargeTemplateService.list();
-		for (OneShotChargeTemplate chargeTemplate : list) {
-			if (chargeTemplate.getOneShotChargeTemplateType() == type) {
-				OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
-						entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
-				List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-				for (CatMessages msg : catMessagesService
-						.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode())) {
-					languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-				}
+        BillingAccount billingAccount = subscription.getUserAccount().getBillingAccount();
+        BillingCycle billingCycle = billingAccount.getBillingCycle();
 
-				oneshotChartTemplateDto.setLanguageDescriptions(languageDescriptions);
+        Integer delay = billingCycle.getDueDateDelay();
+        String delayEL = billingCycle.getDueDateDelayEL();
+        DueDateDelayEnum delayOrigin = DueDateDelayEnum.BC;
+        if (order != null && !StringUtils.isBlank(order.getDueDateDelayEL())) {
+            delay = invoiceService.evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
+            delayEL = order.getDueDateDelayEL();
+            delayOrigin = DueDateDelayEnum.ORDER;
+        } else {
+            if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
+                delay = invoiceService.evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
+                delayEL = billingAccount.getCustomerAccount().getDueDateDelayEL();
+                delayOrigin = DueDateDelayEnum.CA;
+            } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
+                delay = invoiceService.evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
+                delayEL = billingCycle.getDueDateDelayEL();
+                delayOrigin = DueDateDelayEnum.ORDER;
+            }
+        }
 
-				results.add(oneshotChartTemplateDto);
-			}
-		}
+        result.setComputedDelay(delay);
+        result.setDelayEL(delayEL);
+        result.setDelayOrigin(delayOrigin);
 
-		return results;
-	}
-	
-	
-	/**
-	 * @return list of one shot charge others.
-	 */
-	public  List<OneShotChargeTemplateDto> getOneShotChargeOthers() {
-		return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
-	}
-	
+        return result;
+    }
+
+    /**
+     * @param type of one shot charge (SUBSCRIPTION, TERMINATION, OTHER)
+     * @return list of one shot charge template type other.s
+     * 
+     */
+    private List<OneShotChargeTemplateDto> getOneShotCharges(OneShotChargeTemplateTypeEnum type) {
+        List<OneShotChargeTemplateDto> results = new ArrayList<OneShotChargeTemplateDto>();
+        if (oneShotChargeTemplateService == null) {
+            return results;
+        }
+
+        List<OneShotChargeTemplate> list = oneShotChargeTemplateService.list();
+        for (OneShotChargeTemplate chargeTemplate : list) {
+            if (chargeTemplate.getOneShotChargeTemplateType() == type) {
+                OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
+                    entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+                results.add(oneshotChartTemplateDto);
+            }
+        }
+
+        return results;
+    }
+
+    /**
+     * @return list of one shot charge others.
+     */
+    public List<OneShotChargeTemplateDto> getOneShotChargeOthers() {
+        return this.getOneShotCharges(OneShotChargeTemplateTypeEnum.OTHER);
+    }
 
     /**
      * Convert SubscriptionRenewalDto to an entity and validate the data converted
@@ -1368,16 +1353,15 @@ public class SubscriptionApi extends BaseApi {
      */
     public SubscriptionRenewal subscriptionRenewalFromDto(SubscriptionRenewal renewalInfo, SubscriptionRenewalDto renewalInfoDto, boolean subscriptionRenewed)
             throws InvalidParameterException, MissingParameterException {
-        
+
         if (renewalInfo == null) {
             renewalInfo = new SubscriptionRenewal();
         }
 
-        
         if (renewalInfoDto == null) {
             return renewalInfo;
         }
-        
+
         if (!subscriptionRenewed) {
             renewalInfo.setInitialyActiveFor(renewalInfoDto.getInitialyActiveFor());
             renewalInfo.setInitialyActiveForUnit(renewalInfoDto.getInitialyActiveForUnit());

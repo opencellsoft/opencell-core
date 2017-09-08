@@ -167,7 +167,7 @@
 			outcome="#{cc.attrs.backingBean.back()}" includeViewParams="true">
 
 			<c:if
-				test="#{conversation.id != null and not cc.attrs.killConversationOnBack}">
+				test="#{javax.enterprise.context.conversation.id != null and not cc.attrs.killConversationOnBack}">
 				<f:param name="cid"
 					value="#{javax.enterprise.context.conversation.id}" />
 			</c:if>

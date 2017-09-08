@@ -49,7 +49,7 @@ public interface CustomerRs extends IBaseRs {
     ActionStatus update(CustomerDto postData);
 
     /**
-     * Search for a customer with a given code 
+     * Search for a customer with a given code
      * 
      * @param customerCode The customer's code
      * @return The customer's data
@@ -59,7 +59,7 @@ public interface CustomerRs extends IBaseRs {
     GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode);
 
     /**
-     * Remove customer with a given code 
+     * Remove customer with a given code
      * 
      * @param customerCode The customer's code
      * @return Request processing status
@@ -72,11 +72,16 @@ public interface CustomerRs extends IBaseRs {
      * Filters are: category, seller, brand and provider
      * 
      * @param postData The customer's data
+     * @param firstRow Pagination - from record number. Deprecated in v.4.7, use "from" instead
+     * @param numberOfRows Pagination - number of records to retrieve. Deprecated in v.4.7, use "limit" instead
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
      * @return
      */
     @POST
     @Path("/list")
-    CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") int firstRow, @QueryParam("numberOfRows") int numberOfRows);
+    CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow, @QueryParam("numberOfRows") @Deprecated Integer numberOfRows,
+            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
 
     /**
      * Create a new customer brand
@@ -139,7 +144,7 @@ public interface CustomerRs extends IBaseRs {
     ActionStatus createOrUpdateCategory(CustomerCategoryDto postData);
 
     /**
-     * Remove existing customer brand with a given brand code 
+     * Remove existing customer brand with a given brand code
      * 
      * @param brandCode The brand's code
      * @return Request processing status
@@ -149,7 +154,7 @@ public interface CustomerRs extends IBaseRs {
     ActionStatus removeBrand(@PathParam("brandCode") String brandCode);
 
     /**
-     * Remove an existing customer category with a given category code 
+     * Remove an existing customer category with a given category code
      * 
      * @param categoryCode The category's code
      * @return Request processing status

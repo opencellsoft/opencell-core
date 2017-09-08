@@ -29,10 +29,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.meveo.model.MultilanguageEntity;
-
 @Entity
-@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "cat_product_charge_templ")
 @NamedQueries({
 		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),

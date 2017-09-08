@@ -18,6 +18,7 @@
  */
 package org.meveo.model.billing;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -32,6 +33,7 @@ import org.meveo.model.ExportIdentifier;
  * Language entity.
  */
 @Entity
+@Cacheable
 @ExportIdentifier("languageCode")
 @Table(name = "adm_language")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_language_seq"), })

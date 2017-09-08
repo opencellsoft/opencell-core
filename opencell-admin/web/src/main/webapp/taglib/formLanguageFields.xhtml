@@ -2,15 +2,48 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" >
+    xmlns:p="http://primefaces.org/ui" xmlns:hftl="http://hftl.org" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
 
 <ui:composition>
+
+    <!--  not not really work. Looks like it has to be passed from c: expression -->
+    <c:if test="${entity == null}">
+        <!--         <c:set var="fieldEntityIsNull" value="true"/> -->
+        <c:set var="entity" value="${formLevelEntity!=null ? formLevelEntity : backingBean.entity}" />
+        <c:set var="defaultEntityFromBean" value="${formLevelEntity==null}" />
+    </c:if>
+    <!-- <c:set var="formEntityIsNull" value="#{formLevelEntity==null}"/> -->
+
+    <hftl:getFieldInformation backingBean="${backingBean}" entity="${entity}" entityClass="${entityClass}" defaultEntityFromBean="${defaultEntityFromBean}" fieldName="${field}"
+        childFieldName="${childField}" var="fieldInfo" />
+
+    <c:if test="${empty(size)}">
+        <c:set var="size" value="${fieldInfo.maxLength != null and fieldInfo.maxLength>100?80:35}" />
+    </c:if>
+    <c:if test="${empty(maxlength)}">
+        <c:set var="maxlength" value="${fieldInfo.maxLength != null?fieldInfo.maxLength:(size&lt;=40?40:size)}" />
+    </c:if>
+    <c:if test="${empty(required)}">
+        <c:set var="required" value="${fieldInfo.required}" />
+    </c:if>
+    <c:if test="${empty(textArea)}">
+        <c:set var="textArea" value="${maxlength>255?true:false}" />
+    </c:if>
+    <c:if test="${empty(componentWidth)}">
+        <c:set var="componentWidth" value="50" />
+    </c:if>
+    <c:if test="${empty(cols)}">
+        <c:set var="cols" value="${componentWidth&lt;=50?80:componentWidth&lt;=75?140:190}" />
+    </c:if>
+    <c:if test="${empty(rows)}">
+        <c:set var="rows" value="1" />
+    </c:if>
 
     <c:if test="${empty(displayOneLine)}">
         <c:set var="displayOneLine" value="false" />
     </c:if>
     <c:if test="${empty(multiLang)}">
-        <c:set var="multiLang" value="false" />
+        <c:set var="multiLang" value="true" />
     </c:if>
     <c:if test="${empty(newLine)}">
         <c:set var="newLine" value="true" />
@@ -21,27 +54,41 @@
     <c:if test="${empty(edit)}">
         <c:set var="edit" value="#{formLevelEdit}" />
     </c:if>
+    <c:if test="${empty(label)}">
+        <c:set var="label" value="#{messages['businessEntity.description']}" />
+    </c:if>
 
-<!--     <hftl:formField field="description" label="#{messages['businessEntity.description']}" componentWidth="50" newLine="#{newLine}" displayOneLine="#{displayOneLine}"/> -->
+    <hftl:decorateFormField fieldId="#{field}" label="#{label}" componentWidth="#{componentWidth}" displayOneLine="#{displayOneLine}" required="#{required}">
 
-    <hftl:decorateFormField fieldId="descriptionI" label="#{messages['businessEntity.languageDescriptions']}" componentWidth="50" 
-        displayOneLine="#{displayOneLine}" rendered="#{multiLang}">
+        <div style="float: left; width: 36px;">&nbsp;</div>
+        <div style="clear: right;">
+            <c:if test="#{textArea and edit}">
+                <p:inputTextarea id="#{field}" value="#{entity[field]}" required="#{required}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true" />
+            </c:if>
+            <c:if test="#{!textArea and edit}">
+                <p:inputText id="#{field}" value="#{entity[field]}" size="#{size}" maxlength="#{maxlength}" rendered="#{edit}" required="#{required}" />
+            </c:if>
+            <c:if test="#{!edit}">
+                <h:outputText id="#{field}" value="#{entity[field]}" />
+            </c:if>
+        </div>
 
-        <p:inputText id="description" value="#{entity.description}" size="80" maxlength="100" style="margin-left:36px;"
-                    rendered="#{edit}" />
-        <h:outputText value="#{entity.description}" style="margin-left:36px;" rendered="#{! edit}" />
-
-        <h:dataTable id="descriptionI" value="#{backingBean.getProviderLanguages()}" var="languageCom">
-            <h:column>
-                <h:graphicImage value="/img/img#{languageCom.language.languageCode}.png" style="height:17px; width:33px;" />
-            </h:column>
-            <h:column>
-                <p:inputText rendered="#{edit and !empty(languageCom.language)}"
-                    value="#{backingBean.languageMessagesMap[languageCom.language.languageCode]}" size="80" maxlength="100" />
-                <h:outputText rendered="#{!edit and !empty(languageCom.language)}"
-                    value="#{backingBean.languageMessagesMap[languageCom.language.languageCode]}" style="font-weight:bold;" />
-            </h:column>
-        </h:dataTable>
+        <c:if test="#{multiLang}">
+            <ui:repeat var="languageCode" value="#{backingBean.providerLanguages}">
+                <div style="float: left">
+                    <h:graphicImage value="/img/img#{languageCode}.png" style="height:17px; width:33px; margin-right:3px" />
+                </div>
+                <div style="clear: right;">
+                    <c:if test="#{textArea and edit}">
+                        <p:inputTextarea value="#{entity[field.concat('I18nNullSafe')][languageCode]}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true" />
+                    </c:if>
+                    <c:if test="#{!textArea and edit}">
+                        <p:inputText value="#{entity[field.concat('I18nNullSafe')][languageCode]}" size="#{size}" maxlength="#{maxlength}" />
+                    </c:if>
+                    <h:outputText rendered="#{!edit}" value="#{entity[field.concat('I18n')][languageCode]}" style="font-weight:bold;" />
+                </div>
+            </ui:repeat>
+        </c:if>
     </hftl:decorateFormField>
 </ui:composition>
 </html>

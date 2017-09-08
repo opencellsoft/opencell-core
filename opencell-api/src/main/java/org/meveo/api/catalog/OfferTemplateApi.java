@@ -13,6 +13,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseCrudVersionedApi;
+import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -64,6 +65,9 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
     @Inject
     private ProductTemplateService productTemplateService;
 
+    @Inject
+    private SubscriptionApi subscriptionApi;
+    
     private ParamBean paramBean = ParamBean.getInstance();
 
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -185,6 +189,14 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         offerTemplate.setLongDescription(postData.getLongDescription());
         offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        if (postData.getLanguageDescriptions() != null) {
+            offerTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), offerTemplate.getDescriptionI18n()));
+        }
+        if (postData.getLongDescriptionsTranslated() != null) {
+            offerTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), offerTemplate.getLongDescriptionI18n()));
+        }
+
+        offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
 
         try {
             saveImage(offerTemplate, postData.getImagePath(), postData.getImageBase64());
@@ -415,7 +427,8 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
                 offerProductTemplateDto = new OfferProductTemplateDto();
                 offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
                 if (productTemplate != null) {
-                    offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
+                    offerProductTemplateDto
+                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
                 }
                 offerProductTemplates.add(offerProductTemplateDto);
             }

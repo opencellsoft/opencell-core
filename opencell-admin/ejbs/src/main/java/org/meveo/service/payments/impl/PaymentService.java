@@ -31,7 +31,6 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.Country;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -41,7 +40,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -58,9 +56,6 @@ public class PaymentService extends PersistenceService<Payment> {
 
     @Inject
     private MatchingCodeService matchingCodeService;
-
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
@@ -114,9 +109,13 @@ public class PaymentService extends PersistenceService<Payment> {
         }
 
         CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
-
-        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
-            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        try{
+	         gatewayPaymentInterface = gatewayPaymentFactory
+	            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        }catch (Exception e) {
+			throw new BusinessException(e.getMessage());
+		}
 
         PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
 
@@ -172,14 +171,23 @@ public class PaymentService extends PersistenceService<Payment> {
             CreditCardTypeEnum cardType, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-        GatewayPaymentInterface gatewayPaymentInterface = gatewayPaymentFactory
-            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "INGENICO_GC")));
-
-        String coutryCode = null;
-        Country country = countryService.findByName(customerAccount.getAddress() != null ? customerAccount.getAddress().getCountry() : null);
-        if (country != null) {
-            coutryCode = country.getCountryCode();
-        }
+    	String coutryCode = null;
+    	//TODO : waiting #2830 
+    	if(!customerAccount.isTransient()){	    	
+	    	if(customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0){
+	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
+	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
+	    		}
+	    	}
+    	}
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        try{        
+	         gatewayPaymentInterface = gatewayPaymentFactory
+	            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        }catch (Exception e) {
+        	log.warn("Cant find payment gateway");
+		}
+        
         PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, coutryCode,
             null);
 

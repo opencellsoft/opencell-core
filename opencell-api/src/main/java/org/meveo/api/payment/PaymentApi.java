@@ -54,7 +54,15 @@ public class PaymentApi extends BaseApi {
     @Inject
     private OCCTemplateService oCCTemplateService;
 
-    public void createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
+    /**
+     * @param paymentDto payment object which encapsulates the input data sent by client
+     * @return the id of payment if created successful otherwise null
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     * @throws BusinessException
+     * @throws MeveoApiException
+     */
+    public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
                 + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
 
@@ -91,7 +99,7 @@ public class PaymentApi extends BaseApi {
         payment.setMatchingAmount(BigDecimal.ZERO);
         payment.setAccountCode(occTemplate.getAccountCode());
         payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(occTemplate.getDescription());
+        payment.setOccDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());
         payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
         payment.setCustomerAccount(customerAccount);
@@ -136,6 +144,13 @@ public class PaymentApi extends BaseApi {
             log.info("no matching created ");
         }
         log.debug("payment created for amount:" + payment.getAmount());
+        
+        if (payment != null) {
+        	return payment.getId();
+        } else {
+        	return null;
+        }
+        
     }
 
     public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {

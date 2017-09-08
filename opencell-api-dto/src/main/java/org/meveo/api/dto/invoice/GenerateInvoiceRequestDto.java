@@ -21,6 +21,9 @@ public class GenerateInvoiceRequestDto {
 	private Date invoicingDate;
 	
 	@XmlElement()
+	private Date firstTransactionDate;
+	
+	@XmlElement()
 	private Date lastTransactionDate;
 	
 	@XmlElement()
@@ -159,6 +162,18 @@ public class GenerateInvoiceRequestDto {
 	@Override
 	public String toString() {
 		return "GenerateInvoiceRequestDto [billingAccountCode=" + billingAccountCode + ", invoicingDate=" + invoicingDate + ", lastTransactionDate=" + lastTransactionDate + ", filter=" + filter + ", orderNumber=" + orderNumber + ", generateXML=" + generateXML + ", generatePDF=" + generatePDF + ", generateAO=" + generateAO + "]";
+	}
+
+
+
+	public Date getFirstTransactionDate() {
+		return firstTransactionDate;
+	}
+
+
+
+	public void setFirstTransactionDate(Date firstTransactionDate) {
+		this.firstTransactionDate = firstTransactionDate;
 	}
 
 

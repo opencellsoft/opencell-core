@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -35,9 +35,9 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
-import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 @Entity
@@ -65,9 +65,8 @@ public class OfferTemplate extends ProductOffering {
 	@OrderBy("id")
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
 
-	@Size(max = 2000)
-	@Column(name = "long_description", columnDefinition = "TEXT")
-	private String longDescription;
+    @Embedded
+    private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
 	@Transient
 	public String prefix;
@@ -115,8 +114,7 @@ public class OfferTemplate extends ProductOffering {
 	/**
 	 * Check if offer contains a given service template
 	 *
-	 * @param serviceTemplate
-	 *            Service template to match
+     * @param serviceTemplate Service template to match
 	 * @return True if offer contains a given service template
 	 */
 	public boolean containsServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -132,8 +130,7 @@ public class OfferTemplate extends ProductOffering {
     /**
      * Check if offer contains a given product template
      *
-     * @param productTemplate
-     *            Product template to match
+     * @param productTemplate Product template to match
      * @return True if offer contains a given product template
      */
     public boolean containsProductTemplate(ProductTemplate productTemplate) {
@@ -178,12 +175,12 @@ public class OfferTemplate extends ProductOffering {
 		this.prefix = prefix;
 	}
 
-	public String getLongDescription() {
-		return longDescription;
+    public SubscriptionRenewal getSubscriptionRenewal() {
+        return subscriptionRenewal;
 	}
 
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
+    public void setSubscriptionRenewal(SubscriptionRenewal subscriptionRenewal) {
+        this.subscriptionRenewal = subscriptionRenewal;
 	}
 
     @SuppressWarnings("rawtypes")

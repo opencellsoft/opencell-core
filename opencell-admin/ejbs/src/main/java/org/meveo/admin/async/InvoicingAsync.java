@@ -40,6 +40,7 @@ public class InvoicingAsync {
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun) {
+    	long startDate = System.currentTimeMillis();
         int count = 0;
         for (Long billingAccountId : billingAccountIds) {
             if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
@@ -56,7 +57,7 @@ public class InvoicingAsync {
 
         for (Long billingAccountId : billingAccountIds) {
             try {
-                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null);
+                invoiceService.createAgregatesAndInvoice(billingAccountId, billingRun, null, null, null, null, null);
             } catch (Exception e) {
                 log.error("Error for BA=" + billingAccountId + " : " + e);
             }

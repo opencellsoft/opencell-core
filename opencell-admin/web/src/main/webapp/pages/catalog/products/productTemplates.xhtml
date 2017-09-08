@@ -177,14 +177,14 @@
 											</p>
 											<p:separator></p:separator>
 											<p:panelGrid columns="1">
-                                                <p:panelGrid columns="1" rendered="#{prod.validityRaw !=null}">
+                                                <p:panelGrid columns="1" rendered="#{prod.validity !=null}">
 													<h:outputText value="#{messages['commons.valid']}: " />
 													<h:panelGroup>
-														<h:outputText value="#{prod.validityRaw.from}">
+														<h:outputText value="#{prod.validity.from}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 														<h:outputText value="-" style="padding:5px" />
-														<h:outputText value="#{prod.validityRaw.to}">
+														<h:outputText value="#{prod.validity.to}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 													</h:panelGroup>
@@ -312,10 +312,10 @@
 								valueLabelField="descriptionOrCode">
 							</hftl:column>
 							<hftl:column label="#{messages['commons.validFrom']}"
-								field="validityRaw.from" isDate="true">
+								field="validity.from" isDate="true">
 							</hftl:column>
 							<hftl:column label="#{messages['commons.validTo']}"
-								field="validityRaw.to" isDate="true">
+								field="validity.to" isDate="true">
 							</hftl:column>
 							<p:column>
 								<f:facet name="header">#{messages['commons.status']}</f:facet>

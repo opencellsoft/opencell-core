@@ -48,6 +48,9 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -111,7 +114,15 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         if (entity.getId() == null && getCustomerId() != null) {
             Customer customer = customerService.findById(getCustomerId());
             populateAccounts(customer);
-
+        }
+        if (entity.getAddress() == null) {
+            entity.setAddress(new Address());
+        }
+        if (entity.getName() == null) {
+            entity.setName(new Name());
+        }
+        if (entity.getContactInformation() == null) {
+            entity.setContactInformation(new ContactInformation());
         }
 
         return entity;
@@ -352,10 +363,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) selectedPaymentMethod).getTokenId() == null && ((CardPaymentMethod) selectedPaymentMethod).getCardNumber() != null) {
-                    String cardNumber = ((CardPaymentMethod) selectedPaymentMethod).getCardNumber();
-                    cardNumber = cardNumber.trim();
-                    cardNumber = cardNumber.substring(cardNumber.length() - 4);
-                    ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(cardNumber);
+                    ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
                 }
             }
 

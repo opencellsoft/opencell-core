@@ -78,17 +78,17 @@ public class CustomerAccount extends AccountEntity {
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.REMOVE)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<BillingAccount> billingAccounts = new ArrayList<BillingAccount>();
+    private List<BillingAccount> billingAccounts = new ArrayList<>();
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<AccountOperation> accountOperations = new ArrayList<AccountOperation>();
+    private List<AccountOperation> accountOperations = new ArrayList<>();
 
     @OneToMany(mappedBy = "customerAccount", cascade = CascadeType.ALL)
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
-    private List<ActionDunning> actionDunnings = new ArrayList<ActionDunning>();
+    private List<ActionDunning> actionDunnings = new ArrayList<>();
 
     @Column(name = "date_status")
     @Temporal(TemporalType.TIMESTAMP)
@@ -99,7 +99,7 @@ public class CustomerAccount extends AccountEntity {
     private Date dateDunningLevel;
 
     @Embedded
-    private ContactInformation contactInformation = new ContactInformation();
+    private ContactInformation contactInformation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
@@ -126,7 +126,7 @@ public class CustomerAccount extends AccountEntity {
     private TradingLanguage tradingLanguage;
 
     @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
+    private List<PaymentMethod> paymentMethods;
 
     public Customer getCustomer() {
         return customer;
@@ -180,9 +180,6 @@ public class CustomerAccount extends AccountEntity {
     }
 
     public ContactInformation getContactInformation() {
-        if (contactInformation == null) {
-            contactInformation = new ContactInformation();
-        }
         return contactInformation;
     }
 
@@ -269,6 +266,13 @@ public class CustomerAccount extends AccountEntity {
         this.paymentMethods = paymentMethods;
     }
 
+    public void addPaymentMethod(PaymentMethod paymentMethod) {
+        if (paymentMethods == null) {
+            paymentMethods = new ArrayList<>();
+        }
+        paymentMethods.add(paymentMethod);
+    }
+
     /**
      * Get a payment method marked as preferred
      * 
@@ -323,54 +327,54 @@ public class CustomerAccount extends AccountEntity {
 
         return cardPaymentMethods;
     }
-    
+
     public List<DDPaymentMethod> getDDPaymentMethods() {
         List<DDPaymentMethod> ddPaymentMethods = new ArrayList<>();
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (paymentMethod instanceof DDPaymentMethod) {
-                        ddPaymentMethods.add((DDPaymentMethod) paymentMethod);                    
+                    ddPaymentMethods.add((DDPaymentMethod) paymentMethod);
                 }
             }
         }
         return ddPaymentMethods;
     }
-    
-	public List<TipPaymentMethod> getTipPaymentMethods() {
+
+    public List<TipPaymentMethod> getTipPaymentMethods() {
         List<TipPaymentMethod> tipPaymentMethods = new ArrayList<>();
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (paymentMethod instanceof TipPaymentMethod) {
-                        tipPaymentMethods.add((TipPaymentMethod) paymentMethod);                    
+                    tipPaymentMethods.add((TipPaymentMethod) paymentMethod);
                 }
             }
         }
         return tipPaymentMethods;
-	}
-	
-	public List<WirePaymentMethod> getWirePaymentMethods() {
+    }
+
+    public List<WirePaymentMethod> getWirePaymentMethods() {
         List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
         if (paymentMethods != null) {
             for (PaymentMethod paymentMethod : paymentMethods) {
                 if (paymentMethod instanceof WirePaymentMethod) {
-                	wirePaymentMethods.add((WirePaymentMethod) paymentMethod);                    
+                    wirePaymentMethods.add((WirePaymentMethod) paymentMethod);
                 }
             }
         }
         return wirePaymentMethods;
-	}
-	
-	public List<CheckPaymentMethod> getCheckPaymentMethods() {
-		 List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
-	        if (paymentMethods != null) {
-	            for (PaymentMethod paymentMethod : paymentMethods) {
-	                if (paymentMethod instanceof CheckPaymentMethod) {
-	                	checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);                    
-	                }
-	            }
-	        }
-	        return checkPaymentMethods;
-		}
+    }
+
+    public List<CheckPaymentMethod> getCheckPaymentMethods() {
+        List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
+        if (paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (paymentMethod instanceof CheckPaymentMethod) {
+                    checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);
+                }
+            }
+        }
+        return checkPaymentMethods;
+    }
 
     /**
      * Mark currently valid card payment as preferred
@@ -409,30 +413,49 @@ public class CustomerAccount extends AccountEntity {
     }
 
     /**
-     * Ensure that one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card payment method
-     * if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
+     * Ensure that one and only one payment method is marked as preferred. If currently preferred payment method is of type card, but expired, advance to a currently valid card
+     * payment method if possible. If not possible - leave as it is. If no preferred payment method was found - mark the first payment method as preferred.
      * 
      * @return A preferred payment method
      */
-    public PaymentMethod ensureOnePreferredPaymentMethod() {
+    public void ensureOnePreferredPaymentMethod() {
         if (paymentMethods == null) {
-            return null;
+            return;
         }
 
+        PaymentMethod paymentMethodMatched = null;
+
         for (PaymentMethod paymentMethod : paymentMethods) {
+
+            // Ensure that only one payment method is preferred (the first one found, or in case of CC - the first valid if currently preffered CC is expired)
             if (paymentMethod.isPreferred()) {
-                // If currently preferred payment method has expired, select a new car
+                // If currently preferred payment method has expired, select a new valid card payment method if available. If not available - continue as is
                 if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
-                    return markCurrentlyValidCardPaymentAsPreferred();
+                    paymentMethodMatched = markCurrentlyValidCardPaymentAsPreferred();
+                    if (paymentMethodMatched == null) {
+                        paymentMethodMatched = paymentMethod;
+                    }
+                    break;
                 }
-                return paymentMethod;
+                paymentMethodMatched = paymentMethod;
+                break;
             }
+        }
+
+        if (paymentMethodMatched != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
+                if (!paymentMethod.equals(paymentMethodMatched)) {
+                    paymentMethod.setPreferred(false);
+                }
+            }
+
+            return;
         }
 
         // As no preferred payment method was found, mark the first available payment method as preferred
         paymentMethods.get(0).setPreferred(true);
 
-        return paymentMethods.get(0);
+        return;// paymentMethods.get(0);
     }
 
 }

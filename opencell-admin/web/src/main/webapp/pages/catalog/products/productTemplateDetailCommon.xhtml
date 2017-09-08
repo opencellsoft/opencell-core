@@ -44,7 +44,8 @@
                 <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" />
                 <hftl:formField label="#{messages['productTemplate.family']}" field="businessProductModel" id="businessProductModel" valueLabelField="code"
                     listElements="#{businessProductModelBean.listAll()}" rendered="#{!mainBackingBean.edit and mainBackingBean.entity.businessProductModel != null}" />
-                <hftl:formLanguageFields entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" multiLang="true" />
+                <hftl:formLanguageFields field="description" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" />
+                <hftl:formLanguageFields field="longDescription" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
             </h:panelGrid>
             <p:panel>
                 <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
@@ -103,12 +104,12 @@
                         <h:outputText value="#{prod.productTemplate.description}" />
                     </p:column>                      
                     <p:column headerText="#{messages['commons.validFrom']}">
-                        <h:outputText value="#{prod.productTemplate.validityRaw.from}">
+                        <h:outputText value="#{prod.productTemplate.validity.from}">
                             <f:converter converterId="dateTimeConverter"></f:converter>
                         </h:outputText>
                     </p:column>
                     <p:column headerText="#{messages['commons.validTo']}">
-                        <h:outputText value="#{prod.productTemplate.validityRaw.to}">
+                        <h:outputText value="#{prod.productTemplate.validity.to}">
                             <f:converter converterId="dateTimeConverter"></f:converter>
                         </h:outputText>
                     </p:column>         

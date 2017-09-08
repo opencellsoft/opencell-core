@@ -48,10 +48,10 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 @Stateless
-public class PricePlanMatrixService extends MultilanguageEntityService<PricePlanMatrix> {
+public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;

@@ -94,7 +94,8 @@
 			column4Label="#{messages['commons.validTo']}" column4="validity" column4Child="to"
 			selection="#{subscriptionBean.entity.offer}" width="1000"
 			lazy="false" dataModel="#{offerTemplateBean.listActiveByDate(subscriptionBean.entity.subscriptionDate)}"
-			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text">
+			updateField=":subscriptionTab:subscriptionFormId:informationTab:offerSelectId :subscriptionTab:subscriptionFormId:informationTab:offerSelectId_text :subscriptionTab:subscriptionFormId:informationTab:subscriptionAndRenewalDates"
+            selectionListenerBean="#{subscriptionBean}"  selectionListenerMethod="copySubscriptionRenewalInfo">
 		</hftl:entityPopup>
 
 <!-- 		<hftl:entityPopup id="chargeTemplatePopup" -->
@@ -283,7 +284,7 @@
 									</p:button>
 									<p:commandButton rendered="#{entity.status eq 'INACTIVE' and subscriptionBean.canUserUpdateEntity()}"
 										action="#{subscriptionBean.deleteServiceInstance(entity)}"
-										icon="ui-icon-trash" update="@form :subscriptionTab:ST_results2_form :subscriptionTab:oneShotChgTabPanel :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages">
+										icon="ui-icon-trash" update="@form :subscriptionTab:ST_results2_form :subscriptionTab:oneShotChgTabPanel :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages :subscriptionTab:subscriptionFormId:informationTab">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['commons.confirmDelete']}"
 											icon="ui-icon-alert" />
@@ -335,7 +336,7 @@
 								<p:commandButton id="cbutton"
 									action="#{subscriptionBean.instanciateManyServices}"
 									value="#{messages['button.instanciateButton']}"
-									update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:oneShotChgTabPanel :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages"
+									update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:oneShotChgTabPanel :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages :subscriptionTab:subscriptionFormId:informationTab"
 									disabled="#{subscriptionBean.entity.status != 'ACTIVE' and subscriptionBean.entity.status != 'CREATED'}" />
 							</h:panelGroup>
 						</h:form>
@@ -356,7 +357,7 @@
 											popup="true" popupId="userAccountPopup" allowEdit="false" componentWidth="30"/>
 										<hftl:formField id="offerSelectId"
 											label="#{messages['subscription.offer']}" field="offer"
-											valueLabelField="code" componentWidth="30" allowEdit="#{! subscriptionBean.entity.anyServiceActive}"
+											valueLabelField="code" componentWidth="30" allowEdit="#{subscriptionBean.entity.serviceInstances.isEmpty()}"
 											required="true" popup="true" popupId="offerPopup"/>
 										<hftl:formField label="#{messages['businessEntity.code']}"
 											field="code" required="true" validateUnique="true"/>

@@ -102,7 +102,22 @@ public enum OrderProductCharacteristicEnum {
     /**
      * The period to renew subscription for - value
      */
-    SUBSCRIPTION_RENEW_FOR("renewFor", Integer.class);
+    SUBSCRIPTION_RENEW_FOR("renewFor", Integer.class),
+	
+    /**
+     * The criteria1
+     */
+    CRITERIA_1("criteria_1", String.class),
+	
+    /**
+     * The criteria2
+     */
+    CRITERIA_2("criteria_2", String.class),
+    
+    /**
+     * The criteria3
+     */
+    CRITERIA_3("criteria_3", String.class);
 
     protected String characteristicName;
 

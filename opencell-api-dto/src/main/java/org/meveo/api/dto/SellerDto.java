@@ -46,7 +46,7 @@ public class SellerDto extends BusinessDto {
 
 	private CustomersDto customers;
 	
-	private CustomFieldsDto customFields = new CustomFieldsDto();
+	private CustomFieldsDto customFields;
 	
 	private Map<String,SequenceDto> invoiceTypeSequences = new HashMap<String,SequenceDto>();
 

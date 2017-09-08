@@ -24,8 +24,10 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.CustomerImportHisto;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.customer.ErrorCustomer;
 import org.meveo.model.jaxb.customer.ErrorCustomerAccount;
 import org.meveo.model.jaxb.customer.ErrorSeller;
@@ -43,8 +45,10 @@ import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.catalog.impl.TitleService;
+import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -69,10 +73,10 @@ public class ImportCustomersJobBean {
 
 	@EJB
 	private CustomerImportService customerImportService;
-
+	
 	@Inject
 	private CustomerAccountService customerAccountService;
-
+	
 	@Inject
 	private CustomerService customerService;
 
@@ -81,6 +85,9 @@ public class ImportCustomersJobBean {
 
 	@Inject
 	private TitleService titleService;
+	
+	@Inject
+	private AccountImportService accountImportService;
 
     @Inject
     @ApplicationProvider
@@ -160,7 +167,7 @@ public class ImportCustomersJobBean {
 		result.setNbItemsProcessedWithWarning(nbCustomersWarning);
 	}
 
-	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
+	private synchronized List<File> getFilesToProcess(File dir, String prefix, String ext) {
 		List<File> files = new ArrayList<File>();
 		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
 		File[] listFile = dir.listFiles(filtre);
@@ -225,12 +232,13 @@ public class ImportCustomersJobBean {
 		log.debug("parsing file ok");
 		int i = -1;
 
-		nbSellers = sellers.getSeller().size();
+		List<Seller> sellerList = sellers.getSeller();
+		nbSellers = sellerList.size();
 		if (nbSellers == 0) {
 			createSellerWarning(null, "File empty");
 		}
 
-		for (org.meveo.model.jaxb.customer.Seller sell : sellers.getSeller()) {
+		for (org.meveo.model.jaxb.customer.Seller sell : sellerList) {
 			i++;
 			org.meveo.model.admin.Seller seller = null;
 			try {
@@ -244,7 +252,8 @@ public class ImportCustomersJobBean {
 
 				seller = createSeller(sell, fileName, i);
 
-				for (org.meveo.model.jaxb.customer.Customer cust : sell.getCustomers().getCustomer()) {
+				List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
+				for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
 					if (customerCheckError(sell, cust)) {
 						nbCustomersError++;
 						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
@@ -268,7 +277,7 @@ public class ImportCustomersJobBean {
 	}
 
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i) throws BusinessException {
+	private synchronized org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i) throws BusinessException {
 		org.meveo.model.admin.Seller seller = null;
 		try {
 			seller = sellerService.findByCode(sell.getCode());
@@ -328,9 +337,12 @@ public class ImportCustomersJobBean {
 
 		try {
 			log.debug("customer found code={}", cust.getCode());
-
+			boolean ignoreCheck = cust.getIgnoreCheck() != null && cust.getIgnoreCheck().booleanValue();
 			try {
-				customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"));
+				if (!ignoreCheck) {
+					customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"));
+				}
+				
 			} catch (Exception e) {
 				log.warn("failed to find custom by code and fetch ",e);
 			}
@@ -381,9 +393,11 @@ public class ImportCustomersJobBean {
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
 		nbCustomerAccounts++;
 		CustomerAccount customerAccountTmp = null;
-
+		boolean ignoreCheck = custAcc.getIgnoreCheck() != null && custAcc.getIgnoreCheck().booleanValue();
 		try {
-			customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), Arrays.asList("customer","customFields"));
+			if (!ignoreCheck) {
+				customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), Arrays.asList("customer","customFields"));
+			}
 		} catch (Exception e) {
 			log.error("failed to create customer account",e);
 		}
@@ -400,7 +414,33 @@ public class ImportCustomersJobBean {
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Updated");
 			
 		} else {
-			customerImportService.createCustomerAccount(customer, seller, custAcc, cust, sell);
+			CustomerAccount customerAccount = customerImportService.createCustomerAccount(customer, seller, custAcc, cust, sell);
+			
+			BillingAccounts billingAccounts = custAcc.getBillingAccounts();
+	        
+	        if (billingAccounts != null) {
+	        	List<org.meveo.model.jaxb.account.BillingAccount> billingAccountList = billingAccounts.getBillingAccount();
+	        	
+	        	for (org.meveo.model.jaxb.account.BillingAccount billingAccountJaxb : billingAccountList) {
+	        		BillingAccount billingAccount = null;
+	        		try {
+						billingAccount = accountImportService
+								.importBillingAccount(billingAccountJaxb, customerAccount);
+					} catch (ImportWarningException e) {
+						log.error("Error when importing Billing Account", e);
+					}
+	        		
+	        		for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountJaxb.getUserAccounts().getUserAccount()) {
+	        			try {
+							accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount);
+						} catch (ImportWarningException e) {
+							log.error("Error when importing User Account", e);
+						}
+	        		}
+				}
+	        	
+	        	
+	        }
 			nbCustomerAccountsCreated++;
 			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Created");
 		}

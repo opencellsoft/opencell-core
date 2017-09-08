@@ -1,5 +1,8 @@
 package org.meveo.api.ws;
 
+import java.util.Date;
+import java.util.List;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
@@ -382,26 +385,126 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
 
-    // descriptions
+    // Multi Language field value translations
 
+    /**
+     * 
+     * Provide translation of multi language field values. Deprecated in v.4.7. Use updateTranslations instead
+     * 
+     * @param postData Translated field values
+     * @return
+     */
     @WebMethod
-    ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+    @Deprecated
+    public ActionStatus createDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
+    /**
+     * Provide translation of multi language field value. Deprecated in v.4.7. Use updateTranslations instead
+     * 
+     * @param postData Translated field values
+     * @return
+     */
     @WebMethod
-    ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+    @Deprecated
+    public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
+    /**
+     * Provide translation of multi language field values
+     * 
+     * @param postData Translated field values
+     * @return
+     */
     @WebMethod
+    public ActionStatus updateTranslations(@WebParam(name = "translations") List<CatMessagesDto> translations);
+
+    /**
+     * Find entity field translations for a particular entity, field (optional) and a language (optional). Deprecated in v.4.7. Use findTranslations instead
+     * 
+     * @param entityClass Entity class name
+     * @param code Entity code
+     * @param languageCode 3 letter language code
+     * @return A list of field value translations
+     */
+    @WebMethod
+    @Deprecated
     GetDescriptionsResponse findDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
             @WebParam(name = "languageCode") String languageCode);
 
+    /**
+     * Find entity field translations for a particular entity, field (optional) and a language (optional)
+     * 
+     * @param entityClass Entity class name
+     * @param code Entity code
+     * @param validFrom Validity dates - from
+     * @param validTo Validity dates - to
+     * @param fieldname Field name
+     * @param languageCode 3 letter language code
+     * @return A list of field value translations
+     */
     @WebMethod
-    ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "languageCode") String languageCode);
+    public DescriptionsResponseDto findTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
+            @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname,
+            @WebParam(name = "languageCode") String languageCode);
 
+    /**
+     * Remove field value translation for a given entity and language (optional). Deprecated in v.4.7. Use removeTranslations instead.
+     * 
+     * @param entityClass Entity class name
+     * @param code Entity code
+     * @param languageCode 3 letter language code. Optional
+     * @return
+     */
     @WebMethod
-    ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+    @Deprecated
+    public ActionStatus removeDescriptions(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code,
+            @WebParam(name = "languageCode") String languageCode);
 
+    /**
+     * Remove field value translation for a given entity, field (optional) and language (optional)
+     * 
+     * @param entityClass Entity class name
+     * @param code Entity code
+     * @param validFrom Validity dates - from
+     * @param validTo Validity dates - to
+     * @param fieldname Field name. Optional
+     * @param languageCode 3 letter language code. Optional
+     * @return
+     */
     @WebMethod
-    DescriptionsResponseDto listDescriptions();
+    public ActionStatus removeTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom,
+            @WebParam(name = "validTo") Date validTo, @WebParam(name = "fieldName") String fieldname, @WebParam(name = "languageCode") String languageCode);
+
+    /**
+     * Provide translation of multi language field values. Deprecated in v.4.7. Use updateTranslations instead
+     * 
+     * @param postData Translated field values
+     * @return
+     */
+    @WebMethod
+    @Deprecated
+    public ActionStatus createOrUpdateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
+
+    /**
+     * List entity field value translations. Deprecated in v.4.7. Use listTranslations instead.
+     * 
+     * @return A list of entity field value translations
+     */
+    @WebMethod
+    @Deprecated
+    public DescriptionsResponseDto listDescriptions();
+
+    /**
+     * List entity field value translations for a given entity type (optional), field (optional) and language (optional). Note: will provide ONLY those entities that have at least
+     * one of multilanguage fields translated.
+     * 
+     * @param entityClass Entity class name
+     * @param fieldname Field name. Optional
+     * @param languageCode 3 letter language code. Optional
+     * @return A list of entity field value translations
+     */
+    @WebMethod
+    public DescriptionsResponseDto listTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "fieldName") String fieldname,
+            @WebParam(name = "languageCode") String languageCode);
 
     /* termination reasons */
 
@@ -441,88 +544,99 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     GetInvoiceTypesResponse listInvoiceTypes();
-    
+
     /**
      * create a providerContact by dto
+     * 
      * @param providerContactDto
      * @return
      */
     @WebMethod
-    ActionStatus createProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+    ActionStatus createProviderContact(@WebParam(name = "providerContact") ProviderContactDto providerContactDto);
 
     /**
      * update a providerContact by dto
+     * 
      * @param providerContactDto
      * @return
      */
     @WebMethod
-    ActionStatus updateProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
+    ActionStatus updateProviderContact(@WebParam(name = "providerContact") ProviderContactDto providerContactDto);
 
     /**
      * find a providerContact by code
+     * 
      * @param providerContactCode
      * @return
      */
     @WebMethod
-    ProviderContactResponseDto findProviderContact(@WebParam(name="providerContactCode") String providerContactCode);
+    ProviderContactResponseDto findProviderContact(@WebParam(name = "providerContactCode") String providerContactCode);
 
     /**
      * remove a providerContact by code
+     * 
      * @param providerContactCode
      * @return
      */
     @WebMethod
-    ActionStatus removeProviderContact(@WebParam(name="providerContactCode") String providerContactCode);
+    ActionStatus removeProviderContact(@WebParam(name = "providerContactCode") String providerContactCode);
 
     /**
      * list all providerContacts
+     * 
      * @return
      */
     @WebMethod
     ProviderContactsResponseDto listProviderContacts();
-    
+
     /**
      * createOrUpdate a providerContact by dto
+     * 
      * @param providerContactDto
      * @return
      */
     @WebMethod
-    ActionStatus createOrUpdateProviderContact(@WebParam(name="providerContact")ProviderContactDto providerContactDto);
-    
+    ActionStatus createOrUpdateProviderContact(@WebParam(name = "providerContact") ProviderContactDto providerContactDto);
+
     /**
      * create an emailTemplate by dto
+     * 
      * @param emailTemplateDto
      * @return
      */
     @WebMethod
-    ActionStatus createEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+    ActionStatus createEmailTemplate(@WebParam(name = "emailTemplate") EmailTemplateDto emailTemplateDto);
 
     /**
      * update an emailTemplate by dto
+     * 
      * @param emailTemplateDto
      * @return
      */
     @WebMethod
-    ActionStatus updateEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
+    ActionStatus updateEmailTemplate(@WebParam(name = "emailTemplate") EmailTemplateDto emailTemplateDto);
 
     /**
      * find an emailTemplate by code
+     * 
      * @param emailTemplateCode
      * @return
      */
     @WebMethod
-    EmailTemplateResponseDto findEmailTemplate(@WebParam(name="emailTemplateCode") String emailTemplateCode);
+    EmailTemplateResponseDto findEmailTemplate(@WebParam(name = "emailTemplateCode") String emailTemplateCode);
 
     /**
      * remove an emailTemplate by code
+     * 
      * @param emailTemplateCode
      * @return
      */
     @WebMethod
-    ActionStatus removeEmailTemplate(@WebParam(name="emailTemplateCode") String emailTemplateCode);
+    ActionStatus removeEmailTemplate(@WebParam(name = "emailTemplateCode") String emailTemplateCode);
 
     /**
      * list emailTemplates
+     * 
      * @return
      */
     @WebMethod
@@ -530,96 +644,108 @@ public interface SettingsWs extends IBaseWs {
 
     /**
      * createOrUpdate an emailTemplate by dto
+     * 
      * @param emailTemplateDto
      * @return
      */
     @WebMethod
-    ActionStatus createOrUpdateEmailTemplate(@WebParam(name="emailTemplate")EmailTemplateDto emailTemplateDto);
-    
+    ActionStatus createOrUpdateEmailTemplate(@WebParam(name = "emailTemplate") EmailTemplateDto emailTemplateDto);
+
     /**
      * create a meveoInstance by dto
+     * 
      * @param meveoInstanceDto
      * @return
      */
     @WebMethod
-    ActionStatus createMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+    ActionStatus createMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
 
     /**
      * update a mveoInstance by dto
+     * 
      * @param meveoInstanceDto
      * @return
      */
     @WebMethod
-    ActionStatus updateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+    ActionStatus updateMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
 
     /**
      * find a meveoInstance by code
+     * 
      * @param meveoInstanceCode
      * @return
      */
     @WebMethod
-    MeveoInstanceResponseDto findMeveoInstance(@WebParam(name="meveoInstanceCode") String meveoInstanceCode);
+    MeveoInstanceResponseDto findMeveoInstance(@WebParam(name = "meveoInstanceCode") String meveoInstanceCode);
 
     /**
      * remove a meveoInstance by code
+     * 
      * @param meveoInstanceCode
      * @return
      */
     @WebMethod
-    ActionStatus removeMeveoInstance(@WebParam(name="meveoInstanceCode") String meveoInstanceCode);
+    ActionStatus removeMeveoInstance(@WebParam(name = "meveoInstanceCode") String meveoInstanceCode);
 
     /**
      * list meveoInstances
+     * 
      * @return
      */
     @WebMethod
     MeveoInstancesResponseDto listMeveoInstances();
-    
+
     /**
      * createOrUpdate meveoInstance by dto
+     * 
      * @param meveoInstanceDto
      * @return
      */
     @WebMethod
-    ActionStatus createOrUpdateMeveoInstance(@WebParam(name="meveoInstance")MeveoInstanceDto meveoInstanceDto);
+    ActionStatus createOrUpdateMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
 
     /**
      * create userHierarchyLevel by dto
+     * 
      * @param userHierarchyLevelDto
      * @return
      */
     @WebMethod
-    ActionStatus createUserHierarchyLevel(@WebParam(name="userHierarchyLevel")UserHierarchyLevelDto userHierarchyLevelDto);
+    ActionStatus createUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
 
     /**
      * update userHierarchyLevel by dto
+     * 
      * @param userHierarchyLevelDto
      * @return
      */
     @WebMethod
-    ActionStatus updateUserHierarchyLevel(@WebParam(name="userHierarchyLevel")UserHierarchyLevelDto userHierarchyLevelDto);
+    ActionStatus updateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
 
     /**
      * remove a userHierarchyCode by code
+     * 
      * @param hierarchyLevelCode
      * @return
      */
     @WebMethod
-    ActionStatus removeUserHierarchyLevel(@WebParam(name="hierarchyLevelCode") String hierarchyLevelCode);
+    ActionStatus removeUserHierarchyLevel(@WebParam(name = "hierarchyLevelCode") String hierarchyLevelCode);
 
     /**
      * find a userHierarchyCode by code
+     * 
      * @param hierarchyLevelCode
      * @return
      */
     @WebMethod
-    UserHierarchyLevelResponseDto findUserHierarchyLevel(@WebParam(name="hierarchyLevelCode") String hierarchyLevelCode);
-    
+    UserHierarchyLevelResponseDto findUserHierarchyLevel(@WebParam(name = "hierarchyLevelCode") String hierarchyLevelCode);
+
     /**
      * createOrUpdate userHierarchyLevel by dto
+     * 
      * @param userHierarchyLevelDto
      * @return
      */
     @WebMethod
-    ActionStatus createOrUpdateUserHierarchyLevel(@WebParam(name="userHierarchyLevel")UserHierarchyLevelDto userHierarchyLevelDto);    
+    ActionStatus createOrUpdateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
 }

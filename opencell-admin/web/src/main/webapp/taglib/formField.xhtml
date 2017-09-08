@@ -203,7 +203,8 @@
         <c:set var="imageHeight" value="150px" />
     </c:if>
 
-    <c:if test="#{rendered}">
+
+<!--     <c:if test="#{rendered}"> Comented out as cause component id duplication on boolean and entity list type field updates-->
         <!--  Select and entity or a FK to an entity -->
         <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Entity or fkToEntity}">
 
@@ -375,6 +376,6 @@
                 backingBean="${backingBean}" pictureGroupName="${pictureGroupName}" imageWidth="${imageWidth}" imageHeight="${imageHeight}" />
         </c:if>
 
-    </c:if>
+<!--     </c:if> -->
 </ui:composition>
 </html>

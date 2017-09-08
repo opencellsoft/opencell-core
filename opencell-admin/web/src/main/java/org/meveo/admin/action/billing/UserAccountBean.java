@@ -52,6 +52,8 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
@@ -155,6 +157,13 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
         }
         selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
+
+        if (entity.getAddress() == null) {
+            entity.setAddress(new Address());
+        }
+        if (entity.getName() == null) {
+            entity.setName(new Name());
+        }
         return entity;
     }
 

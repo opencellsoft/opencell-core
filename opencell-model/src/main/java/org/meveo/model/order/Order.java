@@ -33,6 +33,7 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 
 @Entity
@@ -149,6 +150,10 @@ public class Order extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quote_id")
+    private Quote quote;
 
     public String getExternalId() {
         return externalId;
@@ -325,5 +330,13 @@ public class Order extends BusinessCFEntity {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public Quote getQuote() {
+        return quote;
+    }
+
+    public void setQuote(Quote quote) {
+        this.quote = quote;
     }
 }

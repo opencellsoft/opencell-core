@@ -117,9 +117,7 @@
     							field="eventCode" valueLabelField="code" required="true"
     							popup="true" popupId="pricPlanMatChargePopup" /> 
 
-						<hftl:formLanguageFields entity="#{pricePlanMatrixBean.entity}"
-							backingBean="#{pricePlanMatrixBean}" multiLang="true"
-							newLine="false" />
+						<hftl:formLanguageFields field="description" newLine="false" />
 
 						<hftl:formField id="parentSelectId"
 							label="#{messages['seller.title']}" field="seller"

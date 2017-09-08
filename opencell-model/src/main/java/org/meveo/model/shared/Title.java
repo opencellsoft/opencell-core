@@ -18,6 +18,9 @@
  */
 package org.meveo.model.shared;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,57 +33,60 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
-import org.meveo.model.MultilanguageEntity;
 
 @Entity
 @Cacheable
-@MultilanguageEntity(key = "menu.titles", group = "Title")
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @Table(name = "adm_title", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_title_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_title_seq"), })
 public class Title extends BusinessEntity {
 
-	private static final long serialVersionUID = -6827515878506806536L;
+    private static final long serialVersionUID = -6827515878506806536L;
 
-	@Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "is_company")
-	private Boolean isCompany = Boolean.FALSE;
+    private Boolean isCompany = Boolean.FALSE;
 
-	public Title() {
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
-	}
+    public Title() {
 
-	public Title(String code, boolean isCompany) {
-		this.code = code;
-		this.isCompany = isCompany;
-	}
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public Title(String code, boolean isCompany) {
+        this.code = code;
+        this.isCompany = isCompany;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public Boolean getIsCompany() {
-		return isCompany;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setIsCompany(Boolean isCompany) {
-		this.isCompany = isCompany;
-	}
+    public Boolean getIsCompany() {
+        return isCompany;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
+    public void setIsCompany(Boolean isCompany) {
+        this.isCompany = isCompany;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((code == null) ? 0 : code.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -89,18 +95,38 @@ public class Title extends BusinessEntity {
         } else if (!(obj instanceof Title)) {
             return false;
         }
-        
-		Title other = (Title) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		return true;
-	}
 
-	public String getDescriptionNotNull() {
-		return StringUtils.isBlank(super.getDescription()) ? getCode() : super.getDescription();
-	}
-	
+        Title other = (Title) obj;
+        if (code == null) {
+            if (other.code != null)
+                return false;
+        } else if (!code.equals(other.code))
+            return false;
+        return true;
+    }
+
+    public String getDescriptionNotNull() {
+        return StringUtils.isBlank(super.getDescription()) ? getCode() : super.getDescription();
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
 }

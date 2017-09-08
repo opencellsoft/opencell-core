@@ -167,14 +167,14 @@
                                                 </p:commandButton>
                                                 <p:commandButton icon="ui-icon-trash" action="#{customerAccountBean.removePaymentMethod(entity)}"
                                                     update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
-                                                    process="@this" actionListener="#{customerAccountBean.setPreferredPaymentMethod(null)}">
+                                                    process="@this" actionListener="#{customerAccountBean.setPreferredPaymentMethod(null)}" disabled="#{!customerAccountBean.edit}">
                                                     <!--                                                             <p:collector value="#{entity}" removeFrom="#{customerAccountBean.entity.paymentMethods}" /> -->
                                                     <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
                                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                                                 </p:commandButton>
                                                 <p:commandButton icon="ui-icon-star" action="#{customerAccountBean.setPreferredPaymentMethod(entity)}" title="#{messages['paymentMethod.makePreferred']}"
                                                     update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
-                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred}" process="@this">
+                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred}" process="@this" disabled="#{!customerAccountBean.edit}">
                                                 </p:commandButton>
                                             </p:column>
                                             <f:facet name="footer">
@@ -186,7 +186,7 @@
 
                                                 <p:commandButton value="#{messages['commons.addNew']}" action="#{customerAccountBean.newPaymentMethod()}" style="margin-left:10px"
                                                     update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
-                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="newPaymentMethodType @this" />
+                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="newPaymentMethodType @this" disabled="#{!customerAccountBean.edit}"/>
                                             </f:facet>
                                         </p:dataTable>
 
@@ -251,10 +251,10 @@
                                                 <h:panelGroup layout="block" styleClass="form-panel-actions">
                                                     <p:commandButton value="#{messages['paymentMethod.savePaymentMethod']}" action="#{customerAccountBean.savePaymentMethod()}"
                                                         update="paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
-                                                        rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="paymentMethodDetails" />
+                                                        rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="paymentMethodDetails"  disabled="#{!customerAccountBean.edit}" />
                                                     <p:commandButton value="#{messages['action.cancel']}" action="#{customerAccountBean.cancelPaymentMethodEdit}"
                                                         update="paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodDetails"
-                                                        rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="@this" />
+                                                        rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE}" process="@this" disabled="#{!customerAccountBean.edit}" />
                                                 </h:panelGroup>
                                             </p:panel>
                                         </h:panelGroup>

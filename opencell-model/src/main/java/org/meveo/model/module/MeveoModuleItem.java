@@ -121,24 +121,11 @@ public class MeveoModuleItem extends BaseEntity {
         this.appliesTo = applyTo;
     }
 
-    public DatePeriod getValidityRaw() {
-        return validity;
-    }
-
     public void setValidity(DatePeriod validity) {
         this.validity = validity;
     }
 
-    /**
-     * If validity is null (both dates are empty) then instantiate one. Note: Use it with care as it results in update calls to DB if validity was null before. Preferably use
-     * getValidityRaw() and check for null.
-     * 
-     * @return Existing or instantiated new validity
-     */
     public DatePeriod getValidity() {
-        if (validity == null) {
-            validity = new DatePeriod();
-        }
         return validity;
     }
 
@@ -166,8 +153,12 @@ public class MeveoModuleItem extends BaseEntity {
 
         MeveoModuleItem other = (MeveoModuleItem) obj;
 
-        if (!itemClass.equals(other.getItemClass()) || !itemCode.equalsIgnoreCase(other.getItemCode()) || StringUtils.compare(appliesTo, other.getAppliesTo()) != 0
-                || !getValidity().equals(other.getValidity())) {
+        if (!itemClass.equals(other.getItemClass()) || !itemCode.equalsIgnoreCase(other.getItemCode()) || StringUtils.compare(appliesTo, other.getAppliesTo()) != 0) {
+            return false;
+        }
+        if (validity != null && !validity.equals(other.getValidity())) {
+            return false;
+        } else if (validity == null && (other.getValidity() != null && !other.getValidity().isEmpty())) {
             return false;
         }
         return true;

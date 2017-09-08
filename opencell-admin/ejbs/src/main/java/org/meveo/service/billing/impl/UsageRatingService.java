@@ -32,8 +32,11 @@ import org.meveo.cache.CachedUsageChargeTemplate;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.event.CounterPeriodEvent;
 import org.meveo.model.CounterValueChangeInfo;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
+import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Reservation;
 import org.meveo.model.billing.ReservationStatus;
@@ -49,15 +52,18 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.UsageChargeTemplate;
+import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.MeveoJpa;
@@ -112,8 +118,8 @@ public class UsageRatingService {
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
 
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
     @CurrentUser
@@ -122,12 +128,16 @@ public class UsageRatingService {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
-    
-	@Inject
-	protected CatMessagesService catMessagesService;
-	
-	@Inject
-	private ReservationService reservationService;
+
+    @Inject
+    private ReservationService reservationService;
+
+    private Map<String, String> descriptionMap = new HashMap<>();
+
+    private Map<Long, CachedUsageChargeTemplate> cacheUsageMap = new HashMap<>();
+
+    @Inject
+    private UsageChargeTemplateService usageChargeTemplateService;
 
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
@@ -150,38 +160,41 @@ public class UsageRatingService {
      * @param userAccount User account in case of virtual operation
      * @param counterInstance Counter instance in case of virtual operation
      * @param offerCode Offer code in case of virtual operation
-
+     * 
      * @throws BusinessException
      */
-    private void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal quantityToCharge, CachedUsageChargeInstance cachedChargeInstance,
-            boolean isVirtual) throws BusinessException {
+    private void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal quantityToCharge, CachedUsageChargeInstance cachedChargeInstance, boolean isVirtual)
+            throws BusinessException {
 
         UsageChargeInstance chargeInstance = null;
-        
+
         // Not a virtual operation
+        Subscription subscription = edr.getSubscription();
         if (!isVirtual) {
-            chargeInstance = usageChargeInstanceService.findById(cachedChargeInstance.getId());            
-        
-        // For virtual operation, lookup charge in the subscription
+            chargeInstance = usageChargeInstanceService.findById(cachedChargeInstance.getId());
+
+            // For virtual operation, lookup charge in the subscription
         } else {
-            for (ServiceInstance serviceInstance : edr.getSubscription().getServiceInstances()) {
-                for(UsageChargeInstance usageChargeInstance: serviceInstance.getUsageChargeInstances()){
-                    if (usageChargeInstance.getCode().equals(cachedChargeInstance.getChargeTemplateCode())){
+            List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
+            for (ServiceInstance serviceInstance : serviceInstances) {
+                List<UsageChargeInstance> usageChargeInstances = serviceInstance.getUsageChargeInstances();
+                for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
+                    if (usageChargeInstance.getCode().equals(cachedChargeInstance.getChargeTemplateCode())) {
                         chargeInstance = usageChargeInstance;
                         break;
                     }
                 }
-            }            
+            }
         }
-        
+
         CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedChargeInstance.getChargeTemplateId());
-        
+
         walletOperation.setChargeInstance(chargeInstance);
         UserAccount userAccount = chargeInstance.getUserAccount();
-        CounterInstance counterInstance = chargeInstance.getCounter();
-        String offerCode = edr.getSubscription().getOffer().getCode();
-        walletOperation.setSubscriptionDate(edr.getSubscription().getSubscriptionDate());
 
+        CounterInstance counterInstance = chargeInstance.getCounter();
+        String offerCode = subscription.getOffer().getCode();
+        walletOperation.setSubscriptionDate(subscription.getSubscriptionDate());
         walletOperation.setOperationDate(edr.getEventDate());
         walletOperation.setParameter1(edr.getParameter1());
         walletOperation.setParameter2(edr.getParameter2());
@@ -191,38 +204,59 @@ public class UsageRatingService {
         walletOperation.setEdr(edr);
 
         // FIXME: copy those info in chargeInstance instead of performing multiple queries
-        TradingCountry country = userAccount.getBillingAccount().getTradingCountry();
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
+        Customer customer = customerAccount.getCustomer();
+        Seller seller = customer.getSeller();
+
+        TradingCountry country = billingAccount.getTradingCountry();
+
         Long countryId = country.getId();
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategoryCode(), countryId, edr.getEventDate());
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategoryCode(), countryId,
+            edr.getEventDate());
 
         if (invoiceSubcategoryCountry == null) {
-            throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category="
-                    + chargeTemplate.getInvoiceSubCategoryCode());
+            throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategoryCode());
         }
 
-        boolean isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount());
+        boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
-        TradingCurrency currency = userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency();
+        walletOperation.setSeller(seller);
+
+        TradingCurrency currency = customerAccount.getTradingCurrency();
         Tax tax = invoiceSubcategoryCountry.getTax();
-		if(tax==null){
-			tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), chargeInstance.getUserAccount(), chargeInstance.getUserAccount().getBillingAccount(), null);
-		}
+        if (tax == null) {
+            tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, billingAccount, null);
+        }
 
-        walletOperation.setInvoiceSubCategory(invoiceSubcategoryCountry.getInvoiceSubCategory());
+        InvoiceSubCategory invoiceSubCategory = invoiceSubcategoryCountry.getInvoiceSubCategory();
+        walletOperation.setInvoiceSubCategory(invoiceSubCategory);
         walletOperation.setRatingUnitDescription(cachedChargeInstance.getRatingUnitDescription());
         walletOperation.setInputUnitDescription(chargeTemplate.getInputUnitDescription());
-        walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
 
         // we set here the wallet to the principal wallet but it will later be
         // overridden by charging algorithm
         walletOperation.setWallet(userAccount.getWallet());
-        walletOperation.setBillingAccount(chargeInstance.getSubscription().getUserAccount().getBillingAccount());
+        walletOperation.setBillingAccount(billingAccount);
         walletOperation.setCode(chargeTemplate.getCode());
-        walletOperation.setDescription(catMessagesService.getMessageDescriptionByCodeAndLanguage(chargeTemplate.getCode(),userAccount.getBillingAccount().getTradingLanguage().getLanguageCode(),cachedChargeInstance.getDescription()));
+
+        String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
+        String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
+        String descTranslated = descriptionMap.get(translationKey);
+        if (descTranslated != null) {
+            descTranslated = (cachedChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : cachedChargeInstance.getDescription();
+            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(languageCode)) {
+                descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
+            }
+            descriptionMap.put(translationKey, descTranslated);
+        }
+
+        walletOperation.setDescription(descTranslated);
         walletOperation.setQuantity(quantityToCharge);
 
-        walletOperation.setQuantity(NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+        walletOperation.setQuantity(
+            NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
@@ -231,8 +265,8 @@ public class UsageRatingService {
 
         walletOperation.setCounter(counterInstance);
         walletOperation.setOfferCode(offerCode);
-
         ratingService.rateBareWalletOperation(walletOperation, cachedChargeInstance.getAmountWithoutTax(), cachedChargeInstance.getAmountWithTax(), countryId, currency);
+
     }
 
     /**
@@ -342,12 +376,11 @@ public class UsageRatingService {
      * @param edr EDR to rate
      * @param cachedCharge Charge instance to apply
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-
+     * 
      * @return returns true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR content)
      * @throws BusinessException
      */
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, CachedUsageChargeInstance cachedCharge, boolean isVirtual) throws BusinessException {
-
         boolean stopEDRRating = false;
         BigDecimal deducedQuantity = null;
 
@@ -386,7 +419,7 @@ public class UsageRatingService {
         }
 
         CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedCharge.getChargeTemplateId());
-        
+
         for (CachedTriggeredEDR triggeredEDRCache : chargeTemplate.getEdrTemplates()) {
             if (triggeredEDRCache.getConditionEL() == null || "".equals(triggeredEDRCache.getConditionEL())
                     || matchExpression(triggeredEDRCache.getConditionEL(), edr, walletOperation)) {
@@ -414,7 +447,6 @@ public class UsageRatingService {
                     newEdr.setSubscription(sub);
                     log.info("trigger EDR from code " + triggeredEDRCache.getCode());
                     edrService.create(newEdr);
-
                 } else {
                     CDR cdr = new CDR();
                     String subCode = evaluateStringExpression(triggeredEDRCache.getSubscriptionEL(), edr, walletOperation);
@@ -429,7 +461,6 @@ public class UsageRatingService {
                     String url = "api/rest/billing/mediation/chargeCdr";
                     Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDRCache.getMeveoInstanceCode(), cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
-
                     log.debug("response {}", actionStatus);
 
                     if (actionStatus == null || ActionStatusEnum.SUCCESS != actionStatus.getStatus()) {
@@ -443,8 +474,8 @@ public class UsageRatingService {
     }
 
     /**
-     * Rate EDR and create wallet operation for reservation. If counter is used, and the quantity left in counter if less then quantity in EDR, EDR is updated with a left over quantity and the remaining quantity will
-     * be covered by a next charge or EDR will be marked as rejected.
+     * Rate EDR and create wallet operation for reservation. If counter is used, and the quantity left in counter if less then quantity in EDR, EDR is updated with a left over
+     * quantity and the remaining quantity will be covered by a next charge or EDR will be marked as rejected.
      * 
      * @param reservation Reservation
      * @param edr EDR to reserve
@@ -465,7 +496,7 @@ public class UsageRatingService {
         } else {
             stopEDRRating = true;
         }
-        
+
         BigDecimal quantityToCharge = null;
         if (deducedQuantity == null) {
             quantityToCharge = edr.getQuantity();
@@ -482,13 +513,13 @@ public class UsageRatingService {
             walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
             reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
             reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
-            
+
             if (deducedQuantity != null) {
                 walletOperation.setQuantity(quantityToCharge);
             }
 
             walletOperationService.chargeWalletOperation(walletOperation);
-            
+
         } else {
             log.warn("deduceQuantity is null");
         }
@@ -508,7 +539,7 @@ public class UsageRatingService {
     public List<WalletOperation> rateUsageDontChangeTransaction(EDR edr, boolean isVirtual) throws BusinessException {
         return rateUsageWithinTransaction(edr, isVirtual);
     }
-    
+
     /**
      * Rate EDR
      * 
@@ -544,8 +575,7 @@ public class UsageRatingService {
                     edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
                     return null;
                 }
-
-                // Charges should be already ordered by priority and id (why id??) 
+                // Charges should be already ordered by priority and id (why id??)
                 charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
             } else {
@@ -554,12 +584,21 @@ public class UsageRatingService {
 
             boolean foundPricePlan = true;
             CachedUsageChargeTemplate chargeTemplate = null;
+            CachedUsageChargeTemplate newChargeTemplate = null;
             // Find the first matching charge and rate it
             for (CachedUsageChargeInstance charge : charges) {
-                
-                chargeTemplate =  ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
-                log.trace("try templateCache=" + chargeTemplate.toString());
+                Long chargeTemplateId = charge.getChargeTemplateId();
+                // chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(chargeTemplateId);
 
+                chargeTemplate = cacheUsageMap.get(chargeTemplateId);
+                if (chargeTemplate == null) {
+                    UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(chargeTemplateId);
+                    newChargeTemplate = new CachedUsageChargeTemplate(usageChargeTemplate);
+                    chargeTemplate = newChargeTemplate;
+                    cacheUsageMap.put(chargeTemplateId, chargeTemplate);
+                }
+
+                log.trace("try templateCache=" + chargeTemplate.toString());
                 try {
                     if (!isChargeMatch(edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(), chargeTemplate.getFilter2(),
                         chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
@@ -618,8 +657,8 @@ public class UsageRatingService {
      * @throws BusinessException
      * @throws ChargeWitoutPricePlanException If charge has no price plan associated
      */
-    private boolean isChargeMatch(EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4) throws BusinessException,
-            ChargeWitoutPricePlanException {
+    private boolean isChargeMatch(EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4)
+            throws BusinessException, ChargeWitoutPricePlanException {
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
             log.trace("filter1 ok");
@@ -681,12 +720,12 @@ public class UsageRatingService {
                     reservation.setOriginEdr(edr);
                     reservation.setQuantity(edr.getQuantity());
                     // it would be nice to have a persistence context bound to
-//                    // the JTA transaction
-//                    em.persist(reservation);
+                    // // the JTA transaction
+                    // em.persist(reservation);
                     reservationService.create(reservation);
 
                     for (CachedUsageChargeInstance charge : charges) {
-                        CachedUsageChargeTemplate chargeTemplate =  ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
+                        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
                         log.info("try templateCache=" + chargeTemplate.toString());
 
                         if (isChargeMatch(edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(), chargeTemplate.getFilter2(),
@@ -740,13 +779,13 @@ public class UsageRatingService {
         if (expression.indexOf("ua") >= 0) {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
-		if (expression.indexOf("serviceInstance") >= 0) {
-			ServiceInstance service = null;
-			if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-				userMap.put("serviceInstance", service);
-			}
-		}
+        if (expression.indexOf("serviceInstance") >= 0) {
+            ServiceInstance service = null;
+            if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+                userMap.put("serviceInstance", service);
+            }
+        }
 
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
         try {
@@ -769,13 +808,13 @@ public class UsageRatingService {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-			ServiceInstance service = null;
-			if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-				userMap.put("serviceInstance", service);
-			}
-		}
-        
+            ServiceInstance service = null;
+            if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+                userMap.put("serviceInstance", service);
+            }
+        }
+
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
         try {
             result = (String) res;
@@ -794,13 +833,13 @@ public class UsageRatingService {
             userMap.put("ua", walletOperation.getWallet().getUserAccount());
         }
         if (expression.indexOf("serviceInstance") >= 0) {
-			ServiceInstance service = null;
-			if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-				service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-				userMap.put("serviceInstance", service);
-			}
-		}
-        
+            ServiceInstance service = null;
+            if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
+                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
+                userMap.put("serviceInstance", service);
+            }
+        }
+
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
         try {
             result = (Double) res;

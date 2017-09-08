@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.CustomEntityInstanceDto;
+import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -50,11 +51,10 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         handleMissingParameters();
 
-        
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
-        }        
+        }
 
         if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode()))) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCetCode()) + "'");
@@ -90,7 +90,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
+
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(dto.getCetCode());
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCetCode());
@@ -99,7 +99,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(dto.getCetCode()))) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(dto.getCetCode()) + "'");
         }
-        
+
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(dto.getCetCode(), dto.getCode());
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, dto.getCode());
@@ -134,7 +134,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(cetCode))) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(cetCode) + "'");
         }
-        
+
         CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code);
         if (cei != null) {
             customEntityInstanceService.remove(cei);
@@ -152,7 +152,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
+
         if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
         }
@@ -175,7 +175,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         if (!currentUser.hasRole(CustomEntityTemplate.getReadPermission(cetCode))) {
             throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getReadPermission(cetCode) + "'");
         }
-        
+
         Map<String, Object> filter = new HashMap<>();
         filter.put("cetCode", cetCode);
         PaginationConfiguration config = new PaginationConfiguration(filter);
@@ -183,7 +183,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         List<CustomEntityInstance> customEntityInstances = customEntityInstanceService.list(config);
         List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
 
-        for(CustomEntityInstance instance : customEntityInstances) {
+        for (CustomEntityInstance instance : customEntityInstances) {
             customEntityInstanceDtos.add(CustomEntityInstanceDto.toDTO(instance, entityToDtoConverter.getCustomFieldsWithInheritedDTO(instance, true)));
         }
 
@@ -204,7 +204,7 @@ public class CustomEntityInstanceApi extends BaseApi {
      * Validate CustomEntityInstance DTO without saving it
      * 
      * @param ceiDto CustomEntityInstance DTO to validate
-     * @throws MeveoApiException 
+     * @throws MeveoApiException
      */
     public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto) throws MeveoApiException {
 
@@ -225,6 +225,7 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(cei);
 
-        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields().getCustomField(), true, isNew, cei);
+        validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields() != null ? ceiDto.getCustomFields().getCustomField() : new ArrayList<CustomFieldDto>(), true,
+            isNew, cei);
     }
 }

@@ -24,15 +24,20 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.AccountAlreadyExistsException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ElementNotResiliatedOrCanceledException;
 import org.meveo.audit.logging.annotations.MeveoAudit;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingWalletDetailDTO;
+import org.meveo.model.billing.CategoryInvoiceAgregate;
+import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
@@ -148,17 +153,70 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
-		return billingAccount.getUsersAccounts();
-//		TODO : why ?
-//		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
-//		qb.addCriterionEntity("billingAccount", billingAccount);
-//
-//		try {
-//			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
-//		} catch (NoResultException e) {
-//			log.warn("error while getting user account list by billing account",e);
-//			return null;
-//		}
+		//return billingAccount.getUsersAccounts();
+		//TODO : why ?
+		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
+		qb.addCriterionEntity("billingAccount", billingAccount);
+
+		try {
+			return (List<UserAccount>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn("error while getting user account list by billing account",e);
+			return null;
+		}
+	}
+	
+	
+	public List<Subscription> listByUserAccount(UserAccount userAccount) {
+		QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
+		qb.addCriterionEntity("userAccount", userAccount);
+
+		try {
+			return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
+		} catch (NoResultException e) {
+			log.warn("error while getting user account list by billing account",e);
+			return null;
+		}
+	}
+	
+	public List<SubCategoryInvoiceAgregate> listByCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
+		long startDate = System.currentTimeMillis();
+		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
+		qb.addCriterionEntity("categoryInvoiceAgregate", categoryInvoiceAgregate);
+
+		try {
+			List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
+			log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
+			return resultList;
+			
+		} catch (NoResultException e) {
+			log.warn("error while getting user account list by billing account",e);
+			return null;
+		}
+		
+		
+		
+		//select * from  SubCategoryInvoiceAgregate where categoryInvoiceAgregate= categoryInvoiceAgregate and categoryInvoiceAgregate.invoice = invoice
+	}
+	
+	public List<SubCategoryInvoiceAgregate> listByInvoice(Invoice invoice) {
+		long startDate = System.currentTimeMillis();
+		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
+		qb.addCriterionEntity("invoice", invoice);
+
+		try {
+			List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
+			log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
+			return resultList;
+			
+		} catch (NoResultException e) {
+			log.warn("error while getting user account list by billing account",e);
+			return null;
+		}
+		
+		
+		
+		//select * from  SubCategoryInvoiceAgregate where categoryInvoiceAgregate= categoryInvoiceAgregate and categoryInvoiceAgregate.invoice = invoice
 	}
 	
 }

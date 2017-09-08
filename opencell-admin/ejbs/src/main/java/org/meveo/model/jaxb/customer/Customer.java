@@ -85,6 +85,8 @@ public class Customer {
     protected String customerCategory;
     @XmlAttribute(name = "customerBrand")
     protected String customerBrand;
+    @XmlAttribute(name="ignoreCheck")
+    protected Boolean ignoreCheck;
     @XmlElement(required = true)
     protected Name name;
 
@@ -202,6 +204,20 @@ public class Customer {
     public void setCustomerBrand(String value) {
         this.customerBrand = value;
     }
+
+	/**
+	 * @return the ignoreCheck
+	 */
+	public Boolean getIgnoreCheck() {
+		return ignoreCheck;
+	}
+
+	/**
+	 * @param ignoreCheck the ignoreCheck to set
+	 */
+	public void setIgnoreCheck(Boolean ignoreCheck) {
+		this.ignoreCheck = ignoreCheck;
+	}
 
 	public CustomFields getCustomFields() {
 		return customFields;

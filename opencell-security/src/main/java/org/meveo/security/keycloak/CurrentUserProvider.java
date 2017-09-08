@@ -20,6 +20,7 @@ import org.keycloak.KeycloakPrincipal;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
+import org.meveo.model.shared.Name;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
@@ -102,6 +103,9 @@ public class CurrentUserProvider {
                 user = new User();
                 user.setUserName(currentUser.getUserName().toUpperCase());
                 if (currentUser.getFullName() != null) {
+                    if (user.getName() == null) {
+                        user.setName(new Name());
+                    }
                     int spacePos = currentUser.getFullName().indexOf(' ');
                     if (spacePos > 0) {
                         user.getName().setFirstName(currentUser.getFullName().substring(0, spacePos));

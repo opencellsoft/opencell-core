@@ -77,7 +77,6 @@
                                 <h:outputText id="family" value="#{offerTemplateBean.businessOfferModel.code}" styleClass="field-value" />
                             </hftl:decorateFormField>                            
                         </c:if>
-                        <hftl:formLanguageFields entity="#{offerTemplateBean.entity}" backingBean="#{offerTemplateBean}" multiLang="true" />
 
                         <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true" displayOneLine="true" labelWidth="100" />
                         <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="100" />
@@ -100,6 +99,38 @@
                 </h:panelGrid>
                 
             </p:panelGrid>
+
+            <hftl:formLanguageFields field="description"/>
+            <hftl:formLanguageFields field="longDescription" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
+
+                        
+            <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
+                <h:panelGroup id="subscriptionRenewal">
+                    <hftl:formField label="#{messages['subscription.initialyActiveFor']}" field="subscriptionRenewal" childField="initialyActiveFor" size="2" minValue="1" componentWidth="15"
+                        listenerUpdate="subscriptionRenewal" actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}" actionListenerMethod="setDefaultInitialyActiveForUnit" />
+                    <hftl:formField label="#{messages['subscription.initialyActiveForUnit']}" field="subscriptionRenewal" childField="initialyActiveForUnit"
+                        required="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}" disabled="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor==null}"
+                        listenerUpdate="subscriptionRenewal" />
+                    <h:panelGroup rendered="#{offerTemplateBean.entity.subscriptionRenewal.initialyActiveFor!=null}">
+                        <hftl:formField label="#{messages['subscription.autoRenew']}" field="subscriptionRenewal" childField="autoRenew" required="true" listenerUpdate="subscriptionRenewal"
+                            newLine="true" />
+                        <hftl:formField label="#{messages['subscription.renewFor']}" field="subscriptionRenewal" childField="renewFor" size="2" required="true"
+                            rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal"
+                            actionListenerBean="#{offerTemplateBean.entity.subscriptionRenewal}" actionListenerMethod="setDefaultRenewForUnit" />
+                        <hftl:formField label="#{messages['subscription.renewForUnit']}" field="subscriptionRenewal" childField="renewForUnit" required="true"
+                            rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" listenerUpdate="subscriptionRenewal" />
+                        <hftl:formField label="#{messages['subscription.renewNotifyBefore']}" field="subscriptionRenewal" childField="daysNotifyRenewal" size="2" minValue="1"
+                            rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
+                        <hftl:formField label="#{messages['subscription.extendAgreementPeriod']}" field="subscriptionRenewal" childField="extendAgreementPeriodToSubscribedTillDate"
+                            rendered="#{offerTemplateBean.entity.subscriptionRenewal.autoRenew}" />
+                        <hftl:formField label="#{messages['subscription.endOfTermAction']}" field="subscriptionRenewal" childField="endOfTermAction" required="true"
+                            listenerUpdate="subscriptionRenewal" />
+                        <hftl:formField label="#{messages['subscription.endOfTermTerminationReason']}" field="subscriptionRenewal" childField="terminationReason" required="true"
+                            rendered="#{offerTemplateBean.entity.subscriptionRenewal.endOfTermAction eq 'TERMINATE'}" valueLabelField="descriptionOrCode"
+                            listElements="#{subscriptionTerminationReasonService.listReasons()}" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </p:fieldset>
 
 			<p:panel>
 				<p:panel style="margin: 0 auto;">
@@ -142,12 +173,12 @@
                             <h:outputText value="#{entity.productTemplate.description}" />
                         </p:column>                        
 						<p:column headerText="#{messages['commons.validFrom']}">
-							<h:outputText value="#{entity.productTemplate.validityRaw.from}">
+							<h:outputText value="#{entity.productTemplate.validity.from}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
 						<p:column headerText="#{messages['commons.validTo']}">
-							<h:outputText value="#{entity.productTemplate.validityRaw.to}">
+							<h:outputText value="#{entity.productTemplate.validity.to}">
 								<f:converter converterId="dateTimeConverter"></f:converter>
 							</h:outputText>
 						</p:column>
@@ -191,7 +222,7 @@
             <p:panel>
                 <f:facet name="header">#{messages['marketingManager.catalog.servicesToInclude']}</f:facet>
 
-                <p:panel>
+                <p:panel id="offerServices">
                     <c:forEach items="#{offerTemplateBean.sortedOfferServiceTemplates}" var="ost" varStatus="loopStatus">
                         <h:panelGrid columns="2" styleClass="Wid100 ui-panelgrid-blank" columnClasses="Wid25 Responsive100 VAlignTop Padding5, TexAlLeft Wid75 Responsive100 VAlignTop">
 					
@@ -202,13 +233,15 @@
 								</p:selectBooleanCheckbox>
 								
 								<p:inplace id="serviceDescription_#{loopStatus.index}" editor="true" rendered="#{offerTemplateBean.edit}">
-						            <p:inputText value="#{ost.serviceTemplate.description}" required="true" label="text" />
+						            <p:inputText value="#{ost.serviceTemplate.description}" required="true" label="text">
+						            	<p:ajax update="offerServices" />
+						            </p:inputText>
 						        </p:inplace>
  								<h:outputText value=" #{ost.serviceTemplate.description}" rendered="#{!offerTemplateBean.edit}"></h:outputText>
  							</p:panel>
 
-							<p:outputPanel id="serviceCf_panel_#{loopStatus.index}">
-                                <p:panel rendered="#{(offerTemplateBean.businessOfferModel != null and ost.serviceTemplate.selected) || offerTemplateBean.businessOfferModel == null}">
+							<p:panel id="serviceCf_panel_#{loopStatus.index}">
+                                <c:if test="#{(offerTemplateBean.bomId != null and ost.serviceTemplate.selected) || offerTemplateBean.bomId == null}">
                                     <hftl:decorateFormField fieldId="serviceMandatory_#{loopStatus.index}" label="#{messages['offerServiceTemplate.mandatory']}" componentWidth="5">
                                         <p:selectBooleanCheckbox disabled="#{!offerTemplateBean.edit}" id="serviceMandatory_#{loopStatus.index}" value="#{ost.mandatory}"></p:selectBooleanCheckbox>
                                     </hftl:decorateFormField>
@@ -221,14 +254,13 @@
                                     <c:if test="#{customFieldDataEntryBean.getActiveGroupedFieldTemplatesCount(ost.serviceTemplate) > 1}">
                                         <p:tabView>
                                             <hftl:customFields backingBean="#{serviceTemplateBean}" entity="#{ost.serviceTemplate}" messagesId=":offerForm:messages"
-                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="cf_#{loopStatus.index}" />
+                                                defaultTabLabel="#{messages['commons.parameters']}" prefix="tab_cf_#{loopStatus.index}" />
                                         </p:tabView>
                                     </c:if>
+                                </c:if>
                                 </p:panel>
-                            </p:outputPanel>
                         </h:panelGrid>
                     </c:forEach>
-
                 </p:panel>
             </p:panel>
         </hftl:formPanel>
@@ -269,8 +301,8 @@
 
                         <hftl:column label="#{messages['commons.name']}" field="name" />
                         <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
-                        <hftl:column label="#{messages['commons.validFrom']}" field="validityRaw.from" isDate="true" />
-                        <hftl:column label="#{messages['commons.validTo']}" field="validityRaw.to" isDate="true" />
+                        <hftl:column label="#{messages['commons.validFrom']}" field="validity.from" isDate="true" />
+                        <hftl:column label="#{messages['commons.validTo']}" field="validity.to" isDate="true" />
 
                         <p:column headerText="#{messages['commons.actions']}">
                             <p:commandButton value="#{messages['offerTemplate.action.addProduct']}" action="#{offerTemplateBean.addProductTemplateToOffer(entity)}"

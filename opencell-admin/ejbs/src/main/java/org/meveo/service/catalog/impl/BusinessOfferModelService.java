@@ -17,8 +17,7 @@ import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
-import org.meveo.model.billing.CatMessages;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -64,9 +63,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
     private OfferModelScriptService offerModelScriptService;
 
     @Inject
-    private CatMessagesService catMessagesService;
-
-    @Inject
     private ProductTemplateService productTemplateService;
 
     @Inject
@@ -90,7 +86,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
     public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
             List<ServiceConfigurationDto> serviceCodes, List<ServiceConfigurationDto> productCodes) throws BusinessException {
         return createOfferFromBOM(businessOfferModel, customFields, code, name, offerDescription, serviceCodes, productCodes, null, null, null, LifeCycleStatusEnum.IN_DESIGN, null,
-            null, null, null);
+            null, null, null, null, null);
     }
 
     /**
@@ -106,13 +102,15 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
      * @param bams
      * @param offerTemplateCategories
      * @param lifeCycleStatusEnum
+     * @param map
      * @return
      * @throws BusinessException
      */
     public OfferTemplate createOfferFromBOM(BusinessOfferModel businessOfferModel, List<CustomFieldDto> customFields, String code, String name, String offerDescription,
             List<ServiceConfigurationDto> serviceCodes, List<ServiceConfigurationDto> productCodes, List<Channel> channels, List<BusinessAccountModel> bams,
             List<OfferTemplateCategory> offerTemplateCategories, LifeCycleStatusEnum lifeCycleStatusEnum, String imagePath, Date validFrom, Date validTo,
-            Map<String, String> languageMessagesMap) throws BusinessException {
+            Map<String, String> descriptionI18n, String longDescription, Map<String, String> longDescriptionI18n) throws BusinessException {
+
         OfferTemplate bomOffer = businessOfferModel.getOfferTemplate();
         bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
@@ -147,17 +145,27 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         }
 
         newOfferTemplate.setDescription(offerDescription);
+        newOfferTemplate.setDescriptionI18n(descriptionI18n);
+        newOfferTemplate.setLongDescription(longDescription);
+        newOfferTemplate.setLongDescriptionI18n(longDescriptionI18n);
+
         if (StringUtils.isBlank(name)) {
             newOfferTemplate.setName(bomOffer.getName());
         } else {
             newOfferTemplate.setName(name);
         }
 
-        newOfferTemplate.setValidity(bomOffer.getValidityRaw());
+		newOfferTemplate.setValidity(bomOffer.getValidity());
         if (validFrom != null) {
+		    if (newOfferTemplate.getValidity()==null){
+		        newOfferTemplate.setValidity(new DatePeriod());
+		    }
             newOfferTemplate.getValidity().setFrom(validFrom);
         }
         if (validTo != null) {
+		    if (newOfferTemplate.getValidity()==null){
+                newOfferTemplate.setValidity(new DatePeriod());
+            }
             newOfferTemplate.getValidity().setTo(validTo);
         }
         newOfferTemplate.setBusinessOfferModel(businessOfferModel);
@@ -201,23 +209,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                 offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, customFields, newOfferTemplate.getBusinessOfferModel().getScript().getCode());
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
-            }
-        }
-
-        // save the cf
-
-        // create the languages
-        if (languageMessagesMap != null) {
-            for (String languageKey : languageMessagesMap.keySet()) {
-                String description = languageMessagesMap.get(languageKey);
-                CatMessages catMsg = catMessagesService.getCatMessages((BusinessEntity) newOfferTemplate, languageKey);
-                if (catMsg != null) {
-                    catMsg.setDescription(description);
-                    catMessagesService.update(catMsg);
-                } else {
-                    CatMessages catMessages = new CatMessages((BusinessEntity) newOfferTemplate, languageKey, description);
-                    catMessagesService.create(catMessages);
-                }
             }
         }
 

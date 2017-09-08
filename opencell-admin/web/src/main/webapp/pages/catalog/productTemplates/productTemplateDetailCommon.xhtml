@@ -27,9 +27,9 @@
 		<f:attribute name="objectId" value="#{backingBean.entity.id}" />
 	</o:validateMultiple>
 
-	<hftl:formLanguageFields entity="#{mainBackingBean.entity}"
-        backingBean="#{mainBackingBean}" multiLang="true" /> 
-	<hftl:formField label="#{messages['productOffering.lifeCycleStatus']}"
+    <hftl:formLanguageFields field="description" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" />
+    <hftl:formLanguageFields field="longDescription" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
+    <hftl:formField label="#{messages['productOffering.lifeCycleStatus']}"
 		field="lifeCycleStatus" id="lifeCycleStatus" />
 	<hftl:formField label="#{messages['businessProductModel.title']}"
 		field="businessProductModel" valueLabelField="code"
