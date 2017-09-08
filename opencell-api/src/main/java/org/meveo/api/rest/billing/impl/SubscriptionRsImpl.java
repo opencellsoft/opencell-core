@@ -187,12 +187,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-	public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber, boolean mergedCF, String sortBy,
+	public SubscriptionsListResponseDto listAll(int from, int numberOfRows, boolean mergedCF, String sortBy,
 			SortOrder sortOrder) {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
     	try {
-    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, mergedCF, sortBy, sortOrder);
+    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(from, numberOfRows , mergedCF, sortBy, sortOrder);
     		result.setSubscriptions(subscriptionsDto);
     	} catch (Exception e) {
     		processException(e, result.getActionStatus());

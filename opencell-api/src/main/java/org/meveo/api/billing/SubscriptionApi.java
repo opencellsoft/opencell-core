@@ -821,19 +821,20 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * @param pageSize size of page
-     * @param pageNum page number
+     * @param from first row
+     * @param numberOfRows number of rows
      * @param mergedCF
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsListDto listAll(int pageSize, int pageNum, boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
+    public SubscriptionsListDto listAll(int from, int numberOfRows , boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
 
         SubscriptionsListDto result = new SubscriptionsListDto();
         Map<String, Object> filters = new HashMap<>();
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, sortBy, sortOrder);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(from, numberOfRows, filters, null, null, sortBy, sortOrder);
         List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
         if (subscriptions != null) {
+        	result.setListSize(subscriptions.size());
             for (Subscription subscription : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(subscription, mergedCF));
             }
