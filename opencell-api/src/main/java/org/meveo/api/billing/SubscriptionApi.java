@@ -34,12 +34,14 @@ import org.meveo.api.dto.billing.ServiceToUpdateDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
 import org.meveo.api.dto.billing.SubscriptionsDto;
-import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
+import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
@@ -87,7 +89,6 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
-import org.primefaces.model.SortOrder;
 
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -793,7 +794,9 @@ public class SubscriptionApi extends BaseApi {
         }
 
         SubscriptionsDto result = new SubscriptionsDto();
-        List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy, sortOrder);
+		List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
+				sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name())
+						: org.primefaces.model.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, mergedCF));
@@ -810,9 +813,9 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsListDto listAll(int pageSize, int pageNum) throws MeveoApiException {
+    public SubscriptionsListResponseDto listAll(int pageSize, int pageNum) throws MeveoApiException {
 
-        return this.listAll(pageSize, pageNum, false, "code", SortOrder.ASCENDING);
+        return this.listAll(false, new Paging(pageNum, pageSize, "code", org.meveo.api.dto.response.Paging.SortOrder.ASCENDING));
 
     }
 
@@ -823,16 +826,26 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsListDto listAll(int from, int numberOfRows , boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
-
-        SubscriptionsListDto result = new SubscriptionsListDto();
+    public SubscriptionsListResponseDto listAll(boolean mergedCF, Paging paging) throws MeveoApiException {
+    	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
         Map<String, Object> filters = new HashMap<>();
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(from, numberOfRows, filters, null, null, sortBy, sortOrder);
-        List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
-        if (subscriptions != null) {
-        	result.setListSize(subscriptions.size());
-            for (Subscription subscription : subscriptions) {
-                result.getSubscription().add(subscriptionToDto(subscription, mergedCF));
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
+				paging != null ? paging.getFrom() : null, paging != null ? paging.getNumberOfRows() : null, filters,
+				null, null, paging != null ? paging.getSortBy() : null,
+				paging != null && paging.getSortOrder() != null
+						? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name())
+						: org.primefaces.model.SortOrder.ASCENDING);
+		
+		Long totalCount = subscriptionService.count(paginationConfiguration);
+        result.setPaging(paging != null ? paging : new Paging());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+		
+        if (totalCount > 0) {
+        	List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
+            if (subscriptions != null) {
+                for (Subscription subscription : subscriptions) {
+                    result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, mergedCF));
+                }
             }
         }
 

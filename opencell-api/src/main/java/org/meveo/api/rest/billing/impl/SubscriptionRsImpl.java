@@ -16,11 +16,12 @@ import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
+import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -31,7 +32,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.ChargeInstance;
-import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -187,13 +187,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-	public SubscriptionsListResponseDto listAll(int from, int numberOfRows, boolean mergedCF, String sortBy,
+	public SubscriptionsListResponseDto listAll(Integer from, Integer numberOfRows, boolean mergedCF, String sortBy,
 			SortOrder sortOrder) {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
     	try {
-    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(from, numberOfRows , mergedCF, sortBy, sortOrder);
-    		result.setSubscriptions(subscriptionsDto);
+    		result = subscriptionApi.listAll(mergedCF, new Paging(from, numberOfRows, sortBy, sortOrder));
     	} catch (Exception e) {
     		processException(e, result.getActionStatus());
     	}

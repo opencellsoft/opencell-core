@@ -21,6 +21,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -28,7 +29,6 @@ import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
-import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -121,7 +121,8 @@ public interface SubscriptionRs extends IBaseRs {
 
     @GET
     @Path("/listAll")
-	SubscriptionsListResponseDto listAll(@QueryParam("from") int from, @QueryParam("numberOfRows") int numberOfRows,
+	SubscriptionsListResponseDto listAll(@QueryParam("from") Integer from,
+			@QueryParam("numberOfRows") Integer numberOfRows,
 			@DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
 			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
 			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
