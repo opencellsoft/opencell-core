@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.billing.WalletOperationDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
 
 /**
  * @author Edward P. Legaspi
@@ -16,20 +16,20 @@ import org.meveo.api.dto.response.BaseResponse;
 
 @XmlRootElement(name = "FindWalletOperationsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FindWalletOperationsResponseDto extends BaseResponse {
+public class FindWalletOperationsResponseDto extends SearchResponse {
 
-	private static final long serialVersionUID = -1554482700055388991L;
+    private static final long serialVersionUID = -1554482700055388991L;
 
-	private List<WalletOperationDto> walletOperations;
+    private List<WalletOperationDto> walletOperations;
 
-	public List<WalletOperationDto> getWalletOperations() {
-		if (walletOperations == null)
-			walletOperations = new ArrayList<WalletOperationDto>();
-		return walletOperations;
-	}
+    public List<WalletOperationDto> getWalletOperations() {
+        if (walletOperations == null)
+            walletOperations = new ArrayList<WalletOperationDto>();
+        return walletOperations;
+    }
 
-	public void setWalletOperations(List<WalletOperationDto> walletOperations) {
-		this.walletOperations = walletOperations;
-	}
+    public void setWalletOperations(List<WalletOperationDto> walletOperations) {
+        this.walletOperations = walletOperations;
+    }
 
 }
