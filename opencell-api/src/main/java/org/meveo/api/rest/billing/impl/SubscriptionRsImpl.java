@@ -5,9 +5,6 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
@@ -34,6 +31,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.ChargeInstance;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -149,11 +147,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsResponseDto listByUserAccount(String userAccountCode, boolean mergedCF) {
+	public SubscriptionsResponseDto listByUserAccount(String userAccountCode, boolean mergedCF, String sortBy,
+			SortOrder sortOrder) {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
         try {
-            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, mergedCF));
+            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, mergedCF, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -188,11 +187,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber, boolean mergedCF) {
+	public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber, boolean mergedCF, String sortBy,
+			SortOrder sortOrder) {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
     	try {
-    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, mergedCF);
+    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, mergedCF, sortBy, sortOrder);
     		result.setSubscriptions(subscriptionsDto);
     	} catch (Exception e) {
     		processException(e, result.getActionStatus());

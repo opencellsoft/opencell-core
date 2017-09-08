@@ -90,6 +90,7 @@ import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
+import org.primefaces.model.SortOrder;
 
 @Stateless
 public class SubscriptionApi extends BaseApi {
@@ -774,7 +775,7 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException
      */
     public SubscriptionsDto listByUserAccount(String userAccountCode) throws MeveoApiException {
-        return this.listByUserAccount(userAccountCode, false);
+        return this.listByUserAccount(userAccountCode, false, "code", SortOrder.ASCENDING);
 
     }
 
@@ -784,7 +785,7 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF) throws MeveoApiException {
+    public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
             handleMissingParameters();
@@ -796,7 +797,7 @@ public class SubscriptionApi extends BaseApi {
         }
 
         SubscriptionsDto result = new SubscriptionsDto();
-        List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount);
+        List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy, sortOrder);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, mergedCF));
@@ -815,7 +816,7 @@ public class SubscriptionApi extends BaseApi {
      */
     public SubscriptionsListDto listAll(int pageSize, int pageNum) throws MeveoApiException {
 
-        return this.listAll(pageSize, pageNum, false);
+        return this.listAll(pageSize, pageNum, false, "code", SortOrder.ASCENDING);
 
     }
 
@@ -826,11 +827,11 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsListDto listAll(int pageSize, int pageNum, boolean mergedCF) throws MeveoApiException {
+    public SubscriptionsListDto listAll(int pageSize, int pageNum, boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
 
         SubscriptionsListDto result = new SubscriptionsListDto();
         Map<String, Object> filters = new HashMap<>();
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, "code", null);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(pageNum, pageSize, filters, null, null, sortBy, sortOrder);
         List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
         if (subscriptions != null) {
             for (Subscription subscription : subscriptions) {
