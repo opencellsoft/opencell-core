@@ -510,7 +510,7 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
                 //
                 accountHierarchyApi.populateNameAddress(existedBillingAccountDto, postData);
-                if (postData.getCustomFields()!=null && !postData.getCustomFields().isEmpty()) {
+                if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
                     existedBillingAccountDto.setCustomFields(postData.getCustomFields());
                 }
                 update(existedBillingAccountDto);
@@ -527,9 +527,7 @@ public class BillingAccountApi extends AccountEntityApi {
      * @throws MeveoApiException
      * @throws BusinessException
      */
-    private void createOrUpdatePaymentMethodInCA(BillingAccountDto postData, BillingAccount billingAccount)
-
-            throws MeveoApiException, BusinessException {
+    private void createOrUpdatePaymentMethodInCA(BillingAccountDto postData, BillingAccount billingAccount) throws MeveoApiException, BusinessException {
 
         if (postData.getPaymentMethod() == null) {
             return;
@@ -548,7 +546,6 @@ public class BillingAccountApi extends AccountEntityApi {
                 throw new MissingParameterException("iban");
             }
         }
-        
 
         boolean found = false;
         boolean updateCA = false;
@@ -563,8 +560,8 @@ public class BillingAccountApi extends AccountEntityApi {
 
                     } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
 
-                        if (postData.getBankCoordinates().getIban() != null &&  ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null && 
-                        		postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
+                        if (postData.getBankCoordinates().getIban() != null && ((DDPaymentMethod) paymentMethod).getBankCoordinates() != null
+                                && postData.getBankCoordinates().getIban().equals(((DDPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
                             found = true;
                             BankCoordinates bankCoordinatesFromDto = postData.getBankCoordinates().fromDto();
 
@@ -597,7 +594,7 @@ public class BillingAccountApi extends AccountEntityApi {
             if (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER) {
                 paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod())).fromDto(customerAccount);
             } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
-                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod(),postData.getBankCoordinates(),null,null)).fromDto(customerAccount);            
+                paymentMethodFromDto = (new PaymentMethodDto(postData.getPaymentMethod(), postData.getBankCoordinates(), null, null)).fromDto(customerAccount);
             }
 
             if (customerAccount.getPaymentMethods() == null) {

@@ -5,14 +5,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CustomersDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "CustomersResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CustomersResponseDto extends BaseResponse {
+public class CustomersResponseDto extends SearchResponse {
 
 	private static final long serialVersionUID = -7212880976584184812L;
 
@@ -24,7 +24,6 @@ public class CustomersResponseDto extends BaseResponse {
 
 	public void setCustomers(CustomersDto customers) {
 		this.customers = customers;
-		getActionStatus().setMessage(String.valueOf(customers.getTotalNumberOfRecords()));
 	}
 
 	@Override

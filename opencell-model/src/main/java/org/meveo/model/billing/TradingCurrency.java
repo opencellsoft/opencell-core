@@ -26,6 +26,9 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -39,60 +42,63 @@ import org.meveo.model.admin.Currency;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "currency.currencyCode"})
 @Cacheable
+@ExportIdentifier({ "currency.currencyCode" })
 @Table(name = "billing_trading_currency")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_trading_currency_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_trading_currency_seq"), })
+@NamedQueries({ @NamedQuery(name = "TradingCurrency.getByCode", query = "from TradingCurrency tr where tr.currency.currencyCode = :tradingCurrencyCode) ", hints = {
+        @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class TradingCurrency extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "currency_id")
-	private Currency currency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id")
+    private Currency currency;
 
-	@Column(name = "pr_description", length = 255)
-	@Size(max = 255)
-	private String prDescription;
+    @Column(name = "pr_description", length = 255)
+    @Size(max = 255)
+    private String prDescription;
 
-	@Column(name = "pr_currency_to_this", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal prCurrencyToThis;
+    @Column(name = "pr_currency_to_this", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal prCurrencyToThis;
 
-	@Transient
-	String currencyCode;
+    @Transient
+    String currencyCode;
 
-	public BigDecimal getPrCurrencyToThis() {
-		return prCurrencyToThis;
-	}
+    public BigDecimal getPrCurrencyToThis() {
+        return prCurrencyToThis;
+    }
 
-	public void setPrCurrencyToThis(BigDecimal prCurrencyToThis) {
-		this.prCurrencyToThis = prCurrencyToThis;
-	}
+    public void setPrCurrencyToThis(BigDecimal prCurrencyToThis) {
+        this.prCurrencyToThis = prCurrencyToThis;
+    }
 
-	public String getPrDescription() {
-		return prDescription;
-	}
+    public String getPrDescription() {
+        return prDescription;
+    }
 
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+    public void setPrDescription(String prDescription) {
+        this.prDescription = prDescription;
+    }
 
-	public Currency getCurrency() {
-		return currency;
-	}
+    public Currency getCurrency() {
+        return currency;
+    }
 
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
 
-	public String getCurrencyCode() {
-		return currency.getCurrencyCode();
-	}
+    public String getCurrencyCode() {
+        return currency.getCurrencyCode();
+    }
 
-	public void setCurrencyCode(String currencyCode) {
-		this.currencyCode = currencyCode;
-	}
-	
-	public boolean equals(Object obj){
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -101,11 +107,11 @@ public class TradingCurrency extends EnableEntity {
         } else if (!(obj instanceof TradingCurrency)) {
             return false;
         }
-        
-		TradingCurrency other = (TradingCurrency) obj;
-		return getId()!=null &&getId().equals(other.getId());
-//		return (o.currency!=null) && o.currency.equals(this.currency);
-	}
+
+        TradingCurrency other = (TradingCurrency) obj;
+        return getId() != null && getId().equals(other.getId());
+        // return (o.currency!=null) && o.currency.equals(this.currency);
+    }
 
     @Override
     public String toString() {

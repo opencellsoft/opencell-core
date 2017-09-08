@@ -27,46 +27,61 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
+import org.meveo.model.shared.Name;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomerService;
 
 /**
- * Standard backing bean for {@link Customer} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Customer} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class CustomerBean extends AccountBean<Customer> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/** Injected @{link Customer} service. Extends {@link PersistenceService}. */
-	@Inject
-	private CustomerService customerService;
-	
+    /** Injected @{link Customer} service. Extends {@link PersistenceService}. */
+    @Inject
+    private CustomerService customerService;
+
     @Inject
     private SellerService sellerService;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public CustomerBean() {
-		super(Customer.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public CustomerBean() {
+        super(Customer.class);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
+    @Override
+    public Customer initEntity() {
+        super.initEntity();
+        if (entity.getAddress() == null) {
+            entity.setAddress(new Address());
+        }
+        if (entity.getName() == null) {
+            entity.setName(new Name());
+        }
+        if (entity.getContactInformation() == null) {
+            entity.setContactInformation(new ContactInformation());
+        }
+        return entity;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
     @ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         entity.setSeller(sellerService.refreshOrRetrieve(entity.getSeller()));
 
@@ -77,17 +92,17 @@ public class CustomerBean extends AccountBean<Customer> {
         }
         return null;
     }
-	
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Customer> getPersistenceService() {
-		return customerService;
-	}
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Customer> getPersistenceService() {
+        return customerService;
+    }
+
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 }

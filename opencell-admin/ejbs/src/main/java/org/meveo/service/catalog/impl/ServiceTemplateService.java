@@ -34,14 +34,14 @@ import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceChargeTemplateTermination;
 import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Service Template service implementation.
  * 
  */
 @Stateless
-public class ServiceTemplateService extends MultilanguageEntityService<ServiceTemplate> {
+public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
 
     @Inject
     private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;

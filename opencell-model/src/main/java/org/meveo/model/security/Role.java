@@ -3,6 +3,7 @@ package org.meveo.model.security;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,21 +13,27 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "name"})
+@Cacheable
+@ExportIdentifier({ "name" })
 @Table(name = "adm_role")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_role_seq"), })
-@NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p")})
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_role_seq"), })
+@NamedQueries({ @NamedQuery(name = "Role.getAllRoles", query = "select r from org.meveo.model.security.Role r LEFT JOIN r.permissions p", hints = {
+        @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class Role extends BaseEntity {
 
     private static final long serialVersionUID = -2309961042891712685L;
@@ -41,10 +48,12 @@ public class Role extends BaseEntity {
     @NotNull
     private String description;
 
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_permission", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "permission_id"))
     private Set<Permission> permissions = new HashSet<Permission>();
 
+    @Cache(usage=CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     @JoinTable(name = "adm_role_role", joinColumns = @JoinColumn(name = "role_id"), inverseJoinColumns = @JoinColumn(name = "child_role_id"))
     private Set<Role> roles = new HashSet<Role>();
@@ -98,13 +107,13 @@ public class Role extends BaseEntity {
             }
         }
         for (Role role : roles) {
-            if (role.hasPermission(permission)){
+            if (role.hasPermission(permission)) {
                 return true;
             }
         }
         return false;
     }
-    
+
     public String getDescriptionOrName() {
         if (!StringUtils.isBlank(description)) {
             return description;
@@ -130,7 +139,7 @@ public class Role extends BaseEntity {
         } else if (!(obj instanceof Role)) {
             return false;
         }
-        
+
         final Role other = (Role) obj;
         if (getId() == null) {
             return false;

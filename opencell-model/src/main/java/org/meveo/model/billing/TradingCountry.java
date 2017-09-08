@@ -26,7 +26,10 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -39,64 +42,66 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "country.countryCode"})
+@ExportIdentifier({ "country.countryCode" })
 @Cacheable
 @Table(name = "billing_trading_country")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_trading_country_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_trading_country_seq"), })
+@NamedQueries({ @NamedQuery(name = "TradingCountry.getByCode", query = "from TradingCountry tr where tr.country.countryCode = :tradingCountryCode) ", hints = {
+        @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class TradingCountry extends EnableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "tradingCountry", fetch = FetchType.LAZY)
-	private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
+    @OneToMany(mappedBy = "tradingCountry", fetch = FetchType.LAZY)
+    private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "country_id")
-	private Country country;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "country_id")
+    private Country country;
 
-	@Column(name = "pr_description", length = 255)
-	@Size(max = 255)
-	private String prDescription;
+    @Column(name = "pr_description", length = 255)
+    @Size(max = 255)
+    private String prDescription;
 
-	@Transient
-	String countryCode;
+    @Transient
+    String countryCode;
 
-	public String getPrDescription() {
-		return prDescription;
-	}
+    public String getPrDescription() {
+        return prDescription;
+    }
 
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+    public void setPrDescription(String prDescription) {
+        this.prDescription = prDescription;
+    }
 
-	public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
-		return invoiceSubcategoryCountries;
-	}
+    public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
+        return invoiceSubcategoryCountries;
+    }
 
-	public void setInvoiceSubcategoryCountries(
-			List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
-		this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
-	}
+    public void setInvoiceSubcategoryCountries(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+        this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
+    }
 
-	public Country getCountry() {
-		return country;
-	}
+    public Country getCountry() {
+        return country;
+    }
 
-	public void setCountry(Country country) {
-		this.country = country;
-	}
+    public void setCountry(Country country) {
+        this.country = country;
+    }
 
-	public String getCountryCode() {
-		return country.getCountryCode();
-	}
+    public String getCountryCode() {
+        return country.getCountryCode();
+    }
 
-	@Override
+    @Override
     public String toString() {
         return String.format("TradingCountry [country=%s, id=%s]", country, getId());
     }
 
-	@Override
-    public boolean equals(Object obj){
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -105,11 +110,11 @@ public class TradingCountry extends EnableEntity {
         } else if (!(obj instanceof TradingCountry)) {
             return false;
         }
-        
-		TradingCountry other = (TradingCountry) obj;
 
-		return getId()!=null&&getId().equals(other.getId());
-//		return (o.country!=null) && o.country.equals(this.country);
-	}
+        TradingCountry other = (TradingCountry) obj;
+
+        return getId() != null && getId().equals(other.getId());
+        // return (o.country!=null) && o.country.equals(this.country);
+    }
 
 }

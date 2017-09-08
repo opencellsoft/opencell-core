@@ -18,10 +18,10 @@
  */
 package org.meveo.model.billing;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -37,102 +37,102 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Currency;
 
 @Entity
+@Cacheable
 @ExportIdentifier("countryCode")
 @Table(name = "adm_country")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_country_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_country_seq"), })
 public class Country extends AuditableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "country_code", length = 10)
-	@Size(max = 10)
-	private String countryCode;
+    @Column(name = "country_code", length = 10)
+    @Size(max = 10)
+    private String countryCode;
 
-	@Column(name = "description_en", length = 100)
-	@Size(max = 100)
-	private String descriptionEn;
-	
-	@Column(name = "description_fr", length = 100)
-	@Size(max = 100)
-	private String descriptionFr;
+    @Column(name = "description_en", length = 100)
+    @Size(max = 100)
+    private String descriptionEn;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "currency_id")
-	private Currency currency;
+    @Column(name = "description_fr", length = 100)
+    @Size(max = 100)
+    private String descriptionFr;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "language_id")
-	private Language language;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id")
+    private Currency currency;
 
-	public String getCountryCode() {
-		return countryCode;
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "language_id")
+    private Language language;
 
-	public void setCountryCode(String countryCode) {
-		this.countryCode = countryCode;
-	}
+    public String getCountryCode() {
+        return countryCode;
+    }
 
-	
-	public String getDescription_ENG() {
-		return getDescriptionEn();
-	}
-	
-	public String getDescriptionEn() {
-		return descriptionEn;
-	}
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+    }
 
-	public void setDescriptionEn(String descriptionEn) {
-		this.descriptionEn = descriptionEn;
-	}
+    public String getDescription_ENG() {
+        return getDescriptionEn();
+    }
 
-	public String getDescription_FRA() {
-		return getDescriptionFr();
-	}
-	
-	public String getDescriptionFr() {
-		return descriptionFr;
-	}
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
 
-	public void setDescriptionFr(String descriptionFr) {
-		this.descriptionFr = descriptionFr;
-	}
-	
-	public String getDescription(String languageCode)  {
-		
-		Method method = null;
-		try {
-			method = this.getClass().getMethod("getDescription_"+languageCode);
-			String description = (String)method.invoke(this);
-			return description;
-		} catch (NoSuchMethodException | SecurityException e) {
-			return descriptionEn;
-		} catch (IllegalAccessException | IllegalArgumentException
-				| InvocationTargetException e) {
-			return descriptionEn;
-		} 
-		
-	}
-	
-	public Currency getCurrency() {
-		return currency;
-	}
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
 
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
+    public String getDescription_FRA() {
+        return getDescriptionFr();
+    }
 
-	public Language getLanguage() {
-		return language;
-	}
+    public String getDescriptionFr() {
+        return descriptionFr;
+    }
 
-	public void setLanguage(Language language) {
-		this.language = language;
-	}
+    public void setDescriptionFr(String descriptionFr) {
+        this.descriptionFr = descriptionFr;
+    }
 
-	public String toString() {
-		return countryCode;
-	}
+    public String getDescription(String languageCode) {
 
-	@Override
+        Method method = null;
+        try {
+            method = this.getClass().getMethod("getDescription_" + languageCode);
+            String description = (String) method.invoke(this);
+            return description;
+        } catch (NoSuchMethodException | SecurityException e) {
+            return descriptionEn;
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            return descriptionEn;
+        }
+
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public String toString() {
+        return countryCode;
+    }
+
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -142,8 +142,8 @@ public class Country extends AuditableEntity {
         } else if (!(obj instanceof Country)) {
             return false;
         }
-        
-		Country o = (Country) obj;
-		return (o.countryCode!=null) && o.countryCode.equals(this.countryCode);
-	}
+
+        Country o = (Country) obj;
+        return (o.countryCode != null) && o.countryCode.equals(this.countryCode);
+    }
 }

@@ -189,6 +189,12 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         offerTemplate.setLongDescription(postData.getLongDescription());
         offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
+        if (postData.getLanguageDescriptions() != null) {
+            offerTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), offerTemplate.getDescriptionI18n()));
+        }
+        if (postData.getLongDescriptionsTranslated() != null) {
+            offerTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), offerTemplate.getLongDescriptionI18n()));
+        }
 
         offerTemplate.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(offerTemplate.getSubscriptionRenewal(), postData.getRenewalRule(), false));
 
@@ -421,7 +427,8 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
                 offerProductTemplateDto = new OfferProductTemplateDto();
                 offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
                 if (productTemplate != null) {
-                    offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
+                    offerProductTemplateDto
+                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
                 }
                 offerProductTemplates.add(offerProductTemplateDto);
             }

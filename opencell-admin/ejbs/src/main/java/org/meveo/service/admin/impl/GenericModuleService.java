@@ -85,13 +85,13 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             boolean addFromParam = false;
             boolean addToParam = false;
             if (ReflectionUtils.isClassHasField(itemClazz, "validity")) {
-                if (item.getValidity().getFrom() != null) {
+                if (item.getValidity() != null && item.getValidity().getFrom() != null) {
                     sql = sql + " and mi.validity.from = :from";
                     addFromParam = true;
                 } else {
                     sql = sql + " and mi.validity.from IS NULL";
                 }
-                if (item.getValidity().getTo() != null) {
+                if (item.getValidity() != null && item.getValidity().getTo() != null) {
                     sql = sql + " and mi.validity.to = :to";
                     addToParam = true;
                 } else {

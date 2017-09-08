@@ -158,14 +158,14 @@
                                                 </ui:repeat>
                                             </p>
                                             <p:panelGrid columns="1">
-                                                <p:panelGrid columns="1" rendered="#{entity.validityRaw != null}">
+                                                <p:panelGrid columns="1" rendered="#{entity.validity != null}">
 													<h:outputText value="#{messages['commons.valid']}: " />
 													<h:panelGroup>
-														<h:outputText value="#{entity.validityRaw.from}">
+														<h:outputText value="#{entity.validity.from}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 														<h:outputText value="-" style="padding:5px" />
-														<h:outputText value="#{entity.validityRaw.to}">
+														<h:outputText value="#{entity.validity.to}">
 															<f:convertDateTime type="date" pattern="#{paramBean.dateFormat}" />
 														</h:outputText>
 													</h:panelGroup>

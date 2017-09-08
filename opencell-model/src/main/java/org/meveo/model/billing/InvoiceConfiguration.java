@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -73,7 +74,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @Column(name = "display_orders")
     private Boolean displayOrders = false;
 
-    @OneToOne
+    @OneToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 

@@ -28,10 +28,8 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "cat_usage_charge_template")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_usage_charge_template_seq"), })
 @NamedQueries({ @NamedQuery(name = "UsageChargeTemplate.getWithTemplateEDR", query = "SELECT u FROM UsageChargeTemplate u join u.edrTemplates t WHERE :edrTemplate=t"
@@ -50,7 +48,6 @@ query = "select count(*) from UsageChargeTemplate u where (u.id not in (select s
 		query = "from UsageChargeTemplate u where (u.id not in (select serv.chargeTemplate from ServiceChargeTemplateUsage serv) "
 				+ " OR u.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)) ")
 })
-
 public class UsageChargeTemplate extends ChargeTemplate {
 	static String WILCARD = "";
 	

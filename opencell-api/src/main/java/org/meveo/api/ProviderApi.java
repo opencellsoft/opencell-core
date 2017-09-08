@@ -447,52 +447,60 @@ public class ProviderApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getEmail())) {
             provider.setEmail(postData.getEmail());
         }
-        BankCoordinates bankCoordinates = provider.getBankCoordinates() == null ? new BankCoordinates() : provider.getBankCoordinates();
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
-            bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
-            bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
-            bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
-            bankCoordinates.setKey(postData.getBankCoordinates().getKey());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
-            bankCoordinates.setIban(postData.getBankCoordinates().getIban());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
-            bankCoordinates.setBic(postData.getBankCoordinates().getBic());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
-            bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
-            bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
-            bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
-            bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
-            bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
-        }
-        if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
-            bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
-        }
-        if (provider.getBankCoordinates() == null) {
-            provider.setBankCoordinates(bankCoordinates);
+        if (postData.getBankCoordinates() != null) {
+            if (provider.getBankCoordinates() == null) {
+                provider.setBankCoordinates(new BankCoordinates());
+            }
+            BankCoordinates bankCoordinates = provider.getBankCoordinates();
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankCode())) {
+                bankCoordinates.setBankCode(postData.getBankCoordinates().getBankCode());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBranchCode())) {
+                bankCoordinates.setBranchCode(postData.getBankCoordinates().getBranchCode());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountNumber())) {
+                bankCoordinates.setAccountNumber(postData.getBankCoordinates().getAccountNumber());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getKey())) {
+                bankCoordinates.setKey(postData.getBankCoordinates().getKey());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIban())) {
+                bankCoordinates.setIban(postData.getBankCoordinates().getIban());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBic())) {
+                bankCoordinates.setBic(postData.getBankCoordinates().getBic());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getAccountOwner())) {
+                bankCoordinates.setAccountOwner(postData.getBankCoordinates().getAccountOwner());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankName())) {
+                bankCoordinates.setBankName(postData.getBankCoordinates().getBankName());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getBankId())) {
+                bankCoordinates.setBankId(postData.getBankCoordinates().getBankId());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerNumber())) {
+                bankCoordinates.setIssuerNumber(postData.getBankCoordinates().getIssuerNumber());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIssuerName())) {
+                bankCoordinates.setIssuerName(postData.getBankCoordinates().getIssuerName());
+            }
+            if (!StringUtils.isBlank(postData.getBankCoordinates().getIcs())) {
+                bankCoordinates.setIcs(postData.getBankCoordinates().getIcs());
+            }
         }
         if (postData.isRecognizeRevenue() != null) {
             provider.setRecognizeRevenue(postData.isRecognizeRevenue());
         }
-        InvoiceConfiguration invoiceConfiguration = (provider.getInvoiceConfiguration() == null) ? new InvoiceConfiguration() : provider.getInvoiceConfiguration();
+
         InvoiceConfigurationDto invoiceConfigurationDto = postData.getInvoiceConfiguration();
         if (invoiceConfigurationDto != null) {
+            if (provider.getInvoiceConfiguration() == null) {
+                InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
+                invoiceConfiguration.setProvider(provider);
+                provider.setInvoiceConfiguration(invoiceConfiguration);
+            }
+            InvoiceConfiguration invoiceConfiguration = provider.getInvoiceConfiguration();
             if (invoiceConfigurationDto.getDisplaySubscriptions() != null) {
                 invoiceConfiguration.setDisplaySubscriptions(invoiceConfigurationDto.getDisplaySubscriptions());
             }

@@ -145,9 +145,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         String code = latestVersion.getCode();
         Date startDate = null;
         Date endDate = null;
-        if (latestVersion.getValidityRaw() != null) {
-            startDate = latestVersion.getValidityRaw().getFrom();
-            endDate = latestVersion.getValidityRaw().getTo();
+        if (latestVersion.getValidity() != null) {
+            startDate = latestVersion.getValidity().getFrom();
+            endDate = latestVersion.getValidity().getTo();
         }
 
         offer = duplicate(latestVersion, false, false);
@@ -316,9 +316,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         OfferTemplate latestVersion = findTheLatestVersion(offer.getCode());
         Date startDate = null;
         Date endDate = null;
-        if (latestVersion.getValidityRaw() != null) {
-            startDate = latestVersion.getValidityRaw().getFrom();
-            endDate = latestVersion.getValidityRaw().getTo();
+        if (latestVersion.getValidity() != null) {
+            startDate = latestVersion.getValidity().getFrom();
+            endDate = latestVersion.getValidity().getTo();
         }
 
         offer = duplicate(latestVersion, false, false);

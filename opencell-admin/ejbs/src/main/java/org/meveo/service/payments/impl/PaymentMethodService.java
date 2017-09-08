@@ -40,9 +40,6 @@ import org.meveo.service.base.PersistenceService;
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Inject
-    private CustomerAccountService customerAccountService;
-
-    @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
 
     @Override
@@ -121,10 +118,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
 
-        String coutryCode = null;  
-        if(!customerAccount.isTransient()){        	       
-	        customerAccount =  customerAccountService.refreshOrRetrieve(customerAccount);
-	    	if(customerAccount.getBillingAccounts() != null && !customerAccount.getBillingAccounts().isEmpty()){
+        String coutryCode = null;  //TODO : waiting #2830 
+        if(!customerAccount.isTransient()){        	       	       
+	    	if(customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0){
 	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
 	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
 	    		}

@@ -21,12 +21,12 @@ package org.meveo.service.catalog.impl;
 import javax.ejb.Stateless;
 
 import org.meveo.model.shared.Title;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Title service implementation.
  */
 @Stateless
-public class TitleService extends MultilanguageEntityService<Title> {
+public class TitleService extends BusinessService<Title> {
 
 }

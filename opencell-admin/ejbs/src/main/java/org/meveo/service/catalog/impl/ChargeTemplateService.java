@@ -29,14 +29,14 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-public class ChargeTemplateService<P extends ChargeTemplate> extends MultilanguageEntityService<P> {
+public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessService<P> {
 
     @Inject
     private TriggeredEDRTemplateService edrTemplateService;

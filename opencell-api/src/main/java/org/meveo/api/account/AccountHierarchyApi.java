@@ -271,6 +271,7 @@ public class AccountHierarchyApi extends BaseApi {
 
         String creditCategory = paramBean.getProperty("api.default.customerAccount.creditCategory", "NEWCUSTOMER");
 
+        customerDto.setAddress(new AddressDto());
         AddressDto address = customerDto.getAddress();
         address.setAddress1(postData.getAddress1());
         address.setAddress2(postData.getAddress2());
@@ -278,10 +279,12 @@ public class AccountHierarchyApi extends BaseApi {
         address.setCity(postData.getCity());
         address.setCountry(postData.getCountryCode());
 
+        customerDto.setContactInformation(new ContactInformationDto());
         ContactInformationDto contactInformation = customerDto.getContactInformation();
         contactInformation.setEmail(postData.getEmail());
         contactInformation.setPhone(postData.getPhoneNumber());
 
+        customerDto.setName(new NameDto());
         NameDto name = customerDto.getName();
         if (!StringUtils.isBlank(postData.getTitleCode()) && !StringUtils.isBlank(titleService.findByCode(postData.getTitleCode()))) {
             name.setTitle(postData.getTitleCode());
@@ -314,9 +317,10 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
             // Start compatibility with pre-4.6 versions
-        } else if (postData.getPaymentMethod() != null ) {
+        } else if (postData.getPaymentMethod() != null) {
             customerAccountDto.setPaymentMethods(new ArrayList<>());
-            customerAccountDto.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
+            customerAccountDto.getPaymentMethods()
+                .add(new PaymentMethodDto(postData.getPaymentMethod().intValue() == 1 ? PaymentMethodEnum.CHECK : PaymentMethodEnum.WIRETRANSFER));
         }
         // End compatibility with pre-4.6 versions
 
@@ -1023,9 +1027,9 @@ public class AccountHierarchyApi extends BaseApi {
             if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
                 customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
                 // Start compatibility with pre-4.6 versions
-            } else if (postData.getPaymentMethod() != null) {            	
-                customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData));                
-            }             
+            } else if (postData.getPaymentMethod() != null) {
+                customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData));
+            }
             // End compatibility with pre-4.6 versions
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
@@ -1284,7 +1288,7 @@ public class AccountHierarchyApi extends BaseApi {
                 customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
 
                 // Start compatibility with pre-4.6 versions
-            } else if (postData.getPaymentMethod() != null){              
+            } else if (postData.getPaymentMethod() != null) {
                 customerAccountDto.setPaymentMethods(compatibilityPaymentMthod(postData));
             }
             // End compatibility with pre-4.6 versions
@@ -1630,8 +1634,12 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setDescription(account.getDescription());
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
-        dto.setName(new NameDto(account.getName()));
-        dto.setAddress(new AddressDto(account.getAddress()));
+        if (account.getName() != null) {
+            dto.setName(new NameDto(account.getName()));
+        }
+        if (account.getAddress() != null) {
+            dto.setAddress(new AddressDto(account.getAddress()));
+        }
         dto.setCreated(account.getAuditable().getCreated());
 
         BusinessAccountModel businessAccountModel = account.getBusinessAccountModel();
@@ -1714,8 +1722,8 @@ public class AccountHierarchyApi extends BaseApi {
         }
 
         if (ca.getPaymentMethods() != null && !ca.getPaymentMethods().isEmpty()) {
-            dto.setPaymentMethods(new ArrayList<>());           
-            for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {               
+            dto.setPaymentMethods(new ArrayList<>());
+            for (PaymentMethod paymentMethod : ca.getPaymentMethods()) {
                 dto.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
             }
 
@@ -1926,19 +1934,19 @@ public class AccountHierarchyApi extends BaseApi {
             customerBrandService.create(customerBrand);
         }
     }
-    
-    private List<PaymentMethodDto> compatibilityPaymentMthod(CRMAccountHierarchyDto postData){
-    	List<PaymentMethodDto> listPaymentMethod = new ArrayList<PaymentMethodDto>();
-    	if (postData.getPaymentMethod() != null) {
-    		PaymentMethodDto paymentMethodDto = null;
-    		if(postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER){
-    			paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod());
-    		}else{
-    			paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(),postData.getBankCoordinates(),postData.getMandateIdentification(),postData.getMandateDate());
-    		}
-    		paymentMethodDto.validate();       
-    		listPaymentMethod.add(paymentMethodDto);
-    	} 
-    	return listPaymentMethod;
+
+    private List<PaymentMethodDto> compatibilityPaymentMthod(CRMAccountHierarchyDto postData) {
+        List<PaymentMethodDto> listPaymentMethod = new ArrayList<PaymentMethodDto>();
+        if (postData.getPaymentMethod() != null) {
+            PaymentMethodDto paymentMethodDto = null;
+            if (postData.getPaymentMethod() == PaymentMethodEnum.CHECK || postData.getPaymentMethod() == PaymentMethodEnum.WIRETRANSFER) {
+                paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod());
+            } else {
+                paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(), postData.getBankCoordinates(), postData.getMandateIdentification(), postData.getMandateDate());
+            }
+            paymentMethodDto.validate();
+            listPaymentMethod.add(paymentMethodDto);
+        }
+        return listPaymentMethod;
     }
 }

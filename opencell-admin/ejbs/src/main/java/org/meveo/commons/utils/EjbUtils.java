@@ -87,9 +87,9 @@ public class EjbUtils {
     }
 
     /**
-     * Return a service
+     * Return a service by a service interface name
      * 
-     * @param serviceInterfaceName A simple name of a service (NOT a full classname). E.g. WorkflowService
+     * @param serviceInterfaceName A simple name of a service class (NOT a full classname). E.g. WorkflowService
      * @return Service instance
      */
     public static Object getServiceInterface(String serviceInterfaceName) {
@@ -103,11 +103,23 @@ public class EjbUtils {
         return null;
     }
 
+    /**
+     * Return a persistence service for a given entity class
+     * 
+     * @param entityClass Entity class
+     * @return Persistence service
+     */
+    @SuppressWarnings("rawtypes")
+    public static Object getServiceInterface(Class entityClass) {
+        return getServiceInterface(entityClass.getSimpleName() + "Service");
+    }
+
     public static String getCurrentClusterNode() {
         return System.getProperty("jboss.node.name");
     }
 
     public static boolean isRunningInClusterMode() {
-        return System.getProperty("jboss.node.name") != null;
+        String nodeName = System.getProperty("jboss.node.name");
+        return  nodeName!= null && nodeName.startsWith("opencell");
     }
 }

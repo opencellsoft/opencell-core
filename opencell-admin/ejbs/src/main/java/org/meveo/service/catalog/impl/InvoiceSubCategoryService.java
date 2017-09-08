@@ -37,7 +37,7 @@ import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.UserAccount;
-import org.meveo.service.base.MultilanguageEntityService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 
 /**
@@ -45,135 +45,123 @@ import org.meveo.service.base.ValueExpressionWrapper;
  * 
  */
 @Stateless
-public class InvoiceSubCategoryService extends MultilanguageEntityService<InvoiceSubCategory> {
+public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategory> {
 
-	@Inject
-	private TaxService taxService;
-	
-	public InvoiceSubCategory findByCode(EntityManager em, String code) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
-		qb.addCriterion("code", "=", code, false);
+    @Inject
+    private TaxService taxService;
 
-		return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
-	}
+    public InvoiceSubCategory findByCode(EntityManager em, String code) {
+        QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
+        qb.addCriterion("code", "=", code, false);
 
-	@Override
-	public InvoiceSubCategory findByCode(String code) {
-		return findByCode(code, null);
-	}
+        return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
+    }
 
-	@Override
-	public InvoiceSubCategory findByCode(String code, List<String> fetchFields) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc", fetchFields);
-		qb.addCriterion("sc.code", "=", code, false);
+    @Override
+    public InvoiceSubCategory findByCode(String code) {
+        return findByCode(code, null);
+    }
 
-		try {
-			return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+    @Override
+    public InvoiceSubCategory findByCode(String code, List<String> fetchFields) {
+        QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc", fetchFields);
+        qb.addCriterion("sc.code", "=", code, false);
 
-	public int getNbInvSubCatNotAssociated() {
-		return ((Long) getEntityManager()
-				.createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", Long.class)
-				.getSingleResult()).intValue();
-	}
+        try {
+            return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-	public List<InvoiceSubCategory> getInvoiceSubCatNotAssociated() {
-		return (List<InvoiceSubCategory>) getEntityManager()
-				.createNamedQuery("invoiceSubCategory.getInvoiceSubCatNotAssociated", InvoiceSubCategory.class)
-				.getResultList();
-	}
+    public int getNbInvSubCatNotAssociated() {
+        return ((Long) getEntityManager().createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", Long.class).getSingleResult()).intValue();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
-		qb.addCriterionEntity("sc.invoiceCategory", invoiceCategory);
-		try {
-			return qb.getQuery(getEntityManager()).getResultList();
+    public List<InvoiceSubCategory> getInvoiceSubCatNotAssociated() {
+        return (List<InvoiceSubCategory>) getEntityManager().createNamedQuery("invoiceSubCategory.getInvoiceSubCatNotAssociated", InvoiceSubCategory.class).getResultList();
+    }
 
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-	
-	public boolean matchInvoicesubcatCountryExpression(String expression,BillingAccount billingAccount,Invoice invoice) throws BusinessException {
-		Boolean result = true;
-		if (StringUtils.isBlank(expression)) {
-			return result;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
+    @SuppressWarnings("unchecked")
+    public List<InvoiceSubCategory> findByInvoiceCategory(InvoiceCategory invoiceCategory) {
+        QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
+        qb.addCriterionEntity("sc.invoiceCategory", invoiceCategory);
+        try {
+            return qb.getQuery(getEntityManager()).getResultList();
 
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
-		if (expression.indexOf("ca") >= 0) {
-			userMap.put("ca", billingAccount.getCustomerAccount());
-		}
-		if (expression.indexOf("ba") >= 0) {
-			userMap.put("ba", billingAccount);
-		}
-		if (expression.indexOf("iv") >= 0) {
-			userMap.put("iv", invoice);
+    public boolean matchInvoicesubcatCountryExpression(String expression, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+        Boolean result = true;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
 
-		}
-		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
-				Boolean.class);
-		try {
-			result = (Boolean) res;
-		} catch (Exception e) {
-			throw new BusinessException("Expression " + expression
-					+ " do not evaluate to boolean but " + res);
-		}
-		return result;
-	}
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("iv") >= 0) {
+            userMap.put("iv", invoice);
 
+        }
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        try {
+            result = (Boolean) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
+        }
+        return result;
+    }
 
-	public Tax evaluateTaxCodeEL(String expression,UserAccount userAccount, BillingAccount billingAccount, Invoice invoice)  throws BusinessException {
-		Tax result = null;
-		if (StringUtils.isBlank(expression)) {
-			return result;
-		}
-		Map<Object, Object> userMap = new HashMap<Object, Object>();
+    public Tax evaluateTaxCodeEL(String expression, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
+        Tax result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
 
+        if (expression.indexOf("seller") >= 0) {
+            userMap.put("seller", billingAccount.getCustomerAccount().getCustomer().getSeller());
+        }
+        if (expression.indexOf("cust") >= 0) {
+            userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("ua") >= 0) {
+            userMap.put("ua", userAccount);
+        }
+        if (expression.indexOf("iv") >= 0) {
+            userMap.put("iv", invoice);
+        }
+        if (expression.indexOf("date") >= 0) {
+            userMap.put("date", invoice == null ? new Date() : invoice.getInvoiceDate());
+        }
+        String taxCode = null;
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            taxCode = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
+        }
+        if (taxCode == null) {
+            throw new BusinessException("Expression " + expression + " evaluates to null  ");
+        } else {
+            result = taxService.findByCode(taxCode);
+        }
 
-		if (expression.indexOf("seller") >= 0) {
-			userMap.put("seller", billingAccount.getCustomerAccount().getCustomer().getSeller());
-		}
-		if (expression.indexOf("cust") >= 0) {
-			userMap.put("cust", billingAccount.getCustomerAccount().getCustomer());
-		}
-		if (expression.indexOf("ca") >= 0) {
-			userMap.put("ca", billingAccount.getCustomerAccount());
-		}
-		if (expression.indexOf("ba") >= 0) {
-			userMap.put("ba", billingAccount);
-		}
-		if (expression.indexOf("ua") >= 0) {
-			userMap.put("ua", userAccount);
-		}		
-		if (expression.indexOf("iv") >= 0) {
-			userMap.put("iv", invoice);
-		}
-		if(expression.indexOf("date") >=0){
-			userMap.put("date", invoice==null?new Date():invoice.getInvoiceDate());
-		}
-		String taxCode=null;
-		Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap,
-				String.class);
-		try {
-			taxCode = (String) res;
-		} catch (Exception e) {
-			throw new BusinessException("Expression " + expression
-					+ " do not evaluate to String but " + res);
-		}
-		if(taxCode==null){
-			throw new BusinessException("Expression " + expression
-					+ " evaluates to null  ");
-		} else {
-			result = taxService.findByCode(taxCode);
-		}
-		
-		return result;
-	}
-	
+        return result;
+    }
+
 }

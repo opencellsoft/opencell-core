@@ -43,6 +43,7 @@ import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomerService;
@@ -102,11 +103,11 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         handleMissingParametersAndValidate(postData);
-        
-        if(postData.getPaymentMethods() != null){
-        	for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-        		paymentMethodDto.validate();
-        	}
+
+        if (postData.getPaymentMethods() != null) {
+            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+                paymentMethodDto.validate();
+            }
         }
 
         // check if already exists
@@ -130,14 +131,14 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
         // Start compatibility with pre-4.6 versions
         if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
-        	postData.setPaymentMethods(new ArrayList<>());        
-        	if(postData.getPaymentMethod() != null){
-        		postData.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod(),null,postData.getMandateIdentification(),postData.getMandateDate()));
-        	}else if(!StringUtils.isBlank(postData.getMandateIdentification())){
-        		postData.getPaymentMethods().add(new PaymentMethodDto(PaymentMethodEnum.DIRECTDEBIT,null,postData.getMandateIdentification(),postData.getMandateDate()));
-        	}else{
-        		postData.getPaymentMethods().add(new PaymentMethodDto(PaymentMethodEnum.CHECK));	
-        	}
+            postData.setPaymentMethods(new ArrayList<>());
+            if (postData.getPaymentMethod() != null) {
+                postData.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod(), null, postData.getMandateIdentification(), postData.getMandateDate()));
+            } else if (!StringUtils.isBlank(postData.getMandateIdentification())) {
+                postData.getPaymentMethods().add(new PaymentMethodDto(PaymentMethodEnum.DIRECTDEBIT, null, postData.getMandateIdentification(), postData.getMandateDate()));
+            } else {
+                postData.getPaymentMethods().add(new PaymentMethodDto(PaymentMethodEnum.CHECK));
+            }
         }
 
         CustomerAccount customerAccount = new CustomerAccount();
@@ -154,16 +155,19 @@ public class CustomerAccountApi extends AccountEntityApi {
         customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
 
         if (postData.getContactInformation() != null) {
+            if (customerAccount.getContactInformation() == null) {
+                customerAccount.setContactInformation(new ContactInformation());
+            }
             customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             customerAccount.getContactInformation().setPhone(postData.getContactInformation().getPhone());
             customerAccount.getContactInformation().setMobile(postData.getContactInformation().getMobile());
             customerAccount.getContactInformation().setFax(postData.getContactInformation().getFax());
         }
 
-        if(postData.getPaymentMethods() != null){
-        	for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {        		
-        		customerAccount.getPaymentMethods().add(paymentMethodDto.fromDto(customerAccount));
-        	}
+        if (postData.getPaymentMethods() != null) {
+            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount));
+            }
         }
 
         if (businessAccountModel != null) {
@@ -211,7 +215,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         handleMissingParametersAndValidate(postData);
-       
+
         // check if already exists
         CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCode());
         if (customerAccount == null) {
@@ -247,6 +251,9 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (postData.getContactInformation() != null) {
+            if (customerAccount.getContactInformation() == null) {
+                customerAccount.setContactInformation(new ContactInformation());
+            }
             if (!StringUtils.isBlank(postData.getContactInformation().getEmail())) {
                 customerAccount.getContactInformation().setEmail(postData.getContactInformation().getEmail());
             }
@@ -276,7 +283,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
             customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
         }
-        
+
         // Synchronize payment methods
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             if (customerAccount.getPaymentMethods() == null) {
@@ -290,7 +297,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
                 int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
                 if (index < 0) {
-                    customerAccount.getPaymentMethods().add(paymentMethodFromDto);
+                    customerAccount.addPaymentMethod(paymentMethodFromDto);
                     paymentMethodsFromDto.add(paymentMethodFromDto);
                 } else {
                     PaymentMethod paymentMethod = customerAccount.getPaymentMethods().get(index);
@@ -323,10 +330,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
 
             PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount);
-            if (customerAccount.getPaymentMethods() == null) {
-                customerAccount.setPaymentMethods(new ArrayList<>());
-            }
-            customerAccount.getPaymentMethods().add(paymentMethodFromDto);
+            customerAccount.addPaymentMethod(paymentMethodFromDto);
         }
 
         if (businessAccountModel != null) {
@@ -369,7 +373,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
-        
+
         CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
         if (calculateBalances) {
@@ -603,7 +607,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
             if (customerAccountDto.getDunningLevel() != null) {
                 existedCustomerAccountDto.setDunningLevel(customerAccountDto.getDunningLevel());
-            }           
+            }
 
             if (customerAccountDto.getContactInformation() != null) {
                 if (!StringUtils.isBlank(customerAccountDto.getContactInformation().getEmail())) {
@@ -620,12 +624,11 @@ public class CustomerAccountApi extends AccountEntityApi {
                 }
             }
             accountHierarchyApi.populateNameAddress(existedCustomerAccountDto, customerAccountDto);
-            if (customerAccountDto.getCustomFields()!=null && !customerAccountDto.getCustomFields().isEmpty()) {
+            if (customerAccountDto.getCustomFields() != null && !customerAccountDto.getCustomFields().isEmpty()) {
                 existedCustomerAccountDto.setCustomFields(customerAccountDto.getCustomFields());
             }
             update(existedCustomerAccountDto);
         }
     }
 
-  
 }

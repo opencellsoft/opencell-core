@@ -27,20 +27,21 @@ public class CurrentProviderProducer {
     @ApplicationProvider
     public Provider getProvider() {
 
-        Provider provider = providerService.list().get(0);
-
-        if (provider.getCurrency() != null) {
-            provider.getCurrency().getCurrencyCode();
-        }
-        if (provider.getCountry() != null) {
-            provider.getCountry().getCountryCode();
-        }
-        if (provider.getLanguage() != null) {
-            provider.getLanguage().getLanguageCode();
-        }
-        if (provider.getInvoiceConfiguration() != null) {
-            provider.getInvoiceConfiguration().getDisplayBillingCycle();
-        }
+        // Provider provider = providerService.list().get(0);
+        //
+        // if (provider.getCurrency() != null) {
+        // provider.getCurrency().getCurrencyCode();
+        // }
+        // if (provider.getCountry() != null) {
+        // provider.getCountry().getCountryCode();
+        // }
+        // if (provider.getLanguage() != null) {
+        // provider.getLanguage().getLanguageCode();
+        // }
+        // if (provider.getInvoiceConfiguration() != null) {
+        // provider.getInvoiceConfiguration().getDisplayBillingCycle();
+        // }
+        Provider provider = providerService.getProvider();
 
         provider = PersistenceUtils.initializeAndUnproxy(provider);
 

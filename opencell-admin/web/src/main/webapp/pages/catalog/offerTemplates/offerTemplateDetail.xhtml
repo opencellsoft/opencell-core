@@ -65,8 +65,8 @@
 
 
 
-                        <hftl:formLanguageFields backingBean="#{offerTemplateBean}" entity="#{offerTemplateBean.entity}" multiLang="true" />
-                        <hftl:formField label="#{messages['offerTemplate.longDescription']}" field="longDescription" textArea="true" id="longDescription" rows="1" componentWidth="100" />
+                                <hftl:formLanguageFields field="description"/>
+                                <hftl:formLanguageFields field="longDescription" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
 
                         <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
                             <h:panelGroup id="subscriptionRenewal">

@@ -41,6 +41,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
+import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -154,6 +155,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             duplicateOffer = false;
         }
 
+        if (entity.getValidity() == null) {
+            entity.setValidity(new DatePeriod());
+        }
+
         return entity;
     }
 
@@ -262,23 +267,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
      * 
      * @return sorted offer services templates
      */
-	public List<OfferServiceTemplate> getSortedOfferServiceTemplates() {
-		if (sortedOfferServiceTemplates == null) {
-			if (entity != null) {
-				sortedOfferServiceTemplates = new ArrayList<>();
-				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
-				Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
-			}
-		}
+    public List<OfferServiceTemplate> getSortedOfferServiceTemplates() {
+        if (sortedOfferServiceTemplates == null) {
+            if (entity != null) {
+                sortedOfferServiceTemplates = new ArrayList<>();
+                sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
+                Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
+            }
+        }
 
-		return sortedOfferServiceTemplates;
-	}
+        return sortedOfferServiceTemplates;
+    }
 
-	public void resortOfferServiceTemplates() {
-		if (sortedOfferServiceTemplates != null && !sortedOfferServiceTemplates.isEmpty()) {
-//			Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
-		}
-	}
+    public void resortOfferServiceTemplates() {
+        if (sortedOfferServiceTemplates != null && !sortedOfferServiceTemplates.isEmpty()) {
+            // Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
+        }
+    }
 
     @Override
     @ActionMethod
@@ -318,8 +323,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
             OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
                 entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-                entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidityRaw() != null ? entity.getValidityRaw().getFrom() : null,
-                entity.getValidityRaw() != null ? entity.getValidityRaw().getTo() : null, getLanguageMessagesMap());
+                entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidity() != null ? entity.getValidity().getFrom() : null,
+                entity.getValidity() != null ? entity.getValidity().getTo() : null, entity.getDescriptionI18n(), entity.getLongDescription(), entity.getLongDescriptionI18n());
 
             // populate service custom fields
             for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -360,7 +365,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                     // populate service custom fields
                     for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
                         ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-                        Map<String, List<CustomFieldValue>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid()).getValuesByCode();
+                        Map<String, List<CustomFieldValue>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
+                            .getValuesByCode();
                         if (stCustomFieldInstances != null) {
                             // populate offer cf
                             customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), false, false);
@@ -597,7 +603,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public boolean displayStatus(OfferTemplate offer) {
 
         if ((Arrays.asList(LifeCycleStatusEnum.ACTIVE, LifeCycleStatusEnum.LAUNCHED, LifeCycleStatusEnum.IN_TEST).contains(offer.getLifeCycleStatus()))) {
-            return offer.getValidityRaw() == null || offer.getValidityRaw().isCorrespondsToPeriod(new Date());
+            return offer.getValidity() == null || offer.getValidity().isCorrespondsToPeriod(new Date());
         }
 
         return false;
@@ -617,7 +623,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "offerTemplate.version.exists"),
-                matchedVersions.get(0).getValidityRaw() == null ? " / " : matchedVersions.get(0).getValidityRaw().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
             return false;
         }
 
@@ -636,5 +642,5 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             }
         }
     }
-	
+
 }

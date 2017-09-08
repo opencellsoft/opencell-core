@@ -41,7 +41,7 @@ public class ProviderService extends PersistenceService<Provider> {
 
     public Provider getProvider() {
 
-        Provider provider = list().get(0);
+        Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
 
         if (provider.getCurrency() != null) {
             provider.getCurrency().getCurrencyCode();

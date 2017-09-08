@@ -17,7 +17,6 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.account.AccessApi;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.api.dto.account.AccessDto;
 import org.meveo.api.dto.account.ApplyOneShotChargeInstanceRequestDto;
 import org.meveo.api.dto.account.ApplyProductRequestDto;
@@ -50,7 +49,6 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
-import org.meveo.model.billing.CatMessages;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.DueDateDelayEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -84,7 +82,6 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletTemplateService;
-import org.meveo.service.catalog.impl.CatMessagesService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.OneShotChargeTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -142,9 +139,6 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
-
-    @Inject
-    private CatMessagesService catMessagesService;
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -224,9 +218,6 @@ public class SubscriptionApi extends BaseApi {
 
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
-        if (StringUtils.isBlank(postData.getOfferTemplate())) {
-            missingParameters.add("offerTemplate");
-        }
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -256,18 +247,23 @@ public class SubscriptionApi extends BaseApi {
             subscription.setUserAccount(userAccount);
         }
 
+        if (postData.getOfferTemplate() != null) {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
-        }
 
-        if (offerTemplate.isDisabled()) {
-            throw new MeveoApiException("Cannot subscribe to disabled offer");
+            } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
+                throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
+                
+            } else if (offerTemplate.isDisabled()) {
+                throw new InvalidParameterException("Cannot subscribe to disabled offer");
+            }
+            subscription.setOffer(offerTemplate);
         }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        subscription.setOffer(offerTemplate);
+
         subscription.setDescription(postData.getDescription());
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -1333,13 +1329,6 @@ public class SubscriptionApi extends BaseApi {
             if (chargeTemplate.getOneShotChargeTemplateType() == type) {
                 OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
                     entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
-                List<LanguageDescriptionDto> languageDescriptions = new ArrayList<LanguageDescriptionDto>();
-                for (CatMessages msg : catMessagesService.getCatMessagesList(OneShotChargeTemplate.class.getSimpleName(), chargeTemplate.getCode())) {
-                    languageDescriptions.add(new LanguageDescriptionDto(msg.getLanguageCode(), msg.getDescription()));
-                }
-
-                oneshotChartTemplateDto.setLanguageDescriptions(languageDescriptions);
-
                 results.add(oneshotChartTemplateDto);
             }
         }

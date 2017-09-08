@@ -47,6 +47,7 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -57,110 +58,108 @@ import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
- * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link BillingAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class BillingAccountBean extends AccountBean<BillingAccount> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link BillingAccount} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private BillingAccountService billingAccountService;
+    /**
+     * Injected
+     * 
+     * @{link BillingAccount} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private BillingAccountService billingAccountService;
 
-	@Inject
-	private InvoiceService invoiceService;
+    @Inject
+    private InvoiceService invoiceService;
 
-	@Inject
-	private BillingRunService billingRunService;
+    @Inject
+    private BillingRunService billingRunService;
 
-	private Long customerAccountId;
+    private Long customerAccountId;
 
-	@Inject
-	private Messages messages;
+    @Inject
+    private Messages messages;
 
-	@Inject 
-	private CounterInstanceService counterInstanceService;
-	
-	private boolean returnToAgency;
+    @Inject
+    private CounterInstanceService counterInstanceService;
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+    private boolean returnToAgency;
 
-	/** Selected billing account in exceptionelInvoicing page. */
-	private ListItemsSelector<BillingAccount> itemSelector;
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	private Date exceptionalInvoicingDate = new Date();
+    /** Selected billing account in exceptionelInvoicing page. */
+    private ListItemsSelector<BillingAccount> itemSelector;
 
-	private Date exceptionalLastTransactionDate = new Date();
+    private Date exceptionalInvoicingDate = new Date();
 
-	private CounterInstance selectedCounterInstance;
+    private Date exceptionalLastTransactionDate = new Date();
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public BillingAccountBean() {
-		super(BillingAccount.class);
-	}
+    private CounterInstance selectedCounterInstance;
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public BillingAccount initEntity() {
-		super.initEntity();
-		returnToAgency = !(entity.getInvoicePrefix() == null);
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public BillingAccountBean() {
+        super(BillingAccount.class);
+    }
 
-		if (entity.getId() == null && customerAccountId != null) {
-			CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
-			entity.setCustomerAccount(customerAccount);
-			entity.setTradingLanguage(customerAccount.getTradingLanguage());
-			populateAccounts(customerAccount);		
-		}
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Override
+    public BillingAccount initEntity() {
+        super.initEntity();
+        returnToAgency = !(entity.getInvoicePrefix() == null);
 
-		if (entity.getName() == null) {
-			entity.setName(new Name());
-		}
+        if (entity.getId() == null && customerAccountId != null) {
+            CustomerAccount customerAccount = customerAccountService.findById(customerAccountId);
+            entity.setCustomerAccount(customerAccount);
+            entity.setTradingLanguage(customerAccount.getTradingLanguage());
+            populateAccounts(customerAccount);
+        }
 
-		selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
+        selectedCounterInstance = entity.getCounters() != null && entity.getCounters().size() > 0 ? entity.getCounters().values().iterator().next() : null;
 
-		return entity;
-	}
+        if (entity.getAddress() == null) {
+            entity.setAddress(new Address());
+        }
+        if (entity.getName() == null) {
+            entity.setName(new Name());
+        }
 
-	public void setCustomerAccountId(Long customerAccountId) {
-		this.customerAccountId = customerAccountId;
-	}
+        return entity;
+    }
 
-	public Long getCustomerAccountId() {
-		return customerAccountId;
-	}
+    public void setCustomerAccountId(Long customerAccountId) {
+        this.customerAccountId = customerAccountId;
+    }
 
-	/**
-	 * Conversation is ended and user is redirected from edit to his previous
-	 * window.
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
-	 */
-	@Override
+    public Long getCustomerAccountId() {
+        return customerAccountId;
+    }
+
+    /**
+     * Conversation is ended and user is redirected from edit to his previous window.
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(org.meveo.model.IEntity)
+     */
+    @Override
     @ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException{
-		
-	    entity.setCustomerAccount(customerAccountService.attach(entity.getCustomerAccount()));
-	    
-	    try {
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        entity.setCustomerAccount(customerAccountService.attach(entity.getCustomerAccount()));
+
+        try {
 
             entity.setCustomerAccount(customerAccountService.refreshOrRetrieve(entity.getCustomerAccount()));
 
@@ -174,86 +173,85 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
                 return getEditViewName(); // "/pages/billing/billingAccounts/billingAccountDetail.xhtml?edit=true&billingAccountId=" + entity.getId() +
                                           // "&faces-redirect=true&includeViewParams=true";
             }
-            
-		} catch (DuplicateDefaultAccountException e1) {
-			messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
-		}
-		return null;
-	}
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<BillingAccount> getPersistenceService() {
-		return billingAccountService;
-	}
+        } catch (DuplicateDefaultAccountException e1) {
+            messages.error(new BundleKey("messages", "error.account.duplicateDefautlLevel"));
+        }
+        return null;
+    }
 
-	public String terminateAccount() {
-		log.debug("terminateAccount billingAccountId: {}", entity.getId());
-		try {
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<BillingAccount> getPersistenceService() {
+        return billingAccountService;
+    }
 
-		    entity = billingAccountService.attach(entity);
-			entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
-			messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
-			
-		} catch (Exception e) {
-			log.error("Failed to terminate account ",e);
-			messages.error(new BundleKey("messages", "resiliation.resiliateUnsuccessful"), e.getMessage());
-		}
+    public String terminateAccount() {
+        log.debug("terminateAccount billingAccountId: {}", entity.getId());
+        try {
+
+            entity = billingAccountService.attach(entity);
+            entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
+            messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
+
+        } catch (Exception e) {
+            log.error("Failed to terminate account ", e);
+            messages.error(new BundleKey("messages", "resiliation.resiliateUnsuccessful"), e.getMessage());
+        }
 
         return getEditViewName();
-	}
+    }
 
-	public String cancelAccount() {
-		log.info("cancelAccount billingAccountId:" + entity.getId());
-		try {
-		    entity = billingAccountService.attach(entity);
+    public String cancelAccount() {
+        log.info("cancelAccount billingAccountId:" + entity.getId());
+        try {
+            entity = billingAccountService.attach(entity);
             entity = billingAccountService.billingAccountCancellation(entity, new Date());
-			messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
-					
+            messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
+
         } catch (Exception e) {
             log.error("Failed to cancel account ", e);
             messages.error(new BundleKey("messages", "cancellation.cancelUnsuccessful"), e.getMessage());
         }
-		return getEditViewName();
-	}
+        return getEditViewName();
+    }
 
-	public String closeAccount() {
-		log.info("closeAccount billingAccountId:" + entity.getId());
-		try {
-			entity = billingAccountService.closeBillingAccount(entity);
-			messages.info(new BundleKey("messages", "close.closeSuccessful"));
-			
+    public String closeAccount() {
+        log.info("closeAccount billingAccountId:" + entity.getId());
+        try {
+            entity = billingAccountService.closeBillingAccount(entity);
+            messages.info(new BundleKey("messages", "close.closeSuccessful"));
+
         } catch (Exception e) {
             log.error("Failed to close account ", e);
             messages.error(new BundleKey("messages", "close.closeUnsuccessful"), e.getMessage());
         }
         return getEditViewName();
-	}
-	
+    }
 
-	public String generateInvoice() {
-		log.info("generateInvoice billingAccountId:" + entity.getId());
-		try {
-		    entity = billingAccountService.refreshOrRetrieve(entity);
+    public String generateInvoice() {
+        log.info("generateInvoice billingAccountId:" + entity.getId());
+        try {
+            entity = billingAccountService.refreshOrRetrieve(entity);
 			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null,false, true, true, true);
 
-			messages.info(new BundleKey("messages", "generateInvoice.successful"),invoice.getInvoiceNumber());
-			
+            messages.info(new BundleKey("messages", "generateInvoice.successful"), invoice.getInvoiceNumber());
+
         } catch (Exception e) {
             log.error("Failed to generateInvoice ", e);
             messages.error(e.getMessage());
         }
         return getEditViewName();
-	}
+    }
 
-	// TODO: @Factory("getInvoices")
-	@Produces
-	@Named("getInvoices")
-	public List<Invoice> getInvoices() {
-		return entity != null ? entity.getInvoices() : null;
-	}
+    // TODO: @Factory("getInvoices")
+    @Produces
+    @Named("getInvoices")
+    public List<Invoice> getInvoices() {
+        return entity != null ? entity.getInvoices() : null;
+    }
 
     @ActionMethod
     public void generatePDF(long invoiceId) throws BusinessException {
@@ -286,137 +284,138 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
     }
 
-	public boolean pdfExists(long invoiceId) {
-		Invoice invoice = invoiceService.findById(invoiceId);
-		return invoiceService.isInvoicePdfExist(invoice);
-	}
+    public boolean pdfExists(long invoiceId) {
+        Invoice invoice = invoiceService.findById(invoiceId);
+        return invoiceService.isInvoicePdfExist(invoice);
+    }
 
-	public String launchExceptionalInvoicing() {
-		try{
-			List<Long> baIds = new ArrayList<Long>();
-			for (BillingAccount ba : getSelectedEntities()) {
-				baIds.add(ba.getId());
-			}
-			billingRunService.launchExceptionalInvoicing(baIds, exceptionalInvoicingDate, exceptionalLastTransactionDate,BillingProcessTypesEnum.MANUAL); 
-			return "/pages/billing/invoicing/billingRuns.xhtml?edit=true&faces-redirect=true";
-		} catch (BusinessException e) {
-			messages.error(e.getMessage());
-		} catch (Exception e) {
-			log.error("launchExceptionelInvoicing", e);
-			messages.error(e.getMessage());
-		}
-		return null;
-	}
+    public String launchExceptionalInvoicing() {
+        try {
+            List<Long> baIds = new ArrayList<Long>();
+            for (BillingAccount ba : getSelectedEntities()) {
+                baIds.add(ba.getId());
+            }
+            billingRunService.launchExceptionalInvoicing(baIds, exceptionalInvoicingDate, exceptionalLastTransactionDate, BillingProcessTypesEnum.MANUAL);
+            return "/pages/billing/invoicing/billingRuns.xhtml?edit=true&faces-redirect=true";
+        } catch (BusinessException e) {
+            messages.error(e.getMessage());
+        } catch (Exception e) {
+            log.error("launchExceptionelInvoicing", e);
+            messages.error(e.getMessage());
+        }
+        return null;
+    }
 
-	/**
-	 * Item selector getter. Item selector keeps a state of multiselect
-	 * checkboxes.
-	 */
-	// TODO: @BypassInterceptors
-	public ListItemsSelector<BillingAccount> getItemSelector() {
-		if (itemSelector == null) {
-			itemSelector = new ListItemsSelector<BillingAccount>(false);
-		}
-		return itemSelector;
-	}
+    /**
+     * Item selector getter. Item selector keeps a state of multiselect checkboxes.
+     */
+    // TODO: @BypassInterceptors
+    public ListItemsSelector<BillingAccount> getItemSelector() {
+        if (itemSelector == null) {
+            itemSelector = new ListItemsSelector<BillingAccount>(false);
+        }
+        return itemSelector;
+    }
 
-	/**
-	 * Check/uncheck all select boxes.
-	 */
-	public void checkUncheckAll(ValueChangeEvent event) {
-		itemSelector.switchMode();
-	}
+    /**
+     * Check/uncheck all select boxes.
+     */
+    public void checkUncheckAll(ValueChangeEvent event) {
+        itemSelector.switchMode();
+    }
 
-	/**
-	 * Listener of select changed event.
-	 */
-	public void selectChanged(ValueChangeEvent event) {
-		BillingAccount entity = getLazyDataModel().getRowData();
-		if (entity != null) {
-			itemSelector.check(entity);
-		}
-	}
+    /**
+     * Listener of select changed event.
+     */
+    public void selectChanged(ValueChangeEvent event) {
+        BillingAccount entity = getLazyDataModel().getRowData();
+        if (entity != null) {
+            itemSelector.check(entity);
+        }
+    }
 
-	/**
-	 * Resets item selector.
-	 */
-	public void resetSelection() {
-		if (itemSelector == null) {
-			itemSelector = new ListItemsSelector<BillingAccount>(false);
-		} else {
-			itemSelector.reset();
-		}
-	}
+    /**
+     * Resets item selector.
+     */
+    public void resetSelection() {
+        if (itemSelector == null) {
+            itemSelector = new ListItemsSelector<BillingAccount>(false);
+        } else {
+            itemSelector.reset();
+        }
+    }
 
-	public boolean isReturnToAgency() {
-		return returnToAgency;
-	}
+    public boolean isReturnToAgency() {
+        return returnToAgency;
+    }
 
-	public void setReturnToAgency(boolean returnToAgency) {
-		this.returnToAgency = returnToAgency;
-	}
+    public void setReturnToAgency(boolean returnToAgency) {
+        this.returnToAgency = returnToAgency;
+    }
 
-	public void setInvoicePrefix() {
-		if (returnToAgency) {
-			String invoicePrefix = null;
-			if (appProvider.isEntreprise()) {
-				invoicePrefix = "R_PRO_";
-			} else {
-				invoicePrefix = "R_PART_";
-			}
-			entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
-		} else
-			entity.setInvoicePrefix(null);
-	}
+    public void setInvoicePrefix() {
+        if (returnToAgency) {
+            String invoicePrefix = null;
+            if (appProvider.isEntreprise()) {
+                invoicePrefix = "R_PRO_";
+            } else {
+                invoicePrefix = "R_PART_";
+            }
+            entity.setInvoicePrefix(invoicePrefix + entity.getExternalRef2());
+        } else
+            entity.setInvoicePrefix(null);
+    }
 
-	public void processValueChange(ValueChangeEvent value) {
-		if (value != null) {
-			if (value.getNewValue() instanceof String) {
-				entity.setExternalRef2((String) value.getNewValue());
-				setInvoicePrefix();
-			}
+    public void processValueChange(ValueChangeEvent value) {
+        if (value != null) {
+            if (value.getNewValue() instanceof String) {
+                entity.setExternalRef2((String) value.getNewValue());
+                setInvoicePrefix();
+            }
 
-		}
-	}
+        }
+    }
 
-	public void populateAccounts(CustomerAccount customerAccount) {
-		entity.setCustomerAccount(customerAccount);
-		
-		if (customerAccount != null && appProvider.isLevelDuplication()) {
+    public void populateAccounts(CustomerAccount customerAccount) {
+        entity.setCustomerAccount(customerAccount);
 
-			entity.setCode(customerAccount.getCode());
-			entity.setDescription(customerAccount.getDescription());
-			entity.setEmail(customerAccount.getContactInformation().getEmail());
-			entity.setAddress(customerAccount.getAddress());
-			entity.setExternalRef1(customerAccount.getExternalRef1());
-			entity.setExternalRef2(customerAccount.getExternalRef2());
-			entity.setProviderContact(customerAccount.getProviderContact());
-			entity.setName(customerAccount.getName());
-			entity.setPrimaryContact(customerAccount.getPrimaryContact());
-		}
-	}
+        if (customerAccount != null && appProvider.isLevelDuplication()) {
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+            entity.setCode(customerAccount.getCode());
+            entity.setDescription(customerAccount.getDescription());
+            if (customerAccount.getContactInformation() != null) {
+                entity.setEmail(customerAccount.getContactInformation().getEmail());
+            }
+            entity.setAddress(customerAccount.getAddress());
+            entity.setExternalRef1(customerAccount.getExternalRef1());
+            entity.setExternalRef2(customerAccount.getExternalRef2());
+            entity.setProviderContact(customerAccount.getProviderContact());
+            entity.setName(customerAccount.getName());
+            entity.setPrimaryContact(customerAccount.getPrimaryContact());
+        }
+    }
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("customerAccount", "customerAccount.customer");
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("customerAccount", "customerAccount.billingAccounts", "billingCycle");
-	}
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("customerAccount", "customerAccount.customer");
+    }
 
-	public CounterInstance getSelectedCounterInstance() {
-		if (entity == null) {
-			initEntity();
-		}
-		return selectedCounterInstance;
-	}
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("customerAccount", "customerAccount.billingAccounts", "billingCycle");
+    }
+
+    public CounterInstance getSelectedCounterInstance() {
+        if (entity == null) {
+            initEntity();
+        }
+        return selectedCounterInstance;
+    }
 
     public void setSelectedCounterInstance(CounterInstance selectedCounterInstance) {
         if (selectedCounterInstance != null) {
@@ -426,21 +425,20 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         }
     }
 
-	public Date getExceptionalInvoicingDate() {
-		return exceptionalInvoicingDate;
-	}
+    public Date getExceptionalInvoicingDate() {
+        return exceptionalInvoicingDate;
+    }
 
-	public void setExceptionalInvoicingDate(Date exceptionalInvoicingDate) {
-		this.exceptionalInvoicingDate = exceptionalInvoicingDate;
-	}
+    public void setExceptionalInvoicingDate(Date exceptionalInvoicingDate) {
+        this.exceptionalInvoicingDate = exceptionalInvoicingDate;
+    }
 
-	public Date getExceptionalLastTransactionDate() {
-		return exceptionalLastTransactionDate;
-	}
+    public Date getExceptionalLastTransactionDate() {
+        return exceptionalLastTransactionDate;
+    }
 
-	public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
-		this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
-	}
-	
+    public void setExceptionalLastTransactionDate(Date exceptionalLastTransactionDate) {
+        this.exceptionalLastTransactionDate = exceptionalLastTransactionDate;
+    }
 
 }

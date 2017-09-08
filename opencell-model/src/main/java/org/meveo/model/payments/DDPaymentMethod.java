@@ -21,7 +21,7 @@ public class DDPaymentMethod extends PaymentMethod {
 
     @Embedded
     private BankCoordinates bankCoordinates = new BankCoordinates();
-    
+
     @Column(name = "mandate_identification", length = 255)
     @Size(max = 255)
     private String mandateIdentification = "";
@@ -41,8 +41,7 @@ public class DDPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public DDPaymentMethod(CustomerAccount customerAccount, String alias,boolean preferred, Date mandateDate,
-			String mandateIdentification, BankCoordinates bankCoordinates) {
+    public DDPaymentMethod(CustomerAccount customerAccount, String alias, boolean preferred, Date mandateDate, String mandateIdentification, BankCoordinates bankCoordinates) {
         super();
         setPaymentType(PaymentMethodEnum.CARD);
         setAlias(alias);
@@ -51,35 +50,33 @@ public class DDPaymentMethod extends PaymentMethod {
         this.mandateDate = mandateDate;
         this.mandateIdentification = mandateIdentification;
         this.bankCoordinates = bankCoordinates;
-	}
+    }
 
-	public BankCoordinates getBankCoordinates() {
+    public BankCoordinates getBankCoordinates() {
         return bankCoordinates;
     }
 
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
         this.bankCoordinates = bankCoordinates;
     }
-    
-    
 
     public String getMandateIdentification() {
-		return mandateIdentification;
-	}
+        return mandateIdentification;
+    }
 
-	public void setMandateIdentification(String mandateIdentification) {
-		this.mandateIdentification = mandateIdentification;
-	}
+    public void setMandateIdentification(String mandateIdentification) {
+        this.mandateIdentification = mandateIdentification;
+    }
 
-	public Date getMandateDate() {
-		return mandateDate;
-	}
+    public Date getMandateDate() {
+        return mandateDate;
+    }
 
-	public void setMandateDate(Date mandateDate) {
-		this.mandateDate = mandateDate;
-	}
+    public void setMandateDate(Date mandateDate) {
+        this.mandateDate = mandateDate;
+    }
 
-	@Override
+    @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
@@ -94,15 +91,15 @@ public class DDPaymentMethod extends PaymentMethod {
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
             return true;
         }
-        
+
         if (getMandateIdentification() != null && getMandateIdentification().equals(other.getMandateIdentification())) {
             return true;
         }
 
         if (bankCoordinates != null) {
             return bankCoordinates.equals(other.getBankCoordinates());
-        } 
-        return false;        
+        }
+        return false;
     }
 
     @Override
@@ -114,11 +111,9 @@ public class DDPaymentMethod extends PaymentMethod {
         otherPaymentMethod.setBankCoordinates(otherPaymentMethod.getBankCoordinates());
     }
 
-	@Override
-	public String toString() {
-		return "DDPaymentMethod [bankCoordinates=" + bankCoordinates + ", mandateIdentification="
-				+ mandateIdentification + ", mandateDate=" + mandateDate + "]";
-	}
+    @Override
+    public String toString() {
+        return "DDPaymentMethod [bankCoordinates=" + bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + "]";
+    }
 
-   
 }

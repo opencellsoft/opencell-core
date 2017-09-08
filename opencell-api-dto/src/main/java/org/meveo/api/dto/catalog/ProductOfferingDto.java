@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.Channel;
+import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -59,6 +60,12 @@ public class ProductOfferingDto extends BusinessDto {
 
     protected boolean disabled = false;
 
+    protected List<LanguageDescriptionDto> languageDescriptions;
+
+    protected String longDescription;
+
+    protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+
     public ProductOfferingDto() {
     }
 
@@ -72,9 +79,9 @@ public class ProductOfferingDto extends BusinessDto {
     public ProductOfferingDto(ProductOffering productOffering, CustomFieldsDto customFieldsDto, boolean asLink) {
         super(productOffering);
 
-        if (productOffering.getValidityRaw() != null) {
-            this.setValidFrom(productOffering.getValidityRaw().getFrom());
-            this.setValidTo(productOffering.getValidityRaw().getTo());
+        if (productOffering.getValidity() != null) {
+            this.setValidFrom(productOffering.getValidity().getFrom());
+            this.setValidTo(productOffering.getValidity().getTo());
         }
 
         if (asLink) {
@@ -108,6 +115,10 @@ public class ProductOfferingDto extends BusinessDto {
                 this.channels.add(new ChannelDto(channel));
             }
         }
+        setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getDescriptionI18n()));
+        setLongDescription(productOffering.getLongDescription());
+        setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
+
         this.customFields = customFieldsDto;
     }
 
@@ -205,5 +216,29 @@ public class ProductOfferingDto extends BusinessDto {
 
     public void setChannels(List<ChannelDto> channels) {
         this.channels = channels;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
+
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
+
+    public List<LanguageDescriptionDto> getLongDescriptionsTranslated() {
+        return longDescriptionsTranslated;
+    }
+
+    public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
+        this.longDescriptionsTranslated = longDescriptionsTranslated;
     }
 }

@@ -125,8 +125,8 @@ public class GenericProductOfferingServiceTest {
             poService.updateValidityOfVersion(matchedVersion, offeringValidity);
 
             Assert.assertEquals(matchedPeriod[0] + " - " + matchedPeriod[1] + " / " + offeringValidity.toString(DateUtils.DATE_PATTERN), dates[2] + " / " + dates[3],
-                (matchedVersion.getValidityRaw().getFrom() != null ? DateUtils.formatDateWithPattern(matchedVersion.getValidityRaw().getFrom(), DateUtils.DATE_PATTERN) : null) + " / "
-                        + (matchedVersion.getValidityRaw().getTo() != null ? DateUtils.formatDateWithPattern(matchedVersion.getValidityRaw().getTo(), DateUtils.DATE_PATTERN) : null));
+                (matchedVersion.getValidity().getFrom() != null ? DateUtils.formatDateWithPattern(matchedVersion.getValidity().getFrom(), DateUtils.DATE_PATTERN) : null) + " / "
+                        + (matchedVersion.getValidity().getTo() != null ? DateUtils.formatDateWithPattern(matchedVersion.getValidity().getTo(), DateUtils.DATE_PATTERN) : null));
         }
     }
 }

@@ -39,6 +39,7 @@ import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
+import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -528,16 +529,15 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, Integer firstRow, Integer numberOfRows) {
-        CustomersResponseDto result = new CustomersResponseDto();
+    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows, Paging paging) {
 
         try {
-            result.setCustomers(customerApi.filterCustomer(postData, firstRow, numberOfRows));
+            return customerApi.filterCustomer(postData, paging == null ? new Paging(firstRow, numberOfRows, null, null) : paging);
         } catch (Exception e) {
+            CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());
+            return result;
         }
-
-        return result;
     }
 
     @Override
@@ -1087,20 +1087,20 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
-	@Override
-	public AccountOperationResponseDto findAccountOperation(Long id) {
-		AccountOperationResponseDto result = new AccountOperationResponseDto();
-		try {
-			result.setAccountOperation(accountOperationApi.find(id));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+    @Override
+    public AccountOperationResponseDto findAccountOperation(Long id) {
+        AccountOperationResponseDto result = new AccountOperationResponseDto();
+        try {
+            result.setAccountOperation(accountOperationApi.find(id));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
+    @Override
+    public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
@@ -1108,6 +1108,6 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
             processException(e, result);
         }
         return result;
-	}
+    }
 
 }

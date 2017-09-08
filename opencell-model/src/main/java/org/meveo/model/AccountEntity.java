@@ -43,121 +43,115 @@ import org.meveo.model.shared.Name;
 
 @Entity
 @ObservableEntity
-@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "account_entity_seq"), })
+@Table(name = "account_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "account_type" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "account_entity_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn(name = "account_type") // Hibernate does not support of discriminator column with Joined strategy, so need to set it manually
 @EntityListeners({ AccountCodeGenerationListener.class })
 public abstract class AccountEntity extends BusinessCFEntity {
 
-	private static final long serialVersionUID = 1L;
-    
-	@Column(name = "external_ref_1", length = 255)
-	@Size(max = 255)
-	protected String externalRef1;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "external_ref_2", length = 255)
-	@Size(max = 255)
-	protected String externalRef2;
+    @Column(name = "external_ref_1", length = 255)
+    @Size(max = 255)
+    protected String externalRef1;
 
-	@Embedded
-	protected Name name = new Name();
+    @Column(name = "external_ref_2", length = 255)
+    @Size(max = 255)
+    protected String externalRef2;
 
-	@Embedded
-	protected Address address = new Address();
+    @Embedded
+    protected Name name;
 
-	@Type(type="numeric_boolean")
+    @Embedded
+    protected Address address;
+
+    @Type(type = "numeric_boolean")
     @Column(name = "default_level")
-	protected Boolean defaultLevel = true;
+    protected Boolean defaultLevel = true;
 
     @Column(name = "provider_contact", length = 255)
     @Size(max = 255)
     protected String providerContact;
 
-	@ManyToOne
-	@JoinColumn(name = "primary_contact")
-	protected ProviderContact primaryContact;
+    @ManyToOne
+    @JoinColumn(name = "primary_contact")
+    protected ProviderContact primaryContact;
 
     @Column(name = "account_type", insertable = true, updatable = false, length = 10)
     @Size(max = 10)
     protected String accountType;
-        
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "bam_id")
-	protected BusinessAccountModel businessAccountModel;
-        
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "bam_id")
+    protected BusinessAccountModel businessAccountModel;
+
     public String getExternalRef1() {
-		return externalRef1;
-	}
+        return externalRef1;
+    }
 
-	public void setExternalRef1(String externalRef1) {
-		this.externalRef1 = externalRef1;
-	}
+    public void setExternalRef1(String externalRef1) {
+        this.externalRef1 = externalRef1;
+    }
 
-	public String getExternalRef2() {
-		return externalRef2;
-	}
+    public String getExternalRef2() {
+        return externalRef2;
+    }
 
-	public void setExternalRef2(String externalRef2) {
-		this.externalRef2 = externalRef2;
-	}
+    public void setExternalRef2(String externalRef2) {
+        this.externalRef2 = externalRef2;
+    }
 
-	public Name getName() {
-        if (name == null) {
-            name = new Name();
-        }
-			return name;
-		}
+    public Name getName() {
+        return name;
+    }
 
-	public void setName(Name name) {
-		this.name = name;
-	}
+    public void setName(Name name) {
+        this.name = name;
+    }
 
-	public Address getAddress() {
-		if (address == null) {
-			address = new Address();
-		}
+    public Address getAddress() {
+        return address;
+    }
 
-		return address;
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    public Boolean getDefaultLevel() {
+        return defaultLevel;
+    }
 
-	public Boolean getDefaultLevel() {
-		return defaultLevel;
-	}
+    public void setDefaultLevel(Boolean defaultLevel) {
+        this.defaultLevel = defaultLevel;
+    }
 
-	public void setDefaultLevel(Boolean defaultLevel) {
-		this.defaultLevel = defaultLevel;
-	}
+    public String getProviderContact() {
+        return providerContact;
+    }
 
-	public String getProviderContact() {
-		return providerContact;
-	}
+    public void setProviderContact(String providerContact) {
+        this.providerContact = providerContact;
+    }
 
-	public void setProviderContact(String providerContact) {
-		this.providerContact = providerContact;
-	}
+    public ProviderContact getPrimaryContact() {
+        return primaryContact;
+    }
 
-	public ProviderContact getPrimaryContact() {
-		return primaryContact;
-	}
-
-	public void setPrimaryContact(ProviderContact primaryContact) {
-		this.primaryContact = primaryContact;
-	}
+    public void setPrimaryContact(ProviderContact primaryContact) {
+        this.primaryContact = primaryContact;
+    }
 
     public String getAccountType() {
         return accountType;
     }
 
-	public BusinessAccountModel getBusinessAccountModel() {
-		return businessAccountModel;
-	}
+    public BusinessAccountModel getBusinessAccountModel() {
+        return businessAccountModel;
+    }
 
-	public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
-		this.businessAccountModel = businessAccountModel;
-	}
+    public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
+        this.businessAccountModel = businessAccountModel;
+    }
 }

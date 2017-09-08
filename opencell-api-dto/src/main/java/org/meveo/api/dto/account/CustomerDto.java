@@ -31,7 +31,7 @@ public class CustomerDto extends AccountDto {
 	private String mandateIdentification = "";
 	private Date mandateDate;
 
-	private ContactInformationDto contactInformation = new ContactInformationDto();
+	private ContactInformationDto contactInformation;
 
 	/**
 	 * Use for GET / LIST only.

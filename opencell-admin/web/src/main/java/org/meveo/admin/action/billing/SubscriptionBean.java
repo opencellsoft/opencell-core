@@ -263,10 +263,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        if (entity.getOffer().getValidityRaw() != null && !entity.getOffer().getValidityRaw().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
+        if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
             String datePattern = paramBean.getDateFormat();
-            messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidityRaw().toString(datePattern),
+            messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidity().toString(datePattern),
                 DateUtils.formatDateWithPattern(entity.getSubscriptionDate(), datePattern));
             FacesContext.getCurrentInstance().validationFailed();
             return null;
@@ -581,12 +581,12 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (productInstance.isTransient()) {
 
-            if (productInstance.getProductTemplate().getValidityRaw() != null
-                    && !productInstance.getProductTemplate().getValidityRaw().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
+            if (productInstance.getProductTemplate().getValidity() != null
+                    && !productInstance.getProductTemplate().getValidity().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
 
                 String datePattern = paramBean.getDateFormat();
                 messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
-                    productInstance.getProductTemplate().getValidityRaw().toString(datePattern),
+                    productInstance.getProductTemplate().getValidity().toString(datePattern),
                     DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
                 FacesContext.getCurrentInstance().validationFailed();
                 return;
@@ -869,10 +869,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
         try {
+            entity = subscriptionService.attach(entity);
+
             serviceTemplates.add(serviceInstance.getServiceTemplate());
             serviceInstanceService.remove(serviceInstance.getId());
             serviceInstances.remove(serviceInstance);
             selectedServiceInstance = null;
+            subscriptionService.refresh(entity);
+
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Exception e) {
             log.error("exception when delete service instance!", e);
@@ -989,7 +993,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (entity != null && entity.getOffer() != null) {
             for (OfferProductTemplate offerProductTemplate : offerTemplateService.refreshOrRetrieve(entity.getOffer()).getOfferProductTemplates()) {
-                if (offerProductTemplate.getProductTemplate().getValidityRaw() == null || offerProductTemplate.getProductTemplate().getValidityRaw().isCorrespondsToPeriod(date)) {
+                if (offerProductTemplate.getProductTemplate().getValidity() == null || offerProductTemplate.getProductTemplate().getValidity().isCorrespondsToPeriod(date)) {
                     result.add(offerProductTemplate.getProductTemplate());
                 }
             }

@@ -32,10 +32,8 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
-import org.meveo.model.MultilanguageEntity;
 
 @Entity
-@MultilanguageEntity(key = "menu.charges", group = "ChargeTemplate")
 @Table(name = "cat_recurring_charge_templ")
 @NamedQueries({			
 @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", 

@@ -9,9 +9,8 @@
 <!-- </cc:interface> -->
 
 <ui:composition>
-    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}"
-        style="#{style}" labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}"
-        inputWidth="#{inputWidth}">
+    <hftl:decorateFormField fieldId="#{id}" label="#{label}" componentWidth="#{componentWidth}" newLine="#{newLine}" displayOneLine="#{displayOneLine}" styleClass="#{styleClass}" style="#{style}"
+        labelStyle="#{labelStyle}" labelStyleClass="#{labelStyleClass}" inputStyle="#{inputStyle}" inputStyleClass="#{inputStyleClass}" labelWidth="#{labelWidth}" inputWidth="#{inputWidth}">
 
         <!--  Regular text input field -->
         <c:if test="#{listValues == null and !isAutocomplete}">
@@ -24,13 +23,12 @@
 
         <!--  Autocomplete -->
         <c:if test="#{listValues == null and isAutocomplete}">
-            <p:autoComplete id="#{id}" value="#{backingBean.filters[field]}" size="#{size}" disabled="#{disabled}" dropdown="true"
-                completeMethod="#{autocompleteBean[autocompleteMethod]}">
+            <p:autoComplete id="#{id}" value="#{backingBean.filters[field]}" size="#{size}" disabled="#{disabled}" dropdown="true" completeMethod="#{autocompleteBean[autocompleteMethod]}">
                 <c:if test="#{not empty converter}">
                     <f:converter converterId="#{converter}" />
                 </c:if>
                 <c:if test="#{not empty listenerUpdate}">
-                	<p:ajax update="#{listenerUpdate}" event="itemSelect"/>
+                    <p:ajax update="#{listenerUpdate}" event="itemSelect" />
                 </c:if>
             </p:autoComplete>
         </c:if>
@@ -39,12 +37,7 @@
         <c:if test="#{listValues != null}">
             <p:selectOneMenu id="#{id}" value="#{backingBean.filters[field]}" disabled="#{disabled}">
                 <f:selectItem itemValue="#{null}" itemLabel="" />
-                <c:if test="#{i18nLabels}">
-                	<f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{messages[listVal.value]}" />
-                </c:if>
-                <c:if test="#{!i18nLabels}">
-                	<f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
-                </c:if>
+                <f:selectItems value="#{listValues.entrySet()}" var="listVal" itemValue="#{listVal.key}" itemLabel="#{listVal.value}" />
             </p:selectOneMenu>
         </c:if>
     </hftl:decorateFormField>

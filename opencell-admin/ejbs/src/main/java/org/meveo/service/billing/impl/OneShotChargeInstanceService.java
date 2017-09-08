@@ -205,6 +205,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 		}
 
 		create(oneShotChargeInstance);
+		
+		OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
+		if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
+			log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true",
+					oneShotChargeInstance.getCode());
+			return oneShotChargeInstance;
+		}
 
 		if(applyCharge){
 			walletOperationService.oneShotWalletOperation(subscription, oneShotChargeInstance, inputQuantity, quantity, effetDate, false, subscription.getOrderNumber());
@@ -215,6 +222,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 	public void oneShotChargeApplication(Subscription subscription,
 			OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity, String orderNumberOverride)
 			throws BusinessException {
+		OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
+		if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
+			log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true",
+					oneShotChargeInstance.getCode());
+			return;
+		}
+		
 		BigDecimal inputQuantity = quantity;
 		quantity = NumberUtil.getInChargeUnit(quantity, oneShotChargeInstance.getChargeTemplate().getUnitMultiplicator(), oneShotChargeInstance.getChargeTemplate()
 				.getUnitNbDecimal(),oneShotChargeInstance.getChargeTemplate().getRoundingMode());
@@ -236,6 +250,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         log.debug("Apply one shot charge on Virtual operation. User account {}, offer {}, charge {}, quantity {}", oneShotChargeInstance.getUserAccount().getCode(), subscription
             .getOffer().getCode(), oneShotChargeInstance.getChargeTemplate().getCode(), quantity);
+        
+        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findByCode(oneShotChargeInstance.getCode());
+		if (!walletOperationService.isChargeMatch(oneShotChargeInstance, oneShotChargeTemplate.getFilterExpression())) {
+			log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true",
+					oneShotChargeInstance.getCode());
+			return null;
+		}
 
         BigDecimal inputQuantity = quantity;
         quantity = NumberUtil.getInChargeUnit(quantity, oneShotChargeInstance.getChargeTemplate().getUnitMultiplicator(), oneShotChargeInstance.getChargeTemplate()

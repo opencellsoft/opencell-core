@@ -15,13 +15,9 @@ public class AccessesDto implements Serializable {
 
 	private static final long serialVersionUID = 1614784156576503978L;
 
-	private List<AccessDto> access;
+	private List<AccessDto> access = new ArrayList<>();
 
 	public List<AccessDto> getAccess() {
-		if (access == null) {
-			access = new ArrayList<AccessDto>();
-		}
-
 		return access;
 	}
 
