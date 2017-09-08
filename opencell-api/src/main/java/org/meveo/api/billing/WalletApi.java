@@ -438,7 +438,7 @@ public class WalletApi extends BaseApi {
 
     }
 
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData) throws MeveoApiException {
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Paging paging) throws MeveoApiException {
 
         if (StringUtils.isBlank(postData.getUserAccount())) {
             missingParameters.add("userAccount");
@@ -461,9 +461,6 @@ public class WalletApi extends BaseApi {
             walletInstance = walletService.findByUserAccountAndCode(userAccount, WalletTemplate.PRINCIPAL);
         }
 
-        FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
-        result.setPaging(postData.getPaging());
-
         Map<String, Object> filters = new HashMap<>();
 
         if (walletTemplate != null) {
@@ -483,16 +480,15 @@ public class WalletApi extends BaseApi {
         filters.put("parameter3", postData.getParameter3());
         filters.put("chargeInstance.subscription.code", postData.getSubscriptionCode());
 
-        PaginationConfiguration paginationConfig = new PaginationConfiguration(postData.getPaging() != null ? postData.getPaging().getFrom() : null,
-            postData.getPaging() != null ? postData.getPaging().getNrOfItems() : null, filters, null, Arrays.asList("wallet"),
-            postData.getPaging() != null && postData.getPaging().getSortBy() != null ? postData.getPaging().getSortBy() : "id",
-            postData.getPaging() != null && postData.getPaging().getSortOrder() != null ? SortOrder.valueOf(postData.getPaging().getSortOrder().name()) : SortOrder.ASCENDING);
+        PaginationConfiguration paginationConfig = new PaginationConfiguration(paging != null ? paging.getFrom() : null, paging != null ? paging.getNumberOfRows() : null, filters,
+            null, Arrays.asList("wallet"), paging != null && paging.getSortBy() != null ? paging.getSortBy() : "id",
+            paging != null && paging.getSortOrder() != null ? SortOrder.valueOf(paging.getSortOrder().name()) : SortOrder.ASCENDING);
 
         Long totalCount = walletOperationService.count(paginationConfig);
-        if (result.getPaging() == null) {
-            result.setPaging(new Paging());
-        }
-        result.getPaging().setCount(totalCount.intValue());
+
+        FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
+        result.setPaging(paging != null ? paging : new Paging());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);

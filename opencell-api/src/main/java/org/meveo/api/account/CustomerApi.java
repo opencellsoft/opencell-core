@@ -13,6 +13,8 @@ import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -284,7 +286,7 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @SecuredBusinessEntityMethod(resultFilter = AccountDtoListFilter.class, validate = @SecureMethodParameter(parser = NullParser.class))
-    public CustomersDto filterCustomer(CustomerDto postData, Integer firstRow, Integer numberOfRows) throws MeveoApiException {
+    public CustomersResponseDto filterCustomer(CustomerDto postData, Paging paging) throws MeveoApiException {
 
         CustomerCategory customerCategory = null;
         if (!StringUtils.isBlank(postData.getCustomerCategory())) {
@@ -310,15 +312,20 @@ public class CustomerApi extends AccountEntityApi {
             }
         }
 
-        CustomersDto result = new CustomersDto();
-        List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, firstRow, numberOfRows);
-        result.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand));
+        CustomersDto customerDtos = new CustomersDto();
+        List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, paging != null ? paging.getFrom() : null,
+            paging != null ? paging.getNumberOfRows() : null);
+        customerDtos.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand));
         if (customers != null) {
             for (Customer c : customers) {
-                result.getCustomer().add(accountHierarchyApi.customerToDto(c));
+                customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c));
             }
         }
 
+        CustomersResponseDto result = new CustomersResponseDto();
+        result.setCustomers(customerDtos);
+        result.setPaging(paging != null ? paging : new Paging());
+        result.getPaging().setTotalNumberOfRecords(customerDtos.getTotalNumberOfRecords().intValue());
         return result;
     }
 

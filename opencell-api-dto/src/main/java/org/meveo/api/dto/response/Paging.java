@@ -11,14 +11,14 @@ public class Paging implements Serializable {
     private static final long serialVersionUID = 4367485228070123385L;
 
     /**
-     * Pagination - from item number
+     * Pagination - from record number
      */
     public Integer from;
 
     /**
-     * Pagination - number of items per page
+     * Pagination - number of items to retrieve
      */
-    public Integer nrOfItems = 100;
+    public Integer numberOfRows = 100;
 
     /**
      * Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
@@ -31,12 +31,24 @@ public class Paging implements Serializable {
     public SortOrder sortOrder;
 
     /**
-     * Total of items. Note - filled on response only.
+     * Total number of records. Note - filled on response only.
      */
-    public Integer count;
+    public Integer totalNumberOfRecords;
 
     public enum SortOrder {
         ASCENDING, DESCENDING;
+    }
+
+    public Paging() {
+
+    }
+
+    public Paging(Integer from, Integer numberOfRows, String sortBy, SortOrder sortOrder) {
+        super();
+        this.from = from;
+        this.numberOfRows = numberOfRows;
+        this.sortBy = sortBy;
+        this.sortOrder = sortOrder;
     }
 
     public Integer getFrom() {
@@ -47,12 +59,12 @@ public class Paging implements Serializable {
         this.from = from;
     }
 
-    public Integer getNrOfItems() {
-        return nrOfItems;
+    public Integer getNumberOfRows() {
+        return numberOfRows;
     }
 
-    public void setNrOfItems(Integer nrOfItems) {
-        this.nrOfItems = nrOfItems;
+    public void setNumberOfRows(Integer nrOfItems) {
+        this.numberOfRows = nrOfItems;
     }
 
     public String getSortBy() {
@@ -71,11 +83,11 @@ public class Paging implements Serializable {
         this.sortOrder = sortOrder;
     }
 
-    public Integer getCount() {
-        return count;
+    public Integer getTotalNumberOfRecords() {
+        return totalNumberOfRecords;
     }
 
-    public void setCount(Integer count) {
-        this.count = count;
+    public void setTotalNumberOfRecords(Integer count) {
+        this.totalNumberOfRecords = count;
     }
 }

@@ -10,6 +10,7 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -79,16 +80,15 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public CustomersResponseDto list(CustomerDto postData, int firstRow, int numberOfRows) {
-        CustomersResponseDto result = new CustomersResponseDto();
+    public CustomersResponseDto list(CustomerDto postData, Integer firstRow, Integer from, Integer numberOfRows) {
 
         try {
-            result.setCustomers(customerApi.filterCustomer(postData, firstRow, numberOfRows));
+            return customerApi.filterCustomer(postData, new Paging(from != null ? from : firstRow, numberOfRows, null, null));
         } catch (Exception e) {
+            CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());
+            return result;
         }
-
-        return result;
     }
 
     @Override

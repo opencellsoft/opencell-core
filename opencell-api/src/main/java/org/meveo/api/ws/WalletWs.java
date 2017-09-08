@@ -12,6 +12,7 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
+import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 
@@ -20,48 +21,54 @@ import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
  **/
 @WebService
 public interface WalletWs extends IBaseWs {
-	
-	@WebMethod
-	ActionStatus createWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
-	
-	@WebMethod
-	ActionStatus updateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
-	
-	@WebMethod
-	ActionStatus createOrUpdateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
-	
-	@WebMethod
-	GetWalletTemplateResponseDto findWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
-	
-	@WebMethod
-	ActionStatus removeWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
 
-	@WebMethod
-	ActionStatus currentBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
+    @WebMethod
+    ActionStatus createWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
 
-	@WebMethod
-	ActionStatus reservedBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
+    @WebMethod
+    ActionStatus updateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
 
-	@WebMethod
-	ActionStatus openBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
+    @WebMethod
+    ActionStatus createOrUpdateWalletTemplate(@WebParam(name = "walletTemplate") WalletTemplateDto postData);
 
-	@WebMethod
-	ActionStatus createReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);
+    @WebMethod
+    GetWalletTemplateResponseDto findWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
 
-	@WebMethod
-	ActionStatus updateReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);
+    @WebMethod
+    ActionStatus removeWalletTemplate(@WebParam(name = "walletTemplateCode") String walletTemplateCode);
 
-	@WebMethod
-	ActionStatus cancelReservation(@WebParam(name = "reservationId") Long reservationId);
+    @WebMethod
+    ActionStatus currentBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
 
-	@POST
-	@Path("/reservation/confirm")
-	ActionStatus confirmReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);
+    @WebMethod
+    ActionStatus reservedBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
 
-	@WebMethod
-	ActionStatus createOperation(@WebParam(name = "walletOperation") WalletOperationDto postData);
+    @WebMethod
+    ActionStatus openBalance(@WebParam(name = "walletBalance") WalletBalanceDto postData);
 
-	@WebMethod
-	FindWalletOperationsResponseDto findOperations(@WebParam(name = "findWalletOperations") FindWalletOperationsDto postData);
+    @WebMethod
+    ActionStatus createReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);
 
+    @WebMethod
+    ActionStatus updateReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);
+
+    @WebMethod
+    ActionStatus cancelReservation(@WebParam(name = "reservationId") Long reservationId);
+
+    @POST
+    @Path("/reservation/confirm")
+    ActionStatus confirmReservation(@WebParam(name = "walletReservation") WalletReservationDto postData);
+
+    @WebMethod
+    ActionStatus createOperation(@WebParam(name = "walletOperation") WalletOperationDto postData);
+
+    /**
+     * List wallet operations matching a given criteria
+     * 
+     * @param postData Search criteria
+     * @param paging Pagination criteria
+     * @return
+     */
+    @WebMethod
+    FindWalletOperationsResponseDto findOperations(@WebParam(name = "findWalletOperations") FindWalletOperationsDto postData, @WebParam(name = "paging") Paging paging);
 }

@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.SearchDto;
+import org.meveo.api.dto.BaseDto;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 
 /**
@@ -15,7 +15,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FindWalletOperationsDto extends SearchDto {
+public class FindWalletOperationsDto extends BaseDto {
 
     private static final long serialVersionUID = 4342970913973071312L;
 
