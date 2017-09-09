@@ -132,13 +132,17 @@ public class CustomerAccountApi extends AccountEntityApi {
         // Start compatibility with pre-4.6 versions
         if (postData.getPaymentMethods() == null || postData.getPaymentMethods().isEmpty()) {
             postData.setPaymentMethods(new ArrayList<>());
+            PaymentMethodDto paymentMethodDto = null;
             if (postData.getPaymentMethod() != null) {
-                postData.getPaymentMethods().add(new PaymentMethodDto(postData.getPaymentMethod(), null, postData.getMandateIdentification(), postData.getMandateDate()));
+            	paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(), null, postData.getMandateIdentification(), postData.getMandateDate());               
             } else if (!StringUtils.isBlank(postData.getMandateIdentification())) {
-                postData.getPaymentMethods().add(new PaymentMethodDto(PaymentMethodEnum.DIRECTDEBIT, null, postData.getMandateIdentification(), postData.getMandateDate()));
+            	paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.DIRECTDEBIT, null, postData.getMandateIdentification(), postData.getMandateDate());
             } else {
-                postData.getPaymentMethods().add(new PaymentMethodDto(PaymentMethodEnum.CHECK));
+            	paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.CHECK);
             }
+            paymentMethodDto.validate();
+            postData.getPaymentMethods().add(paymentMethodDto);
+            
         }
 
         CustomerAccount customerAccount = new CustomerAccount();
@@ -166,6 +170,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+            	paymentMethodDto.validate();
                 customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount));
             }
         }
