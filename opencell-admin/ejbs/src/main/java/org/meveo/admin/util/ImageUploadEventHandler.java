@@ -59,8 +59,6 @@ public class ImageUploadEventHandler<T extends IEntity> {
             return null;
         }
         String filename = saveToFile(entity, uploadedFile.getInputstream(), uploadedFile.getFileName());
-
-        handleChangeExtension(entity, filename);
         return filename;
     }
 
@@ -97,25 +95,6 @@ public class ImageUploadEventHandler<T extends IEntity> {
     }
 
     /**
-     * Remove old file if extension has been changed.
-     * 
-     * @param entity Entity with an old filename
-     * @param newFilename A new filename
-     * @throws IOException
-     */
-    private void handleChangeExtension(T entity, String newFileame) throws IOException {
-
-        String oldExtension = FilenameUtils.getExtension(((IImageUpload) entity).getImagePath());
-        String newExtension = FilenameUtils.getExtension(newFileame);
-
-        if (oldExtension != null && !oldExtension.equals(newExtension)) {
-            String folder = getPicturePath(entity);
-            String imagePath = ((IImageUpload) entity).getImagePath();
-            Files.deleteIfExists(Paths.get(folder, imagePath));
-        }
-    }
-
-    /**
      * Saves an array of byte as image. Mainly use in API.
      * 
      * @param entity
@@ -130,15 +109,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
 
         String filename = saveToFile(entity, new ByteArrayInputStream(imageData), originalFilename);
 
-        handleChangeExtension(entity, filename);
-
         return filename;
     }
 
     public void deleteImage(T entity) throws IOException {
 
         String imagePath = ((IImageUpload) entity).getImagePath();
-        
+
         if (!StringUtils.isBlank(imagePath)) {
             String folder = getPicturePath(entity);
             Path source = Paths.get(folder, imagePath);

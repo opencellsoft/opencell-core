@@ -255,8 +255,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 try {
                     entity = offerTemplateService.instantiateNewVersion(offer);
 
-                    // Load multi language fields
-                    loadMultiLanguageFields(offer);
                     setObjectId(null);
                     messages.info(new BundleKey("messages", "newVersion.successful"));
                 } catch (BusinessException e) {
@@ -656,8 +654,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 try {
                     entity = offerTemplateService.duplicate(offer, false);
                     setObjectId(null);
-                    // Multi language field values are by previous code, so load it using an original offer
-                    loadMultiLanguageFields(offer);
 
                     messages.info(new BundleKey("messages", "message.duplicate.ok"));
 
@@ -677,7 +673,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
             businessOfferModelService.detach(businessOfferModel);
 
-            loadMultiLanguageFields(offer);
             String code = offer.getCode();
 
             entity = offerTemplateService.duplicate(offer, false);

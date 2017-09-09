@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpStatus;
 import org.meveo.admin.util.ModuleUtil;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -33,6 +32,8 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.util.ApplicationProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Show a picture from a rest URI like /meveo/picture/provider/module/tmp/filename.suffix or /meveo/picture/provider/offerCategory/offerCategoryID or
@@ -49,7 +50,7 @@ public class PictureServlet extends HttpServlet {
      *
      */
     private static final long serialVersionUID = 1L;
-    private final Log log = LogFactory.getLog(PictureServlet.class);
+    private final Logger log = LoggerFactory.getLogger(PictureServlet.class);
 
     public static final String DEFAULT_OFFER_CAT_IMAGE = "offer_cat_default.png";
     public static final String DEFAULT_OFFER_IMAGE = "offer_default.png";
@@ -94,6 +95,7 @@ public class PictureServlet extends HttpServlet {
         }
         String rootPath = null;
         String filename = null;
+        String mimeType = null;
         // String provider = path[3];
         String provider = appProvider.getCode();
         String groupname = path[4];
@@ -115,8 +117,13 @@ public class PictureServlet extends HttpServlet {
 
         byte[] data = null;
         if (filename.indexOf(".") > 0) {
-            String destfile = rootPath + File.separator + filename;
-            data = loadImage(destfile);
+            String destFile = rootPath + File.separator + filename;
+            data = loadImage(destFile);
+            try {
+                mimeType = Files.probeContentType((new File(destFile)).toPath());
+            } catch (IOException e) {
+                log.error("Failed to determine mime type for {}", destFile, e);
+            }
 
         } else {
 
@@ -168,25 +175,41 @@ public class PictureServlet extends HttpServlet {
                 defaultImage = DEFAULT_PRODUCT_IMAGE;
             }
 
-            try {
-                data = Files.readAllBytes(Paths.get(rootPath + File.separator + imagePath));
-            } catch (IOException e) {
-                log.error("Image file " + imagePath + " does not exist in filesystem");
+            if (imagePath != null) {
+                try {
+                    Path destFile = Paths.get(rootPath + File.separator + imagePath);
+                    data = Files.readAllBytes(destFile);
+                    try {
+                        mimeType = Files.probeContentType(destFile);
+                    } catch (IOException e) {
+                        log.error("Failed to determine mime type for {}", destFile, e);
+                    }
+                } catch (IOException e) {
+                    log.error("Image file " + imagePath + " does not exist in filesystem");
+                }
             }
 
             if (data == null) {
                 // load from cached default images
                 data = cachedDefaultImages.get(defaultImage);
+                String imageFile = rootPath + File.separator + defaultImage;
                 if (data == null) {
                     // load from default images directory
-                    String imageFile = rootPath + File.separator + defaultImage;
                     data = loadImage(imageFile);
                     cachedDefaultImages.put(defaultImage, data);
+                }
+                try {
+                    mimeType = Files.probeContentType((new File(imageFile)).toPath());
+                } catch (IOException e) {
+                    log.error("Failed to determine mime type for {}", imageFile, e);
                 }
             }
         }
 
         if (data != null) {
+            if (mimeType != null) {
+                resp.setContentType(mimeType);
+            }
             InputStream in = null;
             OutputStream out = null;
             try {

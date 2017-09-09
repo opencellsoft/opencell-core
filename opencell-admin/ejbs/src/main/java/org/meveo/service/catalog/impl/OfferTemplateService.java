@@ -319,27 +319,4 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-
-    public synchronized OfferTemplate duplicateOfferOnly(OfferTemplate offer) throws BusinessException {
-
-        // Find the latest version of an offer for duplication and to calculate a validity start date for a new offer
-        OfferTemplate latestVersion = findTheLatestVersion(offer.getCode());
-        Date startDate = null;
-        Date endDate = null;
-        if (latestVersion.getValidity() != null) {
-            startDate = latestVersion.getValidity().getFrom();
-            endDate = latestVersion.getValidity().getTo();
-        }
-
-        offer = duplicate(latestVersion, false, false);
-
-        Date from = endDate != null ? endDate : new Date();
-        if (startDate != null && from.before(startDate)) {
-            from = startDate;
-        }
-        offer.setValidity(new DatePeriod(from, null));
-
-        return offer;
-    }
-
 }
