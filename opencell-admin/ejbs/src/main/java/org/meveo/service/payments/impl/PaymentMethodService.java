@@ -143,7 +143,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	
 	        cardPaymentMethod.setTokenId(tockenID);
         }else{
-        	cardPaymentMethod.setTokenId("no token");
+        	cardPaymentMethod.setTokenId(null);
         }
     }
 
