@@ -31,7 +31,6 @@ public class PaymentMethodApi extends BaseApi {
     private PaymentMethodService paymentMethodService;
 
     public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-
         paymentMethodDto.validate(true);
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
         if (customerAccount == null) {
