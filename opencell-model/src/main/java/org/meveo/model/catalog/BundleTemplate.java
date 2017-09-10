@@ -12,7 +12,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
 import org.meveo.model.CustomFieldEntity;
-import org.meveo.model.annotation.ImageType;
 
 /**
  * @author Edward P. Legaspi
@@ -20,7 +19,6 @@ import org.meveo.model.annotation.ImageType;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "BUNDLE")
 @DiscriminatorValue("BUNDLE")
-@ImageType
 @NamedQueries({ @NamedQuery(name = "BundleTemplate.countActive", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=false"),
 		@NamedQuery(name = "BundleTemplate.countDisabled", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=true"),
 		@NamedQuery(name = "BundleTemplate.countExpiring", query = "SELECT COUNT(*) FROM BundleTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW()") })

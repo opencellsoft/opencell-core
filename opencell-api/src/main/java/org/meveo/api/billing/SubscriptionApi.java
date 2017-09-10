@@ -830,7 +830,7 @@ public class SubscriptionApi extends BaseApi {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
         Map<String, Object> filters = new HashMap<>();
 		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
-				paging != null ? paging.getFrom() : null, paging != null ? paging.getNumberOfRows() : null, filters,
+				paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
 				null, null, paging != null ? paging.getSortBy() : null,
 				paging != null && paging.getSortOrder() != null
 						? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name())

@@ -600,7 +600,10 @@ public class UsageRatingService {
 
                 log.trace("try templateCache=" + chargeTemplate.toString());
                 try {
-                    if (!isChargeMatch(edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(), chargeTemplate.getFilter2(),
+					UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+					if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
+							chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
+							chargeTemplate.getFilter2(),
                         chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
                         continue;
                     }
@@ -657,7 +660,7 @@ public class UsageRatingService {
      * @throws BusinessException
      * @throws ChargeWitoutPricePlanException If charge has no price plan associated
      */
-    private boolean isChargeMatch(EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4)
+    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4)
             throws BusinessException, ChargeWitoutPricePlanException {
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
@@ -668,7 +671,7 @@ public class UsageRatingService {
                     log.trace("filter3 ok");
                     if (filter4 == null || filter4.equals(edr.getParameter4())) {
                         log.trace("filter4 ok");
-                        if (filterExpression == null || matchExpression(filterExpression, edr)) {
+                        if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {
 
                             if (chargeCode != null) {
                                 List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(chargeCode);
@@ -728,7 +731,10 @@ public class UsageRatingService {
                         CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
                         log.info("try templateCache=" + chargeTemplate.toString());
 
-                        if (isChargeMatch(edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(), chargeTemplate.getFilter2(),
+						UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+						if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
+								chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
+								chargeTemplate.getFilter2(),
                             chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
 
                             log.debug("found matchig charge inst : id=" + charge.getId());
@@ -762,9 +768,10 @@ public class UsageRatingService {
         return reservation;
     }
 
-    private boolean matchExpression(String expression, EDR edr) throws BusinessException {
+    private boolean matchExpression(UsageChargeInstance ci, String expression, EDR edr) throws BusinessException {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
+        userMap.put("ci", ci);
         return (Boolean) ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
     }
 

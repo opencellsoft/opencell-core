@@ -190,7 +190,7 @@ public class CatalogHierarchyBuilderService {
 
             try {
                 ImageUploadEventHandler<ProductTemplate> productImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-                String newImagePath = productImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath(), prefix + productTemplate.getCode());
+                String newImagePath = productImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath());
                 newProductTemplate.setImagePath(newImagePath);
             } catch (IOException e1) {
                 log.error("IPIEL: Failed duplicating product image: {}", e1.getMessage());
@@ -352,7 +352,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
             try {
                 ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath(), prefix + serviceTemplate.getCode());
+                String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath());
                 newServiceTemplate.setImagePath(newImagePath);
             } catch (IOException e1) {
                 log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());

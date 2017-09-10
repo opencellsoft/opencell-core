@@ -32,7 +32,6 @@ import org.meveo.model.annotation.ImageType;
  **/
 @Entity
 @ObservableEntity
-@ImageType
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code"})

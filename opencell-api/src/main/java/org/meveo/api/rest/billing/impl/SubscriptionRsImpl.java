@@ -187,12 +187,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-	public SubscriptionsListResponseDto listAll(Integer from, Integer numberOfRows, boolean mergedCF, String sortBy,
+	public SubscriptionsListResponseDto listAll(Integer offset, Integer limit, boolean mergedCF, String sortBy,
 			SortOrder sortOrder) {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
     	try {
-    		result = subscriptionApi.listAll(mergedCF, new Paging(from, numberOfRows, sortBy, sortOrder));
+    		result = subscriptionApi.listAll(mergedCF, new Paging(offset, limit, sortBy, sortOrder));
     	} catch (Exception e) {
     		processException(e, result.getActionStatus());
     	}

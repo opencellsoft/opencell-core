@@ -18,6 +18,7 @@
  */
 package org.meveo.admin.action.catalog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
@@ -117,17 +119,28 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Override
     public OfferTemplate initEntity() {
-        super.initEntity();
 
         if (bomId != null) {
-            businessOfferModel = businessOfferModelService.findById(bomId);
+            duplicateFromBom();
+
             productTemplatesLookup = new ArrayList<>();
             if (entity.getOfferProductTemplates() != null && !entity.getOfferProductTemplates().isEmpty()) {
                 for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
                     productTemplatesLookup.add(opt.getProductTemplate());
                 }
             }
-            setOverrideImageOnUpload(false);
+            bomId = null;
+
+        } else if (newVersion) {
+            instantiateNewVersion();
+            newVersion = false;
+
+        } else if (duplicateOffer) {
+            duplicateWOutSave();
+            duplicateOffer = false;
+
+        } else {
+            super.initEntity();
         }
 
         // Load service templates
@@ -141,18 +154,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         // Load product templates
         for (OfferProductTemplate offerProductTemplate : entity.getOfferProductTemplates()) {
             offerProductTemplate.getProductTemplate();
-        }
-
-        if (newVersion) {
-            instantiateNewVersion();
-            setObjectId(entity.getId());
-            newVersion = false;
-        }
-
-        if (duplicateOffer) {
-            duplicateOfferOnly();
-            setObjectId(entity.getId());
-            duplicateOffer = false;
         }
 
         if (entity.getValidity() == null) {
@@ -206,7 +207,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     public void duplicate() {
         if (entity != null && entity.getId() != null) {
             try {
-                offerTemplateService.duplicate(entity);
+                offerTemplateService.duplicate(entity, true);
                 messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
                 log.error("Error encountered duplicating offer template entity: {}", entity.getCode(), e);
@@ -247,13 +248,19 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @ActionMethod
     public void instantiateNewVersion() {
-        if (entity != null && entity.getId() != null) {
-            try {
-                entity = offerTemplateService.instantiateNewVersion(entity);
-                messages.info(new BundleKey("messages", "newVersion.successful"));
-            } catch (BusinessException e) {
-                log.error("Error encountered instantiating new offer template entity version: {}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "error.newVersion.unsuccessful"));
+
+        if (getObjectId() != null) {
+            OfferTemplate offer = offerTemplateService.findById(getObjectId());
+            if (offer != null) {
+                try {
+                    entity = offerTemplateService.instantiateNewVersion(offer);
+
+                    setObjectId(null);
+                    messages.info(new BundleKey("messages", "newVersion.successful"));
+                } catch (BusinessException e) {
+                    log.error("Error encountered instantiating new offer template entity version: {}", offer.getCode(), e);
+                    messages.error(new BundleKey("messages", "error.newVersion.unsuccessful"));
+                }
             }
         }
     }
@@ -273,8 +280,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 sortedOfferServiceTemplates = new ArrayList<>();
                 sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
                 Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
-            }
         }
+    }
 
         return sortedOfferServiceTemplates;
     }
@@ -288,7 +295,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        if (bomId != null && businessOfferModel != null) {
+
+        // Instantiating a new offer from BOM by using the data entered in offer template that was duplicated in initEntity() method
+        if (businessOfferModel != null) {
             Map<String, List<CustomFieldValue>> cfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
             CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, cfValues);
 
@@ -349,11 +358,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             // populate offer cf
             customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
 
-            // detach
-            offerTemplateService.detach(entity);
-            entity.setId(null);
+            if (entity.getImagePath() != null) {
+                try {
+                    ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<OfferTemplate>(appProvider);
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file", e);
+                }
+            }
 
             return back();
+
         } else {
             boolean isNewEntity = (entity.getId() == null);
 
@@ -630,17 +645,44 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return true;
     }
 
-    @ActionMethod
-    public void duplicateOfferOnly() {
-        if (entity != null && entity.getId() != null) {
-            try {
-                entity = offerTemplateService.duplicateOfferOnly(entity);
-                messages.info(new BundleKey("messages", "message.duplicate.ok"));
-            } catch (BusinessException e) {
-                log.error("Error encountered instantiating new offer template entity version: {}", entity.getCode(), e);
-                messages.error(new BundleKey("messages", "message.duplicate.ok"));
+    private void duplicateWOutSave() {
+
+        if (getObjectId() != null) {
+            OfferTemplate offer = offerTemplateService.findById(getObjectId());
+            if (offer != null) {
+
+                try {
+                    entity = offerTemplateService.duplicate(offer, false);
+                    setObjectId(null);
+
+                    messages.info(new BundleKey("messages", "message.duplicate.ok"));
+
+                } catch (BusinessException e) {
+                    log.error("Error encountered while duplicating an offer template: {}", offer.getCode(), e);
+                    messages.error(new BundleKey("messages", "message.duplicate.ok"));
+                }
             }
         }
     }
 
+    private void duplicateFromBom() {
+        try {
+
+            businessOfferModel = businessOfferModelService.findById(bomId);
+            OfferTemplate offer = businessOfferModel.getOfferTemplate();
+
+            businessOfferModelService.detach(businessOfferModel);
+
+            String code = offer.getCode();
+
+            entity = offerTemplateService.duplicate(offer, false);
+            // Preserve the offer template original code
+            entity.setCode(code);
+
+            setObjectId(null);
+
+        } catch (BusinessException e) {
+            log.error("Error encountered while duplicating offer template from BOM: {}", bomId, e);
+        }
+    }
 }

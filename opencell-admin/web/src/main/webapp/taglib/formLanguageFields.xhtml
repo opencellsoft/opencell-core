@@ -68,7 +68,9 @@
             <c:if test="#{!textArea and edit}">
                 <p:inputText id="#{field}" value="#{entity[field]}" size="#{size}" maxlength="#{maxlength}" rendered="#{edit}" required="#{required}" />
             </c:if>
-            <h:outputText value="#{entity[field]}" rendered="#{! edit}" />
+            <c:if test="#{!edit}">
+                <h:outputText id="#{field}" value="#{entity[field]}" />
+            </c:if>
         </div>
 
         <c:if test="#{multiLang}">

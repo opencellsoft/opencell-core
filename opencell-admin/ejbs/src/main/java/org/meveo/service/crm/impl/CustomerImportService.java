@@ -1,5 +1,6 @@
 package org.meveo.service.crm.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -134,6 +135,10 @@ public class CustomerImportService extends ImportService {
         String paymentMethod = custAcc.getPaymentMethod();
         if (paymentMethod == null) {
             List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
+            if (paymentMethods == null) {
+            	paymentMethods = new ArrayList<PaymentMethod>();
+            	customerAccount.setPaymentMethods(paymentMethods);
+            }
             CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();
             checkPaymentMethod.setPaymentType(PaymentMethodEnum.CHECK);
             checkPaymentMethod.setCustomerAccount(customerAccount);

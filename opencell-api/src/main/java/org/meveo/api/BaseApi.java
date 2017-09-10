@@ -43,6 +43,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
@@ -308,12 +309,12 @@ public abstract class BaseApi {
                     hasValue = value != null;
                 }
 
-                // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
-                // field validation should pass even though current period wont have any value
+                    // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
+                    // field validation should pass even though current period wont have any value
                 if (!hasValue) {
                     if (cft.isVersionable()) {
                         hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
-                    } else {
+                } else {
                         Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
                         hasValue = value != null;
                     }
@@ -937,18 +938,23 @@ public abstract class BaseApi {
     }
 
     protected void saveImage(IEntity entity, String imagePath, String imageData) throws IOException, MeveoApiException {
+
+        // No image to save
         if (StringUtils.isBlank(imageData)) {
             return;
-        } else {
-            if (StringUtils.isBlank(imagePath)) {
-                missingParameters.add("imagePath");
-                handleMissingParametersAndValidate(null);
-            }
+        }
+
+        if (StringUtils.isBlank(imagePath)) {
+            missingParameters.add("imagePath");
+            handleMissingParametersAndValidate(null);
         }
 
         try {
             ImageUploadEventHandler<IEntity> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-            imageUploadEventHandler.saveImageUpload(entity, imagePath, Base64.decodeBase64(imageData));
+            String filename = imageUploadEventHandler.saveImage(entity, imagePath, Base64.decodeBase64(imageData));
+            if (filename != null) {
+                ((IImageUpload) entity).setImagePath(filename);
+            }
         } catch (AccessDeniedException e1) {
             throw new InvalidImageData("Failed saving image. Access is denied: " + e1.getMessage());
         } catch (IOException e) {

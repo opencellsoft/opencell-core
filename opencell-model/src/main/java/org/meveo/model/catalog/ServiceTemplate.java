@@ -47,7 +47,6 @@ import org.meveo.model.annotation.ImageType;
 @Entity
 @ModuleItem
 @ObservableEntity
-@ImageType
 @CustomFieldEntity(cftCodePrefix = "SERVICE")
 @ExportIdentifier({ "code"})
 @Table(name = "cat_service_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))

@@ -121,8 +121,7 @@ public interface SubscriptionRs extends IBaseRs {
 
     @GET
     @Path("/listAll")
-	SubscriptionsListResponseDto listAll(@QueryParam("from") Integer from,
-			@QueryParam("numberOfRows") Integer numberOfRows,
+	SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
 			@DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
 			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
 			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);

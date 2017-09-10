@@ -18,6 +18,7 @@
  */
 package org.meveo.service.base;
 
+import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
@@ -39,6 +40,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
@@ -57,6 +59,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
+import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.base.local.IPersistenceService;
@@ -288,6 +291,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // Remove custom field values from cache if applicable
         if (entity instanceof ICustomFieldEntity) {
             customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
+        }
+
+        if (entity instanceof IImageUpload) {
+            try {
+                ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
+                imageUploadEventHandler.deleteImage(entity);
+            } catch (IOException e) {
+                log.error("Failed deleting image file");
+            }
         }
 
         log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());

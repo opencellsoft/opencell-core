@@ -51,7 +51,7 @@ import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.annotation.ImageType;
+import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.EntityCustomAction;
@@ -185,7 +185,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
 
     private UploadedFile uploadedFile;
-    private boolean overrideImageOnUpload = true;
 
     /**
      * Constructor
@@ -295,7 +294,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     protected boolean isImageUpload() {
-        return clazz.isAnnotationPresent(ImageType.class);
+        return IImageUpload.class.isAssignableFrom(clazz);
     }
 
     private void loadPartOfModules() {
@@ -356,15 +355,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         String message = entity.isTransient() ? "save.successful" : "update.successful";
-
-        if (isImageUpload()) {
-            try {
-                ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-                imageUploadEventHandler.saveImageUpload(entity);
-            } catch (IOException e) {
-                log.error("Failed moving image file");
-            }
-        }
 
         entity = saveOrUpdate(entity);
 
@@ -536,7 +526,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
 
-            if (isImageUpload()) {
+            // Delete image here only if transient. Otherwise it will be deleted as part of a call to a service
+            if (id == null && isImageUpload()) {
                 try {
                     ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
                     imageUploadEventHandler.deleteImage(entity);
@@ -562,32 +553,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     @ActionMethod
     public void delete() {
-        try {
-            log.info("Deleting entity {} with id = {}", clazz.getName(), getEntity().getId());
-            getPersistenceService().remove((Long) getEntity().getId());
-
-            if (isImageUpload()) {
-                try {
-                    ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-                    imageUploadEventHandler.deleteImage(entity);
-                } catch (IOException e) {
-                    log.error("Failed deleting image file");
-                }
-            }
-
-            messages.info(new BundleKey("messages", "delete.successful"));
-        } catch (Throwable t) {
-            if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-            } else {
-                log.info("unexpected exception when deleting!", t);
-                messages.error(new BundleKey("messages", "error.delete.unexpected"));
-            }
-        }
-
-        // initEntity();
+        delete((Long) getEntity().getId());
     }
 
     /**
@@ -1046,10 +1012,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public List<Filter> getListFilters() {
         if (clazz != null) {
-            return filterService.findByPrimaryTargetClass(clazz.getName());
+        return filterService.findByPrimaryTargetClass(clazz.getName());
         } else {
             return null;
-        }
+    }
     }
 
     public void runListFilter() {
@@ -1218,15 +1184,14 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void hfHandleFileUpload(FileUploadEvent event) throws BusinessException {
         uploadedFile = event.getFile();
-        String code = ((BusinessEntity) entity).getCode();
-        if (!overrideImageOnUpload) {
-            code = null;
-        }
 
         try {
             ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(appProvider);
-            uploadHandler.handleImageUpload(entity, code, uploadedFile);
-            messages.info(new BundleKey("messages", "message.upload.succesful"));
+            String filename = uploadHandler.handleImageUpload(entity, uploadedFile);
+            if (filename != null) {
+                ((IImageUpload) entity).setImagePath(filename);
+                messages.info(new BundleKey("messages", "message.upload.succesful"));
+            }
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "message.upload.fail"), e.getMessage());
         }
@@ -1238,13 +1203,5 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void setUploadedFile(UploadedFile uploadedFile) {
         this.uploadedFile = uploadedFile;
-    }
-
-    public boolean isOverrideImageOnUpload() {
-        return overrideImageOnUpload;
-    }
-
-    public void setOverrideImageOnUpload(boolean overrideImageOnUpload) {
-        this.overrideImageOnUpload = overrideImageOnUpload;
     }
 }

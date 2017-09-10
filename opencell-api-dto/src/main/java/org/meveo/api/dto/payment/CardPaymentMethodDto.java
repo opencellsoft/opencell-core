@@ -35,7 +35,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
 
     public CardPaymentMethodDto(CardPaymentMethod paymentMethod) {
         super(paymentMethod);
-        setCardNumber("********" + paymentMethod.getHiddenCardNumber());
+        setCardNumber(paymentMethod.getHiddenCardNumber());
         setCardType(paymentMethod.getCardType());
         setMonthExpiration(paymentMethod.getMonthExpiration());
         setOwner(paymentMethod.getOwner());
