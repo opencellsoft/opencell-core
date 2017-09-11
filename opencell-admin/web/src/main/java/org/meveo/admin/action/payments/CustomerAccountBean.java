@@ -441,21 +441,21 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     
     @ActionMethod
     public void disablePaymentMethod(PaymentMethod paymentMethod) {    	
-    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+    	if (entity.getAllPaymentMethods() == null || entity.getAllPaymentMethods().isEmpty()) {
     		return;
     	}        
     	paymentMethod.setDisabled(true);
-    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+    	entity.getAllPaymentMethods().set(entity.getAllPaymentMethods().indexOf(paymentMethod), paymentMethod);        
     	messages.info(new BundleKey("messages", "disabled.successful"));
 
     }
     @ActionMethod
     public void enablePaymentMethod(PaymentMethod paymentMethod) {
-    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+    	if (entity.getAllPaymentMethods() == null || entity.getAllPaymentMethods().isEmpty()) {
     		return;
     	}        
     	paymentMethod.setDisabled(false);
-    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+    	entity.getAllPaymentMethods().set(entity.getAllPaymentMethods().indexOf(paymentMethod), paymentMethod);        
     	messages.info(new BundleKey("messages", "enabled.successful"));
 
     }

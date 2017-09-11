@@ -20,6 +20,7 @@ package org.meveo.model.payments;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -270,12 +271,13 @@ public class CustomerAccount extends AccountEntity {
         return paymentMethods;
     }
     
-    public List<PaymentMethod> getPaymentMethods() {    	
-    	for(PaymentMethod paymentMethod : paymentMethods){
+    public List<PaymentMethod> getPaymentMethods() {     	
+    	for (Iterator<PaymentMethod> iterator = paymentMethods.iterator(); iterator.hasNext(); ) {
+    		PaymentMethod paymentMethod = iterator.next();
     		if(paymentMethod.isDisabled()){
-    			paymentMethods.remove(paymentMethod);
-    		}
-    	}
+    	        iterator.remove();
+    	    }    	    
+    	}     	
         return paymentMethods;
     }
 
