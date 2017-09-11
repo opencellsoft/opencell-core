@@ -18,6 +18,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "ar_payment_token")
@@ -31,7 +32,7 @@ import org.meveo.model.BaseEntity;
         @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred2", query = "UPDATE PaymentMethod pm set pm.preferred = true where pm.customerAccount.id = :caId and pm.id =:id"),
         @NamedQuery(name = "PaymentMethod.updateFirstPaymentMethodToPreferred3", query = "UPDATE PaymentMethod pm set pm.preferred = false where pm.customerAccount.id = :caId and pm.id <>:id"),
         @NamedQuery(name = "PaymentMethod.getNumberOfPaymentMethods", query = "select count(*) from  PaymentMethod pm where pm.customerAccount.id = :caId") })
-public abstract class PaymentMethod extends BaseEntity {
+public abstract class PaymentMethod extends EnableEntity {
 
     private static final long serialVersionUID = 8726571628074346184L;
 

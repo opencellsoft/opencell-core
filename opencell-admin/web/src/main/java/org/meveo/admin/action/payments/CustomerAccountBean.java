@@ -360,7 +360,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
         try {
 
-        	//selectedPaymentMethod.updateAudit(currentUser);
+        	selectedPaymentMethod.updateAudit(currentUser);
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) selectedPaymentMethod).getTokenId() == null && ((CardPaymentMethod) selectedPaymentMethod).getCardNumber() != null) {
                     ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
@@ -439,24 +439,24 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         messages.info(new BundleKey("messages", "paymentMethod.removed.ok"));
     }
     
-//    @ActionMethod
-//    public void disablePaymentMethod(PaymentMethod paymentMethod) {    	
-//    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
-//    		return;
-//    	}        
-//    	paymentMethod.setDisabled(true);
-//    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
-//    	messages.info(new BundleKey("messages", "disabled.successful"));
-//
-//    }
-//    @ActionMethod
-//    public void enablePaymentMethod(PaymentMethod paymentMethod) {
-//    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
-//    		return;
-//    	}        
-//    	paymentMethod.setDisabled(false);
-//    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
-//    	messages.info(new BundleKey("messages", "enabled.successful"));
-//
-//    }
+    @ActionMethod
+    public void disablePaymentMethod(PaymentMethod paymentMethod) {    	
+    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+    		return;
+    	}        
+    	paymentMethod.setDisabled(true);
+    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+    	messages.info(new BundleKey("messages", "disabled.successful"));
+
+    }
+    @ActionMethod
+    public void enablePaymentMethod(PaymentMethod paymentMethod) {
+    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+    		return;
+    	}        
+    	paymentMethod.setDisabled(false);
+    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+    	messages.info(new BundleKey("messages", "enabled.successful"));
+
+    }
 }

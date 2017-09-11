@@ -150,7 +150,7 @@
                                     </p:fieldset>
 
                                     <p:fieldset legend="#{messages['customerAccount.paymentMethods']}">
-                                        <p:dataTable id="paymentMethods" var="entity" value="#{customerAccountBean.entity.paymentMethods}" paginator="false" rows="10" lazy="false"
+                                        <p:dataTable id="paymentMethods" var="entity" value="#{customerAccountBean.entity.getAllPaymentMethods()}" paginator="false" rows="10" lazy="false"
                                             styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true" sortBy="#{entity.alias}" sortField="alias">
 
                                             <hftl:column label="#{messages['paymentMethod.type']}" field="paymentType.label" isMessage="true" />
@@ -174,7 +174,7 @@
                                                     <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
                                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                                                 </p:commandButton>
-										     <!--  
+										      
 										        <p:commandButton icon="ui-icon-circle-close" rendered="#{ not entity.disabled }" action="#{customerAccountBean.disablePaymentMethod(entity)}" 
 										         update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails">
 										            <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
@@ -187,10 +187,10 @@
 										            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
 										        </p:commandButton>
                                                 
-                                                -->
+                                                
                                                 <p:commandButton icon="ui-icon-star" action="#{customerAccountBean.setPreferredPaymentMethod(entity)}" title="#{messages['paymentMethod.makePreferred']}"
                                                     update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
-                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred}" process="@this">
+                                                    rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred and not entity.disabled}" process="@this">
                                                 </p:commandButton>
                                             </p:column>
                                             <f:facet name="footer">

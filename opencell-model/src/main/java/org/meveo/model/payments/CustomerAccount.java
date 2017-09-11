@@ -266,7 +266,16 @@ public class CustomerAccount extends AccountEntity {
         this.dueDateDelayEL = dueDateDelayEL;
     }
 
-    public List<PaymentMethod> getPaymentMethods() {
+    public List<PaymentMethod> getAllPaymentMethods() {    	
+        return paymentMethods;
+    }
+    
+    public List<PaymentMethod> getPaymentMethods() {    	
+    	for(PaymentMethod paymentMethod : paymentMethods){
+    		if(paymentMethod.isDisabled()){
+    			paymentMethods.remove(paymentMethod);
+    		}
+    	}
         return paymentMethods;
     }
 
@@ -289,15 +298,15 @@ public class CustomerAccount extends AccountEntity {
      * @return Payment method marked as preferred
      */
     public PaymentMethod getPreferredPaymentMethod() {
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
                 if (paymentMethod.isPreferred()) {
                     return paymentMethod;
                 }
             }
 
-            if (!paymentMethods.isEmpty()) {
-                return paymentMethods.get(0);
+            if (!getPaymentMethods().isEmpty()) {
+                return getPaymentMethods().get(0);
             }
         }
 
@@ -323,8 +332,8 @@ public class CustomerAccount extends AccountEntity {
 
         List<CardPaymentMethod> cardPaymentMethods = new ArrayList<>();
 
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
                 if (paymentMethod instanceof CardPaymentMethod) {
                     if (noTokenOnly && ((CardPaymentMethod) paymentMethod).getTokenId() == null) {
                         cardPaymentMethods.add((CardPaymentMethod) paymentMethod);
@@ -340,8 +349,8 @@ public class CustomerAccount extends AccountEntity {
     
     public List<DDPaymentMethod> getDDPaymentMethods() {
         List<DDPaymentMethod> ddPaymentMethods = new ArrayList<>();
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
                 if (paymentMethod instanceof DDPaymentMethod) {
                         ddPaymentMethods.add((DDPaymentMethod) paymentMethod);                    
                 }
@@ -352,8 +361,8 @@ public class CustomerAccount extends AccountEntity {
     
 	public List<TipPaymentMethod> getTipPaymentMethods() {
         List<TipPaymentMethod> tipPaymentMethods = new ArrayList<>();
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
                 if (paymentMethod instanceof TipPaymentMethod) {
                         tipPaymentMethods.add((TipPaymentMethod) paymentMethod);                    
                 }
@@ -364,8 +373,8 @@ public class CustomerAccount extends AccountEntity {
 	
 	public List<WirePaymentMethod> getWirePaymentMethods() {
         List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
-        if (paymentMethods != null) {
-            for (PaymentMethod paymentMethod : paymentMethods) {
+        if (getPaymentMethods() != null) {
+            for (PaymentMethod paymentMethod : getPaymentMethods()) {
                 if (paymentMethod instanceof WirePaymentMethod) {
                 	wirePaymentMethods.add((WirePaymentMethod) paymentMethod);                    
                 }
@@ -376,8 +385,8 @@ public class CustomerAccount extends AccountEntity {
 	
 	public List<CheckPaymentMethod> getCheckPaymentMethods() {
 		 List<CheckPaymentMethod> checkPaymentMethods = new ArrayList<>();
-	        if (paymentMethods != null) {
-	            for (PaymentMethod paymentMethod : paymentMethods) {
+	        if (getPaymentMethods() != null) {
+	            for (PaymentMethod paymentMethod : getPaymentMethods()) {
 	                if (paymentMethod instanceof CheckPaymentMethod) {
 	                	checkPaymentMethods.add((CheckPaymentMethod) paymentMethod);                    
 	                }
@@ -393,13 +402,13 @@ public class CustomerAccount extends AccountEntity {
      */
     public PaymentMethod markCurrentlyValidCardPaymentAsPreferred() {
 
-        if (paymentMethods == null) {
+        if (getPaymentMethods() == null) {
             return null;
         }
 
         PaymentMethod matchedPaymentMethod = null;
 
-        for (PaymentMethod paymentMethod : paymentMethods) {
+        for (PaymentMethod paymentMethod : getPaymentMethods()) {
             if (paymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
                     paymentMethod.setPreferred(true);
@@ -413,7 +422,7 @@ public class CustomerAccount extends AccountEntity {
             return null;
         }
 
-        for (PaymentMethod paymentMethod : paymentMethods) {
+        for (PaymentMethod paymentMethod : getPaymentMethods()) {
             if (!paymentMethod.equals(matchedPaymentMethod)) {
                 paymentMethod.setPreferred(false);
             }
@@ -429,11 +438,11 @@ public class CustomerAccount extends AccountEntity {
      * @return A preferred payment method
      */
     public PaymentMethod ensureOnePreferredPaymentMethod() {
-        if (paymentMethods == null) {
+        if (getPaymentMethods() == null) {
             return null;
         }
 
-        for (PaymentMethod paymentMethod : paymentMethods) {
+        for (PaymentMethod paymentMethod : getPaymentMethods()) {
             if (paymentMethod.isPreferred()) {
                 // If currently preferred payment method has expired, select a new car
                 if (paymentMethod instanceof CardPaymentMethod && !((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
@@ -444,9 +453,9 @@ public class CustomerAccount extends AccountEntity {
         }
 
         // As no preferred payment method was found, mark the first available payment method as preferred
-        paymentMethods.get(0).setPreferred(true);
+        getPaymentMethods().get(0).setPreferred(true);
 
-        return paymentMethods.get(0);
+        return getPaymentMethods().get(0);
     }
     
 	/**

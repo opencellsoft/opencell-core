@@ -788,7 +788,7 @@
         <addColumn tableName="ar_customer_account">
             <column name="excluded_from_payment" type="${type.boolean}" defaultValueNumeric="0" />           
         </addColumn>
-     <!--   <addColumn tableName="ar_payment_token">
+        <addColumn tableName="ar_payment_token">
             <column name="creator" type="varchar(100)" />
         </addColumn>  
         <addColumn tableName="ar_payment_token">    
@@ -807,8 +807,7 @@
                 <constraints nullable="false" />
             </column>           
         </addColumn>  
-        <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>      
-        -->
+        <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
     </changeSet>
     
 </databaseChangeLog> 
