@@ -38,6 +38,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -127,6 +128,10 @@ public class CustomerAccount extends AccountEntity {
 
     @OneToMany(mappedBy = "customerAccount", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PaymentMethod> paymentMethods = new ArrayList<PaymentMethod>();
+    
+    @Type(type = "numeric_boolean")
+    @Column(name = "excluded_from_payment")
+    private boolean excludedFromPayment;
 
     public Customer getCustomer() {
         return customer;
@@ -269,7 +274,16 @@ public class CustomerAccount extends AccountEntity {
         this.paymentMethods = paymentMethods;
     }
 
-    /**
+    
+    public boolean isExcludedFromPayment() {
+		return excludedFromPayment;
+	}
+
+	public void setExcludedFromPayment(boolean excludedFromPayment) {
+		this.excludedFromPayment = excludedFromPayment;
+	}
+
+	/**
      * Get a payment method marked as preferred
      * 
      * @return Payment method marked as preferred
@@ -434,5 +448,18 @@ public class CustomerAccount extends AccountEntity {
 
         return paymentMethods.get(0);
     }
-
+    
+	/**
+	 * Check if no more valid Card paymentMethod
+	 * 
+	 * @return
+	 */
+    public boolean isNoMoreValidCard(){
+    	for (CardPaymentMethod card : getCardPaymentMethods(false)) {
+        	if(card.isValidForDate(new Date())){
+        		return false;        		         	
+            }
+        }    	
+    	return true;
+    }
 }

@@ -1723,7 +1723,7 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setPaymentMethod(ca.getPaymentMethods().get(0).getPaymentType());
             // End compatibility with pre-4.6 versions
         }
-
+        dto.setExcludedFromPayment(ca.isExcludedFromPayment());
         dto.setLoaded(true);
         return dto;
     }

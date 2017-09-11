@@ -60,6 +60,8 @@ public class CustomerAccountDto extends AccountDto {
     @XmlElementWrapper(name = "paymentMethods")  
     @XmlElement(name="methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
+    
+    private boolean excludedFromPayment;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field instead
@@ -229,6 +231,14 @@ public class CustomerAccountDto extends AccountDto {
 
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
+	}
+
+	public boolean isExcludedFromPayment() {
+		return excludedFromPayment;
+	}
+
+	public void setExcludedFromPayment(boolean excludedFromPayment) {
+		this.excludedFromPayment = excludedFromPayment;
 	}
     
 }

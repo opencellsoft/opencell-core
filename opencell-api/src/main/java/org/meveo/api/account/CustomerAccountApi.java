@@ -169,7 +169,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (businessAccountModel != null) {
             customerAccount.setBusinessAccountModel(businessAccountModel);
         }
-
+        customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customerAccount, true, checkCustomFields);
@@ -275,6 +275,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
         if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
             customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
+        }
+        
+        if (!StringUtils.isBlank(postData.isExcludedFromPayment())) {
+            customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         }
         
         // Synchronize payment methods

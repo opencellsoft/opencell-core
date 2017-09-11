@@ -119,9 +119,11 @@
                                                 rendered="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}" />
                                         </h:panelGroup>
 
+                                        <hftl:formField label="#{messages['customerAccount.excludedFromPayment']}" field="excludedFromPayment"  />
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
-                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />
-                                        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />
+                                        <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />                                       
+                                        <hftl:formField label="#{messages['customerAccount.status']}" field="status" disabled="true" />                                       
+                                         
                                     </p:fieldset>
                                 </p:tab>
 
@@ -172,6 +174,20 @@
                                                     <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
                                                     <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                                                 </p:commandButton>
+										     <!--  
+										        <p:commandButton icon="ui-icon-circle-close" rendered="#{ not entity.disabled }" action="#{customerAccountBean.disablePaymentMethod(entity)}" 
+										         update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails">
+										            <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
+										            <p:confirm header="#{messages['commons.disable']}" message="#{messages['commons.confirmDisable']}" />
+										        </p:commandButton>                                                
+                                                <p:commandButton  icon="ui-icon-circle-check" action="#{customerAccountBean.enablePaymentMethod(entity)}"
+										            rendered="#{entity.disabled}"  
+										            update="paymentMethods :parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails">
+										            <f:setPropertyActionListener value="#{null}" target="#{customerAccountBean.selectedPaymentMethod}" />
+										            <p:confirm header="#{messages['commons.enable']}" message="#{messages['commons.confirmEnable']}" />
+										        </p:commandButton>
+                                                
+                                                -->
                                                 <p:commandButton icon="ui-icon-star" action="#{customerAccountBean.setPreferredPaymentMethod(entity)}" title="#{messages['paymentMethod.makePreferred']}"
                                                     update=":parentTab:formCustomerAccount:childTab:paymentMethodMessages :parentTab:formCustomerAccount:childTab:paymentMethodDetails paymentMethods"
                                                     rendered="#{customerAccountBean.entity.status!=CustomerAccountStatusEnum.CLOSE and !entity.preferred}" process="@this">

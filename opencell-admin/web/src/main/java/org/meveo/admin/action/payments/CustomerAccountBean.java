@@ -75,6 +75,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     @Inject
     private CustomerService customerService;
 
+    
+
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
      * Account.
@@ -114,6 +116,14 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
         }
 
+        if (entity.getId() != null) {
+           if(!entity.getCardPaymentMethods(false).isEmpty()){
+        	   if(entity.isNoMoreValidCard()){
+        		   messages.warn(new BundleKey("messages", "customerAccount.noMoreValidCard")); 
+        	   }        	 
+           }
+        }
+        
         return entity;
     }
 
@@ -350,6 +360,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
         try {
 
+        	//selectedPaymentMethod.updateAudit(currentUser);
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
                 if (((CardPaymentMethod) selectedPaymentMethod).getTokenId() == null && ((CardPaymentMethod) selectedPaymentMethod).getCardNumber() != null) {
                     ((CardPaymentMethod) selectedPaymentMethod).setHiddenCardNumber(CardPaymentMethod.hideCardNumber(((CardPaymentMethod) selectedPaymentMethod).getCardNumber()));
@@ -427,4 +438,25 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
         entity.getPaymentMethods().remove(paymentMethod);
         messages.info(new BundleKey("messages", "paymentMethod.removed.ok"));
     }
+    
+//    @ActionMethod
+//    public void disablePaymentMethod(PaymentMethod paymentMethod) {    	
+//    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+//    		return;
+//    	}        
+//    	paymentMethod.setDisabled(true);
+//    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+//    	messages.info(new BundleKey("messages", "disabled.successful"));
+//
+//    }
+//    @ActionMethod
+//    public void enablePaymentMethod(PaymentMethod paymentMethod) {
+//    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
+//    		return;
+//    	}        
+//    	paymentMethod.setDisabled(false);
+//    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+//    	messages.info(new BundleKey("messages", "enabled.successful"));
+//
+//    }
 }
