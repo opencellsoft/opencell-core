@@ -267,18 +267,8 @@ public class CustomerAccount extends AccountEntity {
         this.dueDateDelayEL = dueDateDelayEL;
     }
 
-    public List<PaymentMethod> getAllPaymentMethods() {    	
-        return paymentMethods;
-    }
-    
-    public List<PaymentMethod> getPaymentMethods() {     	
-    	for (Iterator<PaymentMethod> iterator = paymentMethods.iterator(); iterator.hasNext(); ) {
-    		PaymentMethod paymentMethod = iterator.next();
-    		if(paymentMethod.isDisabled()){
-    	        iterator.remove();
-    	    }    	    
-    	}     	
-        return paymentMethods;
+    public List<PaymentMethod> getPaymentMethods() { 
+    	return paymentMethods;
     }
 
     public void setPaymentMethods(List<PaymentMethod> paymentMethods) {
@@ -307,7 +297,7 @@ public class CustomerAccount extends AccountEntity {
                 }
             }
 
-            if (!getPaymentMethods().isEmpty()) {
+            if (!getPaymentMethods().isEmpty() && !getPaymentMethods().get(0).isDisabled()) {
                 return getPaymentMethods().get(0);
             }
         }
@@ -412,7 +402,7 @@ public class CustomerAccount extends AccountEntity {
 
         for (PaymentMethod paymentMethod : getPaymentMethods()) {
             if (paymentMethod instanceof CardPaymentMethod) {
-                if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date())) {
+                if (((CardPaymentMethod) paymentMethod).isValidForDate(new Date()) && !paymentMethod.isDisabled() ) {
                     paymentMethod.setPreferred(true);
                     matchedPaymentMethod = paymentMethod;
                     break;
@@ -455,9 +445,11 @@ public class CustomerAccount extends AccountEntity {
         }
 
         // As no preferred payment method was found, mark the first available payment method as preferred
-        getPaymentMethods().get(0).setPreferred(true);
-
-        return getPaymentMethods().get(0);
+       if(!getPaymentMethods().get(0).isDisabled()){
+           getPaymentMethods().get(0).setPreferred(true);
+           return getPaymentMethods().get(0);
+       }
+       return null;
     }
     
 	/**
@@ -467,7 +459,7 @@ public class CustomerAccount extends AccountEntity {
 	 */
     public boolean isNoMoreValidCard(){
     	for (CardPaymentMethod card : getCardPaymentMethods(false)) {
-        	if(card.isValidForDate(new Date())){
+        	if(!card.isDisabled() && card.isValidForDate(new Date())){
         		return false;        		         	
             }
         }    	

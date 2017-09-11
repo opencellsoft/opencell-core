@@ -36,7 +36,9 @@ public class PaymentMethodDto extends BaseDto {
     private PaymentMethodEnum paymentMethodType;
 
     private Long id;
-
+    
+    private boolean disabled = false;
+    
     private String alias;
 
     private boolean preferred;
@@ -119,6 +121,7 @@ public class PaymentMethodDto extends BaseDto {
 
     public PaymentMethodDto(PaymentMethod paymentMethod) {
         this.id = paymentMethod.getId();
+        this.disabled = paymentMethod.isDisabled();
         this.alias = paymentMethod.getAlias();
         this.preferred = paymentMethod.isPreferred();
         this.userId = paymentMethod.getUserId();
@@ -184,25 +187,25 @@ public class PaymentMethodDto extends BaseDto {
         PaymentMethod pmEntity = null;
         switch (getPaymentMethodType()) {
         case CARD:
-            pmEntity = new CardPaymentMethod(customerAccount, getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(), getMonthExpiration(),
+            pmEntity = new CardPaymentMethod(customerAccount,isDisabled(), getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(), getMonthExpiration(),
                 getCardType());
             break;
 
         case DIRECTDEBIT:
-            pmEntity = new DDPaymentMethod(customerAccount, getAlias(),isPreferred(), getMandateDate(), getMandateIdentification(),
+            pmEntity = new DDPaymentMethod(customerAccount, isDisabled(),getAlias(),isPreferred(), getMandateDate(), getMandateIdentification(),
                 getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
             break;
 
         case TIP:
-            pmEntity = new TipPaymentMethod(customerAccount, getAlias(), getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
+            pmEntity = new TipPaymentMethod(customerAccount,isDisabled(), getAlias(), getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
             break;
 
         case CHECK:
-            pmEntity = new CheckPaymentMethod(alias, preferred, customerAccount);
+            pmEntity = new CheckPaymentMethod(isDisabled(),alias, preferred, customerAccount);
             break;
 
         case WIRETRANSFER:
-            pmEntity = new WirePaymentMethod(alias, preferred, customerAccount);
+            pmEntity = new WirePaymentMethod(isDisabled(),alias, preferred, customerAccount);
             break;
         }
         return pmEntity;
@@ -211,13 +214,13 @@ public class PaymentMethodDto extends BaseDto {
     public PaymentMethod updateFromDto(PaymentMethod paymentMethod) {
         if (isPreferred()) {
             paymentMethod.setPreferred(true);
-        } else {
-            paymentMethod.setPreferred(false);
-        }
+        } 
 
-        if (!StringUtils.isBlank(getAlias())) {
+        if (getAlias() != null) {
             paymentMethod.setAlias(getAlias());
         }
+        paymentMethod.setDisabled(isDisabled());
+        
         switch (getPaymentMethodType()) {
 
         case DIRECTDEBIT:
@@ -450,7 +453,16 @@ public class PaymentMethodDto extends BaseDto {
         this.issueNumber = issueNumber;
     }
 
-    public void validate() {
+    
+    public boolean isDisabled() {
+		return disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	public void validate() {
         validate(false);
     }
 
@@ -519,7 +531,7 @@ public class PaymentMethodDto extends BaseDto {
 
     @Override
     public String toString() {
-        return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id + ", alias=" + alias + ", preferred=" + preferred + ", customerAccountCode="
+        return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id  + ", disabled=" + disabled + ", alias=" + alias + ", preferred=" + preferred + ", customerAccountCode="
                 + customerAccountCode + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4=" + info4 + ", info5=" + info5 + ", bankCoordinates="
                 + bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", cardType=" + cardType + ", owner=" + owner
                 + ", monthExpiration=" + monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="

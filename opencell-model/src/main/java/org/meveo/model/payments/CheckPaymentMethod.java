@@ -13,8 +13,9 @@ public class CheckPaymentMethod extends PaymentMethod {
         this.paymentType = PaymentMethodEnum.CHECK;
     }
 
-    public CheckPaymentMethod(String alias, boolean preferred, CustomerAccount customerAccount) {
+    public CheckPaymentMethod(boolean isDisabled,String alias, boolean preferred, CustomerAccount customerAccount) {
         super();
+        setDisabled(isDisabled);
         this.paymentType = PaymentMethodEnum.CHECK;
         this.alias = alias;
         this.preferred = preferred;

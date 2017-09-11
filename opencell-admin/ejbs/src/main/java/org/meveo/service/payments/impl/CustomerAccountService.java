@@ -436,7 +436,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
-
+		for(PaymentMethod pm : entity.getPaymentMethods()){
+			pm.updateAudit(currentUser);
+		}
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
@@ -452,7 +454,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
-
+		for(PaymentMethod pm : entity.getPaymentMethods()){
+			pm.updateAudit(currentUser);
+		}
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());

@@ -67,9 +67,10 @@ public class CardPaymentMethod extends PaymentMethod {
         this.preferred = preferred;
     }
 
-    public CardPaymentMethod(CustomerAccount customerAccount, String alias, String cardNumber, String owner, boolean preferred, String issueNumber, Integer yearExpiration,
+    public CardPaymentMethod(CustomerAccount customerAccount,boolean isDisabled, String alias, String cardNumber, String owner, boolean preferred, String issueNumber, Integer yearExpiration,
             Integer monthExpiration, CreditCardTypeEnum cardType) {
         super();
+        setDisabled(isDisabled);
         setPaymentType(PaymentMethodEnum.CARD);
         setAlias(alias);
         setPreferred(preferred);

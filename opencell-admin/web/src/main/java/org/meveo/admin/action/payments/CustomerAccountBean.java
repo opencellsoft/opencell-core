@@ -370,9 +370,11 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             if (entity.getPaymentMethods() == null) {
                 entity.setPaymentMethods(new ArrayList<PaymentMethod>());
             }
-            if (entity.getPaymentMethods().isEmpty()) {
+            
+            if (entity.getPreferredPaymentMethod() == null) {
                 selectedPaymentMethod.setPreferred(true);
             }
+            
             if (!entity.getPaymentMethods().contains(selectedPaymentMethod)) {
                 selectedPaymentMethod.setCustomerAccount(getEntity());
                 entity.getPaymentMethods().add(selectedPaymentMethod);
@@ -441,21 +443,23 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     
     @ActionMethod
     public void disablePaymentMethod(PaymentMethod paymentMethod) {    	
-    	if (entity.getAllPaymentMethods() == null || entity.getAllPaymentMethods().isEmpty()) {
+    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
     		return;
     	}        
     	paymentMethod.setDisabled(true);
-    	entity.getAllPaymentMethods().set(entity.getAllPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+    	paymentMethod.setPreferred(false);
+    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);        
     	messages.info(new BundleKey("messages", "disabled.successful"));
 
     }
     @ActionMethod
     public void enablePaymentMethod(PaymentMethod paymentMethod) {
-    	if (entity.getAllPaymentMethods() == null || entity.getAllPaymentMethods().isEmpty()) {
+    	if (entity.getPaymentMethods() == null || entity.getPaymentMethods().isEmpty()) {
     		return;
     	}        
     	paymentMethod.setDisabled(false);
-    	entity.getAllPaymentMethods().set(entity.getAllPaymentMethods().indexOf(paymentMethod), paymentMethod);        
+    	entity.getPaymentMethods().set(entity.getPaymentMethods().indexOf(paymentMethod), paymentMethod);  
+    	entity.ensureOnePreferredPaymentMethod();
     	messages.info(new BundleKey("messages", "enabled.successful"));
 
     }

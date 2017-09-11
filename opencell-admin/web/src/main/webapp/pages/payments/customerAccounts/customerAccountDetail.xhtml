@@ -150,7 +150,7 @@
                                     </p:fieldset>
 
                                     <p:fieldset legend="#{messages['customerAccount.paymentMethods']}">
-                                        <p:dataTable id="paymentMethods" var="entity" value="#{customerAccountBean.entity.getAllPaymentMethods()}" paginator="false" rows="10" lazy="false"
+                                        <p:dataTable id="paymentMethods" var="entity" value="#{customerAccountBean.entity.paymentMethods}" paginator="false" rows="10" lazy="false"
                                             styleClass="custom-grid" rowIndexVar="rowIndex" resizableColumns="true" sortBy="#{entity.alias}" sortField="alias">
 
                                             <hftl:column label="#{messages['paymentMethod.type']}" field="paymentType.label" isMessage="true" />
