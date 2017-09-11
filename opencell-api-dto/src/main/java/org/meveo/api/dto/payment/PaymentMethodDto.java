@@ -210,7 +210,7 @@ public class PaymentMethodDto extends BaseDto {
 			// DO NOT set as not prefered. User must explicitly specify what payment method is preferred
 		}
 
-		if (!StringUtils.isBlank(getAlias())) {
+		if (getAlias() != null) {
 			paymentMethod.setAlias(getAlias());
 		}
 		switch (getPaymentMethodType()) {
