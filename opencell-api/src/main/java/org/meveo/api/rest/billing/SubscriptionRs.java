@@ -21,6 +21,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -112,12 +113,18 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
+	SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode,
+			@DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
+			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
+			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
 
     @GET
     @Path("/listAll")
-    SubscriptionsListResponseDto listAll(@QueryParam("pageSize") int pageSize, @QueryParam("pageNumber") int pageNumber, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
+	SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+			@DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
+			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
+			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * Search for a subscription with a given code 

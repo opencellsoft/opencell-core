@@ -44,8 +44,7 @@ import org.meveo.model.mediation.Access;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.offer.OfferModelScriptService;
-
-import com.google.common.util.concurrent.Service;
+import org.primefaces.model.SortOrder;
 
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
@@ -254,11 +253,20 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
+    
+    public List<Subscription> listByUserAccount(UserAccount userAccount) {
+    	return listByUserAccount(userAccount, "code", SortOrder.ASCENDING);
+    }
 
     @SuppressWarnings("unchecked")
-    public List<Subscription> listByUserAccount(UserAccount userAccount) {
+    public List<Subscription> listByUserAccount(UserAccount userAccount, String sortBy, SortOrder sortOrder) {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
         qb.addCriterionEntity("userAccount", userAccount);
+        boolean ascending = true;
+		if (sortOrder != null) {
+			ascending = sortOrder.equals(SortOrder.ASCENDING);
+		}
+		qb.addOrderCriterion(sortBy, ascending);
 
         try {
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
@@ -282,7 +290,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
     }
     
     
-    public List<ServiceInstance> listBySubscription(Subscription subscription) {
+    @SuppressWarnings("unchecked")
+	public List<ServiceInstance> listBySubscription(Subscription subscription) {
 		QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
 		qb.addCriterionEntity("subscription", subscription);
 

@@ -5,9 +5,6 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.ActionStatus;
@@ -19,11 +16,12 @@ import org.meveo.api.dto.billing.InstantiateServicesRequestDto;
 import org.meveo.api.dto.billing.OperationServicesRequestDto;
 import org.meveo.api.dto.billing.OperationSubscriptionRequestDto;
 import org.meveo.api.dto.billing.SubscriptionDto;
-import org.meveo.api.dto.billing.SubscriptionsListDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
+import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -149,11 +147,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsResponseDto listByUserAccount(String userAccountCode, boolean mergedCF) {
+	public SubscriptionsResponseDto listByUserAccount(String userAccountCode, boolean mergedCF, String sortBy,
+			SortOrder sortOrder) {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
         try {
-            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, mergedCF));
+            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, mergedCF, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -188,12 +187,12 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public SubscriptionsListResponseDto listAll(int pageSize, int pageNumber, boolean mergedCF) {
+	public SubscriptionsListResponseDto listAll(Integer offset, Integer limit, boolean mergedCF, String sortBy,
+			SortOrder sortOrder) {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
     	try {
-    		SubscriptionsListDto subscriptionsDto = subscriptionApi.listAll(pageSize, pageNumber, mergedCF);
-    		result.setSubscriptions(subscriptionsDto);
+    		result = subscriptionApi.listAll(mergedCF, new Paging(offset, limit, sortBy, sortOrder));
     	} catch (Exception e) {
     		processException(e, result.getActionStatus());
     	}
