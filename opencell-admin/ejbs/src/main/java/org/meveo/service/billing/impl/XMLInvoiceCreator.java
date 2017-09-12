@@ -153,9 +153,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private InvoiceTypeService invoiceTypeService;
 
     @Inject
-    private UserAccountService userAccountService;
-
-    @Inject
     private SubscriptionService subscriptionService;
 
     @Inject
@@ -171,8 +168,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
     private Map<BillingCycle, String> billingCycleMap = new HashMap<>();
-
-    private Map<String, Boolean> entityCFMap = new HashMap<>();
 
     private List<RatedTransaction> ratedTransactions = null;
 
@@ -759,48 +754,34 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         return collectionTag;
     }
 
+    /**
+     * @param entity given entity to find CFs
+     * @param doc root DOM document
+     * @param parent parent node 
+     */
     private void addCustomFields(ICustomFieldEntity entity, Document doc, Element parent) {
-        String name = entity.getClass().getSimpleName();
-        Boolean value = entityCFMap.get(name);
-        if (value == null) {
-            boolean hasCF = addCustomFields(entity, doc, parent, false);
-            entityCFMap.put(name, Boolean.valueOf(hasCF));
-        } else {
-            if (value.booleanValue()) {
-                addCustomFields(entity, doc, parent, false);
-            }
-        }
-
+        addCustomFields(entity, doc, parent, false);
     }
 
-    private boolean addCustomFields(ICustomFieldEntity entity, Document doc, Element parent, boolean includeParentCFEntities) {
-        String name = entity.getClass().getSimpleName();
-        Boolean value = entityCFMap.get(name);
-        if (value == null || value.booleanValue()) {
-            InvoiceConfiguration invoiceConfiguration = appProvider.getInvoiceConfiguration();
-            if (invoiceConfiguration != null && invoiceConfiguration.getDisplayCfAsXML() != null && invoiceConfiguration.getDisplayCfAsXML()) {
-                Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity, doc, includeParentCFEntities);
-                if (customFieldsTag.hasChildNodes()) {
-                    parent.appendChild(customFieldsTag);
-                    entityCFMap.put(name, Boolean.TRUE);
-                    return true;
-                }
-            } else {
-                String json = customFieldInstanceService.getCFValuesAsJson(entity, includeParentCFEntities);
-                if (json != null && json.length() > 0) {
-                    parent.setAttribute("customFields", json);
-                    entityCFMap.put(name, Boolean.TRUE);
-                    return true;
-                } else {
-                    entityCFMap.put(name, Boolean.FALSE);
-                    return false;
-                }
-            }
-
-            return false;
-        }
-
-        return false;
+    /**
+     * @param entity given entity to find CFs
+     * @param doc root DOM document
+     * @param parent parent node 
+     * @param includeParentCFEntities true/false which defines the need for parent CFs
+     */
+    private void addCustomFields(ICustomFieldEntity entity, Document doc, Element parent, boolean includeParentCFEntities) {
+    	InvoiceConfiguration invoiceConfiguration = appProvider.getInvoiceConfiguration();
+    	if (invoiceConfiguration != null && invoiceConfiguration.getDisplayCfAsXML() != null && invoiceConfiguration.getDisplayCfAsXML()) {
+    		Element customFieldsTag = customFieldInstanceService.getCFValuesAsDomElement(entity, doc, includeParentCFEntities);
+    		if (customFieldsTag.hasChildNodes()) {
+    			parent.appendChild(customFieldsTag);
+    		}
+    	} else {
+    		String json = customFieldInstanceService.getCFValuesAsJson(entity, includeParentCFEntities);
+    		if (json != null && json.length() > 0) {
+    			parent.setAttribute("customFields", json);
+    		}
+    	}
     }
 
     public void addNameAndAdress(AccountEntity account, Document doc, Element parent, String languageCode) {
@@ -1136,7 +1117,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     Element subCategory = doc.createElement("subCategory");
                     subCategories.appendChild(subCategory);
                     subCategory.setAttribute("label", (invoiceSubCategoryLabel != null) ? invoiceSubCategoryLabel : "");
-                    subCategory.setAttribute("code", invoiceSubCat.getCode());// TODO
+                    subCategory.setAttribute("code", invoiceSubCat.getCode());
                     subCategory.setAttribute("amountWithoutTax", round(subCatInvoiceAgregate.getAmountWithoutTax(), rounding));
 
                     if (!entreprise) {
@@ -1146,7 +1127,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     String taxesCode = "";
                     String taxesPercent = "";
                     String sep = "";
-                    for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {// TODO
+                    for (Tax tax : subCatInvoiceAgregate.getSubCategoryTaxes()) {
                         taxesCode = taxesCode + sep + tax.getCode();
                         taxesPercent = taxesPercent + sep + round(tax.getPercent(), rounding);
                         sep = ";";
