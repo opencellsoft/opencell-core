@@ -1470,4 +1470,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId)
             .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
     }
+    
+    /**
+     * @param invoice invoice used to get subcategory
+     * @return list of SubCategoryInvoiceAgregate
+     */
+    public List<SubCategoryInvoiceAgregate> listByInvoice(Invoice invoice) {
+		long startDate = System.currentTimeMillis();
+		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
+		qb.addCriterionEntity("invoice", invoice);
+
+		try {
+			List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
+			log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
+			return resultList;
+			
+		} catch (NoResultException e) {
+			log.warn("error while getting user account list by billing account",e);
+			return null;
+		}
+		
+	}
+	
 }

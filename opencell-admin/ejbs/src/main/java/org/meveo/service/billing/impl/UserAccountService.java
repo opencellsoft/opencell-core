@@ -153,8 +153,9 @@ public class UserAccountService extends AccountService<UserAccount> {
 
 
 	public List<UserAccount> listByBillingAccount(BillingAccount billingAccount) {
-		//return billingAccount.getUsersAccounts();
-		//TODO : why ?
+		return billingAccount.getUsersAccounts();
+		/**
+		 * Check N + 1 query problem
 		QueryBuilder qb = new QueryBuilder(UserAccount.class, "c");
 		qb.addCriterionEntity("billingAccount", billingAccount);
 
@@ -163,60 +164,7 @@ public class UserAccountService extends AccountService<UserAccount> {
 		} catch (NoResultException e) {
 			log.warn("error while getting user account list by billing account",e);
 			return null;
-		}
-	}
-	
-	
-	public List<Subscription> listByUserAccount(UserAccount userAccount) {
-		QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
-		qb.addCriterionEntity("userAccount", userAccount);
-
-		try {
-			return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-	}
-	
-	public List<SubCategoryInvoiceAgregate> listByCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
-		long startDate = System.currentTimeMillis();
-		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
-		qb.addCriterionEntity("categoryInvoiceAgregate", categoryInvoiceAgregate);
-
-		try {
-			List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
-			log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
-			return resultList;
-			
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-		
-		
-		
-		//select * from  SubCategoryInvoiceAgregate where categoryInvoiceAgregate= categoryInvoiceAgregate and categoryInvoiceAgregate.invoice = invoice
-	}
-	
-	public List<SubCategoryInvoiceAgregate> listByInvoice(Invoice invoice) {
-		long startDate = System.currentTimeMillis();
-		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
-		qb.addCriterionEntity("invoice", invoice);
-
-		try {
-			List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
-			log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
-			return resultList;
-			
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-		
-		
-		
-		//select * from  SubCategoryInvoiceAgregate where categoryInvoiceAgregate= categoryInvoiceAgregate and categoryInvoiceAgregate.invoice = invoice
+		}*/
 	}
 	
 }

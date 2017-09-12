@@ -174,8 +174,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     private Map<String, Boolean> entityCFMap = new HashMap<>();
 
-    private Map<Long, ChargeTemplate> chargeTemplateMap = new HashMap<>();
-
     private List<RatedTransaction> ratedTransactions = null;
 
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
@@ -256,7 +254,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
         if (!isVirtual) {
             ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
-            subCategoryInvoiceAgregates = userAccountService.listByInvoice(invoice);
+            subCategoryInvoiceAgregates = invoiceService.listByInvoice(invoice);
         }
 
         // Session session = this.getEntityManager().unwrap(Session.class);
@@ -579,12 +577,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         TradingLanguage tradingLanguage = billingAccount.getTradingLanguage();
         Language language = tradingLanguage.getLanguage();
         String billingAccountLanguage = language.getLanguageCode();
-        // List<UserAccount> usersAccounts = billingAccount.getUsersAccounts();
-
-        List<UserAccount> usersAccounts = userAccountService.listByBillingAccount(billingAccount);
+        List<UserAccount> usersAccounts = billingAccount.getUsersAccounts();
 
         for (UserAccount userAccount : usersAccounts) {
-            List<Subscription> subscriptions = userAccountService.listByUserAccount(userAccount);
+            List<Subscription> subscriptions = userAccount.getSubscriptions();
             Element userAccountTag = doc.createElement("userAccount");
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             String code = userAccount.getCode();
@@ -1202,14 +1198,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 periodEndDate = walletOperation.getEndDate();
                                 // get periodStartDate and periodEndDate for usages
                                 // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
-                                Long chargeTemplateId = chargeTemplate.getId();
-                                ChargeTemplate existingCharge = chargeTemplateMap.get(chargeTemplateId);
-                                if (existingCharge == null) {
-                                    existingCharge = usageChargeTemplateService.findById(chargeTemplateId);
-                                    chargeTemplateMap.put(chargeTemplateId, existingCharge);
-                                }
                                 Date operationDate = walletOperation.getOperationDate();
-                                if (existingCharge != null && operationDate != null) {
+                                if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && operationDate != null) {
                                     CounterPeriod counterPeriod = null;
                                     CounterInstance counter = walletOperation.getCounter();
                                     if (!isVirtual) {
