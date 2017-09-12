@@ -250,7 +250,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
         String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
-        List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
+        List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
         log.debug("After userAccounts:" + (System.currentTimeMillis() - startDate));
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
         if (firstTransactionDate == null) {

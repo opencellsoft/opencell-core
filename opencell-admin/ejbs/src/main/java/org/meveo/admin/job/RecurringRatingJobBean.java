@@ -57,14 +57,9 @@ public class RecurringRatingJobBean implements Serializable {
 	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
 		log.debug("start in running with parameter={}",  jobInstance.getParametres());
 		try {
-			Date maxDate = DateUtils.addDaysToDate(new Date(), 1);
-			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, maxDate);
-			int inputSize =  ids.size();
-			result.setNbItemsToProcess(inputSize);
-			log.info("in job - charges to rate={}", inputSize);
-			
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
+			Date rateUntilDate = null;
 			try{
 				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");              
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
@@ -75,12 +70,19 @@ public class RecurringRatingJobBean implements Serializable {
 				nbRuns = new Long(1);
 				waitingMillis = new Long(0);
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
+			}			
+			if(rateUntilDate == null){
+				rateUntilDate = DateUtils.addDaysToDate(new Date(), 1);
 			}
+			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate);
+			int inputSize =  ids.size();
+			result.setNbItemsToProcess(inputSize);
+			log.info("in job - charges to rate={}", inputSize);
 
 			List<Future<String>> futures = new ArrayList<Future<String>>();
 	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
 			while (subListCreator.isHasNext()) {				
-				futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result,maxDate));	
+				futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result,rateUntilDate));	
 
                 if (subListCreator.isHasNext()) {
                     try {

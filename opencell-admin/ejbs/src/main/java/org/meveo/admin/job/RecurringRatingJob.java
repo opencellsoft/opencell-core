@@ -56,6 +56,15 @@ public class RecurringRatingJob extends Job {
   		customFieldNbWaiting.setValueRequired(false);
   		customFieldNbWaiting.setDefaultValue("0");
   		result.put("waitingMillis", customFieldNbWaiting);
+  		
+		CustomFieldTemplate rateUtilDate = new CustomFieldTemplate();
+		rateUtilDate.setCode("rateUtilDate");
+		rateUtilDate.setAppliesTo("JOB_RecurringRatingJob");
+		rateUtilDate.setActive(true);
+		rateUtilDate.setDescription(resourceMessages.getString("jobExecution.rateUtilDate"));
+		rateUtilDate.setFieldType(CustomFieldTypeEnum.DATE);
+		rateUtilDate.setValueRequired(false);		
+		result.put("rateUtilDate", rateUtilDate);
 
   		return result;
   	}
