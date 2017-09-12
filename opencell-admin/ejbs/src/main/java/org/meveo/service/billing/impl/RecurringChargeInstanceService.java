@@ -85,14 +85,19 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		return chargeInstance;
 	}
 
-    public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate) {
+    public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate,boolean isToTruncatedToDate) {
         List<Long> ids = new ArrayList<Long>();
         try {
             log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
 
             QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
             qb.addCriterionEnum("c.status", status);
-            qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
+            
+    		if(isToTruncatedToDate){
+    			qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);    			
+    		}else{
+    			qb.addCriterion("c.nextChargeDate", "<", maxChargeDate, false);
+    		}
             ids = qb.getIdQuery(getEntityManager()).getResultList();
             log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] { "RecurringChargeInstance", status, (ids != null ? ids.size() : "NULL") });
         } catch (Exception e) {

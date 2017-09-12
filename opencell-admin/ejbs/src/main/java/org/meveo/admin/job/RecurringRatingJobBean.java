@@ -60,12 +60,14 @@ public class RecurringRatingJobBean implements Serializable {
 			Long nbRuns = new Long(1);		
 			Long waitingMillis = new Long(0);
 			Date rateUntilDate = null;
+			boolean isToTruncatedToDate = true;
 			try{
 				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");              
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");                
 				if(nbRuns == -1){
 					nbRuns = (long) Runtime.getRuntime().availableProcessors();
 				}
+				rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUtilDate");
 			}catch(Exception e){
 				nbRuns = new Long(1);
 				waitingMillis = new Long(0);
@@ -73,8 +75,10 @@ public class RecurringRatingJobBean implements Serializable {
 			}			
 			if(rateUntilDate == null){
 				rateUntilDate = DateUtils.addDaysToDate(new Date(), 1);
+			}else{
+				isToTruncatedToDate = false;
 			}
-			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate);
+			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate,isToTruncatedToDate);
 			int inputSize =  ids.size();
 			result.setNbItemsToProcess(inputSize);
 			log.info("in job - charges to rate={}", inputSize);
