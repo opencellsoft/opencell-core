@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.event.Observes;
@@ -66,6 +68,7 @@ import org.slf4j.Logger;
 @Singleton
 @Startup
 @LoggedEvent
+@Lock(LockType.READ)
 public class DefaultObserver {
 
     @Inject

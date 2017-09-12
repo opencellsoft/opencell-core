@@ -7,8 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
@@ -24,8 +23,7 @@ import org.meveo.service.script.ScriptInstanceService;
 /**
  * @author Edward P. Legaspi
  **/
-@Singleton
-@Startup
+@Stateless
 public class ServiceModelScriptService implements Serializable {
 
     private static final long serialVersionUID = -236471508767180502L;

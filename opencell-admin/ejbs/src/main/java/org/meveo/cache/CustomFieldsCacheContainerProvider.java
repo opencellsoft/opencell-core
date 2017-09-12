@@ -13,6 +13,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
@@ -300,6 +302,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param provider Provider
      * @return A map of custom field templates with template code as a key
      */
+    @Lock(LockType.READ)
     public Map<String, CustomFieldTemplate> getCustomFieldTemplates(String appliesTo) {
         String key = appliesTo;
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.get(key);
@@ -315,6 +318,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * 
      * @return A list of custom entity templates
      */
+    @Lock(LockType.READ)
     public Collection<CustomEntityTemplate> getCustomEntityTemplates() {
 
         return cetsByCode.values();
@@ -326,6 +330,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param code Custom entity template code
      * @return A list of custom entity templates
      */
+    @Lock(LockType.READ)
     public CustomEntityTemplate getCustomEntityTemplate(String code) {
 
         return cetsByCode.get(code);
@@ -338,6 +343,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param entity Entity
      * @return Custom field template
      */
+    @Lock(LockType.READ)
     public CustomFieldTemplate getCustomFieldTemplate(String code, ICustomFieldEntity entity) {
         try {
             return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
@@ -355,6 +361,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param appliesTo Entity appliesTo value
      * @return Custom field template
      */
+    @Lock(LockType.READ)
     public CustomFieldTemplate getCustomFieldTemplate(String code, String appliesTo) {
 
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.get(appliesTo);

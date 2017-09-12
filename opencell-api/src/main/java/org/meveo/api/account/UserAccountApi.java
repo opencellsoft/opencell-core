@@ -242,7 +242,7 @@ public class UserAccountApi extends AccountEntityApi {
         }
 
 		UserAccountsDto result = new UserAccountsDto();
-		List<UserAccount> userAccounts = userAccountService.listByBillingAccount(billingAccount);
+		List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
 		if (userAccounts != null) {
 			for (UserAccount ua : userAccounts) {
 				result.getUserAccount().add(accountHierarchyApi.userAccountToDto(ua));

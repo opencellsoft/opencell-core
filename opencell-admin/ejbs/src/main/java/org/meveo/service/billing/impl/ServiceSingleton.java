@@ -2,11 +2,7 @@ package org.meveo.service.billing.impl;
 
 
 import java.lang.reflect.InvocationTargetException;
-import java.text.SimpleDateFormat;
-
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ejb.Lock;
 import javax.ejb.LockType;

@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -18,7 +17,6 @@ import org.meveo.service.script.account.AccountScript;
 import org.meveo.service.script.account.AccountScriptInterface;
 
 @Stateless
-@Startup
 public class AccountModelScriptService implements Serializable {
 
     private static final long serialVersionUID = -5209560989584270634L;

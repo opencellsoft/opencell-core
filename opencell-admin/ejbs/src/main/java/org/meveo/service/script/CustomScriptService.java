@@ -32,6 +32,8 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.ejb.Lock;
+import javax.ejb.LockType;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.tools.Diagnostic;
@@ -45,8 +47,8 @@ import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
+import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.IEntity;
 import org.meveo.model.scripts.CustomScript;
 import org.meveo.model.scripts.ScriptInstanceError;
@@ -99,7 +101,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @return
      */
     @SuppressWarnings("unchecked")
-    public List<T> findByType(ScriptSourceTypeEnum type) {
+    protected List<T> findByType(ScriptSourceTypeEnum type) {
         List<T> result = new ArrayList<T>();
         try {
             result = (List<T>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceByTypeActive").setParameter("sourceTypeEnum", type).getResultList();
@@ -171,7 +173,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     @Override
     public T disable(T script) throws BusinessException {
-        
+
         script = super.disable(script);
 
         clusterEventPublisher.publishEvent(script, CrudActionEnum.disable);
@@ -262,7 +264,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         } else {
             compileScript(script, false);
         }
-//        detach(script);
+        // detach(script);
     }
 
     /**
@@ -417,8 +419,38 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
+    @Lock(LockType.READ)
     public Class<SI> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
+
+        result = allScriptInterfaces.get(scriptCode);
+
+        if (result == null) {
+            result = getScriptInterfaceWCompile(scriptCode);
+        }
+
+        log.debug("getScriptInterface scriptCode:{} -> {}", scriptCode, result);
+        return result;
+    }
+
+    /**
+     * Compile the script class for a given script code and compile it. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT, so there would be only one attempt to compile a
+     * new script class
+     * 
+     * @param scriptCode Script code
+     * @return Script interface Class
+     * @throws InvalidScriptException Were not able to instantiate or compile a script
+     * @throws ElementNotFoundException Script not found
+     */
+    @Lock(LockType.WRITE)
+    private Class<SI> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+        Class<SI> result = null;
+        
+        try {
+            Thread.sleep(30000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         result = allScriptInterfaces.get(scriptCode);
 
@@ -441,7 +473,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             throw new ElementNotFoundException(scriptCode, getEntityClass().getName());
         }
 
-        log.debug("getScriptInterface scriptCode:{} -> {}", scriptCode, result);
         return result;
     }
 
@@ -453,6 +484,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws InvalidScriptException Were not able to instantiate or compile a script
      * @throws ElementNotFoundException Script not found
      */
+    @Lock(LockType.READ)
     public SI getScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> scriptClass = getScriptInterface(scriptCode);
 
