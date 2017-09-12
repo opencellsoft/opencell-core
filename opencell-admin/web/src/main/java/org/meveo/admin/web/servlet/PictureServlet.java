@@ -116,20 +116,14 @@ public class PictureServlet extends HttpServlet {
         }
 
         byte[] data = null;
+        String imagePath = null;
+
         if (filename.indexOf(".") > 0) {
-            String destFile = rootPath + File.separator + filename;
-            data = loadImage(destFile);
-            try {
-                mimeType = Files.probeContentType((new File(destFile)).toPath());
-            } catch (IOException e) {
-                log.error("Failed to determine mime type for {}", destFile, e);
-            }
+            imagePath = rootPath + File.separator + filename;
 
         } else {
 
             Long id = Long.parseLong(filename);
-            String imagePath = null;
-            String defaultImage = null;
 
             if ("offerCategory".equals(groupname)) {
                 OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findById(id);
@@ -140,7 +134,6 @@ public class PictureServlet extends HttpServlet {
                 }
 
                 imagePath = offerTemplateCategory.getImagePath();
-                defaultImage = DEFAULT_OFFER_CAT_IMAGE;
 
             } else if ("offer".equals(groupname)) {
                 ProductOffering offering = productOfferingService.findById(id);
@@ -151,7 +144,6 @@ public class PictureServlet extends HttpServlet {
                 }
 
                 imagePath = offering.getImagePath();
-                defaultImage = DEFAULT_OFFER_IMAGE;
 
             } else if ("service".equals(groupname)) {
                 ServiceTemplate serviceTemplate = serviceTemplateService.findById(id);
@@ -161,7 +153,6 @@ public class PictureServlet extends HttpServlet {
                     return;
                 }
                 imagePath = serviceTemplate.getImagePath();
-                defaultImage = DEFAULT_SERVICE_IMAGE;
 
             } else if ("product".equals(groupname)) {
                 ProductTemplate productTemplate = productTemplateService.findById(id);
@@ -172,44 +163,56 @@ public class PictureServlet extends HttpServlet {
                 }
 
                 imagePath = productTemplate.getImagePath();
-                defaultImage = DEFAULT_PRODUCT_IMAGE;
-            }
 
+            }
             if (imagePath != null) {
-                try {
-                    Path destFile = Paths.get(rootPath + File.separator + imagePath);
-                    data = Files.readAllBytes(destFile);
-                    try {
-                        mimeType = Files.probeContentType(destFile);
-                    } catch (IOException e) {
-                        log.error("Failed to determine mime type for {}", destFile, e);
-                    }
-                } catch (IOException e) {
-                    log.error("Image file " + imagePath + " does not exist in filesystem");
-                }
+                imagePath = rootPath + File.separator + imagePath;
+            }
+        }
+
+        if (imagePath != null) {
+            data = loadImage(imagePath);
+        }
+
+        // Load a default image if not found
+        if (data == null) {
+
+            String defaultImage = null;
+            if ("offerCategory".equals(groupname)) {
+                defaultImage = DEFAULT_OFFER_CAT_IMAGE;
+            } else if ("offer".equals(groupname)) {
+                defaultImage = DEFAULT_OFFER_IMAGE;
+            } else if ("service".equals(groupname)) {
+                defaultImage = DEFAULT_SERVICE_IMAGE;
+            } else if ("product".equals(groupname)) {
+                defaultImage = DEFAULT_PRODUCT_IMAGE;
+            } else {
+                log.error("Unknown path {}", groupname);
+                resp.setStatus(HttpStatus.SC_NOT_FOUND);
+                return;
             }
 
+            // load from cached default images
+            data = cachedDefaultImages.get(defaultImage);
+            imagePath = rootPath + File.separator + defaultImage;
+            // load from default images directory
             if (data == null) {
-                // load from cached default images
-                data = cachedDefaultImages.get(defaultImage);
-                String imageFile = rootPath + File.separator + defaultImage;
-                if (data == null) {
-                    // load from default images directory
-                    data = loadImage(imageFile);
-                    cachedDefaultImages.put(defaultImage, data);
-                }
-                try {
-                    mimeType = Files.probeContentType((new File(imageFile)).toPath());
-                } catch (IOException e) {
-                    log.error("Failed to determine mime type for {}", imageFile, e);
-                }
+                data = loadImage(imagePath);
+                cachedDefaultImages.put(defaultImage, data);
             }
         }
 
         if (data != null) {
-            if (mimeType != null) {
-                resp.setContentType(mimeType);
+            Path destFile = Paths.get(imagePath);
+            try {
+                mimeType = Files.probeContentType(destFile);
+                if (mimeType != null) {
+                    resp.setContentType(mimeType);
+                }
+            } catch (IOException e) {
+                log.error("Failed to determine mime type for {}", destFile, e);
             }
+
             InputStream in = null;
             OutputStream out = null;
             try {
@@ -222,12 +225,13 @@ public class PictureServlet extends HttpServlet {
                 }
                 out.flush();
             } catch (Exception e) {
-                log.error("error when read picture , info " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
+                log.error("Failed to read picture, info " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
             } finally {
                 IOUtils.closeQuietly(in);
                 IOUtils.closeQuietly(out);
             }
             resp.setStatus(HttpStatus.SC_OK);
+
         } else {
             resp.setStatus(HttpStatus.SC_NOT_FOUND);
         }

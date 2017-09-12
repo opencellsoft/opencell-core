@@ -55,7 +55,7 @@ public class EmailNotifier {
             if (notification.getEmails() != null) {
             	to.addAll(notification.getEmails());
             }            
-            emailSender.sent(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);             
+            emailSender.send(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);             
             notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
         } catch (Exception e) {
             try {
