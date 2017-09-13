@@ -839,26 +839,30 @@ public class RatingService extends BusinessService<WalletOperation> {
         if (StringUtils.isBlank(expression)) {
             return result;
         }
+        ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+		if((walletOperation.getChargeInstance() instanceof HibernateProxy)){
+			chargeInstance = (ChargeInstance)((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();	
+		}
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("op", walletOperation);
         if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
-            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), walletOperation.getChargeInstance().getSubscription());
+            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription());
             userMap.put("access", access);
         }
         if (expression.indexOf("charge") >= 0) {
-            ChargeTemplate charge = walletOperation.getChargeInstance().getChargeTemplate();
+            ChargeTemplate charge = chargeInstance.getChargeTemplate();
             userMap.put("charge", charge);
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             ServiceInstance service = null;
-            if (walletOperation.getChargeInstance() instanceof RecurringChargeInstance) {
-                service = ((RecurringChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-            } else if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-            } else if (walletOperation.getChargeInstance() instanceof OneShotChargeInstance) {
-                service = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
+            if (chargeInstance instanceof RecurringChargeInstance) {
+                service = ((RecurringChargeInstance) chargeInstance).getServiceInstance();
+            } else if (chargeInstance instanceof UsageChargeInstance) {
+                service = ((UsageChargeInstance) chargeInstance).getServiceInstance();
+            } else if (chargeInstance instanceof OneShotChargeInstance) {
+                service = ((OneShotChargeInstance) chargeInstance).getSubscriptionServiceInstance();
                 if (service == null) {
-                    service = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getTerminationServiceInstance();
+                    service = ((OneShotChargeInstance) chargeInstance).getTerminationServiceInstance();
                 }
             }
             if (service != null) {
@@ -867,8 +871,8 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
         if (expression.indexOf("productInstance") >= 0) {
             ProductInstance productInstance = null;
-            if (walletOperation.getChargeInstance() instanceof ProductChargeInstance) {
-                productInstance = ((ProductChargeInstance) walletOperation.getChargeInstance()).getProductInstance();
+            if (chargeInstance instanceof ProductChargeInstance) {
+                productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
             if (productInstance != null) {
@@ -876,7 +880,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
         if (expression.indexOf("offer") >= 0) {
-            OfferTemplate offer = walletOperation.getChargeInstance().getSubscription().getOffer();
+            OfferTemplate offer = chargeInstance.getSubscription().getOffer();
             userMap.put("offer", offer);
         }
         if (expression.indexOf("ua") >= 0) {
@@ -909,30 +913,34 @@ public class RatingService extends BusinessService<WalletOperation> {
         if (StringUtils.isBlank(expression)) {
             return result;
         }
+        ChargeInstance chargeInstance = walletOperation.getChargeInstance();
+		if((walletOperation.getChargeInstance() instanceof HibernateProxy)){
+			chargeInstance = (ChargeInstance)((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();	
+		}
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("op", walletOperation);
         if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
-            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), walletOperation.getChargeInstance().getSubscription());
+            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription());
             userMap.put("access", access);
         }
         if (expression.indexOf("charge") >= 0) {
-            ChargeTemplate charge = walletOperation.getChargeInstance().getChargeTemplate();
+            ChargeTemplate charge = chargeInstance.getChargeTemplate();
             userMap.put("charge", charge);
         }
         if (expression.indexOf("offer") >= 0) {
-            OfferTemplate offer = walletOperation.getChargeInstance().getSubscription().getOffer();
+            OfferTemplate offer = chargeInstance.getSubscription().getOffer();
             userMap.put("offer", offer);
         }
         if (expression.indexOf("serviceInstance") >= 0) {
             ServiceInstance service = null;
-            if (walletOperation.getChargeInstance() instanceof RecurringChargeInstance) {
-                service = ((RecurringChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-            } else if (walletOperation.getChargeInstance() instanceof UsageChargeInstance) {
-                service = ((UsageChargeInstance) walletOperation.getChargeInstance()).getServiceInstance();
-            } else if (walletOperation.getChargeInstance() instanceof OneShotChargeInstance) {
-                service = ((OneShotChargeInstance) walletOperation.getChargeInstance()).getSubscriptionServiceInstance();
+            if (chargeInstance instanceof RecurringChargeInstance) {
+                service = ((RecurringChargeInstance) chargeInstance).getServiceInstance();
+            } else if (chargeInstance instanceof UsageChargeInstance) {
+                service = ((UsageChargeInstance) chargeInstance).getServiceInstance();
+            } else if (chargeInstance instanceof OneShotChargeInstance) {
+                service = ((OneShotChargeInstance) chargeInstance).getSubscriptionServiceInstance();
                 if (service == null) {
-                    ((OneShotChargeInstance) walletOperation.getChargeInstance()).getTerminationServiceInstance();
+                    ((OneShotChargeInstance) chargeInstance).getTerminationServiceInstance();
                 }
             }
             if (service != null) {
@@ -941,8 +949,8 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
         if (expression.indexOf("productInstance") >= 0) {
             ProductInstance productInstance = null;
-            if (walletOperation.getChargeInstance() instanceof ProductChargeInstance) {
-                productInstance = ((ProductChargeInstance) walletOperation.getChargeInstance()).getProductInstance();
+            if (chargeInstance instanceof ProductChargeInstance) {
+                productInstance = ((ProductChargeInstance) chargeInstance).getProductInstance();
 
             }
             if (productInstance != null) {
