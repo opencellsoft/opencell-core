@@ -60,6 +60,7 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
@@ -625,6 +626,19 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
             accountOperationApi.unMatchingOperations(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public MatchedOperationsResponseDto listMatchedOperations(Long accountOperationId) {
+        MatchedOperationsResponseDto result = new MatchedOperationsResponseDto();
+        try {
+            result.setMatchedOperations(accountOperationApi.listMatchedOperations(accountOperationId));
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

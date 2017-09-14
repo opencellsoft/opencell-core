@@ -12,6 +12,7 @@ import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.rest.impl.BaseRs;
@@ -102,20 +103,20 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
         return result;
     }
 
-	@Override
-	public AccountOperationResponseDto find(Long id) {
-		AccountOperationResponseDto result = new AccountOperationResponseDto();
-		try {
-			result.setAccountOperation(accountOperationApi.find(id));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+    @Override
+    public AccountOperationResponseDto find(Long id) {
+        AccountOperationResponseDto result = new AccountOperationResponseDto();
+        try {
+            result.setAccountOperation(accountOperationApi.find(id));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
+    @Override
+    public ActionStatus updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             accountOperationApi.updatePaymentMethod(customerAccountCode, aoId, paymentMethod);
@@ -123,6 +124,18 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
             processException(e, result);
         }
         return result;
-	}
+    }
 
+    @Override
+    public MatchedOperationsResponseDto listMatchedOperations(Long accountOperationId) {
+        MatchedOperationsResponseDto result = new MatchedOperationsResponseDto();
+        try {
+            result.setMatchedOperations(accountOperationApi.listMatchedOperations(accountOperationId));
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 }

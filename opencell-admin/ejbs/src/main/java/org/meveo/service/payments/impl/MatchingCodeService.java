@@ -49,225 +49,347 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
-	@Inject
-	private CustomerAccountService customerAccountService;
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	@Inject
-	private AccountOperationService accountOperationService;
+    @Inject
+    private AccountOperationService accountOperationService;
 
-	//first call from gui
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
-		return matchOperations(customerAccountId, customerAccountCode, operationIds, operationIdForPartialMatching, MatchingTypeEnum.M);
-	}
+    /**
+     * Match account operations
+     * 
+     * @param listOcc Account operations to match
+     * @param amount Amount to match
+     * @param aoToMatchLast Account operation to match partially - can be explicitly specified in case more than two operations are matched
+     * @param matchingTypeEnum matching type
+     * @throws BusinessException
+     */
+    private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation aoToMatchLast, MatchingTypeEnum matchingTypeEnum) throws BusinessException {
 
-	private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation partialOcc, MatchingTypeEnum matchingTypeEnum) throws BusinessException  {
-		MatchingCode matchingCode = new MatchingCode();		
-		BigDecimal amountToMatch = BigDecimal.ZERO;
-		for (AccountOperation accountOperation : listOcc) {
-			MatchingAmount matchingAmount = new MatchingAmount();
-			if (partialOcc != null && accountOperation.getId().equals(partialOcc.getId())) {				
-				accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amount));
-				accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amount));
-				accountOperation.setMatchingStatus(MatchingStatusEnum.P);
-				matchingAmount.setMatchingAmount(amount);
-			} else {
-				amountToMatch = accountOperation.getUnMatchingAmount();
-				accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
-				accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
-				accountOperation.setMatchingStatus(MatchingStatusEnum.L);
-				matchingAmount.setMatchingAmount(amountToMatch);
-			}
-			accountOperationService.update(accountOperation);
+        MatchingCode matchingCode = new MatchingCode();
+        BigDecimal amountToMatch = BigDecimal.ZERO;
 
-			matchingAmount.updateAudit(currentUser);
-			matchingAmount.setAccountOperation(accountOperation);
-			matchingAmount.setMatchingCode(matchingCode);
+        BigDecimal amountCredit = amount;
+        BigDecimal amountDebit = amount;
+        boolean fullMatch = false;
 
-			accountOperation.getMatchingAmounts().add(matchingAmount);
-			matchingCode.getMatchingAmounts().add(matchingAmount);			
-		}
-		matchingCode.setMatchingAmountDebit(amount);
-		matchingCode.setMatchingAmountCredit(amount);
-		matchingCode.setMatchingDate(new Date());
-		matchingCode.setMatchingType(matchingTypeEnum);
-		create(matchingCode);
+        log.error("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
+        for (AccountOperation accountOperation : listOcc) {
 
-	}
+            if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {
+                continue;
+            } else if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT && amountCredit.compareTo(BigDecimal.ZERO) == 0) {
+                continue;
+            } else if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT && amountDebit.compareTo(BigDecimal.ZERO) == 0) {
+                continue;
+            }
 
-	public void unmatchingByAOid(Long aoID) throws BusinessException {
+            amountToMatch = BigDecimal.ZERO;
+            fullMatch = false;
 
-		AccountOperation accountOperation = accountOperationService.findById(aoID);
-		if(accountOperation == null){
-			throw new BusinessException("Cant find account operation by id:"+aoID);
-		}
-		if(!MatchingStatusEnum.L.name().equals(accountOperation.getMatchingStatus().name())){
-			throw new BusinessException("The account operation is unmatched");
-		}
-		unmatching(accountOperation.getMatchingAmounts().get(0).getMatchingCode().getId());
+            MatchingAmount matchingAmount = new MatchingAmount();
+            if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+                if (amountCredit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                    fullMatch = true;
+                    amountToMatch = accountOperation.getUnMatchingAmount();
+                    amountCredit = amountCredit.subtract(amountToMatch);
+                } else {
+                    fullMatch = false;
+                    amountToMatch = amountCredit;
+                    amountCredit = BigDecimal.ZERO;
+                }
 
-	}
+            } else {
+                if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                    fullMatch = true;
+                    amountToMatch = accountOperation.getUnMatchingAmount();
+                    amountDebit = amountDebit.subtract(amountToMatch);
+                } else {
+                    fullMatch = false;
+                    amountToMatch = amountDebit;
+                    amountDebit = BigDecimal.ZERO;
+                }
+            }
 
-	public void unmatching(Long idMatchingCode) throws BusinessException {
-		log.info("start cancelMatching with id {}", idMatchingCode);
-		if (idMatchingCode == null) {
-			throw new BusinessException("Error when idMatchingCode is null!");
-		}
-		MatchingCode matchingCode = findById(idMatchingCode);
-		if (matchingCode == null) {
-			log.warn("Error when found a null matchingCode!");
-			throw new BusinessException("Error when found a null matchingCode!");
-		}
-		List<MatchingAmount> matchingAmounts = matchingCode.getMatchingAmounts();
+            accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+            accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
+            accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
+            matchingAmount.setMatchingAmount(amountToMatch);
 
-		if (matchingAmounts != null) {
-			log.info("matchingAmounts.size:" + matchingAmounts.size());
-			for (MatchingAmount matchingAmount : matchingAmounts) {
-				AccountOperation operation = matchingAmount.getAccountOperation();
-				if (operation.getMatchingStatus() != MatchingStatusEnum.P && operation.getMatchingStatus() != MatchingStatusEnum.L) {
-					throw new BusinessException("Error:matchingCode containt unMatching operation");
-				}
-				operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
-				operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
-				if (BigDecimal.ZERO.compareTo(operation.getMatchingAmount()) == 0) {
-					operation.setMatchingStatus(MatchingStatusEnum.O);
-				} else {
-					operation.setMatchingStatus(MatchingStatusEnum.P);
-				}
-				operation.getMatchingAmounts().remove(matchingAmount);
-				accountOperationService.update(operation);
-				log.info("cancel one accountOperation!");
-			}
-		}
-		log.info("remove matching code ....");
-		remove(matchingCode);
-		log.info("successfully end cancelMatching!");
-	}
+            accountOperation = accountOperationService.update(accountOperation);
 
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long operationIdForPartialMatching, MatchingTypeEnum matchingTypeEnum) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-		log.info("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} ", new Object[] { customerAccountId, customerAccountCode, operationIds });
-		CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
+            matchingAmount.updateAudit(currentUser);
+            matchingAmount.setAccountOperation(accountOperation);
+            matchingAmount.setMatchingCode(matchingCode);
 
-		BigDecimal amoutDebit = new BigDecimal(0);
-		BigDecimal amoutCredit = new BigDecimal(0);		
-		List<AccountOperation> listOcc = new ArrayList<AccountOperation>();
-		MatchingReturnObject matchingReturnObject = new MatchingReturnObject();
-		matchingReturnObject.setOk(false);
+            accountOperation.getMatchingAmounts().add(matchingAmount);
+            matchingCode.getMatchingAmounts().add(matchingAmount);
+        }
 
-		int cptOccDebit = 0, cptOccCredit = 0, cptPartialAllowed = 0;
-		AccountOperation accountOperationForPartialMatching = null;
+        // Leave AO to be matched as partial to the end. It will be matched only if any unmatched amount remains.
+        if (aoToMatchLast != null) {
 
-		for (Long id : operationIds) {
-			AccountOperation accountOperation = accountOperationService.findById(id);
-			if(accountOperation == null){
-				throw new BusinessException("Cannot find account operation with id:"+id);
-			}
-			listOcc.add(accountOperation);
+            AccountOperation accountOperation = accountOperationService.findById(aoToMatchLast.getId());
+            if (!(accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT && amountCredit.compareTo(BigDecimal.ZERO) == 0)
+                    || (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT && amountDebit.compareTo(BigDecimal.ZERO) == 0)) {
 
-		}
+                amountToMatch = BigDecimal.ZERO;
+                fullMatch = false;
 
-		for (AccountOperation accountOperation : listOcc) {
-			if (!accountOperation.getCustomerAccount().getCode().equals(customerAccount.getCode())) {
-				log.warn("matchOperations The operationId " + accountOperation.getId() + " is not for the customerAccount");
-				throw new BusinessException("The operationId " + accountOperation.getId() + " is not for the customerAccount");
-			}
-			if (accountOperation.getMatchingStatus() != MatchingStatusEnum.O && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
-				log.warn("matchOperations The operationId " + accountOperation.getId() + " is already matching");
-				throw new NoAllOperationUnmatchedException("The operationId " + accountOperation.getId() + " is already matching");
-			}
-			if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
-				cptOccDebit++;
-				amoutDebit = amoutDebit.add(accountOperation.getUnMatchingAmount());
-			}
-			if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
-				cptOccCredit++;
-				amoutCredit = amoutCredit.add(accountOperation.getUnMatchingAmount());
-			}
-		}
-		if (cptOccCredit == 0) {
-			throw new BusinessException("matchingService.noCreditOps");
-		}
-		if (cptOccDebit == 0) {
-			throw new BusinessException("matchingService.noDebitOps");
-		}
-		BigDecimal balance = amoutDebit.subtract(amoutCredit);
-		balance = balance.abs();
-		BigDecimal matchedAmount = amoutDebit;
+                MatchingAmount matchingAmount = new MatchingAmount();
+                if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+                    if (amountCredit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                        fullMatch = true;
+                        amountToMatch = accountOperation.getUnMatchingAmount();
+                        amountCredit = amountCredit.subtract(amountToMatch);
+                    } else {
+                        fullMatch = false;
+                        amountToMatch = amountCredit;
+                        amountCredit = BigDecimal.ZERO;
+                    }
 
+                } else {
+                    if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                        fullMatch = true;
+                        amountToMatch = accountOperation.getUnMatchingAmount();
+                        amountDebit = amountDebit.subtract(amountToMatch);
+                    } else {
+                        fullMatch = false;
+                        amountToMatch = amountDebit;
+                        amountDebit = BigDecimal.ZERO;
+                    }
+                }
 
-		log.info("matchOperations  balance:" + balance);
+                accountOperation.setMatchingAmount(accountOperation.getMatchingAmount().add(amountToMatch));
+                accountOperation.setUnMatchingAmount(accountOperation.getUnMatchingAmount().subtract(amountToMatch));
+                accountOperation.setMatchingStatus(fullMatch ? MatchingStatusEnum.L : MatchingStatusEnum.P);
+                matchingAmount.setMatchingAmount(amountToMatch);
 
-		if (balance.compareTo(BigDecimal.ZERO) == 0) {
-			matching(listOcc, matchedAmount, null, matchingTypeEnum);
-			matchingReturnObject.setOk(true);
-			log.info("matchOperations successful : no partial");
-			return matchingReturnObject;
-		}
+                accountOperation = accountOperationService.update(accountOperation);
 
-		if( matchedAmount.compareTo(amoutCredit)>0){
-			matchedAmount = amoutCredit;
-		}
+                matchingAmount.updateAudit(currentUser);
+                matchingAmount.setAccountOperation(accountOperation);
+                matchingAmount.setMatchingCode(matchingCode);
 
-		if (operationIdForPartialMatching != null) {
-			matching(listOcc, matchedAmount, accountOperationService.findById(operationIdForPartialMatching), matchingTypeEnum);
-			matchingReturnObject.setOk(true);
-			log.info("matchOperations successful :  partial ok (idPartial recu)");
-			return matchingReturnObject;
-		}
-		// debit 200,60 ; credit 150 => balance = 110
-		for (AccountOperation accountOperation : listOcc) {
-			PartialMatchingOccToSelect p = new PartialMatchingOccToSelect();
-			p.setAccountOperation(accountOperation);
-			p.setPartialMatchingAllowed(false);
-			if (amoutCredit.compareTo(amoutDebit) > 0) {
-				if (OperationCategoryEnum.CREDIT.name().equals(accountOperation.getTransactionCategory().name()) ) {
-					if (balance.compareTo(accountOperation.getUnMatchingAmount()) < 0) {
-						p.setPartialMatchingAllowed(true);
-						cptPartialAllowed++;
-						accountOperationForPartialMatching = accountOperation;
-					}
-				}
-			}else {
-				if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
-					if (balance.compareTo(accountOperation.getUnMatchingAmount()) < 0) {
-						p.setPartialMatchingAllowed(true);
-						cptPartialAllowed++;
-						accountOperationForPartialMatching = accountOperation;
-					}
-				}
-			}
-			matchingReturnObject.getPartialMatchingOcc().add(p);
-		}
+                accountOperation.getMatchingAmounts().add(matchingAmount);
+                matchingCode.getMatchingAmounts().add(matchingAmount);
+            }
+        }
 
-		if (cptPartialAllowed == 1) {
-			matching(listOcc, matchedAmount, accountOperationForPartialMatching, matchingTypeEnum);
-			matchingReturnObject.setOk(true);
-			log.info("matchOperations successful :  partial ok (un idPartial possible)");
-			return matchingReturnObject;
-		}
+        matchingCode.setMatchingAmountDebit(amount);
+        matchingCode.setMatchingAmountCredit(amount);
+        matchingCode.setMatchingDate(new Date());
+        matchingCode.setMatchingType(matchingTypeEnum);
+        create(matchingCode);
 
-		if (cptPartialAllowed == 0) {
-			throw new BusinessException("matchingService.matchingImpossible");
-		}
-		log.info("matchOperations successful :  partial  (plusieurs idPartial possible)");
-		matchingReturnObject.setOk(false);
+    }
 
-		// log.info("matchOperations successful  customerAccountId:{}  customerAccountCode:{} operationIds:{} user:{}",
-		// customerAccountId, customerAccountCode,
-		// operationIds, user == null ? "null" : user.getName());
-		log.debug("matchingReturnObject.getPartialMatchingOcc().size:"+(matchingReturnObject.getPartialMatchingOcc() == null ? null : matchingReturnObject.getPartialMatchingOcc().size()));
+    public void unmatchingByAOid(Long aoID) throws BusinessException {
 
-		return matchingReturnObject;
-	}
+        AccountOperation accountOperation = accountOperationService.findById(aoID);
+        if (accountOperation == null) {
+            throw new BusinessException("Cant find account operation by id:" + aoID);
+        }
+        if (!MatchingStatusEnum.L.name().equals(accountOperation.getMatchingStatus().name())) {
+            throw new BusinessException("The account operation is unmatched");
+        }
+        unmatching(accountOperation.getMatchingAmounts().get(0).getMatchingCode().getId());
 
-	public MatchingCode findByCode(String code) {
-		QueryBuilder qb = new QueryBuilder(MatchingCode.class, "m", null);
-		qb.addCriterion("code", "=", code, true);
+    }
 
-		try {
-			return (MatchingCode) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+    public void unmatching(Long idMatchingCode) throws BusinessException {
+        log.info("start cancelMatching with id {}", idMatchingCode);
+        if (idMatchingCode == null) {
+            throw new BusinessException("Error when idMatchingCode is null!");
+        }
+        MatchingCode matchingCode = findById(idMatchingCode);
+        if (matchingCode == null) {
+            log.warn("Error when found a null matchingCode!");
+            throw new BusinessException("Error when found a null matchingCode!");
+        }
+        List<MatchingAmount> matchingAmounts = matchingCode.getMatchingAmounts();
+
+        if (matchingAmounts != null) {
+            log.info("matchingAmounts.size:" + matchingAmounts.size());
+            for (MatchingAmount matchingAmount : matchingAmounts) {
+                AccountOperation operation = matchingAmount.getAccountOperation();
+                if (operation.getMatchingStatus() != MatchingStatusEnum.P && operation.getMatchingStatus() != MatchingStatusEnum.L) {
+                    throw new BusinessException("Error:matchingCode containt unMatching operation");
+                }
+                operation.setUnMatchingAmount(operation.getUnMatchingAmount().add(matchingAmount.getMatchingAmount()));
+                operation.setMatchingAmount(operation.getMatchingAmount().subtract(matchingAmount.getMatchingAmount()));
+                if (BigDecimal.ZERO.compareTo(operation.getMatchingAmount()) == 0) {
+                    operation.setMatchingStatus(MatchingStatusEnum.O);
+                } else {
+                    operation.setMatchingStatus(MatchingStatusEnum.P);
+                }
+                operation.getMatchingAmounts().remove(matchingAmount);
+                accountOperationService.update(operation);
+                log.info("cancel one accountOperation!");
+            }
+        }
+        log.info("remove matching code ....");
+        remove(matchingCode);
+        log.info("successfully end cancelMatching!");
+    }
+
+    /**
+     * Match account operations of a given customer account
+     * 
+     * @param customerAccountId Customer account - id or
+     * @param customerAccountCode Customer account - code
+     * @param operationIds Ids of account operations to match
+     * @param aoToMatchLast An operation to match last - most likely will be matched partially
+     * @return Information on matched operations
+     * @throws BusinessException
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     */
+    public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
+        return matchOperations(customerAccountId, customerAccountCode, operationIds, aoToMatchLast, MatchingTypeEnum.M);
+    }
+
+    /**
+     * Match account operations of a given customer account
+     * 
+     * @param customerAccountId Customer account - id or
+     * @param customerAccountCode Customer account - code
+     * @param operationIds Ids of account operations to match
+     * @param aoToMatchLast An operation to match last - most likely will be matched partially
+     * @param matchingTypeEnum Matching type
+     * @return Information on matched operations
+     * @throws BusinessException
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     */
+    public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast, MatchingTypeEnum matchingTypeEnum)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+
+        log.info("matchOperations   customerAccountId:{}  customerAccountCode:{} operationIds:{} ", new Object[] { customerAccountId, customerAccountCode, operationIds });
+        CustomerAccount customerAccount = customerAccountService.findCustomerAccount(customerAccountId, customerAccountCode);
+
+        BigDecimal amoutDebit = new BigDecimal(0);
+        BigDecimal amoutCredit = new BigDecimal(0);
+        List<AccountOperation> listOcc = new ArrayList<AccountOperation>();
+        MatchingReturnObject matchingReturnObject = new MatchingReturnObject();
+        matchingReturnObject.setOk(false);
+
+        int cptOccDebit = 0, cptOccCredit = 0, cptPartialAllowed = 0;
+        AccountOperation accountOperationForPartialMatching = null;
+
+        for (Long id : operationIds) {
+            AccountOperation accountOperation = accountOperationService.findById(id);
+            if (accountOperation == null) {
+                throw new BusinessException("Cannot find account operation with id:" + id);
+            }
+            listOcc.add(accountOperation);
+
+        }
+
+        for (AccountOperation accountOperation : listOcc) {
+            if (!accountOperation.getCustomerAccount().getCode().equals(customerAccount.getCode())) {
+                log.warn("matchOperations The operationId " + accountOperation.getId() + " is not for the customerAccount");
+                throw new BusinessException("The operationId " + accountOperation.getId() + " is not for the customerAccount");
+            }
+            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.O && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
+                log.warn("matchOperations The operationId " + accountOperation.getId() + " is already matching");
+                throw new NoAllOperationUnmatchedException("The operationId " + accountOperation.getId() + " is already matching");
+            }
+            if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
+                cptOccDebit++;
+                amoutDebit = amoutDebit.add(accountOperation.getUnMatchingAmount());
+            }
+            if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
+                cptOccCredit++;
+                amoutCredit = amoutCredit.add(accountOperation.getUnMatchingAmount());
+            }
+        }
+        if (cptOccCredit == 0) {
+            throw new BusinessException("matchingService.noCreditOps");
+        }
+        if (cptOccDebit == 0) {
+            throw new BusinessException("matchingService.noDebitOps");
+        }
+        BigDecimal balance = amoutDebit.subtract(amoutCredit);
+        balance = balance.abs();
+        BigDecimal matchedAmount = amoutDebit;
+
+        log.info("matchOperations  balance:" + balance);
+
+        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+            matching(listOcc, matchedAmount, null, matchingTypeEnum);
+            matchingReturnObject.setOk(true);
+            log.info("matchOperations successful : no partial");
+            return matchingReturnObject;
+        }
+
+        if (matchedAmount.compareTo(amoutCredit) > 0) {
+            matchedAmount = amoutCredit;
+        }
+
+        if (aoToMatchLast != null) {
+            matching(listOcc, matchedAmount, accountOperationService.findById(aoToMatchLast), matchingTypeEnum);
+            matchingReturnObject.setOk(true);
+            log.info("matchOperations successful :  partial ok (idPartial recu)");
+            return matchingReturnObject;
+        }
+        // debit 200,60 ; credit 150 => balance = 110
+        for (AccountOperation accountOperation : listOcc) {
+            PartialMatchingOccToSelect p = new PartialMatchingOccToSelect();
+            p.setAccountOperation(accountOperation);
+            p.setPartialMatchingAllowed(false);
+            if (amoutCredit.compareTo(amoutDebit) > 0) {
+                if (OperationCategoryEnum.CREDIT.name().equals(accountOperation.getTransactionCategory().name())) {
+                    if (balance.compareTo(accountOperation.getUnMatchingAmount()) < 0) {
+                        p.setPartialMatchingAllowed(true);
+                        cptPartialAllowed++;
+                        accountOperationForPartialMatching = accountOperation;
+                    }
+                }
+            } else {
+                if (accountOperation.getTransactionCategory() == OperationCategoryEnum.DEBIT) {
+                    if (balance.compareTo(accountOperation.getUnMatchingAmount()) < 0) {
+                        p.setPartialMatchingAllowed(true);
+                        cptPartialAllowed++;
+                        accountOperationForPartialMatching = accountOperation;
+                    }
+                }
+            }
+            matchingReturnObject.getPartialMatchingOcc().add(p);
+        }
+
+        if (cptPartialAllowed == 1) {
+            matching(listOcc, matchedAmount, accountOperationForPartialMatching, matchingTypeEnum);
+            matchingReturnObject.setOk(true);
+            log.info("matchOperations successful :  partial ok (un idPartial possible)");
+            return matchingReturnObject;
+        }
+
+        if (cptPartialAllowed == 0) {
+            throw new BusinessException("matchingService.matchingImpossible");
+        }
+        log.info("matchOperations successful :  partial  (plusieurs idPartial possible)");
+        matchingReturnObject.setOk(false);
+
+        // log.info("matchOperations successful customerAccountId:{} customerAccountCode:{} operationIds:{} user:{}",
+        // customerAccountId, customerAccountCode,
+        // operationIds, user == null ? "null" : user.getName());
+        log.debug("matchingReturnObject.getPartialMatchingOcc().size:"
+                + (matchingReturnObject.getPartialMatchingOcc() == null ? null : matchingReturnObject.getPartialMatchingOcc().size()));
+
+        return matchingReturnObject;
+    }
+
+    public MatchingCode findByCode(String code) {
+        QueryBuilder qb = new QueryBuilder(MatchingCode.class, "m", null);
+        qb.addCriterion("code", "=", code, true);
+
+        try {
+            return (MatchingCode) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
 }

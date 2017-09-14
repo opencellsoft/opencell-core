@@ -37,7 +37,6 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.IEntity;
 import org.meveo.model.MatchingReturnObject;
-import org.meveo.model.PartialMatchingOccToSelect;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
@@ -53,172 +52,116 @@ import org.meveo.service.payments.impl.MatchingCodeService;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link AccountOperation} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private AccountOperationService accountOperationService;
+    /**
+     * Injected @{link AccountOperation} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private AccountOperationService accountOperationService;
 
-	@Inject
-	private MatchingCodeService matchingCodeService;
-	
-	private List<PartialMatchingOccToSelect> partialMatchingOps = new ArrayList<PartialMatchingOccToSelect>();
+    @Inject
+    protected MatchingCodeService matchingCodeService;
 
-	private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
+    @Inject
+    private AccountOperationListBean accountOperationListBean;
 
-	public List<PartialMatchingOccToSelect> getPartialMatchingOps() {
-		return partialMatchingOps;
-	}
+    private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
-	public void setPartialMatchingOps(
-			List<PartialMatchingOccToSelect> partialMatchingOps) {
-		this.partialMatchingOps = partialMatchingOps;
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public AccountOperationBean() {
+        super(AccountOperation.class);
+    }
 
-	/**
-	 * TODO
-	 */
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Produces
+    @Named("accountOperation")
+    public AccountOperation init() {
+        return initEntity();
+    }
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public AccountOperationBean() {
-		super(AccountOperation.class);
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<AccountOperation> getPersistenceService() {
+        return accountOperationService;
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Produces
-	@Named("accountOperation")
-	public AccountOperation init() {
-		return initEntity();
-	}
+    /**
+     * TODO
+     */
+    public String displayOperation(AccountOperation accountOperation) {
+        String page = "/pages/payments/accountOperations/showOcc.xhtml";
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<AccountOperation> getPersistenceService() {
-		return accountOperationService;
-	}
+        if (accountOperation instanceof RecordedInvoice) {
+            page = "/pages/payments/accountOperations/showInvoice.xhtml";
+        }
+        if (accountOperation instanceof AutomatedPayment) {
+            page = "/pages/payments/accountOperations/showAutomatedPayment.xhtml";
+        }
+        if (accountOperation instanceof Payment) {
+            page = "/pages/payments/accountOperations/showPayment.xhtml";
+        }
+        return page;
+    }
 
-	/**
-	 * TODO
-	 */
-	public String displayOperation(AccountOperation accountOperation) {
-		String page = "/pages/payments/accountOperations/showOcc.xhtml";
-		
-		if (accountOperation instanceof RecordedInvoice) {
-			page = "/pages/payments/accountOperations/showInvoice.xhtml";
-		}
-		if (accountOperation instanceof AutomatedPayment) {
-			page = "/pages/payments/accountOperations/showAutomatedPayment.xhtml";
-		}
-		if (accountOperation instanceof Payment) {
-			page = "/pages/payments/accountOperations/showPayment.xhtml";
-		}		
-		return page;
-	}
+    /**
+     * match selected operations
+     * 
+     * @return
+     */
+    public String matching(Long customerAccountId) {
+        List<Long> operationIds = new ArrayList<Long>();
+        log.debug("getChecked():" + getSelectedEntities());
+        for (IEntity operation : getSelectedEntities()) {
+            operationIds.add((Long) operation.getId());
+        }
+        log.info("operationIds    " + operationIds);
+        if (operationIds.isEmpty()) {
+            messages.error(new BundleKey("messages", "customerAccount.matchingUnselectedOperation"));
+            return null;
+        }
+        try {
+            MatchingReturnObject result = matchingCodeService.matchOperations(customerAccountId, null, operationIds, null);
+            if (result.isOk()) {
+                messages.info(new BundleKey("messages", "customerAccount.matchingSuccessful"));
+            } else {
+                accountOperationListBean.setPartialMatchingOps(result.getPartialMatchingOcc());
+                return "/pages/payments/customerAccounts/partialMatching.xhtml&faces-redirect=true";
+            }
 
-	/**
-	 * match selected operations
-	 * 
-	 * @return
-	 */
-	public String matching(Long customerAccountId) {
-		List<Long> operationIds = new ArrayList<Long>();
-		log.debug("getChecked():" + getSelectedEntities());
-		for (IEntity operation : getSelectedEntities()) {
-			operationIds.add((Long) operation.getId());
-		}
-		log.info("operationIds    " + operationIds);
-		if (operationIds.isEmpty()) {
-			messages.error(new BundleKey("messages",
-					"customerAccount.matchingUnselectedOperation"));
-			return null;
-		}
-		try {
-			MatchingReturnObject result = matchingCodeService.matchOperations(
-					customerAccountId, null, operationIds, null);
-			if (result.isOk()) {
-				messages.info(new BundleKey("messages",
-						"customerAccount.matchingSuccessful"));
-			} else {
-				setPartialMatchingOps(result.getPartialMatchingOcc());
-				return "/pages/payments/customerAccounts/partialMatching.xhtml?objectId="
-						+ customerAccountId + "&faces-redirect=true";
-			}
+        } catch (NoAllOperationUnmatchedException ee) {
+            messages.error(new BundleKey("messages", "customerAccount.noAllOperationUnmatched"));
+        } catch (BusinessException ee) {
+            messages.error(new BundleKey("messages", ee.getMessage()));
+        } catch (Exception e) {
+            log.error("failed to matching ", e);
+            messages.error(e.getMessage());
+        }
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
+    }
 
-		} catch (NoAllOperationUnmatchedException ee) {
-			messages.error(new BundleKey("messages",
-					"customerAccount.noAllOperationUnmatched"));
-		} catch (BusinessException ee) {
-			messages.error(new BundleKey("messages", ee.getMessage()));
-		} catch (Exception e) {
-			log.error("failed to matching ",e);
-			messages.error(e.getMessage());
-		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
-				+ customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
-	}
-
-	// called from page of selection partial operation
-	public String partialMatching(
-			PartialMatchingOccToSelect partialMatchingOccSelected) {
-		List<Long> operationIds = new ArrayList<Long>();
-		for (PartialMatchingOccToSelect p : getPartialMatchingOps()) {
-			operationIds.add(p.getAccountOperation().getId());
-		}
-		try {
-			MatchingReturnObject result = matchingCodeService.matchOperations(
-					partialMatchingOccSelected.getAccountOperation()
-							.getCustomerAccount().getId(), null, operationIds,
-					partialMatchingOccSelected.getAccountOperation().getId());
-			if (result.isOk()) {
-				messages.info(new BundleKey("messages",
-						"customerAccount.matchingSuccessful"));
-			} else {
-				messages.error(new BundleKey("messages",
-						"customerAccount.matchingFailed"));
-			}
-		} catch (NoAllOperationUnmatchedException ee) {
-			messages.error(new BundleKey("messages",
-					"customerAccount.noAllOperationUnmatched"));
-		} catch (Exception e) {
-			log.error("failed to partial matching",e);
-			messages.error(e.getMessage());
-		}
-		return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
-				+ partialMatchingOccSelected.getAccountOperation()
-						.getCustomerAccount().getId()
-				+ "&edit=true&mainTab=1&faces-redirect=true";
-	}
-
-	/**
-	 * Consult Matching code page
-	 * 
-	 * @return the URL of the matching code page containing the selected
-	 *         operation
-	 * @throws BusinessException 
-	 */
+    /**
+     * Consult Matching code page
+     * 
+     * @return the URL of the matching code page containing the selected operation
+     * @throws BusinessException
+     */
 
     private void dunningInclusionExclusionPartial(AccountOperation accountOperation, Boolean exclude) throws BusinessException {
         for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
@@ -259,111 +202,102 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
         return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
     }
-	
-	public boolean isSelectedOperationIncluded(){
-		boolean included=true;
-		if(getSelectedEntities()!=null){
-			for (IEntity operation : getSelectedEntities()) {
-		     AccountOperation accountOperation = (AccountOperation) operation;
-		     if(accountOperation.getExcludedFromDunning()){
-		    	 included=false;
-		    	 break;
-		    	 }}}
-		return included;
-	  }
-	
-	public boolean isSelectedOperationExcluded(){
-		boolean excluded=true;
-		if(getSelectedEntities()!=null){
-			for (IEntity operation : getSelectedEntities()) {
-		     AccountOperation accountOperation = (AccountOperation) operation;
-		     if(!accountOperation.getExcludedFromDunning()){
-		    	 excluded=false;
-		    	 break;
-		     }}}
-		return excluded;
-	  }
-	
 
-	public String consultMatching(long customerAccountId) {
-		List<Long> operationIds = new ArrayList<Long>();
-		log.debug("getChecked():" + getSelectedEntities());
-		for (IEntity operation : getSelectedEntities()) {
-			operationIds.add((Long) operation.getId());
-		}
-		log.info(" consultMatching operationIds " + operationIds);
-		if (operationIds.isEmpty() || operationIds.size() > 1) {
-			messages.info(new BundleKey("messages",
-					"consultMatching.noOperationSelected"));
+    public boolean isSelectedOperationIncluded() {
+        boolean included = true;
+        if (getSelectedEntities() != null) {
+            for (IEntity operation : getSelectedEntities()) {
+                AccountOperation accountOperation = (AccountOperation) operation;
+                if (accountOperation.getExcludedFromDunning()) {
+                    included = false;
+                    break;
+                }
+            }
+        }
+        return included;
+    }
 
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
-					+ customerAccountId
-					+ "&edit=false&mainTab=1&faces-redirect=true";
-		}
-		AccountOperation accountOperation = accountOperationService
-				.findById(operationIds.get(0));
-		if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L
-				&& accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
-			messages.info(new BundleKey("messages",
-					"consultMatching.operationNotMatched"));
+    public boolean isSelectedOperationExcluded() {
+        boolean excluded = true;
+        if (getSelectedEntities() != null) {
+            for (IEntity operation : getSelectedEntities()) {
+                AccountOperation accountOperation = (AccountOperation) operation;
+                if (!accountOperation.getExcludedFromDunning()) {
+                    excluded = false;
+                    break;
+                }
+            }
+        }
+        return excluded;
+    }
 
-			return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId="
-					+ customerAccountId
-					+ "&edit=false&mainTab=1&faces-redirect=true";
-		}
-		matchingAmounts = accountOperation.getMatchingAmounts();
-		if (matchingAmounts.size() == 1) {
-			return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId="
-					+ matchingAmounts.get(0).getMatchingCode().getId()
-					+ "&edit=false&faces-redirect=true";
-		}
-		return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId="
-				+ accountOperation.getId() + "&edit=false&faces-redirect=true";
-	}
+    public String consultMatching(long customerAccountId) {
+        List<Long> operationIds = new ArrayList<Long>();
+        log.debug("getChecked():" + getSelectedEntities());
+        for (IEntity operation : getSelectedEntities()) {
+            operationIds.add((Long) operation.getId());
+        }
+        log.info(" consultMatching operationIds " + operationIds);
+        if (operationIds.isEmpty() || operationIds.size() > 1) {
+            messages.info(new BundleKey("messages", "consultMatching.noOperationSelected"));
 
-	public List<MatchingAmount> getMatchingAmounts() {
-		return matchingAmounts;
-	}
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
+        }
+        AccountOperation accountOperation = accountOperationService.findById(operationIds.get(0));
+        if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L && accountOperation.getMatchingStatus() != MatchingStatusEnum.P) {
+            messages.info(new BundleKey("messages", "consultMatching.operationNotMatched"));
 
-	public void setMatchingAmounts(List<MatchingAmount> matchingAmounts) {
-		this.matchingAmounts = matchingAmounts;
-	}
+            return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
+        }
+        matchingAmounts = accountOperation.getMatchingAmounts();
+        if (matchingAmounts.size() == 1) {
+            return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId=" + matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false&faces-redirect=true";
+        }
+        return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId=" + accountOperation.getId() + "&edit=false&faces-redirect=true";
+    }
 
-	public String getDate() {
-		return (new Date()).toString();
-	}
+    public List<MatchingAmount> getMatchingAmounts() {
+        return matchingAmounts;
+    }
 
-	public LazyDataModel<AccountOperation> getAccountOperations(
-			CustomerAccount ca) {
-		if (!ca.isTransient()) {
-			filters.put("customerAccount", ca);
-			return getLazyDataModel();
-		} else {
-			return null;
-		}
-	}
+    public void setMatchingAmounts(List<MatchingAmount> matchingAmounts) {
+        this.matchingAmounts = matchingAmounts;
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("customerAccount");
-	}
+    public String getDate() {
+        return (new Date()).toString();
+    }
 
-	@Override
-	protected List<String> getListFieldsToFetch() {
-		return Arrays.asList("customerAccount");
-	}
-	
-	@Override
-	public void deleteInlist() {
-		//	accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
-	    super.deleteInlist();	
-	}
-	
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException { 
-		super.saveOrUpdate(killConversation);
-		return null;
-	}
+    public LazyDataModel<AccountOperation> getAccountOperations(CustomerAccount ca) {
+        if (!ca.isTransient()) {
+            filters.put("customerAccount", ca);
+            return getLazyDataModel();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("customerAccount");
+    }
+
+    @Override
+    protected List<String> getListFieldsToFetch() {
+        return Arrays.asList("customerAccount");
+    }
+
+    @Override
+    public void deleteInlist() {
+        // accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
+        super.deleteInlist();
+    }
+
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        super.saveOrUpdate(killConversation);
+        return null;
+    }
 
 }

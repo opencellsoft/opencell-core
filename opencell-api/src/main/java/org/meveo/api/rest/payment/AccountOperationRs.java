@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -16,6 +17,7 @@ import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -90,23 +92,35 @@ public interface AccountOperationRs extends IBaseRs {
 
     /**
      * Finds an accountOperation given an id.
+     * 
      * @param id id of the account operation
      * @return
      */
     @GET
     @Path("/")
     AccountOperationResponseDto find(@QueryParam("id") Long id);
-    
-	/**
-	 * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
-	 * 
-	 * @param customerAccountCode
-	 * @param aoId
-	 * @param paymentMethod
-	 * @return Request processing status
-	 */
+
+    /**
+     * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
+     * 
+     * @param customerAccountCode
+     * @param aoId
+     * @param paymentMethod
+     * @return Request processing status
+     */
     @PUT
     @Path("/updatePaymentMethod")
-    ActionStatus updatePaymentMethod(@QueryParam("customerAccountCode")String customerAccountCode,@QueryParam("aoId") Long aoId,@QueryParam("paymentMethod") PaymentMethodEnum paymentMethod);
-    
+    ActionStatus updatePaymentMethod(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("aoId") Long aoId,
+            @QueryParam("paymentMethod") PaymentMethodEnum paymentMethod);
+
+    /**
+     * List matched operations for a given account operation
+     * 
+     * @param accountOperationId Account operation identifier
+     * @return A list of matched operations
+     */
+    @GET
+    @Path("/{accountOperationId}/listMatchedOperations")
+    public MatchedOperationsResponseDto listMatchedOperations(@PathParam("accountOperationId") Long accountOperationId);
+
 }

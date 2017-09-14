@@ -49,6 +49,7 @@ import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
+import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -395,6 +396,15 @@ public interface AccountWs extends IBaseWs {
 
     @WebMethod
     ActionStatus unMatchingOperations(@WebParam(name = "unMatchingOperationRequest") UnMatchingOperationRequestDto postData);
+
+    /**
+     * List matched operations for a given account operation
+     * 
+     * @param accountOperationId Account operation identifier
+     * @return A list of matched operations
+     */
+    @WebMethod
+    public MatchedOperationsResponseDto listMatchedOperations(@WebParam(name = "accountOperationId") Long accountOperationId);
 
     @WebMethod
     ActionStatus addLitigation(@WebParam(name = "addLitigationRequest") LitigationRequestDto postData);

@@ -1,10 +1,5 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-	xmlns:p="http://primefaces.org/ui"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+    xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -12,38 +7,30 @@
         </f:metadata>
     </ui:define>
 
-	<ui:define name="body">	
-	<p:panel>				
-				<hftl:formPanel  showFormButtons ="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
-						<hftl:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate" disabled="true" />	  
-						<hftl:formField label="#{messages['matchingCode.matchingType']}" field="matchingType" disabled="true"/>
-						<hftl:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" disabled="true" converter="bigDecimal4DigitsConverter"/>
-						<hftl:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" disabled="true" converter="bigDecimal4DigitsConverter"/>																		                  																						
-					<p:commandButton value="#{messages['action.back']}"	 onclick="window.history.back();"/>						
-					<p:commandButton value="#{messages['matchingCode.button.unmatching']}"	 action="#{matchingCodeBean.unmatching()}"/>
-				</hftl:formPanel>
-				<p:panel label="#{messages['customerAccount.operations']}">
-					<hftl:dataList backingBean="#{matchingCodeBean}"
-						dataModel="#{matchingCodeBean.entity.matchingAmounts}"
-						edit="#{false}" checkMany="#{false}">
-						<hftl:column label="#{messages['accountOperation.occCode']}"
-							field="accountOperation.occCode" />					
-						<hftl:column
-							label="#{messages['accountOperation.occDescription']}"
-							field="accountOperation.occDescription" />
-						<hftl:column label="#{messages['accountOperation.transactionDate']}"
-							field="accountOperation.transactionDate" isDate="true" />						
-						<hftl:column label="#{messages['accountOperation.dueDate']}"
-							field="accountOperation.dueDate" isDate="true" />
-						<hftl:column label="#{messages['accountOperation.credit']}"
-							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}" converterParam="4digits" />
-						<hftl:column label="#{messages['accountOperation.debit']}"
-							field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}"  converterParam="4digits"/>								- 					
-	                    <hftl:column label="#{messages['matchingAmount.amount']}"
-							field="matchingAmount"  converterParam="4digits" />								-							
+    <ui:define name="body">
+        <p:panel>
+            <hftl:formPanel showFormButtons="#{false}" label="#{messages['matchingCode.panel']}" backingBean="#{matchingCodeBean}">
+                <hftl:formField label="#{messages['matchingCode.matchingDate']}" field="matchingDate" disabled="true" />
+                <hftl:formField label="#{messages['matchingCode.matchingType']}" field="matchingType" disabled="true" />
+                <hftl:formField label="#{messages['matchingCode.matchingAmountDebit']}" field="matchingAmountDebit" disabled="true" converter="bigDecimal4DigitsConverter" />
+                <hftl:formField label="#{messages['matchingCode.matchingAmountCredit']}" field="matchingAmountCredit" disabled="true" converter="bigDecimal4DigitsConverter" />
+                <p:commandButton value="#{messages['action.back']}" onclick="window.history.back();" />
+                <p:commandButton value="#{messages['matchingCode.button.unmatching']}" action="#{matchingCodeBean.unmatching()}" />
+            </hftl:formPanel>
+            <p:panel label="#{messages['customerAccount.operations']}">
+                <hftl:dataList backingBean="#{matchingCodeBean}" dataModel="#{matchingCodeBean.entity.matchingAmounts}" edit="#{false}" checkMany="#{false}">
+                    <hftl:column label="#{messages['accountOperation.occCode']}" field="accountOperation.occCode" />
+                    <hftl:column label="#{messages['accountOperation.occDescription']}" field="accountOperation.occDescription" />
+                    <hftl:column label="#{messages['accountOperation.transactionDate']}" field="accountOperation.transactionDate" isDate="true" />
+                    <hftl:column label="#{messages['accountOperation.dueDate']}" field="accountOperation.dueDate" isDate="true" />
+                    <hftl:column label="#{messages['accountOperation.credit']}" field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'CREDIT'}"
+                        converterParam="4digits" />
+                    <hftl:column label="#{messages['accountOperation.debit']}" field="accountOperation.amount" show="#{entity.accountOperation.transactionCategory.toString() == 'DEBIT'}"
+                        converterParam="4digits" />								- 					
+	                    <hftl:column label="#{messages['matchingAmount.amount']}" field="matchingAmount" converterParam="4digits" />								-							
 					</hftl:dataList>
-				</p:panel>
-				
-			</p:panel>		
-		</ui:define>
+            </p:panel>
+
+        </p:panel>
+    </ui:define>
 </ui:composition>
