@@ -89,7 +89,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
             MatchingAmount matchingAmount = new MatchingAmount();
             if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
-                if (amountCredit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                if (amountCredit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                     fullMatch = true;
                     amountToMatch = accountOperation.getUnMatchingAmount();
                     amountCredit = amountCredit.subtract(amountToMatch);
@@ -100,7 +100,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                 }
 
             } else {
-                if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                     fullMatch = true;
                     amountToMatch = accountOperation.getUnMatchingAmount();
                     amountDebit = amountDebit.subtract(amountToMatch);
@@ -138,7 +138,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
                 MatchingAmount matchingAmount = new MatchingAmount();
                 if (accountOperation.getTransactionCategory() == OperationCategoryEnum.CREDIT) {
-                    if (amountCredit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                    if (amountCredit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                         fullMatch = true;
                         amountToMatch = accountOperation.getUnMatchingAmount();
                         amountCredit = amountCredit.subtract(amountToMatch);
@@ -149,7 +149,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
                     }
 
                 } else {
-                    if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) > 0) {
+                    if (amountDebit.compareTo(accountOperation.getUnMatchingAmount()) >= 0) {
                         fullMatch = true;
                         amountToMatch = accountOperation.getUnMatchingAmount();
                         amountDebit = amountDebit.subtract(amountToMatch);

@@ -11,6 +11,7 @@ import org.meveo.api.dto.BaseDto;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
+import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 
@@ -86,6 +87,8 @@ public class MatchedOperationDto extends BaseDto {
      */
     private BigDecimal matchedTransactionAmount;
 
+    private MatchingStatusEnum matchingStatus;
+
     public MatchedOperationDto() {
 
     }
@@ -107,7 +110,7 @@ public class MatchedOperationDto extends BaseDto {
         dueDate = ao.getDueDate();
         transactionAmount = ao.getAmount();
         matchedTransactionAmount = ao.getMatchingAmount();
-
+        matchingStatus = ao.getMatchingStatus();
     }
 
     public Long getMatchingId() {
@@ -204,6 +207,14 @@ public class MatchedOperationDto extends BaseDto {
 
     public void setMatchedTransactionAmount(BigDecimal matchedTransactionAmount) {
         this.matchedTransactionAmount = matchedTransactionAmount;
+    }
+
+    public MatchingStatusEnum getMatchingStatus() {
+        return matchingStatus;
+    }
+
+    public void setMatchingStatus(MatchingStatusEnum matchingStatus) {
+        this.matchingStatus = matchingStatus;
     }
 
     @Override
