@@ -38,6 +38,8 @@ public class ServiceToActivateDto implements Serializable {
     // @ApiModelProperty(hidden = true)
     private ServiceTemplate serviceTemplate;
 
+    private Date rateUntilDate;
+    
     public String getCode() {
         return code;
     }
@@ -93,4 +95,13 @@ public class ServiceToActivateDto implements Serializable {
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
+
+	public Date getRateUntilDate() {
+		return rateUntilDate;
+	}
+
+	public void setRateUntilDate(Date rateUtilDate) {
+		this.rateUntilDate = rateUtilDate;
+	}
+        
 }

@@ -117,7 +117,12 @@ public enum OrderProductCharacteristicEnum {
     /**
      * The criteria3
      */
-    CRITERIA_3("criteria_3", String.class);
+    CRITERIA_3("criteria_3", String.class), 
+    
+    /**
+     * The rate_until_date, if set so the recurring charge will be rated on activation service until this date
+     */
+    RATE_UNTIL_DATE("rate_until_date", Date.class);
 
     protected String characteristicName;
 
