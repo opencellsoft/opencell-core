@@ -696,8 +696,10 @@
 	<changeSet id="performance_20170830" author="TienLanPHUNG">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
+		<sql>DROP INDEX IF EXISTS transaction_billing_account_index</sql>
+		<sql>CREATE INDEX transaction_billing_account_index ON billing_rated_transaction(billing_account__id)</sql>
 		<sql>DROP INDEX IF EXISTS transaction_billing_index</sql>
-		<sql>CREATE INDEX transaction_billing_index ON billing_rated_transaction(billing_account__id, invoice_id,wallet_id, invoice_sub_category_id)</sql>
+		<sql>CREATE INDEX transaction_billing_index ON billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
 		<sql>DROP INDEX IF EXISTS invoice_agre_index</sql>
 		<sql>CREATE INDEX invoice_agre_index ON billing_invoice_agregate(invoice_id)</sql>
 		<sql>DROP INDEX IF EXISTS billing_recurring_charge_inst_index</sql>
@@ -755,13 +757,17 @@
 		<sql>DROP INDEX IF EXISTS billing_invoice_index</sql>
 		<sql>CREATE INDEX billing_invoice_index ON billing_invoice(invoice_id, invoice_type_id)</sql>
 		<sql>DROP INDEX IF EXISTS billing_wallet_operation_index</sql>
-		<sql>CREATE INDEX billing_wallet_operation_index ON billing_wallet_operation(invoicing_date,status, wallet_id, charge_instance_id)</sql>
+		<sql>CREATE INDEX billing_wallet_operation_index ON billing_wallet_operation(wallet_id, charge_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_operation_status_index</sql>
+		<sql>CREATE INDEX billing_wallet_operation_status_index ON billing_wallet_operation(invoicing_date,status)</sql>
 		<sql>DROP INDEX IF EXISTS billing_wallet_index</sql>
 		<sql>CREATE INDEX billing_wallet_index ON billing_wallet(user_account_id,cat_wallet_template_id)</sql>
 		<sql>DROP INDEX IF EXISTS billing_charge_instance_index</sql>
 		<sql>CREATE INDEX billing_charge_instance_index ON billing_charge_instance(invoicing_calendar_id, lower(code), charge_template_id)</sql>
 		<sql>DROP INDEX IF EXISTS billing_reservation_index</sql>
 		<sql>CREATE INDEX billing_reservation_index ON billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
+		<sql>DROP INDEX IF EXISTS rated_transaction_number</sql>
+		<sql>CREATE INDEX rated_transaction_number ON billing_rated_transaction(order_number)</sql>
 	</changeSet>
 
     
