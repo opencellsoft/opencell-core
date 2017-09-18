@@ -177,7 +177,8 @@ public class PaymentMethodDto extends BaseDto {
 		this.monthExpiration = cardPaymentMethodDto.getMonthExpiration();
 		this.yearExpiration = cardPaymentMethodDto.getYearExpiration();
 		this.issueNumber = cardPaymentMethodDto.getIssueNumber();
-		this.tokenId = cardPaymentMethodDto.getTokenId();       
+		this.tokenId = cardPaymentMethodDto.getTokenId();   
+		this.customerAccountCode = cardPaymentMethodDto.getCustomerAccountCode();
 	}
 
 
