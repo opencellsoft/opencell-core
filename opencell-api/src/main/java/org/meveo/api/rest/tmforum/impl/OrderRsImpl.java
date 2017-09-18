@@ -10,14 +10,10 @@ import javax.interceptor.Interceptors;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.billing.OrderApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.api.exception.ActionForbiddenException;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.dto.billing.ApplicableDueDateDelayDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.OrderRs;
@@ -148,4 +144,44 @@ public class OrderRsImpl extends BaseRs implements OrderRs {
         log.debug("RESPONSE={}", response.getEntity());
         return response;
     }
+
+	@Override
+	public Response applicableDueDateDelay(String orderId, UriInfo info) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		Response.ResponseBuilder responseBuilder = null;
+
+		try {
+			responseBuilder = Response.ok().entity(orderApi.applicableDueDateDelay(orderId));
+
+		} catch (Exception e) {
+			processException(e, result);
+			responseBuilder.entity(result);
+		}
+
+		Response response = responseBuilder.build();
+		log.debug("RESPONSE={}", response.getEntity());
+		return response;
+	}
+
+	@Override
+	public Response simpleDueDateDelay(String orderId, ApplicableDueDateDelayDto postData, UriInfo info) {
+		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+		Response.ResponseBuilder responseBuilder = null;
+
+		try {
+			orderApi.simpleDueDateDelay(orderId, postData);
+
+			responseBuilder = Response.ok();
+
+		} catch (Exception e) {
+			processException(e, result);
+			responseBuilder.entity(result);
+		}
+
+		Response response = responseBuilder.build();
+		log.debug("RESPONSE={}", response.getEntity());
+		return response;
+	}
 }
