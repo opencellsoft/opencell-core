@@ -202,7 +202,11 @@ public class MeveoFunctionMapper extends FunctionMapper {
             addFunction("mv", "getBean", EjbUtils.class.getMethod("getServiceInterface", String.class));
            
             addFunction("mv", "addToDate", MeveoFunctionMapper.class.getMethod("addToDate", Date.class, Long.class, Long.class));
-
+            
+            addFunction("mv", "getEndOfMonth", MeveoFunctionMapper.class.getMethod("getEndOfMonth", Date.class));
+            
+            addFunction("mv", "getStartOfNextMonth", MeveoFunctionMapper.class.getMethod("getStartOfNextMonth", Date.class));
+            
             // addFunction("mv", "call", MeveoFunctionMapper.class.getMethod("call", String.class, String.class,String.class, Object[].class));
         } catch (NoSuchMethodException | SecurityException e) {
             Logger log = LoggerFactory.getLogger(this.getClass());
@@ -1174,4 +1178,23 @@ public class MeveoFunctionMapper extends FunctionMapper {
         }
         return result;
     }
+    
+	public static Date getEndOfMonth(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+
+		return c.getTime();
+	}
+
+	public static Date getStartOfNextMonth(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		c.add(Calendar.MONTH, 1);
+
+		return c.getTime();
+	}
+    
+    
 }

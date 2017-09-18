@@ -4,6 +4,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.api.dto.billing.ApplicableDueDateDelayDto;
 import org.meveo.api.rest.PATCH;
 import org.tmf.dsmapi.catalog.resource.order.ProductOrder;
 
@@ -80,4 +82,27 @@ public interface OrderRs {
     @DELETE
     @Path("/{orderId}")
     public Response deleteProductOrder(@PathParam("orderId") String id, @Context UriInfo info);
+    
+    /**
+     * Evaluate and return the dueDateDelayEL. It checks the EL in this order: Order, CustomerAccount, BillingCycle.
+     * 
+     * @param orderId
+     * @param info
+     * @return
+     */
+    @GET
+    @Path("/{orderId}/applicableDueDateDelay")
+    public Response applicableDueDateDelay(@PathParam("orderId") String orderId, @Context UriInfo info);
+    
+    /**
+     * Updates the dueDateDelayEL of an Order. 
+     * 
+     * @param orderId
+     * @param postData
+     * @param info
+     * @return
+     */
+    @PUT
+    @Path("/{orderId}/simpleDueDateDelay")
+    public Response simpleDueDateDelay(@PathParam("orderId") String orderId, ApplicableDueDateDelayDto postData, @Context UriInfo info);
 }
