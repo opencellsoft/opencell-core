@@ -1169,7 +1169,10 @@ public class OrderApi extends BaseApi {
 			result.setLevel(DueDateDelayLevelEnum.ORDER);
 			result.setDueDateDelayEL(order.getDueDateDelayEL());
 		} else {
-			BillingAccount ba = order.getOrderItems().get(0).getSubscription().getUserAccount().getBillingAccount();
+			BillingAccount ba = null;
+			if (order.getOrderItems().get(0).getSubscription() != null) {
+				ba = order.getOrderItems().get(0).getSubscription().getUserAccount().getBillingAccount();
+			}
 			if (!org.meveo.commons.utils.StringUtils.isBlank(ba.getCustomerAccount().getDueDateDelayEL())) {
 				result.setLevel(DueDateDelayLevelEnum.CA);
 				result.setDueDateDelayEL(ba.getCustomerAccount().getDueDateDelayEL());
