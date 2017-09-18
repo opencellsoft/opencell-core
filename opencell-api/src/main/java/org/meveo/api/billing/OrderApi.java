@@ -807,6 +807,8 @@ public class OrderApi extends BaseApi {
 				service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct,
 						OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
 						DateUtils.setTimeToZero(new Date())));
+				service.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(), Date.class,
+                        DateUtils.setTimeToZero(new Date())));
 
 				// FIX - no way to set value via API
 				// service.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct,

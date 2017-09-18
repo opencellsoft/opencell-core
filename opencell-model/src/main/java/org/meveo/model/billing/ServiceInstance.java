@@ -121,6 +121,10 @@ public class ServiceInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "rate_until_date")
+    private Date rateUntilDate;
 	
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -248,6 +252,15 @@ public class ServiceInstance extends BusinessCFEntity {
 
 	public void setOrderNumber(String orderNumber) {
 		this.orderNumber = orderNumber;
+	}
+
+	
+	public Date getRateUntilDate() {
+		return rateUntilDate;
+	}
+
+	public void setRateUntilDate(Date rateUntilDate) {
+		this.rateUntilDate = rateUntilDate;
 	}
 
 	public boolean equals(Object obj) {

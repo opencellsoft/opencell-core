@@ -756,6 +756,8 @@ public class QuoteApi extends BaseApi {
                 Date.class, subscription.getSubscriptionDate()));
             serviceInstance.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(),
                 Date.class, subscription.getEndAgreementDate()));
+            serviceInstance.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
+                    Date.class, subscription.getEndAgreementDate()));
 
             String terminationReasonCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
                 String.class, null);

@@ -880,6 +880,13 @@
         <dropTable tableName="tmp_desc_values" />
         <!--     <dropTable tableName="adm_messages"/> // NOTE: Drop table after you are sure that description translation values were migrated correctly -->
     </changeSet>
+    
+    <changeSet id="#2845_20170914" author="anasseh">       
+        <addColumn tableName="billing_service_instance">
+            <column name="rate_until_date" type="datetime" />           
+        </addColumn>
+        <sql>update billing_service_instance set rate_until_date = status_date</sql>
+    </changeSet>
 
     <changeSet id="#2759_20170907" author="anasseh">    
         <addColumn tableName="ar_customer_account">

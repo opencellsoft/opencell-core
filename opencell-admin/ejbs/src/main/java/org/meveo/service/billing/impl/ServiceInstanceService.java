@@ -332,7 +332,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                     agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
                 }
             }
-            int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(), new Date());
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(), serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate() );
             log.debug("rated " + nbRating + " missing periods during activation");
         }
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {

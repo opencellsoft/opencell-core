@@ -390,6 +390,7 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setDescription(serviceTemplate.getDescription());
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
+                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
 
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
@@ -541,7 +542,8 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setCode(serviceTemplate.getCode());
                 serviceInstance.setDescription(serviceTemplate.getDescription());
                 serviceInstance.setServiceTemplate(serviceTemplate);
-                serviceInstance.setSubscription(subscription);
+                serviceInstance.setSubscription(subscription);      
+                serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
 
                 if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
