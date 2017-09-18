@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -15,11 +14,11 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.async.PaymentCardAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.ApplicationProvider;
@@ -69,7 +68,7 @@ public class PaymentCardJobBean {
 				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
 			}
 			
-			List<Long> ids = recordedInvoiceService.getAOidsToPay();		
+			List<Long> ids = recordedInvoiceService.getAOidsToPay(PaymentMethodEnum.CARD);		
 			log.debug("AO to pay:" + ids.size());
 			result.setNbItemsToProcess(ids.size());
 

@@ -881,4 +881,30 @@
         <!--     <dropTable tableName="adm_messages"/> // NOTE: Drop table after you are sure that description translation values were migrated correctly -->
     </changeSet>
 
+    <changeSet id="#2759_20170907" author="anasseh">    
+        <addColumn tableName="ar_customer_account">
+            <column name="excluded_from_payment" type="${type.boolean}" defaultValueNumeric="0" />           
+        </addColumn>
+        <addColumn tableName="ar_payment_token">
+            <column name="creator" type="varchar(100)" />
+        </addColumn>  
+        <addColumn tableName="ar_payment_token">    
+            <column name="updater" type="varchar(100)" />   
+        </addColumn>    
+        <addColumn tableName="ar_payment_token">    
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>   
+        </addColumn>  
+        <addColumn tableName="ar_payment_token">    
+           <column name="updated" type="datetime" />   
+        </addColumn>  
+        <addColumn tableName="ar_payment_token">
+             <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>           
+        </addColumn>  
+        <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
+    </changeSet>
+    
 </databaseChangeLog> 

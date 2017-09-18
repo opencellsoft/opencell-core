@@ -66,19 +66,19 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
     public DDRequestLOT createDDRquestLot(Date fromDueDate, Date toDueDate, DDRequestFileFormatEnum ddRequestFileFormatEnum) throws BusinessEntityException, Exception {
         log.info("createDDRquestLot fromDueDate: {}   toDueDate: {}", fromDueDate, toDueDate);
 
-        if (fromDueDate == null) {
-            throw new BusinessEntityException("fromDuDate is empty");
-        }
-        if (toDueDate == null) {
-            throw new BusinessEntityException("toDueDate is empty");
-        }
-        if (fromDueDate.after(toDueDate)) {
-            throw new BusinessEntityException("fromDueDate is after toDueDate");
-        }
-        List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoices(fromDueDate, toDueDate);
-        if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
-            throw new BusinessEntityException("no invoices!");
-        }
+		if (fromDueDate == null) {
+			throw new BusinessEntityException("fromDuDate is empty");
+		}
+		if (toDueDate == null) {
+			throw new BusinessEntityException("toDueDate is empty");
+		}
+		if (fromDueDate.after(toDueDate)) {
+			throw new BusinessEntityException("fromDueDate is after toDueDate");
+		}
+		List<RecordedInvoice> recordedInvoices = recordedInvoiceService.getInvoicesToPay(fromDueDate, toDueDate,PaymentMethodEnum.DIRECTDEBIT);
+		if ((recordedInvoices == null) || (recordedInvoices.isEmpty())) {
+			throw new BusinessEntityException("no invoices!");
+		}
 
         log.info("number invoices: {}", recordedInvoices.size());
 

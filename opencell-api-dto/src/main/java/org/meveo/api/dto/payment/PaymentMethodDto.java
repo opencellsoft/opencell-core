@@ -35,9 +35,12 @@ public class PaymentMethodDto extends BaseDto {
 	@XmlAttribute()
 	private PaymentMethodEnum paymentMethodType;
 
-	private Long id;
+    private Long id;
+    
+    private boolean disabled = false;
+    
+    private String alias;
 
-	private String alias;
 
 	private boolean preferred;
 
@@ -114,46 +117,48 @@ public class PaymentMethodDto extends BaseDto {
 		this.mandateDate = mandateDate;		
 	}
 
-	public PaymentMethodDto(PaymentMethod paymentMethod) {
-		this.id = paymentMethod.getId();
-		this.alias = paymentMethod.getAlias();
-		this.preferred = paymentMethod.isPreferred();
-		this.userId = paymentMethod.getUserId();
-		this.info1 = paymentMethod.getInfo1();
-		this.info2 = paymentMethod.getInfo2();
-		this.info3 = paymentMethod.getInfo3();
-		this.info4 = paymentMethod.getInfo4();
-		this.info5 = paymentMethod.getInfo5();
-		// if (paymentMethod.getCustomerAccount() != null) {
-		// this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
-		// }
-		if (paymentMethod instanceof DDPaymentMethod) {
-			this.setPaymentMethodType(PaymentMethodEnum.DIRECTDEBIT);
-			this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
-			this.mandateIdentification = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
-			this.bankCoordinates = new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates());
-		}
-		if (paymentMethod instanceof TipPaymentMethod) {
-			this.setPaymentMethodType(PaymentMethodEnum.TIP);
-			this.bankCoordinates = new BankCoordinatesDto(((TipPaymentMethod) paymentMethod).getBankCoordinates());
-		}
-		if (paymentMethod instanceof CardPaymentMethod) {
-			this.setPaymentMethodType(PaymentMethodEnum.CARD);
-			this.cardNumber =  ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
-			this.owner = ((CardPaymentMethod) paymentMethod).getOwner();
-			this.cardType = ((CardPaymentMethod) paymentMethod).getCardType();
-			this.monthExpiration = ((CardPaymentMethod) paymentMethod).getMonthExpiration();
-			this.yearExpiration = ((CardPaymentMethod) paymentMethod).getYearExpiration();
-			this.issueNumber = ((CardPaymentMethod) paymentMethod).getIssueNumber();
-			this.tokenId = ((CardPaymentMethod) paymentMethod).getTokenId();
-		}
-		if (paymentMethod instanceof CheckPaymentMethod) {
-			this.setPaymentMethodType(PaymentMethodEnum.CHECK);
-		}
-		if (paymentMethod instanceof WirePaymentMethod) {
-			this.setPaymentMethodType(PaymentMethodEnum.WIRETRANSFER);
-		}
-	}
+    public PaymentMethodDto(PaymentMethod paymentMethod) {
+        this.id = paymentMethod.getId();
+        this.disabled = paymentMethod.isDisabled();
+        this.alias = paymentMethod.getAlias();
+        this.preferred = paymentMethod.isPreferred();
+        this.userId = paymentMethod.getUserId();
+        this.info1 = paymentMethod.getInfo1();
+        this.info2 = paymentMethod.getInfo2();
+        this.info3 = paymentMethod.getInfo3();
+        this.info4 = paymentMethod.getInfo4();
+        this.info5 = paymentMethod.getInfo5();
+        if (paymentMethod.getCustomerAccount() != null) {
+            this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
+        }
+        if (paymentMethod instanceof DDPaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.DIRECTDEBIT);
+            this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
+            this.mandateIdentification = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
+            this.bankCoordinates = new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates());
+        }
+        if (paymentMethod instanceof TipPaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.TIP);
+            this.bankCoordinates = new BankCoordinatesDto(((TipPaymentMethod) paymentMethod).getBankCoordinates());
+        }
+        if (paymentMethod instanceof CardPaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.CARD);
+            this.cardNumber = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
+            this.owner = ((CardPaymentMethod) paymentMethod).getOwner();
+            this.cardType = ((CardPaymentMethod) paymentMethod).getCardType();
+            this.monthExpiration = ((CardPaymentMethod) paymentMethod).getMonthExpiration();
+            this.yearExpiration = ((CardPaymentMethod) paymentMethod).getYearExpiration();
+            this.issueNumber = ((CardPaymentMethod) paymentMethod).getIssueNumber();
+            this.tokenId = ((CardPaymentMethod) paymentMethod).getTokenId();
+        }
+        if (paymentMethod instanceof CheckPaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.CHECK);
+        }
+        if (paymentMethod instanceof WirePaymentMethod) {
+            this.setPaymentMethodType(PaymentMethodEnum.WIRETRANSFER);
+        }
+    }
+
 
 	public PaymentMethodDto(CardPaymentMethodDto cardPaymentMethodDto) {
 		this.setPaymentMethodType(PaymentMethodEnum.CARD);
@@ -175,85 +180,50 @@ public class PaymentMethodDto extends BaseDto {
 		this.tokenId = cardPaymentMethodDto.getTokenId();       
 	}
 
-	public PaymentMethod fromDto(CustomerAccount customerAccount) {
-		PaymentMethod pmEntity = null;
-		switch (getPaymentMethodType()) {
-		case CARD:
-			pmEntity = new CardPaymentMethod(customerAccount, getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(), getMonthExpiration(),
-					getCardType());
-			break;
 
-		case DIRECTDEBIT:
-			pmEntity = new DDPaymentMethod(customerAccount, getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
-					getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
-			break;
+    public PaymentMethod fromDto(CustomerAccount customerAccount) {
+        PaymentMethod pmEntity = null;
+        switch (getPaymentMethodType()) {
+        case CARD:
+            pmEntity = new CardPaymentMethod(customerAccount,isDisabled(), getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(), getMonthExpiration(),
+                getCardType());
+            break;
 
-		case TIP:
-			pmEntity = new TipPaymentMethod(customerAccount, getAlias(), getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
-			break;
+        case DIRECTDEBIT:
+            pmEntity = new DDPaymentMethod(customerAccount, isDisabled(),getAlias(),isPreferred(), getMandateDate(), getMandateIdentification(),
+                getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
+            break;
 
-		case CHECK:
-			pmEntity = new CheckPaymentMethod(alias, preferred, customerAccount);
-			break;
+        case TIP:
+            pmEntity = new TipPaymentMethod(customerAccount,isDisabled(), getAlias(), getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
+            break;
 
-		case WIRETRANSFER:
-			pmEntity = new WirePaymentMethod(alias, preferred, customerAccount);
-			break;
-		}
-		return pmEntity;
-	}
+        case CHECK:
+            pmEntity = new CheckPaymentMethod(isDisabled(),alias, preferred, customerAccount);
+            break;
 
-	public PaymentMethod updateFromDto(PaymentMethod paymentMethod) {
-		if (isPreferred()) {
-			paymentMethod.setPreferred(true);
-		} else {
+        case WIRETRANSFER:
+            pmEntity = new WirePaymentMethod(isDisabled(),alias, preferred, customerAccount);
+            break;
+        }
+        return pmEntity;
+    }
+
+
+    public PaymentMethod updateFromDto(PaymentMethod paymentMethod) {
+        if (isPreferred()) {
+            paymentMethod.setPreferred(true);
+        }  else {
 			// DO NOT set as not prefered. User must explicitly specify what payment method is preferred
 		}
 
-		if (getAlias() != null) {
-			paymentMethod.setAlias(getAlias());
-		}
-		switch (getPaymentMethodType()) {
-		case TIP:
-			if (getBankCoordinates() != null) {
-				if (!StringUtils.isBlank(getBankCoordinates().getAccountNumber())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountNumber());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getAccountOwner())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setAccountOwner(getBankCoordinates().getAccountOwner());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getBankCode())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankCode(getBankCoordinates().getBankCode());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getBankId())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankId(getBankCoordinates().getBankId());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getBankName())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankName(getBankCoordinates().getBankName());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getBic())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setBic(getBankCoordinates().getBic());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getBranchCode())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setBranchCode(getBankCoordinates().getBranchCode());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getIban())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setIban(getBankCoordinates().getIban());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getIcs())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setIcs(getBankCoordinates().getIcs());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getIssuerName())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setIssuerName(getBankCoordinates().getIssuerName());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getIssuerNumber())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setIssuerNumber(getBankCoordinates().getIssuerNumber());
-				}
-				if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
-					((TipPaymentMethod) paymentMethod).getBankCoordinates().setKey(getBankCoordinates().getKey());
-				}
-			}
-			break;
+
+        if (getAlias() != null) {
+            paymentMethod.setAlias(getAlias());
+        }
+        paymentMethod.setDisabled(isDisabled());
+        
+        switch (getPaymentMethodType()) {
 
 		case DIRECTDEBIT:
 
@@ -482,7 +452,14 @@ public class PaymentMethodDto extends BaseDto {
 	public void validate() {
 		validate(false);
 	}
+	
+    public boolean isDisabled() {
+		return disabled;
+	}
 
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
 	public void validate(boolean isRoot) {
 		if (getPaymentMethodType() == null) {
 			throw new InvalidDTOException("Missing payment method type");
@@ -547,13 +524,12 @@ public class PaymentMethodDto extends BaseDto {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id + ", alias=" + alias + ", preferred=" + preferred + ", customerAccountCode="
-				+ customerAccountCode + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4=" + info4 + ", info5=" + info5 + ", bankCoordinates="
-				+ bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", cardType=" + cardType + ", owner=" + owner
-				+ ", monthExpiration=" + monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="
-				+ CardPaymentMethod.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + "]";
-	}
-
+    @Override
+    public String toString() {
+        return "PaymentMethodDto [paymentMethodType=" + paymentMethodType + ", id=" + id  + ", disabled=" + disabled + ", alias=" + alias + ", preferred=" + preferred + ", customerAccountCode="
+                + customerAccountCode + ", info1=" + info1 + ", info2=" + info2 + ", info3=" + info3 + ", info4=" + info4 + ", info5=" + info5 + ", bankCoordinates="
+                + bankCoordinates + ", mandateIdentification=" + mandateIdentification + ", mandateDate=" + mandateDate + ", cardType=" + cardType + ", owner=" + owner
+                + ", monthExpiration=" + monthExpiration + ", yearExpiration=" + yearExpiration + ", tokenId=" + tokenId + ", cardNumber="
+                + CardPaymentMethod.hideCardNumber(cardNumber) + ", issueNumber=" + issueNumber + ", userId=" + userId + "]";
+    }
 }
