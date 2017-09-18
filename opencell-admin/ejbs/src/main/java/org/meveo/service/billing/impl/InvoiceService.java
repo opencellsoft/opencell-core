@@ -380,14 +380,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             if (paymentMethod == null) {
-
-                List<PaymentMethod> paymentMethods = customerAccountService.getPaymentMethods(billingAccount);
-                if (paymentMethods != null && paymentMethods.size() > 0) {
-                    paymentMethod = paymentMethods.get(0);
-
-                }
-                // paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
-
+                paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
             }
 
             if (paymentMethod != null) {
