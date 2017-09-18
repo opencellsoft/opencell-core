@@ -119,14 +119,6 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
 
         String coutryCode = null;  //TODO : waiting #2830 
-        if(!customerAccount.isTransient()){        	       	       
-	    	if(customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0){
-	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
-	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
-	    		}
-	    	}
-        }
-        
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try{
         

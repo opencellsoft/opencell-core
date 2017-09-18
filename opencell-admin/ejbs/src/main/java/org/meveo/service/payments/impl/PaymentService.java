@@ -171,15 +171,8 @@ public class PaymentService extends PersistenceService<Payment> {
             CreditCardTypeEnum cardType, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-    	String coutryCode = null;
-    	//TODO : waiting #2830 
-    	if(!customerAccount.isTransient()){	    	
-	    	if(customerAccount.getBillingAccounts() != null && customerAccount.getBillingAccounts().size() > 0){
-	    		if(customerAccount.getBillingAccounts().get(0).getTradingCountry() != null){
-	    			coutryCode = customerAccount.getBillingAccounts().get(0).getTradingCountry().getCountryCode();
-	    		}
-	    	}
-    	}
+    	String coutryCode = null;//TODO : waiting #2830
+    	     	
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try{        
 	         gatewayPaymentInterface = gatewayPaymentFactory
