@@ -224,7 +224,7 @@ public class CardPaymentMethod extends PaymentMethod {
         if (cardNumber == null) {
             return "invalid";
         }
-        cardNumber = cardNumber.trim();
+        cardNumber = cardNumber.replaceAll("\\s+","");
         if (cardNumber.length() == 4 || cardNumber.length() == 16) {
             return cardNumber.substring(cardNumber.length() - 4);
         }
