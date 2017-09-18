@@ -26,7 +26,7 @@
                 </p:column>
                 <hftl:column label="#{messages['accountOperation.matchingStatus']}" field="accountOperation.matchingStatus.label" isMessage="true" />
                 <p:column styleClass="actions-column" headerText="#{messages['commons.actions']}">
-                    <h:commandLink id="selectPartialOcc" value="#{messages['matching.buttonSelectPartialOcc']}" rendered="#{entity.partialMatchingAllowed}"
+                    <h:commandLink id="selectPartialOcc" value="#{messages['matchingCode.selectForPartialMatching']}" rendered="#{entity.partialMatchingAllowed}"
                         action="#{accountOperationListBean.partialMatching(entity)}" />
                     <!--  <p:toolTip for="selectPartialOcc" value="#{messages['matching.selectPartialOcc']}"/>-->
                 </p:column>
