@@ -899,7 +899,7 @@
             <column name="updater" type="varchar(100)" />   
         </addColumn>    
         <addColumn tableName="ar_payment_token">    
-            <column name="created" type="datetime">
+            <column name="created" type="datetime" defaultValueDate="2015-09-18 00:04:00.631">
                 <constraints nullable="false" />
             </column>   
         </addColumn>  
