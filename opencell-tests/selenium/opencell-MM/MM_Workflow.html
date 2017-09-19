@@ -12,8 +12,8 @@
 <tr><td rowspan="1" colspan="3">MM_Workflow</td></tr>
 </thead><tbody>
 <tr>
-	<td>clickAndWait</td>
-	<td>//a[@id='menu:mm_workflows']/span</td>
+	<td>open</td>
+	<td>${meveoUrl}/pages/order/workflows/workflows.jsf</td>
 	<td></td>
 </tr>
 <tr>
@@ -52,6 +52,11 @@
 	<td></td>
 </tr>
 <tr>
+	<td>pause</td>
+	<td>5000</td>
+	<td></td>
+</tr>
+<tr>
 	<td>type</td>
 	<td>id=formDunningPlanTransition:decisionRuleFromNumberValue0</td>
 	<td>1000000</td>
@@ -87,8 +92,8 @@
 	<td>SALES</td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>id=formDunningPlanTransition:j_idt176:saveButtonAjax</td>
+	<td>click</td>
+	<td>${wfSaveButton}</td>
 	<td></td>
 </tr>
 <tr>
@@ -128,12 +133,32 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=formDunningPlanTransition:j_idt176:saveButtonAjax</td>
+	<td>${wfSaveButton}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
 	<td>id=transitionList:1:moveUpBtn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=transitionList:0:deleteOperationBtn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=j_idt196</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=transitionList:0:deleteOperationBtn</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>id=j_idt196</td>
 	<td></td>
 </tr>
 </tbody></table>

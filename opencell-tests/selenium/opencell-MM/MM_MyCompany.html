@@ -13,12 +13,7 @@
 </thead><tbody>
 <tr>
 	<td>open</td>
-	<td>/opencell/pages/order/workflows/workflows.jsf?cid=11</td>
-	<td></td>
-</tr>
-<tr>
-	<td>clickAndWait</td>
-	<td>//a[@id='menu:mmUserGroups']/span</td>
+	<td>${meveoUrl}/pages/admin/userGroupHierarchy/userGroupHierarchy.jsf</td>
 	<td></td>
 </tr>
 <tr>
@@ -43,17 +38,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=userGroupHierarchyDetail:j_idt178:saveButtonAjax</td>
+	<td>${ugSaveButton}</td>
 	<td></td>
 </tr>
 <tr>
 	<td>click</td>
-	<td>//li[@id='j_idt132:0_3']/span/span[3]</td>
-	<td></td>
-</tr>
-<tr>
-	<td>click</td>
-	<td>id=userGroupHierarchyDetail:j_idt178:saveButtonAjax</td>
+	<td>//li[@id='j_idt132:0_1_0']/span/span[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -73,7 +63,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=userGroupHierarchyDetail:j_idt178:saveButtonAjax</td>
+	<td>${ugSaveButton}</td>
+	<td></td>
+</tr>
+<tr>
+	<td>click</td>
+	<td>//li[@id='j_idt132:0_1_0']/span/span[3]</td>
 	<td></td>
 </tr>
 <tr>
@@ -83,12 +78,12 @@
 </tr>
 <tr>
 	<td>click</td>
-	<td>id=j_idt208</td>
+	<td>id=j_idt210</td>
 	<td></td>
 </tr>
 <tr>
-	<td>clickAndWait</td>
-	<td>//a[@id='menu:mm_users']/span</td>
+	<td>open</td>
+	<td>${meveoUrl}/pages/admin/meveoUsers/users.jsf</td>
 	<td></td>
 </tr>
 <tr>
@@ -98,7 +93,7 @@
 </tr>
 <tr>
 	<td>clickAndWait</td>
-	<td>id=userFormId:j_idt211:backButton</td>
+	<td>id=userFormId:j_idt212:backButton</td>
 	<td></td>
 </tr>
 </tbody></table>
