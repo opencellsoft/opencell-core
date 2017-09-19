@@ -39,109 +39,107 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
-    @Inject
-    private GatewayPaymentFactory gatewayPaymentFactory;
+	@Inject
+	private GatewayPaymentFactory gatewayPaymentFactory;
 
-    @Override
-    public void create(PaymentMethod paymentMethod) throws BusinessException {
+	@Override
+	public void create(PaymentMethod paymentMethod) throws BusinessException {
 
-        if (paymentMethod instanceof CardPaymentMethod) {
-            CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
-            if (!cardPayment.isValidForDate(new Date())) {
-                throw new BusinessException("Cant add expired card");
-            }
-            obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
-        }
-
-        super.create(paymentMethod);
-
-        // Mark other payment methods as not preferred
-        if (paymentMethod.isPreferred()) {
-            getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
-        }
-    }
-
-    @Override
-    public PaymentMethod update(PaymentMethod entity) throws BusinessException {
-        if (entity.isPreferred()) {
-            if (entity instanceof CardPaymentMethod) {
-                if (!((CardPaymentMethod) entity).isValidForDate(new Date())) {
-                    throw new BusinessException("Cant mark expired card as preferred");
-                }
-            }
-        }
-        PaymentMethod paymentMethod = super.update(entity);
-
-        // Mark other payment methods as not preferred
-        if (paymentMethod.isPreferred()) {
-            getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
-        }
-
-        return paymentMethod;
-    }
-
-    @Override
-    public void remove(PaymentMethod paymentMethod) throws BusinessException {
-
-        boolean wasPreferred = paymentMethod.isPreferred();
-        Long caId = paymentMethod.getCustomerAccount().getId();
-
-        long paymentMethodCount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfPaymentMethods").setParameter("caId", caId).getSingleResult();
-        if (paymentMethodCount <= 1) {
-            throw new ValidationException("At least one payment method on a customer account is required");
-        }
-
-        super.remove(paymentMethod);
-
-        if (wasPreferred) {
-            Long minId = (Long) getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).getSingleResult();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
-            getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
-        }
-    }
-
-    /**
-     * Store payment information in payment gateway and return token id in a payment gateway
-     * 
-     * @param cardPaymentMethod Card payment method
-     * @param customerAccount Customer account
-     * @throws BusinessException
-     */
-    public void obtainAndSetCardToken(CardPaymentMethod cardPaymentMethod, CustomerAccount customerAccount) throws BusinessException {
-        if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
-            return;
-        }
-        String cardNumber = cardPaymentMethod.getCardNumber();
-        cardNumber = cardNumber.replaceAll(" ", "");
-
-        cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
-
-        String coutryCode = null;  //TODO : waiting #2830 
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        try{
-        
-         gatewayPaymentInterface = gatewayPaymentFactory
-            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-        }catch (Exception e) {
-        	log.warn("Cant find payment gateway");
+		if (paymentMethod instanceof CardPaymentMethod) {
+			CardPaymentMethod cardPayment = (CardPaymentMethod) paymentMethod;
+			if (!cardPayment.isValidForDate(new Date())) {
+				throw new BusinessException("Cant add expired card");
+			}
+			obtainAndSetCardToken(cardPayment, cardPayment.getCustomerAccount());
 		}
 
-        if(gatewayPaymentInterface != null){
-	        String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
-	            StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-	            cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
-	
-	        cardPaymentMethod.setTokenId(tockenID);
-        }else{
-        	cardPaymentMethod.setTokenId(null);
-        }
-    }
+		super.create(paymentMethod);
 
-    public CardPaymentMethod findByTokenId(String tokenId) {
-        QueryBuilder queryBuilder = new QueryBuilder(CardPaymentMethod.class, "a", null);
-        queryBuilder.addCriterion("tokenId", "=", tokenId, true);
-        return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
-    }
+		// Mark other payment methods as not preferred
+		if (paymentMethod.isPreferred()) {
+			getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
+			.setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+		}
+	}
+
+	@Override
+	public PaymentMethod update(PaymentMethod entity) throws BusinessException {
+		if (entity.isPreferred()) {
+			if (entity instanceof CardPaymentMethod) {
+				if (!((CardPaymentMethod) entity).isValidForDate(new Date())) {
+					throw new BusinessException("Cant mark expired card as preferred");
+				}
+			}
+		}
+		PaymentMethod paymentMethod = super.update(entity);
+
+		// Mark other payment methods as not preferred
+		if (paymentMethod.isPreferred()) {
+			getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
+			.setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+		}
+
+		return paymentMethod;
+	}
+
+	@Override
+	public void remove(PaymentMethod paymentMethod) throws BusinessException {
+
+		boolean wasPreferred = paymentMethod.isPreferred();
+		Long caId = paymentMethod.getCustomerAccount().getId();
+
+		long paymentMethodCount = (long) getEntityManager().createNamedQuery("PaymentMethod.getNumberOfPaymentMethods").setParameter("caId", caId).getSingleResult();
+		if (paymentMethodCount <= 1) {
+			throw new ValidationException("At least one payment method on a customer account is required");
+		}
+
+		super.remove(paymentMethod);
+
+		if (wasPreferred) {
+			Long minId = (Long) getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred1").setParameter("caId", caId).getSingleResult();
+			getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred2").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
+			getEntityManager().createNamedQuery("PaymentMethod.updateFirstPaymentMethodToPreferred3").setParameter("id", minId).setParameter("caId", caId).executeUpdate();
+		}
+	}
+
+	/**
+	 * Store payment information in payment gateway and return token id in a payment gateway
+	 * 
+	 * @param cardPaymentMethod Card payment method
+	 * @param customerAccount Customer account
+	 * @throws BusinessException
+	 */
+	public void obtainAndSetCardToken(CardPaymentMethod cardPaymentMethod, CustomerAccount customerAccount) throws BusinessException {
+		if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
+			return;
+		}
+		String cardNumber = cardPaymentMethod.getCardNumber();
+		cardPaymentMethod.setHiddenCardNumber(CardPaymentMethod.hideCardNumber(cardNumber));
+
+		String coutryCode = null;  //TODO : waiting #2830 
+		GatewayPaymentInterface gatewayPaymentInterface = null;
+		try{
+
+			gatewayPaymentInterface = gatewayPaymentFactory
+					.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+		}catch (Exception e) {
+			log.warn("Cant find payment gateway");
+		}
+
+		if(gatewayPaymentInterface != null){
+			String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
+					StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
+					cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
+
+			cardPaymentMethod.setTokenId(tockenID);
+		}else{
+			cardPaymentMethod.setTokenId(null);
+		}
+	}
+
+	public CardPaymentMethod findByTokenId(String tokenId) {
+		QueryBuilder queryBuilder = new QueryBuilder(CardPaymentMethod.class, "a", null);
+		queryBuilder.addCriterion("tokenId", "=", tokenId, true);
+		return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+	}
 }
