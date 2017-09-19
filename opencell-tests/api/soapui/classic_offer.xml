@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -35,7 +35,7 @@
   </con:settings>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="21c1fb0e-ed84-4133-9d3e-82094b378947" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://keepcool.i.opencellsoft.com/meveo/CatalogWs</con:endpoint>
@@ -347,7 +347,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" id="8af58aca-6143-49ed-952e-8ab3b34bf0d4" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/AccountWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/AccountWs</con:endpoint>
@@ -587,7 +587,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SubscriptionWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SubscriptionWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SubscriptionWs?wsdl" id="9b2cc058-9937-4389-9d45-dcf284fa0358" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://jpv2.I.opencellsoft.com/meveo/SubscriptionWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/SubscriptionWs</con:endpoint>
@@ -628,7 +628,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="WalletWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}WalletWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/WalletWs?wsdl" id="f799ad81-8b34-4625-831f-f4f653bea480" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/WalletWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/WalletWs</con:endpoint>
     </con:endpoints>
@@ -680,7 +680,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/MediationWs?wsdl" id="6bd4d161-6e4d-493f-9d33-8b526e6c16a5" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/MediationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/MediationWs</con:endpoint>
@@ -706,7 +706,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" id="0f234374-b4df-4d6a-94fc-bcb97691a681" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/SettingsWs</con:endpoint>
       <con:endpoint>http://integration.i.opencellsoft.com/meveo/SettingsWs</con:endpoint>
@@ -1097,7 +1097,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" id="0eb58c11-ce7f-44a5-bd1e-0a6aec7a9961" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/JobWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/JobWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/JobWs</con:endpoint>
@@ -1136,7 +1136,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" id="f0f7e27e-a1df-4dc1-a0fd-16ad7ef97f79" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://i.meveo.info/meveo/NotificationWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/NotificationWs</con:endpoint>
@@ -1198,7 +1198,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="38c203bc-70bb-4e60-b187-baa76b3b8359" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://i.meveo.info/meveo/InvoiceWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/InvoiceWs</con:endpoint>
     </con:endpoints>
@@ -1229,7 +1229,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="5e672655-5f83-45bd-a4ef-544fb2f1e1c1" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://demo.meveo.info/meveo/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="b3f663b5-e096-4fc4-be9e-4d2d2ed16a61" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1253,7 +1253,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="7ea337bf-5239-40f7-8296-1545c8dc3097" wsaVersion="NONE" name="InvoicingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoicingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoicingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/InvoicingWs</con:endpoint>
     </con:endpoints>
     <con:operation id="01ca2ff0-e093-45ee-9558-473341191c5e" isOneWay="false" action="" name="cancelBillingRun" bindingOperationName="cancelBillingRun" type="Request-Response" outputName="cancelBillingRunResponse" inputName="cancelBillingRun" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1283,7 +1283,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="ba5f98f2-b753-4f34-baf7-764ad91bb527" wsaVersion="NONE" name="SuperAdminSettingsWsSoapBinding" type="wsdl" bindingName="{http://superAdmin.ws.api.meveo.org/}SuperAdminSettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SuperAdminSettingsWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://localhost:8080/meveo/SuperAdminSettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation id="d31e2100-dbad-40f6-97ba-a21be91f3f06" isOneWay="false" action="" name="createCountry" bindingOperationName="createCountry" type="Request-Response" outputName="createCountryResponse" inputName="createCountry" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1349,7 +1349,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="0da7e377-c1a0-48f7-99a9-e1e9247de8ba" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://keepcool.i.opencellsoft.com/meveo/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="83d88b58-fa89-4d42-a074-14f88e26b240" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
@@ -1424,7 +1424,7 @@
   </con:interface>
   <con:interface xsi:type="con:WsdlInterface" id="46c7a3e2-1f7a-4eba-82d6-658a290b9a92" wsaVersion="NONE" name="ModuleWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ModuleWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ModuleWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>http://127.0.0.1:8080/meveo/ModuleWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/ModuleWs</con:endpoint>
     </con:endpoints>
@@ -1464,11 +1464,11 @@
   </con:interface>
   <con:interface xsi:type="con:RestService" id="cbea8ecf-a6c3-4d0d-a813-222e3d4af5ee" wadlVersion="http://wadl.dev.java.net/2009/02" name="Classic offer" type="rest" definitionUrl="hierar" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints/>
+    <con:definitionCache/><con:endpoints/>
   </con:interface>
   <con:interface xsi:type="con:RestService" id="7959a799-a204-4db3-a820-bb959de54cab" wadlVersion="http://wadl.dev.java.net/2009/02" name="MEVEO JAX-WS API Documentation" type="rest" basePath="/api/rest" definitionUrl="" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
-    <con:endpoints>
+    <con:definitionCache/><con:endpoints>
       <con:endpoint>${#Project#meveoEndpoint}</con:endpoint>
     </con:endpoints>
     <con:resource name="/notification/jobTrigger" path="/notification/jobTrigger" id="5508eae1-6cce-432e-bff7-c93e068518d9">
@@ -15686,7 +15686,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:testCase>
     <con:properties/>
   </con:testSuite>
-  <con:testSuite id="7320e016-8154-4d49-bd9f-0c1532c5ac32" name="Create Offer/Provider CFs">
+  <con:testSuite id="7320e016-8154-4d49-bd9f-0c1532c5ac32" name="Create Offer/Seller CFs">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="2f27bdf6-bd93-4c48-806b-2debb1ae6a72" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Configuration" searchProperties="true">
@@ -15793,7 +15793,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       </con:testStep>
       <con:properties/>
     </con:testCase>
-    <con:testCase id="4d064b4a-23d8-4ea0-b7ba-b78093fa334a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Provider" searchProperties="true">
+    <con:testCase id="4d064b4a-23d8-4ea0-b7ba-b78093fa334a" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Seller" searchProperties="true">
       <con:settings/>
       <con:testStep type="request" name="CF_PROVIDER_ADDR_NAME" id="f2002010-4c72-4a87-9704-fe198d8e49d0">
         <con:settings/>
@@ -15813,7 +15813,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_NAME" description="Provider Address Name">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrName}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -15864,7 +15864,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_LINE1" description="Provider Address line 1">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrLine1}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -15915,7 +15915,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_LINE2" description="Provider Address line 2">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrLine2}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -15966,7 +15966,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_ZIP" description="Provider Address Zip code">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrZip}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16017,7 +16017,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_CITY" description="Provider Address City">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrCity}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16068,7 +16068,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_PHONE" description="Provider Address Phone">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrPhone}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16119,7 +16119,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          \r
          <customField code="CF_PROVIDER_ADDR_EMAIL" description="Provider Address Email">\r
             <fieldType>STRING</fieldType>\r
-            <appliesTo>PROVIDER</appliesTo>\r
+            <appliesTo>SELLER</appliesTo>\r
             <defaultValue>${#Project#providerAddrEmail}</defaultValue>
             <storageType>SINGLE</storageType>\r
             <valueRequired>false</valueRequired>\r
@@ -16152,72 +16152,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="request" name="Update Provider CF" id="b4fb4acd-30c7-472d-9388-399dd2b1d34a">
-        <con:settings/>
-        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:interface>SuperAdminSettingsWsSoapBinding</con:interface>
-          <con:operation>createProvider</con:operation>
-          <con:request name="Update Provider CF" id="5fe54926-c495-4c0b-9a75-bf4b2e24d787">
-            <con:settings>
-              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
-            </con:settings>
-            <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ws:updateProviderCF>
-         <provider code="${#Project#provider}">
-         	<customFields>
-         		<customField code="CF_PROVIDER_ADDR_NAME">
-         			<stringValue>${#Project#providerAddrName}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_LINE1">
-         			<stringValue>${#Project#providerAddrLine1}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_LINE2">
-         			<stringValue>${#Project#providerAddrLine2}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_ZIP">
-         			<stringValue>${#Project#providerAddrZip}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_CITY">
-         			<stringValue>${#Project#providerAddrCity}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_PHONE">
-         			<stringValue>${#Project#providerAddrPhone}</stringValue>
-         		</customField>
-         		<customField code="CF_PROVIDER_ADDR_EMAIL">
-         			<stringValue>${#Project#providerAddrEmail}</stringValue>
-         		</customField>
-         	</customFields>
-         </provider>
-      </ws:updateProviderCF>
-   </soapenv:Body>
-</soapenv:Envelope>]]></con:request>
-            <con:assertion type="SOAP Response" id="672fcfee-e9c9-4797-a7e0-10ddc9f464f0"/>
-            <con:assertion type="Simple Contains" id="edabc20e-68fe-476f-8075-6249992738ef" name="Contains">
-              <con:configuration>
-                <token>&lt;status>SUCCESS&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:credentials>
-              <con:username>meveo.superadmin</con:username>
-              <con:password>meveo.superadmin</con:password>
-              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
-              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
-              <con:preemptive>true</con:preemptive>
-              <con:authType>No Authorization</con:authType>
-            </con:credentials>
-            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
-            <con:jmsPropertyConfig/>
-            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
-            <con:wsrmConfig version="1.2"/>
-          </con:request>
-        </con:config>
-      </con:testStep>
+      
       <con:properties/>
     </con:testCase>
     <con:properties/>
@@ -56071,23 +56006,23 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>providerAddrName</con:name>
-      <con:value>My Energy Company</con:value>
+      <con:value>Opencell</con:value>
     </con:property>
     <con:property>
       <con:name>providerAddrLine1</con:name>
-      <con:value>3 Watt street</con:value>
+      <con:value>14 rue Crespin du Gast</con:value>
     </con:property>
     <con:property>
       <con:name>providerAddrLine2</con:name>
-      <con:value>3rd building on the right</con:value>
+      <con:value>3rd floor</con:value>
     </con:property>
     <con:property>
       <con:name>providerAddrZip</con:name>
-      <con:value>P99999</con:value>
+      <con:value>75011</con:value>
     </con:property>
     <con:property>
       <con:name>providerAddrCity</con:name>
-      <con:value>Citytownburg</con:value>
+      <con:value>Paris</con:value>
     </con:property>
     <con:property>
       <con:name>providerAddrPhone</con:name>
@@ -56095,7 +56030,7 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>providerAddrEmail</con:name>
-      <con:value>billing@energy.com</con:value>
+      <con:value>contact@opencellsoft.com</con:value>
     </con:property>
     <con:property>
       <con:name>MMUsername</con:name>
