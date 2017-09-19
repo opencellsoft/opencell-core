@@ -52,6 +52,7 @@ import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.order.OrderItemProductOffering;
 import org.meveo.model.order.OrderStatusEnum;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
@@ -148,7 +149,9 @@ public class OrderApi extends BaseApi {
 		order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
 		if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
-			order.setPaymentMethod(productOrder.getPaymentMethods().get(0).fromDto(null));
+			PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null);
+			paymentMethod.updateAudit(currentUser);
+			order.setPaymentMethod(paymentMethod);
 		}
 
 		order.setOrderDate(productOrder.getOrderDate() != null ? productOrder.getOrderDate() : new Date());
