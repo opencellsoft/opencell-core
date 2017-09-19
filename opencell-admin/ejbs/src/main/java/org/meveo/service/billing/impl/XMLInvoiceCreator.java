@@ -1485,26 +1485,26 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
             }
             
-            for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-                CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
-                if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId() != null && categoryInvoiceAgregate.getId() != null
-                        && categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId().longValue()
-                        || (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null)) {
-                    continue;
+            if (subCategoryInvoiceAgregates != null) {
+            	for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+            		CategoryInvoiceAgregate categoryInvoiceAgregate2 = subCatInvoiceAgregate.getCategoryInvoiceAgregate();
+            		if (categoryInvoiceAgregate2 != null && categoryInvoiceAgregate != null && categoryInvoiceAgregate2.getId() != null && categoryInvoiceAgregate.getId() != null
+            				&& categoryInvoiceAgregate2.getId().longValue() != categoryInvoiceAgregate.getId().longValue()
+            				|| (categoryInvoiceAgregate2 == null || categoryInvoiceAgregate == null)) {
+            			continue;
+            		}
+
+            		headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);
+            		headerCategories.put(invoiceCategory.getCode(), headerCat);
+            	}
+            } else {
+            	Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+
+                for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+                    headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);
+                    headerCategories.put(invoiceCategory.getCode(), headerCat);
                 }
-                
-                headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);
-                headerCategories.put(invoiceCategory.getCode(), headerCat);
             }
-            
-            /**
-            Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
-
-            for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-                headerCat.getSubCategoryInvoiceAgregates().add(subCatInvoiceAgregate);
-                headerCategories.put(invoiceCategory.getCode(), headerCat);
-            }*/
-
         }
         addHeaderCategories(headerCategories, doc, parent, entreprise);
 
