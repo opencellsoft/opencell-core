@@ -1,5 +1,6 @@
 package org.meveo.model.dwh;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Cacheable
 @Table(name = "dwh_chart_bar")
 public class BarChart extends Chart {
 

@@ -66,7 +66,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -83,10 +82,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     @MeveoJpa
     private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
 
     @Inject
     private ElasticClient elasticClient;
@@ -159,7 +154,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id) {
-        return findById(id, false);
+        log.trace("Find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        return getEntityManager().find(entityClass, id);
     }
 
     /**
@@ -167,9 +163,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-        final Class<? extends E> productClass = getEntityClass();
-        E e = getEntityManager().find(productClass, id);
+        log.trace("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        E e = getEntityManager().find(entityClass, id);
         if (e != null) {
             if (refresh) {
                 log.debug("refreshing loaded entity");
@@ -193,7 +188,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings("unchecked")
     public E findById(Long id, List<String> fetchFields, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        log.trace("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -368,7 +363,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        //log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        // log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
@@ -821,18 +816,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-        // em.hashCode());
-        return result;
+        return em;
     }
 
     public void updateAudit(E e) {

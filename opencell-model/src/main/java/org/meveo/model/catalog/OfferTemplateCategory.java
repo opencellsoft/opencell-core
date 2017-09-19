@@ -2,6 +2,7 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +34,7 @@ import org.meveo.model.annotation.ImageType;
 @Entity
 @ObservableEntity
 @ModuleItem
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "OFFER_CATEGORY")
 @ExportIdentifier({ "code"})
 @Table(name = "cat_offer_template_category", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))

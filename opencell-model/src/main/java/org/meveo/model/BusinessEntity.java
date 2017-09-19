@@ -37,6 +37,12 @@ public class BusinessEntity extends EnableEntity {
     @NotNull
     protected String code;
 
+    /**
+     * Used to track if "Code" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    protected String previousCode;
+
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     protected String description;
@@ -154,4 +160,12 @@ public class BusinessEntity extends EnableEntity {
         setDescription(val);
     }
 
+    /**
+     * Check if current and previous "Code" field values match. Note: previous value is set to current value at postLoad, postPersist, postUpdate JPA events
+     * 
+     * @return True if current and previous "Code" field values DO NOT match
+     */
+    public boolean isCodeChanged() {
+        return !StringUtils.equals(code, previousCode);
+    }
 }

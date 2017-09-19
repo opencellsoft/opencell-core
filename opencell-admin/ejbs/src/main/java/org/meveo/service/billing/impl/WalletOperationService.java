@@ -32,7 +32,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -40,7 +39,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeInstanceException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
-import org.meveo.admin.util.NumberUtil;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
@@ -580,7 +578,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		BigDecimal quantity = chargeInstance.getServiceInstance() == null ? null : chargeInstance.getServiceInstance().getQuantity();
 		BigDecimal inputQuantity = quantity;
-		quantity = NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
+		quantity = NumberUtils.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
 		
 		if (Boolean.TRUE.equals(recurringChargeTemplate.getSubscriptionProrata())) {
 			Date periodStart = applicationDate;
@@ -593,7 +591,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				log.error("Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}", nextapplicationDate, previousapplicationDate);
 			}
             
-			quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());			
+			quantity = NumberUtils.getInChargeUnit(quantity, new BigDecimal(prorataRatio), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());			
 			log.debug("rateSubscription part1={}, part2={}, prorataRation={} -> quantity={}", new Object[] { part1, part2, prorataRatio, quantity });
 		}
 
@@ -716,7 +714,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 		BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 		BigDecimal inputQuantity = quantity;
-		quantity = NumberUtil.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
+		quantity = NumberUtils.getInChargeUnit(quantity, chargeInstance.getChargeTemplate().getUnitMultiplicator(), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
 
 		Date nextapplicationDate = cal.nextCalendarDate(applicationDate);
 		if (cal.truncDateTime()) {
@@ -749,7 +747,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			// FIXME i18n
 			String param2 = " " + str_tooPerceived + " " + sdf.format(periodStart) + " / " + sdf.format(DateUtils.addDaysToDate(nextapplicationDate, -1));			
-			quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
+			quantity = NumberUtils.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), chargeInstance.getChargeTemplate().getUnitNbDecimal(),chargeInstance.getChargeTemplate().getRoundingMode());
 			log.debug("part1={}, part2={}, prorataRatio={}, param2={} -> quantity={}", part1, part2, prorataRatio, param2, quantity);
 
 			InvoiceSubCategory invoiceSubCategory = recurringChargeTemplate.getInvoiceSubCategory();
@@ -892,7 +890,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				quantity = quantity.negate();
 			}
 			BigDecimal inputQuantity = quantity;
-			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
+			quantity = NumberUtils.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			log.debug("applyReccuringCharge : nextapplicationDate={}, param2={} -> quantity={}", nextapplicationDate, param2, quantity);
 
@@ -1054,7 +1052,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
 			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			BigDecimal inputQuantity = quantity;
-			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
+			quantity = NumberUtils.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			ApplicationTypeEnum applicationTypeEnum = ApplicationTypeEnum.RECURRENT;
 			Date periodStart = applicationDate;
@@ -1073,7 +1071,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 					log.error("ApplyNotAppliedinAdvanceReccuringCharge Error in calendar dates : nextapplicationDate={}, previousapplicationDate={}", nextapplicationDate,
 							previousapplicationDate);
 				}
-				quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());				
+				quantity = NumberUtils.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());				
 				log.debug("part1={}, part2={}, prorataRatio={} -> quantity", part1, part2, prorataRatio, quantity);
 			}
 
@@ -1186,7 +1184,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 			Date endDate = DateUtils.addDaysToDate(nextapplicationDate, -1);
 			BigDecimal quantity = chargeInstance.getServiceInstance().getQuantity();
 			BigDecimal inputQuantity = quantity;
-			quantity = NumberUtil.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
+			quantity = NumberUtils.getInChargeUnit(quantity, recurringChargeTemplate.getUnitMultiplicator(), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 			
 			if (nextapplicationDate.getTime() > endAgreementDate.getTime() && applicationDate.getTime() < endAgreementDate.getTime()) {
 				Date endAgreementDateModified = DateUtils.addDaysToDate(endAgreementDate, 1);
@@ -1201,7 +1199,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 				endDate = nextapplicationDate;
 				if (recurringChargeTemplate.getTerminationProrata()) {
 					type = ApplicationTypeEnum.PRORATA_TERMINATION;					
-					quantity = NumberUtil.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
+					quantity = NumberUtils.getInChargeUnit(quantity, new BigDecimal(prorataRatio + ""), recurringChargeTemplate.getUnitNbDecimal(),recurringChargeTemplate.getRoundingMode());
 				}
 			}
 			String param2 = sdf.format(applicationDate) + " - " + sdf.format(endDate);
@@ -1226,19 +1224,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 		}
 	}
 
-	public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
-		return findByStatus(getEntityManager(), status);
-	}
-
 	@SuppressWarnings("unchecked")
-	public List<WalletOperation> findByStatus(EntityManager em, WalletOperationStatusEnum status) {
+    public List<WalletOperation> findByStatus(WalletOperationStatusEnum status) {
+		
 		List<WalletOperation> walletOperations = null;
 		try {
 			log.debug("start of find {} by status (status={})) ..", "WalletOperation", status);
 			QueryBuilder qb = new QueryBuilder(WalletOperation.class, "c");
 			qb.addCriterion("c.status", "=", status, true);
 
-			walletOperations = qb.getQuery(em).getResultList();
+			walletOperations = qb.getQuery(getEntityManager()).getResultList();
 			log.debug("end of find {} by status (status={}). Result size found={}.", new Object[] { "WalletOperation", status,
 					walletOperations != null ? walletOperations.size() : 0 });
 

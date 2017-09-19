@@ -28,7 +28,7 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.NumberUtil;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -75,7 +75,7 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
                 .getQuantity(), productChargeInstance.getChargeDate());
 
         BigDecimal inputQuantity = productChargeInstance.getQuantity();
-        BigDecimal quantity = NumberUtil.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
+        BigDecimal quantity = NumberUtils.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
             chargeTemplate.getRoundingMode());
         WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, isVirtual);
         if (!isVirtual) {

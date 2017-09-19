@@ -22,6 +22,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -30,6 +31,9 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 /**
  * Represents a time inverval(s) based calendar. Time interval specifies a begin and end times, which can be expressed in the following units: weekdays, month/day and hour/minute.
@@ -42,6 +46,7 @@ import javax.persistence.OrderBy;
  * 
  */
 @Entity
+@Cacheable
 @DiscriminatorValue("INTERVAL")
 public class CalendarInterval extends Calendar {
 
@@ -51,6 +56,7 @@ public class CalendarInterval extends Calendar {
     @Enumerated(EnumType.STRING)
     private CalendarIntervalTypeEnum intervalType = CalendarIntervalTypeEnum.DAY;
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("intervalBegin")
     private List<CalendarDateInterval> intervals;

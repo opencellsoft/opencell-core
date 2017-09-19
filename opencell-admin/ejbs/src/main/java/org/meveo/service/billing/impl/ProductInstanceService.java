@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -40,7 +39,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 
@@ -82,13 +80,13 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
     }
 
     @SuppressWarnings("unchecked")
-    public List<ProductInstance> findByProductTemplate(EntityManager em, ProductTemplate productTemplate, Provider provider, InstanceStatusEnum status) {
+    public List<ProductInstance> findByProductTemplate(ProductTemplate productTemplate, InstanceStatusEnum status) {
         QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
         try {
             qb.addCriterionEntity("productTemplate", productTemplate);
 
             qb.addCriterionEnum("status", status);
-            return (List<ProductInstance>) qb.getQuery(em).getResultList();
+            return (List<ProductInstance>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
             return null;
         }

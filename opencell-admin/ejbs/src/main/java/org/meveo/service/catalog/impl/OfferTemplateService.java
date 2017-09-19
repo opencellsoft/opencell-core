@@ -27,7 +27,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -36,7 +35,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferProductTemplate;
@@ -59,18 +57,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private SubscriptionService subscriptionService;
-
-    @SuppressWarnings("unchecked")
-    public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
-        Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
-        query.setParameter("serviceTemplate", serviceTemplate);
-
-        try {
-            return (List<OfferTemplate>) query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -168,12 +154,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      */
     public synchronized void delete(OfferTemplate entity) throws BusinessException {
         entity = refreshOrRetrieve(entity);
-        List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
-        if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
-            this.remove(entity);
-            this.catalogHierarchyBuilderService.delete(entity);
-        }
 
+        if (entity == null || entity.isTransient() || subscriptionService.hasSubscriptions(entity)) {
+            return;
+        }
+        this.remove(entity);
+        this.catalogHierarchyBuilderService.delete(entity);
     }
 
     /**

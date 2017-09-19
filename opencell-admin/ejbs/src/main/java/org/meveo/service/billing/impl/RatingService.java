@@ -20,7 +20,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.UnrolledbackBusinessException;
 import org.meveo.admin.parse.csv.CDR;
-import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.cache.RatingCacheContainerProvider;
@@ -200,7 +199,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
 
         walletOperation
-            .setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+            .setQuantity(NumberUtils.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
 
         walletOperation.setInputQuantity(inputQuantity);
         walletOperation.setRatingUnitDescription(chargeTemplate.getRatingUnitDescription());

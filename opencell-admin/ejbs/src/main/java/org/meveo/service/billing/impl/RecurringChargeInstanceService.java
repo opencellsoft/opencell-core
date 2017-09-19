@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.NumberUtil;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
@@ -390,7 +390,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 		}
 
         BigDecimal inputQuantity = chargeInstance.getServiceInstance().getQuantity();
-        BigDecimal quantity = NumberUtil.getInChargeUnit(inputQuantity, chargeInstance.getRecurringChargeTemplate().getUnitMultiplicator(), chargeInstance.getRecurringChargeTemplate()
+        BigDecimal quantity = NumberUtils.getInChargeUnit(inputQuantity, chargeInstance.getRecurringChargeTemplate().getUnitMultiplicator(), chargeInstance.getRecurringChargeTemplate()
             .getUnitNbDecimal(), chargeInstance.getRecurringChargeTemplate().getRoundingMode());
 
         return walletOperationService.applyReccuringChargeVirtual(chargeInstance, inputQuantity, quantity, fromDate, toDate);

@@ -23,11 +23,13 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 
 @Entity
+@Cacheable
 @DiscriminatorValue("PERIOD")
 public class CalendarPeriod extends Calendar {
 

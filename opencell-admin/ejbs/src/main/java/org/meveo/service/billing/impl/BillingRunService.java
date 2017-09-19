@@ -482,7 +482,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
             .getResultList();
         SubListCreator subListCreator = null;
@@ -511,13 +511,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 throw new BusinessException(e);
             }
         }
-        
+
     }
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
@@ -618,14 +618,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @SuppressWarnings("unchecked")
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis) throws Exception {
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-            List<Long> billingAccountIds = getBillingAccountIds(billingRun);
-            log.info("Nb billingAccounts to process={}", (billingAccountIds != null ? billingAccountIds.size() : 0));
 
             billingRunExtensionService.updateBRAmounts(billingRun);
+
+            List<Long> billingAccountIds = getBillingAccountIds(billingRun);
+            log.info("Nb billingAccounts to process={}", (billingAccountIds != null ? billingAccountIds.size() : 0));
 
             if (billingAccountIds != null && billingAccountIds.size() > 0) {
                 int billableBA = 0;
@@ -646,10 +647,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
                 log.info("Total billableBA:" + billableBA);
-                
+
                 billingRunExtensionService.updateBillingRun(billingRun, billingAccountIds.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
+                    log.info("Will proceed to create aggregates and invoice");
                     createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis);
                     billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
                 }

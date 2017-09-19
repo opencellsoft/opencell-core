@@ -18,6 +18,7 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -34,6 +35,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Cacheable
 @Table(name = "cat_recurring_charge_templ")
 @NamedQueries({			
 @NamedQuery(name = "recurringChargeTemplate.getNbrRecurringChrgWithNotPricePlan", 

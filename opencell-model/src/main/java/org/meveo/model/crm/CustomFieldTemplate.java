@@ -10,6 +10,7 @@ import java.util.TreeMap;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -48,6 +49,7 @@ import org.meveo.model.shared.DateUtils;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "crm_custom_field_tmpl", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

@@ -22,12 +22,10 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.RatingCacheContainerProvider;
-import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
@@ -38,57 +36,64 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 @Stateless
 public class UsageChargeTemplateService extends ChargeTemplateService<UsageChargeTemplate> {
 
-	@Inject
-	private RatingCacheContainerProvider ratingCacheContainerProvider;
+    @Inject
+    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
-	@Override
-	public void create(UsageChargeTemplate e) throws BusinessException {
-		super.create(e);
-		ratingCacheContainerProvider.createOrUpdateUsageChargeTemplateInCache(e, null);
-	}
+    @Override
+    public void create(UsageChargeTemplate e) throws BusinessException {
 
-	@Override
-	public UsageChargeTemplate update(UsageChargeTemplate e) throws BusinessException {
-		e = super.update(e);
-		ratingCacheContainerProvider.createOrUpdateUsageChargeTemplateInCache(e, null);
-		return e;
-	}
+        e.setFilterExpression(StringUtils.stripToNull(e.getFilterExpression()));
+        e.setFilterParam1(StringUtils.stripToNull(e.getFilterParam1()));
+        e.setFilterParam2(StringUtils.stripToNull(e.getFilterParam2()));
+        e.setFilterParam3(StringUtils.stripToNull(e.getFilterParam3()));
+        e.setFilterParam4(StringUtils.stripToNull(e.getFilterParam4()));
 
-	@SuppressWarnings("unchecked")
-	public List<UsageChargeTemplate> findByPrefix(EntityManager em, String usageChargePrefix) {
-		QueryBuilder qb = new QueryBuilder(UsageChargeTemplate.class, "a");
-		qb.like("code", usageChargePrefix, QueryLikeStyleEnum.MATCH_BEGINNING, true);
+        super.create(e);
+    }
 
-		return (List<UsageChargeTemplate>) qb.getQuery(em).getResultList();
-	}
+    @Override
+    public UsageChargeTemplate update(UsageChargeTemplate e) throws BusinessException {
 
-	public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {
-		return getEntityManager().createNamedQuery("UsageChargeTemplate.getWithTemplateEDR", UsageChargeTemplate.class)
-				.setParameter("edrTemplate", triggeredEDRTemplate).getResultList();
-	}
+        e.setFilterExpression(StringUtils.stripToNull(e.getFilterExpression()));
+        e.setFilterParam1(StringUtils.stripToNull(e.getFilterParam1()));
+        e.setFilterParam2(StringUtils.stripToNull(e.getFilterParam2()));
+        e.setFilterParam3(StringUtils.stripToNull(e.getFilterParam3()));
+        e.setFilterParam4(StringUtils.stripToNull(e.getFilterParam4()));
 
-	public int getNbrUsagesChrgWithNotPricePlan() {
-		return ((Long) getEntityManager()
-				.createNamedQuery("usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", Long.class)
-				.getSingleResult()).intValue();
-	}
+        ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e); // Make sure to update cache before DB, as to not loose if code and priority has changed
 
-	public List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan() {
-		return (List<UsageChargeTemplate>) getEntityManager()
-				.createNamedQuery("usageChargeTemplate.getUsagesChrgWithNotPricePlan", UsageChargeTemplate.class)
-				.getResultList();
-	}
+        e = super.update(e);
+        return e;
+    }
 
-	public int getNbrUsagesChrgNotAssociated() {
-		return ((Long) getEntityManager()
-				.createNamedQuery("usageChargeTemplate.getNbrUsagesChrgNotAssociated", Long.class)
-				.getSingleResult()).intValue();
-	}
+    public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {
+        return getEntityManager().createNamedQuery("UsageChargeTemplate.getWithTemplateEDR", UsageChargeTemplate.class).setParameter("edrTemplate", triggeredEDRTemplate)
+            .getResultList();
+    }
 
-	public List<UsageChargeTemplate> getUsagesChrgNotAssociated() {
-		return (List<UsageChargeTemplate>) getEntityManager()
-				.createNamedQuery("usageChargeTemplate.getUsagesChrgNotAssociated", UsageChargeTemplate.class)
-				.getResultList();
-	}
+    public int getNbrUsagesChrgWithNotPricePlan() {
+        return ((Long) getEntityManager().createNamedQuery("usageChargeTemplate.getNbrUsagesChrgWithNotPricePlan", Long.class).getSingleResult()).intValue();
+    }
 
+    public List<UsageChargeTemplate> getUsagesChrgWithNotPricePlan() {
+        return (List<UsageChargeTemplate>) getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgWithNotPricePlan", UsageChargeTemplate.class).getResultList();
+    }
+
+    public int getNbrUsagesChrgNotAssociated() {
+        return ((Long) getEntityManager().createNamedQuery("usageChargeTemplate.getNbrUsagesChrgNotAssociated", Long.class).getSingleResult()).intValue();
+    }
+
+    public List<UsageChargeTemplate> getUsagesChrgNotAssociated() {
+        return (List<UsageChargeTemplate>) getEntityManager().createNamedQuery("usageChargeTemplate.getUsagesChrgNotAssociated", UsageChargeTemplate.class).getResultList();
+    }
+
+    /**
+     * Get a list of identifiers of subscriptions that have charge instances of a given usage charge template
+     * 
+     * @param usageChargeTemplate Usage charge template
+     * @return A list of subscription identifiers
+     */
+    public List<Long> getSubscriptionsAssociated(UsageChargeTemplate usageChargeTemplate) {
+        return getEntityManager().createNamedQuery("Subscription.getIdsByUsageChargeTemplate", Long.class).setParameter("chargeTemplate", usageChargeTemplate).getResultList();
+    }
 }

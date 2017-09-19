@@ -91,7 +91,6 @@ import org.meveo.model.billing.InvoiceAgregate;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
-import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.billing.Sequence;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Tax;
@@ -311,20 +310,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun,
-			Filter ratedTransactionFilter, String orderNumber, Date invoiceDate, Date firstTransactionDate,
-			Date lastTransactionDate) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
-        Invoice invoice = null;
+    public Invoice createAgregatesAndInvoice(Long billingAccountId, BillingRun billingRun, Filter ratedTransactionFilter, String orderNumber, Date invoiceDate,
+            Date firstTransactionDate, Date lastTransactionDate) throws BusinessException {
+
+        long startDate = System.currentTimeMillis();
 
         log.debug("createAgregatesAndInvoice billingAccount={} , billingRunId={} , ratedTransactionFilter={} , orderNumber{}, lastTransactionDate={} ,invoiceDate={} ",
             billingAccountId, billingRun != null ? billingRun.getId() : null, ratedTransactionFilter, orderNumber, lastTransactionDate, invoiceDate);
-        
+
         if (firstTransactionDate == null) {
-			firstTransactionDate = new Date(0);
-		}
-        
-        EntityManager em = getEntityManager();
+            firstTransactionDate = new Date(0);
+        }
+
         if (billingRun == null) {
             if (invoiceDate == null) {
                 throw new BusinessException("invoiceDate must be set if billingRun is null");
@@ -337,9 +334,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoiceDate = billingRun.getInvoiceDate();
         }
 
-        BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
 
-        if (billingAccount.getInvoicingThreshold() != null) {
+        // If invoicing run as part of billing run, this check has been done in pre-invoiced step of BR, so no need to ru it again.
+        if (billingRun == null && billingAccount.getInvoicingThreshold() != null) {
             BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
             if (invoiceAmount == null) {
                 throw new BusinessException("Cant compute invoice amount");
@@ -349,12 +347,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
+        Invoice invoice = null;
+        EntityManager em = getEntityManager();
         try {
 
             BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
-            if (billingCycle == null) {
-                billingCycle = billingAccount.getBillingCycle();
-            }
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
@@ -380,7 +377,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             if (paymentMethod == null) {
-                paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+                paymentMethod = customerAccountService.getPreferredPaymentMethod(billingAccount.getCustomerAccount().getId());
+                // or this option: paymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
             }
 
             if (paymentMethod != null) {
@@ -404,11 +402,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
             invoice.setDueDate(dueDate);
 
-            create(invoice);
+            ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, firstTransactionDate, lastTransactionDate);
+            log.debug("appended aggregates");
 
-			ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, ratedTransactionFilter,
-					orderNumber, firstTransactionDate, lastTransactionDate);
-            log.debug("created aggregates");
+            create(invoice);
 
             // Note that rated transactions get updated in
             // ratedTransactionservice in case of Filter or orderNumber not empty
@@ -421,23 +418,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 query.executeUpdate();
             }
 
-            StringBuffer num1 = new StringBuffer("000000000");
-            num1.append(invoice.getId() + "");
-            String invoiceNumber = num1.substring(num1.length() - 9);
-            int key = 0;
-
-            for (int i = 0; i < invoiceNumber.length(); i++) {
-                key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
-            }
-
-            invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
-            // getEntityManager().merge(invoice);
             List<String> orderNums = null;
             if (!StringUtils.isBlank(orderNumber)) {
                 orderNums = new ArrayList<String>();
                 orderNums.add(orderNumber);
+
             } else {
-                ratedTransactionService.commit();
                 orderNums = (List<String>) getEntityManager().createNamedQuery("RatedTransaction.getDistinctOrderNumsByInvoice", String.class).setParameter("invoice", invoice)
                     .getResultList();
 
@@ -454,15 +440,18 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 invoice.setOrders(orders);
             }
+
+            invoice.assignTemporaryInvoiceNumber();
+
             Long endDate = System.currentTimeMillis();
 
             log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
                     + (endDate - startDate));
+
         } catch (BusinessException e) {
-            log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
+            log.error("Error for BA {}", billingAccount.getCode(), e);
             if (billingRun != null) {
-                RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
-                rejectedBillingAccountService.create(rejectedBA);
+                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
             }
             throw e;
         }
@@ -484,7 +473,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
         }
 
-        ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, null, null, false, true);
+        ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, null, ratedTransactions, null, null, null, false, true);
 
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -593,7 +582,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
             }
-            
+
             File destDirInvoiceAdjustment = new File(resDir + File.separator + billingTemplateName + File.separator + "invoiceAdjustmentPdf");
             if (!destDirInvoiceAdjustment.exists()) {
                 destDirInvoiceAdjustment.mkdirs();
@@ -627,7 +616,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-			PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
+            PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
 
             if (preferedPaymentMethod != null) {
@@ -671,7 +660,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
                 jasperReportMap.put(path, jasperReport);
             }
-            
+
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
             log.debug("After jasperPrint:" + (System.currentTimeMillis() - startDate));
@@ -1260,8 +1249,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws ImportInvoiceException
      * @throws InvoiceExistException
      */
-    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber, boolean isDraft,
-            boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
+    public Invoice generateInvoice(BillingAccount billingAccount, Date invoiceDate, Date firstTransactionDate, Date lastTransactionDate, Filter ratedTxFilter, String orderNumber,
+            boolean isDraft, boolean produceXml, boolean producePdf, boolean generateAO) throws BusinessException, InvoiceExistException, ImportInvoiceException {
 
         if (StringUtils.isBlank(billingAccount)) {
             throw new BusinessException("billingAccount is null");
@@ -1269,10 +1258,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (StringUtils.isBlank(invoiceDate)) {
             throw new BusinessException("invoicingDate is null");
         }
-        
+
         if (firstTransactionDate == null) {
-			firstTransactionDate = new Date(0);
-		}
+            firstTransactionDate = new Date(0);
+        }
 
         if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate) && StringUtils.isBlank(orderNumber)) {
             throw new BusinessException("lastTransactionDate or filter or orderNumber is null");
@@ -1297,8 +1286,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-		Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber,
-				invoiceDate, firstTransactionDate, lastTransactionDate);
+        Invoice invoice = createAgregatesAndInvoice(billingAccount.getId(), null, ratedTxFilter, orderNumber, invoiceDate, firstTransactionDate, lastTransactionDate);
         if (!isDraft) {
             assignInvoiceNumber(invoice);
         }
@@ -1417,7 +1405,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         billingAccount.setNextInvoiceDate(nextCalendarDate);
         billingAccount.updateAudit(currentUser);
         invoice = update(invoice);
-        
+
         log.debug("After update:" + (System.currentTimeMillis() - startDate));
     }
 
@@ -1463,26 +1451,26 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return getEntityManager().createNamedQuery("Invoice.byBrItSelDate", Long.class).setParameter("billingRunId", billingRunId).setParameter("invoiceTypeId", invoiceTypeId)
             .setParameter("sellerId", sellerId).setParameter("invoiceDate", invoiceDate).getResultList();
     }
-    
+
     /**
      * @param invoice invoice used to get subcategory
      * @return list of SubCategoryInvoiceAgregate
      */
     public List<SubCategoryInvoiceAgregate> listByInvoice(Invoice invoice) {
-		long startDate = System.currentTimeMillis();
-		QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
-		qb.addCriterionEntity("invoice", invoice);
+        long startDate = System.currentTimeMillis();
+        QueryBuilder qb = new QueryBuilder(SubCategoryInvoiceAgregate.class, "c");
+        qb.addCriterionEntity("invoice", invoice);
 
-		try {
-			List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
-			log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
-			return resultList;
-			
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-		
-	}
-	
+        try {
+            List<SubCategoryInvoiceAgregate> resultList = (List<SubCategoryInvoiceAgregate>) qb.getQuery(getEntityManager()).getResultList();
+            log.info("listByCategoryInvoiceAgregate time: " + (System.currentTimeMillis() - startDate));
+            return resultList;
+
+        } catch (NoResultException e) {
+            log.warn("error while getting user account list by billing account", e);
+            return null;
+        }
+
+    }
+
 }

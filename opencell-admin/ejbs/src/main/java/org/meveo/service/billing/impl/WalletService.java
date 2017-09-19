@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -52,15 +51,12 @@ public class WalletService extends PersistenceService<WalletInstance> {
 	}
 
 	public WalletInstance findByUserAccount(UserAccount userAccount) {
-		return findByUserAccount(getEntityManager(), userAccount);
-	}
-
-	public WalletInstance findByUserAccount(EntityManager em, UserAccount userAccount) {
+	
 		QueryBuilder qb = new QueryBuilder(WalletInstance.class, "w");
 		try {
 			qb.addCriterionEntity("userAccount", userAccount);
 
-			return (WalletInstance) qb.getQuery(em).getSingleResult();
+			return (WalletInstance) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException e) {
 			log.warn("failed to find walletInstance by user account",e);
 			return null;

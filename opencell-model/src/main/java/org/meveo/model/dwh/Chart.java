@@ -1,5 +1,6 @@
 package org.meveo.model.dwh;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +23,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
+@Cacheable
 @ModuleItem
 @ExportIdentifier({ "code"})
 @Table(name = "dwh_chart", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))

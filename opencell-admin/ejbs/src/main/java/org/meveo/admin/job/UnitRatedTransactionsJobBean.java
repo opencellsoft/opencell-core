@@ -4,10 +4,7 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.interceptor.Interceptors;
 
-import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatedTransactionService;
 import org.slf4j.Logger;
@@ -21,7 +18,6 @@ public class UnitRatedTransactionsJobBean {
 	@Inject
 	private RatedTransactionService ratedTransactionService;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result,Long walletOperationId ) {
 		log.debug("Running with walletOperationId={}", walletOperationId);

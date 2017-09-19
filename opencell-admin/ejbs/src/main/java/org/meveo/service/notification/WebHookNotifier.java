@@ -25,7 +25,7 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpa;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 public class WebHookNotifier {
 
     @Inject
-    @MeveoJpaForJobs
+    @MeveoJpa
     private EntityManager em;
 
     @Inject

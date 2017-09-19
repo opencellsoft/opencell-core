@@ -25,7 +25,6 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -49,30 +48,6 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
 
     @Inject
     private TaxService taxService;
-
-    public InvoiceSubCategory findByCode(EntityManager em, String code) {
-        QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc");
-        qb.addCriterion("code", "=", code, false);
-
-        return (InvoiceSubCategory) qb.getQuery(em).getSingleResult();
-    }
-
-    @Override
-    public InvoiceSubCategory findByCode(String code) {
-        return findByCode(code, null);
-    }
-
-    @Override
-    public InvoiceSubCategory findByCode(String code, List<String> fetchFields) {
-        QueryBuilder qb = new QueryBuilder(InvoiceSubCategory.class, "sc", fetchFields);
-        qb.addCriterion("sc.code", "=", code, false);
-
-        try {
-            return (InvoiceSubCategory) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
 
     public int getNbInvSubCatNotAssociated() {
         return ((Long) getEntityManager().createNamedQuery("invoiceSubCategory.getNbrInvoiceSubCatNotAssociated", Long.class).getSingleResult()).intValue();

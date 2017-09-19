@@ -221,8 +221,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
      * @return true/false
      */
     public boolean isUsedInSubscription(OfferTemplate givenEntity) {
-        return (givenEntity != null && !givenEntity.isTransient() && (subscriptionService.findByOfferTemplate(givenEntity) != null)
-                && subscriptionService.findByOfferTemplate(givenEntity).size() > 0) ? true : false;
+        return givenEntity != null && !givenEntity.isTransient() && subscriptionService.hasSubscriptions(givenEntity);
     }
 
     /**
@@ -266,8 +265,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     }
 
     public boolean isUsedInSubscription() {
-        return (getEntity() != null && !getEntity().isTransient() && (subscriptionService.findByOfferTemplate(getEntity()) != null)
-                && subscriptionService.findByOfferTemplate(getEntity()).size() > 0) ? true : false;
+        return isUsedInSubscription(entity);
     }
 
     /**
@@ -280,8 +278,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 sortedOfferServiceTemplates = new ArrayList<>();
                 sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
                 Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
+            }
         }
-    }
 
         return sortedOfferServiceTemplates;
     }

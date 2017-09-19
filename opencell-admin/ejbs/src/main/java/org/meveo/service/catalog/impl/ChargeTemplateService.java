@@ -61,7 +61,6 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
                 chargeTemplate.getEdrTemplates().add(edrTemplate);
             }
         }
-        chargeTemplate.setChargeInstances(null);
         chargeTemplate.setCode(code);
         create(chargeTemplate);
     }

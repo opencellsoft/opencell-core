@@ -106,7 +106,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -152,10 +151,6 @@ public class EntityExportImportService implements Serializable {
     @Inject
     @MeveoJpa
     private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
 
     @Inject
     private Conversation conversation;
@@ -365,16 +360,7 @@ public class EntityExportImportService implements Serializable {
      * @return
      */
     private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        return result;
+        return em;
     }
 
     /**

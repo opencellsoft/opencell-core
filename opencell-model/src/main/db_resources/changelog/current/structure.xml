@@ -914,4 +914,19 @@
         <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
     </changeSet>
     
+    <changeSet id="#2792_20170919" author="AndriusKarpavicius">  
+        <sql>update cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_2=null where filter_param_2=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_3=null where filter_param_3=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_4=null where filter_param_4=''</sql>
+        
+        <sql>update cat_triggered_edr set condition_el=null where condition_el=''</sql>
+        <sql>update cat_triggered_edr set param_1_el=null where param_1_el=''</sql>
+        <sql>update cat_triggered_edr set param_2_el=null where param_2_el=''</sql>
+        <sql>update cat_triggered_edr set param_3_el=null where param_3_el=''</sql>
+        <sql>update cat_triggered_edr set param_4_el=null where param_4_el=''</sql>
+        <sql>update cat_triggered_edr set quantity_el=null where quantity_el=''</sql>
+        <sql>update cat_triggered_edr set subscription_el=null where subscription_el=''</sql>
+    </changeSet>
 </databaseChangeLog> 

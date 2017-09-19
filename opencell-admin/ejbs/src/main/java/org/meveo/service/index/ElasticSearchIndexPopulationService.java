@@ -17,7 +17,6 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
 import javax.inject.Inject;
 import javax.persistence.Embeddable;
 import javax.persistence.EntityManager;
@@ -52,7 +51,6 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
 import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -63,13 +61,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @Inject
     @MeveoJpa
     private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
 
     @Inject
     private ElasticSearchConfiguration esConfiguration;
@@ -148,16 +139,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        return result;
+        return em;
     }
 
     /**
@@ -242,10 +224,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         // Set custom field values if applicable
-        if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues()!=null) {
+        if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null) {
 
             ICustomFieldEntity cfEntity = (ICustomFieldEntity) entity;
-            
+
             for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfEntity.getCfValues().getValuesByCode().entrySet()) {
 
                 if (cfValueInfo.getValue().isEmpty()) {

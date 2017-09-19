@@ -363,7 +363,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
                 counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
             }
-            counterPeriodService.update(counterPeriod);
+            counterPeriod = counterPeriodService.update(counterPeriod);
 
             log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), deduceBy, counterPeriod.getValue());
 

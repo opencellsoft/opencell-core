@@ -21,6 +21,7 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -30,30 +31,31 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
+@Cacheable
 @Table(name = "cat_product_charge_templ")
 @NamedQueries({
-		@NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
-		@NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
+        @NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),
+        @NamedQuery(name = "productChargeTemplate.getProductWithNotPricePlan", query = "from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "), })
 public class ProductChargeTemplate extends ChargeTemplate {
-	
-	@Transient
-	public static final String CHARGE_TYPE = "PRODUCT";
 
-	private static final long serialVersionUID = 1L;
+    @Transient
+    public static final String CHARGE_TYPE = "PRODUCT";
 
-	@ManyToMany(fetch = FetchType.LAZY,mappedBy = "productChargeTemplates")		
-	private List<ProductTemplate> productTemplates = new ArrayList<>();
+    private static final long serialVersionUID = 1L;
 
-	public List<ProductTemplate> getProductTemplates() {
-		return productTemplates;
-	}
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "productChargeTemplates")
+    private List<ProductTemplate> productTemplates = new ArrayList<>();
 
-	public void setProductTemplates(List<ProductTemplate> productTemplates) {
-		this.productTemplates = productTemplates;
-	}
+    public List<ProductTemplate> getProductTemplates() {
+        return productTemplates;
+    }
 
-	public String getChargeType() {
-		return CHARGE_TYPE;
-	}
+    public void setProductTemplates(List<ProductTemplate> productTemplates) {
+        this.productTemplates = productTemplates;
+    }
+
+    public String getChargeType() {
+        return CHARGE_TYPE;
+    }
 
 }

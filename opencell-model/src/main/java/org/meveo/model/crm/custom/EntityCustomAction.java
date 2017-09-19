@@ -1,5 +1,6 @@
 package org.meveo.model.crm.custom;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -18,6 +19,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code", "appliesTo"})
 @Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_custom_action_seq"), })

@@ -28,7 +28,7 @@ import org.meveo.model.filter.NativeFilterCondition;
 import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpa;
 
 /**
  * @author Edward P. Legaspi
@@ -37,7 +37,7 @@ import org.meveo.util.MeveoJpaForJobs;
 public class FilteredQueryBuilderTest extends BaseFilterTest {
 
 	@Inject
-	@MeveoJpaForJobs
+	@MeveoJpa
 	private EntityManager em;
 
 	@Inject

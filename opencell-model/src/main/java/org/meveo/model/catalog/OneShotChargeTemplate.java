@@ -18,12 +18,14 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Size;
@@ -31,52 +33,45 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 @Entity
+@Cacheable
 @Table(name = "cat_one_shot_charge_templ")
-@NamedQueries({			
-@NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", 
-	           query = "select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"),
-	           
-@NamedQuery(name = "oneShotChargeTemplate.getOneShotWithNotPricePlan", 
-	           query = "from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"),
-	           	              
-@NamedQuery(name = "oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", 
-	           query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
-	           		+ "OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
-	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
-	           	              
-@NamedQuery(name = "oneShotChargeTemplate.getSubscriptionChrgNotAssociated", 
-	 	           query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
-	 	           		+ " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
-	 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
-	 	           		
-@NamedQuery(name = "oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", 
-		 	           query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
-		 	           		+ " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
-		 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType "),
-		 	           		
-@NamedQuery(name = "oneShotChargeTemplate.getTerminationChrgNotAssociated", 
-		 	           query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
-		 	           		+ " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
-		 	           		+ " and  oneShotChargeTemplateType=:oneShotChargeTemplateType")           	                  	         
-	})
+@NamedQueries({
+        @NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", query = "select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+
+        @NamedQuery(name = "oneShotChargeTemplate.getOneShotWithNotPricePlan", query = "from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)"),
+
+        @NamedQuery(name = "oneShotChargeTemplate.getNbrSubscriptionChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
+                + "OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+                + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+
+        @NamedQuery(name = "oneShotChargeTemplate.getSubscriptionChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateSubscription serv) "
+                + " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))" + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType"),
+
+        @NamedQuery(name = "oneShotChargeTemplate.getNbrTerminationChrgNotAssociated", query = "select count (*) from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
+                + " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))"
+                + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType ", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+
+        @NamedQuery(name = "oneShotChargeTemplate.getTerminationChrgNotAssociated", query = "from  OneShotChargeTemplate o where (o.id not in (select serv.chargeTemplate from ServiceChargeTemplateTermination serv) "
+                + " OR o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null))" + " and  oneShotChargeTemplateType=:oneShotChargeTemplateType") })
 public class OneShotChargeTemplate extends ChargeTemplate {
-	
-	@Transient
-	public static final String CHARGE_TYPE = "ONESHOT";
+
+    @Transient
+    public static final String CHARGE_TYPE = "ONESHOT";
 
     private static final long serialVersionUID = 1L;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
-    
-    @Type(type="numeric_boolean")
+
+    @Type(type = "numeric_boolean")
     @Column(name = "immediate_invoicing")
     private Boolean immediateInvoicing = false;
-    
+
     @Column(name = "filter_expression", length = 2000)
-	@Size(max = 2000)
-	private String filterExpression = null;
+    @Size(max = 2000)
+    private String filterExpression = null;
 
     public OneShotChargeTemplateTypeEnum getOneShotChargeTemplateType() {
         return oneShotChargeTemplateType;
@@ -86,24 +81,24 @@ public class OneShotChargeTemplate extends ChargeTemplate {
         this.oneShotChargeTemplateType = oneShotChargeTemplateType;
     }
 
-	public Boolean getImmediateInvoicing() {
-		return immediateInvoicing;
-	}
+    public Boolean getImmediateInvoicing() {
+        return immediateInvoicing;
+    }
 
-	public void setImmediateInvoicing(Boolean immediateInvoicing) {
-		this.immediateInvoicing = immediateInvoicing;
-	}
+    public void setImmediateInvoicing(Boolean immediateInvoicing) {
+        this.immediateInvoicing = immediateInvoicing;
+    }
 
-	public String getChargeType() {
-		return CHARGE_TYPE;
-	}
+    public String getChargeType() {
+        return CHARGE_TYPE;
+    }
 
-	public String getFilterExpression() {
-		return filterExpression;
-	}
+    public String getFilterExpression() {
+        return filterExpression;
+    }
 
-	public void setFilterExpression(String filterExpression) {
-		this.filterExpression = filterExpression;
-	}
+    public void setFilterExpression(String filterExpression) {
+        this.filterExpression = filterExpression;
+    }
 
 }

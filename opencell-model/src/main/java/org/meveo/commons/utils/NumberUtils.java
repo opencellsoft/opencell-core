@@ -23,6 +23,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import org.meveo.model.catalog.RoundingModeEnum;
+
 /**
  * @author R.AITYAAZZA
  * @created 20 janv. 11
@@ -33,11 +35,10 @@ public class NumberUtils {
         if (what == null) {
             return null;
         }
-        
+
         what = what.setScale(howmuch, RoundingMode.HALF_UP);
         return what;
     }
-   
 
     public static String format(BigDecimal amount, String format) {
         if (amount == null) {
@@ -51,6 +52,33 @@ public class NumberUtils {
         String value = decimalFormat.format(amount);
         return value;
     }
+
+    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingModeEnum) {        
+        if (unitMultiplicator == null){
+            unitMultiplicator = BigDecimal.ONE;
+        }   
+        if (unitNbDecimal == null){
+            unitNbDecimal = new Integer(2);
+        }
+
+        BigDecimal result = unitValue.multiply(unitMultiplicator);          
+        result = result.setScale(unitNbDecimal, getRoundingMode(roundingModeEnum));
+        return result;
+    }
     
-  
+    public static RoundingMode getRoundingMode(RoundingModeEnum roundingModeEnum){
+        if (roundingModeEnum == null){
+            return RoundingMode.HALF_UP;
+        }
+        
+        if (RoundingModeEnum.DOWN.name().equals(roundingModeEnum.name())) {
+            return RoundingMode.FLOOR;
+        } 
+        
+        if (RoundingModeEnum.UP.name().equals(roundingModeEnum.name())) {
+            return RoundingMode.CEILING;
+        } 
+            
+        return RoundingMode.HALF_UP;        
+    }
 }

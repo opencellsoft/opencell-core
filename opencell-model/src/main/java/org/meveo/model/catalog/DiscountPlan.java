@@ -3,6 +3,7 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
@@ -20,6 +21,7 @@ import org.meveo.model.ObservableEntity;
  **/
 @Entity
 @ObservableEntity
+@Cacheable
 @ExportIdentifier({ "code"})
 @Table(name = "cat_discount_plan", uniqueConstraints = { @UniqueConstraint(columnNames = { "code"}) })
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_discount_plan_seq"), })

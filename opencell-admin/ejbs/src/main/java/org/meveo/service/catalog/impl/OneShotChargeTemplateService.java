@@ -21,7 +21,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -57,13 +56,6 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 				.getQuery(getEntityManager());
 		return query.getResultList();
 	}
-
-	public void removeByCode(EntityManager em, String code) {
-		Query query = em.createQuery("DELETE OneShotChargeTemplate t WHERE t.code=:code");
-		query.setParameter("code", code);
-		query.executeUpdate();
-	}
-
 
 	public int getNbrOneShotWithNotPricePlan() {
 		return ((Long) getEntityManager()

@@ -1,5 +1,6 @@
 package org.meveo.service.billing.impl;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,22 +15,19 @@ import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.parse.csv.CDR;
-import org.meveo.admin.util.NumberUtil;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.cache.CachedCounterInstance;
 import org.meveo.cache.CachedCounterPeriod;
-import org.meveo.cache.CachedTriggeredEDR;
 import org.meveo.cache.CachedUsageChargeInstance;
-import org.meveo.cache.CachedUsageChargeTemplate;
 import org.meveo.cache.RatingCacheContainerProvider;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.event.CounterPeriodEvent;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.admin.Seller;
@@ -52,6 +50,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
@@ -63,18 +62,19 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
 @Stateless
-public class UsageRatingService {
+public class UsageRatingService implements Serializable {
 
-    @PersistenceContext(unitName = "MeveoAdmin")
+    private static final long serialVersionUID = 1411446109227299227L;
+
+    @Inject
     @MeveoJpa
-    protected EntityManager em;
+    private EntityManager em;
 
     @Inject
     protected Logger log;
@@ -134,11 +134,6 @@ public class UsageRatingService {
 
     private Map<String, String> descriptionMap = new HashMap<>();
 
-    private Map<Long, CachedUsageChargeTemplate> cacheUsageMap = new HashMap<>();
-
-    @Inject
-    private UsageChargeTemplateService usageChargeTemplateService;
-
     // @PreDestroy
     // accessing Entity manager in predestroy is bugged in jboss7.1.3
     /*
@@ -179,7 +174,7 @@ public class UsageRatingService {
             for (ServiceInstance serviceInstance : serviceInstances) {
                 List<UsageChargeInstance> usageChargeInstances = serviceInstance.getUsageChargeInstances();
                 for (UsageChargeInstance usageChargeInstance : usageChargeInstances) {
-                    if (usageChargeInstance.getCode().equals(cachedChargeInstance.getChargeTemplateCode())) {
+                    if (usageChargeInstance.getId().equals(cachedChargeInstance.getChargeTemplateId())) {
                         chargeInstance = usageChargeInstance;
                         break;
                     }
@@ -187,10 +182,7 @@ public class UsageRatingService {
             }
         }
 
-        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedChargeInstance.getChargeTemplateId());
-
         walletOperation.setChargeInstance(chargeInstance);
-        UserAccount userAccount = chargeInstance.getUserAccount();
 
         CounterInstance counterInstance = chargeInstance.getCounter();
         String offerCode = subscription.getOffer().getCode();
@@ -204,6 +196,7 @@ public class UsageRatingService {
         walletOperation.setEdr(edr);
 
         // FIXME: copy those info in chargeInstance instead of performing multiple queries
+        UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();
@@ -213,11 +206,13 @@ public class UsageRatingService {
 
         Long countryId = country.getId();
 
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategoryCode(), countryId,
-            edr.getEventDate());
+        UsageChargeTemplate chargeTemplate = em.find(UsageChargeTemplate.class, cachedChargeInstance.getChargeTemplateId());
+
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getCode(),
+            countryId, edr.getEventDate());
 
         if (invoiceSubcategoryCountry == null) {
-            throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategoryCode());
+            throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
         }
 
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
@@ -256,7 +251,7 @@ public class UsageRatingService {
         walletOperation.setQuantity(quantityToCharge);
 
         walletOperation.setQuantity(
-            NumberUtil.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+            NumberUtils.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
@@ -312,7 +307,7 @@ public class UsageRatingService {
         }
 
         CounterValueChangeInfo counterValueChangeInfo = null;
-        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedCharge.getChargeTemplateId());
+        UsageChargeTemplate chargeTemplate = em.find(UsageChargeTemplate.class, cachedCharge.getChargeTemplateId());
 
         synchronized (cachedCounterPeriod) {
             BigDecimal deduceByQuantity = chargeTemplate.getInChargeUnit(edr.getQuantity());
@@ -418,48 +413,47 @@ public class UsageRatingService {
             return stopEDRRating;
         }
 
-        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(cachedCharge.getChargeTemplateId());
+        UsageChargeTemplate chargeTemplate = em.find(UsageChargeTemplate.class, cachedCharge.getChargeTemplateId());
 
-        for (CachedTriggeredEDR triggeredEDRCache : chargeTemplate.getEdrTemplates()) {
-            if (triggeredEDRCache.getConditionEL() == null || "".equals(triggeredEDRCache.getConditionEL())
-                    || matchExpression(triggeredEDRCache.getConditionEL(), edr, walletOperation)) {
-                if (triggeredEDRCache.getMeveoInstanceCode() == null) {
+        for (TriggeredEDRTemplate triggeredEDR : chargeTemplate.getEdrTemplates()) {
+            if (triggeredEDR.getConditionEl() == null || "".equals(triggeredEDR.getConditionEl()) || matchExpression(triggeredEDR.getConditionEl(), edr, walletOperation)) {
+                if (triggeredEDR.getMeveoInstance() == null) {
                     EDR newEdr = new EDR();
                     newEdr.setCreated(new Date());
                     newEdr.setEventDate(edr.getEventDate());
                     newEdr.setOriginBatch(EDR.EDR_TABLE_ORIGIN);
                     newEdr.setOriginRecord("" + walletOperation.getId());
-                    newEdr.setParameter1(evaluateStringExpression(triggeredEDRCache.getParam1EL(), edr, walletOperation));
-                    newEdr.setParameter2(evaluateStringExpression(triggeredEDRCache.getParam2EL(), edr, walletOperation));
-                    newEdr.setParameter3(evaluateStringExpression(triggeredEDRCache.getParam3EL(), edr, walletOperation));
-                    newEdr.setParameter4(evaluateStringExpression(triggeredEDRCache.getParam4EL(), edr, walletOperation));
-                    newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRCache.getQuantityEL(), edr, walletOperation)));
+                    newEdr.setParameter1(evaluateStringExpression(triggeredEDR.getParam1El(), edr, walletOperation));
+                    newEdr.setParameter2(evaluateStringExpression(triggeredEDR.getParam2El(), edr, walletOperation));
+                    newEdr.setParameter3(evaluateStringExpression(triggeredEDR.getParam3El(), edr, walletOperation));
+                    newEdr.setParameter4(evaluateStringExpression(triggeredEDR.getParam4El(), edr, walletOperation));
+                    newEdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDR.getQuantityEl(), edr, walletOperation)));
                     newEdr.setStatus(EDRStatusEnum.OPEN);
                     Subscription sub = edr.getSubscription();
-                    if (!StringUtils.isBlank(triggeredEDRCache.getSubscriptionEL())) {
-                        String subCode = evaluateStringExpression(triggeredEDRCache.getSubscriptionEL(), edr, walletOperation);
+                    if (!StringUtils.isBlank(triggeredEDR.getSubscriptionEl())) {
+                        String subCode = evaluateStringExpression(triggeredEDR.getSubscriptionEl(), edr, walletOperation);
                         sub = subscriptionService.findByCode(subCode);
                         if (sub == null) {
-                            throw new BusinessException("could not find subscription for code =" + subCode + " (EL=" + triggeredEDRCache.getSubscriptionEL()
-                                    + ") in triggered EDR with code " + triggeredEDRCache.getCode());
+                            throw new BusinessException("could not find subscription for code =" + subCode + " (EL=" + triggeredEDR.getSubscriptionEl()
+                                    + ") in triggered EDR with code " + triggeredEDR.getCode());
                         }
                     }
                     newEdr.setSubscription(sub);
-                    log.info("trigger EDR from code " + triggeredEDRCache.getCode());
+                    log.info("trigger EDR from code " + triggeredEDR.getCode());
                     edrService.create(newEdr);
                 } else {
                     CDR cdr = new CDR();
-                    String subCode = evaluateStringExpression(triggeredEDRCache.getSubscriptionEL(), edr, walletOperation);
+                    String subCode = evaluateStringExpression(triggeredEDR.getSubscriptionEl(), edr, walletOperation);
                     cdr.setAccess_id(subCode);
                     cdr.setTimestamp(edr.getEventDate());
-                    cdr.setParam1(evaluateStringExpression(triggeredEDRCache.getParam1EL(), edr, walletOperation));
-                    cdr.setParam2(evaluateStringExpression(triggeredEDRCache.getParam2EL(), edr, walletOperation));
-                    cdr.setParam3(evaluateStringExpression(triggeredEDRCache.getParam3EL(), edr, walletOperation));
-                    cdr.setParam4(evaluateStringExpression(triggeredEDRCache.getParam4EL(), edr, walletOperation));
-                    cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDRCache.getQuantityEL(), edr, walletOperation)));
+                    cdr.setParam1(evaluateStringExpression(triggeredEDR.getParam1El(), edr, walletOperation));
+                    cdr.setParam2(evaluateStringExpression(triggeredEDR.getParam2El(), edr, walletOperation));
+                    cdr.setParam3(evaluateStringExpression(triggeredEDR.getParam3El(), edr, walletOperation));
+                    cdr.setParam4(evaluateStringExpression(triggeredEDR.getParam4El(), edr, walletOperation));
+                    cdr.setQuantity(new BigDecimal(evaluateDoubleExpression(triggeredEDR.getQuantityEl(), edr, walletOperation)));
 
                     String url = "api/rest/billing/mediation/chargeCdr";
-                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDRCache.getMeveoInstanceCode(), cdr.toCsv());
+                    Response response = meveoInstanceService.callTextServiceMeveoInstance(url, triggeredEDR.getMeveoInstance(), cdr.toCsv());
                     ActionStatus actionStatus = response.readEntity(ActionStatus.class);
                     log.debug("response {}", actionStatus);
 
@@ -550,13 +544,14 @@ public class UsageRatingService {
      */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual) throws BusinessException {
-        BigDecimal originalQuantity = edr.getQuantity();
 
         log.info("Rating EDR={}", edr);
 
-        List<WalletOperation> walletOperations = new ArrayList<>();
-
-        edr.setLastUpdate(new Date());
+        if (edr.getQuantity() == null) {
+            edr.setStatus(EDRStatusEnum.REJECTED);
+            edr.setRejectReason("NULL_QUANTITY");
+            return null;
+        }
 
         if (edr.getSubscription() == null) {
             edr.setStatus(EDRStatusEnum.REJECTED);
@@ -564,49 +559,45 @@ public class UsageRatingService {
             return null;
         }
 
+        edr.setLastUpdate(new Date());
+
         boolean edrIsRated = false;
+
+        BigDecimal originalQuantity = edr.getQuantity();
+        List<WalletOperation> walletOperations = new ArrayList<>();
 
         try {
             List<CachedUsageChargeInstance> charges = null;
 
             if (!isVirtual) {
-                if (!ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
+                // Charges should be already ordered by priority and id (why id??)
+                charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
+                if (charges == null || charges.isEmpty()) {
                     edr.setStatus(EDRStatusEnum.REJECTED);
                     edr.setRejectReason("SUBSCRIPTION_HAS_NO_CHARGE");
                     return null;
                 }
-                // Charges should be already ordered by priority and id (why id??)
-                charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
 
             } else {
                 // TODO still need to obtain charges as subscription is virtual
             }
 
             boolean foundPricePlan = true;
-            CachedUsageChargeTemplate chargeTemplate = null;
-            CachedUsageChargeTemplate newChargeTemplate = null;
+            UsageChargeTemplate chargeTemplate = null;
+
             // Find the first matching charge and rate it
             for (CachedUsageChargeInstance charge : charges) {
-                Long chargeTemplateId = charge.getChargeTemplateId();
-                // chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(chargeTemplateId);
 
-                chargeTemplate = cacheUsageMap.get(chargeTemplateId);
-                if (chargeTemplate == null) {
-                    UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(chargeTemplateId);
-                    newChargeTemplate = new CachedUsageChargeTemplate(usageChargeTemplate);
-                    chargeTemplate = newChargeTemplate;
-                    cacheUsageMap.put(chargeTemplateId, chargeTemplate);
-                }
+                chargeTemplate = em.find(UsageChargeTemplate.class, charge.getChargeTemplateId());
 
-                log.trace("try templateCache=" + chargeTemplate.toString());
+                log.trace("try templateCache {}", chargeTemplate.getCode());
                 try {
-					UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
-					if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
-							chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
-							chargeTemplate.getFilter2(),
-                        chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
+                    UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+                    if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilterParam1(),
+                        chargeTemplate.getFilterParam2(), chargeTemplate.getFilterParam3(), chargeTemplate.getFilterParam4())) {
                         continue;
                     }
+
                 } catch (ChargeWitoutPricePlanException e) {
                     log.debug("Charge {} was matched but does not contain a priceplan", chargeTemplate.getCode());
                     foundPricePlan = false;
@@ -660,17 +651,13 @@ public class UsageRatingService {
      * @throws BusinessException
      * @throws ChargeWitoutPricePlanException If charge has no price plan associated
      */
-    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4)
-            throws BusinessException, ChargeWitoutPricePlanException {
+    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3,
+            String filter4) throws BusinessException, ChargeWitoutPricePlanException {
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
-            log.trace("filter1 ok");
             if (filter2 == null || filter2.equals(edr.getParameter2())) {
-                log.trace("filter2 ok");
                 if (filter3 == null || filter3.equals(edr.getParameter3())) {
-                    log.trace("filter3 ok");
                     if (filter4 == null || filter4.equals(edr.getParameter4())) {
-                        log.trace("filter4 ok");
                         if (filterExpression == null || matchExpression(chargeInstance, filterExpression, edr)) {
 
                             if (chargeCode != null) {
@@ -681,9 +668,17 @@ public class UsageRatingService {
                             }
                             return true;
                         }
+                    } else {
+                        log.trace("filter 4 not matched");
                     }
+                } else {
+                    log.trace("filter 3 not matched");
                 }
+            } else {
+                log.trace("filter 2 not matched");
             }
+        } else {
+            log.trace("filter 1 not matched");
         }
         return false;
     }
@@ -712,9 +707,10 @@ public class UsageRatingService {
             boolean edrIsRated = false;
 
             try {
-                if (ratingCacheContainerProvider.isUsageChargeInstancesCached(edr.getSubscription().getId())) {
-                    // TODO:order charges by priority and id
-                    List<CachedUsageChargeInstance> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
+                // Charges are ordered by priority and id
+                List<CachedUsageChargeInstance> charges = ratingCacheContainerProvider.getUsageChargeInstances(edr.getSubscription().getId());
+                if (charges != null && !charges.isEmpty()) {
+
                     reservation = new Reservation();
                     reservation.setReservationDate(edr.getEventDate());
                     reservation.setExpiryDate(new Date(time + appProvider.getPrepaidReservationExpirationDelayinMillisec()));
@@ -727,17 +723,17 @@ public class UsageRatingService {
                     // em.persist(reservation);
                     reservationService.create(reservation);
 
+                    UsageChargeInstance usageChargeInstance = null;
+                    UsageChargeTemplate chargeTemplate = null;
                     for (CachedUsageChargeInstance charge : charges) {
-                        CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
-                        log.info("try templateCache=" + chargeTemplate.toString());
 
-						UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
-						if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
-								chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
-								chargeTemplate.getFilter2(),
-                            chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
+                        usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+                        chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+                        log.trace("Try  templateCache {}", chargeTemplate.getCode());
+                        if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilterParam1(),
+                            chargeTemplate.getFilterParam2(), chargeTemplate.getFilterParam3(), chargeTemplate.getFilterParam4())) {
 
-                            log.debug("found matchig charge inst : id=" + charge.getId());
+                            log.debug("found matching charge inst : id {}", charge.getId());
                             edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, charge);
                             if (edrIsRated) {
                                 edr.setStatus(EDRStatusEnum.RATED);

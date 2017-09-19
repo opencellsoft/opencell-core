@@ -124,21 +124,21 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 	public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance) throws BusinessException {
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
 		update(usageChargeInstance);
-		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
+		ratingCacheContainerProvider.addOrUpdateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
 	public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) throws BusinessException {
 		usageChargeInstance.setTerminationDate(terminationDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
         update(usageChargeInstance);
-		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
+		ratingCacheContainerProvider.addOrUpdateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
 	public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) throws BusinessException {
 		usageChargeInstance.setTerminationDate(suspensionDate);
 		usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
         update(usageChargeInstance);
-		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
+		ratingCacheContainerProvider.addOrUpdateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
 	public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) throws BusinessException {
@@ -146,7 +146,7 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 		usageChargeInstance.setTerminationDate(null);
 		usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
         update(usageChargeInstance);
-		ratingCacheContainerProvider.updateUsageChargeInstanceInCache(usageChargeInstance);
+		ratingCacheContainerProvider.addOrUpdateUsageChargeInstanceInCache(usageChargeInstance);
 	}
 
 	@SuppressWarnings("unchecked")

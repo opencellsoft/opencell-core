@@ -5,11 +5,10 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectChargeTemplateException;
-import org.meveo.admin.util.NumberUtil;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InvoiceSubCategory;
@@ -128,7 +127,7 @@ public class RealtimeChargingService {
 		op.setCode(chargeTemplate.getCode());
 
 		op.setDescription("");
-		op.setQuantity(NumberUtil.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));    
+		op.setQuantity(NumberUtils.getInChargeUnit(quantity, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));    
 		op.setTaxPercent(tax==null?BigDecimal.ZERO:tax.getPercent());
 		op.setCurrency(currency.getCurrency());
 		op.setStartDate(null);
@@ -164,21 +163,11 @@ public class RealtimeChargingService {
 		return priceWithoutTax ? op.getAmountWithoutTax() : op
 				.getAmountWithTax();
 	}
-
-	public BigDecimal getActivationServicePrice(BillingAccount ba,
-			ServiceTemplate serviceTemplate, Date subscriptionDate,
-			String offerCode, BigDecimal quantity, String param1,
-			String param2, String param3, boolean priceWithoutTax)
-			throws BusinessException {
-		return getActivationServicePrice(null, ba, serviceTemplate,
-				subscriptionDate, offerCode, quantity, param1, param2, param3,
-				priceWithoutTax);
-	}
-
+	
 	/*
 	 * Warning : this method does not handle calendars at service level
 	 */
-	public BigDecimal getActivationServicePrice(EntityManager em,
+	public BigDecimal getActivationServicePrice(
 			BillingAccount ba, ServiceTemplate serviceTemplate,
 			Date subscriptionDate, String offerCode, BigDecimal quantity,
 			String param1, String param2, String param3, boolean priceWithoutTax)

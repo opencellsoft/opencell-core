@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,6 +25,7 @@ import org.meveo.model.IEntity;
  * @author Edward P. Legaspi
  */
 @Entity
+@Cacheable
 @ExportIdentifier({ "offerTemplate.code", "offerTemplate.validity.from", "offerTemplate.validity.to", "productTemplate.code", "productTemplate.validity.from",
         "productTemplate.validity.to" })
 @Table(name = "cat_offer_product_template")
