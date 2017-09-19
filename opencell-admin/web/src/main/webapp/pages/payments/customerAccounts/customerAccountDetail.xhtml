@@ -195,8 +195,11 @@
                                                 </p:commandButton>
                                             </p:column>
                                             <f:facet name="footer">
-                                                <p:selectOneMenu id="newPaymentMethodType" value="#{customerAccountBean.newPaymentMethodType}">
-                                                    <f:selectItems value="#{PaymentMethodEnum.ALL_VALUES}" var="enumElement" itemValue="#{enumElement}" itemLabel="#{messages[enumElement.label]}" />
+                                                <p:selectOneMenu id="newPaymentMethodType" value="#{customerAccountBean.newPaymentMethodType}">                                                   
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.TIP.label]}" itemValue="#{PaymentMethodEnum.TIP}" />
+                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
                                                     <f:converter converterId="enumConverter" />
                                                     <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
                                                 </p:selectOneMenu>
