@@ -173,9 +173,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
     private String ADJUSTEMENT_DIR_NAME = "invoiceAdjustmentPdf";
     private String INVOICE_TEMPLATE_FILENAME = "invoice.jasper";
     private String DATE_PATERN = "yyyy.MM.dd";
-
+    
+    /** map used to store temporary jasper report.*/
     private Map<String, JasperReport> jasperReportMap = new HashMap<>();
 
+    /**
+     * @param invoiceNumber invoice's number
+     * @param customerAccount customer account
+     * @return invoice 
+     * @throws BusinessException business exception
+     */
     public Invoice getInvoice(String invoiceNumber, CustomerAccount customerAccount) throws BusinessException {
         try {
             Query q = getEntityManager().createQuery("from Invoice where invoiceNumber = :invoiceNumber and billingAccount.customerAccount=:customerAccount");
@@ -244,6 +251,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    /**
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
     public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
         String cfName = invoiceTypeService.getCustomFieldCode(invoice.getInvoiceType());
         Customer cust = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());
@@ -267,6 +278,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceNumber(prefix + invoiceNumber);
     }
 
+    /**
+     * @param invoice invoice
+     * @param invoicesToNumberInfo instance of InvoicesToNumberInfo
+     * @throws BusinessException business exception
+     */
     private void assignInvoiceNumberFromReserve(Invoice invoice, InvoicesToNumberInfo invoicesToNumberInfo) throws BusinessException {
         String prefix = invoicesToNumberInfo.getNumberingSequence().getPrefixEL();
         if (prefix != null && !StringUtils.isBlank(prefix)) {
@@ -469,6 +485,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
+    /**
+     * @param ratedTransactions list of rated transaction
+     * @param billingAccount billing account
+     * @param invoiceType type of invoice
+     * @return invoice
+     * @throws BusinessException business exception
+     */
     public Invoice createAgregatesAndInvoiceVirtual(List<RatedTransaction> ratedTransactions, BillingAccount billingAccount, InvoiceType invoiceType) throws BusinessException {
 
         if (invoiceType == null) {
@@ -711,6 +734,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return invoice;
     }
 
+    /**
+     * @param resDir resource directory
+     * @param billingTemplate billing template
+     * @param paymentMethod payment method
+     * @param isInvoiceAdjustment true/false
+     * @return jasper file
+     */
     private File getJasperTemplateFile(String resDir, String billingTemplate, PaymentMethodEnum paymentMethod, boolean isInvoiceAdjustment) {
         String pdfDirName = new StringBuilder(resDir).append(File.separator).append(billingTemplate).append(File.separator)
             .append(isInvoiceAdjustment ? ADJUSTEMENT_DIR_NAME : PDF_DIR_NAME).toString();
@@ -727,6 +757,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    /** 
+     * @param node instance of Node
+     * @return xml node as string
+     */
     protected String getNodeXmlString(Node node) {
         try {
             TransformerFactory transFactory = TransformerFactory.newInstance();
@@ -741,10 +775,20 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    /**
+     * @param tempDir temporary directory
+     * @param invoiceDate invoice date
+     * @param invoiceNumber invoice number
+     * @return name of invoice without sequence
+     */
     public String getNameWoutSequence(String tempDir, Date invoiceDate, String invoiceNumber) {
         return new StringBuilder(tempDir).append(File.separator).append(formatInvoiceDate(invoiceDate)).append("_").append(invoiceNumber).toString();
     }
 
+    /**
+     * @param invoiceDate invoice date
+     * @return invoice date as string
+     */
     public String formatInvoiceDate(Date invoiceDate) {
         DateFormat dateFormat = new SimpleDateFormat(DATE_PATERN);
         return dateFormat.format(invoiceDate);
@@ -773,6 +817,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
         queryInvoices.executeUpdate();
     }
 
+    /**
+     * @param prefix prefix of EL expression
+     * @param invoice invoice
+     * @return evaluated value
+     * @throws BusinessException business exception
+     */
     public String evaluatePrefixElExpression(String prefix, Invoice invoice) throws BusinessException {
         String result = null;
         if (StringUtils.isBlank(prefix)) {
@@ -795,6 +845,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return result;
     }
 
+    /**
+     * @param invoice invoice
+     * @throws BusinessException business exception
+     */
     public void recomputeAggregates(Invoice invoice) throws BusinessException {
         boolean entreprise = appProvider.isEntreprise();
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
@@ -928,6 +982,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setNetToPay(netToPay);
     }
 
+    /**
+     * @param invoice invoice used to recompute
+     */
     public void recomputeSubCategoryAggregate(Invoice invoice) {
         int rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
 
@@ -973,6 +1030,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return result;
     }
 
+    /**
+     * @param invoice invoice used to get billing run path
+     * @return billing run path
+     */
     private String getBillingRunPath(Invoice invoice) {
         BillingRun billingRun = invoice.getBillingRun();
         ParamBean paramBean = ParamBean.getInstance();
@@ -983,6 +1044,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return brPath;
     }
 
+    /**
+     * @param invoice invoice which used to get file name
+     * @return xml file name
+     */
     public String getInvoiceXMLFilename(Invoice invoice) {
 
         boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
@@ -994,6 +1059,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
     }
 
+    /**
+     * @param invoice invoice
+     * @return invoiced adjustment xml file name
+     */
     public String getInvoiceAdjustmentXMLFilename(Invoice invoice) {
 
         return paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_")
