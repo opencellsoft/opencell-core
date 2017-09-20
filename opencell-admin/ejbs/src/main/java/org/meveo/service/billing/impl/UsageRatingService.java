@@ -244,7 +244,7 @@ public class UsageRatingService {
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
         String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
         String descTranslated = descriptionMap.get(translationKey);
-        if (descTranslated != null) {
+        if (descTranslated == null) {
             descTranslated = (cachedChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : cachedChargeInstance.getDescription();
             if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(languageCode)) {
                 descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
