@@ -1248,7 +1248,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
                         if (!(ratedTransaction.getWallet().getId().longValue() == wallet.getId()
-                                || ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
+                                && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
                             continue;
                         }
                         if (!isVirtual) {
