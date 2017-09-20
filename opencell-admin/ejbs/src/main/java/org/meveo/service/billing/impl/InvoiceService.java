@@ -408,9 +408,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 delay = evaluateIntegerExpression(order.getDueDateDelayEL(), billingAccount, invoice, order);
             } else {
                 if (!StringUtils.isBlank(billingAccount.getCustomerAccount().getDueDateDelayEL())) {
-                    delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, null);
+                    delay = evaluateIntegerExpression(billingAccount.getCustomerAccount().getDueDateDelayEL(), billingAccount, invoice, order);
                 } else if (!StringUtils.isBlank(billingCycle.getDueDateDelayEL())) {
-                    delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, null);
+                    delay = evaluateIntegerExpression(billingCycle.getDueDateDelayEL(), billingAccount, invoice, order);
                 }
             }
 
