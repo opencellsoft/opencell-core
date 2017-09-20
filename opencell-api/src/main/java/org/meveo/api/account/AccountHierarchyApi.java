@@ -891,30 +891,6 @@ public class AccountHierarchyApi extends BaseApi {
 
 		handleMissingParameters();
 
-		NameDto name = new NameDto();
-		name.setFirstName(postData.getName().getFirstName());
-		name.setLastName(postData.getName().getLastName());
-		name.setTitle(postData.getName().getTitle());
-
-		AddressDto address = new AddressDto();
-		if (postData.getAddress() != null) {
-			address.setAddress1(postData.getAddress().getAddress1());
-			address.setAddress2(postData.getAddress().getAddress2());
-			address.setAddress3(postData.getAddress().getAddress3());
-			address.setCity(postData.getAddress().getCity());
-			address.setCountry(postData.getAddress().getCountry());
-			address.setState(postData.getAddress().getState());
-			address.setZipCode(postData.getAddress().getZipCode());
-		}
-
-		ContactInformationDto contactInformation = new ContactInformationDto();
-		if (postData.getContactInformation() != null) {
-			contactInformation.setEmail(postData.getContactInformation().getEmail());
-			contactInformation.setFax(postData.getContactInformation().getFax());
-			contactInformation.setMobile(postData.getContactInformation().getMobile());
-			contactInformation.setPhone(postData.getContactInformation().getPhone());
-		}
-
 		String accountType = postData.getCrmAccountType();
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
 		BusinessAccountModel businessAccountModel = businessAccountModelService.findByCode(accountType);
@@ -977,9 +953,9 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			customerDto.setMandateDate(postData.getMandateDate());
 			customerDto.setMandateIdentification(postData.getMandateIdentification());
-			customerDto.setName(name);
-			customerDto.setAddress(address);
-			customerDto.setContactInformation(contactInformation);
+			customerDto.setName(postData.getName());
+			customerDto.setAddress(postData.getAddress());
+			customerDto.setContactInformation(postData.getContactInformation());
 			customerDto.setExternalRef1(postData.getExternalRef1());
 			customerDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1016,11 +992,10 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccountDto.setCreditCategory(postData.getCreditCategory());
 			customerAccountDto.setDateStatus(postData.getDateStatus());
 			customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
-			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setContactInformation(postData.getContactInformation());
 			customerAccountDto.setDunningLevel(postData.getDunningLevel());
-			customerAccountDto.setName(name);
-			customerAccountDto.setAddress(address);
-			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setName(postData.getName());
+			customerAccountDto.setAddress(postData.getAddress());
 			customerAccountDto.setExternalRef1(postData.getExternalRef1());
 			customerAccountDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1072,8 +1047,8 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setEmail(postData.getEmail());
 			billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 			billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
-			billingAccountDto.setName(name);
-			billingAccountDto.setAddress(address);
+			billingAccountDto.setName(postData.getName());
+			billingAccountDto.setAddress(postData.getAddress());
 			billingAccountDto.setExternalRef1(postData.getExternalRef1());
 			billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1107,8 +1082,8 @@ public class AccountHierarchyApi extends BaseApi {
 			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
 			userAccountDto.setTerminationReason(postData.getTerminationReason());
 			userAccountDto.setStatus(postData.getUaStatus());
-			userAccountDto.setName(name);
-			userAccountDto.setAddress(address);
+			userAccountDto.setName(postData.getName());
+			userAccountDto.setAddress(postData.getAddress());
 			userAccountDto.setExternalRef1(postData.getExternalRef1());
 			userAccountDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1150,30 +1125,6 @@ public class AccountHierarchyApi extends BaseApi {
 		}
 
 		handleMissingParameters();
-
-		NameDto name = new NameDto();
-		name.setFirstName(postData.getName().getFirstName());
-		name.setLastName(postData.getName().getLastName());
-		name.setTitle(postData.getName().getTitle());
-
-		AddressDto address = new AddressDto();
-		if (postData.getAddress() != null) {
-			address.setAddress1(postData.getAddress().getAddress1());
-			address.setAddress2(postData.getAddress().getAddress2());
-			address.setAddress3(postData.getAddress().getAddress3());
-			address.setCity(postData.getAddress().getCity());
-			address.setCountry(postData.getAddress().getCountry());
-			address.setState(postData.getAddress().getState());
-			address.setZipCode(postData.getAddress().getZipCode());
-		}
-
-		ContactInformationDto contactInformation = new ContactInformationDto();
-		if (postData.getContactInformation() != null) {
-			contactInformation.setEmail(postData.getContactInformation().getEmail());
-			contactInformation.setFax(postData.getContactInformation().getFax());
-			contactInformation.setMobile(postData.getContactInformation().getMobile());
-			contactInformation.setPhone(postData.getContactInformation().getPhone());
-		}
 
 		String accountType = postData.getCrmAccountType();
 		AccountHierarchyTypeEnum accountHierarchyTypeEnum = null;
@@ -1237,9 +1188,9 @@ public class AccountHierarchyApi extends BaseApi {
 			}
 			customerDto.setMandateDate(postData.getMandateDate());
 			customerDto.setMandateIdentification(postData.getMandateIdentification());
-			customerDto.setName(name);
-			customerDto.setAddress(address);
-			customerDto.setContactInformation(contactInformation);
+			customerDto.setName(postData.getName());
+			customerDto.setAddress(postData.getAddress());
+			customerDto.setContactInformation(postData.getContactInformation());
 			customerDto.setExternalRef1(postData.getExternalRef1());
 			customerDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1276,11 +1227,10 @@ public class AccountHierarchyApi extends BaseApi {
 			customerAccountDto.setCreditCategory(postData.getCreditCategory());
 			customerAccountDto.setDateStatus(postData.getDateStatus());
 			customerAccountDto.setDateDunningLevel(postData.getDateDunningLevel());
-			customerAccountDto.setContactInformation(contactInformation);
 			customerAccountDto.setDunningLevel(postData.getDunningLevel());
-			customerAccountDto.setName(name);
-			customerAccountDto.setAddress(address);
-			customerAccountDto.setContactInformation(contactInformation);
+			customerAccountDto.setName(postData.getName());
+			customerAccountDto.setAddress(postData.getAddress());
+			customerAccountDto.setContactInformation(postData.getContactInformation());
 			customerAccountDto.setExternalRef1(postData.getExternalRef1());
 			customerAccountDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1331,8 +1281,8 @@ public class AccountHierarchyApi extends BaseApi {
 			billingAccountDto.setEmail(postData.getEmail());
 			billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
 			billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
-			billingAccountDto.setName(name);
-			billingAccountDto.setAddress(address);
+			billingAccountDto.setName(postData.getName());
+			billingAccountDto.setAddress(postData.getAddress());
 			billingAccountDto.setExternalRef1(postData.getExternalRef1());
 			billingAccountDto.setExternalRef2(postData.getExternalRef2());
 
@@ -1366,8 +1316,8 @@ public class AccountHierarchyApi extends BaseApi {
 			userAccountDto.setSubscriptionDate(postData.getSubscriptionDate());
 			userAccountDto.setTerminationReason(postData.getTerminationReason());
 			userAccountDto.setStatus(postData.getUaStatus());
-			userAccountDto.setName(name);
-			userAccountDto.setAddress(address);
+			userAccountDto.setName(postData.getName());
+			userAccountDto.setAddress(postData.getAddress());
 			userAccountDto.setExternalRef1(postData.getExternalRef1());
 			userAccountDto.setExternalRef2(postData.getExternalRef2());
 
