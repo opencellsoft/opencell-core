@@ -221,7 +221,6 @@
                                                     <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" required="true" />
 
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
-
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType"
                                                             required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardOwner']}" field="owner"
