@@ -36,6 +36,7 @@ import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 /**
@@ -85,10 +86,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-counter-cache")
     private Cache<Long, CachedCounterInstance> counterCache;
-
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
     // private CacheContainer meveoContainer;
@@ -327,7 +324,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         // For some reason cast does not work - (exception ChargeTemplate can not be cast to UsageChargeTemplate), so need to look it up by id
         // UsageChargeTemplate usageChargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
-        UsageChargeTemplate usageChargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
+        UsageChargeTemplate usageChargeTemplate = usageChargeTemplateService.findById(usageChargeInstance.getChargeTemplate().getId());
 
         boolean cachedSubscriptionContainsCharge = false;
 

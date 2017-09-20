@@ -23,6 +23,7 @@ import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceUnit;
 
 public class Resources {
@@ -55,10 +56,9 @@ public class Resources {
     // }
     // end of "For some reason this causes issue in GUI with lazy loading"
 
-    //
-    // @Produces
-    // @PersistenceContext(unitName = "MeveoAdmin")
-    // @MeveoJpaForJobs
-    // private EntityManager emfForJobs;
+    @Produces
+    @PersistenceContext(unitName = "MeveoAdmin")
+    @MeveoJpaForJobs
+    private EntityManager emfForJobs;
 
 }

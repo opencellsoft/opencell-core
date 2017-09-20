@@ -66,6 +66,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -82,6 +83,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     @MeveoJpa
     private EntityManager em;
+
+    @Inject
+    @MeveoJpaForJobs
+    private EntityManager emfForJobs;
 
     @Inject
     private ElasticClient elasticClient;
@@ -816,7 +821,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public EntityManager getEntityManager() {
-        return em;
+        EntityManager result = emfForJobs;
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                result = em;
+            } catch (Exception e) {
+            }
+        }
+
+        return result;
     }
 
     public void updateAudit(E e) {

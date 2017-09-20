@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -25,17 +24,12 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.MeveoJpa;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 import org.slf4j.Logger;
 
 @Stateless
 public class WebHookNotifier {
-
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
 
     @Inject
     Logger log;

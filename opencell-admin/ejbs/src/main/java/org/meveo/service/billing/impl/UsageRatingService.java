@@ -64,7 +64,7 @@ import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -73,7 +73,7 @@ public class UsageRatingService implements Serializable {
     private static final long serialVersionUID = 1411446109227299227L;
 
     @Inject
-    @MeveoJpa
+    @MeveoJpaForJobs
     private EntityManager em;
 
     @Inject
@@ -852,5 +852,4 @@ public class UsageRatingService implements Serializable {
 
         return result;
     }
-
 }
