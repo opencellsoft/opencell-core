@@ -963,6 +963,7 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
+        this.paymentMethod.updateAudit(currentUser);
     }
 
     public void changePaymentMethodType() {

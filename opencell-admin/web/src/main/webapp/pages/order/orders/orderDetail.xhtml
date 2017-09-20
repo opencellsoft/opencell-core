@@ -89,9 +89,16 @@
                         </p:fieldset>
 
                         <p:fieldset legend="#{messages['customerAccount.paymentMethod']}" styleClass="clearBoth" rendered="#{orderBean.orderEditable or orderBean.entity.paymentMethod!=null}">
-                            <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-                                <hftl:formField entity="#{orderBean}" label="#{messages['paymentMethod.type']}" field="paymentMethodType" actionListenerBean="#{orderBean}"
-                                    actionListenerMethod="changePaymentMethodType" listenerUpdate="paymentMethodDetail" componentWidth="15" />
+                            <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">       
+                              <p:selectOneMenu id="newPaymentMethodType" value="#{orderBean.paymentMethodType}">                                                   
+                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
+                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
+                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.TIP.label]}" itemValue="#{PaymentMethodEnum.TIP}" />
+                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
+                                  <f:converter converterId="enumConverter" />
+                                  <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
+                                   <p:ajax update="paymentMethodDetail"  listener="#{orderBean.changePaymentMethodType}" event="change" />                                 
+                              </p:selectOneMenu>
 
                                 <h:panelGroup rendered="#{orderBean.paymentMethodType!=null}">
                                     <hftl:formField label="#{messages['paymentMethod.alias']}" field="paymentMethod" childField="alias" />
