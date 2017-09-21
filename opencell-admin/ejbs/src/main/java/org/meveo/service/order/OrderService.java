@@ -99,7 +99,6 @@ public class OrderService extends BusinessService<Order> {
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
 		if (order.getPaymentMethod() != null) {
-			order.getPaymentMethod().setAuditable(new Auditable());
 			order.getPaymentMethod().updateAudit(currentUser);
 		}
 
@@ -118,6 +117,9 @@ public class OrderService extends BusinessService<Order> {
             UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
+        if (order.getPaymentMethod() != null) {
+			order.getPaymentMethod().updateAudit(currentUser);
+		}
 
         return super.update(order);
     }

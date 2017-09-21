@@ -243,8 +243,14 @@
                                                     </c:if>
                                     
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT}">
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['customerAccount.mandateIdentification']}" field="mandateIdentification" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['customerAccount.mandateDate']}" field="mandateDate" isDate="true" required="true" />
+                                                    	<hftl:decorateFormField
+															label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
+															<p:inputText id="mandateIdentification" value="#{customerAccountBean.selectedPaymentMethod.mandateIdentification}" required="true" />
+														</hftl:decorateFormField>
+														<hftl:decorateFormField
+															label="#{messages['customerAccount.mandateDate']}" fieldId="mandateDate">
+															<p:calendar id="mandateDate" value="#{customerAccountBean.selectedPaymentMethod.mandateDate}" pattern="#{paramBean.dateFormat}" required="true" />
+														</hftl:decorateFormField>
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
                                                             childField="bankName" size="55" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"

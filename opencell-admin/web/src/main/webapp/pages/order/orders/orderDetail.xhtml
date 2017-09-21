@@ -122,14 +122,20 @@
                                     </c:if>
 
                                     <c:if test="#{orderBean.entity.paymentMethod.paymentType eq PaymentMethodEnum.DIRECTDEBIT}">
-                                        <hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['customerAccount.mandateIdentification']}" field="mandateIdentification" required="true" />
-										<hftl:formField entity="#{orderBean.paymentMethod}" label="#{messages['customerAccount.mandateDate']}" field="mandateDate" isDate="true" required="true" />
+										<hftl:decorateFormField
+											label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
+											<p:inputText id="mandateIdentification" value="#{orderBean.paymentMethod.mandateIdentification}" required="true" />
+										</hftl:decorateFormField>
+										<hftl:decorateFormField
+											label="#{messages['customerAccount.mandateDate']}" fieldId="mandateDate">
+											<p:calendar id="mandateDate" value="#{orderBean.paymentMethod.mandateDate}" pattern="#{paramBean.dateFormat}" required="true" />
+										</hftl:decorateFormField>
 										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankName']}" field="bankName" size="55" required="true" />
-                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
-                                            required="true" />
-                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
-                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />
-                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.ics']}" field="ics" size="35" required="true" />
+										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
+											required="true" />
+										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
+										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />
+										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.ics']}" field="ics" size="35" required="true" />
                                     </c:if>
                                     
                                     <c:if test="#{orderBean.entity.paymentMethod.paymentType eq PaymentMethodEnum.TIP}">
