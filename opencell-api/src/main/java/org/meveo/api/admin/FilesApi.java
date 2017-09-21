@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.admin.FileDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -157,6 +159,24 @@ public class FilesApi extends BaseApi {
 			}
 		} else {
 			throw new BusinessApiException("Directory does not exists: " + filename);
+		}
+	}
+	
+	public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
+		File file = new File(getProviderRootDir() + File.separator + filePath);
+		if (!file.exists()) {
+			throw new BusinessApiException("File does not exists: " + file.getPath());
+		}
+
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			response.setContentType("application/force-download");
+			response.setContentLength((int) file.length());
+			response.addHeader("Content-disposition", "attachment;filename=\"" + file + "\"");
+			IOUtils.copy(fis, response.getOutputStream());
+			response.flushBuffer();
+		} catch (IOException e) {
+			throw new BusinessApiException("Error zipping file: " + file.getName() + ". " + e.getMessage());
 		}
 	}
 
