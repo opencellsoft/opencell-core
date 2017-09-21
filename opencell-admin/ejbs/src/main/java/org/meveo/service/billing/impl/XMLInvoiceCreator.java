@@ -109,6 +109,9 @@ import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -120,6 +123,7 @@ import org.xml.sax.SAXException;
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
+	/** configuration parameter bean.*/
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
@@ -156,36 +160,62 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private SubscriptionService subscriptionService;
 
     @Inject
+    private ScriptInstanceService scriptInstanceService;
+
+    @Inject
     @ApplicationProvider
     private Provider appProvider;
 
+    /** transformer factory.*/
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
+    /** list of service's id, order's id, price plan's id.*/
     private List<Long> serviceIds = null, offerIds = null, priceplanIds = null;
+
+    /** description map .*/
     private Map<String, String> descriptionMap = new HashMap<String, String>();
 
+    /** default date format.*/
     private static String DEFAULT_DATE_PATTERN = "dd/MM/yyyy";
+
+    /** default date time format.*/
     private static String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
 
+    /** temporary map to store billing cycle.*/
     private Map<BillingCycle, String> billingCycleMap = new HashMap<>();
 
+    /** all rated transaction for a invoice.*/
     private List<RatedTransaction> ratedTransactions = null;
 
+    /** list of sub category invoice agregates.*/
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
+    /**
+     * @param invoice invoice used to create xml
+     * @param isVirtual true/false (true for Quote/order)
+     * @return xml file
+     * @throws BusinessException business exception
+     */
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
-        /**
-         * log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() :
-         * invoice.getTemporaryInvoiceNumber());
-         * 
-         * String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
-         * 
-         * if(invoiceXmlScript != null){
-         * 
-         * ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript); Map<String,Object> methodContext = new HashMap<String, Object>();
-         * methodContext.put(Script.CONTEXT_ENTITY, invoice); methodContext.put("isVirtual", Boolean.valueOf(isVirtual)); methodContext.put("XMLInvoiceCreator", this); if(script ==
-         * null){ log.debug("script is null"); } script.execute(methodContext); return (File) methodContext.get(Script.RESULT_VALUE); }
-         */
+    	log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(),
+				invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+
+		String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider,
+				"PROV_CUSTOM_INV_XML_SCRIPT_CODE");
+
+		if (invoiceXmlScript != null) {
+			ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript);
+			Map<String, Object> methodContext = new HashMap<String, Object>();
+			methodContext.put(Script.CONTEXT_ENTITY, invoice);
+			methodContext.put("isVirtual", Boolean.valueOf(isVirtual));
+			methodContext.put("XMLInvoiceCreator", this);
+			if (script == null) {
+				log.debug("script is null");
+			}
+			script.execute(methodContext);
+			return (File) methodContext.get(Script.RESULT_VALUE);
+		}
+
         try {
             return createDocumentAndFile(invoice, isVirtual);
         } catch (ParserConfigurationException | SAXException | IOException e) {
@@ -1709,15 +1739,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         parent.appendChild(discounts);
 
-        List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
+        List<SubCategoryInvoiceAgregate> discountInvoiceAgregates = new ArrayList<>();
+
         if (isVirtual) {
-            subCategoryInvoiceAgregates = invoice.getDiscountAgregates();
+            discountInvoiceAgregates = invoice.getDiscountAgregates();
 
         } else {
-            subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
+            discountInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
         }
 
-        for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+        for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : discountInvoiceAgregates) {
 
             Element discount = doc.createElement("discount");
             discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanCode());
@@ -1732,6 +1763,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     }
 
+    /**
+     * @param amount amount needs to be rounded
+     * @param scale mode of scale
+     * @return string represents the amount.
+     */
     private String round(BigDecimal amount, Integer scale) {
         if (amount == null) {
             amount = BigDecimal.ZERO;
