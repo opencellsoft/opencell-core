@@ -109,6 +109,9 @@ import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.ScriptInterface;
 import org.meveo.util.ApplicationProvider;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -154,6 +157,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+	private ScriptInstanceService scriptInstanceService;
 
     @Inject
     @ApplicationProvider
@@ -173,19 +179,32 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     private List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
 
+    /**
+     * @param invoice invoice used to create xml
+     * @param isVirtual true/false (true for Quote/order)
+     * @return xml file
+     * @throws BusinessException business exception
+     */
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
-        /**
-         * log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() :
-         * invoice.getTemporaryInvoiceNumber());
-         * 
-         * String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider, "PROV_CUSTOM_INV_XML_SCRIPT_CODE");
-         * 
-         * if(invoiceXmlScript != null){
-         * 
-         * ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript); Map<String,Object> methodContext = new HashMap<String, Object>();
-         * methodContext.put(Script.CONTEXT_ENTITY, invoice); methodContext.put("isVirtual", Boolean.valueOf(isVirtual)); methodContext.put("XMLInvoiceCreator", this); if(script ==
-         * null){ log.debug("script is null"); } script.execute(methodContext); return (File) methodContext.get(Script.RESULT_VALUE); }
-         */
+    	log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(),
+				invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+
+		String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider,
+				"PROV_CUSTOM_INV_XML_SCRIPT_CODE");
+
+		if (invoiceXmlScript != null) {
+			ScriptInterface script = scriptInstanceService.getScriptInstance(invoiceXmlScript);
+			Map<String, Object> methodContext = new HashMap<String, Object>();
+			methodContext.put(Script.CONTEXT_ENTITY, invoice);
+			methodContext.put("isVirtual", Boolean.valueOf(isVirtual));
+			methodContext.put("XMLInvoiceCreator", this);
+			if (script == null) {
+				log.debug("script is null");
+			}
+			script.execute(methodContext);
+			return (File) methodContext.get(Script.RESULT_VALUE);
+		}
+
         try {
             return createDocumentAndFile(invoice, isVirtual);
         } catch (ParserConfigurationException | SAXException | IOException e) {
