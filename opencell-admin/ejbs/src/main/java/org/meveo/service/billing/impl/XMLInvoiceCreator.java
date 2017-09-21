@@ -169,7 +169,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     /** transformer factory.*/
     private TransformerFactory transfac = TransformerFactory.newInstance();
 
-    /** list of service's id, order's id, price plan's id./
+    /** list of service's id, order's id, price plan's id.*/
     private List<Long> serviceIds = null, offerIds = null, priceplanIds = null;
 
     /** description map .*/
@@ -1739,16 +1739,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         parent.appendChild(discounts);
 
-        List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
-        
+        List<SubCategoryInvoiceAgregate> discountInvoiceAgregates = new ArrayList<>();
+
         if (isVirtual) {
-            subCategoryInvoiceAgregates = invoice.getDiscountAgregates();
+            discountInvoiceAgregates = invoice.getDiscountAgregates();
 
         } else {
-            subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
+            discountInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
         }
 
-        for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
+        for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : discountInvoiceAgregates) {
 
             Element discount = doc.createElement("discount");
             discount.setAttribute("discountPlanCode", subCategoryInvoiceAgregate.getDiscountPlanCode());
