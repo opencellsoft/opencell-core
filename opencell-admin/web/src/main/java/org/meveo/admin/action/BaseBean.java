@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
