@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,8 +34,7 @@ public class FilesApi extends BaseApi {
 
 	public String getProviderRootDir() {
 		if (StringUtils.isBlank(providerRootDir)) {
-			providerRootDir = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator
-					+ appProvider.getCode();
+			providerRootDir = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator + appProvider.getCode();
 		}
 
 		return providerRootDir;
@@ -94,8 +94,7 @@ public class FilesApi extends BaseApi {
 		}
 
 		try {
-			FileOutputStream fos = new FileOutputStream(new File(
-					FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
+			FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
 			ZipOutputStream zos = new ZipOutputStream(fos);
 			FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
 			fos.flush();
@@ -161,7 +160,7 @@ public class FilesApi extends BaseApi {
 			throw new BusinessApiException("Directory does not exists: " + filename);
 		}
 	}
-	
+
 	public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
 		File file = new File(getProviderRootDir() + File.separator + filePath);
 		if (!file.exists()) {
@@ -170,9 +169,9 @@ public class FilesApi extends BaseApi {
 
 		try {
 			FileInputStream fis = new FileInputStream(file);
-			response.setContentType("application/force-download");
+			response.setContentType(Files.probeContentType(file.toPath()));
 			response.setContentLength((int) file.length());
-			response.addHeader("Content-disposition", "attachment;filename=\"" + file + "\"");
+			response.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
 			IOUtils.copy(fis, response.getOutputStream());
 			response.flushBuffer();
 		} catch (IOException e) {
