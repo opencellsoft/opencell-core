@@ -219,14 +219,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+     * @return
      * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void disable(Long id) throws BusinessException {
+    public E disable(Long id) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            disable(e);
+            e = disable(e);
         }
+        return e;
     }
 
     @Override
@@ -250,11 +252,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long, org.meveo.model.admin.User)
      */
     @Override
-    public void enable(Long id) throws BusinessException {
+    public E enable(Long id) throws BusinessException {
         E e = findById(id);
         if (e != null) {
-            enable(e);
+            e = enable(e);
         }
+        return e;
     }
 
     @Override

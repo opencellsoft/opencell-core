@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -526,16 +525,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
 
-            // Delete image here only if transient. Otherwise it will be deleted as part of a call to a service
-            if (id == null && isImageUpload()) {
-                try {
-                    ImageUploadEventHandler<T> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-                    imageUploadEventHandler.deleteImage(entity);
-                } catch (IOException e) {
-                    log.error("Failed deleting image file");
-                }
-            }
-
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Throwable t) {
             if (t.getCause() instanceof EntityExistsException) {
@@ -671,7 +660,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void disable() {
         try {
             log.info("Disabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().disable(entity);
+            entity = getPersistenceService().disable((Long) entity.getId());
             messages.info(new BundleKey("messages", "disabled.successful"));
 
         } catch (Exception t) {
@@ -707,7 +696,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public void enable() {
         try {
             log.info("Enabling entity {} with id = {}", clazz.getName(), entity.getId());
-            entity = getPersistenceService().enable(entity);
+            entity = getPersistenceService().enable((Long) entity.getId());
             messages.info(new BundleKey("messages", "enabled.successful"));
 
         } catch (Exception t) {
@@ -1012,10 +1001,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public List<Filter> getListFilters() {
         if (clazz != null) {
-        return filterService.findByPrimaryTargetClass(clazz.getName());
+            return filterService.findByPrimaryTargetClass(clazz.getName());
         } else {
             return null;
-    }
+        }
     }
 
     public void runListFilter() {

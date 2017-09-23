@@ -119,4 +119,7 @@ public interface SuperAdminSettingsWs extends IBaseWs {
 
 	@WebMethod
 	ActionStatus suppressDir(@WebParam(name = "dir") String dir);
+	
+	@WebMethod
+	ActionStatus downloadFile(@WebParam(name = "file") String file);
 }

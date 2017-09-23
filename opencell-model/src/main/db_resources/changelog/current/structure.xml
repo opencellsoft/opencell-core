@@ -131,6 +131,8 @@
 
     <changeSet id="#2751_migration_P1" author="AndriusKarpavicius" dbms="postgresql">
 
+        <sql>update tmp_cfi_copy set string_value = regexp_replace(replace(string_value, '"', '\"'),'\n','\\r\\n','g')  where string_value is not null</sql>
+
         <sql>update tmp_cfi_copy set serialized_value = new_value from (select id, 'list_Date|['|| string_agg(new_date,',')||']' as new_value from (select id, old_date, substr(old_date,1,5) || substring(old_date,9,3)||
             substring(old_date,6,3) || substring(old_date,12) as new_date from (select id, unnest(string_to_array(substring(left(serialized_value,length(serialized_value)-1), strpos(serialized_value,'|')+2),',')) as
             old_date from crm_custom_field_inst where left(serialized_value,9)='list_Date') old_dates_array) new_dates_array group by id) new_values where tmp_cfi_copy.id=new_values.id
@@ -228,6 +230,9 @@
     </changeSet>
 
     <changeSet id="#2751_migration_M1" author="AndriusKarpavicius" dbms="mysql">
+    
+    
+        <sql>update tmp_cfi_copy set string_value = replace(string_value, '"', '\"') where string_value is not null</sql>
 
         <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-01','-AKKR01-01') where serialized_value like '%_Date|%'</sql>
         <sql>update tmp_cfi_copy set serialized_value = replace(serialized_value,'-01-02','-AKKR02-01') where serialized_value like '%_Date|%'</sql>

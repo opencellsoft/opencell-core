@@ -218,10 +218,9 @@
 
                                             <p:panel header="#{messages['customerAccount.paymentMethod']}" rendered="#{customerAccountBean.selectedPaymentMethod!=null}">
                                                 <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
-                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" />
+                                                    <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" required="true" />
 
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.CARD}">
-
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardType']}" field="cardType"
                                                             required="true" edit="#{customerAccountBean.selectedPaymentMethod.tokenId==null}" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.cardOwner']}" field="owner"
@@ -243,11 +242,28 @@
                                                         </hftl:decorateFormField>
                                                     </c:if>
                                     
-                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT or customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
-                                                        <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT }">
-		                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['customerAccount.mandateIdentification']}" field="mandateIdentification" />
-		                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['customerAccount.mandateDate']}" field="mandateDate" isDate="true" />
-                                                          </c:if>
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.DIRECTDEBIT}">
+                                                    	<hftl:decorateFormField
+															label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
+															<p:inputText id="mandateIdentification" value="#{customerAccountBean.selectedPaymentMethod.mandateIdentification}" required="true" />
+														</hftl:decorateFormField>
+														<hftl:decorateFormField
+															label="#{messages['customerAccount.mandateDate']}" fieldId="mandateDate">
+															<p:calendar id="mandateDate" value="#{customerAccountBean.selectedPaymentMethod.mandateDate}" pattern="#{paramBean.dateFormat}" required="true" />
+														</hftl:decorateFormField>
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
+                                                            childField="bankName" size="55" required="true" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"
+                                                            field="bankCoordinates" childField="accountOwner" size="55" required="true" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
+                                                            childField="bic" size="15" required="true" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
+                                                            childField="iban" size="45" required="true" />
+                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.ics']}" field="bankCoordinates"
+                                                            childField="ics" size="35" required="true" />                                                            
+                                                    </c:if>
+                                                    
+                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
                                                             childField="bankName" size="55" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankCode']}" id="bankCode"
@@ -260,11 +276,10 @@
                                                             field="bankCoordinates" childField="accountOwner" size="55" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.key']}" field="bankCoordinates"
                                                             childField="key" size="2" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
+                                                        <!-- <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
                                                             childField="bic" size="15" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
-                                                            childField="iban" size="45" required="true" />
-                                                            
+                                                            childField="iban" size="45" required="true" /> -->                                                            
                                                     </c:if>
 
                                                 </p:outputPanel>

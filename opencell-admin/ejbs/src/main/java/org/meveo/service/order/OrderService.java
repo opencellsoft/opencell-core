@@ -10,6 +10,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.model.Auditable;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
@@ -97,6 +98,9 @@ public class OrderService extends BusinessService<Order> {
             UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
+		if (order.getPaymentMethod() != null) {
+			order.getPaymentMethod().updateAudit(currentUser);
+		}
 
         super.create(order);
     }
@@ -113,6 +117,9 @@ public class OrderService extends BusinessService<Order> {
             UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
+        if (order.getPaymentMethod() != null) {
+			order.getPaymentMethod().updateAudit(currentUser);
+		}
 
         return super.update(order);
     }

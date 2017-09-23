@@ -3,6 +3,8 @@ package org.meveo.api.rest.admin.impl;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
 
 import org.meveo.api.admin.FilesApi;
 import org.meveo.api.dto.ActionStatus;
@@ -20,6 +22,9 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
 
 	@Inject
 	private FilesApi filesApi;
+	
+	@Context 
+	private HttpServletResponse httpServletResponse;
 
 	@Override
 	public GetFilesResponseDto listFiles() {
@@ -118,6 +123,19 @@ public class FilesRsImpl extends BaseRs implements FilesRs {
 
 		try {
 			filesApi.uploadFile(form.getData(), form.getFilename());
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus downloadFile(String file) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			filesApi.downloadFile(file, httpServletResponse);
 		} catch (Exception e) {
 			processException(e, result);
 		}

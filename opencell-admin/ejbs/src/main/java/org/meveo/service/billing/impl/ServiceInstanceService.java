@@ -51,27 +51,57 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
+/**
+ * ServiceInstanceService.
+ * 
+ * @author anasseh
+ *
+ */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
-
+    /**
+     * ServiceModelScriptService
+     */
     @Inject
     private ServiceModelScriptService serviceModelScriptService;
 
+    /**
+     * RecurringChargeInstanceService
+     */
     @Inject
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
+    /**
+     * OneShotChargeInstanceService
+     */
     @Inject
     private OneShotChargeInstanceService oneShotChargeInstanceService;
 
+    /**
+     * UsageChargeInstanceService
+     */
     @Inject
     private UsageChargeInstanceService usageChargeInstanceService;
 
+    /**
+     * WalletOperationService
+     */
     @Inject
     private WalletOperationService walletOperationService;
 
+    /**
+     * ServiceTemplateService
+     */
     @Inject
     ServiceTemplateService serviceTemplateService;
 
+    /**
+     * Find a serviceInstance by subscription code and service template code.
+     * 
+     * @param subscriptionCode the subscription code
+     * @param code the service template code
+     * @return the ServiceInstance found
+     */
     public ServiceInstance findBySubscriptionCodeAndCode(String subscriptionCode, String code) {
         ServiceInstance chargeInstance = null;
         try {
@@ -94,6 +124,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return chargeInstance;
     }
 
+    /**
+     * Find a service instance by subscription entity and service template code.
+     * 
+     * @param code the service template code
+     * @param subscription the subscription entity
+     * @return the ServiceInstance found
+     */
     public ServiceInstance findByCodeAndSubscription(String code, Subscription subscription) {
         ServiceInstance chargeInstance = null;
         try {
@@ -112,6 +149,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return chargeInstance;
     }
 
+    /**
+     * Find a service instance list by subscription entity, service template code and service instance status list
+     * 
+     * @param code the service template code
+     * @param subscription the subscription entity
+     * @param statuses service instance statuses
+     * @return the ServiceInstance list found
+     */
     @SuppressWarnings("unchecked")
     public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, Subscription subscription, InstanceStatusEnum... statuses) {
         List<ServiceInstance> serviceInstances = null;
@@ -139,6 +184,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return serviceInstances;
     }
 
+    /**
+     * Find a service instance by subscription entity, service template code and service instance status
+     * 
+     * @param code the service template code
+     * @param subscription the subscription entity
+     * @param status service instance status
+     * @return the ServiceInstance found
+     */
     public ServiceInstance findFirstByCodeSubscriptionAndStatus(String code, Subscription subscription, InstanceStatusEnum status) {
         ServiceInstance result = null;
         try {
@@ -159,6 +212,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return result;
     }
 
+    /**
+     * Instantiate a service
+     * 
+     * @param serviceInstance service instance to instantiate
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
+     */
     public void serviceInstanciation(ServiceInstance serviceInstance) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         serviceInstanciation(serviceInstance, null, null, false);
     }
@@ -247,7 +308,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
-     * Activate a service, the subscription charges are applied
+     * Activate a service, the subscription charges are applied.
+     *
+     * @param serviceInstance
+     * @param amountWithoutTax
+     * @param amountWithoutTax2
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
      */
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -255,7 +323,15 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
-     * Activate a service, the subscription charges can be applied or not
+     * Activate a service, the subscription charges can be applied or not.
+     * 
+     * @param serviceInstance
+     * @param applySubscriptionCharges
+     * @param amountWithoutTax
+     * @param amountWithoutTax2
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -330,7 +406,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 }
             }
             int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
-                serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate());
+                serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
             log.debug("rated " + nbRating + " missing periods during activation");
         }
         for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
@@ -346,6 +422,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         }
     }
 
+    /**
+     * Terminate a service.
+     * 
+     * @param serviceInstance
+     * @param terminationDate
+     * @param terminationReason
+     * @param orderNumber
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
+     */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
@@ -355,6 +442,20 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         update(serviceInstance);
     }
 
+    /**
+     * Terminate a service
+     * 
+     * @param serviceInstance
+     * @param terminationDate
+     * @param applyAgreement
+     * @param applyReimbursment
+     * @param applyTerminationCharges
+     * @param orderNumber
+     * @param terminationReason
+     * @throws IncorrectSusbcriptionException
+     * @throws IncorrectServiceInstanceException
+     * @throws BusinessException
+     */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
             String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 

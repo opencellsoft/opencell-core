@@ -4,14 +4,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.zip.ZipOutputStream;
 
 import javax.ejb.Stateless;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.admin.FileDto;
 import org.meveo.api.exception.BusinessApiException;
@@ -31,8 +34,7 @@ public class FilesApi extends BaseApi {
 
 	public String getProviderRootDir() {
 		if (StringUtils.isBlank(providerRootDir)) {
-			providerRootDir = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator
-					+ appProvider.getCode();
+			providerRootDir = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator + appProvider.getCode();
 		}
 
 		return providerRootDir;
@@ -92,8 +94,7 @@ public class FilesApi extends BaseApi {
 		}
 
 		try {
-			FileOutputStream fos = new FileOutputStream(new File(
-					FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
+			FileOutputStream fos = new FileOutputStream(new File(FilenameUtils.removeExtension(file.getParent() + File.separator + file.getName()) + ".zip"));
 			ZipOutputStream zos = new ZipOutputStream(fos);
 			FileUtils.addDirToArchive(getProviderRootDir(), file.getPath(), zos);
 			fos.flush();
@@ -157,6 +158,24 @@ public class FilesApi extends BaseApi {
 			}
 		} else {
 			throw new BusinessApiException("Directory does not exists: " + filename);
+		}
+	}
+
+	public void downloadFile(String filePath, HttpServletResponse response) throws BusinessApiException {
+		File file = new File(getProviderRootDir() + File.separator + filePath);
+		if (!file.exists()) {
+			throw new BusinessApiException("File does not exists: " + file.getPath());
+		}
+
+		try {
+			FileInputStream fis = new FileInputStream(file);
+			response.setContentType(Files.probeContentType(file.toPath()));
+			response.setContentLength((int) file.length());
+			response.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
+			IOUtils.copy(fis, response.getOutputStream());
+			response.flushBuffer();
+		} catch (IOException e) {
+			throw new BusinessApiException("Error zipping file: " + file.getName() + ". " + e.getMessage());
 		}
 	}
 

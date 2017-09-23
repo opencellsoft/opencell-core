@@ -3,6 +3,8 @@ package org.meveo.api.ws.impl;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
+import javax.servlet.http.HttpServletResponse;
+import javax.xml.ws.handler.MessageContext;
 
 import org.meveo.api.CountryIsoApi;
 import org.meveo.api.CurrencyIsoApi;
@@ -418,6 +420,21 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 
 		try {
 			filesApi.suppressDir(dir);
+		} catch (Exception e) {
+			processException(e, result);
+		}
+
+		return result;
+	}
+
+	@Override
+	public ActionStatus downloadFile(String file) {
+		ActionStatus result = new ActionStatus();
+
+		try {
+			MessageContext mc = webServiceContext.getMessageContext();
+			HttpServletResponse response = (HttpServletResponse) mc.get(MessageContext.SERVLET_RESPONSE);
+			filesApi.downloadFile(file, response);
 		} catch (Exception e) {
 			processException(e, result);
 		}

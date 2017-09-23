@@ -54,5 +54,9 @@ public interface FilesRs extends IBaseRs {
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	ActionStatus uploadFile(@MultipartForm FileUploadForm form);
+	
+	@GET
+	@Path("/downloadFile")
+	ActionStatus downloadFile(@QueryParam("file") String file);
 
 }
