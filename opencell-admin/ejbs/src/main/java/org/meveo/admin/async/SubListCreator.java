@@ -5,74 +5,102 @@ package org.meveo.admin.async;
 
 import java.util.List;
 
-
-
 /**
  * @author anasseh
  *
  */
 
-
 public class SubListCreator {
 
-	private int nbThreads=1;
+	/** number of threads. */
+	private int nbThreads = 1;
+
+	/** list to split. */
 	private List<?> theBigList;
-	private boolean hasNext=true;
+
+	/** has next value to proceed . */
+	private boolean hasNext = true;
+
+	/** from index . */
 	private int from;
+
+	/** to index . */
 	private int to;
-	private int blocToRun ;
-	private int modulo ;
+
+	/** block to run . */
+
+	private int blocToRun;
+
+	/** modulo. */
+	private int modulo;
+
+	/** size of list. */
 	private int listSize;
 
-	public SubListCreator(List<?> theList, int nbRuns) throws Exception{
-		if(nbRuns < 1){
+	/**
+	 * @param theList
+	 *            list to split
+	 * @param nbRuns
+	 *            number of run
+	 * @throws Exception
+	 *             exception
+	 */
+	public SubListCreator(List<?> theList, int nbRuns) throws Exception {
+		if (nbRuns < 1) {
 			throw new Exception("nbRuns should not be < 1 ");
 		}
-		if(theList == null ){
+
+		if (theList == null) {
 			throw new Exception("The list should not be null");
 		}
+		
 		this.theBigList = theList;
 		this.nbThreads = nbRuns;
-		
+
 		listSize = theBigList.size();
-		if(nbThreads > listSize && listSize >0) {
+		if (nbThreads > listSize && listSize > 0) {
 			nbThreads = listSize;
 		}
-		blocToRun = listSize/nbThreads;
+		
+		blocToRun = listSize / nbThreads;
 		modulo = listSize % nbThreads;
-		from=0;
-		to=blocToRun;
-		if(from == listSize) {
-			this.hasNext=false;
+		from = 0;
+		to = blocToRun;
+		if (from == listSize) {
+			this.hasNext = false;
 		}
 	}
-//TODO repartir  aussi le modulo equitablement possible
-	public List<?> getNextWorkSet(){
-		List<?> toRuns = theBigList.subList(from,to );
+
+	/**
+	 * @return list of next work set
+	 */
+	public List<?> getNextWorkSet() {
+		List<?> toRuns = theBigList.subList(from, to);
 		from = to;
 		to = from + blocToRun;
-		if(listSize - modulo == to){
-			to+=modulo;
+		if (listSize - modulo == to) {
+			to += modulo;
 		}
-		if(from==listSize) {
-			hasNext=false;
+		if (from == listSize) {
+			hasNext = false;
 		}
 		return toRuns;
 	}
 
-	
 	/**
 	 * @return the hasNext
 	 */
 	public boolean isHasNext() {
 		return hasNext;
 	}
+
 	/**
 	 * @return the blocToRun
 	 */
 	public int getBlocToRun() {
 		return blocToRun;
 	}
+
 	/**
 	 * @return the listSize
 	 */
@@ -80,5 +108,4 @@ public class SubListCreator {
 		return listSize;
 	}
 
-	
 }
