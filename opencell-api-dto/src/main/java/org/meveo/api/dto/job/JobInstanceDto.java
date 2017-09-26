@@ -55,6 +55,16 @@ public class JobInstanceDto extends BusinessDto {
     @XmlAttribute(required = false)
     private String timerCode;
 
+    /**
+     * What cluster nodes job could/should run on. A comma separated list of custer nodes. A job can/will be run on any node if value is null.
+     */
+    private String runOnNodes;
+    
+    /**
+     * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
+     */
+    private Boolean limitToSingleNode;
+
     public JobCategoryEnum getJobCategory() {
         return jobCategory;
     }
@@ -111,11 +121,25 @@ public class JobInstanceDto extends BusinessDto {
         this.timerCode = timerCode;
     }
 
+    public String getRunOnNodes() {
+        return runOnNodes;
+    }
+
+    public void setRunOnNodes(String runOnNodes) {
+        this.runOnNodes = runOnNodes;
+    }
+
+    public Boolean getLimitToSingleNode() {
+        return limitToSingleNode;
+    }
+
+    public void setLimitToSingleNode(Boolean limitToSingleNode) {
+        this.limitToSingleNode = limitToSingleNode;
+    }
+
     @Override
     public String toString() {
-        return String
-            .format(
-                "JobInstanceDto [code=%s, description=%s, jobCategory=%s, jobTemplate=%s, followingJob=%s,  parameter=%s, active=%s, customFields=%s, timerCode=%s]",
-                getCode(), getDescription(), jobCategory, jobTemplate, followingJob, parameter, active, customFields, timerCode);
+        return "JobInstanceDto [jobCategory=" + jobCategory + ", jobTemplate=" + jobTemplate + ", followingJob=" + followingJob + ", parameter=" + parameter + ", active=" + active
+                + ", customFields=" + customFields + ", timerCode=" + timerCode + ", runOnNodes=" + runOnNodes + ", limitToSingleNode=" + limitToSingleNode + "]";
     }
 }

@@ -78,10 +78,16 @@ public class JobInstance extends BusinessCFEntity {
     @JoinColumn(name = "following_job_id")
     private JobInstance followingJob;
 
+    /**
+     * What cluster nodes job could/should run on. A comma separated list of custer nodes. A job can/will be run on any node if value is null.
+     */
     @Column(name = "run_on_nodes", length = 255)
     @Size(max = 255)
     private String runOnNodes;
 
+    /**
+     * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
+     */
     @Type(type = "numeric_boolean")
     @Column(name = "single_node", nullable = false)
     @NotNull
