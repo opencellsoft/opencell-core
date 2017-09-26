@@ -81,9 +81,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
     @Inject
-    private InvoiceAgregateService invoiceAgregateService;
-
-    @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
     @Inject
@@ -274,7 +271,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
         log.debug("After userAccounts:" + (System.currentTimeMillis() - startDate));
-        
+
         for (UserAccount userAccount : userAccounts) {
             WalletInstance wallet = userAccount.getWallet();
             List<Object[]> invoiceSubCats = new ArrayList<>();
@@ -863,7 +860,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
             if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && ((SubCategoryInvoiceAgregate) invoiceAgregate).getWallet().equals(wallet)
                     && ((SubCategoryInvoiceAgregate) invoiceAgregate).getInvoiceSubCategory().equals(invoiceSubCat) && !invoiceAgregate.isDiscountAggregate()) {
-                amount.add(invoiceAgregate.getAmountWithoutTax());
+                amount = amount.add(invoiceAgregate.getAmountWithoutTax());
             }
         }
         // }
@@ -1042,7 +1039,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     public void createRatedTransaction(Long billingAccountId, Date invoicingDate) throws BusinessException {
-        BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
+        BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
         List<WalletOperation> walletOps = new ArrayList<WalletOperation>();
         for (UserAccount ua : userAccounts) {

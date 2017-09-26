@@ -608,8 +608,9 @@ public class QueryBuilder {
         Query result = em.createQuery(q.toString());
         applyPagination(result);
 
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
+        }
         return result;
     }
 
@@ -628,8 +629,9 @@ public class QueryBuilder {
         TypedQuery<Long> result = em.createQuery(s, Long.class);
         applyPagination(result);
 
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
+        }
         return result;
     }
 
@@ -642,8 +644,9 @@ public class QueryBuilder {
         String s = "select count(*) " + q.toString().substring(q.indexOf(from));
 
         Query result = em.createQuery(s);
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
+        }
         return result;
     }
 
@@ -673,8 +676,9 @@ public class QueryBuilder {
     public String convertFieldToParam(String field) {
         field = field.replace(".", "_").replace("(", "_").replace(")", "_");
         StringBuilder newField = new StringBuilder(field);
-        while (params.containsKey(newField.toString()))
+        while (params.containsKey(newField.toString())) {
             newField = new StringBuilder(field).append("_" + String.valueOf(new Random().nextInt(100)));
+        }
         return newField.toString();
     }
 
@@ -712,8 +716,9 @@ public class QueryBuilder {
     /* DEBUG */
     public void debug() {
         System.out.println("Requete : " + q.toString());
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
+        }
     }
 
     public String getSqlString() {

@@ -31838,7 +31838,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains"/>
+            <con:assertion type="Simple Contains" id="74899ed6-06f4-4a94-a369-98589031c24f">
+              <con:configuration/>
+            </con:assertion>
             <con:assertion type="Simple Contains" id="66947aa4-6ddb-4b22-81c5-176c6ea35198" name="Contains 1">
               <con:configuration>
                 <token>45</token>
@@ -31905,7 +31907,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:name>orderId2</con:name>
         <con:value>d66c6bef-b978-4fc2-b007-a11a74c24a43</con:value>
       </con:property>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>2</con:value>
+      </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="6809dbe0-41aa-461c-99a7-cd21e1c5ef56" name="Cleanup" disabled="true">
     <con:settings/>
