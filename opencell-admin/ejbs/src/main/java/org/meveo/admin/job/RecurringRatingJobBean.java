@@ -30,91 +30,91 @@ import org.slf4j.Logger;
 @Stateless
 public class RecurringRatingJobBean implements Serializable {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 2226065462536318643L;
-	
-	@Inject
-	private RecurringChargeAsync recurringChargeAsync;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 2226065462536318643L;
 
-	@Inject
-	private RecurringChargeInstanceService recurringChargeInstanceService;
+    @Inject
+    private RecurringChargeAsync recurringChargeAsync;
 
-	@Inject
-	protected Logger log;
+    @Inject
+    private RecurringChargeInstanceService recurringChargeInstanceService;
 
-	@Inject
-	@Rejected
-	Event<Serializable> rejectededChargeProducer;
-    
+    @Inject
+    protected Logger log;
+
+    @Inject
+    @Rejected
+    Event<Serializable> rejectededChargeProducer;
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-	@SuppressWarnings("unchecked")
+    @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		log.debug("start in running with parameter={}",  jobInstance.getParametres());
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+	log.debug("start in running with parameter={}", jobInstance.getParametres());
+	try {
+	    Long nbRuns = new Long(1);
+	    Long waitingMillis = new Long(0);
+	    Date rateUntilDate = null;
+	    boolean isToTruncatedToDate = true;
+	    try {
+		nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
+		waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
+		if (nbRuns == -1) {
+		    nbRuns = (long) Runtime.getRuntime().availableProcessors();
+		}
+		rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUtilDate");
+	    } catch (Exception e) {
+		nbRuns = new Long(1);
+		waitingMillis = new Long(0);
+		log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+	    }
+	    if (rateUntilDate == null) {
+		rateUntilDate = DateUtils.addDaysToDate(new Date(), 1);
+	    } else {
+		isToTruncatedToDate = false;
+	    }
+	    List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate, isToTruncatedToDate);
+	    int inputSize = ids.size();
+	    result.setNbItemsToProcess(inputSize);
+	    log.info("in job - charges to rate={}", inputSize);
+
+	    List<Future<String>> futures = new ArrayList<Future<String>>();
+	    SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
+	    while (subListCreator.isHasNext()) {
+		futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, rateUntilDate));
+
+		if (subListCreator.isHasNext()) {
+		    try {
+			Thread.sleep(waitingMillis.longValue());
+		    } catch (InterruptedException e) {
+			log.error("", e);
+		    }
+		}
+	    }
+
+	    // Wait for all async methods to finish
+	    for (Future<String> future : futures) {
 		try {
-			Long nbRuns = new Long(1);		
-			Long waitingMillis = new Long(0);
-			Date rateUntilDate = null;
-			boolean isToTruncatedToDate = true;
-			try{
-				nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");              
-                waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");                
-				if(nbRuns == -1){
-					nbRuns = (long) Runtime.getRuntime().availableProcessors();
-				}
-				rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUtilDate");
-			}catch(Exception e){
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
-				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
-			}			
-			if(rateUntilDate == null){
-				rateUntilDate = DateUtils.addDaysToDate(new Date(), 1);
-			}else{
-				isToTruncatedToDate = false;
-			}
-			List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate,isToTruncatedToDate);
-			int inputSize =  ids.size();
-			result.setNbItemsToProcess(inputSize);
-			log.info("in job - charges to rate={}", inputSize);
+		    future.get();
 
-			List<Future<String>> futures = new ArrayList<Future<String>>();
-	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
-			while (subListCreator.isHasNext()) {				
-				futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result,rateUntilDate));	
+		} catch (InterruptedException e) {
+		    // It was cancelled from outside - no interest
 
-                if (subListCreator.isHasNext()) {
-                    try {
-                        Thread.sleep(waitingMillis.longValue());
-                    } catch (InterruptedException e) {
-                        log.error("", e);
-                    }
-                }
-            }
-
-            // Wait for all async methods to finish
-            for (Future<String> future : futures) {
-                try {
-                    future.get();
-
-                } catch (InterruptedException e) {
-                    // It was cancelled from outside - no interest
-                    
-                } catch (ExecutionException e) {
-                    Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    log.error("Failed to execute async method", cause);
-                }
-            }       
-        } catch (Exception e) {
-            log.error("Failed to run recurring rating job", e);
-            result.registerError(e.getMessage());
-        }
-		log.debug("end running RecurringRatingJobBean!");
+		} catch (ExecutionException e) {
+		    Throwable cause = e.getCause();
+		    result.registerError(cause.getMessage());
+		    log.error("Failed to execute async method", cause);
+		}
+	    }
+	} catch (Exception e) {
+	    log.error("Failed to run recurring rating job", e);
+	    result.registerError(e.getMessage());
 	}
+	log.debug("end running RecurringRatingJobBean!");
+    }
 }

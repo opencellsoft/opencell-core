@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -13,7 +12,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
@@ -22,21 +20,18 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.SubscriptionImportHisto;
-import org.meveo.model.billing.UserAccount;
-import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.jaxb.subscription.Access;
 import org.meveo.model.jaxb.subscription.ErrorServiceInstance;
 import org.meveo.model.jaxb.subscription.ErrorSubscription;
 import org.meveo.model.jaxb.subscription.Errors;
+import org.meveo.model.jaxb.subscription.ServiceInstance;
+import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.jaxb.subscription.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.SubscriptionImportHistoService;
-import org.meveo.service.billing.impl.SubscriptionService;
-import org.meveo.service.billing.impl.UserAccountService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.crm.impl.CheckedSubscription;
 import org.meveo.service.crm.impl.ImportIgnoredException;
 import org.meveo.service.crm.impl.SubscriptionImportService;
@@ -51,16 +46,7 @@ public class ImportSubscriptionsJobBean {
 	private Logger log;
 
 	@Inject
-	private SubscriptionService subscriptionService;
-
-	@Inject
 	private SubscriptionImportHistoService subscriptionImportHistoService;
-
-	@Inject
-	private OfferTemplateService offerTemplateService;
-
-	@Inject
-	private UserAccountService userAccountService;
 
 	@Inject
 	private SubscriptionImportService subscriptionImportService;
@@ -79,13 +65,10 @@ public class ImportSubscriptionsJobBean {
 	int nbSubscriptionsTerminated;
 	int nbSubscriptionsIgnored;
 	int nbSubscriptionsCreated;
+	
 	SubscriptionImportHisto subscriptionImportHisto;
 	
 	
-	private Map<String, OfferTemplate> offerMap = new HashedMap();
-	
-	private Map<String, UserAccount> userAccountMap = new HashedMap();
-
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public void execute(JobExecutionResultImpl result) {
@@ -212,6 +195,9 @@ public class ImportSubscriptionsJobBean {
 		log.info("end import file ");
 	}
 
+	/**
+	 * @throws Exception exception
+	 */
 	private void createHistory() throws Exception {
 		subscriptionImportHisto.setLinesRead(nbSubscriptions);
 		subscriptionImportHisto.setLinesInserted(nbSubscriptionsCreated);
@@ -221,6 +207,10 @@ public class ImportSubscriptionsJobBean {
 		subscriptionImportHistoService.create(subscriptionImportHisto);
 	}
 
+	/**
+	 * @param fileName file's name
+	 * @throws Exception exception
+	 */
 	private void generateReport(String fileName) throws Exception {
 		String importDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator
 				+ appProvider.getCode() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
@@ -246,6 +236,12 @@ public class ImportSubscriptionsJobBean {
 
 	}
 
+	/**
+	 * @param dir folder
+	 * @param prefix prefix file
+	 * @param ext extension file
+	 * @return list of file to proceed
+	 */
 	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
 		List<File> files = new ArrayList<File>();
 		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
@@ -265,6 +261,10 @@ public class ImportSubscriptionsJobBean {
 		return files;
 	}
 
+	/**
+	 * @param jaxbSubscription subscription serialized from file
+	 * @return checked subscription
+	 */
 	private CheckedSubscription subscriptionCheckError(
 			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription) {
 		CheckedSubscription checkSubscription = new CheckedSubscription();
@@ -350,14 +350,15 @@ public class ImportSubscriptionsJobBean {
 		}
 	*/
 		if ("ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
-			if (jaxbSubscription.getServices() == null || jaxbSubscription.getServices().getServiceInstance() == null
-					|| jaxbSubscription.getServices().getServiceInstance().isEmpty()) {
+			List<ServiceInstance> serviceInstance = jaxbSubscription.getServices()
+					.getServiceInstance();
+			if (jaxbSubscription.getServices() == null || serviceInstance == null
+					|| serviceInstance.isEmpty()) {
 				createSubscriptionError(jaxbSubscription, "Cannot create subscription without services");
 				return null;
 			}
 
-			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : jaxbSubscription.getServices()
-					.getServiceInstance()) {
+			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : serviceInstance) {
 				if (serviceInstanceCheckError(jaxbSubscription, serviceInst)) {
 					return null;
 				}
@@ -366,7 +367,8 @@ public class ImportSubscriptionsJobBean {
 			}
 
 			if (jaxbSubscription.getAccesses() != null) {
-				for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription.getAccesses().getAccess()) {
+				List<Access> access = jaxbSubscription.getAccesses().getAccess();
+				for (org.meveo.model.jaxb.subscription.Access jaxbAccess : access) {
 					if (accessCheckError(jaxbSubscription, jaxbAccess)) {
 						return null;
 					}
@@ -379,6 +381,10 @@ public class ImportSubscriptionsJobBean {
 		return checkSubscription;
 	}
 
+	/**
+	 * @param subscrip subscription
+	 * @param cause error 
+	 */
 	private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
 		log.error(cause);
 
@@ -387,17 +393,23 @@ public class ImportSubscriptionsJobBean {
 		errorSubscription.setCause(cause);
 		errorSubscription.setCode(subscrip.getCode());
 
-		if (!subscriptionsError.getSubscription().contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject)) {
-			subscriptionsError.getSubscription().add(subscrip);
+		List<Subscription> subscription = subscriptionsError.getSubscription();
+		if (!subscription.contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+			subscription.add(subscrip);
 		}
 
-		if (subscriptionsError.getErrors() == null) {
+		Errors errors = subscriptionsError.getErrors();
+		if (errors == null) {
 			subscriptionsError.setErrors(new Errors());
 		}
 
-		subscriptionsError.getErrors().getErrorSubscription().add(errorSubscription);
+		errors.getErrorSubscription().add(errorSubscription);
 	}
 
+	/**
+	 * @param subscrip subscription
+	 * @param cause cause
+	 */
 	private void createSubscriptionWarning(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
 		log.warn(cause);
 
@@ -406,18 +418,25 @@ public class ImportSubscriptionsJobBean {
 		warningSubscription.setCause(cause);
 		warningSubscription.setCode(subscrip == null ? "" : subscrip.getCode());
 
-		if (!subscriptionsWarning.getSubscription().contains(subscrip)
+		List<Subscription> subscription = subscriptionsWarning.getSubscription();
+		if (!subscription.contains(subscrip)
 				&& "true".equalsIgnoreCase(generateFullCrmReject) && subscrip != null) {
-			subscriptionsWarning.getSubscription().add(subscrip);
+			subscription.add(subscrip);
 		}
 
-		if (subscriptionsWarning.getWarnings() == null) {
+		Warnings warnings = subscriptionsWarning.getWarnings();
+		if (warnings == null) {
 			subscriptionsWarning.setWarnings(new Warnings());
 		}
 
-		subscriptionsWarning.getWarnings().getWarningSubscription().add(warningSubscription);
+		warnings.getWarningSubscription().add(warningSubscription);
 	}
 
+	/**
+	 * @param subscrip subscription
+	 * @param serviceInst service instance
+	 * @return true/false
+	 */
 	private boolean serviceInstanceCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst) {
 
@@ -434,6 +453,11 @@ public class ImportSubscriptionsJobBean {
 		return false;
 	}
 
+	/**
+	 * @param subscrip subscription
+	 * @param access access point
+	 * @return true/false
+	 */
 	private boolean accessCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.Access access) {
 
@@ -445,6 +469,11 @@ public class ImportSubscriptionsJobBean {
 		return false;
 	}
 
+	/**
+	 * @param subscrip subscription
+	 * @param serviceInst service instance
+	 * @param cause error message
+	 */
 	private void createServiceInstanceError(org.meveo.model.jaxb.subscription.Subscription subscrip,
 			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst, String cause) {
 		ErrorServiceInstance errorServiceInstance = new ErrorServiceInstance();
@@ -452,15 +481,17 @@ public class ImportSubscriptionsJobBean {
 		errorServiceInstance.setCode(serviceInst.getCode());
 		errorServiceInstance.setSubscriptionCode(subscrip.getCode());
 
-		if (!subscriptionsError.getSubscription().contains(subscrip)) {
-			subscriptionsError.getSubscription().add(subscrip);
+		List<Subscription> subscription = subscriptionsError.getSubscription();
+		if (!subscription.contains(subscrip)) {
+			subscription.add(subscrip);
 		}
 
-		if (subscriptionsError.getErrors() == null) {
+		Errors errors = subscriptionsError.getErrors();
+		if (errors == null) {
 			subscriptionsError.setErrors(new Errors());
 		}
 
-		subscriptionsError.getErrors().getErrorServiceInstance().add(errorServiceInstance);
+		errors.getErrorServiceInstance().add(errorServiceInstance);
 	}
 
 }

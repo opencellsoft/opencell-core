@@ -255,7 +255,15 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
 
     /**
      * Find a particular product offering version, attempting to match validity start and end dates. First both dates will be tried to match, then only start date as a single date
-     * and then current date as a single date
+     * and then current date as a single date<br>
+     * 
+     * if you don't provide any date, it will consider today. <br>
+     * If you provide both dates - it will do a strict match. <br>
+     * If you provide only To date - it will do a strict match with starting date as null.<br>
+     * If you provide only From date - it will do:<br>
+     * - a strict match with end date as null<br>
+     * - and then a single date match for that date.<br>
+     * - and then a single date match for today<br>
      * 
      * @param code Product offering code
      * @param from Validity date range start date

@@ -93,15 +93,17 @@ public interface IPersistenceService<E extends IEntity> {
      * Disable an entity.
      * 
      * @param id Entity id which has to be disabled.
+     * @return Updated entity
      * 
      * @throws BusinessException
      */
-    public void disable(Long id) throws BusinessException;
+    public E disable(Long id) throws BusinessException;
 
     /**
      * Disable an entity.
      * 
-     * @param id Entity to be disabled.
+     * @param e Entity to be disabled.
+     * @return Updated entity
      * 
      * @throws BusinessException
      */
@@ -111,15 +113,17 @@ public interface IPersistenceService<E extends IEntity> {
      * Enable an entity.
      * 
      * @param id Entity id which has to be enabled.
+     * @return Updated entity
      * 
      * @throws BusinessException
      */
-    public void enable(Long id) throws BusinessException;
+    public E enable(Long id) throws BusinessException;
 
     /**
      * Enable an entity.
      * 
-     * @param id Entity to be enabled.
+     * @param e Entity to be enabled.
+     * @return Updated entity
      * @throws BusinessException
      */
     public E enable(E e) throws BusinessException;
@@ -225,5 +229,5 @@ public interface IPersistenceService<E extends IEntity> {
 
     public EntityManager getEntityManager();
 
-	public Set<E> refreshOrRetrieve(Set<E> entities);
+    public Set<E> refreshOrRetrieve(Set<E> entities);
 }

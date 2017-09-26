@@ -167,6 +167,12 @@ public class ImportCustomersJobBean {
 		result.setNbItemsProcessedWithWarning(nbCustomersWarning);
 	}
 
+	/**
+	 * @param dir folder
+	 * @param prefix prefix file
+	 * @param ext extension
+	 * @return list of files 
+	 */
 	private synchronized List<File> getFilesToProcess(File dir, String prefix, String ext) {
 		List<File> files = new ArrayList<File>();
 		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
@@ -187,6 +193,12 @@ public class ImportCustomersJobBean {
 		return files;
 	}
 
+	/**
+	 * @param file file to import
+	 * @param fileName file's name
+	 * @throws JAXBException jaxb exception
+	 * @throws Exception exception
+	 */
 	public void importFile(File file, String fileName) throws JAXBException, Exception {
 
 		log.info("start import file :" + fileName);
@@ -327,6 +339,13 @@ public class ImportCustomersJobBean {
 		return seller;
 	}
 
+	/**
+	 * @param fileName file's name
+	 * @param seller seller 
+	 * @param sell jaxb seller
+	 * @param cust jaxb customer
+	 * @param i index
+	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createCustomer(String fileName, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.Customer cust, int i) {
@@ -388,6 +407,17 @@ public class ImportCustomersJobBean {
 		}
 	}
 
+	/**
+	 * @param fileName file's name
+	 * @param customer customer
+	 * @param seller seller
+	 * @param custAcc custom account
+	 * @param cust jaxb customer
+	 * @param sell jaxb seller
+	 * @param i index
+	 * @param j index
+	 * @throws BusinessException business exception
+	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	private void createCustomerAccount(String fileName, Customer customer, org.meveo.model.admin.Seller seller,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
@@ -446,6 +476,9 @@ public class ImportCustomersJobBean {
 		}
 	}
 
+	/**
+	 * @throws Exception exception
+	 */
 	private void createHistory() throws Exception {
 	    
 		customerImportHisto.setNbCustomerAccounts(nbCustomerAccounts);
@@ -466,6 +499,10 @@ public class ImportCustomersJobBean {
 		customerImportHistoService.create(customerImportHisto);
 	}
 
+	/**
+	 * @param fileName file's name
+	 * @throws Exception exception occurs when genering report
+	 */
 	private void generateReport(String fileName) throws Exception {
 		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
 				+ File.separator;
@@ -490,6 +527,10 @@ public class ImportCustomersJobBean {
 		}
 	}
 
+	/**
+	 * @param sell seller
+	 * @param cause cause of having error
+	 */
 	private void createSellerError(org.meveo.model.jaxb.customer.Seller sell, String cause) {
 		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorSeller errorSeller = new ErrorSeller();
@@ -507,6 +548,11 @@ public class ImportCustomersJobBean {
 		sellersError.getErrors().getErrorSeller().add(errorSeller);
 	}
 
+	/**
+	 * @param sell seller
+	 * @param cust customer
+	 * @param cause erorr
+	 */
 	private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, String cause) {
 		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		ErrorCustomer errorCustomer = new ErrorCustomer();
@@ -524,6 +570,10 @@ public class ImportCustomersJobBean {
 		sellersError.getErrors().getErrorCustomer().add(errorCustomer);
 	}
 
+	/**
+	 * @param sell seller
+	 * @param cause the reason of having error.
+	 */
 	private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell, String cause) {
 		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
 		WarningSeller warningSeller = new WarningSeller();
@@ -541,6 +591,12 @@ public class ImportCustomersJobBean {
 		sellersWarning.getWarnings().getWarningSeller().add(warningSeller);
 	}
 
+	/**
+	 * @param sell seller
+	 * @param cust customer
+	 * @param custAccount customer account
+	 * @param cause cause of error
+	 */
 	private void createCustomerAccountError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
 		log.error("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
@@ -561,6 +617,12 @@ public class ImportCustomersJobBean {
 		sellersError.getErrors().getErrorCustomerAccount().add(errorCustomerAccount);
 	}
 
+	/**
+	 * @param sell seller
+	 * @param cust customer
+	 * @param custAccount customer account
+	 * @param cause the cause of error
+	 */
 	private void createCustomerAccountWarning(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
 			org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
 		log.warn("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
@@ -581,6 +643,10 @@ public class ImportCustomersJobBean {
 		sellersWarning.getWarnings().getWarningCustomerAccount().add(warningCustomerAccount);
 	}
 
+	/**
+	 * @param sell seller
+	 * @return true/false
+	 */
 	private boolean sellerCheckError(org.meveo.model.jaxb.customer.Seller sell) {
 		if (StringUtils.isBlank(sell.getCode())) {
 			createSellerError(sell, "Code is null.");
@@ -595,6 +661,11 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
+	/**
+	 * @param sell seller
+	 * @param cust customer
+	 * @return true/false
+	 */
 	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
 
 		if (StringUtils.isBlank(cust.getCode())) {
@@ -636,6 +707,12 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
+	/**
+	 * @param cust customer
+	 * @param sell seller
+	 * @param custAcc customer account
+	 * @return true/false
+	 */
 	private boolean customerAccountCheckError(org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
 		if (StringUtils.isBlank(custAcc.getCode())) {
@@ -685,6 +762,12 @@ public class ImportCustomersJobBean {
 		return false;
 	}
 
+	/**
+	 * @param cust customer
+	 * @param sell seller
+	 * @param custAcc customer account
+	 * @return true/false for warning
+	 */
 	private boolean customerAccountCheckWarning(org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell,
 			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
 		boolean isWarning = false;
