@@ -1107,7 +1107,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         InvoiceSubCategory walletInvoiceSubCategory = walletOperation.getInvoiceSubCategory();
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-        
+
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
         InvoiceSubCategory invoiceSubCategory = walletInvoiceSubCategory != null ? walletInvoiceSubCategory : chargeTemplate.getInvoiceSubCategory();
