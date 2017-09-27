@@ -60,6 +60,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -103,10 +104,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     @Inject
     private ResourceBundle resourceMessages;
 
-    private static final BigDecimal HUNDRED = new BigDecimal("100");
+    /** constants.*/
+    private final BigDecimal HUNDRED = new BigDecimal("100");
 
+    /** description map.*/
     private Map<String, String> descriptionMap = new HashMap<>();
 
+    /**
+     * @param userAccount user account
+     * @return list
+     */
     public List<RatedTransaction> getRatedTransactionsInvoiced(UserAccount userAccount) {
         if (userAccount == null || userAccount.getWallet() == null) {
             return null;
@@ -115,6 +122,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             .getResultList();
     }
 
+    /**
+     * @param subscription subscription
+     * @param infoType info type
+     * @param billingCycle billing cycle
+     * @param sumarizeConsumption summary consumption
+     * @return instance of ConsumptionDTO
+     * @throws IncorrectSusbcriptionException exception for incorrect subscription
+     */
     @SuppressWarnings("unchecked")
     // FIXME: edward please use Named queries
     public ConsumptionDTO getConsumption(Subscription subscription, String infoType, Integer billingCycle, boolean sumarizeConsumption) throws IncorrectSusbcriptionException {
@@ -233,11 +248,31 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param billingAccount billing account
+     * @param invoice invoice to create from
+     * @param ratedTransactionFilter filter for rated transaction
+     * @param orderNumber order number
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @throws BusinessException business exception
+     */
     public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, String orderNumber, Date firstTransactionDate,
             Date lastTransactionDate) throws BusinessException {
         createInvoiceAndAgregates(billingAccount, invoice, ratedTransactionFilter, null, orderNumber, firstTransactionDate, lastTransactionDate, false, false);
     }
 
+    /**
+    *  @param billingAccount billing account
+     * @param invoice invoice to create from
+     * @param ratedTransactionFilter filter for rated transaction
+     * @param orderNumber order number
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @param isInvoiceAdjustment true/false
+     * @param isVirtual true/false
+     * @throws BusinessException business exception
+     */
     @SuppressWarnings({ "unchecked", "unused" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createInvoiceAndAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, List<RatedTransaction> ratedTransactions,
@@ -248,8 +283,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BigDecimal nonEnterprisePriceWithTax = BigDecimal.ZERO;
         String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
-        log.debug("After userAccounts:" + (System.currentTimeMillis() - startDate));
+
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
+
         if (firstTransactionDate == null) {
             firstTransactionDate = new Date(0);
         }
@@ -268,17 +304,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             if (ratedTransactionFilter != null || !StringUtils.isBlank(orderNumber) || isVirtual) {
 
                 if (!StringUtils.isBlank(orderNumber)) {
-                    List<RatedTransaction> orderRatedTransactions = null;
-                    orderRatedTransactions = (List<RatedTransaction>) getEntityManager().createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
-                        .setParameter("wallet", wallet).setParameter("orderNumber", orderNumber).getResultList();
+                    List<RatedTransaction> orderRatedTransactions = (List<RatedTransaction>) getEntityManager()
+                            .createNamedQuery("RatedTransaction.listToInvoiceByOrderNumber", RatedTransaction.class)
+                            .setParameter("wallet", wallet).setParameter("orderNumber", orderNumber).getResultList();
                     if (ratedTransactions == null) {
                         ratedTransactions = new ArrayList<>();
                     }
                     ratedTransactions.addAll(orderRatedTransactions);
                 }
+
                 if (ratedTransactions == null || ratedTransactions.isEmpty()) {
                     continue;
                 }
+
                 for (RatedTransaction ratedTransaction : ratedTransactions) {
                     if (ratedTransactionFilter != null) {
                         if (ratedTransaction.getStatus() != RatedTransactionStatusEnum.OPEN) {
@@ -330,9 +368,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
                 }
             } else {
-                // TODO : use Named queries
-
-                Query q = getEntityManager().createNamedQuery("RatedTransaction.test").setParameter("wallet", wallet).setParameter("lastTransactionDate", lastTransactionDate);
+                Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingByWallet")
+                        .setParameter("wallet", wallet).setParameter("lastTransactionDate", lastTransactionDate);
                 if (isInvoiceAdjustment) {
                     q = q.setParameter("status", RatedTransactionStatusEnum.BILLED);
                 } else {
@@ -340,25 +377,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
 
                 invoiceSubCats = q.getResultList();
-                /**
-                 * 
-                 * CriteriaBuilder cb = getEntityManager().getCriteriaBuilder(); CriteriaQuery<Object[]> cq = cb.createQuery(Object[].class); Root from =
-                 * cq.from(RatedTransaction.class); Path<Long> invoiceSubCategoryPath = from.get("invoiceSubCategory").get("id");
-                 * 
-                 * Expression<BigDecimal> amountWithoutTax = cb.sum(from.get("amountWithoutTax")); Expression<BigDecimal> amountWithTax = cb.sum(from.get("amountWithTax"));
-                 * Expression<BigDecimal> amountTax = cb.sum(from.get("amountTax")); Expression<BigDecimal> quantity = cb.sum(from.get("quantity"));
-                 * 
-                 * CriteriaQuery<Object[]> select = cq.multiselect(invoiceSubCategoryPath, amountWithoutTax, amountWithTax, amountTax, quantity); // Grouping
-                 * cq.groupBy(invoiceSubCategoryPath); // Restrictions \ Predicate pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.OPEN); if (isInvoiceAdjustment)
-                 * { pStatus = cb.equal(from.get("status"), RatedTransactionStatusEnum.BILLED); } Predicate pWallet = cb.equal(from.get("wallet"), wallet); Predicate
-                 * pAmoutWithoutTax = null; Predicate pOldTransactionGT = cb.greaterThan(from.get("usageDate"), firstTransactionDate); Predicate pOldTransactionLT =
-                 * cb.lessThan(from.get("usageDate"), lastTransactionDate); Predicate pdoNotTriggerInvoicing = cb.isFalse(from.get("doNotTriggerInvoicing"));
-                 * 
-                 * Predicate pInvoice = cb.isNull(from.get("invoice")); if (isInvoiceAdjustment) { pInvoice = cb.equal(from.get("invoice"), invoice); }
-                 * 
-                 * cq.where(pStatus, pWallet, pOldTransaction, pdoNotTriggerInvoicing, pInvoice); log.info(">>>>>>" + cq.toString()); invoiceSubCats =
-                 * getEntityManager().createQuery(cq).getResultList();
-                 */
             }
 
             List<InvoiceAgregate> invoiceAgregateSubcatList = new ArrayList<InvoiceAgregate>();
@@ -383,9 +401,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = invoiceSubCategory.getInvoiceSubcategoryCountries();
 
                 for (InvoiceSubcategoryCountry invoicesubcatCountry : invoiceSubcategoryCountries) {
-
-                    if (invoicesubcatCountry.getTradingCountry().getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
-                            && invoiceSubCategoryService.matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount, invoice)) {
+                    TradingCountry tradingCountry = invoicesubcatCountry.getTradingCountry();
+                    boolean matchInvoicesubcatCountryExpression = invoiceSubCategoryService
+                            .matchInvoicesubcatCountryExpression(invoicesubcatCountry.getFilterEL(), billingAccount,
+                                    invoice);
+                    if (tradingCountry.getCountryCode().equalsIgnoreCase(billingAccount.getTradingCountry().getCountryCode())
+                            && matchInvoicesubcatCountryExpression) {
                         Tax tax = invoiceSubCategoryCountryService.isInvoiceSubCategoryTaxValid(invoicesubcatCountry, userAccount, billingAccount, invoice, new Date());
                         if (tax != null) {
                             taxes.add(tax);
@@ -471,9 +492,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 // start aggregate R
                 CategoryInvoiceAgregate invoiceAgregateCat = null;
                 Long invoiceCategoryId = invoiceSubCategory.getInvoiceCategory().getId();
+
                 if (catInvoiceAgregateMap.containsKey(invoiceCategoryId)) {
                     invoiceAgregateCat = catInvoiceAgregateMap.get(invoiceCategoryId);
-
                 } else {
 
                     invoiceAgregateCat = new CategoryInvoiceAgregate();
@@ -494,7 +515,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     }
 
                     invoiceAgregateCat.setDescription(invCatDescTranslated);
-
                     invoiceAgregateCat.setInvoiceCategory(invoiceSubCategory.getInvoiceCategory());
                     catInvoiceAgregateMap.put(invoiceCategoryId, invoiceAgregateCat);
                 }
@@ -646,6 +666,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         invoice.setNetToPay(netToPay);
     }
 
+    /**
+     * @param invoiceAgregate invoice agregate
+     * @param userAccount user account
+     */
     private void fillAgregates(InvoiceAgregate invoiceAgregate, UserAccount userAccount) {
         invoiceAgregate.setBillingAccount(userAccount.getBillingAccount());
         invoiceAgregate.setUserAccount(userAccount);
@@ -653,6 +677,19 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         invoiceAgregate.setItemNumber(itemNumber);
     }
 
+    /**
+     * @param billingAccount billing acount
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @return
+     */
+
+    /**
+     * @param billingAccount billing account
+     * @param firstTransactionDate date of first transaction
+     * @param lastTransactionDate date of last transaction
+     * @return true/false
+     */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
         long count = 0;
         if (firstTransactionDate == null) {
@@ -665,6 +702,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return count > 0 ? true : false;
     }
 
+    /**
+     * @param billingAccount billing account
+     * @param orderNumber order number.
+     * @return true/false
+     */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, String orderNumber) {
         long count = 0;
         TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countListToInvoiceByOrderNumber", Long.class);
@@ -676,11 +718,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * This method is only for generating Xml invoice {@link org.meveo.service.billing.impl.XMLInvoiceCreator #createXMLInvoice(Long, java.io.File, boolean, boolean)
      * createXMLInvoice}
-     * 
      * <p>
      * If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction with amount=0 don't show up in the XML.
      * </p>
-     * 
      * @param wallet
      * @param invoice
      * @param invoiceSubCategory
@@ -709,6 +749,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param invoice invoice to get rated transaction.
+     * @return list of rated transactions
+     */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(Invoice invoice) {
 
         long startDate = System.currentTimeMillis();
@@ -730,6 +774,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param wallet wallet contains the wallet operation.
+     * @param invoice invoice to get from
+     * @param invoiceSubCategory invoice sub category
+     * @return list of rated transactions.
+     */
     public List<RatedTransaction> getRatedTransactions(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
         long startDate = System.currentTimeMillis();
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c", Arrays.asList("priceplan"));
@@ -737,7 +787,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         qb.addCriterionEntity("c.wallet", wallet);
         qb.addCriterionEntity("c.invoice", invoice);
         qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
-
         qb.addOrderCriterion("c.usageDate", true);
 
         @SuppressWarnings("unchecked")
@@ -749,12 +798,18 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param id wallet operation id
+     * @return re-rated transaction id
+     * @throws UnrolledbackBusinessException un rolledback business exception
+     */
     public int reratedByWalletOperationId(Long id) throws UnrolledbackBusinessException {
         int result = 0;
         List<RatedTransaction> ratedTransactions = (List<RatedTransaction>) getEntityManager().createNamedQuery("RatedTransaction.listByWalletOperationId", RatedTransaction.class)
             .setParameter("walletOperationId", id).getResultList();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
-            if (ratedTransaction.getBillingRun() != null && ratedTransaction.getBillingRun().getStatus() != BillingRunStatusEnum.CANCELED) {
+            BillingRun billingRun = ratedTransaction.getBillingRun();
+            if (billingRun != null && billingRun.getStatus() != BillingRunStatusEnum.CANCELED) {
                 throw new UnrolledbackBusinessException("A rated transaction " + ratedTransaction.getId() + " forbid rerating of wallet operation " + id);
             }
             ratedTransaction.setStatus(RatedTransactionStatusEnum.RERATED);
@@ -763,6 +818,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return result;
     }
 
+    /**
+     * @param walletOperationId wallet operation i
+     * @return list of rated transactions
+     */
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> getNotBilledRatedTransactions(Long walletOperationId) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c");
@@ -777,6 +836,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param BillingRun billing run
+     * @return list of rated transactions for given billing run.
+     */
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> getRatedTransactionsByBillingRun(BillingRun BillingRun) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "c");
@@ -790,6 +853,12 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param userAccount user account
+     * @param invoice invoice
+     * @param taxInvoiceAgregateMap map of tax invoice agregate
+     * @param isVirtual true/false
+     */
     private void createInvoiceDiscountAggregates(UserAccount userAccount, Invoice invoice, Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual) {
         try {
 
@@ -839,6 +908,16 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
     }
 
+    /**
+     * @param userAccount user account
+     * @param wallet wallet
+     * @param invoice invoice from to create
+     * @param invoiceSubCat sub category of invoice
+     * @param discountPlanItem item of discount plan
+     * @param taxInvoiceAgregateMap map of tax invoice agregate
+     * @param isVirtual true/false
+     * @throws BusinessException business exception
+     */
     private void createDiscountAggregate(UserAccount userAccount, WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCat, DiscountPlanItem discountPlanItem,
             Map<Long, TaxInvoiceAgregate> taxInvoiceAgregateMap, boolean isVirtual) throws BusinessException {
         BillingAccount billingAccount = userAccount.getBillingAccount();
@@ -924,6 +1003,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+    /**
+     * @param expression el expression
+     * @param userAccount user account
+     * @param wallet wallet
+     * @param invoice invoice
+     * @param subCatTotal total of sub category
+     * @return amount
+     * @throws BusinessException business exception
+     */
     private BigDecimal getDecimalExpression(String expression, UserAccount userAccount, WalletInstance wallet, Invoice invoice, BigDecimal subCatTotal) throws BusinessException {
         BigDecimal result = null;
 
@@ -945,6 +1033,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return result;
     }
 
+    /**
+     * @param expression EL exprestion
+     * @param customerAccount customer account
+     * @param billingAccount billing account
+     * @param invoice invoice
+     * @return true/false
+     * @throws BusinessException business exception.
+     */
     private boolean matchDiscountPlanItemExpression(String expression, CustomerAccount customerAccount, BillingAccount billingAccount, Invoice invoice) throws BusinessException {
         Boolean result = true;
 
@@ -972,6 +1068,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return result;
     }
 
+    /**
+     * @param invoice invoice
+     * @param invoiceSubCategory sub category invoice
+     * @return list of rated transaction
+     */
     public List<RatedTransaction> getListByInvoiceAndSubCategory(Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
         if (invoice == null || invoiceSubCategory == null) {
             return null;
@@ -980,6 +1081,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             .setParameter("invoice", invoice).setParameter("invoiceSubCategory", invoiceSubCategory).getResultList();
     }
 
+    /**
+     * @param walletOperationId wallet operation i
+     * @throws BusinessException business exception
+     */
     public void createRatedTransaction(Long walletOperationId) throws BusinessException {
         WalletOperation walletOperation = walletOperationService.findById(walletOperationId);
 
@@ -987,16 +1092,14 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * Create Rated transaction from wallet operation
-     * 
+     * Create Rated transaction from wallet operation.
      * @param walletOperation Wallet operation
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
-     * 
      * @return Rated transaction
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public RatedTransaction createRatedTransaction(WalletOperation walletOperation, boolean isVirtual) throws BusinessException {
-        BigDecimal amountWithTAx = walletOperation.getAmountWithTax();
+        BigDecimal amountWithTax = walletOperation.getAmountWithTax();
         BigDecimal amountTax = walletOperation.getAmountTax();
         BigDecimal unitAmountWithTax = walletOperation.getUnitAmountWithTax();
         BigDecimal unitAmountTax = walletOperation.getUnitAmountTax();
@@ -1004,7 +1107,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         InvoiceSubCategory walletInvoiceSubCategory = walletOperation.getInvoiceSubCategory();
 
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-
+        
         ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
 
         InvoiceSubCategory invoiceSubCategory = walletInvoiceSubCategory != null ? walletInvoiceSubCategory : chargeTemplate.getInvoiceSubCategory();
@@ -1017,7 +1120,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         UserAccount userAccount = wallet.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), unitAmountWithTax,
-            unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTAx, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
+            unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
             invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(),
             walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(), walletOperation.getOfferCode(),
             walletOperation.getEdr(), null, null);
@@ -1031,6 +1134,11 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         return ratedTransaction;
     }
 
+    /**
+     * @param billingAccountId id of billing account
+     * @param invoicingDate invoicing date
+     * @throws BusinessException business exception.
+     */
     public void createRatedTransaction(Long billingAccountId, Date invoicingDate) throws BusinessException {
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
         List<UserAccount> userAccounts = billingAccount.getUsersAccounts();
@@ -1043,6 +1151,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+    /**
+     * @param invoice invoice
+     * @return list of rated transactions for given invoice
+     */
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> listByInvoice(Invoice invoice) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "r");
@@ -1055,10 +1167,22 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
     }
 
+    /**
+     * @param walletInstance wallet's instance
+     * @param invoiceSubCategory invoice sub category
+     * @return list of open rated transaction for a given invoice sub category.
+     */
     public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory) {
         return openRTbySubCat(walletInstance, invoiceSubCategory, null, null);
     }
 
+    /**
+     * @param walletInstance wallet instance
+     * @param invoiceSubCategory invoice sub category
+     * @param from checking date
+     * @param to checking date
+     * @return list of rated transaction
+     */
     @SuppressWarnings("unchecked")
     public List<RatedTransaction> openRTbySubCat(WalletInstance walletInstance, InvoiceSubCategory invoiceSubCategory, Date from, Date to) {
         QueryBuilder qb = new QueryBuilder(RatedTransaction.class, "rt");
