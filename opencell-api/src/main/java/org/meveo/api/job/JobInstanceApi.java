@@ -49,8 +49,6 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             handleMissingParametersAndValidate(postData);
         }
 
-        
-
         if (jobInstanceService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(JobInstance.class, postData.getCode());
         }
@@ -65,6 +63,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         jobInstance.setJobTemplate(postData.getJobTemplate());
         jobInstance.setCode(postData.getCode());
         jobInstance.setDescription(postData.getDescription());
+        jobInstance.setRunOnNodes(postData.getRunOnNodes());
+        if (postData.getLimitToSingleNode() != null) {
+            jobInstance.setLimitToSingleNode(postData.getLimitToSingleNode());
+        }
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode());
@@ -112,19 +114,18 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
      * Updates JobInstance based on Code
      * 
      * @param jobInstanceDto
-
+     * 
      * @throws MeveoApiException
      * @throws BusinessException
      */
     public JobInstance update(JobInstanceDto postData) throws MeveoApiException, BusinessException {
 
         String jobInstanceCode = postData.getCode();
-        
 
         if (StringUtils.isBlank(jobInstanceCode)) {
             missingParameters.add("code");
         }
-        
+
         handleMissingParametersAndValidate(postData);
 
         JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode);
@@ -142,6 +143,13 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         jobInstance.setJobCategoryEnum(jobCategory);
         jobInstance.setDescription(postData.getDescription());
         jobInstance.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+
+        if (postData.getRunOnNodes() != null) {
+            jobInstance.setRunOnNodes(postData.getRunOnNodes());
+        }
+        if (postData.getLimitToSingleNode() != null) {
+            jobInstance.setLimitToSingleNode(postData.getLimitToSingleNode());
+        }
 
         if (!StringUtils.isBlank(postData.getTimerCode())) {
             TimerEntity timerEntity = timerEntityService.findByCode(postData.getTimerCode());
@@ -185,7 +193,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
      * Create or update Job Instance based on code.
      * 
      * @param jobInstanceDto
-
+     * 
      * @throws MeveoApiException
      * @throws BusinessException
      */
@@ -229,7 +237,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
      * @param code
      * @param provider
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     public void remove(String code) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {
@@ -259,6 +267,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             dto.setTimerCode(jobInstance.getTimerEntity().getCode());
         }
 
+        dto.setRunOnNodes(jobInstance.getRunOnNodes());
+        dto.setLimitToSingleNode(jobInstance.isLimitToSingleNode());
+        
         dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(jobInstance, true));
 
         if (jobInstance.getFollowingJob() != null) {
