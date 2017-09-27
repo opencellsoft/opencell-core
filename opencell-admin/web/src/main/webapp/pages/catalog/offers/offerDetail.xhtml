@@ -218,8 +218,23 @@
                 </c:if>
                 <hftl:displayWorkflowsHistory entity="#{offerTemplateBean.entity}" />
             </p:panel>
+            
+			<p:panel rendered="#{offerTemplateBean.businessOfferModel != null}">
+				<f:facet name="header">#{messages['marketingManager.catalog.businessServiceModels']}</f:facet>
+				
+				<p:messages id="bsmMessage"></p:messages>
+				
+				<p:pickList id="bsm" value="#{offerTemplateBean.bsmsDualListModel}" var="bsm" itemLabel="#{bsm.code}" itemValue="#{bsm}">
+					<hftl:objectConverter />
+					<p:ajax event="transfer" listener="#{offerTemplateBean.onBsmTransfer}" update="bsmMessage" />
+				</p:pickList>
 
-            <p:panel>
+				<div class="form-panel-actions">
+					<p:commandButton update="offerServices bsmMessage" value="Add / Remove BSM" actionListener="#{offerTemplateBean.addRemoveBsm()}" immediate="true"></p:commandButton>
+				</div> 
+			</p:panel>
+
+			<p:panel>
                 <f:facet name="header">#{messages['marketingManager.catalog.servicesToInclude']}</f:facet>
 
                 <p:panel id="offerServices">
