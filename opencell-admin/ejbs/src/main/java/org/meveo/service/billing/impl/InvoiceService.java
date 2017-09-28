@@ -607,8 +607,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice to generate pdf
      * @throws BusinessException
      */
-    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
-	if(true) return;
+    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {	
         long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
