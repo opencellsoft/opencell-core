@@ -313,16 +313,20 @@ public class CustomerApi extends AccountEntityApi {
         }
 
         CustomersDto customerDtos = new CustomersDto();
+		
+		CustomersResponseDto result = new CustomersResponseDto();
+		
         List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, paging != null ? paging.getOffset() : null,
-            paging != null ? paging.getLimit() : null);
-        customerDtos.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand));
+            paging != null ? paging.getLimit() : null, paging);
+        
+        customerDtos.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand, paging));
+        
         if (customers != null) {
             for (Customer c : customers) {
                 customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c));
             }
         }
 
-        CustomersResponseDto result = new CustomersResponseDto();
         result.setCustomers(customerDtos);
         result.setPaging(paging != null ? paging : new Paging());
         result.getPaging().setTotalNumberOfRecords(customerDtos.getTotalNumberOfRecords().intValue());

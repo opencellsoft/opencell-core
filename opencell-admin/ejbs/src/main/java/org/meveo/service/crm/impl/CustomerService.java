@@ -19,17 +19,23 @@
 package org.meveo.service.crm.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.response.Paging;
+import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.filter.Filter;
 import org.meveo.service.base.AccountService;
+import org.primefaces.model.SortOrder;
 
 /**
  * Customer service implementation.
@@ -59,18 +65,19 @@ public class CustomerService extends AccountService<Customer> {
 	}
 	
 	public Long countFilter(String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand) {
+			CustomerBrand brand, Paging paging) {
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-		filter(qb, customerCode, customerCategory, seller, brand);
+		filter(qb, customerCode, customerCategory, seller, brand, null);
 		Long recordCount = (Long) qb.getCountQuery(getEntityManager()).getSingleResult();
 		return recordCount;
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Customer> filter(String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand, Integer firstRow, Integer numberOfRows) {
+			CustomerBrand brand, Integer firstRow, Integer numberOfRows, Paging paging) {
+		
 		QueryBuilder qb = new QueryBuilder(Customer.class, "c");
-		Query query = filter(qb, customerCode, customerCategory, seller, brand);
+		Query query = filter(qb, customerCode, customerCategory, seller, brand, paging);
 		if (firstRow != null && numberOfRows != null) {
 			qb.applyPagination(query, firstRow, numberOfRows);
 		}
@@ -83,7 +90,7 @@ public class CustomerService extends AccountService<Customer> {
 	}
 
 	private Query filter(QueryBuilder qb, String customerCode, CustomerCategory customerCategory, Seller seller,
-			CustomerBrand brand) {
+			CustomerBrand brand, Paging paging) {
 		
 		qb.addCriterion("code", "=", customerCode, true);
 
@@ -99,6 +106,11 @@ public class CustomerService extends AccountService<Customer> {
 			qb.addCriterionEntity("customerBrand", brand);
 		}
 		
+		boolean ascending = true;
+		if (paging != null && paging.sortOrder.name() != null) {
+			ascending = SortOrder.ASCENDING.name().equals(paging.sortOrder.name());
+			qb.addOrderCriterion("UPPER("+paging.getSortBy()+")", ascending);
+		}
 		
 		Query query = qb.getQuery(getEntityManager());
 		
