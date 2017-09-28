@@ -48,9 +48,9 @@ public class CatalogApi extends BaseApi {
         return new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
     }
 
-    public List<ProductOffering> findProductOfferings(UriInfo uriInfo, Category category) {
+    public List<ProductOffering> findProductOfferings(Date validFrom, Date validTo, UriInfo uriInfo, Category category) {
         List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
-        List<OfferTemplate> offerTemplates = offerTemplateService.list(true);
+        List<OfferTemplate> offerTemplates = offerTemplateService.list(null, validFrom, validTo);
 
         for (OfferTemplate offerTemplate : offerTemplates) {
             List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate);

@@ -23,7 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -34,6 +36,9 @@ import javax.persistence.Query;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Subscription;
@@ -318,5 +323,39 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         return offer;
+    }
+    
+    public List<OfferTemplate> list(String code, Date validFrom, Date validTo) {
+        List<OfferTemplate> listOfferTemplates = null;
+
+        if (StringUtils.isBlank(code) && validFrom == null && validTo == null) {
+            listOfferTemplates = list();
+        } else {
+
+            Map<String, Object> filters = new HashMap<String, Object>();
+            if (!StringUtils.isBlank(code)) {
+                filters.put("code", code);
+            }
+
+            // If only validTo date is provided, a search will return products valid from today to a given date.
+            if (validFrom == null && validTo != null) {
+                validFrom = new Date();
+            }
+
+            // search by a single date
+            if (validFrom != null && validTo == null) {
+
+                filters.put("minmaxOptionalRange-validity.from-validity.to", validFrom);
+
+                // search by date range
+            } else if (validFrom != null && validTo != null) {
+                filters.put("overlapOptionalRange-validity.from-validity.to", new Date[] { validFrom, validTo });
+            }
+
+            PaginationConfiguration config = new PaginationConfiguration(filters);
+            listOfferTemplates = list(config);
+        }
+        
+        return listOfferTemplates;
     }
 }
