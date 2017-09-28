@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -50,7 +51,7 @@ public class CatalogApi extends BaseApi {
 
     public List<ProductOffering> findProductOfferings(Date validFrom, Date validTo, UriInfo uriInfo, Category category) {
         List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
-        List<OfferTemplate> offerTemplates = offerTemplateService.list(null, validFrom, validTo);
+        List<OfferTemplate> offerTemplates = offerTemplateService.list(null, validFrom, validTo, LifeCycleStatusEnum.ACTIVE);
 
         for (OfferTemplate offerTemplate : offerTemplates) {
             List<ProductOfferingPrice> offerPrices = getOfferPrices(offerTemplate);

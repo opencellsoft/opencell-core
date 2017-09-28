@@ -37,13 +37,13 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.dto.catalog.OfferTemplateDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -326,9 +326,14 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     }
     
     public List<OfferTemplate> list(String code, Date validFrom, Date validTo) {
-        List<OfferTemplate> listOfferTemplates = null;
+    	return list(code, validFrom, validTo, null);
+    }
+    
+	public List<OfferTemplate> list(String code, Date validFrom, Date validTo,
+			LifeCycleStatusEnum lifeCycleStatusEnum) {
+		List<OfferTemplate> listOfferTemplates = null;
 
-        if (StringUtils.isBlank(code) && validFrom == null && validTo == null) {
+        if (StringUtils.isBlank(code) && validFrom == null && validTo == null && lifeCycleStatusEnum == null) {
             listOfferTemplates = list();
         } else {
 
@@ -351,6 +356,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             } else if (validFrom != null && validTo != null) {
                 filters.put("overlapOptionalRange-validity.from-validity.to", new Date[] { validFrom, validTo });
             }
+            
+			if (!StringUtils.isBlank(lifeCycleStatusEnum)) {
+				filters.put("lifeCycleStatus", lifeCycleStatusEnum);
+			}
+			
+			filters.put("disabled", false);
 
             PaginationConfiguration config = new PaginationConfiguration(filters);
             listOfferTemplates = list(config);
