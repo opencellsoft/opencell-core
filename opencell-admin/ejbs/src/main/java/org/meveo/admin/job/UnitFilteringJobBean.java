@@ -17,6 +17,14 @@ import org.meveo.service.script.ScriptInterface;
 @Stateless
 public class UnitFilteringJobBean {
 
+    /**
+     * Excute the script for the filtered entity in a single transaction.
+     * 
+     * @param result the result exception
+     * @param obj the filtered entity
+     * @param scriptInterface the script to execute
+     * @param recordVariableName the recordVariableName
+     */
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Object obj, ScriptInterface scriptInterface, String recordVariableName) {
