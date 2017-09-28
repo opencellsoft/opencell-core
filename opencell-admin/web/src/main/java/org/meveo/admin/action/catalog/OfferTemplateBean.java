@@ -364,7 +364,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 							if (stCustomFieldInstances != null) {
 								// populate offer cf
 								customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false, false);
-								serviceTemplateService.update(newServiceTemplate);
+								newServiceTemplate = serviceTemplateService.update(newServiceTemplate);
 								break;
 							}
 						}
@@ -374,7 +374,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 			// populate offer cf
 			customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
-			offerTemplateService.update(newOfferTemplate);
+			newOfferTemplate = offerTemplateService.update(newOfferTemplate);
 			
 			if (entity.getImagePath() != null) {
 				try {
