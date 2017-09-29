@@ -401,13 +401,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
-
-        if (billingAccount.getInvoicingThreshold() != null) {
+        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold() : billingAccount.getInvoicingThreshold();
+        if (invoicingThreshold != null) {
             BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
             if (invoiceAmount == null) {
                 throw new BusinessException("Cant compute invoice amount");
             }
-            if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
+            if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
                 throw new BusinessException("Invoice amount below the threshold");
             }
         }
