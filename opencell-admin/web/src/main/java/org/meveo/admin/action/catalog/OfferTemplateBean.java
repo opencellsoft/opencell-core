@@ -294,6 +294,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						}
 					}
 				}
+				
+				if (entity.isTransient() && entity.getBusinessOfferModel() != null) {
+					for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
+						ostOffer.getServiceTemplate().setSelected(true);
+					}
+
+					for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates()) {
+						for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
+							if (ostOffer.getServiceTemplate().equals(ostBom.getServiceTemplate())) {
+								continue;
+							}
+						}
+
+						sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
+					}
+				}
+				
 				Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
 			}
 		}

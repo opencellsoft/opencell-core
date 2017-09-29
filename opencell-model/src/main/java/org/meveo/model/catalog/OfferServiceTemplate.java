@@ -181,4 +181,16 @@ public class OfferServiceTemplate implements IEntity {
         setValidity(otherOst.getValidity());
         setIncompatibleServices(otherOst.getIncompatibleServices());
     }
+    
+	public OfferServiceTemplate duplicate(OfferTemplate newOfferTemplate) {
+		OfferServiceTemplate newOst = new OfferServiceTemplate();
+		newOst.setIncompatibleServices(incompatibleServices);
+		newOst.setMandatory(mandatory);
+		newOst.setServiceTemplate(serviceTemplate);
+		newOst.setValidity(validity);
+		if (newOfferTemplate != null) {
+			newOst.setOfferTemplate(newOfferTemplate);
+		}
+		return newOst;
+	}
 }
