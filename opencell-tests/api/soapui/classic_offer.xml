@@ -22869,6 +22869,12 @@ public class InvoiceCreateScript extends Script {
 			throws IOException, SAXException, ParserConfigurationException {
               
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+		
+		SimpleDateFormat sdfPDF = new SimpleDateFormat("yyyy.MM.dd");
+
+        String pdfName = sdfPDF.format(context.get("INVOICE_DATE")) + "_" + context.get("INVOICE_NUMBER").toString() + ".pdf";
+        
+        String pdfUrl = "${#Project#opencell.url}/api/rest/admin/files/downloadFile?file=invoices/pdf/" + pdfName;
 
 		if(context !=null){
           log.debug("context is not null");
@@ -22911,6 +22917,12 @@ public class InvoiceCreateScript extends Script {
 			requestMain += "                    	<a:Value>"+invoiceTypeId+"</a:Value>";
 			requestMain += "                    </b:value>";
 			requestMain += "                  </a:KeyValuePairOfstringanyType>";
+			
+			requestMain += "                  <a:KeyValuePairOfstringanyType>";
+            requestMain += "                    <b:key>ocl_invoicepdfurl</b:key>";
+            requestMain += "                    <b:value i:type=\"c:string\" xmlns:c=\"http://www.w3.org/2001/XMLSchema\">"+pdfUrl+"</b:value>";
+            requestMain += "                  </a:KeyValuePairOfstringanyType>";
+			
 			requestMain += "                  <a:KeyValuePairOfstringanyType>";
 			requestMain += "                  	<b:key>customerid</b:key>";
 			requestMain += "                  	<b:value i:type=\"a:EntityReference\">";
