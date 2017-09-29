@@ -412,6 +412,20 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			if (outcome != null) {
 
 				if (outcome.equals("mm_offers")) {
+					if (isNewEntity) {
+						for(OfferServiceTemplate ostGui : sortedOfferServiceTemplates) {
+							for (OfferServiceTemplate ostEntity : entity.getOfferServiceTemplates()) {
+								if (ostEntity.getServiceTemplate().equals(ostGui.getServiceTemplate())) {
+									continue;
+								}
+							}
+							
+							entity.addOfferServiceTemplate(ostGui);
+						}
+						
+						entity = offerTemplateService.update(entity);
+					}
+					
 					// populate service custom fields
 					for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
 						ServiceTemplate serviceTemplate = ost.getServiceTemplate();
@@ -419,7 +433,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 								.getValuesByCode();
 						if (stCustomFieldInstances != null) {
 							// populate offer cf
-							customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), false, false);
+							customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
 						}
 					}
 				}
