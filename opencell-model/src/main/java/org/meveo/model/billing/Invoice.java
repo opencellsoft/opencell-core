@@ -66,9 +66,9 @@ import org.meveo.model.quote.Quote;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
-@NamedQueries({ @NamedQuery(name = "Invoice.byBR", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId"),
-        @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false"),
-        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.isPdfGenerated is false and inv.billingRun.id=:billingRunId"),
+@NamedQueries({ @NamedQuery(name = "Invoice.byBRNoXml", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+        @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.pdfFilename IS NULL"),
+        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.billingRun.status = 'VALIDATED' and inv.pdfFilename IS NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
@@ -190,9 +190,19 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "quote_id")
     private Quote quote;
 
-    @Type(type = "numeric_boolean")
-    @Column(name = "pdf_generated")
-    private boolean isPdfGenerated = false;
+    /**
+     * XML file name. Might contain subdirectories relative to directory where all XML files are located.
+     */
+    @Column(name = "xml_filename", length = 255)
+    @Size(max = 255)
+    private String xmlFilename;
+
+    /**
+     * PDF file name. Might contain subdirectories relative to directory where all PDF files are located.
+     */
+    @Column(name = "pdf_filename", length = 255)
+    @Size(max = 255)
+    private String pdfFilename;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -599,12 +609,57 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         this.quote = quote;
     }
 
-    public boolean isPdfGenerated() {
-        return isPdfGenerated;
+    /**
+     * Return a PDF filename. Including any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "a/b/c.pdf"
+     * 
+     * @return PDF file name
+     */
+    public String getPdfFilename() {
+        return pdfFilename;
     }
 
-    public void setPdfGenerated(boolean isPdfGenerated) {
-        this.isPdfGenerated = isPdfGenerated;
+    public void setPdfFilename(String pdfFilename) {
+        this.pdfFilename = pdfFilename;
     }
 
+    /**
+     * Return a PDF filename without any subdirectories it might contain. E.g. for "a/b/c.pdf", this method will return "c.pdf"
+     * 
+     * @return PDF file name without any subdirectories it might contain.
+     */
+    public String getPdfFilenameOnly() {
+
+        int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
+        if (pos > -1) {
+            return pdfFilename.substring(pos + 1);
+        }
+        return pdfFilename;
+    }
+
+    /**
+     * Return a XML filename. Including any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "a/b/c.xml"
+     * 
+     * @return XML file name
+     */
+    public String getXmlFilename() {
+        return xmlFilename;
+    }
+
+    public void setXmlFilename(String xmlFilename) {
+        this.xmlFilename = xmlFilename;
+    }
+
+    /**
+     * Return a XML filename without any subdirectories it might contain. E.g. for "a/b/c.xml", this method will return "c.xml"
+     * 
+     * @return XML file name without any subdirectories it might contain.
+     */
+    public String getXmlFilenameOnly() {
+
+        int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
+        if (pos > -1) {
+            return xmlFilename.substring(pos + 1);
+        }
+        return xmlFilename;
+    }
 }

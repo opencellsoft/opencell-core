@@ -403,7 +403,7 @@
 								resultsId="i_results"
 								backingBean="#{invoiceBean}" deleteManyButton="false" exportToXml="false" reflow="false">
 
-								<p:column style="width:16px">
+								<p:column style="width:30px">
 									<p:rowToggler />
 								</p:column>
 
@@ -426,21 +426,13 @@
 								</p:column>
 								<hftl:column label="#{messages['invoice.invoiceType']}"
 									field="invoiceType.code"  />
-								<p:column width="100">
-									<f:facet name="header">
-										<h:outputText value="#{messages['billingAccount.invoice']}" />
-									</f:facet>
-									<h:commandLink
-										action="#{billingAccountBean.generatePDF(entity.id)}"
-										rendered="#{billingAccountBean.pdfExists(entity.id)}">
-										<h:graphicImage value="/img/pdf.gif" style="border:0" />
-									</h:commandLink>
-								</p:column>
-								<hftl:actionsColumn renderViewLink="true"
-									editView="/pages/billing/invoices/invoiceDetail.xhtml"
-									renderEditLink="false" renderDeleteLink="false" />
+                            <hftl:actionsColumn renderViewLink="true" editView="/pages/billing/invoices/invoiceDetail.xhtml" renderEditLink="false" renderDeleteLink="false">
+                                <h:commandLink action="#{invoiceBean.downloadPdfInvoice(entity.id)}" rendered="#{invoiceBean.isPdfInvoiceAlreadyGenerated(entity.id)}">
+                                    <h:graphicImage value="/img/pdf.gif" style="border:0; margin-top:2px" />
+                                </h:commandLink>
+                            </hftl:actionsColumn>
 
-								<p:rowExpansion>
+                            <p:rowExpansion>
 									<p:dataTable
 										value="#{invoiceBean.getLinkedInvoices(entity)}"
 										var="obj" reflow="false" styleClass="invoice-adjustment-table">

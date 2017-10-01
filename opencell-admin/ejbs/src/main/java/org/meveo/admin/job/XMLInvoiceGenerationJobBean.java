@@ -83,7 +83,7 @@ public class XMLInvoiceGenerationJobBean {
                     log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
                 }
 
-                List<Long> invoiceIds = invoiceService.getInvoiceIdsByBR(billingRunId);
+                List<Long> invoiceIds = invoiceService.getInvoiceIdsByBRWithNoXml(billingRunId);
                 List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
                 SubListCreator subListCreator = new SubListCreator(invoiceIds, nbRuns.intValue());
 

@@ -919,4 +919,43 @@
         <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
     </changeSet>
     
+    <changeSet id="#2824_20170928" author="AndriusKarpavicius">    
+        <addColumn tableName="billing_invoice">
+            <column name="pdf_filename" type="varchar(255)"  />           
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="pdf_filename_el" type="varchar(2000)"  />           
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="#2824_20170928_migration_P" author="AndriusKarpavicius" dbms="postgresql">    
+        <sql>update billing_invoice set pdf_filename=to_char(invoice_date,'YYYY.MM.DD')|| (case when billing_invoice_type.code='ADJ' then '_IA_' else  '_' end) ||case when invoice_number is not null then invoice_number else temporary_invoice_number end|| '.pdf' from billing_invoice_type where billing_invoice.invoice_type_id = billing_invoice_type.id and pdf_generated=1</sql> 
+    </changeSet>    
+    
+    <changeSet id="#2824_20170928_migration_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id set pdf_filename=concat(date_format(invoice_date,'%Y.%m.%d'), (case when billing_invoice_type.code='ADJ' then '_IA_' else  '_' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where pdf_generated=1</sql> 
+    </changeSet>
+           
+    <changeSet id="#2824_20170928_1" author="AndriusKarpavicius">     
+        <dropColumn tableName="billing_invoice" columnName="pdf_generated"/>
+    </changeSet> 
+       
+    
+    <changeSet id="#2824_20170929" author="AndriusKarpavicius">    
+        <addColumn tableName="billing_invoice">
+            <column name="xml_filename" type="varchar(255)"  />           
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="xml_filename_el" type="varchar(2000)"  />           
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="#2824_20170929_migration_P" author="AndriusKarpavicius" dbms="postgresql">    
+        <sql>update billing_invoice set xml_filename=(case when billing_run_id IS NOT NULL then billing_run_id::text else to_char(billing_invoice.invoice_date,'DDMMYYYY_HH24MISS') end) || '/' || (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end) ||case when invoice_number is not null then invoice_number else temporary_invoice_number end|| '.pdf' from billing_invoice_type, billing_billing_run where billing_invoice.invoice_type_id = billing_invoice_type.id and billing_invoice.billing_run_id = billing_billing_run.id and xml_invoice_generated=1</sql> 
+    </changeSet>    
+    
+    <changeSet id="#2824_20170929_migration_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id join billing_billing_run_id on billing_invoice.billing_run_id = billing_billing_run.id set xml_filename=concat((case when billing_run_id IS NOT NULL then billing_run_id else to_char(billing_invoice.invoice_date,'%d%m%Y_%k%%S') end) , '/' , (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where xml_invoice_generated=1</sql> 
+    </changeSet>
+               
 </databaseChangeLog> 
