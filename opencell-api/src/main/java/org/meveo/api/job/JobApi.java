@@ -80,7 +80,7 @@ public class JobApi extends BaseApi {
 
         jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
 
-        if (jobExecutionResult.getEndDate() != null) {
+        if (jobExecutionResult.getEndDate() == null) {
             List<String> nodeNames = jobCacheContainerProvider.getNodesJobIsRuningOn(jobExecutionResult.getJobInstance().getId());
             if (nodeNames != null && !nodeNames.isEmpty()) {
                 jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", nodeNames));
