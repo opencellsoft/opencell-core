@@ -1,5 +1,7 @@
 package org.meveo.api.job;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -9,8 +11,9 @@ import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.jobs.JobExecutionResult;
+import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
@@ -27,14 +30,18 @@ public class JobApi extends BaseApi {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
+
     /**
      * Execute job
      * 
      * @param jobInstanceDTO Job instance DTO
      * @return Job execution result identifier
      * @throws MeveoApiException
+     * @throws BusinessException
      */
-    public Long executeJob(JobInstanceInfoDto jobInstanceDTO) throws MeveoApiException {
+    public JobExecutionResultDto executeJob(JobInstanceInfoDto jobInstanceDTO) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(jobInstanceDTO.getCode()) && StringUtils.isBlank(jobInstanceDTO.getTimerName())) {
             missingParameters.add("timerName or code");
         }
@@ -47,11 +54,9 @@ public class JobApi extends BaseApi {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
 
-        try {
-            return jobExecutionService.executeJobWithResultId(jobInstance, null);
-        } catch (BusinessException e) {
-            throw new MeveoApiException(e.getMessage());
-        }
+        Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
+
+        return findJobExecutionResult(executionId);
     }
 
     /**
@@ -68,19 +73,20 @@ public class JobApi extends BaseApi {
             handleMissingParameters();
         }
 
-        JobExecutionResult jobExecutionResult = jobExecutionService.findById(id);
+        JobExecutionResultImpl jobExecutionResult = jobExecutionService.findById(id);
         if (jobExecutionResult == null) {
-            throw new EntityDoesNotExistsException(JobExecutionResult.class, id);
-        }
-
-        if (StringUtils.isBlank(jobExecutionResult.getEndDate())) {
-            throw new MeveoApiException("Job still running, not yet finished");
+            throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
         }
 
         jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
 
+        if (jobExecutionResult.getEndDate() != null) {
+            List<String> nodeNames = jobCacheContainerProvider.getNodesJobIsRuningOn(jobExecutionResult.getJobInstance().getId());
+            if (nodeNames != null && !nodeNames.isEmpty()) {
+                jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", nodeNames));
+            }
+        }
+
         return jobExecutionResultDto;
-
     }
-
 }

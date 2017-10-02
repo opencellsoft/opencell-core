@@ -126,7 +126,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         if (EjbUtils.isRunningInClusterMode()) {
             nodes.add(EjbUtils.getCurrentClusterNode());
         } else {
-            nodes.add("Current");
+            nodes.add(EjbUtils.getCurrentClusterNode());
         }
 
         // Use flags to not return previous value
@@ -164,5 +164,15 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
             log.trace("Job {} marked as not running in job cache", jobInstanceId);
         }
+    }
+
+    /**
+     * Get a list of nodes that job is currently running on
+     * 
+     * @param jobInstanceId Job instance identifier
+     * @return A list of cluster node names that job is currently running on
+     */
+    public List<String> getNodesJobIsRuningOn(Long jobInstanceId) {
+        return runningJobsCache.get(jobInstanceId);
     }
 }

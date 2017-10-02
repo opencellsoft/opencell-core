@@ -27,8 +27,9 @@ import org.meveo.model.NotifiableEntity;
 @Entity
 @Table(name = "job_execution")
 @NotifiableEntity
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "job_execution_seq"), })
-public class JobExecutionResultImpl extends BaseEntity implements JobExecutionResult {
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "job_execution_seq"), })
+public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,7 +56,10 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Column(name = "nb_error")
     private long nbItemsProcessedWithError;
 
-    @Type(type="numeric_boolean")
+    /**
+     * True if the job didn't detect anything else to do. If false the Jobservice will execute it again immediatly
+     */
+    @Type(type = "numeric_boolean")
     @Column(name = "job_done")
     private boolean done = true;
 
@@ -63,13 +67,22 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     @Column(name = "job_launcher")
     private JobLauncherEnum jobLauncherEnum;
 
+    /**
+     * Null if warnings are available somewhere else (for example in a file)
+     */
     @Transient
     private List<String> warnings = new ArrayList<String>();
 
+    /**
+     * Null if errors are available somewhere else (for example in a file)
+     */
     @Transient
     private List<String> errors = new ArrayList<String>();
 
-    @Column(name = "report", columnDefinition="LONGTEXT")
+    /**
+     * General report displayed in GUI, put here info that do not fit other places
+     */
+    @Column(name = "report", columnDefinition = "LONGTEXT")
     private String report;
 
     public synchronized void registerSucces() {
@@ -106,7 +119,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
     }
 
     // helper
-    public static JobExecutionResultImpl createFromInterface(JobInstance jobInstance, JobExecutionResult res) {
+    public static JobExecutionResultImpl createFromInterface(JobInstance jobInstance, JobExecutionResultImpl res) {
         JobExecutionResultImpl result = new JobExecutionResultImpl();
         result.setJobInstance(jobInstance);
         result.setEndDate(res.getEndDate());
@@ -123,7 +136,7 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
         return result;
     }
 
-    public static void updateFromInterface(JobExecutionResult source, JobExecutionResultImpl result) {
+    public static void updateFromInterface(JobExecutionResultImpl source, JobExecutionResultImpl result) {
         result.setEndDate(source.getEndDate());
         result.setStartDate(source.getStartDate());
         result.setErrors(source.getErrors());
@@ -279,10 +292,12 @@ public class JobExecutionResultImpl extends BaseEntity implements JobExecutionRe
         return warningBuffer.toString();
     }
 
-	@Override
-	public String toString() {
-		return "JobExecutionResultImpl [jobInstanceCode=" + (jobInstance==null?null:jobInstance.getCode()) + ", startDate=" + startDate + ", endDate=" + endDate + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning=" + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", jobLauncherEnum=" + jobLauncherEnum + ", warnings=" + warnings + ", errors=" + errors + ", report="
-				+ report + "]";
-	}
+    @Override
+    public String toString() {
+        return "JobExecutionResultImpl [jobInstanceCode=" + (jobInstance == null ? null : jobInstance.getCode()) + ", startDate=" + startDate + ", endDate=" + endDate
+                + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
+                + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", jobLauncherEnum=" + jobLauncherEnum
+                + ", warnings=" + warnings + ", errors=" + errors + ", report=" + report + "]";
+    }
 
 }
