@@ -104,11 +104,13 @@ public class RatingService extends BusinessService<WalletOperation> {
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
 
-    /*
-     * public int getSharedQuantity(LevelEnum level, Provider provider, String chargeCode, Date chargeDate, RecurringChargeInstance recChargeInstance) { return
-     * getSharedQuantity(entityManager, level, provider, chargeCode, chargeDate, recChargeInstance); }
+    /**
+     * @param level level enum
+     * @param chargeCode charge's code
+     * @param chargeDate charge's date
+     * @param recChargeInstance reccurring charge instance
+     * @return shared quantity
      */
-
     public int getSharedQuantity(LevelEnum level, String chargeCode, Date chargeDate, RecurringChargeInstance recChargeInstance) {
         int result = 0;
         try {
@@ -171,16 +173,38 @@ public class RatingService extends BusinessService<WalletOperation> {
         return result;
     }
 
-    /*
-     * public WalletOperation prerateChargeApplication(String code, Date subscriptionDate, String offerCode, ChargeInstance chargeInstance, ApplicationTypeEnum applicationType,
-     * Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent,
-     * BigDecimal discountPercent, Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, Date startdate, Date
-     * endDate, ChargeApplicationModeEnum mode) throws BusinessException { return prerateChargeApplication(entityManager, code, subscriptionDate, offerCode, chargeInstance,
-     * applicationType, applicationDate, amountWithoutTax, amountWithTax, quantity, tCurrency, countryId, taxPercent, discountPercent, nextApplicationDate, invoiceSubCategory,
-     * criteria1, criteria2, criteria3, startdate, endDate, mode); }
-     */
 
-    // used to prerate a oneshot or recurring charge
+    
+    /**
+     * This method is used to prerate a oneshot or recurring charge.
+     * @param chargeTemplate charge template
+     * @param subscriptionDate subscription date
+     * @param offerCode code of offer
+     * @param chargeInstance charge instance
+     * @param applicationType type of application
+     * @param applicationDate date of application
+     * @param amountWithoutTax amount without tax
+     * @param amountWithTax amount with tax
+     * @param inputQuantity input quantity
+     * @param quantity quantity
+     * @param tCurrency trading currency
+     * @param countryId id of country
+     * @param languageCode code of language
+     * @param taxPercent tax percent
+     * @param discountPercent discount percent
+     * @param nextApplicationDate next date of application
+     * @param invoiceSubCategory subcategory of invoice
+     * @param criteria1 criteria 1
+     * @param criteria2 criteria 2
+     * @param criteria3 criteria 3
+     * @param orderNumber order number
+     * @param startdate start date
+     * @param endDate end date
+     * @param mode mode
+     * @param userAccount user account
+     * @return wallet operation
+     * @throws BusinessException business exception
+     */
     public WalletOperation prerateChargeApplication(ChargeTemplate chargeTemplate, Date subscriptionDate, String offerCode, ChargeInstance chargeInstance,
             ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity,
             TradingCurrency tCurrency, Long countryId, String languageCode, BigDecimal taxPercent, BigDecimal discountPercent, Date nextApplicationDate,
@@ -263,7 +287,34 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     }
 
-    // used to rate a oneshot, recurring or product charge and triggerEDR
+    
+    /**
+     * used to rate a oneshot, recurring or product charge and triggerEDR
+     * @param chargeInstance charge instance
+     * @param applicationType type of application
+     * @param applicationDate application date
+     * @param amountWithoutTax amoun without tax
+     * @param amountWithTax amount with tax
+     * @param inputQuantity input quantity
+     * @param quantity quantity
+     * @param tCurrency trading currency
+     * @param countryId country id
+     * @param taxPercent tax percent
+     * @param discountPercent discount percent
+     * @param nextApplicationDate next application date
+     * @param invoiceSubCategory sub category date
+     * @param criteria1 criteria 1
+     * @param criteria2 criteria 2
+     * @param criteria3 criteria 3
+     * @param orderNumber order number
+     * @param startdate start date
+     * @param endDate end date
+     * @param mode mode
+     * @param forSchedule true/false
+     * @param isVirtual true/false
+     * @return wallet operation
+     * @throws BusinessException business exception
+     */
     public WalletOperation rateChargeApplication(ChargeInstance chargeInstance, ApplicationTypeEnum applicationType, Date applicationDate, BigDecimal amountWithoutTax,
             BigDecimal amountWithTax, BigDecimal inputQuantity, BigDecimal quantity, TradingCurrency tCurrency, Long countryId, BigDecimal taxPercent, BigDecimal discountPercent,
             Date nextApplicationDate, InvoiceSubCategory invoiceSubCategory, String criteria1, String criteria2, String criteria3, String orderNumber, Date startdate, Date endDate,
@@ -354,7 +405,16 @@ public class RatingService extends BusinessService<WalletOperation> {
         return walletOperation;
     }
 
-    // used to rate or rerate a bareWalletOperation
+    
+    /**
+     * used to rate or rerate a bareWalletOperation.
+     * @param bareWalletOperation operation
+     * @param unitPriceWithoutTax unit price without tax
+     * @param unitPriceWithTax unit price with tax
+     * @param countryId country id
+     * @param tcurrency trading currency
+     * @throws BusinessException business exception
+     */
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency)
             throws BusinessException {
         long startDate = System.currentTimeMillis();
@@ -587,6 +647,11 @@ public class RatingService extends BusinessService<WalletOperation> {
     }
 
     // rerate
+    /**
+     * @param operationToRerateId wallet operation to be rerated
+     * @param useSamePricePlan true if same price plan will be used
+     * @throws BusinessException business exception
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void reRate(Long operationToRerateId, boolean useSamePricePlan) throws BusinessException {
 
@@ -596,17 +661,18 @@ public class RatingService extends BusinessService<WalletOperation> {
             WalletOperation operation = operationToRerate.getUnratedClone();
             operationToRerate.setReratedWalletOperation(operation);
             operationToRerate.setStatus(WalletOperationStatusEnum.RERATED);
+            PricePlanMatrix priceplan = operation.getPriceplan();
             if (useSamePricePlan) {
-                if (operation.getPriceplan() != null) {
-                    operation.setUnitAmountWithoutTax(operation.getPriceplan().getAmountWithoutTax());
-                    operation.setUnitAmountWithTax(operation.getPriceplan().getAmountWithTax());
-                    if (operation.getPriceplan().getAmountWithoutTaxEL() != null) {
-                        operation.setUnitAmountWithoutTax(getExpressionValue(operation.getPriceplan().getAmountWithoutTaxEL(), operation.getPriceplan(), operation,
+                if (priceplan != null) {
+                    operation.setUnitAmountWithoutTax(priceplan.getAmountWithoutTax());
+                    operation.setUnitAmountWithTax(priceplan.getAmountWithTax());
+                    if (priceplan.getAmountWithoutTaxEL() != null) {
+                        operation.setUnitAmountWithoutTax(getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation,
                             operation.getWallet().getUserAccount(), operation.getUnitAmountWithoutTax()));
 
                     }
-                    if (operation.getPriceplan().getAmountWithTaxEL() != null) {
-                        operation.setUnitAmountWithTax(getExpressionValue(operation.getPriceplan().getAmountWithTaxEL(), operation.getPriceplan(), operation,
+                    if (priceplan.getAmountWithTaxEL() != null) {
+                        operation.setUnitAmountWithTax(getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation,
                             operation.getWallet().getUserAccount(), operation.getUnitAmountWithoutTax()));
 
                     }
@@ -629,12 +695,14 @@ public class RatingService extends BusinessService<WalletOperation> {
                 operation.setUnitAmountWithTax(null);
                 operation.setUnitAmountTax(null);
 
-                TradingCountry tradingCountry = operationToRerate.getChargeInstance().getUserAccount().getBillingAccount().getTradingCountry();
+                ChargeInstance chargeInstance = operationToRerate.getChargeInstance();
+                TradingCountry tradingCountry = chargeInstance.getUserAccount().getBillingAccount().getTradingCountry();
+                ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
                 InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(
-                    operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getId(), tradingCountry.getId(), operation.getOperationDate());
+                    chargeTemplate.getInvoiceSubCategory().getId(), tradingCountry.getId(), operation.getOperationDate());
                 if (invoiceSubcategoryCountry == null) {
                     throw new IncorrectChargeTemplateException("reRate: No invoiceSubcategoryCountry exists for invoiceSubCategory code="
-                            + operationToRerate.getChargeInstance().getChargeTemplate().getInvoiceSubCategory().getCode() + " and trading country="
+                            + chargeTemplate.getInvoiceSubCategory().getCode() + " and trading country="
                             + tradingCountry.getCountryCode());
                 }
 
@@ -648,8 +716,8 @@ public class RatingService extends BusinessService<WalletOperation> {
                 }
 
                 operation.setTaxPercent(tax.getPercent());
-                rateBareWalletOperation(operation, null, null, operation.getPriceplan().getTradingCountry() == null ? null : operation.getPriceplan().getTradingCountry().getId(),
-                    operation.getPriceplan().getTradingCurrency());
+                rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
+                    priceplan.getTradingCurrency());
             }
             create(operation);
             updateNoCheck(operationToRerate);
@@ -663,6 +731,14 @@ public class RatingService extends BusinessService<WalletOperation> {
         log.debug("end rerate wallet operation");
     }
 
+    /**
+     * @param expression EL expression
+     * @param priceplan price plan
+     * @param bareOperation operation
+     * @param ua user account
+     * @param amount amount used in EL
+     * @return evaluated value from expression.
+     */
     private BigDecimal getExpressionValue(String expression, PricePlanMatrix priceplan, WalletOperation bareOperation, UserAccount ua, BigDecimal amount) {
         BigDecimal result = null;
         if (StringUtils.isBlank(expression)) {
@@ -758,6 +834,14 @@ public class RatingService extends BusinessService<WalletOperation> {
         return result;
     }
 
+    /**
+     * @param expression EL exception
+     * @param bareOperation operation
+     * @param ua user account
+     * @param priceplan price plan
+     * @return true/false true if expression is matched
+     * @throws BusinessException business exception
+     */
     private boolean matchExpression(String expression, WalletOperation bareOperation, UserAccount ua, PricePlanMatrix priceplan) throws BusinessException {
         Boolean result = true;
         if (StringUtils.isBlank(expression)) {
@@ -834,6 +918,13 @@ public class RatingService extends BusinessService<WalletOperation> {
         return result;
     }
 
+    /**
+     * @param expression EL expression
+     * @param walletOperation wallet operation
+     * @param ua user account
+     * @return evaluated value
+     * @throws BusinessException business exception
+     */
     private String evaluateStringExpression(String expression, WalletOperation walletOperation, UserAccount ua) throws BusinessException {
         String result = null;
         if (StringUtils.isBlank(expression)) {
@@ -908,6 +999,13 @@ public class RatingService extends BusinessService<WalletOperation> {
         return result;
     }
 
+    /**
+     * @param expression EL expression
+     * @param walletOperation wallet operation
+     * @param ua user account
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
     private Double evaluateDoubleExpression(String expression, WalletOperation walletOperation, UserAccount ua) throws BusinessException {
         Double result = null;
         if (StringUtils.isBlank(expression)) {
