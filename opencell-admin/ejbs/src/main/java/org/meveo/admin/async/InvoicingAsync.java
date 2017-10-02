@@ -39,8 +39,7 @@ public class InvoicingAsync {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun) {
-    	long startDate = System.currentTimeMillis();
+    public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun) {    	
         int count = 0;
         for (Long billingAccountId : billingAccountIds) {
             if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {

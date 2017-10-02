@@ -957,5 +957,9 @@
     <changeSet id="#2824_20170929_migration_M" author="AndriusKarpavicius" dbms="mysql">    
         <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id join billing_billing_run_id on billing_invoice.billing_run_id = billing_billing_run.id set xml_filename=concat((case when billing_run_id IS NOT NULL then billing_run_id else to_char(billing_invoice.invoice_date,'%d%m%Y_%k%%S') end) , '/' , (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where xml_invoice_generated=1</sql> 
     </changeSet>
+    
+    <changeSet id="#2827_20171002" author="anasseh">     
+        <dropColumn tableName="billing_billing_run" columnName="xml_invoice_generated"/>
+    </changeSet> 
                
 </databaseChangeLog> 

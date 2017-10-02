@@ -101,11 +101,4 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
         billingRun.setStatus(status);
         updateNoCheck(billingRun);
     }
-
-    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void markBillingRunAsAllXMLGenerated(Long billingRunId) {
-        BillingRun billingRun = findById(billingRunId);
-        billingRun.setXmlInvoiceGenerated(true);
-        updateNoCheck(billingRun);
-    }
 }
