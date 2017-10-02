@@ -45,7 +45,7 @@ public class UnitUsageRatingJobBean {
 
     // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long edrId) {
+    public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
     	long startDate = System.currentTimeMillis();
         log.debug("Running with edrId={}", edrId);
         EDR edr = null;
@@ -81,7 +81,7 @@ public class UnitUsageRatingJobBean {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void registerFailedEdr(JobExecutionResultImpl result, EDR edr, Exception e) {
+    public void registerFailedEdr(JobExecutionResultImpl result, EDR edr, Exception e) throws BusinessException {
 
         edr = edrService.updateNoCheck(edr);
         rejectededEdrProducer.fire(edr);

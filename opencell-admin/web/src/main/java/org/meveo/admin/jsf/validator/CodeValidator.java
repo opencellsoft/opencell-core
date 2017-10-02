@@ -1,8 +1,6 @@
 package org.meveo.admin.jsf.validator;
 
 import java.text.MessageFormat;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -13,6 +11,8 @@ import javax.faces.validator.ValidatorException;
 import javax.inject.Inject;
 
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
@@ -20,17 +20,17 @@ import org.meveo.admin.util.ResourceBundle;
 @FacesValidator("codeValidator")
 public class CodeValidator implements Validator {
 
-	private static final String CODE_REGEX = "^[@A-Za-z0-9_\\.-]+$";
-
 	@Inject
 	private ResourceBundle resourceMessages;
 
+	private ParamBean paramBean = ParamBean.getInstance();
+
 	@Override
 	public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
-		if (value != null && !isMatch(value.toString())) {
+		if (value != null && !StringUtils.isMatch(value.toString(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
 			FacesMessage facesMessage = new FacesMessage();
 			String message = resourceMessages.getString("message.validation.code.pattern");
-			message = MessageFormat.format(message, getLabel(context, component), CODE_REGEX);
+			message = MessageFormat.format(message, getLabel(context, component), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX));
 			facesMessage.setDetail(message);
 			facesMessage.setSummary(message);
 			facesMessage.setSeverity(FacesMessage.SEVERITY_ERROR);
@@ -39,11 +39,7 @@ public class CodeValidator implements Validator {
 		}
 	}
 
-	private static boolean isMatch(String value) {
-		Pattern r = Pattern.compile(CODE_REGEX);
-		Matcher m = r.matcher(value);
-		return m.find();
-	}
+	
 
 	private Object getLabel(FacesContext context, UIComponent component) {
 		Object o = component.getAttributes().get("label");
