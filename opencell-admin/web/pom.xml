@@ -163,7 +163,7 @@
 				<version>2.5</version>
 				<executions>
 					<execution>
-						<phase>install</phase>
+						<phase>initialize</phase>
 						<goals>
 							<goal>install-file</goal>
 						</goals>
