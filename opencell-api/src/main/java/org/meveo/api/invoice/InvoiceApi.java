@@ -532,8 +532,7 @@ public class InvoiceApi extends BaseApi {
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
         Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
-            generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf, generateAO);
-        invoiceService.commit();
+            generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf, generateAO);        
 
         GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
         if (isDraft) {

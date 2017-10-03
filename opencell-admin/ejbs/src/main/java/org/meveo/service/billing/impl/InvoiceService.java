@@ -1494,6 +1494,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             assignInvoiceNumber(invoice);
         }
 
+        // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
+        commit();
+        
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
