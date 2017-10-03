@@ -1,11 +1,15 @@
 package org.meveo.api.catalog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.catalog.BSMConfigurationDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -13,18 +17,23 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
+import org.meveo.service.catalog.impl.BusinessServiceModelService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
 
 	@Inject
 	private BusinessOfferModelService businessOfferModelService;
+	
+	@Inject
+	private BusinessServiceModelService businessServiceModelService;
 
 	public Long createOfferFromBOM(BomOfferDto postData) throws MeveoApiException {
 
@@ -49,6 +58,12 @@ public class BusinessOfferApi extends BaseApi {
 		if ((bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty())
 				&& (bomOffer.getOfferProductTemplates() == null || bomOffer.getOfferProductTemplates().isEmpty())) {
 			throw new MeveoApiException("No service or product template attached");
+		}
+		
+		// process bsm
+		List<ServiceConfigurationDto> serviceConfigurationDtoFromBSM = getServiceConfiguration(postData.getBusinessServiceModels());
+		if (!serviceConfigurationDtoFromBSM.isEmpty()) {
+			postData.getServicesToActivate().addAll(serviceConfigurationDtoFromBSM);
 		}
 
 		OfferTemplate newOfferTemplate = null;
@@ -129,4 +144,39 @@ public class BusinessOfferApi extends BaseApi {
 		
 		return newOfferTemplate.getId();
 	}
+	
+	private List<ServiceConfigurationDto> getServiceConfiguration(List<BSMConfigurationDto> bsmsConfig) throws EntityDoesNotExistsException {
+		List<ServiceConfigurationDto> result = new ArrayList<>();
+
+		if (bsmsConfig != null && !bsmsConfig.isEmpty()) {
+			for (BSMConfigurationDto bsmConfig : bsmsConfig) {
+				BusinessServiceModel bsm = businessServiceModelService.findByCode(bsmConfig.getCode());
+				if (bsm == null) {
+					throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmConfig.getCode());
+				}
+
+				boolean found = false;
+				if (bsmConfig.getServices() != null && !bsmConfig.getServices().isEmpty()) {
+					for (ServiceConfigurationDto serviceConfigurationDto : bsmConfig.getServices()) {
+						if (bsm.getServiceTemplate().getCode().equals(serviceConfigurationDto.getCode())) {
+							result.add(serviceConfigurationDto);
+							found = true;
+							break;
+						}
+					}
+				}
+
+				if (!found) {
+					// add service template from BSM
+					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
+					serviceConfigurationDto.setCode(bsm.getServiceTemplate().getCode());
+					serviceConfigurationDto.setDescription(bsm.getServiceTemplate().getDescription());
+					result.add(serviceConfigurationDto);
+				}
+			}
+		}
+
+		return result;
+	}
+	
 }
