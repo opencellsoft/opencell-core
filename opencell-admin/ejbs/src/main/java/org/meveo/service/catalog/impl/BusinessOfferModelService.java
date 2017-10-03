@@ -191,7 +191,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         String prefix = newOfferTemplate.getId() + "_";
 
         // 2 create services
-        List<OfferServiceTemplate> newOfferServiceTemplates = getOfferServiceTemplate(prefix, bomOffer, serviceCodes, businessOfferModel);
+        List<OfferServiceTemplate> newOfferServiceTemplates = getOfferServiceTemplate(prefix, bomOffer, newOfferTemplate, serviceCodes, businessOfferModel);
 
         // 3 create product templates
         List<OfferProductTemplate> newOfferProductTemplates = getOfferProductTemplate(prefix, bomOffer, productCodes, businessOfferModel);
@@ -302,34 +302,47 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         return newOfferProductTemplates;
     }
 
-    private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer, List<ServiceConfigurationDto> serviceCodes,
-            BusinessOfferModel businessOfferModel) throws BusinessException {
-        List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
+	private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
+			BusinessOfferModel businessOfferModel) throws BusinessException {
+		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
+		List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>(bomOffer.getOfferServiceTemplates());
 
-        if (bomOffer.getOfferServiceTemplates() == null || bomOffer.getOfferServiceTemplates().isEmpty() || serviceCodes == null || serviceCodes.isEmpty()) {
+        if (offerServiceTemplates == null || offerServiceTemplates.isEmpty() || serviceCodes == null || serviceCodes.isEmpty()) {
             return newOfferServiceTemplates;
         }
 
+        // check if service exists in offer
         for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
             boolean serviceFound = false;
             String serviceCode = serviceCodeDto.getCode();
 
-            for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
-                ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-                if (serviceCode.equals(serviceTemplate.getCode())) {
-                    serviceFound = true;
-                    break;
-                }
-            }
+			OfferServiceTemplate tempOfferServiceTemplate = null;
+			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+				if (serviceCode.equals(serviceTemplate.getCode())) {
+					serviceFound = true;
+					break;
+				} else {
+					ServiceTemplate newServiceTemplate = serviceTemplateService.findByCode(serviceCode);
+					tempOfferServiceTemplate = new OfferServiceTemplate();
+					tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
+					tempOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+				}
+			}
 
-            if (!serviceFound) {
-                throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
-            }
+			if (!serviceFound) {
+				// check if exists in bsm
+				if (tempOfferServiceTemplate != null && findBsmFromBom(businessOfferModel, tempOfferServiceTemplate.getServiceTemplate()) != null) {
+					offerServiceTemplates.add(tempOfferServiceTemplate);
+				} else {
+					throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
+				}
+			}
         }
 
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
-        for (OfferServiceTemplate offerServiceTemplate : bomOffer.getOfferServiceTemplates()) {
+        for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 
             boolean serviceFound = false;
@@ -342,20 +355,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                     break;
                 }
             }
+            
             if (!serviceFound) {
                 continue;
             }
 
             // get the BSM from BOM
-            BusinessServiceModel bsm = null;
-            for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
-                if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-                    bsm = businessServiceModelService.findByCode(item.getItemCode());
-                    if (bsm.getServiceTemplate().equals(serviceTemplate)) {
-                        break;
-                    }
-                }
-            }
+			BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, serviceTemplate);
 
             if (bsm != null && bsm.getScript() != null) {
                 try {
@@ -396,4 +402,30 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             return null;
         }
     }
+
+	public List<BusinessServiceModel> getBusinessServiceModels(BusinessOfferModel businessOfferModel) {
+		List<BusinessServiceModel> businessServiceModels = new ArrayList<>();
+		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
+			if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
+				businessServiceModels.add(businessServiceModelService.findByCode(item.getItemCode()));
+			}
+		}
+
+		return businessServiceModels;
+	}
+	
+	public BusinessServiceModel findBsmFromBom(BusinessOfferModel businessOfferModel, ServiceTemplate serviceTemplate) {
+		 BusinessServiceModel bsm = null;
+         for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
+             if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
+                 bsm = businessServiceModelService.findByCode(item.getItemCode());
+                 if (bsm.getServiceTemplate().equals(serviceTemplate)) {
+                     break;
+                 }
+             }
+         }
+         
+         return bsm;
+	}
+	
 }
