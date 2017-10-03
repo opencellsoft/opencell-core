@@ -66,7 +66,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 isPersistResult = "true".equals(ParamBean.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
-                resultToPersist.setEndDate(new Date());
                 if (resultToPersist.isTransient()) {
                     create(resultToPersist);
                     result.setId(resultToPersist.getId());

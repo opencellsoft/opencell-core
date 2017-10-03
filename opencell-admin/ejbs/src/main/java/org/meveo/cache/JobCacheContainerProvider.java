@@ -123,20 +123,21 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         if (nodes == null) {
             nodes = new ArrayList<>();
         }
+        String currentNode = EjbUtils.getCurrentClusterNode();
         if (EjbUtils.isRunningInClusterMode()) {
-            nodes.add(EjbUtils.getCurrentClusterNode());
+            nodes.add(currentNode);
         } else {
-            nodes.add(EjbUtils.getCurrentClusterNode());
+            nodes.add(currentNode);
         }
 
         // Use flags to not return previous value
         runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
 
-        log.trace("Job {} marked as running in job cache", jobInstanceId);
+        log.trace("Job {} marked as running in job cache. Job is currently running on {} nodes", jobInstanceId, nodes);
     }
 
     /**
-     * Mark job, identified by a given job instance id, as currently NOT running on current cluster node
+     * Mark job, identified by a given job instance id, as currently NOT running on CURRENT cluster node
      * 
      * @param jobInstanceId Job instance identifier
      */
@@ -145,7 +146,8 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         if (EjbUtils.isRunningInClusterMode()) {
             List<String> nodes = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
             if (nodes != null && !nodes.isEmpty()) {
-                boolean removed = nodes.remove(EjbUtils.getCurrentClusterNode());
+                String currentNode = EjbUtils.getCurrentClusterNode();
+                boolean removed = nodes.remove(currentNode);
                 if (removed) {
                     if (nodes.isEmpty()) {
                         // Use flags to not return previous value
@@ -155,7 +157,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
                     } else {
                         // Use flags to not return previous value
                         runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(jobInstanceId, nodes);
-                        log.trace("Job {} marked as not running in job cache", jobInstanceId);
+                        log.trace("Job {} marked as not running on {} node in job cache. Job is currently still running on {} nodes", jobInstanceId, currentNode, nodes);
                     }
                 }
             }
@@ -164,6 +166,17 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
             log.trace("Job {} marked as not running in job cache", jobInstanceId);
         }
+    }
+
+    /**
+     * Reset job running status - mark job, identified by a given job instance id, as currently NOT running on ALL cluster nodes
+     * 
+     * @param jobInstanceId Job instance identifier
+     */
+    public void resetJobRunningStatus(Long jobInstanceId) {
+        // Use flags to not return previous value
+        runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(jobInstanceId);
+        log.trace("Job {} marked as not running in job cache", jobInstanceId);
     }
 
     /**
