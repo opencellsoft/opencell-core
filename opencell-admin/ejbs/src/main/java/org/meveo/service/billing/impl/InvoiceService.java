@@ -1636,7 +1636,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of invoice identifiers
      */
     public List<Long> getInvoiceIdsByBRWithNoXml(Long billingRunId) {
-        return getEntityManager().createNamedQuery("Invoice.byBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+       if(billingRunId == null) {
+	   return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
+       }
+	return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
 
     /**
