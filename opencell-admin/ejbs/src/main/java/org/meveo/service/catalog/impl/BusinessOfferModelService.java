@@ -324,9 +324,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					break;
 				} else {
 					ServiceTemplate newServiceTemplate = serviceTemplateService.findByCode(serviceCode);
-					tempOfferServiceTemplate = new OfferServiceTemplate();
-					tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
-					tempOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+					if (newServiceTemplate != null) {
+						tempOfferServiceTemplate = new OfferServiceTemplate();
+						tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
+						tempOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+					}
 				}
 			}
 
