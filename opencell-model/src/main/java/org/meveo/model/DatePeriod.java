@@ -94,7 +94,7 @@ public class DatePeriod implements Comparable<DatePeriod>, Serializable {
      * @return True/false
      */
     public boolean isCorrespondsToPeriod(Date date) {
-        return (from == null || date.compareTo(from) >= 0) && (to == null || date.before(to));
+        return (from == null || (date != null &&  date.compareTo(from) >= 0)) && (to == null || (date != null && date.before(to)));
     }
 
     /**

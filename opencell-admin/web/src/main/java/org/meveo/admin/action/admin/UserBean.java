@@ -534,7 +534,7 @@ public class UserBean extends CustomFieldBean<User> {
             InputStream is = new ByteArrayInputStream(filedata);
             return new DefaultStreamedContent(is, "application/octet-stream", filename + ".zip");
         } catch (Exception e) {
-            log.debug("error when zipped ui file - {}", e.getMessage());
+            log.debug("Failed to zip a file", e);
         }
         return null;
     }
@@ -545,7 +545,7 @@ public class UserBean extends CustomFieldBean<User> {
             FileUtils.unzipFile(folder, in);
             buildFileList();
         } catch (Exception e) {
-            log.debug("error when upload zip file for new UI {}", e.getMessage());
+            log.debug("error when upload zip file for new UI", e);
         }
     }
 

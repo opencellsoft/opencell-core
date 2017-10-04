@@ -2,6 +2,7 @@ package org.meveo.api.rest.account;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -81,7 +83,10 @@ public interface CustomerRs extends IBaseRs {
     @POST
     @Path("/list")
     CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow, @QueryParam("numberOfRows") @Deprecated Integer numberOfRows,
-            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit);
+            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("c.code") @QueryParam("sortBy") String sortBy,
+			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder
+			);
 
     /**
      * Create a new customer brand

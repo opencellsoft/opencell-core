@@ -533,6 +533,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows, Paging paging) {
 
         try {
+        	if(paging!=null && paging.sortOrder==null) {//setup defauly sort order
+        		paging.setSortOrder(Paging.SortOrder.ASCENDING);
+        		paging.setSortBy("code");
+        	}
             return customerApi.filterCustomer(postData, paging == null ? new Paging(firstRow, numberOfRows, null, null) : paging);
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();

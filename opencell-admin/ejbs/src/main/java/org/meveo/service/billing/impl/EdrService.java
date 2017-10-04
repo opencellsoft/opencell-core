@@ -54,6 +54,10 @@ public class EdrService extends PersistenceService<EDR> {
 		useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
 	}
 	
+	/**
+	 * @param rateUntilDate date until we still rate
+	 * @return list of EDR'sId we can rate until a given date
+	 */
 	public List<Long> getEDRidsToRate(Date rateUntilDate) {
 		QueryBuilder qb = new QueryBuilder(EDR.class, "c");
 		qb.addCriterion("c.status", "=", EDRStatusEnum.OPEN, true);
@@ -68,6 +72,11 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
+	/**
+	 * @param originBatch original batch
+	 * @param originRecord origin record
+	 * @return found EDR
+	 */
 	public EDR findByBatchAndRecordId(String originBatch, String originRecord) {
 		EDR result = null;
 		try {
@@ -81,6 +90,11 @@ public class EdrService extends PersistenceService<EDR> {
 	}
 
 
+    /**
+     * @param originBatch original batch
+     * @param originRecord original record
+     * @return true/false
+     */
     public boolean duplicateFound(String originBatch, String originRecord) {
         boolean result = false;
         if (useInMemoryDeduplication) {
@@ -99,6 +113,10 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
+	/**
+	 * @param status EDR status
+	 * @param subscription subscription in which EDR is updating.
+	 */
 	public void massUpdate(EDRStatusEnum status, Subscription subscription) {
 		StringBuilder sb = new StringBuilder();
 
@@ -116,6 +134,10 @@ public class EdrService extends PersistenceService<EDR> {
 		}
 	}
 
+	/**
+	 * @param status EDR status
+	 * @param selectedIds list of selected EDR ids
+	 */
 	public void massUpdate(EDRStatusEnum status, Set<Long> selectedIds) {
 		StringBuilder sb = new StringBuilder();
 

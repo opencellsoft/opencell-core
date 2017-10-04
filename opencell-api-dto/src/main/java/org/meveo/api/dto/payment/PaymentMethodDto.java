@@ -654,9 +654,15 @@ public class PaymentMethodDto extends BaseDto {
 
     /**
      * Validate the PaymentMethodDto.
+     */
+    public void validate() {
+	validate(false);
+    }
+    /**
+     * Validate the PaymentMethodDto.
      * @param isRoot  is the root Dto or sub Dto.
      */
-    public final void validate(boolean isRoot) {
+    public void validate(boolean isRoot) {
 	if (getPaymentMethodType() == null) {
 	    throw new InvalidDTOException("Missing payment method type");
 	}
