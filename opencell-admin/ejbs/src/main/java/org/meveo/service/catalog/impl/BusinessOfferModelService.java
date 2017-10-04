@@ -185,6 +185,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         newOfferTemplate.setLifeCycleStatus(lifeCycleStatusEnum);
 
         offerTemplateService.create(newOfferTemplate);
+        newOfferTemplate.setCfValues(bomOffer.getCfValues());
+        
 
         String prefix = newOfferTemplate.getId() + "_";
 

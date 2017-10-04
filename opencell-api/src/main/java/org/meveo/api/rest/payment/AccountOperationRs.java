@@ -1,6 +1,7 @@
 package org.meveo.api.rest.payment;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
@@ -47,8 +49,9 @@ public interface AccountOperationRs extends IBaseRs {
      * @return A list of account operations
      */
     @GET
-    @Path("/list")
-    AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode);
+	@Path("/list")
+	AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode, @DefaultValue("created") @QueryParam("sortBy") String sortBy,
+			@DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * Match operations

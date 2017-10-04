@@ -18,6 +18,7 @@ import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -183,7 +184,7 @@ public class AccountOperationApi extends BaseApi {
         return accountOperation.getId();
     }
 
-    public AccountOperationsResponseDto list(String customerAccountCode) throws MeveoApiException {
+	public AccountOperationsResponseDto list(String customerAccountCode, String sortBy, SortOrder sortOrder) throws MeveoApiException {
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
         }
@@ -196,7 +197,8 @@ public class AccountOperationApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount);
+		List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount, sortBy,
+				sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
 
         for (AccountOperation accountOp : accountOperations) {
             AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
