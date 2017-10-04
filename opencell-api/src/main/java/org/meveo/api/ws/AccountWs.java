@@ -30,6 +30,7 @@ import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.TitleDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
@@ -389,7 +390,7 @@ public interface AccountWs extends IBaseWs {
     ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
 
     @WebMethod
-    AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode);
+    AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "sortBy") String sortBy, @WebParam(name = "sortOrder") SortOrder sortOrder);
 
     @WebMethod
     ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);

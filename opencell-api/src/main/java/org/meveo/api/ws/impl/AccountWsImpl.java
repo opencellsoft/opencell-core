@@ -41,6 +41,7 @@ import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
 import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.TitleDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
 import org.meveo.api.dto.response.account.BusinessAccountModelResponseDto;
@@ -65,6 +66,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.payment.AccountOperationApi;
 import org.meveo.api.ws.AccountWs;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -598,11 +600,17 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public AccountOperationsResponseDto listAccountOperations(String customerAccountCode) {
+    public AccountOperationsResponseDto listAccountOperations(String customerAccountCode, String sortBy, SortOrder sortOrder) {
+    	if(StringUtils.isBlank(sortBy)) {
+    		sortBy = "id";
+    	}
+    	if(StringUtils.isBlank(sortOrder)) {
+    		sortOrder = SortOrder.DESCENDING;
+    	}
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
         try {
-            result = accountOperationApi.list(customerAccountCode);
+            result = accountOperationApi.list(customerAccountCode, sortBy, sortOrder);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
