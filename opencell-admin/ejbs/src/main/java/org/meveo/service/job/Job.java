@@ -35,9 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
  * Interface that must implement all jobs that are managed in meveo application by the JobService bean. The implementation must be a session EJB and must statically register itself
- * (through its jndi name) to the JobService
+ * (through its jndi name) to the JobService.
  * 
  * @author seb
  * 
@@ -86,10 +85,9 @@ public abstract class Job {
 
     /**
      * Execute job instance with results published to a given job execution result entity.
-     * 
      * @param jobInstance Job instance to execute
      * @param result Job execution results
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobInstance jobInstance, JobExecutionResultImpl result) throws BusinessException {
@@ -134,10 +132,9 @@ public abstract class Job {
 
     /**
      * Execute job instance with results published to a given job execution result entity. Executed in Asynchronous mode.
-     * 
      * @param jobInstance Job instance to execute
      * @param result Job execution results
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -147,8 +144,7 @@ public abstract class Job {
     }
 
     /**
-     * The actual job execution logic implementation
-     * 
+     * The actual job execution logic implementation.
      * @param result Job execution results
      * @param jobInstance Job instance to execute
      * @throws BusinessException Any exception
@@ -156,7 +152,7 @@ public abstract class Job {
     protected abstract void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException;
 
     /**
-     * Canceling timers associated to this job implmenentation- solves and issue when server is restarted and wildlfy data directory contains previously active timers
+     * Canceling timers associated to this job implmenentation- solves and issue when server is restarted and wildlfy data directory contains previously active timers.
      */
     public void cleanTimers() {
 
@@ -175,8 +171,7 @@ public abstract class Job {
     }
 
     /**
-     * Register/schedule a timer for a job instance
-     * 
+     * Register/schedule a timer for a job instance.
      * @param scheduleExpression Schedule expression
      * @param jobInstance Job instance to execute
      * @return Instantiated timer object
@@ -193,7 +188,6 @@ public abstract class Job {
 
     /**
      * Trigger job execution uppon scheduler timer expiration.
-     * 
      * @param timer Timer configuration with jobInstance entity as Info attribute
      */
     @Timeout
@@ -209,8 +203,14 @@ public abstract class Job {
         }
     }
 
+    /**
+     * @return job category enum
+     */
     public abstract JobCategoryEnum getJobCategory();
 
+    /**
+     * @return map of custom fields
+     */
     public Map<String, CustomFieldTemplate> getCustomFields() {
 
         return null;
