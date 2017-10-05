@@ -166,6 +166,7 @@ public class UsageRatingService implements Serializable {
         // Not a virtual operation
         Subscription subscription = edr.getSubscription();
         if (!isVirtual) {
+            log.error("AKK URS line 169");
             chargeInstance = usageChargeInstanceService.findById(cachedChargeInstance.getId());
 
             // For virtual operation, lookup charge in the subscription
@@ -184,8 +185,6 @@ public class UsageRatingService implements Serializable {
 
         walletOperation.setChargeInstance(chargeInstance);
 
-        CounterInstance counterInstance = chargeInstance.getCounter();
-        String offerCode = subscription.getOffer().getCode();
         walletOperation.setSubscriptionDate(subscription.getSubscriptionDate());
         walletOperation.setOperationDate(edr.getEventDate());
         walletOperation.setParameter1(edr.getParameter1());
@@ -195,6 +194,7 @@ public class UsageRatingService implements Serializable {
         walletOperation.setOrderNumber(chargeInstance.getServiceInstance().getOrderNumber());
         walletOperation.setEdr(edr);
 
+        log.error("AKK URS line 197");
         // FIXME: copy those info in chargeInstance instead of performing multiple queries
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
@@ -206,8 +206,11 @@ public class UsageRatingService implements Serializable {
 
         Long countryId = country.getId();
 
+        log.error("AKK URS line 209");
         UsageChargeTemplate chargeTemplate = em.find(UsageChargeTemplate.class, cachedChargeInstance.getChargeTemplateId());
 
+
+        log.error("AKK URS line 213");
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getCode(),
             countryId, edr.getEventDate());
 
@@ -215,8 +218,10 @@ public class UsageRatingService implements Serializable {
             throw new BusinessException("No tax defined for countryId=" + countryId + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
         }
 
+        log.error("AKK URS line 222");
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
+        log.error("AKK URS line 224");
         walletOperation.setSeller(seller);
 
         TradingCurrency currency = customerAccount.getTradingCurrency();
@@ -236,7 +241,10 @@ public class UsageRatingService implements Serializable {
         walletOperation.setBillingAccount(billingAccount);
         walletOperation.setCode(chargeTemplate.getCode());
 
+        log.error("AKK URS line 244");
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
+
+        log.error("AKK URS line 245");
         String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
         String descTranslated = descriptionMap.get(translationKey);
         if (descTranslated == null) {
@@ -247,6 +255,7 @@ public class UsageRatingService implements Serializable {
             descriptionMap.put(translationKey, descTranslated);
         }
 
+        log.error("AKK URS line 256");
         walletOperation.setDescription(descTranslated);
         walletOperation.setQuantity(quantityToCharge);
 
@@ -258,10 +267,12 @@ public class UsageRatingService implements Serializable {
         walletOperation.setCurrency(currency.getCurrency());
         walletOperation.setStatus(WalletOperationStatusEnum.OPEN);
 
-        walletOperation.setCounter(counterInstance);
-        walletOperation.setOfferCode(offerCode);
+        walletOperation.setCounter(chargeInstance.getCounter());
+        walletOperation.setOfferCode(subscription.getOffer().getCode());
+        
+        log.error("AKK URS line 270");
         ratingService.rateBareWalletOperation(walletOperation, cachedChargeInstance.getAmountWithoutTax(), cachedChargeInstance.getAmountWithTax(), countryId, currency);
-
+        log.error("AKK URS line 272");
     }
 
     /**
@@ -406,9 +417,11 @@ public class UsageRatingService implements Serializable {
             edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
             quantityToCharge = deducedQuantity;
         }
+        log.error("AKK URS line 409");
         rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, cachedCharge, isVirtual);
 
         if (!isVirtual) {
+            log.error("AKK URS line 421");
             walletOperationService.chargeWalletOperation(walletOperation);
         }
 

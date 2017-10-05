@@ -20,7 +20,6 @@ package org.meveo.model.catalog;
 
 import java.util.Date;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -41,7 +40,6 @@ import javax.persistence.ManyToOne;
  * 
  */
 @Entity
-@Cacheable
 @DiscriminatorValue("JOIN")
 public class CalendarJoin extends Calendar {
 

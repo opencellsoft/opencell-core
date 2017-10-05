@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Cacheable
 @Table(name = "dwh_chart_pie")
 public class PieChart extends Chart {
 

@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
@@ -44,7 +43,6 @@ import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
 @Entity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "OFFER")
 @DiscriminatorValue("OFFER")
 @NamedQueries({ @NamedQuery(name = "OfferTemplate.countActive", query = "SELECT COUNT(*) FROM OfferTemplate WHERE disabled=false and businessOfferModel is not null"),

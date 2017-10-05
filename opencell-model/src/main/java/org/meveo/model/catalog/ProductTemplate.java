@@ -3,7 +3,6 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -23,7 +22,6 @@ import org.meveo.model.ICustomFieldEntity;
  * @author Edward P. Legaspi
  */
 @Entity
-@Cacheable
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
 @NamedQueries({ @NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false "),

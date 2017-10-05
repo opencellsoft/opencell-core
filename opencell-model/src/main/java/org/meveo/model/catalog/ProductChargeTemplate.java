@@ -21,7 +21,6 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
@@ -31,7 +30,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Cacheable
 @Table(name = "cat_product_charge_templ")
 @NamedQueries({
         @NamedQuery(name = "productChargeTemplate.getNbrProductWithNotPricePlan", query = "select count (*) from ProductChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null) "),

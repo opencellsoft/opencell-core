@@ -879,6 +879,8 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
+
+                    log.error("AKK before refresh or retrieve parent entity {} {}", parentCfEntity.getClass(), parentCfEntity.getClass());
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
                 }
                 Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode);
@@ -1250,10 +1252,12 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         if (getEntityManager().contains(entity)) {
-            getEntityManager().refresh(entity);
+            // Entity is managed already, no need to refresh
+            // getEntityManager().refresh(entity);
             return entity;
 
         } else {
+            log.error("AKK entity will be retrieved by ID");
             entity = getEntityManager().find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId());
             return entity;
         }
@@ -2200,6 +2204,7 @@ public class CustomFieldInstanceService extends BaseService {
             try {
                 conversation.isTransient();
                 result = em;
+                log.error("AKK em in use");
             } catch (Exception e) {
             }
         }

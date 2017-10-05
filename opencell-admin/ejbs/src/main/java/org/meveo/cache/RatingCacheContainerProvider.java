@@ -19,7 +19,6 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
@@ -35,8 +34,6 @@ import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.catalog.impl.CalendarService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
 import org.slf4j.Logger;
 
 /**

@@ -21,7 +21,6 @@ package org.meveo.model.catalog;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,7 +33,6 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.meveo.model.shared.DateUtils;
 
 @Entity
-@Cacheable
 @DiscriminatorValue("YEARLY")
 public class CalendarYearly extends Calendar {
 

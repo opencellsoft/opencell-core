@@ -83,7 +83,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @Size(max = 10)
     protected String accountType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bam_id")
     protected BusinessAccountModel businessAccountModel;
 

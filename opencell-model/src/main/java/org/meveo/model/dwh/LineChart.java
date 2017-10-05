@@ -11,7 +11,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Cacheable
 @Table(name = "dwh_chart_line")
 public class LineChart extends Chart {
 

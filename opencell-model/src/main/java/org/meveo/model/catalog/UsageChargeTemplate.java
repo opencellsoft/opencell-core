@@ -21,7 +21,6 @@ package org.meveo.model.catalog;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -38,7 +37,6 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.commons.utils.NumberUtils;
 
 @Entity
-@Cacheable
 @Table(name = "cat_usage_charge_template")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_usage_charge_template_seq"), })

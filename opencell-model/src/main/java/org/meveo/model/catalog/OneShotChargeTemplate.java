@@ -18,7 +18,6 @@
  */
 package org.meveo.model.catalog;
 
-import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -33,7 +32,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 
 @Entity
-@Cacheable
 @Table(name = "cat_one_shot_charge_templ")
 @NamedQueries({
         @NamedQuery(name = "oneShotChargeTemplate.getNbrOneShotWithNotPricePlan", query = "select count (*) from OneShotChargeTemplate o where o.code not in (select p.eventCode from  PricePlanMatrix p where p.eventCode is not null)", hints = {

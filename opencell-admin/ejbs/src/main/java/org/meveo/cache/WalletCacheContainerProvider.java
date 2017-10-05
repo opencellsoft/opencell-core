@@ -139,9 +139,11 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      */
     // @Lock(LockType.WRITE)
     public void updateCache(UsageChargeInstance charge) {
+        log.error("AKK WCCP line 142");
         List<WalletInstance> wallets = charge.getWalletInstances();
         List<Long> walletIds = new ArrayList<>();
 
+        log.error("AKK WCCP line 145");
         for (WalletInstance wallet : wallets) {
             if (!walletIds.contains(wallet.getId()) && wallet.getWalletTemplate() != null && wallet.getWalletTemplate().getWalletType() == BillingWalletTypeEnum.PREPAID) {
                 walletIds.add(wallet.getId());
@@ -157,6 +159,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         } else {
             usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(charge.getId());
         }
+        log.error("AKK WCCP line 162");
     }
 
     /**
