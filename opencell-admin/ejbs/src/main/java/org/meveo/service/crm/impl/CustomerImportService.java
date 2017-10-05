@@ -305,7 +305,7 @@ public class CustomerImportService extends ImportService {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateSeller(org.meveo.model.admin.Seller seller) {
+    public void updateSeller(org.meveo.model.admin.Seller seller) throws BusinessException {
         sellerService.updateNoCheck(seller);
     }
 
