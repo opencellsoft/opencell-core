@@ -91,26 +91,34 @@ public class CustomerService extends AccountService<Customer> {
 
 	private Query filter(QueryBuilder qb, String customerCode, CustomerCategory customerCategory, Seller seller,
 			CustomerBrand brand, Paging paging) {
-		
+		System.out.println("OK -1");
 		qb.addCriterion("code", "=", customerCode, true);
 
+		System.out.println("OK -2");
+		
 		if (customerCategory != null) {
 			qb.addCriterionEntity("customerCategory", customerCategory);
 		}
 
+		System.out.println("OK -3");
 		if (seller != null) {
 			qb.addCriterionEntity("seller", seller);
 		}
 
+		System.out.println("OK -4");
+		
 		if (brand != null) {
 			qb.addCriterionEntity("customerBrand", brand);
 		}
 		
+		System.out.println("OK -5");
+		
 		boolean ascending = true;
 		if (paging != null && paging.sortOrder.name() != null) {
 			ascending = SortOrder.ASCENDING.name().equals(paging.sortOrder.name());
-			qb.addOrderCriterion("UPPER("+paging.getSortBy()+")", ascending);
+			qb.addOrderCriterion("LOWER("+paging.getSortBy()+")", ascending);
 		}
+		System.out.println("OK -6");
 		
 		Query query = qb.getQuery(getEntityManager());
 		

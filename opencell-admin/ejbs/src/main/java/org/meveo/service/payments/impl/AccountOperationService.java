@@ -32,6 +32,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * AccountOperation service implementation.
@@ -72,10 +73,15 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca) {
+	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca, String sortBy, SortOrder sortOrder) {
 		QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a", null);
 		qb.addCriterionEntity("customerAccount", ca);
-
+		boolean ascending = true;
+		if (sortOrder != null) {
+			ascending = sortOrder.equals(SortOrder.ASCENDING);
+		}
+		qb.addOrderCriterion(sortBy, ascending);
+		
 		try {
 			return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
 		} catch (NoResultException e) {
