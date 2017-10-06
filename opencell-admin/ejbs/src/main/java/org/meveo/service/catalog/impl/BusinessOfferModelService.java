@@ -344,6 +344,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
+        // duplicate the services
         for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 
