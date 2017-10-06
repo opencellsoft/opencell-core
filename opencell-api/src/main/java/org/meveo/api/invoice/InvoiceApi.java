@@ -363,11 +363,13 @@ public class InvoiceApi extends BaseApi {
                 invoiceService.produceInvoiceXml(invoice);
                 String invoiceXml = invoiceService.getInvoiceXml(invoice);
                 response.setXmlInvoice(invoiceXml);
+                response.setXmlFilename(invoice.getXmlFilename());
             }
             if (invoiceDTO.isReturnPdf()) {
                 invoice = invoiceService.produceInvoicePdf(invoice);
                 byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
                 response.setPdfInvoice(invoicePdf);
+                response.setPdfFilename(invoice.getPdfFilename());
             }
         }
         return response;
@@ -529,13 +531,10 @@ public class InvoiceApi extends BaseApi {
         boolean producePdf = (generateInvoiceRequestDto.getGeneratePDF() != null && generateInvoiceRequestDto.getGeneratePDF());
         boolean generateAO = generateInvoiceRequestDto.getGenerateAO() != null && generateInvoiceRequestDto.getGenerateAO();
 
-		Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(),
-				generateInvoiceRequestDto.getFirstTransactionDate(), generateInvoiceRequestDto.getLastTransactionDate(),
-				ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf,
-				generateAO);
-        invoiceService.commit();
+        Invoice invoice = invoiceService.generateInvoice(billingAccount, generateInvoiceRequestDto.getInvoicingDate(), generateInvoiceRequestDto.getFirstTransactionDate(),
+            generateInvoiceRequestDto.getLastTransactionDate(), ratedTransactionFilter, generateInvoiceRequestDto.getOrderNumber(), isDraft, produceXml, producePdf, generateAO);        
 
-        GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, true);
+        GenerateInvoiceResultDto generateInvoiceResultDto = createGenerateInvoiceResultDto(invoice, produceXml, producePdf);
         if (isDraft) {
             invoiceService.cancelInvoice(invoice);
         }
@@ -543,7 +542,7 @@ public class InvoiceApi extends BaseApi {
         return generateInvoiceResultDto;
     }
 
-    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includePdf) throws BusinessException {
+    public GenerateInvoiceResultDto createGenerateInvoiceResultDto(Invoice invoice, boolean includeXml, boolean includePdf) throws BusinessException {
         GenerateInvoiceResultDto dto = new GenerateInvoiceResultDto();
         dto.setInvoiceId(invoice.getId());
         dto.setInvoiceNumber(invoice.getInvoiceNumber());
@@ -554,21 +553,30 @@ public class InvoiceApi extends BaseApi {
         dto.setAmountWithTax(invoice.getAmountWithTax());
         dto.setAmountTax(invoice.getAmountTax());
         dto.setDiscount(invoice.getDiscount());
-        if (includePdf && invoiceService.isInvoicePdfExist(invoice)) {
-            dto.setPdf(invoiceService.getInvoicePdf(invoice));
+
+        if (invoiceService.isInvoicePdfExist(invoice)) {
+            dto.setPdfFilename(invoice.getPdfFilename());
+            if (includePdf) {
+                dto.setPdf(invoiceService.getInvoicePdf(invoice));
+            }
         }
+
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            dto.setXmlFilename(invoice.getXmlFilename());
+        }
+
         if (invoice.getRecordedInvoice() != null) {
             dto.setAccountOperationId(invoice.getRecordedInvoice().getId());
         }
-        
+
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = new ArrayList<>();
-		subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
-        
+        subCategoryInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);
+
         for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : subCategoryInvoiceAgregates) {
-        	SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto(subCategoryInvoiceAgregate);
-        	dto.getDiscountAggregates().add(subCategoryInvoiceAgregateDto);
+            SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto(subCategoryInvoiceAgregate);
+            dto.getDiscountAggregates().add(subCategoryInvoiceAgregateDto);
         }
-        
+
         return dto;
     }
 
@@ -899,8 +907,14 @@ public class InvoiceApi extends BaseApi {
 
         if (invoiceService.isInvoicePdfExist(invoice)) {
             invoiceDto.setPdfPresent(true);
+            invoiceDto.setPdfFilename(invoice.getPdfFilename());
             invoiceDto.setPdf(invoiceService.getInvoicePdf(invoice));
         }
+
+        if (invoiceService.isInvoiceXmlExist(invoice)) {
+            invoiceDto.setXmlFilename(invoice.getXmlFilename());
+        }
+
         invoiceDto.setNetToPay(invoice.getNetToPay());
 
         return invoiceDto;

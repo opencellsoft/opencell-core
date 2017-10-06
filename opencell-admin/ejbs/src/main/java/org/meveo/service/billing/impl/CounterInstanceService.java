@@ -70,7 +70,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
-    
+
     @Inject
     private RatingCacheContainerProvider ratingCacheContainerProvider;
 
@@ -85,7 +85,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             throw new BusinessException("counterTemplate is null");
         }
 
-
         // we instanciate the counter only if there is no existing instance for
         // the same template
         if (counterTemplate.getCounterLevel() == CounterTemplateLevel.BA) {
@@ -94,14 +93,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result = new CounterInstance();
                 result.setCounterTemplate(counterTemplate);
                 result.setBillingAccount(billingAccount);
-                
-                if (!isVirtual){
+
+                if (!isVirtual) {
                     create(result);
                 }
-                
+
                 billingAccount.getCounters().put(counterTemplate.getCode(), result);
-                
-                if (!isVirtual){
+
+                if (!isVirtual) {
                     billingAccountService.update(billingAccount);
                 }
             } else {
@@ -113,12 +112,12 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                 result.setCounterTemplate(counterTemplate);
                 result.setUserAccount(userAccount);
 
-                if (!isVirtual){
+                if (!isVirtual) {
                     create(result);
                 }
                 userAccount.getCounters().put(counterTemplate.getCode(), result);
 
-                if (!isVirtual){
+                if (!isVirtual) {
                     userAccountService.update(userAccount);
                 }
             } else {
@@ -139,7 +138,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (counterTemplate == null) {
             throw new BusinessException("counterTemplate is null");
         }
-
 
         // Remove current counter instance if it does not match the counter
         // template to be instantiated
@@ -166,25 +164,24 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
-    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
-            throws BusinessException {
+    public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
         refresh(counterInstance);
         counterInstance = (CounterInstance) attach(counterInstance);
-        
+
         CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 
-        CounterPeriod counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, usageChargeInstance);                                
+        CounterPeriod counterPeriod = instantiateCounterPeriod(counterTemplate, chargeDate, initDate, usageChargeInstance);
         counterPeriod.setCounterInstance(counterInstance);
-        counterPeriodService.create(counterPeriod); 
+        counterPeriodService.create(counterPeriod);
 
         counterInstance.getCounterPeriods().add(counterPeriod);
         counterInstance.updateAudit(currentUser);
 
         // Add usage type counter period to cache
-        if (counterTemplate.getCounterType() == CounterTypeEnum.USAGE){
+        if (counterTemplate.getCounterType() == CounterTypeEnum.USAGE) {
             ratingCacheContainerProvider.addCounterPeriodToCache(counterPeriod);
         }
-        
+
         return counterPeriod;
     }
 
@@ -198,7 +195,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @return CounterPeriod instance
      * @throws BusinessException
      */
-    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
+    public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
+            throws BusinessException {
         CounterPeriod counterPeriod = new CounterPeriod();
         Calendar cal = counterTemplate.getCalendar();
         cal.setInitDate(initDate);
@@ -211,8 +209,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         BigDecimal initialValue = counterTemplate.getCeiling();
         log.info("create counter period from {} to {}", startDate, endDate);
         if (!StringUtils.isBlank(counterTemplate.getCeilingExpressionEl()) && usageChargeInstance != null) {
-            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), usageChargeInstance,
-                usageChargeInstance.getServiceInstance(), usageChargeInstance.getSubscription());
+            initialValue = evaluateCeilingElExpression(counterTemplate.getCeilingExpressionEl(), usageChargeInstance, usageChargeInstance.getServiceInstance(),
+                usageChargeInstance.getSubscription());
         }
         counterPeriod.setPeriodStartDate(startDate);
         counterPeriod.setPeriodEndDate(endDate);
@@ -222,6 +220,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setLevel(initialValue);
         counterPeriod.setCounterType(counterTemplate.getCounterType());
         counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
+
+        log.error("AKK is correspond to period in period instantiation");
+        counterPeriod.isCorrespondsToPeriod(chargeDate);
+
         return counterPeriod;
     }
 
@@ -286,8 +288,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @throws CounterValueInsufficientException
      * @throws BusinessException
      */
-    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException,
-            BusinessException {
+    public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, BusinessException {
 
         CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate);
 
@@ -319,7 +320,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (isVirtual) {
             counterValueInfo = ratingCacheContainerProvider.deduceCounterValue(counterInstanceId, periodId, deduceBy);
             return counterValueInfo;
-            
+
         } else {
             CounterPeriod counterPeriod = counterPeriodService.findById(periodId);
             if (counterPeriod == null) {
@@ -349,7 +350,8 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
                     counterPeriodService.detach(counterPeriod);
                     return null;
 
-                } else if (previousValue.compareTo(BigDecimal.ZERO) == 0) {
+                    // Previous value is Zero, but deduction value is negative (really an addition)
+                } else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
                     return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
                 } else if (previousValue.compareTo(deduceBy) < 0) {
@@ -365,7 +367,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             }
             counterPeriodService.update(counterPeriod);
 
-            log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), deduceBy, counterPeriod.getValue());
+            log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
 
             return counterValueInfo;
         }
@@ -451,7 +453,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param periodId Counter period identifier
      * @param value Increment by
      * @return The new value, or NULL if value is not tracked (initial value is not set)
-     * @throws BusinessException 
+     * @throws BusinessException
      * 
      */
     public BigDecimal incrementCounterValue(Long periodId, BigDecimal incrementBy) throws BusinessException {
@@ -474,9 +476,9 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
             counterPeriod.setValue(counterPeriod.getValue().add(incrementBy));
         }
         counterPeriodService.update(counterPeriod);
-        
+
         log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), incrementBy, counterPeriod.getValue());
-        
+
         return counterPeriod.getValue();
     }
 }

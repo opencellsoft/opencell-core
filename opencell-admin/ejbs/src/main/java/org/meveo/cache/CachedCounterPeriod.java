@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.meveo.model.billing.CounterPeriod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CachedCounterPeriod implements Serializable {
 
@@ -49,6 +51,13 @@ public class CachedCounterPeriod implements Serializable {
 
     public boolean isDbDirty() {
         return dbDirty;
+    }
+
+    public boolean isCorrespondsToPeriod(Date dateToCheck) {
+
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.error("AKK period match {} {} to {} {} {}", startDate, endDate, dateToCheck, !dateToCheck.before(startDate), !dateToCheck.after(endDate));
+        return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
     }
 
     public CachedCounterInstance getCounterInstance() {

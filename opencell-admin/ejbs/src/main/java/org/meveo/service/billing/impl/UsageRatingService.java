@@ -304,6 +304,9 @@ public class UsageRatingService {
                 UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(cachedCharge.getId());
                 counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(), cachedCharge.getSubscriptionDate(), usageChargeInstance);
                 cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(cachedCharge.getCounterInstanceId(), counterPeriod.getId());
+                log.error("AKK is correspond to period in period cache instantiation {} {}", counterPeriod.isCorrespondsToPeriod(edr.getEventDate()),
+                    cachedCounterPeriod.isCorrespondsToPeriod(edr.getEventDate()));
+
             }
         }
 
@@ -325,15 +328,17 @@ public class UsageRatingService {
             if (counterValueChangeInfo == null) {
                 deducedQuantityInEDRUnit = edr.getQuantity();
 
-            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) > 0) {
+            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) != 0) {
 
                 BigDecimal deducedQuantity = counterValueChangeInfo.getDeltaValue();
 
                 // Not everything was deduced
                 if (deducedQuantity.compareTo(deduceByQuantity) < 0) {
+                    log.error("AKK not everything was deduced {} {}", deducedQuantity, deduceByQuantity);
                     deducedQuantityInEDRUnit = chargeTemplate.getInEDRUnit(deducedQuantity);
                     // Everything was deduced
                 } else {
+                    log.error("AKK everything was deduced {} {}", deducedQuantity, deduceByQuantity);
                     deducedQuantityInEDRUnit = edr.getQuantity();
                 }
                 if (reservation != null) {
@@ -600,11 +605,9 @@ public class UsageRatingService {
 
                 log.trace("try templateCache=" + chargeTemplate.toString());
                 try {
-					UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
-					if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
-							chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
-							chargeTemplate.getFilter2(),
-                        chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
+                    UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+                    if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
+                        chargeTemplate.getFilter2(), chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
                         continue;
                     }
                 } catch (ChargeWitoutPricePlanException e) {
@@ -660,8 +663,8 @@ public class UsageRatingService {
      * @throws BusinessException
      * @throws ChargeWitoutPricePlanException If charge has no price plan associated
      */
-    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4)
-            throws BusinessException, ChargeWitoutPricePlanException {
+    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3,
+            String filter4) throws BusinessException, ChargeWitoutPricePlanException {
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
             log.trace("filter1 ok");
@@ -731,11 +734,9 @@ public class UsageRatingService {
                         CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
                         log.info("try templateCache=" + chargeTemplate.toString());
 
-						UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
-						if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
-								chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
-								chargeTemplate.getFilter2(),
-                            chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
+                        UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+                        if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
+                            chargeTemplate.getFilter2(), chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
 
                             log.debug("found matchig charge inst : id=" + charge.getId());
                             edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, charge);

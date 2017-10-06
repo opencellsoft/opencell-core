@@ -369,9 +369,9 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
             cachedSubscriptionCharges.add(cachedCharge);
             Collections.sort(cachedSubscriptionCharges);
         }
-        //ANA : There no reasons to keep terminated charge instance in cache 
-        if(!usageChargeInstance.getStatus().name().equals(InstanceStatusEnum.ACTIVE.name()) ){
-        	 cachedSubscriptionCharges.remove(cachedCharge);
+        // ANA : There no reasons to keep terminated charge instance in cache
+        if (!usageChargeInstance.getStatus().name().equals(InstanceStatusEnum.ACTIVE.name())) {
+            cachedSubscriptionCharges.remove(cachedCharge);
         }
         usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(subscriptionId, cachedSubscriptionCharges);
 
@@ -656,6 +656,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         CachedCounterInstance cachedCounterInstance = counterCache.get(counterInstanceId);
         if (cachedCounterInstance == null) {
+            log.error("AKK cached counter instance not found {}", counterInstanceId);
             return null;
         }
 
@@ -682,7 +683,8 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         if (counterPeriodToUpdate.getLevel() == null) {
             return null;
 
-        } else if (counterPeriodToUpdate.getValue().compareTo(BigDecimal.ZERO) == 0) {
+            // If previous value is not Zero and deduction is not negative (really its an addition)
+        } else if (counterPeriodToUpdate.getValue().compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
             return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         } else if (counterPeriodToUpdate.getValue().compareTo(deduceBy) < 0) {

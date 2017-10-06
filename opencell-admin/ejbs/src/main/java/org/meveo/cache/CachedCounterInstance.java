@@ -88,7 +88,7 @@ public class CachedCounterInstance implements Serializable {
         }
 
         for (CachedCounterPeriod period : counterPeriods) {
-            if ((period.getStartDate().before(date) || period.getStartDate().equals(date)) && period.getEndDate().after(date)) {
+            if(period.isCorrespondsToPeriod(date)) {
                 return period;
             }
         }

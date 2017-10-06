@@ -16,8 +16,8 @@ import org.meveo.api.dto.SubCategoryInvoiceAgregateDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GenerateInvoiceResultDto {
 
-	private Long invoiceId;
-	 
+    private Long invoiceId;
+
     private String invoiceNumber;
 
     private String temporaryInvoiceNumber;
@@ -33,11 +33,21 @@ public class GenerateInvoiceResultDto {
     private BigDecimal amountTax;
 
     private byte[] pdf;
-    
+
+    /**
+     * Invoice XML filename
+     */
+    private String xmlFilename;
+
+    /**
+     * Invoice PDF filename
+     */
+    private String pdfFilename;
+
     private Long accountOperationId;
-    
+
     private BigDecimal discount;
-    
+
     @XmlElementWrapper(name = "discountAggregates")
     @XmlElement(name = "discountAggregate")
     private List<SubCategoryInvoiceAgregateDto> discountAggregates = new ArrayList<>();
@@ -117,50 +127,62 @@ public class GenerateInvoiceResultDto {
     public void setPdf(byte[] pdf) {
         this.pdf = pdf;
     }
-    
 
+    public Long getAccountOperationId() {
+        return accountOperationId;
+    }
 
-	public Long getAccountOperationId() {
-		return accountOperationId;
-	}
+    public void setAccountOperationId(Long accountOperationId) {
+        this.accountOperationId = accountOperationId;
+    }
 
-	public void setAccountOperationId(Long accountOperationId) {
-		this.accountOperationId = accountOperationId;
-	}
-	
-	
+    public Long getInvoiceId() {
+        return invoiceId;
+    }
 
-	public Long getInvoiceId() {
-		return invoiceId;
-	}
+    public void setInvoiceId(Long invoiceId) {
+        this.invoiceId = invoiceId;
+    }
 
-	public void setInvoiceId(Long invoiceId) {
-		this.invoiceId = invoiceId;
-	}
-
-	/*
+    /*
      * (non-Javadoc)
      * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:"+invoiceId+"]";
+        return "GenerateInvoiceResultDto [invoiceNumber=" + (invoiceNumber != null ? invoiceNumber : temporaryInvoiceNumber) + " ,invoiceId:" + invoiceId + "]";
     }
 
-	public BigDecimal getDiscount() {
-		return discount;
-	}
+    public BigDecimal getDiscount() {
+        return discount;
+    }
 
-	public void setDiscount(BigDecimal discount) {
-		this.discount = discount;
-	}
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
+    }
 
-	public List<SubCategoryInvoiceAgregateDto> getDiscountAggregates() {
-		return discountAggregates;
-	}
+    public List<SubCategoryInvoiceAgregateDto> getDiscountAggregates() {
+        return discountAggregates;
+    }
 
-	public void setDiscountAggregates(List<SubCategoryInvoiceAgregateDto> discountAggregates) {
-		this.discountAggregates = discountAggregates;
-	}
+    public void setDiscountAggregates(List<SubCategoryInvoiceAgregateDto> discountAggregates) {
+        this.discountAggregates = discountAggregates;
+    }
+
+    public String getXmlFilename() {
+        return xmlFilename;
+    }
+
+    public void setXmlFilename(String xmlFilename) {
+        this.xmlFilename = xmlFilename;
+    }
+
+    public String getPdfFilename() {
+        return pdfFilename;
+    }
+
+    public void setPdfFilename(String pdfFilename) {
+        this.pdfFilename = pdfFilename;
+    }
 }

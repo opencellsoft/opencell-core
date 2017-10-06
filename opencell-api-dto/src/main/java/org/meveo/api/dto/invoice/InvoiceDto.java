@@ -52,7 +52,14 @@ public class InvoiceDto extends BaseDto {
     private BigDecimal amountTax;
     private BigDecimal amountWithTax;
     private PaymentMethodEnum paymentMethod;
+    /**
+     * Deprecated in 4.8. Use pdfFilename!=null instead
+     */
+    @Deprecated
     private boolean pdfPresent;
+
+    private String xmlFilename;
+    private String pdfFilename;
     private byte[] pdf;
     private boolean autoValidation = true;
     private boolean returnXml = false;
@@ -147,6 +154,22 @@ public class InvoiceDto extends BaseDto {
 
     public void setPdfPresent(boolean pDFpresent) {
         pdfPresent = pDFpresent;
+    }
+
+    public String getXmlFilename() {
+        return xmlFilename;
+    }
+
+    public void setXmlFilename(String xmlFilename) {
+        this.xmlFilename = xmlFilename;
+    }
+
+    public String getPdfFilename() {
+        return pdfFilename;
+    }
+
+    public void setPdfFilename(String pdfFilename) {
+        this.pdfFilename = pdfFilename;
     }
 
     public PaymentMethodEnum getPaymentMethod() {
