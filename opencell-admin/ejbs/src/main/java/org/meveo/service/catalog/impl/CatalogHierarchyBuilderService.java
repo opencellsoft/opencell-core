@@ -336,7 +336,11 @@ public class CatalogHierarchyBuilderService {
 
         try {
             BeanUtils.copyProperties(newServiceTemplate, serviceTemplate);
-            newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
+            String newCode = prefix + serviceTemplate.getCode();
+            if(serviceConfiguration.isDuplicate()) {
+            	newCode = prefix + serviceTemplate.getId();
+            }
+            newServiceTemplate.setCode(newCode);
             if (serviceConfiguration != null) {
                 newServiceTemplate.setDescription(serviceConfiguration.getDescription());
             }

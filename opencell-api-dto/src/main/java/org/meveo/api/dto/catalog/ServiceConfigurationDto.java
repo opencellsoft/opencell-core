@@ -31,6 +31,7 @@ public class ServiceConfigurationDto {
 	private List<CustomFieldDto> customFields;
 	
 	private boolean mandatory;
+	private boolean duplicate;
 
 	public String getCode() {
 		return code;
@@ -67,6 +68,14 @@ public class ServiceConfigurationDto {
 
 	public void setMandatory(boolean mandatory) {
 		this.mandatory = mandatory;
+	}
+
+	public boolean isDuplicate() {
+		return duplicate;
+	}
+
+	public void setDuplicate(boolean duplicate) {
+		this.duplicate = duplicate;
 	}
 
 }

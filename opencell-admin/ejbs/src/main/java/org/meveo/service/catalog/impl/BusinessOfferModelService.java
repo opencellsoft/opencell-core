@@ -319,7 +319,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			OfferServiceTemplate tempOfferServiceTemplate = null;
 			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
 				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-				if (serviceCode.equals(serviceTemplate.getCode())) {
+				if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isDuplicate()) {
 					serviceFound = true;
 					break;
 				} else {
@@ -344,6 +344,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
+        // duplicate the services
         for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 

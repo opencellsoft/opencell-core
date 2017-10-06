@@ -289,12 +289,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
 				if (getBsmServiceTemplates() != null) {
 					for (OfferServiceTemplate ost : getBsmServiceTemplates()) {
-						if (!sortedOfferServiceTemplates.contains(ost)) {
+						if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isDuplicate()) {
 							sortedOfferServiceTemplates.add(ost);
 						}
 					}
 				}
-				
+
 				if (entity.isTransient() && entity.getBusinessOfferModel() != null) {
 					for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
 						ostOffer.getServiceTemplate().setSelected(true);
@@ -310,7 +310,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
 					}
 				}
-				
+
 				Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
 			}
 		}
@@ -346,6 +346,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					serviceConfigurationDto.setCode(st.getCode());
 					serviceConfigurationDto.setDescription(st.getDescription());
 					serviceConfigurationDto.setMandatory(ost.isMandatory());
+					serviceConfigurationDto.setDuplicate(st.isDuplicate());
 					servicesConfigurations.add(serviceConfigurationDto);
 					if (stCfsDto != null) {
 						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
@@ -392,7 +393,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			// populate offer cf
 			customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
 			newOfferTemplate = offerTemplateService.update(newOfferTemplate);
-			
+
 			if (entity.getImagePath() != null) {
 				try {
 					ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<OfferTemplate>(appProvider);
@@ -413,15 +414,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 				if (outcome.equals("mm_offers")) {
 					if (isNewEntity) {
-						for(OfferServiceTemplate ostGui : sortedOfferServiceTemplates) {
-							if(ostGui.getServiceTemplate().isSelected()) {
+						for (OfferServiceTemplate ostGui : sortedOfferServiceTemplates) {
+							if (ostGui.getServiceTemplate().isSelected()) {
 								entity.addOfferServiceTemplate(ostGui);
 							}
 						}
-						
+
 						entity = offerTemplateService.update(entity);
 					}
-					
+
 					// populate service custom fields
 					for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
 						ServiceTemplate serviceTemplate = ost.getServiceTemplate();
@@ -618,7 +619,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public boolean isNewVersion() {
 		return newVersion;
 	}
-	
+
 	public DualListModel<BusinessServiceModel> getBsmsDualListModel() {
 		if (businessOfferModel != null && bsmsDualListModel == null) {
 			List<BusinessServiceModel> source = businessOfferModelService.getBusinessServiceModels(businessOfferModel);
@@ -637,7 +638,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public void setBsmsDualListModel(DualListModel<BusinessServiceModel> bsmsDualListModel) {
 		this.bsmsDualListModel = bsmsDualListModel;
 	}
-	
+
 	public List<OfferServiceTemplate> getBsmServiceTemplates() {
 		return bsmServiceTemplates;
 	}
@@ -766,6 +767,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				OfferServiceTemplate ost = new OfferServiceTemplate();
 				ost.setServiceTemplate(bsm.getServiceTemplate());
 				ost.setOfferTemplate(entity);
+				if (offerServiceTemplates.contains(ost)) {
+					// duplicate
+					int idx = offerServiceTemplates.indexOf(ost);
+					offerServiceTemplates.get(idx).getServiceTemplate().setDuplicate(true);
+					ost.getServiceTemplate().setDuplicate(true);
+				}
+
 				offerServiceTemplates.add(ost);
 			}
 		}
@@ -774,9 +782,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		bsmServiceTemplates.addAll(offerServiceTemplates);
 		sortedOfferServiceTemplates = null;
 	}
-	
+
 	public void onBsmTransfer(TransferEvent event) {
-		
+
 	}
-	
+
 }
