@@ -289,7 +289,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
 				if (getBsmServiceTemplates() != null) {
 					for (OfferServiceTemplate ost : getBsmServiceTemplates()) {
-						if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isDuplicate()) {
+						if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isInstantiatedFromBSM()) {
 							sortedOfferServiceTemplates.add(ost);
 						}
 					}
@@ -346,7 +346,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					serviceConfigurationDto.setCode(st.getCode());
 					serviceConfigurationDto.setDescription(st.getDescription());
 					serviceConfigurationDto.setMandatory(ost.isMandatory());
-					serviceConfigurationDto.setDuplicate(st.isDuplicate());
+					serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
 					servicesConfigurations.add(serviceConfigurationDto);
 					if (stCfsDto != null) {
 						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
@@ -768,10 +768,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				ost.setServiceTemplate(bsm.getServiceTemplate());
 				ost.setOfferTemplate(entity);
 				if (offerServiceTemplates.contains(ost)) {
-					// duplicate
-					int idx = offerServiceTemplates.indexOf(ost);
-					offerServiceTemplates.get(idx).getServiceTemplate().setDuplicate(true);
-					ost.getServiceTemplate().setDuplicate(true);
+					ost.getServiceTemplate().setInstantiatedFromBSM(true);
 				}
 
 				offerServiceTemplates.add(ost);

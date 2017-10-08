@@ -301,6 +301,15 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
         return newOfferProductTemplates;
     }
+    
+	private void findNonTransientDuplicateAndRemove(List<OfferServiceTemplate> offerServiceTemplates, ServiceTemplate serviceTemplate) {
+		for (OfferServiceTemplate ost : offerServiceTemplates) {
+			if (ost.getServiceTemplate().equals(serviceTemplate) && !ost.isTransient()) {
+				offerServiceTemplates.remove(ost);
+				break;
+			}
+		}
+	}
 
 	private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
 			BusinessOfferModel businessOfferModel) throws BusinessException {
@@ -319,7 +328,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			OfferServiceTemplate tempOfferServiceTemplate = null;
 			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
 				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-				if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isDuplicate()) {
+				if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
 					serviceFound = true;
 					break;
 				} else {
@@ -336,6 +345,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 				// check if exists in bsm
 				if (tempOfferServiceTemplate != null && findBsmFromBom(businessOfferModel, tempOfferServiceTemplate.getServiceTemplate()) != null) {
 					offerServiceTemplates.add(tempOfferServiceTemplate);
+					// find transient duplicate and remove
+					findNonTransientDuplicateAndRemove(offerServiceTemplates, tempOfferServiceTemplate.getServiceTemplate());
 				} else {
 					throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
 				}

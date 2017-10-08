@@ -31,7 +31,7 @@ public class ServiceConfigurationDto {
 	private List<CustomFieldDto> customFields;
 	
 	private boolean mandatory;
-	private boolean duplicate;
+	private boolean instantiatedFromBSM;
 
 	public String getCode() {
 		return code;
@@ -70,12 +70,12 @@ public class ServiceConfigurationDto {
 		this.mandatory = mandatory;
 	}
 
-	public boolean isDuplicate() {
-		return duplicate;
+	public boolean isInstantiatedFromBSM() {
+		return instantiatedFromBSM;
 	}
 
-	public void setDuplicate(boolean duplicate) {
-		this.duplicate = duplicate;
+	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
+		this.instantiatedFromBSM = instantiatedFromBSM;
 	}
 
 }

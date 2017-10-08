@@ -101,8 +101,11 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	@Transient
 	private boolean selected;
 	
+	/**
+	 * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
+	 */
 	@Transient
-	private boolean duplicate;
+	private boolean instantiatedFromBSM;
 
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -240,12 +243,12 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 		this.imagePath = imagePath;
 	}
 
-	public boolean isDuplicate() {
-		return duplicate;
+	public boolean isInstantiatedFromBSM() {
+		return instantiatedFromBSM;
 	}
 
-	public void setDuplicate(boolean duplicate) {
-		this.duplicate = duplicate;
+	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
+		this.instantiatedFromBSM = instantiatedFromBSM;
 	}
 
 
