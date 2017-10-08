@@ -94,6 +94,7 @@ public abstract class Job {
 
         if (result == null) {
             result = new JobExecutionResultImpl();
+            result.setJobInstance(jobInstance);            
         }
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
