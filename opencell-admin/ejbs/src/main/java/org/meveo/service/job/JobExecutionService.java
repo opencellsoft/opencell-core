@@ -27,7 +27,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.naming.NamingException;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -42,12 +41,14 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
+    /**
+     * job instance service.
+     */
     @Inject
     private JobInstanceService jobInstanceService;
 
     /**
-     * Persist job execution results
-     * 
+     * Persist job execution results.
      * @param job Job implementation
      * @param result Execution result
      * @param jobInstance Job instance
@@ -81,7 +82,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
             }
             return resultToPersist.isDone();
 
-        } catch (Exception e) {// FIXME:BusinessException e) {
+        } catch (Exception e) { // FIXME:BusinessException e) {
             log.error("Failed to persist job execution results", e);
         }
 
@@ -91,7 +92,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /**
      * Execute next job or continue executing same job if more data is left to process (execution in batches). Executed asynchronously. Current user should be already available
      * from earlier context.
-     * 
      * @param job Job implementation
      * @param jobInstance Job instance
      * @param continueSameJob Continue executing same job
@@ -112,19 +112,17 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 executeJobWithParameters(nextJob, null);
             }
 
-        } catch (Exception e) {// FIXME:BusinessException e) {
+        } catch (Exception e) { // FIXME:BusinessException e) {
             log.error("Failed to execute next job or continue same job", e);
         }
         log.info("JobExecutionService executeNextJob End");
     }
 
     /**
-     * Execute a given job instance
-     * 
+     * Execute a given job instance.
      * @param jobInstance Job instance to execute
      * @param params Parameters to pass to job execution
-     * @throws BusinessException
-     * @throws NamingException Thrown when Job definition was not found
+     * @throws BusinessException business exception
      */
     private void executeJobWithParameters(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
 
@@ -134,7 +132,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Execute job from GUI. Execution is done asynchronously. Current user is already set by GUI.
-     * 
      * @param jobInstance Job instance to execute
      * @throws BusinessException Any exception
      */
@@ -154,7 +151,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /**
      * Execute job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
      * asynchronously.
-     * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
      * @return Job execution result ID
@@ -182,7 +178,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Execute job and return job execution result ID to be able to query execution results later. Job is executed asynchronously.
-     * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
      * @throws BusinessException Any exception
@@ -193,8 +188,13 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         executeJobWithParameters(jobInstance, params);
     }
 
+    /**
+     * @param jobName job name
+     * @param configuration configuration
+     * @return querry builder
+     */
     private QueryBuilder getFindQuery(String jobName, PaginationConfiguration configuration) {
-        QueryBuilder qb = new QueryBuilder("select distinct t from JobExecutionResultImpl t");// FIXME:.cacheable();
+        QueryBuilder qb = new QueryBuilder("select distinct t from JobExecutionResultImpl t"); // FIXME:.cacheable();
 
         if (!StringUtils.isEmpty(jobName)) {
             qb.addCriterion("t.jobInstance.code", "=", jobName, false);
@@ -205,15 +205,15 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
-     * Count job execution history records which end date is older then a given date
-     * 
+     * Count job execution history records which end date is older then a given date.
+     * @param jobName job name
      * @param date Date to check
      * @return A number of job execution history records which is older then a given date
      */
     public long countJobExecutionHistoryToDelete(String jobName, Date date) {
         long result = 0;
         if (date != null) {
-            QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "t");// FIXME:.cacheable();
+            QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "t"); // FIXME:.cacheable();
             if (!StringUtils.isEmpty(jobName)) {
                 qb.addCriterion("t.jobInstance.code", "=", jobName, false);
             }
@@ -225,8 +225,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
-     * Remove job execution history older then a given date
-     * 
+     * Remove job execution history older then a given date.
      * @param jobName Job name to match
      * @param date Date to check
      * @return A number of records that were removed
@@ -258,19 +257,36 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         return itemsDeleted;
     }
 
+    /**
+     * @param jobName job's name
+     * @param configuration pagination configuration
+     * @return list of job's result.
+     */
     @SuppressWarnings("unchecked")
     public List<JobExecutionResultImpl> find(String jobName, PaginationConfiguration configuration) {
         return getFindQuery(jobName, configuration).find(getEntityManager());
     }
 
+    /**
+     * @param jobName job name
+     * @param configuration configuration
+     * @return number of job
+     */
     public long count(String jobName, PaginationConfiguration configuration) {
         return getFindQuery(jobName, configuration).count(getEntityManager());
     }
 
+    /**
+     * @return job instance service
+     */
     public JobInstanceService getJobInstanceService() {
         return jobInstanceService;
     }
 
+    /**
+     * @return list of job's result
+     * @see org.meveo.service.base.PersistenceService#findByCodeLike(java.lang.String)
+     */
     @Override
     public List<JobExecutionResultImpl> findByCodeLike(String code) {
         throw new UnsupportedOperationException();
