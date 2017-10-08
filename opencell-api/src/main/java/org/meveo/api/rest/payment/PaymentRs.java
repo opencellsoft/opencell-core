@@ -16,11 +16,14 @@ import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
+import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
 import org.meveo.api.rest.IBaseRs;
+
 
 @Path("/payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -47,11 +50,11 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/customerPayment")
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode);
-    
+
     /************************************************************************************************/
     /****                                 Card Payment Method                                    ****/
     /************************************************************************************************/
-    
+
     /**
      * Add a new card payment method. It will be marked as preferred.
      * 
@@ -102,7 +105,7 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/cardPaymentMethod")
     public CardPaymentMethodTokenDto findCardPaymentMethod(@QueryParam("id") Long id);
-    
+
     /************************************************************************************************/
     /****                                 Payment Methods                                         ****/
     /************************************************************************************************/
@@ -156,4 +159,68 @@ public interface PaymentRs extends IBaseRs {
     @GET
     @Path("/paymentMethod")
     public PaymentMethodTokenDto findPaymentMethod(@QueryParam("id") Long id);
-  }
+
+
+    /************************************************************************************************/
+    /****                                 Payment Gateways                                       ****/
+    /************************************************************************************************/
+    /**
+     * Add a new payment gateway.
+     * 
+     * @param paymentGateway  payment gateway DTO
+     * @return the paymentGateway dto created
+     */
+    @POST
+    @Path("/paymentGateway")
+    public PaymentGatewayResponseDto addPaymentGateway(PaymentGatewayDto paymentGateway);
+
+    /**
+     * Update existing payment gateway.
+     * 
+     * @param paymentGateway  payment gateway DTO
+     * @return Action status
+     */
+    @PUT
+    @Path("/paymentGateway")
+    public ActionStatus updatePaymentGateway(PaymentGatewayDto ddPaymentGateway);
+
+    /**
+     * Remove payment gateway.
+     * 
+     * @param id Id
+     * @return Action status
+     */
+    @DELETE
+    @Path("/paymentGateway")
+    public ActionStatus removePaymentGateway(@QueryParam("code") String code);
+
+    /**
+     * List  payment gateways .
+     * 
+     * @return A list of payment gateways
+     */
+    @GET
+    @Path("/paymentGateway/list")
+    public PaymentGatewayResponseDto listPaymentGateways();
+
+    /**
+     * Retrieve payment gateway by its id
+     * 
+     * @param id Id
+     * @return  payment DTO
+     */
+    @GET
+    @Path("/paymentGateway")
+    public PaymentGatewayResponseDto findPaymentGateway(@QueryParam("code") String code);
+    
+    /**
+     * Create or update payment gateway.
+     * 
+     * @param paymentGateway  payment gateway DTO
+     * @return the paymentGateway dto created
+     */
+    @POST
+    @Path("/createOrUpdatePaymentGateway")
+    public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway);
+
+}

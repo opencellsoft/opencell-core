@@ -32,4 +32,55 @@
 
 	</changeSet>
 
+	<changeSet author="anasseh" id="#2857_02102017_2">
+		<insert tableName="ar_payment_gateway">
+			<column name="id" valueNumeric="-1" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="INGENICO_GC" />
+			<column name="description" value="Ingenico global collect" />
+			<column name="type" value="NATIF" />
+			<column name="payment_method" value="CARD" />
+			<column name="implementation_class_name" value="org.meveo.service.payments.impl.IngenicoGatewayPayment" />
+			<column name="uuid" value="gateway_INGENICO_GC" />
+		</insert>
+		<insert tableName="ar_payment_gateway">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="SEPA" />
+			<column name="description" value="Sepa file" />
+			<column name="type" value="NATIF" />
+			<column name="payment_method" value="DIRECTDEBIT" />
+			<column name="implementation_class_name" value="org.meveo.admin.sepa.SepaFile" />
+			<column name="uuid" value="gateway_SEPA" />
+		</insert>
+		<insert tableName="ar_payment_gateway">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="1" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="PAYNUM" />
+			<column name="description" value="Paynum file" />
+			<column name="type" value="NATIF" />
+			<column name="payment_method" value="DIRECTDEBIT" />
+			<column name="implementation_class_name" value="org.meveo.admin.sepa.PaynumFile" />
+			<column name="uuid" value="gateway_PAYNUM" />
+		</insert>
+		<insert tableName="crm_provider_pay_methods">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="payment_method" value="CARD" />			
+		</insert>
+		<insert tableName="crm_provider_pay_methods">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="payment_method" value="DIRECTDEBIT" />			
+		</insert>	
+		<insert tableName="crm_provider_pay_methods">
+			<column name="provider_id" valueNumeric="1" />
+			<column name="payment_method" value="NONE" />			
+		</insert>			
+	</changeSet>
+
 </databaseChangeLog>

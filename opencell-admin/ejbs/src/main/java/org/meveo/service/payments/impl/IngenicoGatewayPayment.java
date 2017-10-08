@@ -8,7 +8,9 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +37,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalNa
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
 
+@PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
@@ -211,5 +214,17 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             return PaymentStatusEnum.PENDING;
         }
         return PaymentStatusEnum.REJECTED;
+    }
+
+
+    @Override
+    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException {
+	throw new UnsupportedOperationException();	
+    }
+
+
+    @Override
+    public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
+	throw new UnsupportedOperationException();	
     }
 }

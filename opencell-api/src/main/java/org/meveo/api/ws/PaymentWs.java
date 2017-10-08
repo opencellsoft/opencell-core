@@ -15,6 +15,8 @@ import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
+import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
@@ -52,9 +54,9 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name = "fromDueDate") Date fromDueDate, @WebParam(name = "toDueDate") Date toDueDate,
-            @WebParam(name = "status") DDRequestOpStatusEnum status);
-    
-    
+	    @WebParam(name = "status") DDRequestOpStatusEnum status);
+
+
     /**
      * Make a payment by card. Either with a provided card information, or an existing and preferred card payment method
      * 
@@ -67,7 +69,7 @@ public interface PaymentWs extends IBaseWs {
     /************************************************************************************************/
     /****                                 Card Payment Method                                    ****/
     /************************************************************************************************/
-    
+
     /**
      * Add a new card payment method. It will be marked as preferred.
      * 
@@ -107,7 +109,7 @@ public interface PaymentWs extends IBaseWs {
     @WebMethod
     @Deprecated // Use listPaymentMthod operation
     public CardPaymentMethodTokensDto listCardPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
-            @WebParam(name = "customerAccountCode") String customerAccountCode);
+	    @WebParam(name = "customerAccountCode") String customerAccountCode);
 
     /**
      * Retrieve card payment method by its id
@@ -120,11 +122,11 @@ public interface PaymentWs extends IBaseWs {
     public CardPaymentMethodTokenDto findCardPaymentMethod(@WebParam(name = "id") Long id);
 
 
-    
+
     /************************************************************************************************/
     /****                                  Payment Methods                                        ****/
     /************************************************************************************************/
-    
+
     /**
      * Add a new  payment method. It will be marked as preferred.
      * 
@@ -160,7 +162,7 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentMethodTokensDto listPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
-            @WebParam(name = "customerAccountCode") String customerAccountCode);
+	    @WebParam(name = "customerAccountCode") String customerAccountCode);
 
     /**
      * Retrieve payment method by its id
@@ -170,27 +172,85 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentMethodTokenDto findPaymentMethod(@WebParam(name = "id") Long id);
-    
+
     /**
      * Credit Category
      */
-	@WebMethod
-	ActionStatus createCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
+    @WebMethod
+    ActionStatus createCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
 
-	@WebMethod
-	ActionStatus updateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
+    @WebMethod
+    ActionStatus updateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
 
-	@WebMethod
-	ActionStatus createOrUpdateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
-	
-	@WebMethod
-	CreditCategoryResponseDto findCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
+    @WebMethod
+    ActionStatus createOrUpdateCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
 
-	@WebMethod
-	CreditCategoriesResponseDto listCreditCategory();
-	
-	@WebMethod
-	ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
+    @WebMethod
+    CreditCategoryResponseDto findCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
+
+    @WebMethod
+    CreditCategoriesResponseDto listCreditCategory();
+
+    @WebMethod
+    ActionStatus removeCreditCategory(@WebParam(name = "creditCategoryCode") String creditCategoryCode);
     
+    /************************************************************************************************/
+    /****                                 Payment Gateways                                       ****/
+    /************************************************************************************************/
+    /**
+     * Add a new payment gateway.
+     * 
+     * @param paymentGateway  payment gateway DTO
+     * @return the paymentGateway dto created
+     */
+    @WebMethod
+    public PaymentGatewayResponseDto addPaymentGateway(@WebParam(name = "paymentGateway")PaymentGatewayDto paymentGateway);
+
+    /**
+     * Update existing payment gateway.
+     * 
+     * @param paymentGateway  payment gateway DTO
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus updatePaymentGateway(@WebParam(name = "paymentGateway")PaymentGatewayDto ddPaymentGateway);
+
+    /**
+     * Remove payment gateway.
+     * 
+     * @param code code
+     * @return Action status
+     */
+    @WebMethod
+    public ActionStatus removePaymentGateway(@WebParam(name = "code") String code);
+
+    /**
+     * List  payment gateways .
+     * 
+     * @return A list of payment gateways
+     */
+    @WebMethod
+    public PaymentGatewayResponseDto listPaymentGateways();
+
+    /**
+     * Retrieve payment gateway by its id
+     * 
+     * @param code code
+     * @return  payment DTO
+     */
+    @WebMethod
+    public PaymentGatewayResponseDto findPaymentGateway(@WebParam(name = "code") String code);
+    
+    /**
+     * Create or update payment gateway.
+     * 
+     * @param  paymentGateway  payment gateway DTO
+     * @return the paymentGateway dto created
+     */
+    @WebMethod
+    public PaymentGatewayResponseDto createOrUpdatePaymentGateway(@WebParam(name = "paymentGateway")PaymentGatewayDto paymentGateway);
+
+
+
 }
 

@@ -5,14 +5,12 @@ import java.io.Serializable;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
-import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.admin.exception.InvalidScriptException;
-import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
-import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.model.payments.CardPaymentMethod;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.payment.PaymentScriptInterface;
-import org.meveo.util.ApplicationProvider;
 
 @Stateless
 public class GatewayPaymentFactory implements Serializable {
@@ -21,37 +19,27 @@ public class GatewayPaymentFactory implements Serializable {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
-
+    
     @Inject
-    private CustomFieldInstanceService customFieldInstanceService;
+    private PaymentGatewayService paymentGatewayService;
 
-    @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
 
-    /**
-     * 
-     * @param gatewayPaymentName
-     * @return
-     * @throws InvalidScriptException
-     * @throws Exception
-     */
-    public GatewayPaymentInterface getInstance(GatewayPaymentNamesEnum gatewayPaymentName) throws Exception, InvalidScriptException {
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        if (GatewayPaymentNamesEnum.INGENICO_GC.name().equals(gatewayPaymentName.name())) {
-            gatewayPaymentInterface = new IngenicoGatewayPayment();
+   
+    public GatewayPaymentInterface getInstance(CustomerAccount customerAccount,CardPaymentMethod cardPaymentMethod) throws Exception {
+        GatewayPaymentInterface gatewayPaymentInterface = null;        
+        PaymentGateway paymentGateway =  paymentGatewayService.getPaymentGateway(customerAccount,cardPaymentMethod);
+        if (paymentGateway == null) {
+            throw new Exception("No payment gateway" );
         }
-        if (GatewayPaymentNamesEnum.CUSTOM_API.name().equals(gatewayPaymentName.name())) {
-            EntityReferenceWrapper entityReferenceWrapper = (EntityReferenceWrapper) customFieldInstanceService.getCFValue(appProvider, "CF_PRV_GW_PAY_SCRIPT");
-            if (entityReferenceWrapper != null) {
-                gatewayPaymentInterface = new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(entityReferenceWrapper.getCode()));
-            }
-        }
-        if (gatewayPaymentInterface == null) {
-            throw new Exception("Payment gateway with code=" + gatewayPaymentName.name() + " not found" );
-        }
+        
+        if(paymentGateway.getType() == PaymentGatewayTypeEnum.CUSTOM) {
+            gatewayPaymentInterface = new CustomApiGatewayPayment((PaymentScriptInterface) scriptInstanceService.getScriptInstance(paymentGateway.getScriptInstance().getCode()));
+        }        
+        if(paymentGateway.getType() == PaymentGatewayTypeEnum.NATIF) {
+            Class<?> clazz = Class.forName(paymentGateway.getImplementationClassName());
+             gatewayPaymentInterface = (GatewayPaymentInterface) clazz.newInstance();
+        }      
+       
         return gatewayPaymentInterface;
-
     }
-
 }

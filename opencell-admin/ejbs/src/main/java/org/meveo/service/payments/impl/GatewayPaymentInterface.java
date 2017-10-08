@@ -7,6 +7,7 @@ import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDRequestLOT;
 
 public interface GatewayPaymentInterface {
 
@@ -58,5 +59,12 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException
      */
     public void cancelPayment(String paymentID) throws BusinessException;
+    
+    
+    //TODO PaymentRun
+    public void  doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException;
+    
+    //TODO PaymentRun
+    public void  doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException;
 
 }

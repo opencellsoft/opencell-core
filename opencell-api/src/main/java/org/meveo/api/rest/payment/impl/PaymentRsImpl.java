@@ -14,6 +14,8 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
+import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
@@ -22,7 +24,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.PaymentApi;
-
+import org.meveo.api.payment.PaymentGatewayApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
 
@@ -39,6 +41,9 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     
     @Inject
     private PaymentMethodApi paymentMethodApi;
+    
+    @Inject
+    private PaymentGatewayApi paymentGatewayApi;
 
    
     /** 
@@ -214,6 +219,89 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         }
 
         return response;
+    }
+    
+    /*************************************************************************************************/
+    /*                            Payment Gateways                                                  */
+    /************************************************************************************************/
+
+
+    @Override
+    public PaymentGatewayResponseDto addPaymentGateway(PaymentGatewayDto paymentGateway) {
+	PaymentGatewayResponseDto response = new PaymentGatewayResponseDto();
+	try {
+	    paymentGatewayApi.create(paymentGateway);
+	    response.getPaymentGateways().add(paymentGatewayApi.find(paymentGateway.getCode()));
+
+	} catch (Exception e) {
+	    processException(e, response.getActionStatus());
+	}
+
+	return response;
+    }
+
+    @Override
+    public ActionStatus updatePaymentGateway(PaymentGatewayDto paymentGateway) {
+	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	try {
+	    paymentGatewayApi.update(paymentGateway);
+	} catch (Exception e) {
+	    processException(e, result);
+	}
+
+	return result;
+    }
+
+    @Override
+    public ActionStatus removePaymentGateway(String code) {
+	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+	try {
+	    paymentGatewayApi.remove(code);
+	} catch (Exception e) {
+	    processException(e, result);
+	}
+
+	return result;
+    }
+
+    @Override
+    public PaymentGatewayResponseDto listPaymentGateways() {
+	PaymentGatewayResponseDto result = new PaymentGatewayResponseDto();
+	try {
+	    result.setPaymentGateways(paymentGatewayApi.list());
+	} catch (Exception e) {
+	    processException(e, result.getActionStatus());
+	}
+	return null;
+    }
+
+    @Override
+    public PaymentGatewayResponseDto findPaymentGateway(String code) {
+	PaymentGatewayResponseDto result = new PaymentGatewayResponseDto();
+
+	try {
+	    result.getPaymentGateways().add(paymentGatewayApi.find(code));
+	} catch (Exception e) {
+	    processException(e, result.getActionStatus());
+	}
+
+	return result;
+    }
+
+    @Override
+    public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway) {
+	PaymentGatewayResponseDto response = new PaymentGatewayResponseDto();
+	try {
+	    paymentGatewayApi.createOrUpdate(paymentGateway);
+	    response.getPaymentGateways().add(paymentGatewayApi.find(paymentGateway.getCode()));
+
+	} catch (Exception e) {
+	    processException(e, response.getActionStatus());
+	}
+
+	return response;
     }
  
 }

@@ -24,10 +24,14 @@ import java.util.UUID;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,7 +40,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -70,7 +73,7 @@ import org.meveo.model.shared.InterBankTitle;
 @ExportIdentifier("code")
 @Table(name = "crm_provider", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-        @Parameter(name = "sequence_name", value = "crm_provider_seq"), })
+	@Parameter(name = "sequence_name", value = "crm_provider_seq"), })
 @NamedQueries({ @NamedQuery(name = "Provider.first", query = "select p from Provider p order by id", hints = { @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
@@ -130,14 +133,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
-    private static final String PM_SEP = ",";
-
-    @Column(name = "payment_methods", length = 255)
-    @Size(max = 255)
-    private String serializedPaymentMethods;
-
-    @Transient
-    private List<PaymentMethodEnum> paymentMethods;
+    /** Payment methods allowed. */
+    @ElementCollection(targetClass = PaymentMethodEnum.class) 
+    @CollectionTable(name = "crm_provider_pay_methods",joinColumns = @JoinColumn(name = "provider_id"))
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
     @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
@@ -198,328 +199,307 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     private CustomFieldValues cfValues;
 
     public String getCode() {
-        return code;
+	return code;
     }
 
     public void setCode(String code) {
-        this.code = code;
+	this.code = code;
     }
 
     public String getDescription() {
-        return description;
+	return description;
     }
 
     public void setDescription(String description) {
-        this.description = description;
+	this.description = description;
     }
 
     public boolean isDisabled() {
-        return disabled;
+	return disabled;
     }
 
     public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
+	this.disabled = disabled;
     }
 
     public boolean isActive() {
-        return !disabled;
+	return !disabled;
     }
 
     public void setActive(boolean active) {
-        setDisabled(!active);
-    }
-
-    public String getSerializedPaymentMethods() {
-        return serializedPaymentMethods;
-    }
-
-    public void setSerializedPaymentMethods(String serializedPaymentMethods) {
-        this.serializedPaymentMethods = serializedPaymentMethods;
+	setDisabled(!active);
     }
 
     public Currency getCurrency() {
-        return currency;
+	return currency;
     }
 
     public void setCurrency(Currency currency) {
-        this.currency = currency;
+	this.currency = currency;
     }
 
     public Country getCountry() {
-        return country;
+	return country;
     }
 
     public void setCountry(Country country) {
-        this.country = country;
+	this.country = country;
     }
 
     public Language getLanguage() {
-        return language;
+	return language;
     }
 
     public void setLanguage(Language language) {
-        this.language = language;
+	this.language = language;
     }
 
     public boolean getMulticountryFlag() {
-        return multicountryFlag;
+	return multicountryFlag;
     }
 
     public void setMulticountryFlag(boolean multicountryFlag) {
-        this.multicountryFlag = multicountryFlag;
+	this.multicountryFlag = multicountryFlag;
     }
 
     public boolean getMulticurrencyFlag() {
-        return multicurrencyFlag;
+	return multicurrencyFlag;
     }
 
     public void setMulticurrencyFlag(boolean multicurrencyFlag) {
-        this.multicurrencyFlag = multicurrencyFlag;
+	this.multicurrencyFlag = multicurrencyFlag;
     }
 
     public boolean getMultilanguageFlag() {
-        return multilanguageFlag;
+	return multilanguageFlag;
     }
 
     public void setMultilanguageFlag(boolean multilanguageFlag) {
-        this.multilanguageFlag = multilanguageFlag;
+	this.multilanguageFlag = multilanguageFlag;
     }
 
     public Customer getCustomer() {
-        return customer;
+	return customer;
     }
 
     public void setCustomer(Customer customer) {
-        this.customer = customer;
+	this.customer = customer;
     }
 
     public CustomerAccount getCustomerAccount() {
-        return customerAccount;
+	return customerAccount;
     }
 
     public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
+	this.customerAccount = customerAccount;
     }
 
     public BillingAccount getBillingAccount() {
-        return billingAccount;
+	return billingAccount;
     }
 
     public void setBillingAccount(BillingAccount billingAccount) {
-        this.billingAccount = billingAccount;
+	this.billingAccount = billingAccount;
     }
 
     public UserAccount getUserAccount() {
-        return userAccount;
+	return userAccount;
     }
 
     public void setUserAccount(UserAccount userAccount) {
-        this.userAccount = userAccount;
-    }
-
-    public List<PaymentMethodEnum> getPaymentMethods() {
-        if (paymentMethods == null) {
-            paymentMethods = new ArrayList<PaymentMethodEnum>();
-            if (serializedPaymentMethods != null) {
-                int index = -1;
-                while ((index = serializedPaymentMethods.indexOf(PM_SEP)) > -1) {
-                    String paymentMethod = serializedPaymentMethods.substring(0, index);
-                    paymentMethods.add(PaymentMethodEnum.valueOf(paymentMethod));
-                    serializedPaymentMethods = serializedPaymentMethods.substring(index);
-                }
-            }
-        }
-        return paymentMethods;
-    }
-
-    public void setPaymentMethods(List<PaymentMethodEnum> paymentMethods) {
-        if (paymentMethods == null) {
-            serializedPaymentMethods = null;
-        } else {
-            serializedPaymentMethods = "";
-            String sep = "";
-            for (PaymentMethodEnum paymentMethod : paymentMethods) {
-                serializedPaymentMethods = sep + paymentMethod.name();
-                sep = PM_SEP;
-            }
-        }
+	this.userAccount = userAccount;
     }
 
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
-        this.bankCoordinates = bankCoordinates;
+	this.bankCoordinates = bankCoordinates;
     }
 
     public BankCoordinates getBankCoordinates() {
-        return bankCoordinates;
+	return bankCoordinates;
     }
 
     public boolean isEntreprise() {
-        return entreprise;
+	return entreprise;
     }
 
     public void setEntreprise(boolean entreprise) {
-        this.entreprise = entreprise;
+	this.entreprise = entreprise;
     }
 
     public InterBankTitle getInterBankTitle() {
-        return interBankTitle;
+	return interBankTitle;
     }
 
     public void setInterBankTitle(InterBankTitle interBankTitle) {
-        this.interBankTitle = interBankTitle;
+	this.interBankTitle = interBankTitle;
     }
 
     public Integer getRounding() {
-        return rounding;
+	return rounding;
     }
 
     public void setRounding(Integer rounding) {
-        this.rounding = rounding;
+	this.rounding = rounding;
     }
 
     public boolean isAutomaticInvoicing() {
-        return automaticInvoicing;
+	return automaticInvoicing;
     }
 
     public void setAutomaticInvoicing(boolean automaticInvoicing) {
-        this.automaticInvoicing = automaticInvoicing;
+	this.automaticInvoicing = automaticInvoicing;
     }
 
     public boolean isAmountValidation() {
-        return amountValidation;
+	return amountValidation;
     }
 
     public void setAmountValidation(boolean amountValidation) {
-        this.amountValidation = amountValidation;
+	this.amountValidation = amountValidation;
     }
 
     public boolean isLevelDuplication() {
-        return levelDuplication;
+	return levelDuplication;
     }
 
     public void setLevelDuplication(boolean levelDuplication) {
-        this.levelDuplication = levelDuplication;
+	this.levelDuplication = levelDuplication;
     }
 
     public String getEmail() {
-        return email;
+	return email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+	this.email = email;
     }
 
     public boolean isDisplayFreeTransacInInvoice() {
-        return displayFreeTransacInInvoice;
+	return displayFreeTransacInInvoice;
     }
 
     public void setDisplayFreeTransacInInvoice(boolean displayFreeTransacInInvoice) {
-        this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
+	this.displayFreeTransacInInvoice = displayFreeTransacInInvoice;
     }
 
     public Long getPrepaidReservationExpirationDelayinMillisec() {
-        return prepaidReservationExpirationDelayinMillisec;
+	return prepaidReservationExpirationDelayinMillisec;
     }
 
     public void setPrepaidReservationExpirationDelayinMillisec(Long prepaidReservationExpirationDelayinMillisec) {
-        this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
+	this.prepaidReservationExpirationDelayinMillisec = prepaidReservationExpirationDelayinMillisec;
     }
 
     public String getDiscountAccountingCode() {
-        return discountAccountingCode;
+	return discountAccountingCode;
     }
 
     public void setDiscountAccountingCode(String discountAccountingCode) {
-        this.discountAccountingCode = discountAccountingCode;
+	this.discountAccountingCode = discountAccountingCode;
     }
 
     @Override
     public boolean equals(Object obj) {
 
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof Provider)) {
-            return false;
-        }
+	if (this == obj) {
+	    return true;
+	} else if (obj == null) {
+	    return false;
+	} else if (!(obj instanceof Provider)) {
+	    return false;
+	}
 
-        Provider other = (Provider) obj;
+	Provider other = (Provider) obj;
 
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            return true;
-        }
+	if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+	    return true;
+	}
 
-        if (code == null) {
-            if (other.getCode() != null) {
-                return false;
-            }
-        } else if (!code.equals(other.getCode())) {
-            return false;
-        }
-        return true;
+	if (code == null) {
+	    if (other.getCode() != null) {
+		return false;
+	    }
+	} else if (!code.equals(other.getCode())) {
+	    return false;
+	}
+	return true;
     }
 
     @Override
     public String toString() {
-        return String.format("Provider [code=%s]", code);
+	return String.format("Provider [code=%s]", code);
     }
 
     public InvoiceConfiguration getInvoiceConfiguration() {
-        return invoiceConfiguration;
+	return invoiceConfiguration;
     }
 
     public void setInvoiceConfiguration(InvoiceConfiguration invoiceConfiguration) {
-        this.invoiceConfiguration = invoiceConfiguration;
+	this.invoiceConfiguration = invoiceConfiguration;
     }
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return null;
+	return null;
     }
 
     public boolean isRecognizeRevenue() {
-        return recognizeRevenue;
+	return recognizeRevenue;
     }
 
     public void setRecognizeRevenue(boolean recognizeRevenue) {
-        this.recognizeRevenue = recognizeRevenue;
+	this.recognizeRevenue = recognizeRevenue;
+    }
+
+    
+    /**
+     * @return the paymentMethods
+     */
+    public List<PaymentMethodEnum> getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    /**
+     * @param paymentMethods the paymentMethods to set
+     */
+    public void setPaymentMethods(List<PaymentMethodEnum> paymentMethods) {
+        this.paymentMethods = paymentMethods;
     }
 
     @Override
     public String getUuid() {
-        return uuid;
+	return uuid;
     }
 
     public void setUuid(String uuid) {
-        this.uuid = uuid;
+	this.uuid = uuid;
     }
 
     @Override
     public String clearUuid() {
-        String oldUuid = uuid;
-        uuid = UUID.randomUUID().toString();
-        return oldUuid;
+	String oldUuid = uuid;
+	uuid = UUID.randomUUID().toString();
+	return oldUuid;
     }
 
     public CustomFieldValues getCfValues() {
-        return cfValues;
+	return cfValues;
     }
 
     public void setCfValues(CustomFieldValues cfValues) {
-        this.cfValues = cfValues;
+	this.cfValues = cfValues;
     }
 
     @Override
     public CustomFieldValues getCfValuesNullSafe() {
-        if (cfValues == null) {
-            cfValues = new CustomFieldValues();
-        }
-        return cfValues;
+	if (cfValues == null) {
+	    cfValues = new CustomFieldValues();
+	}
+	return cfValues;
     }
 
     @Override
     public void clearCfValues() {
-        cfValues = null;
+	cfValues = null;
     }
 }

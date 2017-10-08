@@ -126,9 +126,10 @@
 		</p:submenu>
 	</p:submenu>
 	
-	<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">			
+	<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">	
+	        <p:menuitem id="paymentGateways" outcome="paymentGateways" value="#{messages['menu.paymentGateways']}" />		
 	  	 	<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />				
-		<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
+		    <p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
 	</p:submenu>
 	
 	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">

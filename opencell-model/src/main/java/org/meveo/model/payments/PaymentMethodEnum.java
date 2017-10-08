@@ -23,7 +23,7 @@ package org.meveo.model.payments;
  */
 public enum PaymentMethodEnum {
 
-    CHECK, DIRECTDEBIT, TIP, WIRETRANSFER, CARD;
+    CHECK, DIRECTDEBIT, TIP, WIRETRANSFER, CARD, NONE;
 
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();

@@ -44,6 +44,7 @@ import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.ModuleLicenseEnum;
@@ -95,7 +96,8 @@ public class MeveoModuleDto extends BaseDataModelDto {
 			@XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
 			@XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class),
 			@XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
-			@XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), })
+			@XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class),
+			@XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class), })
     private List<BaseDto> moduleItems;
 
     public MeveoModuleDto() {

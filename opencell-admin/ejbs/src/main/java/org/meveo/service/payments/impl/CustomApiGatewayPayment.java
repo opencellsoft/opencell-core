@@ -8,6 +8,7 @@ import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.script.payment.PaymentScript;
 import org.meveo.service.script.payment.PaymentScriptInterface;
@@ -65,6 +66,24 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 	@Override
 	public void cancelPayment(String paymentID) throws BusinessException {
 		
+	}
+
+	/* (non-Javadoc)
+	 * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doBulkPaymentAsFile(org.meveo.model.payments.DDRequestLOT)
+	 */
+	@Override
+	public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException {
+	    // TODO Auto-generated method stub
+	    
+	}
+
+	/* (non-Javadoc)
+	 * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doBulkPaymentAsService(org.meveo.model.payments.DDRequestLOT)
+	 */
+	@Override
+	public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
+	    // TODO Auto-generated method stub
+	    
 	}
 
 

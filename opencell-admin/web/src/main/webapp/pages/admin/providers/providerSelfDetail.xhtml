@@ -45,17 +45,9 @@
                     <hftl:formField label="#{messages['provider.email']}" field="email" id="email" />
 
 					<hftl:formField label="#{messages['provider.recognizeRevenue']}" field="recognizeRevenue" id="recognizeRevenue" />
-					 <!--
-                    <p:fieldset legend="#{messages['provider.invoicing.title']}" styleClass="clearLeft">
-                       <hftl:formField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" id="invoicePrefix" textArea="true" rows="1" maxlength="2000" />
-                        <hftl:formField label="#{messages['provider.currentInvoiceNb']}" field="currentInvoiceNb" id="currentInvoiceNb" />
-                        <hftl:formField label="#{messages['provider.invoiceSequenceSize']}" field="invoiceSequenceSize" id="invoiceSequenceSize" />
-                        <hftl:formField label="#{messages['invoice.adjustment.prefix']}" field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" textArea="true" rows="1"
-                            maxlength="2000" newLine="true" />
-                        <hftl:formField label="#{messages['invoice.adjustment.currentSequenceNb']}" field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb" />
-                        <hftl:formField label="#{messages['invoice.adjustment.sequenceSize']}" field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize" />
-						</p:fieldset>
-						-->
+					
+					<hftl:formField label="#{messages['provider.paymentMethods']}" field="paymentMethods" listType="pickUpList" valueLabelField="label" dualListModel="#{providerBean.paymentMethodsModel}" newLine="true"/>
+                  
                     <p:fieldset legend="#{messages['provider.bankCoordinates.title']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" newLine="true" />
 
