@@ -919,4 +919,25 @@
         <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
     </changeSet>
     
+    <changeSet id="#2879_20171002" author="AndriusKarpavicius"> 
+        <modifyDataType tableName="account_entity" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="account_entity" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="account_entity" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="com_sender_config" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="com_sender_config" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="com_sender_config" columnName="address_3" newDataType="varchar(255)"/>           
+        <modifyDataType tableName="crm_provider" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="crm_provider" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="crm_provider" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="crm_provider_contact" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="crm_provider_contact" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="crm_provider_contact" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="crm_seller" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="crm_seller" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="crm_seller" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="ord_order_item" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="ord_order_item" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="ord_order_item" columnName="address_3" newDataType="varchar(255)"/>  
+    </changeSet>
+      
 </databaseChangeLog> 
