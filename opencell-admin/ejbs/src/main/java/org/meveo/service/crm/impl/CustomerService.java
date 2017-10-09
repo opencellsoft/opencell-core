@@ -107,7 +107,7 @@ public class CustomerService extends AccountService<Customer> {
 		}
 		
 		boolean ascending = true;
-		if (paging != null && paging.sortOrder.name() != null) {
+		if (paging != null && paging.sortOrder != null && paging.sortOrder.name() != null) {
 			ascending = SortOrder.ASCENDING.name().equals(paging.sortOrder.name());
 			qb.addOrderCriterion("UPPER("+paging.getSortBy()+")", ascending);
 		}
