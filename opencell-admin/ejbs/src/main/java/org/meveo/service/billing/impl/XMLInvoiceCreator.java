@@ -247,7 +247,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return xml file
      * @throws BusinessException business exception
      */
-    private File createFile(Document doc, Invoice invoice) throws BusinessException {
+    public File createFile(Document doc, Invoice invoice) throws BusinessException {
         try {
             Transformer trans = transfac.newTransformer();
             // trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
