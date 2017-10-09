@@ -835,6 +835,7 @@ public class InvoiceApi extends BaseApi {
                 subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
                 subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
                 subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+                subCategoryInvoiceAgregateDto.setUserAccountCode(invoiceAgregate.getUserAccount() == null ? null : invoiceAgregate.getUserAccount().getCode());
 
                 categoryInvoiceAgregateDto.getListSubCategoryInvoiceAgregateDto().add(subCategoryInvoiceAgregateDto);
 
@@ -852,6 +853,7 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
                     subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
                     subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
+                    subCategoryInvoiceAgregateDto.setUserAccountCode(invoiceAgregate.getUserAccount() == null ? null : invoiceAgregate.getUserAccount().getCode());
 
                     if (includeTransactions) {
 
@@ -875,7 +877,7 @@ public class InvoiceApi extends BaseApi {
                 // subCategoryInvoiceAgregateDto.setAmountWithoutTax(invoiceAgregate.getAmountWithoutTax());
                 // subCategoryInvoiceAgregateDto.setAmountTax(invoiceAgregate.getAmountTax());
                 // subCategoryInvoiceAgregateDto.setAmountWithTax(invoiceAgregate.getAmountWithTax());
-                //
+                // subCategoryInvoiceAgregateDto.setUserAccountCode(invoiceAgregate.getUserAccount() == null ? null : invoiceAgregate.getUserAccount().getCode());
                 // CategoryInvoiceAgregateDto categoryInvoiceAgregateDto = null;
                 // if (invoiceDto.getCategoryInvoiceAgregates().size() > 0) {
                 // categoryInvoiceAgregateDto = invoiceDto.getCategoryInvoiceAgregates().get(0);
