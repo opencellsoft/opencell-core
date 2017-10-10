@@ -32,6 +32,7 @@ public class ServiceConfigurationDto {
 	
 	private boolean mandatory;
 	private boolean instantiatedFromBSM;
+	private boolean match;
 
 	public String getCode() {
 		return code;
@@ -76,6 +77,14 @@ public class ServiceConfigurationDto {
 
 	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
 		this.instantiatedFromBSM = instantiatedFromBSM;
+	}
+
+	public boolean isMatch() {
+		return match;
+	}
+
+	public void setMatch(boolean match) {
+		this.match = match;
 	}
 
 }

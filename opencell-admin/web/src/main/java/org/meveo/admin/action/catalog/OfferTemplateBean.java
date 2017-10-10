@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -370,12 +371,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					entity.getValidity() != null ? entity.getValidity().getTo() : null, entity.getDescriptionI18n(), entity.getLongDescription(), entity.getLongDescriptionI18n());
 
 			// populate service custom fields
-			for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
-				ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-				if (serviceTemplate.isSelected()) {
-					for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
-						ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
+			for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
+				ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
+				for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
+					ServiceTemplate serviceTemplate = ost.getServiceTemplate();
+					if (serviceTemplate.isSelected()) {
 						String serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getCode();
+						if (serviceTemplate.isInstantiatedFromBSM()) {
+							serviceTemplateCode = newOfferTemplate.getId() + "_" + newServiceTemplate.getId() + "_" + serviceTemplate.getCode();
+						}
 						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
 							Map<String, List<CustomFieldValue>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
 									.getValuesByCode();
@@ -765,12 +769,17 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		if (businessServiceModels != null && !businessServiceModels.isEmpty()) {
 			for (BusinessServiceModel bsm : businessServiceModels) {
 				OfferServiceTemplate ost = new OfferServiceTemplate();
-				ost.setServiceTemplate(bsm.getServiceTemplate());
+				ServiceTemplate stSource = bsm.getServiceTemplate();
+				ServiceTemplate stTarget = new ServiceTemplate();
+				stTarget.setCode(stSource.getCode());
+				stTarget.setDescription(stSource.getDescription());
+				stTarget.clearUuid();
+				stTarget.clearCfValues();
+				stTarget.setInstantiatedFromBSM(true);
+				
+				ost.setServiceTemplate(stTarget);
 				ost.setOfferTemplate(entity);
-				if (offerServiceTemplates.contains(ost)) {
-					ost.getServiceTemplate().setInstantiatedFromBSM(true);
-				}
-
+				
 				offerServiceTemplates.add(ost);
 			}
 		}

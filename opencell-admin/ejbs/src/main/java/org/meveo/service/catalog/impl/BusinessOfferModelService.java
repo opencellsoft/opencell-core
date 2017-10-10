@@ -314,6 +314,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
 			BusinessOfferModel businessOfferModel) throws BusinessException {
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
+		// we need this to check in case of non-bsm, non-existing service template
 		List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>(bomOffer.getOfferServiceTemplates());
 
         if (offerServiceTemplates == null || offerServiceTemplates.isEmpty() || serviceCodes == null || serviceCodes.isEmpty()) {
@@ -332,30 +333,41 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					serviceFound = true;
 					break;
 				} else {
-					ServiceTemplate newServiceTemplate = serviceTemplateService.findByCode(serviceCode);
-					if (newServiceTemplate != null) {
-						tempOfferServiceTemplate = new OfferServiceTemplate();
-						tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
-						tempOfferServiceTemplate.setServiceTemplate(newServiceTemplate);
+					ServiceTemplate stSource = serviceTemplateService.findByCode(serviceCode);
+					if (stSource != null) {
+						// check if exists in bsm or is from offer entity 
+						// (meaning not from bsm = non transient)
+						BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, stSource);
+						if (bsm != null) {
+							tempOfferServiceTemplate = new OfferServiceTemplate();
+							tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
+							tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
+							
+							ServiceTemplate stTarget = new ServiceTemplate();
+							stTarget.setCode(stSource.getCode());
+							stTarget.setDescription(stSource.getDescription());
+							stTarget.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
+							stTarget.setBusinessServiceModel(bsm);
+							
+							tempOfferServiceTemplate.setServiceTemplate(stTarget);
+							offerServiceTemplates.add(tempOfferServiceTemplate);
+							serviceFound = true;
+							break;
+						}
 					}
 				}
 			}
 
 			if (!serviceFound) {
-				// check if exists in bsm
-				if (tempOfferServiceTemplate != null && findBsmFromBom(businessOfferModel, tempOfferServiceTemplate.getServiceTemplate()) != null) {
-					offerServiceTemplates.add(tempOfferServiceTemplate);
-					// find transient duplicate and remove
-					findNonTransientDuplicateAndRemove(offerServiceTemplates, tempOfferServiceTemplate.getServiceTemplate());
-				} else {
-					throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
-				}
+				// service is not defined in offer
+				throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
 			}
         }
 
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
         // duplicate the services
+        // note that ost now contains st with null id from bsm
         for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(offerServiceTemplate.getServiceTemplate().getCode());
 
@@ -363,7 +375,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
             for (ServiceConfigurationDto tempServiceCodeDto : serviceCodes) {
                 String serviceCode = tempServiceCodeDto.getCode();
-                if (serviceCode.equals(serviceTemplate.getCode())) {
+                if (serviceCode.equals(serviceTemplate.getCode()) && !tempServiceCodeDto.isMatch()) {
+                	tempServiceCodeDto.setMatch(true);
                     serviceConfigurationDto = tempServiceCodeDto;
                     serviceFound = true;
                     break;

@@ -1,12 +1,8 @@
 package org.meveo.api.dto.catalog;
 
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -23,9 +19,7 @@ public class BSMConfigurationDto {
 	/**
 	 * We used this to configure the custom fields for BSM services.
 	 */
-	@XmlElementWrapper(name = "services")
-	@XmlElement(name = "service")
-	private List<ServiceConfigurationDto> services;
+	private ServiceConfigurationDto serviceConfiguration;
 
 	public String getCode() {
 		return code;
@@ -35,12 +29,12 @@ public class BSMConfigurationDto {
 		this.code = code;
 	}
 
-	public List<ServiceConfigurationDto> getServices() {
-		return services;
+	public ServiceConfigurationDto getServiceConfiguration() {
+		return serviceConfiguration;
 	}
 
-	public void setServices(List<ServiceConfigurationDto> services) {
-		this.services = services;
+	public void setServiceConfiguration(ServiceConfigurationDto serviceConfiguration) {
+		this.serviceConfiguration = serviceConfiguration;
 	}
 
 }

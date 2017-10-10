@@ -98,6 +98,32 @@ public class BusinessOfferApi extends BaseApi {
 					}
 				}
 			}
+			
+			// populate bsm service custom fields
+			if (serviceConfigurationDtoFromBSM != null && !serviceConfigurationDtoFromBSM.isEmpty()) {
+				for (ServiceConfigurationDto serviceCodeDto : serviceConfigurationDtoFromBSM) {
+					String serviceTemplateCode = ost.getOfferTemplate().getId() + "_" + serviceCodeDto.getCode();
+					if (serviceTemplate.isInstantiatedFromBSM()) {
+						serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getId() + "_" + serviceTemplate.getCode();
+					}
+					if (serviceTemplateCode.equals(serviceTemplate.getCode())) {
+						if (serviceCodeDto.getCustomFields() != null) {
+							try {
+								CustomFieldsDto cfsDto = new CustomFieldsDto();
+								cfsDto.setCustomField(serviceCodeDto.getCustomFields());
+								populateCustomFields(cfsDto, serviceTemplate, true);
+							} catch (MissingParameterException e) {
+								log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+								throw e;
+							} catch (Exception e) {
+								log.error("Failed to associate custom field instance to an entity", e);
+								throw e;
+							}
+							break;
+						}
+					}
+				}
+			}
 		}
 		
 		// populate product custom fields
@@ -145,7 +171,7 @@ public class BusinessOfferApi extends BaseApi {
 		return newOfferTemplate.getId();
 	}
 	
-	private List<ServiceConfigurationDto> getServiceConfiguration(List<BSMConfigurationDto> bsmsConfig) throws EntityDoesNotExistsException {
+	private List<ServiceConfigurationDto> getServiceConfiguration(List<BSMConfigurationDto> bsmsConfig) throws MeveoApiException {
 		List<ServiceConfigurationDto> result = new ArrayList<>();
 
 		if (bsmsConfig != null && !bsmsConfig.isEmpty()) {
@@ -155,24 +181,12 @@ public class BusinessOfferApi extends BaseApi {
 					throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmConfig.getCode());
 				}
 
-				boolean found = false;
-				if (bsmConfig.getServices() != null && !bsmConfig.getServices().isEmpty()) {
-					for (ServiceConfigurationDto serviceConfigurationDto : bsmConfig.getServices()) {
-						if (bsm.getServiceTemplate().getCode().equals(serviceConfigurationDto.getCode())) {
-							result.add(serviceConfigurationDto);
-							found = true;
-							break;
-						}
-					}
+				if (bsm.getServiceTemplate().getCode().equals(bsmConfig.getServiceConfiguration().getCode())) {
+					throw new MeveoApiException("Service template with code=" + bsmConfig.getServiceConfiguration().getCode() + " is not linked to BSM with code="
+							+ bsm.getServiceTemplate().getCode());
 				}
 
-				if (!found) {
-					// add service template from BSM
-					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
-					serviceConfigurationDto.setCode(bsm.getServiceTemplate().getCode());
-					serviceConfigurationDto.setDescription(bsm.getServiceTemplate().getDescription());
-					result.add(serviceConfigurationDto);
-				}
+				result.add(bsmConfig.getServiceConfiguration());
 			}
 		}
 
