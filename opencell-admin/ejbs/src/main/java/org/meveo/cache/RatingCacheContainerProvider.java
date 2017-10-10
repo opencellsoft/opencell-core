@@ -20,6 +20,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.model.CounterValueChangeInfo;
@@ -121,7 +122,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         log.debug("Start to populate price plan cache");
 
-        pricePlanCache.startBatch();
         pricePlanCache.clear();
 
         String lastEventCode = null;
@@ -175,8 +175,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
             Collections.sort(chargePriceListSameEventCode);
             pricePlanCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastEventCode, chargePriceListSameEventCode);
         }
-
-        pricePlanCache.endBatch(true);
 
         log.info("Price plan cache populated with {} price plans", activePricePlans.size());
     }
@@ -232,9 +230,11 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
             preloadCache(pricePlan.getValidityCalendar());
         }
 
-        List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-        if (chargePriceList == null) {
-            chargePriceList = new ArrayList<PricePlanMatrix>();
+        List<PricePlanMatrix> chargePriceListOld = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+
+        List<PricePlanMatrix> chargePriceList = new ArrayList<PricePlanMatrix>();
+        if (chargePriceListOld != null) {
+            chargePriceList.addAll(chargePriceListOld);
         }
 
         chargePriceList.add(pricePlan);
@@ -254,9 +254,10 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         log.trace("Removing pricePlan {} from priceplan cache under key {}", pricePlan.getId(), cacheKey);
 
-        List<PricePlanMatrix> chargePriceList = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        List<PricePlanMatrix> chargePriceListOld = pricePlanCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        if (chargePriceList != null && !chargePriceList.isEmpty()) {
+        if (chargePriceListOld != null && !chargePriceListOld.isEmpty()) {
+            List<PricePlanMatrix> chargePriceList = new ArrayList<>(chargePriceListOld);
             boolean removed = chargePriceList.remove(pricePlan);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list
@@ -291,10 +292,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     private void populateUsageChargeCache() {
         log.debug("Loading usage charge cache");
 
-        usageChargeTemplateCache.startBatch();
-        usageChargeInstanceCache.startBatch();
-        counterCache.startBatch();
-
         usageChargeTemplateCache.clear();
         usageChargeInstanceCache.clear();
         counterCache.clear();
@@ -306,10 +303,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
                 updateUsageChargeInstanceInCache(usageChargeInstance);
             }
         }
-
-        usageChargeTemplateCache.endBatch(true);
-        usageChargeInstanceCache.endBatch(true);
-        counterCache.endBatch(true);
 
         log.info("Usage charge cache populated with {} usage charge instances", usageChargeInstances.size());
     }
@@ -342,8 +335,12 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         boolean cachedSubscriptionContainsCharge = false;
 
         CachedUsageChargeInstance cachedCharge = null;
-        List<CachedUsageChargeInstance> cachedSubscriptionCharges = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
-        if (cachedSubscriptionCharges != null) {
+        List<CachedUsageChargeInstance> cachedSubscriptionChargesOld = usageChargeInstanceCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(subscriptionId);
+
+        List<CachedUsageChargeInstance> cachedSubscriptionCharges = null;
+        if (cachedSubscriptionChargesOld != null) {
+            cachedSubscriptionCharges = new ArrayList<>(cachedSubscriptionChargesOld);
+
             for (CachedUsageChargeInstance charge : cachedSubscriptionCharges) {
                 if (charge.getId() == usageChargeInstance.getId()) {
                     cachedCharge = charge;
@@ -617,15 +614,24 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         log.debug("Adding counter period to the counter cache counter: {}", counterPeriod);
 
-        CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterPeriod.getCounterInstance().getId());
-        if (cachedCounterInstance == null) {
-            cachedCounterInstance = new CachedCounterInstance(counterPeriod.getCounterInstance());
-        }
-        CachedCounterPeriod cachedCounterPeriod = cachedCounterInstance.addCounterPeriod(counterPeriod);
+        BiFunction<? super Long, ? super CachedCounterInstance, ? extends CachedCounterInstance> remappingFunction = (counterId, cachedCounterInstance) -> {
 
-        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
+            // Add a new counter instance
+            if (cachedCounterInstance == null) {
+                return new CachedCounterInstance(counterPeriod.getCounterInstance());
 
-        return cachedCounterPeriod;
+                // Add period to existing cached counter
+            } else {
+                CachedCounterInstance newCachedCounterInstance = SerializationUtils.clone(cachedCounterInstance);
+                newCachedCounterInstance.addCounterPeriod(counterPeriod);
+                return newCachedCounterInstance;
+            }
+        };
+
+        CachedCounterInstance cachedCounterInstance = counterCache.compute(counterPeriod.getCounterInstance().getId(), remappingFunction);
+
+        return cachedCounterInstance.getCounterPeriod(counterPeriod.getId());
+
     }
 
     /**
@@ -656,7 +662,6 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
 
         CachedCounterInstance cachedCounterInstance = counterCache.get(counterInstanceId);
         if (cachedCounterInstance == null) {
-            log.error("AKK cached counter instance not found {}", counterInstanceId);
             return null;
         }
 
@@ -664,72 +669,55 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Deduce current counterPeriod's value by a given amount. If given amount exceeds current value, only partial amount will be deduced
+     * Deduce current counterPeriod's value by a given amount. If given amount exceeds current value, only partial amount will be deduced. If ammount is negative, counter value
+     * will be incremented
      * 
      * @param counterInstanceId Counter instance id to update
      * @param counterPeriodId Counter period id to update
-     * @param deduceBy Amount to deduce by
-     * @return Previous, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
+     * @param deduceBy Amount to deduce by or to increment by if negative value
+     * @return Previous, the actual deduced or incremented (negative) value and new counter value. or NULL if value is not tracked (initial counter value is not set)
      */
     public CounterValueChangeInfo deduceCounterValue(Long counterInstanceId, Long counterPeriodId, BigDecimal deduceBy) {
 
-        CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterInstanceId);
-        CachedCounterPeriod counterPeriodToUpdate = cachedCounterInstance.getCounterPeriod(counterPeriodId);
-
-        BigDecimal previousValue = null;
-        BigDecimal deducedQuantity = null;
+        CachedCounterInstance cachedCounterInstanceOld = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterInstanceId);
+        CachedCounterPeriod counterPeriod = cachedCounterInstanceOld.getCounterPeriod(counterPeriodId);
 
         // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update cache
-        if (counterPeriodToUpdate.getLevel() == null) {
+        if (counterPeriod.getLevel() == null) {
             return null;
 
             // If previous value is not Zero and deduction is not negative (really its an addition)
-        } else if (counterPeriodToUpdate.getValue().compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
+        } else if (counterPeriod.getValue().compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
             return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
-        } else if (counterPeriodToUpdate.getValue().compareTo(deduceBy) < 0) {
-            previousValue = counterPeriodToUpdate.getValue();
-            deducedQuantity = counterPeriodToUpdate.getValue();
-            counterPeriodToUpdate.setValue(BigDecimal.ZERO);
-
         } else {
-            previousValue = counterPeriodToUpdate.getValue();
-            deducedQuantity = deduceBy;
-            counterPeriodToUpdate.setValue(counterPeriodToUpdate.getValue().subtract(deduceBy));
+
+            BigDecimal previousValue;
+            BigDecimal deducedQuantity;
+            BigDecimal newValue;
+
+            if (counterPeriod.getValue().compareTo(deduceBy) < 0) {
+
+                previousValue = counterPeriod.getValue();
+                deducedQuantity = counterPeriod.getValue();
+                newValue = BigDecimal.ZERO;
+
+            } else {
+                previousValue = counterPeriod.getValue();
+                deducedQuantity = deduceBy;
+                newValue = previousValue.subtract(deduceBy);
+            }
+
+            CachedCounterInstance newCachedCounterInstance = SerializationUtils.clone(cachedCounterInstanceOld);
+            CachedCounterPeriod newCounterPeriod = newCachedCounterInstance.getCounterPeriod(counterPeriodId);
+
+            newCounterPeriod.setValue(newValue);
+
+            counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(counterInstanceId, newCachedCounterInstance);
+
+            log.debug("Deduced cached {}/{} counter period from {} by {} to a new value {}", counterInstanceId, counterPeriodId, previousValue, deducedQuantity, newValue);
+
+            return new CounterValueChangeInfo(previousValue, deducedQuantity, newValue);
         }
-
-        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
-
-        log.debug("Deduced cached {}/{} counter period by {} to a new value {}", counterInstanceId, counterPeriodId, deducedQuantity, counterPeriodToUpdate.getValue());
-
-        return new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriodToUpdate.getValue());
-    }
-
-    /**
-     * Increment current counterPeriod's value by a given amount.
-     * 
-     * @param counterInstanceId Counter instance id to update
-     * @param counterPeriodId Counter period id to update
-     * @param incrementBy Amount to increment by
-     * @return The new value, or NULL if value is not tracked (initial value is not set)
-     */
-    public BigDecimal incrementCounterValue(Long counterInstanceId, Long counterPeriodId, BigDecimal incrementBy) {
-
-        CachedCounterInstance cachedCounterInstance = counterCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(counterInstanceId);
-        CachedCounterPeriod counterPeriodToUpdate = cachedCounterInstance.getCounterPeriod(counterPeriodId);
-
-        // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update cache
-        if (counterPeriodToUpdate.getLevel() == null) {
-            return null;
-
-        } else {
-            counterPeriodToUpdate.setValue(counterPeriodToUpdate.getValue().add(incrementBy));
-        }
-
-        counterCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cachedCounterInstance.getId(), cachedCounterInstance);
-
-        log.debug("Incremented cached {}/{} counter period by {} to a new value {}", counterInstanceId, counterPeriodId, incrementBy, counterPeriodToUpdate.getValue());
-
-        return counterPeriodToUpdate.getValue();
     }
 }

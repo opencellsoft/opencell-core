@@ -304,9 +304,6 @@ public class UsageRatingService {
                 UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(cachedCharge.getId());
                 counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(), cachedCharge.getSubscriptionDate(), usageChargeInstance);
                 cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(cachedCharge.getCounterInstanceId(), counterPeriod.getId());
-                log.error("AKK is correspond to period in period cache instantiation {} {}", counterPeriod.isCorrespondsToPeriod(edr.getEventDate()),
-                    cachedCounterPeriod.isCorrespondsToPeriod(edr.getEventDate()));
-
             }
         }
 
@@ -334,11 +331,9 @@ public class UsageRatingService {
 
                 // Not everything was deduced
                 if (deducedQuantity.compareTo(deduceByQuantity) < 0) {
-                    log.error("AKK not everything was deduced {} {}", deducedQuantity, deduceByQuantity);
                     deducedQuantityInEDRUnit = chargeTemplate.getInEDRUnit(deducedQuantity);
                     // Everything was deduced
                 } else {
-                    log.error("AKK everything was deduced {} {}", deducedQuantity, deduceByQuantity);
                     deducedQuantityInEDRUnit = edr.getQuantity();
                 }
                 if (reservation != null) {
@@ -620,6 +615,7 @@ public class UsageRatingService {
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, isVirtual);
                 walletOperations.add(walletOperation);
+                
                 if (edrIsRated) {
                     edr.setStatus(EDRStatusEnum.RATED);
                     break;

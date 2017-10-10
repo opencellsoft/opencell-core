@@ -1,7 +1,6 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -19,7 +18,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.inject.Inject;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.SerializationUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.model.ICustomFieldEntity;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
  */
 @Startup
 @Singleton
+@Lock(LockType.READ)
 public class CustomFieldsCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 180156064688145292L;
@@ -95,7 +95,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         // Start to populate custom field value caching time and appliesTo cache
         log.debug("Start to populate custom field value caching time and appliesTo cache");
 
-        cftsByAppliesTo.startBatch();
         cftsByAppliesTo.clear();
 
         String lastAppliesTo = null;
@@ -139,8 +138,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(lastAppliesTo, cftsSameAppliesTo);
         }
 
-        cftsByAppliesTo.endBatch(true);
-
         log.info("CFT cache populated with {} values", cfts.size());
 
     }
@@ -153,7 +150,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
         // Start to populate custom entity template cache
         log.debug("Start to populate custom entity template cache");
 
-        cetsByCode.startBatch();
         cetsByCode.clear();
 
         // Cache custom entity templates sorted by a cet.name
@@ -164,7 +160,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cet.getCode(), cet);
         }
 
-        cetsByCode.endBatch(true);
         log.info("Custom entity template cache populated with {} values.", allCets.size());
     }
 
@@ -211,9 +206,10 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         log.trace("Adding/updating custom field template {} for {} to custom field template cache", cft.getCode(), cacheKeyByAppliesTo);
 
-        Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
-        if (cfts == null) {
-            cfts = new TreeMap<String, CustomFieldTemplate>();
+        Map<String, CustomFieldTemplate> cftsOld = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
+        Map<String, CustomFieldTemplate> cfts = new TreeMap<String, CustomFieldTemplate>();
+        if (cftsOld != null) {
+            cfts.putAll(cftsOld);
         }
 
         // Load calendar for lazy loading
@@ -234,11 +230,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
             cft.getListValues().values().toArray(new String[] {});
         }
 
-        try {
-            cft = (CustomFieldTemplate) BeanUtils.cloneBean(cft);
-        } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-            log.error("Failed to clone a CFT entity {} for storage in CFT cache", cft.getCode());
-        }
+        cft = SerializationUtils.clone(cft);
 
         cfts.put(cft.getCode(), cft);
         cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
@@ -255,10 +247,19 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
 
         log.trace("Removing custom field template {} for {} from custom field template cache", cft.getCode(), cacheKeyByAppliesTo);
 
-        Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
-        if (cfts != null && cfts.containsKey(cft.getCode())) {
+        Map<String, CustomFieldTemplate> cftsOld = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKeyByAppliesTo);
+        if (cftsOld != null && cftsOld.containsKey(cft.getCode())) {
+
+            Map<String, CustomFieldTemplate> cfts = new TreeMap<String, CustomFieldTemplate>(cftsOld);
             cfts.remove(cft.getCode());
-            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
+
+            // Remove cached value altogether if no value are left in the map
+            if (cfts.isEmpty()) {
+                cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKeyByAppliesTo);
+            } else {
+                cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKeyByAppliesTo, cfts);
+            }
+
             log.trace("Removed custom field template {} for {} from custom field template cache", cft.getCode(), cacheKeyByAppliesTo);
         }
     }

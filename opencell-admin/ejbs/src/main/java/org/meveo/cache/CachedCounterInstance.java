@@ -88,7 +88,7 @@ public class CachedCounterInstance implements Serializable {
         }
 
         for (CachedCounterPeriod period : counterPeriods) {
-            if(period.isCorrespondsToPeriod(date)) {
+            if (period.isCorrespondsToPeriod(date)) {
                 return period;
             }
         }
@@ -112,7 +112,7 @@ public class CachedCounterInstance implements Serializable {
     }
 
     protected CachedCounterPeriod addCounterPeriod(CounterPeriod counterPeriod) {
-        CachedCounterPeriod periodCache = new CachedCounterPeriod(counterPeriod, this);
+        CachedCounterPeriod periodCache = new CachedCounterPeriod(counterPeriod);
         boolean added = false;
         for (int i = 0; i < counterPeriods.size(); i++) {
             if (counterPeriods.get(i).getStartDate().after(periodCache.getStartDate())) {

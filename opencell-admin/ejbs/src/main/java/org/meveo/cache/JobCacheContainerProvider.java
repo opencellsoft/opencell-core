@@ -119,9 +119,11 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     @Lock(LockType.WRITE)
     public void markJobAsRunning(Long jobInstanceId) {
 
-        List<String> nodes = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
-        if (nodes == null) {
-            nodes = new ArrayList<>();
+        List<String> nodesOld = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
+
+        List<String> nodes = new ArrayList<>();
+        if (nodesOld != null) {
+            nodes.addAll(nodesOld);
         }
         String currentNode = EjbUtils.getCurrentClusterNode();
         if (EjbUtils.isRunningInClusterMode()) {
@@ -144,9 +146,12 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     public void markJobAsNotRunning(Long jobInstanceId) {
 
         if (EjbUtils.isRunningInClusterMode()) {
-            List<String> nodes = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
-            if (nodes != null && !nodes.isEmpty()) {
+            List<String> nodesOld = runningJobsCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(jobInstanceId);
+            if (nodesOld != null && !nodesOld.isEmpty()) {
                 String currentNode = EjbUtils.getCurrentClusterNode();
+
+                List<String> nodes = new ArrayList<>(nodesOld);
+
                 boolean removed = nodes.remove(currentNode);
                 if (removed) {
                     if (nodes.isEmpty()) {
