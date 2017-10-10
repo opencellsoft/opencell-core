@@ -462,12 +462,13 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         }
         if (counterPeriod.getCounterType() == CounterTypeEnum.USAGE) {
 
-            BigDecimal counterValue = ratingCacheContainerProvider.incrementCounterValue(counterPeriod.getCounterInstance().getId(), periodId, incrementBy);
+            CounterValueChangeInfo counterValueChangeInfo = ratingCacheContainerProvider.deduceCounterValue(counterPeriod.getCounterInstance().getId(), periodId,
+                incrementBy.negate());
             // Value is not tracked
-            if (counterValue == null) {
+            if (counterValueChangeInfo == null) {
                 return null;
             } else {
-                counterPeriod.setValue(counterValue);
+                counterPeriod.setValue(counterValueChangeInfo.getNewValue());
             }
 
         } else {

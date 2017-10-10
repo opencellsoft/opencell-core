@@ -19,8 +19,6 @@ public class CachedCounterPeriod implements Serializable {
     private Date endDate;
     private BigDecimal value;
     private BigDecimal level;
-    private boolean dbDirty;
-    private CachedCounterInstance counterInstance;
     private Map<String, BigDecimal> notificationLevels;
 
     public Long getId() {
@@ -47,25 +45,26 @@ public class CachedCounterPeriod implements Serializable {
         return level;
     }
 
-    public boolean isDbDirty() {
-        return dbDirty;
+    public void setLevel(BigDecimal level) {
+        this.level = level;
     }
 
-    public CachedCounterInstance getCounterInstance() {
-        return counterInstance;
+    public boolean isCorrespondsToPeriod(Date dateToCheck) {
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.error("AKK period match {} {} to {} {} {}", startDate, endDate, dateToCheck, !dateToCheck.before(startDate), !dateToCheck.after(endDate));
+        return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
     }
 
     public CachedCounterPeriod() {
 
     }
 
-    public CachedCounterPeriod(CounterPeriod counterPeriod, CachedCounterInstance counterInstance) {
+    public CachedCounterPeriod(CounterPeriod counterPeriod) {
         this.id = counterPeriod.getId();
         this.endDate = counterPeriod.getPeriodEndDate();
         this.level = counterPeriod.getLevel();
         this.startDate = counterPeriod.getPeriodStartDate();
         this.value = counterPeriod.getValue();
-        this.counterInstance = counterInstance;
         this.notificationLevels = counterPeriod.getNotificationLevelsAsMap();
     }
 
@@ -92,7 +91,7 @@ public class CachedCounterPeriod implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("CachedCounterPeriod [counterPeriodId=%s, startDate=%s, endDate=%s, value=%s, level=%s, dbDirty=%s, notificationLevels=%s]", id, startDate, endDate,
-            value, level, dbDirty, notificationLevels);
+        return String.format("CachedCounterPeriod [counterPeriodId=%s, startDate=%s, endDate=%s, value=%s, level=%s, notificationLevels=%s]", id, startDate, endDate, value, level,
+            notificationLevels);
     }
 }
