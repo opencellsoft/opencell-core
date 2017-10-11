@@ -933,19 +933,19 @@
         <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, concat('{', GROUP_CONCAT(concat('"',language_code,'":"',description,'"')),'}') as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
    
         <sql>update adm_title set description_i18n = null</sql>
-        <sql>update adm_title join tmp_desc_values on adm_title.code = tmp_desc_values.code set set description_i18n = desc_values_txt from tmp_desc_values where  tmp_desc_values.clazz='Title'</sql>
+        <sql>update adm_title join tmp_desc_values on adm_title.code = tmp_desc_values.code set description_i18n = desc_values_txt where  tmp_desc_values.clazz='Title'</sql>
         <sql>update billing_invoice_cat set description_i18n = null</sql>
-        <sql>update billing_invoice_cat join tmp_desc_values on billing_invoice_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='InvoiceCategory'</sql>
+        <sql>update billing_invoice_cat join tmp_desc_values on billing_invoice_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='InvoiceCategory'</sql>
         <sql>update billing_invoice_sub_cat set description_i18n = null</sql>
-        <sql>update billing_invoice_sub_cat join tmp_desc_values on billing_invoice_sub_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='InvoiceSubCategory'</sql>
+        <sql>update billing_invoice_sub_cat join tmp_desc_values on billing_invoice_sub_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='InvoiceSubCategory'</sql>
         <sql>update billing_tax set description_i18n = null</sql>
-        <sql>update billing_tax join tmp_desc_values on billing_tax.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='Tax'</sql>
+        <sql>update billing_tax join tmp_desc_values on billing_tax.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='Tax'</sql>
         <sql>update cat_price_plan_matrix set description_i18n = null</sql>
-        <sql>update cat_price_plan_matrix join tmp_desc_values on cat_price_plan_matrix.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='PricePlanMatrix'</sql>
+        <sql>update cat_price_plan_matrix join tmp_desc_values on cat_price_plan_matrix.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='PricePlanMatrix'</sql>
         <sql>update cat_charge_template set description_i18n = null</sql>
-        <sql>update cat_charge_template join tmp_desc_values on cat_charge_template.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz in ('OneShotChargeTemplate','ProductChargeTemplate','RecurringChargeTemplate','UsageChargeTemplate','ChargeTemplate')</sql>
+        <sql>update cat_charge_template join tmp_desc_values on cat_charge_template.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz in ('OneShotChargeTemplate','ProductChargeTemplate','RecurringChargeTemplate','UsageChargeTemplate','ChargeTemplate')</sql>
         <sql>update cat_offer_template set description_i18n = null</sql>
-        <sql>update cat_offer_template join tmp_desc_values on cat_offer_template.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz in ('OfferTemplate','ProductTemplate','BundleTemplate','ProductOffering')</sql>
+        <sql>update cat_offer_template join tmp_desc_values on cat_offer_template.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz in ('OfferTemplate','ProductTemplate','BundleTemplate','ProductOffering')</sql>
       
     </changeSet>
     
@@ -1044,7 +1044,7 @@
     </changeSet>    
     
     <changeSet id="#2824_20170929_migration_M" author="AndriusKarpavicius" dbms="mysql">    
-        <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id join billing_billing_run_id on billing_invoice.billing_run_id = billing_billing_run.id set xml_filename=concat((case when billing_run_id IS NOT NULL then billing_run_id else to_char(billing_invoice.invoice_date,'%d%m%Y_%k%%S') end) , '/' , (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where xml_invoice_generated=1</sql> 
+        <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id join billing_billing_run on billing_invoice.billing_run_id = billing_billing_run.id set xml_filename=concat((case when billing_run_id IS NOT NULL then billing_run_id else date_format(billing_invoice.invoice_date,'%d%m%Y_%k%%S') end) , '/' , (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where xml_invoice_generated=1</sql> 
     </changeSet>
     
     <changeSet id="#2827_20171002" author="anasseh">     
