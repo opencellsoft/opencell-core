@@ -131,7 +131,7 @@
 					field="periodUnit" required="true"
 					listValues="#{calendarBean.periodTypes}"
 					rendered="#{ calendarBean.edit}" />
-				<hftl:formField label="#{messages['calendar.periodUnit']}"
+				<hftl:formField id="periodUnit2" label="#{messages['calendar.periodUnit']}"
 					field="periodUnit" isMessage="true"
 					messagePrefix="calendar.periodUnit"
 					rendered="#{ not calendarBean.edit}" />
