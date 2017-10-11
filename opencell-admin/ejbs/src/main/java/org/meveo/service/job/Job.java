@@ -98,14 +98,13 @@ public abstract class Job {
             executionResult = new JobExecutionResultImpl();
         }
 
-        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
             log.debug("Starting Job {} of type {} with currentUser {}. Processors available {}, paralel procesors requested {}", jobInstance.getCode(),
                 jobInstance.getJobTemplate(), currentUser.toStringShort(), Runtime.getRuntime().availableProcessors(),
                 customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false));
 
-            try {
-                jobCacheContainerProvider.markJobAsRunning(jobInstance.getId());
+            try {                
                 execute(executionResult, jobInstance);
                 executionResult.close();
 
