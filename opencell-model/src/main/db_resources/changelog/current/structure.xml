@@ -830,8 +830,6 @@
 		<sql>CREATE INDEX cat_triggered_edr_index ON cat_triggered_edr(meveo_instance_id)</sql>
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_index ON cat_chrg_edr</sql>
 		<sql>CREATE INDEX cat_chrg_edr_index ON cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
-		<sql>DROP INDEX IF EXISTS billing_charge_instance_index ON billing_charge_instance</sql>
-		<sql>CREATE INDEX billing_charge_instance_index ON billing_charge_instance (invoicing_calendar_id, code)</sql>
 		<sql>DROP INDEX IF EXISTS billing_invoice_index ON billing_invoice</sql>
 		<sql>CREATE INDEX billing_invoice_index ON billing_invoice(invoice_id, invoice_type_id)</sql>
 		<sql>DROP INDEX IF EXISTS billing_wallet_operation_index ON billing_wallet_operation</sql>
