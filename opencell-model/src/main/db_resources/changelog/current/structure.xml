@@ -830,7 +830,7 @@
 		<sql>CREATE INDEX cat_serv_usage_wallet_template_index ON cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
 		<sql>DROP INDEX IF EXISTS cat_calendar_days_index ON cat_calendar_days</sql>
 		<sql>CREATE INDEX cat_calendar_days_index ON cat_calendar_days(calendar_id)</sql>
-		<sql>DROP INDEX IF EXISTS cat_triggered_edr_index ON cat_triggered_edr(</sql>
+		<sql>DROP INDEX IF EXISTS cat_triggered_edr_index ON cat_triggered_edr</sql>
 		<sql>CREATE INDEX cat_triggered_edr_index ON cat_triggered_edr(meveo_instance_id)</sql>
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_index ON cat_chrg_edr</sql>
 		<sql>CREATE INDEX cat_chrg_edr_index ON cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
