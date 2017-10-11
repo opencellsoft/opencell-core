@@ -17,10 +17,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BaseEntity;
 import org.meveo.model.EnableEntity;
+import org.meveo.model.ObservableEntity;
 
 @Entity
+@ObservableEntity
 @Table(name = "ar_payment_token")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "token_type")

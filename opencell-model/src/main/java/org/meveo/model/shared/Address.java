@@ -29,16 +29,16 @@ public class Address implements Serializable, Cloneable {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "address_1", length = 50)
-	@Size(max = 50)
+	@Column(name = "address_1", length = 255)
+	@Size(max = 255)
 	protected String address1;
 
-	@Column(name = "address_2", length = 50)
-	@Size(max = 50)
+	@Column(name = "address_2", length = 255)
+	@Size(max = 255)
 	protected String address2;
 
-	@Column(name = "address_3", length = 50)
-	@Size(max = 50)
+	@Column(name = "address_3", length = 255)
+	@Size(max = 255)
 	protected String address3;
 
 	@Column(name = "address_zipcode", length = 10)
