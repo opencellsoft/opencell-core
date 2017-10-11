@@ -931,13 +931,12 @@
     </changeSet>
     
     
-    <changeSet id="#2780_desc_migration_N1" author="AndriusKarpavicius" dbms="mysql">
+    <changeSet id="#2780_desc_migration_M1" author="AndriusKarpavicius" dbms="mysql">
 
         <sql>SET group_concat_max_len =300000</sql>
 
         <sql>delete from tmp_desc_values</sql>
-        <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, '{'.concat( GROUP_CONCAT('"'.concat(language_code).concat('":"').concat(description).concat('"')) ).concat('}') as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
-   
+        <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, concat('{', GROUP_CONCAT(concat('"',language_code,'":"',description,'"')),'}') as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
    
         <sql>update adm_title set description_i18n = null</sql>
         <sql>update adm_title join tmp_desc_values on adm_title.code = tmp_desc_values.code set set description_i18n = desc_values_txt from tmp_desc_values where  tmp_desc_values.clazz='Title'</sql>
