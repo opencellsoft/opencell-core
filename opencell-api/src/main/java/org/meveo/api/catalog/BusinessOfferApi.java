@@ -181,11 +181,12 @@ public class BusinessOfferApi extends BaseApi {
 					throw new EntityDoesNotExistsException(BusinessServiceModel.class, bsmConfig.getCode());
 				}
 
-				if (bsm.getServiceTemplate().getCode().equals(bsmConfig.getServiceConfiguration().getCode())) {
+				if (!bsm.getServiceTemplate().getCode().equals(bsmConfig.getServiceConfiguration().getCode())) {
 					throw new MeveoApiException("Service template with code=" + bsmConfig.getServiceConfiguration().getCode() + " is not linked to BSM with code="
-							+ bsm.getServiceTemplate().getCode());
+							+ bsm.getCode());
 				}
-
+				bsmConfig.getServiceConfiguration().setInstantiatedFromBSM(true);
+				
 				result.add(bsmConfig.getServiceConfiguration());
 			}
 		}
