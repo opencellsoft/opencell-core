@@ -654,7 +654,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                     if (!sourceFile.exists()) {
 
-                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "/default/invoice";
+                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
                         sourceFile = new File(sourcePath);
 
                         if (!sourceFile.exists()) {
