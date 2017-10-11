@@ -1,6 +1,5 @@
 package org.meveo.api.dto;
 
-import javax.validation.constraints.Pattern;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -18,7 +17,7 @@ public abstract class BusinessDto extends AuditableDto {
 
 	private static final long serialVersionUID = 4451119256601996946L;
 
-	@Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
+	// @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
 	@XmlAttribute(required = true)
 	protected String code;
 

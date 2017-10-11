@@ -80,13 +80,12 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     private void populateNotificationCache() {
         log.debug("Start to populate notification cache");
 
-        eventNotificationCache.startBatch();
         eventNotificationCache.clear();
+
         List<Notification> activeNotifications = notificationService.getNotificationsForCache();
         for (Notification notif : activeNotifications) {
             addNotificationToCache(notif);
         }
-        eventNotificationCache.endBatch(true);
 
         log.info("Notification cache populated with {} notifications", activeNotifications.size());
     }
@@ -109,9 +108,11 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         try {
 
-            List<Notification> notifications = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-            if (notifications == null) {
-                notifications = new ArrayList<Notification>();
+            List<Notification> notificationsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+
+            List<Notification> notifications = new ArrayList<Notification>();
+            if (notificationsOld != null) {
+                notifications.addAll(notificationsOld);
             }
             notifications.add(notif);
             eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, notifications);
@@ -132,9 +133,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
         log.trace("Removing notification {} from notification cache under key {}", notif.getId(), cacheKey);
 
-        List<Notification> notifs = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        List<Notification> notifsOld = eventNotificationCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        if (notifs != null && !notifs.isEmpty()) {
+        if (notifsOld != null && !notifsOld.isEmpty()) {
+            List<Notification> notifs = new ArrayList<>(notifsOld);
             boolean removed = notifs.remove(notif);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list
@@ -191,7 +193,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
             entityClass = entityClass.getSuperclass();
         }
 
-		Collections.sort(notifications, (o1, o2) -> o1.getPriority() - o2.getPriority());
+        Collections.sort(notifications, (o1, o2) -> o1.getPriority() - o2.getPriority());
 
         return notifications;
     }

@@ -366,7 +366,7 @@ public class Invoice4_2Api extends BaseApi {
             BillingProcessTypesEnum.AUTOMATIC);
     }
 
-    private void updateBAtotalAmount(Long billingAccountId, BillingRun billingRun) {
+    private void updateBAtotalAmount(Long billingAccountId, BillingRun billingRun) throws BusinessException {
         billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun);
         log.debug("updateBillingAccountTotalAmounts ok");
     }

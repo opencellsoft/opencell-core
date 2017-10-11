@@ -14,11 +14,15 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<endPoint>http://localhost:8080/meveo</endPoint>
-		<meveoUrl>http://localhost:8080/meveo</meveoUrl>
-		<username>meveo.admin</username>
-		<password>meveo.admin</password>
-		<authorization>Basic bWV2ZW8uYWRtaW46bWV2ZW8uYWRtaW4=</authorization>
+		<endPoint>http://tests.i.opencellsoft.com/opencell</endPoint>
+		<opencell.url>http://tests.i.opencellsoft.com/opencell</opencell.url>
+		<opencell.url2>http://tests.i.opencellsoft.com/opencell</opencell.url2>
+		<adminUsername>opencell.admin</adminUsername>
+		<adminPassword>opencell.admin</adminPassword>
+		<superUsername>opencell.superadmin</superUsername>
+		<superPassword>opencell.superadmin</superPassword>
+		<provider>DEMO</provider>
+		<provider_description>Test</provider_description>
 	</properties>
 
 	<build>
@@ -26,18 +30,51 @@
 			<plugin>
 				<groupId>com.smartbear.soapui</groupId>
 				<artifactId>soapui-maven-plugin</artifactId>
-				<version>5.1.3</version>
+				<version>5.3.0</version>
 				<configuration>
-					<projectFile>${basedir}/api/soapui/Jax-Ws_NONREG.xml</projectFile>
+					<projectFile>${basedir}/api/soapui/Full-WS-CRUD-Test-Entities.xml</projectFile>
 					<outputFolder>${basedir}/target/surefire-reports/</outputFolder>
 					<junitReport>true</junitReport>
 					<exportwAll>true</exportwAll>
 					<printReport>true</printReport>
-					<testFailIgnore>false</testFailIgnore>
+					<testFailIgnore>true</testFailIgnore>
+					<soapuiProperties>
+						<property>
+							<name>opencell.url</name>
+							<value>${opencell.url}</value>
+						</property>
+                			</soapuiProperties>
 					<projectProperties>
-						<!-- <value>meveoUrl=${meveoUrl}</value> <value>username=${username}</value> <value>password=${password}</value> <value>authorization=${authorization}</value> -->
+						<value>opencell.url=${opencell.url}</value>
+						<value>opencell.url2=${opencell.url2}</value>
+						<value>adminUsername=${adminUsername}</value>
+						<value>adminPassword=${adminPassword}</value>
+						<value>superUsername=${superUsername}</value>
+						<value>superPassword=${superPassword}</value>
+						<value>provider=${provider}</value>
+						<value>provider_description=${provider_description}</value>
 					</projectProperties>
 				</configuration>
+				<dependencies>
+
+				<dependency>
+					<groupId>com.jgoodies</groupId>
+					<artifactId>forms</artifactId>
+					<version>1.0.7</version>
+				</dependency>
+				<dependency>
+					<groupId>com.smartbear.soapui</groupId>
+                			<artifactId>soapui</artifactId>
+               				<version>5.3.0</version>
+               				<exclusions>
+                  			 <exclusion>
+                    			 <groupId>javafx</groupId>
+                     			 <artifactId>jfxrt</artifactId>
+                   			 </exclusion>
+               				</exclusions>
+				</dependency>
+
+				</dependencies>
 			</plugin>
 		</plugins>
 	</build>

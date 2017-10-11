@@ -197,8 +197,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public File createXMLInvoice(Invoice invoice, boolean isVirtual) throws BusinessException {
-    	log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(),
-				invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
+        log.debug("Creating xml for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
 		String invoiceXmlScript = (String) customFieldInstanceService.getCFValue(appProvider,
 				"PROV_CUSTOM_INV_XML_SCRIPT_CODE");
@@ -235,7 +234,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws SAXException sax exception
      * @throws IOException IO exception
      */
-    public File createDocumentAndFile(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
+    private File createDocumentAndFile(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
 
         Document doc = createDocument(invoice, isVirtual);
         File file = createFile(doc, invoice);
@@ -268,11 +267,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             trans.transform(source, result);
 
+            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
+            
             return xmlFile;
+            
         } catch (TransformerException e) {
-            throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber()
-                    : invoice.getTemporaryInvoiceNumber(),
-                e);
+            throw new BusinessException("Failed to create xml file for invoice id=" + invoice.getId() + " number=" + invoice.getInvoiceNumberOrTemporaryNumber(), e);
         }
 
     }

@@ -86,33 +86,32 @@ public abstract class Job {
     /**
      * Execute job instance with results published to a given job execution result entity.
      * @param jobInstance Job instance to execute
-     * @param result Job execution results
+     * @param executionResult Job execution results
      * @throws BusinessException business exception
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void execute(JobInstance jobInstance, JobExecutionResultImpl result) throws BusinessException {
+    public void execute(JobInstance jobInstance, JobExecutionResultImpl executionResult) throws BusinessException {
 
-        if (result == null) {
-            result = new JobExecutionResultImpl();
-            result.setJobInstance(jobInstance);            
+        if (executionResult == null) {
+            executionResult = new JobExecutionResultImpl();
+            executionResult.setJobInstance(jobInstance);            
         }
 
-        JobRunningStatusEnum isRunning = jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+        JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
         if (isRunning == JobRunningStatusEnum.NOT_RUNNING || (isRunning == JobRunningStatusEnum.RUNNING_OTHER && !jobInstance.isLimitToSingleNode())) {
             log.debug("Starting Job {} of type {} with currentUser {}. Processors available {}, paralel procesors requested {}", jobInstance.getCode(),
                 jobInstance.getJobTemplate(), currentUser.toStringShort(), Runtime.getRuntime().availableProcessors(),
                 customFieldInstanceService.getCFValue(jobInstance, "nbRuns", false));
 
             try {
-                jobCacheContainerProvider.markJobAsRunning(jobInstance.getId());
-                execute(result, jobInstance);
-                result.close();
+                execute(executionResult, jobInstance);
+                executionResult.close();
 
                 log.trace("Job {} of type {} executed. Persisting job execution results", jobInstance.getCode(), jobInstance.getJobTemplate());
 
-                Boolean jobCompleted = jobExecutionService.persistResult(this, result, jobInstance);
+                Boolean jobCompleted = jobExecutionService.persistResult(this, executionResult, jobInstance);
                 log.debug("Job {} of type {} execution finished. Job completed {}", jobInstance.getCode(), jobInstance.getJobTemplate(), jobCompleted);
-                eventJobProcessed.fire(result);
+                eventJobProcessed.fire(executionResult);
 
                 if (jobCompleted != null) {
                     jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted);
@@ -127,6 +126,12 @@ public abstract class Job {
 
         } else {
             log.trace("Job {} of type {} execution will be skipped. Reason: isRunning={}", jobInstance.getCode(), jobInstance.getJobTemplate(), isRunning);
+
+            // Mark job a finished. Applies in cases where execution result was already saved to db - like when executing job from API
+            if (!executionResult.isTransient()) {
+                executionResult.close();
+                jobExecutionService.persistResult(this, executionResult, jobInstance);
+        }
         }
 
     }

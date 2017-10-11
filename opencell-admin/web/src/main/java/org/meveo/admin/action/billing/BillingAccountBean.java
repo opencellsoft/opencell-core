@@ -235,7 +235,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         log.info("generateInvoice billingAccountId:" + entity.getId());
         try {
             entity = billingAccountService.refreshOrRetrieve(entity);
-			Invoice invoice = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null,false, true, true, true);
+            Invoice invoice = invoiceService.generateInvoice(entity, new Date(), null, new Date(), null, null, false, true, true, true);
 
             messages.info(new BundleKey("messages", "generateInvoice.successful"), invoice.getInvoiceNumber());
 
@@ -244,49 +244,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
             messages.error(e.getMessage());
         }
         return getEditViewName();
-    }
-
-    // TODO: @Factory("getInvoices")
-    @Produces
-    @Named("getInvoices")
-    public List<Invoice> getInvoices() {
-        return entity != null ? entity.getInvoices() : null;
-    }
-
-    @ActionMethod
-    public void generatePDF(long invoiceId) throws BusinessException {
-
-        Invoice invoice = invoiceService.findById(invoiceId);
-        invoice = invoiceService.produceInvoicePdf(invoice);
-        byte[] invoicePdf = invoiceService.getInvoicePdf(invoice);
-
-        FacesContext context = FacesContext.getCurrentInstance();
-        String invoiceFilename = null;
-        BillingRun billingRun = invoice.getBillingRun();
-        invoiceFilename = (invoice.getInvoiceNumber() != null ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber()) + ".pdf";
-        if (billingRun != null && billingRun.getStatus() != BillingRunStatusEnum.VALIDATED) {
-            invoiceFilename = "unvalidated-invoice.pdf";
-        }
-
-        try {
-            HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
-            response.setContentType("application/pdf"); // fill in
-            response.setHeader("Content-disposition", "attachment; filename=" + invoiceFilename);
-
-            OutputStream os = response.getOutputStream();
-            os.write(invoicePdf); // fill in PDF with bytes
-            // contentType
-            os.flush();
-            os.close();
-            context.responseComplete();
-        } catch (Exception e) {
-            log.error("Failed to generate PDF for HTTP request ", e);
-        }
-    }
-
-    public boolean pdfExists(long invoiceId) {
-        Invoice invoice = invoiceService.findById(invoiceId);
-        return invoiceService.isInvoicePdfExist(invoice);
     }
 
     public String launchExceptionalInvoicing() {

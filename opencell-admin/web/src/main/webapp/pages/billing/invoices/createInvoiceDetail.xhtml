@@ -172,14 +172,13 @@
 					</p:fieldset>
 					<div style="clear: both"></div>
 <!-- detailed lines here -->
-						<p:fieldset legend="Detail"
+						<p:fieldset legend="#{messages['detailedInvoice.title']}"
 							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{creationInvoiceBean.detailed}">
 							<p:outputPanel id="detailedInvoicePanel">
 								<p:dataTable var="aSubCatInvAgregate" editable="true" resizableColumns="true"
 									editMode="cell"
 									value="#{creationInvoiceBean.subCategoryInvoiceAggregates}">
-									<f:facet name="header">#{messages['detailedInvoice.title']}</f:facet>
 									<p:columnGroup type="header">
 										<p:row>
 											<p:column style="width: 200px;"
@@ -272,14 +271,13 @@
 							</p:outputPanel>
 						</p:fieldset>
 <!-- aggregated lines here -->
-						<p:fieldset legend="Agregates"
+						<p:fieldset legend="#{messages['invoice.aggregates']}"
 							style="float: left; width: 95%; margin-top: 10px;"
 							rendered="#{!creationInvoiceBean.detailed}">
 							<p:outputPanel id="aggregatedInvoicePanel">
 								<p:dataTable style="margin-top: 10px;" var="entity"
 									editable="true" editMode="cell" resizableColumns="true"
 									value="#{creationInvoiceBean.categoryInvoiceAggregates}">
-									<f:facet name="header">#{messages['invoice.aggregates']}</f:facet>
 									<p:columnGroup type="header">
 										<p:row>
 											<p:column style="width: 200px;"

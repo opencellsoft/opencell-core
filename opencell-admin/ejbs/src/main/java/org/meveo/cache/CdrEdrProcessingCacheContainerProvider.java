@@ -86,13 +86,11 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         log.debug("Start to populate access cache");
 
         List<Access> activeAccesses = accessService.getAccessesForCache();
-        accessCache.startBatch();
         accessCache.clear();
 
         for (Access access : activeAccesses) {
             addAccessToCache(access);
         }
-        accessCache.endBatch(true);
 
         log.info("Access cache populated with {} accesses", activeAccesses.size());
     }
@@ -112,11 +110,14 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
 
         String cacheKey = access.getAccessUserId();
 
-        List<Access> accesses = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-        if (accesses == null) {
-            accesses = new ArrayList<Access>();
+        List<Access> accessesOld = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+
+        List<Access> accesses = new ArrayList<Access>();
+        if (accessesOld != null) {
+            accesses.addAll(accessesOld);
         }
         accesses.add(access);
+
         accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
 
     }
@@ -132,9 +133,10 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         log.trace("Removing access {} from access cache", access.getId());
 
         String cacheKey = access.getAccessUserId();
-        List<Access> accesses = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+        List<Access> accessesOld = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-        if (accesses != null && !accesses.isEmpty()) {
+        if (accessesOld != null && !accessesOld.isEmpty()) {
+            List<Access> accesses = new ArrayList<>(accessesOld);
             boolean removed = accesses.remove(access);
             if (removed) {
                 // Remove cached value altogether if no value are left in the list
@@ -184,7 +186,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
 
         log.debug("Start to populate EDR cache");
 
-        edrCache.startBatch();
         edrCache.clear();
 
         List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache();
@@ -192,7 +193,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         for (String edrCacheKey : edrCacheKeys) {
             edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edrCacheKey, 0);
         }
-        edrCache.endBatch(true);
 
         log.info("EDR cache populated with {} EDRs", edrCacheKeys.size());
     }
