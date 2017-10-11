@@ -7,12 +7,10 @@ import java.util.List;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.catalog.BusinessOfferApi;
 import org.meveo.api.catalog.CatalogApi;
 import org.meveo.api.catalog.OfferTemplateCategoryApi;
@@ -24,8 +22,6 @@ import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
-import org.meveo.api.exception.EntityDoesNotExistsException;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
@@ -154,14 +150,14 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-    public Response findProductOfferings(UriInfo info) {
+    public Response findProductOfferings(Date validFrom, Date validTo, UriInfo info) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("find productOfferings ... ");
 
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            List<ProductOffering> productOfferings = catalogApi.findProductOfferings(uriInfo, Category.createProto(uriInfo));
+            List<ProductOffering> productOfferings = catalogApi.findProductOfferings(validFrom, validTo, uriInfo, Category.createProto(uriInfo));
             responseBuilder = Response.ok().entity(productOfferings);
 
 //        } catch (MeveoApiException e) {

@@ -331,7 +331,7 @@ public class UsageRatingService implements Serializable {
             if (counterValueChangeInfo == null) {
                 deducedQuantityInEDRUnit = edr.getQuantity();
 
-            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) > 0) {
+            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) != 0) {
 
                 BigDecimal deducedQuantity = counterValueChangeInfo.getDeltaValue();
 
@@ -625,6 +625,7 @@ public class UsageRatingService implements Serializable {
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, isVirtual);
                 walletOperations.add(walletOperation);
+                
                 if (edrIsRated) {
                     edr.setStatus(EDRStatusEnum.RATED);
                     break;

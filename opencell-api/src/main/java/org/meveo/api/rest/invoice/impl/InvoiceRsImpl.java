@@ -113,12 +113,22 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
     @Override
     public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto) {
+	 GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         String invoiceNumber = pdfInvoiceRequestDto.getInvoiceNumber();
         String invoiceType = pdfInvoiceRequestDto.getInvoiceType();
         if (StringUtils.isBlank(invoiceType)) {
             invoiceType = invoiceTypeService.getCommercialCode();
         }
-        return findPdfInvoiceWithType(null, invoiceNumber, invoiceType);
+        try {
+
+            result.setPdfContent(invoiceApi.getPdfInvoice(null, invoiceNumber, invoiceType,pdfInvoiceRequestDto.getGeneratePdf()));
+            result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        log.info("getPdfInvoice Response={}", result);
+        return result;
     }
 
     @Override

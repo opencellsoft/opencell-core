@@ -516,7 +516,17 @@ public class RatingService extends BusinessService<WalletOperation> {
         log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
     }
 
-    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId)
+    /**
+     * @param listPricePlan list of price plan
+     * @param bareOperation operation
+     * @param countryId county id
+     * @param tcurrency trading currency
+     * @param sellerId seller's id
+     * @return matrix of price plan
+     * @throws BusinessException business exception
+     */
+    private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation,
+            Long countryId, TradingCurrency tcurrency, Long sellerId)
             throws BusinessException {
         // FIXME: the price plan properties could be null !
         log.error("AKK RS line 523");

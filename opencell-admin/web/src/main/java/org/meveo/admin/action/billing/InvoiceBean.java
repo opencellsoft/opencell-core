@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.faces.view.ViewScoped;
@@ -121,6 +123,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     private long billingAccountId;
 
     private boolean isSelectedInvoices = false;
+
+    private Map<Long, Boolean> pdfGenerated = new HashMap<Long, Boolean>();
+
+    private Boolean xmlGenerated;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -221,22 +227,26 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
     }
 
-    public void deleteInvoicePdf() {
+    public void deletePdfInvoice() {
         try {
             entity = invoiceService.refreshOrRetrieve(entity);
             entity = invoiceService.deleteInvoicePdf(entity);
+            pdfGenerated.remove(entity.getId());
             messages.info(new BundleKey("messages", "invoice.pdfDelete.successful"));
         } catch (Exception e) {
-            log.error("failed to delete PDF ", e);
+            log.error("failed to delete invoice PDF file", e);
             messages.error(new BundleKey("messages", "invoice.pdfDelete.failed"));
         }
     }
 
-    public void generatePdf() {
+    @ActionMethod
+    public void generatePdfInvoice() {
         try {
 
             entity = invoiceService.refreshOrRetrieve(entity);
             entity = invoiceService.produceInvoicePdf(entity);
+            pdfGenerated.put(entity.getId(), true);
+
             messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
 
         } catch (InvoiceXmlNotFoundException e) {
@@ -248,14 +258,35 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         }
     }
 
+    public void downloadPdfInvoice() {
+        if (entity.getPdfFilename() == null) {
+            return;
+        }
+        String fileName = invoiceService.getFullPdfFilePath(entity, false);
+        downloadFile(fileName);
+    }
+
+    public void downloadPdfInvoice(Long invoiceId) {
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        if (invoice.getPdfFilename() == null) {
+            return;
+        }
+
+        String fileName = invoiceService.getFullPdfFilePath(invoice, false);
+        downloadFile(fileName);
+    }
+
     public List<SubCategoryInvoiceAgregate> getDiscountAggregates() {
         return invoiceAgregateService.findDiscountAggregates(entity);
     }
 
-    public void generateXMLInvoice() throws BusinessException {
+    @ActionMethod
+    public void generateXmlInvoice() throws BusinessException {
         try {
             entity = invoiceService.refreshOrRetrieve(entity);
-            invoiceService.produceInvoiceXml(entity);
+            entity = invoiceService.produceInvoiceXml(entity);
+            xmlGenerated = true;
             messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
 
         } catch (Exception e) {
@@ -264,20 +295,13 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     }
 
-    public String downloadXMLInvoice() {
+    public void downloadXmlInvoice() {
         String fileName = invoiceService.getFullXmlFilePath(entity, false);
-
-        return downloadXMLInvoice(fileName);
+        downloadFile(fileName);
     }
 
-    public String downloadXMLInvoiceAdjustment() {
-        String fileName = invoiceService.getFullAdjustmentXmlFilePath(entity);
-
-        return downloadXMLInvoice(fileName);
-    }
-
-    public String downloadXMLInvoice(String fileName) {
-        log.info("start to download...");
+    private void downloadFile(String fileName) {
+        log.info("Requested to download file {}", fileName);
 
         File file = new File(fileName);
 
@@ -302,7 +326,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             out.flush();
             out.close();
             context.responseComplete();
-            log.info("download over!");
+            log.info("File made available for download");
         } catch (Exception e) {
             log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
         } finally {
@@ -321,31 +345,47 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
         }
-        log.info("downloaded successfully!");
-        return null;
     }
 
     @ActionMethod
     public void deleteXmlInvoice() {
 
-        boolean fileDeleted = invoiceService.deleteInvoiceXml(getEntity());
-        if (fileDeleted) {
+        try {
+            entity = invoiceService.refreshOrRetrieve(entity);
+            entity = invoiceService.deleteInvoiceXml(entity);
+            xmlGenerated = false;
+            deletePdfInvoice();
             messages.info(new BundleKey("messages", "invoice.xmlDelete.successful"));
-        } else {
-            messages.info(new BundleKey("messages", "invoice.xmlDelete.failed"));
+
+        } catch (Exception e) {
+            log.error("failed to delete invoice XML file ", e);
+            messages.error(new BundleKey("messages", "invoice.xmlDelete.failed"));
         }
     }
 
     public boolean isXmlInvoiceAlreadyGenerated() {
-        return invoiceService.isInvoiceXmlExist(entity);
-    }
-
-    public boolean isXmlInvoiceAdjustmentAlreadyGenerated() {
-        return invoiceService.isInvoiceAdjustmentXmlAlreadyGenerated(entity);
+        if (xmlGenerated == null) {
+            xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
+        }
+        return xmlGenerated;
     }
 
     public boolean isPdfInvoiceAlreadyGenerated() {
-        return invoiceService.isInvoicePdfExist(entity);
+        if (!pdfGenerated.containsKey(entity.getId())) {
+            pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
+    }
+
+        return pdfGenerated.get(entity.getId());
+    }
+
+    public boolean isPdfInvoiceAlreadyGenerated(Long invoiceId) {
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        if (!pdfGenerated.containsKey(invoice.getId())) {
+            pdfGenerated.put(invoice.getId(), invoiceService.isInvoicePdfExist(invoice));
+        }
+
+        return pdfGenerated.get(invoice.getId());
     }
 
     public void excludeBillingAccounts(BillingRun billingrun) {

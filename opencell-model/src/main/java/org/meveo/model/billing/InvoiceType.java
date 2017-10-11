@@ -49,7 +49,7 @@ import org.meveo.model.payments.OCCTemplate;
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
-@Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
+@Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_type_seq"), })
 @NamedQueries({ @NamedQuery(name = "InvoiceType.currentInvoiceNb", query = "select max(sequence.currentInvoiceNb) from InvoiceType i where i.code=:invoiceTypeCode") })
@@ -82,6 +82,20 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "billing_template_name")
     @Size(max = 50)
     private String billingTemplateName;
+
+    /**
+     * An EL expression to customize invoice PDF file name.
+     */
+    @Column(name = "pdf_filename_el", length = 2000)
+    @Size(max = 2000)
+    private String pdfFilenameEL;
+
+    /**
+     * An EL expression to customize invoice XML file name.
+     */
+    @Column(name = "xml_filename_el", length = 2000)
+    @Size(max = 2000)
+    private String xmlFilenameEL;
 
     public InvoiceType() {
 
@@ -168,5 +182,21 @@ public class InvoiceType extends BusinessEntity {
 
     public void setBillingTemplateName(String billingTemplateName) {
         this.billingTemplateName = billingTemplateName;
+    }
+
+    public String getPdfFilenameEL() {
+        return pdfFilenameEL;
+    }
+
+    public void setPdfFilenameEL(String pdfFilenameEL) {
+        this.pdfFilenameEL = pdfFilenameEL;
+    }
+
+    public String getXmlFilenameEL() {
+        return xmlFilenameEL;
+    }
+
+    public void setXmlFilenameEL(String xmlFilenameEL) {
+        this.xmlFilenameEL = xmlFilenameEL;
     }
 }

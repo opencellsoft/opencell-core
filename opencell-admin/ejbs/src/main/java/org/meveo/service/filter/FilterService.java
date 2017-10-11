@@ -363,7 +363,7 @@ public class FilterService extends BusinessService<Filter> {
                 if (StringUtils.isBlank(label)) {
                     label = code;
                 }
-                customField = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo);
+                customField = customFieldTemplateService.findByCodeAndAppliesToNoCache(code, appliesTo);
                 if (customField == null) {
                     customField = new CustomFieldTemplate();
                     customField.setAppliesTo(appliesTo);

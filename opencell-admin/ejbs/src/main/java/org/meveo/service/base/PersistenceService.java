@@ -43,7 +43,9 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
 import org.meveo.event.qualifier.Enabled;
@@ -79,6 +81,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
     public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
     public static String SEARCH_SQL = "SQL";
+    
+    private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     @MeveoJpa
@@ -145,8 +149,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entityClass;
     }
 
-    public E updateNoCheck(E entity) {
+    public E updateNoCheck(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
+        
+        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {            
+            // validate code
+			validateCode((BusinessEntity) entity);
+        }
 
         updateAudit(entity);
         E mergedEntity = getEntityManager().merge(entity);
@@ -359,11 +368,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         } else if (entity instanceof BusinessEntity) {
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
+            
+            // validate code
+			validateCode((BusinessEntity) entity);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 
         return entity;
+    }
+    
+    private boolean validateCode(BusinessEntity entity) throws BusinessException {
+		if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+			throw new BusinessException("Invalid characters found in entity code.");
+		}
+		
+		return true;
     }
 
     /**
@@ -392,6 +412,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // Add entity to Elastic Search
         if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
+            
+            // validate code
+			validateCode((BusinessEntity) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -837,7 +860,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public void updateAudit(E e) {
-
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
         }

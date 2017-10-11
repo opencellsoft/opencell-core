@@ -69,7 +69,7 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
 
         BusinessEntity entity = null;
         if (CustomFieldTemplate.class.getName().equals(item.getItemClass())) {
-            entity = customFieldTemplateService.findByCodeAndAppliesTo(item.getItemCode(), item.getAppliesTo());
+            entity = customFieldTemplateService.findByCodeAndAppliesToNoCache(item.getItemCode(), item.getAppliesTo());
 
         } else {
 
@@ -157,9 +157,9 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
                 // Find API service class first trying with item's classname and then with its super class (a simplified version instead of trying various class
                 // superclasses)
                 Class clazz = Class.forName(item.getItemClass());
-                PersistenceService persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSimpleName() + "Service");
+                PersistenceService persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz);
                 if (persistenceServiceForItem == null) {
-                    persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSuperclass().getSimpleName() + "Service");
+                    persistenceServiceForItem = (PersistenceService) EjbUtils.getServiceInterface(clazz.getSuperclass());
                 }
                 if (persistenceServiceForItem == null) {
                     log.error("Failed to find implementation of persistence service for class {}", item.getItemClass());

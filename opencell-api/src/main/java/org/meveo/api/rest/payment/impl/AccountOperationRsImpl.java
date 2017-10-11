@@ -10,6 +10,7 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.Paging.SortOrder;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
@@ -43,11 +44,11 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     }
 
     @Override
-    public AccountOperationsResponseDto list(String customerAccountCode) {
+	public AccountOperationsResponseDto list(String customerAccountCode, String sortBy, SortOrder sortOrder) {
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
         try {
-            result = accountOperationApi.list(customerAccountCode);
+            result = accountOperationApi.list(customerAccountCode, sortBy, sortOrder);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

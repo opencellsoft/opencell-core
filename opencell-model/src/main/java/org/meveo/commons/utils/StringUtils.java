@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
  * @created Aug 4, 2010
  */
 public class StringUtils {
+	
+	public static final String CODE_REGEX = "^[@A-Za-z0-9_\\.\\/-]+$";
 
     /**
      * Checks if string is in array of strings.
@@ -217,5 +219,12 @@ public class StringUtils {
         }
 
         return 0;
-    }	
+    }
+    
+    public static boolean isMatch(String value, String regEx) {
+		Pattern r = Pattern.compile(regEx);
+		Matcher m = r.matcher(value);
+		return m.find();
+	}
+    
 }

@@ -441,15 +441,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         return billingRuns;
     }
 
-    /**
-     * Get a list of billing run ids that were validated and XML was not yet generated
-     * 
-     * @return A list of billing run ids
-     */
-    public List<Long> getBillingRunIdsValidatedNoXml() {
-        return getEntityManager().createNamedQuery("BillingRun.validatedNoXml", Long.class).getResultList();
-    }
-
     public List<Long> getBillingAccountIds(BillingRun billingRun) {
 
         BillingCycle billingCycle = billingRun.getBillingCycle();

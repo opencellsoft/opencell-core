@@ -103,10 +103,6 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     private void populateWalletCache() {
         log.debug("Start to populate wallet cache");
 
-        balanceCache.startBatch();
-        reservedBalanceCache.startBatch();
-        usageChargeInstanceWalletCache.startBatch();
-
         balanceCache.clear();
         reservedBalanceCache.clear();
         usageChargeInstanceWalletCache.clear();
@@ -124,10 +120,6 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
                 fillBalanceCaches(walletId);
             }
         }
-
-        balanceCache.endBatch(true);
-        reservedBalanceCache.endBatch(true);
-        usageChargeInstanceWalletCache.endBatch(true);
 
         log.info("Wallet cache populated with {} usagecharges and {} wallets", charges.size(), walletIds.size());
     }
