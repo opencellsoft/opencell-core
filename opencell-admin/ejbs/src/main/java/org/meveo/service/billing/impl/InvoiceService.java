@@ -652,15 +652,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
 
-                    if (!sourceFile.exists()) {
-
-                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
-                        sourceFile = new File(sourcePath);
+//                    if (!sourceFile.exists()) {
+//
+//                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
+//                        sourceFile = new File(sourcePath);
 
                         if (!sourceFile.exists()) {
                             throw new BusinessException("embedded jasper report for invoice is missing..");
                         }
-                    }
+//                    }
                 }
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
