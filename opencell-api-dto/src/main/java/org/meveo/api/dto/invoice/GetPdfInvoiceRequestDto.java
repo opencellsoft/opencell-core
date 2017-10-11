@@ -16,6 +16,7 @@ public class GetPdfInvoiceRequestDto extends BaseDto {
     private static final long serialVersionUID = 1L;
     private String invoiceNumber;
     private String invoiceType;
+    private Boolean generatePdf = Boolean.FALSE;
 
     public GetPdfInvoiceRequestDto() {
 
@@ -36,10 +37,26 @@ public class GetPdfInvoiceRequestDto extends BaseDto {
     public void setInvoiceType(String invoiceType) {
         this.invoiceType = invoiceType;
     }
+    
+    
+
+    /**
+     * @return the generatePdf
+     */
+    public Boolean getGeneratePdf() {
+        return generatePdf;
+    }
+
+    /**
+     * @param generatePdf the generatePdf to set
+     */
+    public void setGeneratePdf(Boolean generatePdf) {
+        this.generatePdf = generatePdf;
+    }
 
     @Override
     public String toString() {
-        return "GetPdfInvoiceRequestDto [invoiceNumber=" + invoiceNumber + ", invoiceType=" + invoiceType + "]";
+        return "GetPdfInvoiceRequestDto [invoiceNumber=" + invoiceNumber + ", invoiceType=" + invoiceType + ", generatePdf="+generatePdf+"]";
     }
 
 
