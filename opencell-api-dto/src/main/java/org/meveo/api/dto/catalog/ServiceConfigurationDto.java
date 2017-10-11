@@ -31,7 +31,15 @@ public class ServiceConfigurationDto {
 	private List<CustomFieldDto> customFields;
 	
 	private boolean mandatory;
+	
+	/**
+	 * Tells us that this service is linked to a BusinessServiceModel.
+	 */
 	private boolean instantiatedFromBSM;
+	
+	/**
+	 * Use when matching service template in bsm vs offer.
+	 */
 	private boolean match;
 
 	public String getCode() {
