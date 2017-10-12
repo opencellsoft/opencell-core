@@ -107,6 +107,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	private boolean newVersion;
 	private boolean duplicateOffer;
+	
+	/**
+	 * These configurations are used to show / hide the checkbox to select the service templates as well
+	 * as the custom fields for each service.
+	 */
+	private boolean visibleServiceCheckbox;
+	private boolean visibleServiceCF;
+	private boolean instantiatedFromBom;
+	private boolean newVersionFlag;
 
 	private DualListModel<ServiceTemplate> incompatibleServices;
 	private OfferServiceTemplate offerServiceTemplate;
@@ -128,6 +137,11 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	@Override
 	public OfferTemplate initEntity() {
 
+		visibleServiceCF = true;
+		visibleServiceCheckbox = false;
+		instantiatedFromBom = false;
+		
+		// offer instantiation
 		if (bomId != null) {
 			duplicateFromBom();
 
@@ -138,20 +152,27 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				}
 			}
 			bomId = null;
+			visibleServiceCheckbox = true;
+			instantiatedFromBom = true;
 
 		} else if (newVersion) {
+			// creates a new version by setting new validity date
 			instantiateNewVersion();
 			newVersion = false;
+			visibleServiceCheckbox = true;
+			newVersionFlag = true;
 
 		} else if (duplicateOffer) {
+			// duplicate the offer, detach and set id to null
 			duplicateWOutSave();
 			duplicateOffer = false;
 
 		} else {
+			// creates new entity
 			super.initEntity();
 		}
 
-		// Load service templates
+		// lazy loading service templates
 		for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
 			offerServiceTemplate.getServiceTemplate().getCode();
 			for (ServiceTemplate serviceTemplate : offerServiceTemplate.getIncompatibleServices()) {
@@ -159,7 +180,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			}
 		}
 
-		// Load product templates
+		// lazy loading product templates
 		for (OfferProductTemplate offerProductTemplate : entity.getOfferProductTemplates()) {
 			offerProductTemplate.getProductTemplate();
 		}
@@ -287,7 +308,11 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		if (sortedOfferServiceTemplates == null) {
 			if (entity != null) {
 				sortedOfferServiceTemplates = new ArrayList<>();
+				
+				// add all offer service templates
 				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
+				
+				// add bsm service templates
 				if (getBsmServiceTemplates() != null) {
 					for (OfferServiceTemplate ost : getBsmServiceTemplates()) {
 						if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isInstantiatedFromBSM()) {
@@ -296,19 +321,24 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					}
 				}
 
+				// duplication, new version
 				if (entity.isTransient() && entity.getBusinessOfferModel() != null) {
 					for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
 						ostOffer.getServiceTemplate().setSelected(true);
 					}
 
 					for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates()) {
+						boolean found = false;
 						for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
 							if (ostOffer.getServiceTemplate().equals(ostBom.getServiceTemplate())) {
-								continue;
+								found = true;
+								break;
 							}
 						}
 
-						sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
+						if (!found) {
+							sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
+						}
 					}
 				}
 
@@ -435,6 +465,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						if (stCustomFieldInstances != null) {
 							// populate offer cf
 							customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
+							serviceTemplate = serviceTemplateService.update(serviceTemplate);
 						}
 					}
 				}
@@ -791,6 +822,38 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void onBsmTransfer(TransferEvent event) {
 
+	}
+
+	public boolean isVisibleServiceCF() {
+		return visibleServiceCF;
+	}
+
+	public void setVisibleServiceCF(boolean visibleServiceCF) {
+		this.visibleServiceCF = visibleServiceCF;
+	}
+
+	public boolean isVisibleServiceCheckbox() {
+		return visibleServiceCheckbox;
+	}
+
+	public void setVisibleServiceCheckbox(boolean visibleServiceCheckbox) {
+		this.visibleServiceCheckbox = visibleServiceCheckbox;
+	}
+
+	public boolean isInstantiatedFromBom() {
+		return instantiatedFromBom;
+	}
+
+	public void setInstantiatedFromBom(boolean instantiatedFromBom) {
+		this.instantiatedFromBom = instantiatedFromBom;
+	}
+
+	public boolean isNewVersionFlag() {
+		return newVersionFlag;
+	}
+
+	public void setNewVersionFlag(boolean newVersionFlag) {
+		this.newVersionFlag = newVersionFlag;
 	}
 
 }
