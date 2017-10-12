@@ -16,64 +16,77 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class JobInstanceInfoDto implements Serializable {
 
-	private static final long serialVersionUID = -7091372162470026030L;
-	
-	@Deprecated
-	@XmlElement(required = false)
-	private String timerName;
+    private static final long serialVersionUID = -7091372162470026030L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    @Deprecated
+    @XmlElement(required = false)
+    private String timerName;
 
-	private Date lastTransactionDate;
-	private Date invoiceDate;
-	private String billingCycle;
+    @XmlAttribute(required = true)
+    private String code;
 
-	public Date getLastTransactionDate() {
-		return lastTransactionDate;
-	}
+    private Date lastTransactionDate;
 
-	public void setLastTransactionDate(Date lastTransactionDate) {
-		this.lastTransactionDate = lastTransactionDate;
-	}
+    private Date invoiceDate;
 
-	public Date getInvoiceDate() {
-		return invoiceDate;
-	}
+    private String billingCycle;
 
-	public void setInvoiceDate(Date invoiceDate) {
-		this.invoiceDate = invoiceDate;
-	}
+    /**
+     * Ignore a check if job is currently running and launch it anyway
+     */
+    private boolean forceExecution;
 
-	public String getBillingCycle() {
-		return billingCycle;
-	}
+    public Date getLastTransactionDate() {
+        return lastTransactionDate;
+    }
 
-	public void setBillingCycle(String billingCycle) {
-		this.billingCycle = billingCycle;
-	}
+    public void setLastTransactionDate(Date lastTransactionDate) {
+        this.lastTransactionDate = lastTransactionDate;
+    }
 
-	public String getTimerName() {
-		return timerName;
-	}
+    public Date getInvoiceDate() {
+        return invoiceDate;
+    }
 
-	public void setTimerName(String timerName) {
-		this.timerName = timerName;
-	}
+    public void setInvoiceDate(Date invoiceDate) {
+        this.invoiceDate = invoiceDate;
+    }
 
-	@Override
-	public String toString() {
-		return "JobInstanceInfoDto [timerName=" + timerName + ", code=" + code
-				+ ", lastTransactionDate=" + lastTransactionDate + ", invoiceDate=" + invoiceDate + ", billingCycle="
-				+ billingCycle + "]";
-	}
+    public String getBillingCycle() {
+        return billingCycle;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public void setBillingCycle(String billingCycle) {
+        this.billingCycle = billingCycle;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public String getTimerName() {
+        return timerName;
+    }
 
+    public void setTimerName(String timerName) {
+        this.timerName = timerName;
+    }
+
+    @Override
+    public String toString() {
+        return "JobInstanceInfoDto [timerName=" + timerName + ", code=" + code + ", lastTransactionDate=" + lastTransactionDate + ", invoiceDate=" + invoiceDate + ", billingCycle="
+                + billingCycle + "]";
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public boolean isForceExecution() {
+        return forceExecution;
+    }
+
+    public void setForceExecution(boolean forceExecution) {
+        this.forceExecution = forceExecution;
+    }
 }

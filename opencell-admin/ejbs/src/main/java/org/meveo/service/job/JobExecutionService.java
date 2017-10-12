@@ -33,7 +33,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.jobs.JobExecutionResult;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
@@ -55,7 +54,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @return True if job is completely done. False if any data are left to process.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public Boolean persistResult(Job job, JobExecutionResult result, JobInstance jobInstance) {
+    public Boolean persistResult(Job job, JobExecutionResultImpl result, JobInstance jobInstance) {
         try {
             JobExecutionResultImpl resultToPersist = JobExecutionResultImpl.createFromInterface(jobInstance, result);
             boolean isPersistResult = false;

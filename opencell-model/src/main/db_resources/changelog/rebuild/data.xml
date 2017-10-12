@@ -6936,7 +6936,7 @@
             <column name="code" value="ASSOC" />
             <column name="description" value="Assoc." />
             <column name="is_company" valueNumeric="1" />
-
+<!--             <column name="description_i18n" value="{'FRA':'Assoc.','ENG':'Assoc.'}" /> -->
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-2" />
@@ -6947,7 +6947,7 @@
             <column name="code" value="CIE" />
             <column name="description" value="Cie." />
             <column name="is_company" valueNumeric="1" />
-
+<!--             <column name="description_i18n" value="{'FRA':'Sté','ENG':'Cie.'}" /> -->
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-3" />
@@ -6958,7 +6958,7 @@
             <column name="code" value="MR" />
             <column name="description" value="Mr." />
             <column name="is_company" valueNumeric="0" />
-
+<!--             <column name="description_i18n" value="{'FRA':'M.','ENG':'Mr.'}" /> -->
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-4" />
@@ -6969,7 +6969,7 @@
             <column name="code" value="MRS" />
             <column name="description" value="Mrs." />
             <column name="is_company" valueNumeric="0" />
-
+<!--             <column name="description_i18n" value="{'FRA':'Mme.','ENG':'Mrs.'}" /> -->
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-5" />
@@ -6980,7 +6980,7 @@
             <column name="code" value="MS" />
             <column name="description" value="Ms." />
             <column name="is_company" valueNumeric="0" />
-
+<!--             <column name="description_i18n" value="{'FRA':'Mlle','ENG':'Ms.'}" /> -->
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-6" />
@@ -6991,7 +6991,7 @@
             <column name="code" value="DR" />
             <column name="description" value="Dr." />
             <column name="is_company" valueNumeric="0" />
-
+<!--             <column name="description_i18n" value="{'FRA':'Dr','ENG':'Dr.'}" /> -->
         </insert>
         <insert tableName="adm_title">
             <column name="id" valueNumeric="-7" />
@@ -7002,7 +7002,7 @@
             <column name="code" value="PROF" />
             <column name="description" value="Prof." />
             <column name="is_company" valueNumeric="0" />
-
+<!--             <column name="description_i18n" value="{'FRA':'Pr','ENG':'Prof.'}" /> -->
         </insert>
 
         <insert tableName="adm_messages">

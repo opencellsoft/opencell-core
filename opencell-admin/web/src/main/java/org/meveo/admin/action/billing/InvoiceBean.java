@@ -28,8 +28,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.faces.view.ViewScoped;
@@ -70,572 +72,600 @@ import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.LazyDataModel;
 
 /**
- * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that
- * provides almost all common methods to handle entities filtering/sorting in
- * datatable, their create, edit, view, delete operations). It works with Manaty
- * custom JSF components.
+ * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class InvoiceBean extends CustomFieldBean<Invoice> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link Invoice} service. Extends {@link PersistenceService}.
-	 */
-	@Inject
-	private InvoiceService invoiceService;
+    /**
+     * Injected
+     * 
+     * @{link Invoice} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private InvoiceService invoiceService;
 
-	@Inject
-	BillingAccountService billingAccountService;
+    @Inject
+    BillingAccountService billingAccountService;
 
-	@Inject
-	CustomerAccountService customerAccountService;
+    @Inject
+    CustomerAccountService customerAccountService;
 
-	@Inject
-	RatedTransactionService ratedTransactionService;
+    @Inject
+    RatedTransactionService ratedTransactionService;
 
-	@Inject
-	InvoiceAgregateService invoiceAgregateService;
-	
-	@Inject
-	InvoiceTypeService invoiceTypeService;	
+    @Inject
+    InvoiceAgregateService invoiceAgregateService;
 
-	@Inject
-	XMLInvoiceCreator xmlInvoiceCreator;
-	
-	@Inject
-	@Param
-	private Long adjustedInvoiceIdParam;
+    @Inject
+    InvoiceTypeService invoiceTypeService;
 
-	@Inject
-	@Param
-	private Boolean detailedParam;
+    @Inject
+    XMLInvoiceCreator xmlInvoiceCreator;
 
-	private Boolean detailedInvoiceAdjustment;
+    @Inject
+    @Param
+    private Long adjustedInvoiceIdParam;
 
-	private List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates;
-	private List<RatedTransaction> uiRatedTransactions;
-	
-	private long billingAccountId;
-	
-	private boolean isSelectedInvoices=false;
-    
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public InvoiceBean() {
-		super(Invoice.class);
-	}
+    @Inject
+    @Param
+    private Boolean detailedParam;
 
-	@Override
-	public Invoice initEntity() {
-		return super.initEntity();
-	}
+    private Boolean detailedInvoiceAdjustment;
 
-	/**
-	 * Method, that is invoked in billing account screen. This method returns
-	 * invoices associated with current Billing Account.
-	 * 
-	 */
-	public LazyDataModel<Invoice> getBillingAccountInvoices(BillingAccount ba) {
-		if (ba.getCode() == null) {
-			log.warn("No billingAccount code");
-		} else {
-			filters.put("billingAccount", ba);
-//			try {
-//				filters.put("invoiceType", invoiceTypeService.getDefaultCommertial());
-//			} catch (BusinessException e) {				
-//				log.error("Error on geting invoiceType",e);
-//			}
-			return getLazyDataModel();
-		}
+    private List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates;
+    private List<RatedTransaction> uiRatedTransactions;
 
-		return null;
-	}
+    private long billingAccountId;
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<Invoice> getPersistenceService() {
-		return invoiceService;
-	}
+    private boolean isSelectedInvoices = false;
 
-	public List<InvoiceCategoryDTO> getInvoiceCategories() {
-		entity = invoiceService.refreshOrRetrieve(entity);
-		LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
-		List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
-		for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
-			if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-				CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-				categoryInvoiceAgregates.add(categoryInvoiceAgregate);
-			}
-		}
-		Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
-			public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
-				if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null
-						&& c0.getInvoiceCategory().getSortIndex() != null
-						&& c1.getInvoiceCategory().getSortIndex() != null) {
-					return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
-				}
-				return 0;
-			}
-		});
+    private Map<Long, Boolean> pdfGenerated = new HashMap<Long, Boolean>();
 
-		for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
-			InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
-			InvoiceCategoryDTO headerCat = null;
-			if (headerCategories.containsKey(invoiceCategory.getCode())) {
-				headerCat = headerCategories.get(invoiceCategory.getCode());
-				headerCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-				headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
-			} else {
-				headerCat = new InvoiceCategoryDTO();
-				headerCat.setDescription(invoiceCategory.getDescription());
-				headerCat.setCode(invoiceCategory.getCode());
-				headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
-				headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
-				headerCategories.put(invoiceCategory.getCode(), headerCat);
-			}
+    private Boolean xmlGenerated;
 
-			Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate
-					.getSubCategoryInvoiceAgregates();
-			LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
-			for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
-				InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
-				InvoiceSubCategoryDTO headerSubCat = null;
-				if (headerSubCategories.containsKey(invoiceSubCategory.getCode())) {
-					headerSubCat = headerSubCategories.get(invoiceSubCategory.getCode());
-					headerSubCat.addAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-					headerSubCat.addAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
-				} else {
-					headerSubCat = new InvoiceSubCategoryDTO();
-					headerSubCat.setDescription(invoiceSubCategory.getDescription());
-					headerSubCat.setCode(invoiceSubCategory.getCode());
-					headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
-					headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
-					headerSubCat.setRatedTransactions(ratedTransactionService.getListByInvoiceAndSubCategory(entity,
-							invoiceSubCategory));
-					headerSubCategories.put(invoiceSubCategory.getCode(), headerSubCat);
-				}
-			}
-		}
-		return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public InvoiceBean() {
+        super(Invoice.class);
+    }
 
-	public void deleteInvoicePdf() {
-		try {
-		    entity = invoiceService.refreshOrRetrieve(entity);
-			entity = invoiceService.deleteInvoicePdf(entity);
-			messages.info(new BundleKey("messages", "invoice.pdfDelete.successful"));
-		} catch (Exception e) {
-			log.error("failed to delete PDF ", e);
+    @Override
+    public Invoice initEntity() {
+        return super.initEntity();
+    }
+
+    /**
+     * Method, that is invoked in billing account screen. This method returns invoices associated with current Billing Account.
+     * 
+     */
+    public LazyDataModel<Invoice> getBillingAccountInvoices(BillingAccount ba) {
+        if (ba.getCode() == null) {
+            log.warn("No billingAccount code");
+        } else {
+            filters.put("billingAccount", ba);
+            // try {
+            // filters.put("invoiceType", invoiceTypeService.getDefaultCommertial());
+            // } catch (BusinessException e) {
+            // log.error("Error on geting invoiceType",e);
+            // }
+            return getLazyDataModel();
+        }
+
+        return null;
+    }
+
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<Invoice> getPersistenceService() {
+        return invoiceService;
+    }
+
+    public List<InvoiceCategoryDTO> getInvoiceCategories() {
+        entity = invoiceService.refreshOrRetrieve(entity);
+        LinkedHashMap<String, InvoiceCategoryDTO> headerCategories = new LinkedHashMap<String, InvoiceCategoryDTO>();
+        List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
+        for (InvoiceAgregate invoiceAgregate : entity.getInvoiceAgregates()) {
+            if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+                categoryInvoiceAgregates.add(categoryInvoiceAgregate);
+            }
+        }
+        Collections.sort(categoryInvoiceAgregates, new Comparator<CategoryInvoiceAgregate>() {
+            public int compare(CategoryInvoiceAgregate c0, CategoryInvoiceAgregate c1) {
+                if (c0.getInvoiceCategory() != null && c1.getInvoiceCategory() != null && c0.getInvoiceCategory().getSortIndex() != null
+                        && c1.getInvoiceCategory().getSortIndex() != null) {
+                    return c0.getInvoiceCategory().getSortIndex().compareTo(c1.getInvoiceCategory().getSortIndex());
+                }
+                return 0;
+            }
+        });
+
+        for (CategoryInvoiceAgregate categoryInvoiceAgregate : categoryInvoiceAgregates) {
+            InvoiceCategory invoiceCategory = categoryInvoiceAgregate.getInvoiceCategory();
+            InvoiceCategoryDTO headerCat = null;
+            if (headerCategories.containsKey(invoiceCategory.getCode())) {
+                headerCat = headerCategories.get(invoiceCategory.getCode());
+                headerCat.addAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+                headerCat.addAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+            } else {
+                headerCat = new InvoiceCategoryDTO();
+                headerCat.setDescription(invoiceCategory.getDescription());
+                headerCat.setCode(invoiceCategory.getCode());
+                headerCat.setAmountWithoutTax(categoryInvoiceAgregate.getAmountWithoutTax());
+                headerCat.setAmountWithTax(categoryInvoiceAgregate.getAmountWithTax());
+                headerCategories.put(invoiceCategory.getCode(), headerCat);
+            }
+
+            Set<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = categoryInvoiceAgregate.getSubCategoryInvoiceAgregates();
+            LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = headerCat.getInvoiceSubCategoryDTOMap();
+            for (SubCategoryInvoiceAgregate subCatInvoiceAgregate : subCategoryInvoiceAgregates) {
+                InvoiceSubCategory invoiceSubCategory = subCatInvoiceAgregate.getInvoiceSubCategory();
+                InvoiceSubCategoryDTO headerSubCat = null;
+                if (headerSubCategories.containsKey(invoiceSubCategory.getCode())) {
+                    headerSubCat = headerSubCategories.get(invoiceSubCategory.getCode());
+                    headerSubCat.addAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+                    headerSubCat.addAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                } else {
+                    headerSubCat = new InvoiceSubCategoryDTO();
+                    headerSubCat.setDescription(invoiceSubCategory.getDescription());
+                    headerSubCat.setCode(invoiceSubCategory.getCode());
+                    headerSubCat.setAmountWithoutTax(subCatInvoiceAgregate.getAmountWithoutTax());
+                    headerSubCat.setAmountWithTax(subCatInvoiceAgregate.getAmountWithTax());
+                    headerSubCat.setRatedTransactions(ratedTransactionService.getListByInvoiceAndSubCategory(entity, invoiceSubCategory));
+                    headerSubCategories.put(invoiceSubCategory.getCode(), headerSubCat);
+                }
+            }
+        }
+        return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
+    }
+
+    public void deletePdfInvoice() {
+        try {
+            entity = invoiceService.refreshOrRetrieve(entity);
+            entity = invoiceService.deleteInvoicePdf(entity);
+            pdfGenerated.remove(entity.getId());
+            messages.info(new BundleKey("messages", "invoice.pdfDelete.successful"));
+        } catch (Exception e) {
+            log.error("failed to delete invoice PDF file", e);
             messages.error(new BundleKey("messages", "invoice.pdfDelete.failed"));
-		}
-	}
+        }
+    }
 
-	public void generatePdf() {
-		try {
+    @ActionMethod
+    public void generatePdfInvoice() {
+        try {
 
             entity = invoiceService.refreshOrRetrieve(entity);
-            entity = invoiceService.produceInvoicePdf(entity);			
-			messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
-			
-		} catch (InvoiceXmlNotFoundException e) {
-			messages.error(new BundleKey("messages", "invoice.xmlNotFound"));
-		} catch (InvoiceJasperNotFoundException e) {
-			messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
-		} catch (Exception e) {
-			log.error("failed to generate PDF ", e);
-		}
-	}
-	
-	public List<SubCategoryInvoiceAgregate> getDiscountAggregates() {
-		return invoiceAgregateService.findDiscountAggregates(entity);
-	}
+            entity = invoiceService.produceInvoicePdf(entity);
+            pdfGenerated.put(entity.getId(), true);
 
-	public void generateXMLInvoice() throws BusinessException {
-		try {
-		    entity=invoiceService.refreshOrRetrieve(entity);          
-            invoiceService.produceInvoiceXml(entity);   
+            messages.info(new BundleKey("messages", "invoice.pdfGeneration"));
+
+        } catch (InvoiceXmlNotFoundException e) {
+            messages.error(new BundleKey("messages", "invoice.xmlNotFound"));
+        } catch (InvoiceJasperNotFoundException e) {
+            messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
+        } catch (Exception e) {
+            log.error("failed to generate PDF ", e);
+        }
+    }
+
+    public void downloadPdfInvoice() {
+        if (entity.getPdfFilename() == null) {
+            return;
+        }
+        String fileName = invoiceService.getFullPdfFilePath(entity, false);
+        downloadFile(fileName);
+    }
+
+    public void downloadPdfInvoice(Long invoiceId) {
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        if (invoice.getPdfFilename() == null) {
+            return;
+        }
+
+        String fileName = invoiceService.getFullPdfFilePath(invoice, false);
+        downloadFile(fileName);
+    }
+
+    public List<SubCategoryInvoiceAgregate> getDiscountAggregates() {
+        return invoiceAgregateService.findDiscountAggregates(entity);
+    }
+
+    @ActionMethod
+    public void generateXmlInvoice() throws BusinessException {
+        try {
+            entity = invoiceService.refreshOrRetrieve(entity);
+            entity = invoiceService.produceInvoiceXml(entity);
+            xmlGenerated = true;
             messages.info(new BundleKey("messages", "invoice.xmlGeneration"));
-            
-		} catch (Exception e) {
-			log.error("failed to generate xml invoice", e);
-		}
 
-	}
+        } catch (Exception e) {
+            log.error("failed to generate xml invoice", e);
+        }
 
-	public String downloadXMLInvoice() {
-		String fileName = invoiceService.getFullXmlFilePath(entity, false);
+    }
 
-		return downloadXMLInvoice(fileName);
-	}
+    public void downloadXmlInvoice() {
+        String fileName = invoiceService.getFullXmlFilePath(entity, false);
+        downloadFile(fileName);
+    }
 
-	public String downloadXMLInvoiceAdjustment() {
-		String fileName = invoiceService.getFullAdjustmentXmlFilePath(entity);
+    private void downloadFile(String fileName) {
+        log.info("Requested to download file {}", fileName);
 
-		return downloadXMLInvoice(fileName);
-	}
+        File file = new File(fileName);
 
-	public String downloadXMLInvoice(String fileName) {
-		log.info("start to download...");
-	
-		File file = new File(fileName);
-		
-		OutputStream out = null;
-		InputStream fin = null;
-		try {
-			javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
-			HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
-			res.setContentType("application/force-download");
-			res.setContentLength((int) file.length());
-			res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
+        OutputStream out = null;
+        InputStream fin = null;
+        try {
+            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            res.setContentType("application/force-download");
+            res.setContentLength((int) file.length());
+            res.addHeader("Content-disposition", "attachment;filename=\"" + file.getName() + "\"");
 
-			 out = res.getOutputStream();
-			 fin = new FileInputStream(file);
+            out = res.getOutputStream();
+            fin = new FileInputStream(file);
 
-			byte[] buf = new byte[1024];
-			int sig = 0;
-			while ((sig = fin.read(buf, 0, 1024)) != -1) {
-				out.write(buf, 0, sig);
-			}
-			fin.close();
-			out.flush();
-			out.close();
-			context.responseComplete();
-			log.info("download over!");
-		} catch (Exception e) {
-			log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
-		}finally{
-			if(out != null){
-				try {
-					out.close();
-				} catch (IOException e) {
-					log.error("Error",e);
-				}
-			}
-			if(fin != null){
-				try {
-					fin.close();
-				} catch (IOException e) {
-					log.error("Error",e);
-				}
-			}
-		}
-		log.info("downloaded successfully!");
-		return null;
-	}
+            byte[] buf = new byte[1024];
+            int sig = 0;
+            while ((sig = fin.read(buf, 0, 1024)) != -1) {
+                out.write(buf, 0, sig);
+            }
+            fin.close();
+            out.flush();
+            out.close();
+            context.responseComplete();
+            log.info("File made available for download");
+        } catch (Exception e) {
+            log.error("Error:#0, when dowload file: #1", e.getMessage(), file.getAbsolutePath());
+        } finally {
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    log.error("Error", e);
+                }
+            }
+            if (fin != null) {
+                try {
+                    fin.close();
+                } catch (IOException e) {
+                    log.error("Error", e);
+                }
+            }
+        }
+    }
 
     @ActionMethod
     public void deleteXmlInvoice() {
 
-        boolean fileDeleted = invoiceService.deleteInvoiceXml(getEntity());
-        if (fileDeleted) {
+        try {
+            entity = invoiceService.refreshOrRetrieve(entity);
+            entity = invoiceService.deleteInvoiceXml(entity);
+            xmlGenerated = false;
+            deletePdfInvoice();
             messages.info(new BundleKey("messages", "invoice.xmlDelete.successful"));
-        } else {
-            messages.info(new BundleKey("messages", "invoice.xmlDelete.failed"));
+
+        } catch (Exception e) {
+            log.error("failed to delete invoice XML file ", e);
+            messages.error(new BundleKey("messages", "invoice.xmlDelete.failed"));
         }
     }
 
-	public boolean isXmlInvoiceAlreadyGenerated() {
-		return invoiceService.isInvoiceXmlExist(entity);
-	}
-
-	public boolean isXmlInvoiceAdjustmentAlreadyGenerated() {
-	    return invoiceService.isInvoiceAdjustmentXmlAlreadyGenerated(entity);
-	}
-
-	public boolean isPdfInvoiceAlreadyGenerated() {
-        return invoiceService.isInvoicePdfExist(entity);
+    public boolean isXmlInvoiceAlreadyGenerated() {
+        if (xmlGenerated == null) {
+            xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
+        }
+        return xmlGenerated;
     }
-	
-	public void excludeBillingAccounts(BillingRun billingrun) {
-		try {
-			log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
-			if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
-				for (Invoice invoice : getSelectedEntities()) {
-					invoiceService.deleteInvoice(invoice);
-					billingrun.getInvoices().remove(invoice);
-				}
-				messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
-			} else {
-				messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
-			}
 
-		} catch (Exception e) {
-			log.error("Failed to exclude BillingAccounts!", e);
-			messages.error(new BundleKey("messages", "error.execution"));
-		}
-	}
+    public boolean isPdfInvoiceAlreadyGenerated() {
+        if (!pdfGenerated.containsKey(entity.getId())) {
+            pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
+        }
 
-	public BigDecimal totalInvoiceAdjustmentAmountWithoutTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
-			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-			if(subCategoryInvoiceAgregate.getAmountWithoutTax()!=null){
-				total = total.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalInvoiceAdjustmentAmountTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
-			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-			if(subCategoryInvoiceAgregate.getAmountTax()!=null){
-				total = total.add(subCategoryInvoiceAgregate.getAmountTax());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalInvoiceAdjustmentAmountWithTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
-			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-		    if(subCategoryInvoiceAgregate.getAmountWithTax()!=null){	
-				total = total.add(subCategoryInvoiceAgregate.getAmountWithTax());
-			}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalOldInvoiceAdjustmentAmountWithoutTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
-			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-				if(subCategoryInvoiceAgregate.getOldAmountWithoutTax()!=null){
-				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithoutTax());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalOldInvoiceAdjustmentAmountWithTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiSubCategoryInvoiceAgregates != null) {
-			for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
-				if(subCategoryInvoiceAgregate.getOldAmountWithTax()!=null){
-				total = total.add(subCategoryInvoiceAgregate.getOldAmountWithTax());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	/**
-	 * Detail invoice adjustments.
-	 */
-
-	public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithoutTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiRatedTransactions != null) {
-			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
-			if(ratedTransaction.getUnitAmountWithoutTax()!=null){
-				total = total.add(ratedTransaction.getUnitAmountWithoutTax());
-			}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiRatedTransactions != null) {
-			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
-			if(ratedTransaction.getUnitAmountWithTax()!=null){	
-				total = total.add(ratedTransaction.getUnitAmountWithTax());
-			}	
-			}
-		}
-		return total;
-	}
-
-	public BigDecimal totalInvoiceAdjustmentDetailQuantity() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiRatedTransactions != null) {
-			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
-			   if(ratedTransaction.getQuantity()!=null){
-				total = total.add(ratedTransaction.getQuantity());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalInvoiceAdjustmentDetailAmountWithoutTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiRatedTransactions != null) {
-			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
-				if(ratedTransaction.getAmountWithoutTax()!=null){
-				total = total.add(ratedTransaction.getAmountWithoutTax());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	public BigDecimal totalInvoiceAdjustmentDetailAmountWithTax() {
-		BigDecimal total = new BigDecimal(0);
-		if (entity != null && uiRatedTransactions != null) {
-			for (RatedTransaction ratedTransaction : uiRatedTransactions) {
-				if(ratedTransaction.getAmountWithTax()!=null){
-				total = total.add(ratedTransaction.getAmountWithTax());
-				}
-			}
-		}
-
-		return total;
-	}
-
-	public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate)
-			throws BusinessException {
-		// invoiceService.recomputeSubCategoryAggregate(entity);
-		invoiceService.recomputeAggregates(entity);
-	}
-
-	public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
-		ratedTx.recompute(appProvider.isEntreprise());
-	}
-
-	public void testListener() {
-		log.debug("testListener");
-	}
-
-	public Long getAdjustedInvoiceIdParam() {
-		return adjustedInvoiceIdParam;
-	}
-
-	public void setAdjustedInvoiceIdParam(Long adjustedInvoiceIdParam) {
-		this.adjustedInvoiceIdParam = adjustedInvoiceIdParam;
-	}
-
-	public Long getAdjustedInvoiceId() {
-		if (getEntity() != null && getEntity().getAdjustedInvoice() != null) {
-			return getEntity().getAdjustedInvoice().getId();
-		}
-
-		return adjustedInvoiceIdParam;
-	}
-
-	public String saveOrUpdateInvoiceAdjustment() throws Exception {
-		if (entity.isTransient()) {			
-			if (isDetailed()) {
-				for (RatedTransaction rt : uiRatedTransactions) {
-					ratedTransactionService.create(rt);
-				}	
-			}
-			super.saveOrUpdate(false);
-			if(billingAccountId!=0){
-				BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-				entity.setBillingAccount(billingAccount);
-				invoiceService.assignInvoiceNumber(entity);
-			} 	 
-		}	
-		if (isDetailed()) {
-			ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, null, null, null,
-					new Date());
-		} else {
-			if (entity.getAmountWithoutTax() == null) {
-				invoiceService.recomputeAggregates(entity);
-			}
-			entity = invoiceService.update(entity);
-		} 
-		entity = invoiceService.refreshOrRetrieve(entity);
-		entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
-		invoiceService.update(entity.getAdjustedInvoice());
-
-		invoiceService.commit();
-
-		// create xml and pdf for invoice adjustment
-		entity = invoiceService.generateXmlAndPdfInvoice(entity);
-
-		return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid="
-				+ conversation.getId() + "&faces-redirect=true&includeViewParams=true";
-	}
-	
-	public void onRowSelectCheckbox(SelectEvent event) {
-        isSelectedInvoices=true;
+        return pdfGenerated.get(entity.getId());
     }
+
+    public boolean isPdfInvoiceAlreadyGenerated(Long invoiceId) {
+
+        Invoice invoice = invoiceService.findById(invoiceId);
+        if (!pdfGenerated.containsKey(invoice.getId())) {
+            pdfGenerated.put(invoice.getId(), invoiceService.isInvoicePdfExist(invoice));
+        }
+
+        return pdfGenerated.get(invoice.getId());
+    }
+
+    public void excludeBillingAccounts(BillingRun billingrun) {
+        try {
+            log.debug("excludeBillingAccounts getSelectedEntities=" + getSelectedEntities().size());
+            if (getSelectedEntities() != null && getSelectedEntities().size() > 0) {
+                for (Invoice invoice : getSelectedEntities()) {
+                    invoiceService.deleteInvoice(invoice);
+                    billingrun.getInvoices().remove(invoice);
+                }
+                messages.info(new BundleKey("messages", "info.invoicing.billingAccountExcluded"));
+            } else {
+                messages.error(new BundleKey("messages", "postInvoicingReport.noBillingAccountSelected"));
+            }
+
+        } catch (Exception e) {
+            log.error("Failed to exclude BillingAccounts!", e);
+            messages.error(new BundleKey("messages", "error.execution"));
+        }
+    }
+
+    public BigDecimal totalInvoiceAdjustmentAmountWithoutTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+            for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+                if (subCategoryInvoiceAgregate.getAmountWithoutTax() != null) {
+                    total = total.add(subCategoryInvoiceAgregate.getAmountWithoutTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalInvoiceAdjustmentAmountTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+            for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+                if (subCategoryInvoiceAgregate.getAmountTax() != null) {
+                    total = total.add(subCategoryInvoiceAgregate.getAmountTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalInvoiceAdjustmentAmountWithTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+            for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+                if (subCategoryInvoiceAgregate.getAmountWithTax() != null) {
+                    total = total.add(subCategoryInvoiceAgregate.getAmountWithTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalOldInvoiceAdjustmentAmountWithoutTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+            for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+                if (subCategoryInvoiceAgregate.getOldAmountWithoutTax() != null) {
+                    total = total.add(subCategoryInvoiceAgregate.getOldAmountWithoutTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalOldInvoiceAdjustmentAmountWithTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiSubCategoryInvoiceAgregates != null) {
+            for (SubCategoryInvoiceAgregate subCategoryInvoiceAgregate : uiSubCategoryInvoiceAgregates) {
+                if (subCategoryInvoiceAgregate.getOldAmountWithTax() != null) {
+                    total = total.add(subCategoryInvoiceAgregate.getOldAmountWithTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    /**
+     * Detail invoice adjustments.
+     */
+
+    public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithoutTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiRatedTransactions != null) {
+            for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+                if (ratedTransaction.getUnitAmountWithoutTax() != null) {
+                    total = total.add(ratedTransaction.getUnitAmountWithoutTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalInvoiceAdjustmentDetailUnitAmountWithTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiRatedTransactions != null) {
+            for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+                if (ratedTransaction.getUnitAmountWithTax() != null) {
+                    total = total.add(ratedTransaction.getUnitAmountWithTax());
+                }
+            }
+        }
+        return total;
+    }
+
+    public BigDecimal totalInvoiceAdjustmentDetailQuantity() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiRatedTransactions != null) {
+            for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+                if (ratedTransaction.getQuantity() != null) {
+                    total = total.add(ratedTransaction.getQuantity());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalInvoiceAdjustmentDetailAmountWithoutTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiRatedTransactions != null) {
+            for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+                if (ratedTransaction.getAmountWithoutTax() != null) {
+                    total = total.add(ratedTransaction.getAmountWithoutTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public BigDecimal totalInvoiceAdjustmentDetailAmountWithTax() {
+        BigDecimal total = new BigDecimal(0);
+        if (entity != null && uiRatedTransactions != null) {
+            for (RatedTransaction ratedTransaction : uiRatedTransactions) {
+                if (ratedTransaction.getAmountWithTax() != null) {
+                    total = total.add(ratedTransaction.getAmountWithTax());
+                }
+            }
+        }
+
+        return total;
+    }
+
+    public void reComputeInvoiceAdjustment(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) throws BusinessException {
+        // invoiceService.recomputeSubCategoryAggregate(entity);
+        invoiceService.recomputeAggregates(entity);
+    }
+
+    public void reComputeDetailedInvoiceAdjustment(RatedTransaction ratedTx) {
+        ratedTx.recompute(appProvider.isEntreprise());
+    }
+
+    public void testListener() {
+        log.debug("testListener");
+    }
+
+    public Long getAdjustedInvoiceIdParam() {
+        return adjustedInvoiceIdParam;
+    }
+
+    public void setAdjustedInvoiceIdParam(Long adjustedInvoiceIdParam) {
+        this.adjustedInvoiceIdParam = adjustedInvoiceIdParam;
+    }
+
+    public Long getAdjustedInvoiceId() {
+        if (getEntity() != null && getEntity().getAdjustedInvoice() != null) {
+            return getEntity().getAdjustedInvoice().getId();
+        }
+
+        return adjustedInvoiceIdParam;
+    }
+
+    public String saveOrUpdateInvoiceAdjustment() throws Exception {
+        if (entity.isTransient()) {
+            if (isDetailed()) {
+                for (RatedTransaction rt : uiRatedTransactions) {
+                    ratedTransactionService.create(rt);
+                }
+            }
+            super.saveOrUpdate(false);
+            if (billingAccountId != 0) {
+                BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
+                entity.setBillingAccount(billingAccount);
+                invoiceService.assignInvoiceNumber(entity);
+            }
+        }
+        if (isDetailed()) {
+            ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+        } else {
+            if (entity.getAmountWithoutTax() == null) {
+                invoiceService.recomputeAggregates(entity);
+            }
+            entity = invoiceService.update(entity);
+        }
+        entity = invoiceService.refreshOrRetrieve(entity);
+        entity.getAdjustedInvoice().getLinkedInvoices().add(entity);
+        invoiceService.update(entity.getAdjustedInvoice());
+
+        invoiceService.commit();
+
+        // create xml and pdf for invoice adjustment
+        entity = invoiceService.generateXmlAndPdfInvoice(entity);
+
+        return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid=" + conversation.getId()
+                + "&faces-redirect=true&includeViewParams=true";
+    }
+
+    public void onRowSelectCheckbox(SelectEvent event) {
+        isSelectedInvoices = true;
+    }
+
     public void onRowUnSelectCheckbox(UnselectEvent event) {
-    	isSelectedInvoices=false;
+        isSelectedInvoices = false;
     }
 
-	public List<SubCategoryInvoiceAgregate> getUiSubCategoryInvoiceAgregates() {
-		return uiSubCategoryInvoiceAgregates;
-	}
+    public List<SubCategoryInvoiceAgregate> getUiSubCategoryInvoiceAgregates() {
+        return uiSubCategoryInvoiceAgregates;
+    }
 
-	public void setUiSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates) {
-		this.uiSubCategoryInvoiceAgregates = uiSubCategoryInvoiceAgregates;
-	}
+    public void setUiSubCategoryInvoiceAgregates(List<SubCategoryInvoiceAgregate> uiSubCategoryInvoiceAgregates) {
+        this.uiSubCategoryInvoiceAgregates = uiSubCategoryInvoiceAgregates;
+    }
 
-	public boolean isDetailed() {
-		if (detailedInvoiceAdjustment == null && detailedParam != null) {
-			detailedInvoiceAdjustment = detailedParam;
-		}
+    public boolean isDetailed() {
+        if (detailedInvoiceAdjustment == null && detailedParam != null) {
+            detailedInvoiceAdjustment = detailedParam;
+        }
 
-		return detailedInvoiceAdjustment;
-	}
+        return detailedInvoiceAdjustment;
+    }
 
-	public Boolean getDetailedParam() {
-		return detailedParam;
-	}
+    public Boolean getDetailedParam() {
+        return detailedParam;
+    }
 
-	public void setDetailedParam(Boolean detailedParam) {
-		this.detailedParam = detailedParam;
-	}
+    public void setDetailedParam(Boolean detailedParam) {
+        this.detailedParam = detailedParam;
+    }
 
-	public List<RatedTransaction> getUiRatedTransactions() {
-		return uiRatedTransactions;
-	}
+    public List<RatedTransaction> getUiRatedTransactions() {
+        return uiRatedTransactions;
+    }
 
-	public void setUiRatedTransactions(List<RatedTransaction> uiRatedTransactions) {
-		this.uiRatedTransactions = uiRatedTransactions;
-	}
+    public void setUiRatedTransactions(List<RatedTransaction> uiRatedTransactions) {
+        this.uiRatedTransactions = uiRatedTransactions;
+    }
 
-	public Boolean getDetailedInvoiceAdjustment() {
-		return detailedInvoiceAdjustment;
-	}
+    public Boolean getDetailedInvoiceAdjustment() {
+        return detailedInvoiceAdjustment;
+    }
 
-	public void setDetailedInvoiceAdjustment(Boolean detailedInvoiceAdjustment) {
-		this.detailedInvoiceAdjustment = detailedInvoiceAdjustment;
-	}
+    public void setDetailedInvoiceAdjustment(Boolean detailedInvoiceAdjustment) {
+        this.detailedInvoiceAdjustment = detailedInvoiceAdjustment;
+    }
 
-	public long getBillingAccountId() {
-		return billingAccountId;
-	}
-	
-	public Set<Invoice> getLinkedInvoices(Invoice invoice){
-		return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
-	}
+    public long getBillingAccountId() {
+        return billingAccountId;
+    }
 
-	public boolean isSelectedInvoices() {
-		return isSelectedInvoices;
-	}
+    public Set<Invoice> getLinkedInvoices(Invoice invoice) {
+        return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+    }
 
-	public void setSelectedInvoices(boolean isSelectedInvoices) {
-		this.isSelectedInvoices = isSelectedInvoices;
-	}
-	
-	
+    public boolean isSelectedInvoices() {
+        return isSelectedInvoices;
+    }
+
+    public void setSelectedInvoices(boolean isSelectedInvoices) {
+        this.isSelectedInvoices = isSelectedInvoices;
+    }
 
 }

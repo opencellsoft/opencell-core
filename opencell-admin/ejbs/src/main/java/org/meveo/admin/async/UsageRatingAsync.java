@@ -13,6 +13,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 
@@ -29,7 +30,7 @@ public class UsageRatingAsync {
 
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) throws BusinessException {
         for (Long id : ids) {
             unitUsageRatingJobBean.execute(result, id);
         }

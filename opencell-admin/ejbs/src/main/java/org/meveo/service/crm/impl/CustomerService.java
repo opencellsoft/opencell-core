@@ -114,7 +114,7 @@ public class CustomerService extends AccountService<Customer> {
 		System.out.println("OK -5");
 		
 		boolean ascending = true;
-		if (paging != null && paging.sortOrder.name() != null) {
+		if (paging != null && paging.sortOrder != null && paging.sortOrder.name() != null) {
 			ascending = SortOrder.ASCENDING.name().equals(paging.sortOrder.name());
 			qb.addOrderCriterion("LOWER("+paging.getSortBy()+")", ascending);
 		}

@@ -898,7 +898,7 @@ public class QuoteApi extends BaseApi {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());
             for (Invoice invoice : quote.getInvoices()) {
 
-                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false);
+                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false, false);
                 productQuote.getInvoices().add(invoiceDto);
             }
         }

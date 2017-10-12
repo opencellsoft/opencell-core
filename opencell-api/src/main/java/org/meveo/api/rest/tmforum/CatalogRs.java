@@ -61,7 +61,7 @@ public interface CatalogRs {
      */
     @GET
     @Path("/productOffering")
-    public Response findProductOfferings(@Context UriInfo info);
+	public Response findProductOfferings(@QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo, @Context UriInfo info);
 
     /**
      * Get details of a single Offer template and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
