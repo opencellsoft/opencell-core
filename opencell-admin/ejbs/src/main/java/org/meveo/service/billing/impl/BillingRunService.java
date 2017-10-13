@@ -472,8 +472,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {    	
         List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
             .getResultList();
         SubListCreator subListCreator = null;
@@ -508,7 +507,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void assignInvoiceNumberAndIncrementBAInvoiceDates(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
         List<InvoicesToNumberInfo> invoiceSummary = invoiceService.getInvoicesToNumberSummary(billingRun.getId());
         // Reserve invoice number for each invoice type/seller/invoice date combination
         for (InvoicesToNumberInfo invoicesToNumberInfo : invoiceSummary) {
@@ -609,7 +607,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     @SuppressWarnings("unchecked")
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis) throws Exception {
-    	long startDate = System.currentTimeMillis();
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
