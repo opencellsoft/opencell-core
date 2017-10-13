@@ -159,6 +159,21 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return null;
     }
+    
+    /**
+     * Method, that is invoked in billing run screen. This method returns invoices associated with current Billing Run.
+     * 
+     */
+    public LazyDataModel<Invoice> getBillingRunInvoices(BillingRun br) {
+        if (br == null) {
+            log.warn("billingRun is null");
+        } else {
+            filters.put("billingRun", br);           
+            return getLazyDataModel();
+        }
+
+        return null;
+    }
 
     /**
      * @see org.meveo.admin.action.BaseBean#getPersistenceService()

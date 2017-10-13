@@ -19,9 +19,7 @@
 package org.meveo.admin.action.billing;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.enterprise.context.ConversationScoped;
 import javax.enterprise.inject.Produces;
@@ -41,17 +39,11 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
-import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
-import org.meveo.service.billing.impl.InvoiceService;
-import org.meveo.service.billing.impl.RejectedBillingAccountService;
-import org.meveo.service.index.ElasticClient;
-import org.meveo.util.view.ServiceBasedLazyDataModel;
 import org.omnifaces.cdi.Param;
-import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -73,12 +65,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
     private BillingRunService billingRunService;
 
     @Inject
-    private InvoiceService invoiceService;
-    
-    @Inject
-    private  RejectedBillingAccountService rejectedBillingAccountService;
-
-    @Inject
     @Param
     private Boolean preReport;
 
@@ -90,10 +76,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
     @Inject
     private Messages messages;
-
-    protected LazyDataModel<Invoice> invoicesDataModel;
-    
-    protected LazyDataModel<RejectedBillingAccount> rejectedBillingAccountsDataModel;
+ 
     
     
 
@@ -337,109 +320,4 @@ public class BillingRunBean extends BaseBean<BillingRun> {
     public void setLaunchInvoicingRejectedBA(boolean launchInvoicingRejectedBA) {
 	this.launchInvoicingRejectedBA = launchInvoicingRejectedBA;
     }
-
-    public LazyDataModel<Invoice> getInvoicesDataModel() {
-	if (invoicesDataModel == null) {
-
-	    invoicesDataModel = new ServiceBasedLazyDataModel<Invoice>() {
-
-		private static final long serialVersionUID = 1736191234466041033L;
-
-		@Override
-		protected IPersistenceService<Invoice> getPersistenceServiceImpl() {
-
-		    return invoiceService;
-		}
-
-		@Override
-		protected Map<String, Object> getSearchCriteria() {
-		    Map<String, Object> filters = new HashMap<String, Object>();
-		    filters.put("billingRun", entity);
-		    return filters;
-		}
-
-		@Override
-		protected String getDefaultSortImpl() {
-		    return getDefaultSort();
-		}
-
-		@Override
-		protected SortOrder getDefaultSortOrderImpl() {
-		    return getDefaultSortOrder();
-		}
-
-		@Override
-		protected List<String> getListFieldsToFetchImpl() {
-		    return getListFieldsToFetch();
-		}
-
-		@Override
-		protected ElasticClient getElasticClientImpl() {
-		    return null;
-		}
-
-		@Override
-		protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
-		    return null;
-		}
-	    };
-	}
-
-	return invoicesDataModel;
-    }
-
-    
-    public LazyDataModel<RejectedBillingAccount> getRejectedBillingAccountsDataModel() {
-	if (rejectedBillingAccountsDataModel == null) {
-
-	    rejectedBillingAccountsDataModel = new ServiceBasedLazyDataModel<RejectedBillingAccount>() {
-
-		private static final long serialVersionUID = 1736191234466041033L;
-
-		@Override
-		protected IPersistenceService<RejectedBillingAccount> getPersistenceServiceImpl() {
-
-		    return rejectedBillingAccountService;
-		}
-
-		@Override
-		protected Map<String, Object> getSearchCriteria() {
-		    Map<String, Object> filters = new HashMap<String, Object>();
-		    filters.put("billingRun", entity);
-		    return filters;
-		}
-
-		@Override
-		protected String getDefaultSortImpl() {
-		    return getDefaultSort();
-		}
-
-		@Override
-		protected SortOrder getDefaultSortOrderImpl() {
-		    return getDefaultSortOrder();
-		}
-
-		@Override
-		protected List<String> getListFieldsToFetchImpl() {
-		    return getListFieldsToFetch();
-		}
-
-		@Override
-		protected ElasticClient getElasticClientImpl() {
-		    return null;
-		}
-
-		@Override
-		protected String getFullTextSearchValue(Map<String, Object> loadingFilters) {
-		    return null;
-		}
-	    };
-	}
-
-	return rejectedBillingAccountsDataModel;
-    }
-    
-    
-    
-    
 }

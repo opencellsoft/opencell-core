@@ -158,7 +158,7 @@
 		</hftl:formPanel>
 
 		<p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">		
-			<hftl:dataList  id="dataListInvoicess" dataModel="#{billingRunBean.getInvoicesDataModel()}"   backingBean="#{invoiceBean}">
+			<hftl:dataList  id="dataListInvoicess" dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"   backingBean="#{invoiceBean}">
 	        <p:ajax event="rowSelectCheckbox"    listener="#{invoiceBean.onRowSelectCheckbox}" update=":excludeBa" />
 	        <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  /> 
 	
@@ -191,7 +191,7 @@
 	
 		<p:panel header="#{messages['postInvoicingReport.rejectedBillingAccounts']}"  id="rejectedBA_panel" width="100">
 			
-			<hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{billingRunBean.getRejectedBillingAccountsDataModel()}"   backingBean="#{billingRunBean}">
+			<hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{rejectedBillingAccountBean.getBArejected(billingRunBean.entity)}"   backingBean="#{rejectedBillingAccountBean}">
 
 
 					<hftl:column label="#{messages['businessEntity.code']}"
