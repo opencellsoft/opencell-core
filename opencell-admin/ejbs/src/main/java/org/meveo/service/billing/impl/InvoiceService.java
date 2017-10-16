@@ -401,7 +401,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
-        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold() : billingAccount.getInvoicingThreshold();
+        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
+                : billingAccount.getInvoicingThreshold();
         if (invoicingThreshold != null) {
             BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
             if (invoiceAmount == null) {
@@ -608,7 +609,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice to generate pdf
      * @throws BusinessException
      */
-    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {	
+    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
         long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
@@ -652,15 +653,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
 
-//                    if (!sourceFile.exists()) {
-//
-//                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
-//                        sourceFile = new File(sourcePath);
+                    // if (!sourceFile.exists()) {
+                    //
+                    // sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
+                    // sourceFile = new File(sourcePath);
 
-                        if (!sourceFile.exists()) {
-                            throw new BusinessException("embedded jasper report for invoice is missing..");
-                        }
-//                    }
+                    if (!sourceFile.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing..");
+                    }
+                    // }
                 }
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
@@ -1392,15 +1393,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Generate XML and PDF files for Invoice.
+     * Generate XML (if neeed) and PDF files for Invoice.
      * 
      * @param invoice Invoice
+     * @param regenerate Regenerate XML and PDF files ignoring id they exist already
      * @return invoice
+     * 
      * @throws BusinessException business exception
      */
-    public Invoice generateXmlAndPdfInvoice(Invoice invoice) throws BusinessException {
+    public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
 
-        produceInvoiceXmlNoUpdate(invoice);
+        if (regenerate || !isInvoiceXmlExist(invoice)) {
+            produceInvoiceXmlNoUpdate(invoice);
+        }
         invoice = produceInvoicePdf(invoice);
         return invoice;
     }
@@ -1496,7 +1501,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
-        
+
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
@@ -1639,10 +1644,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of invoice identifiers
      */
     public List<Long> getInvoiceIdsByBRWithNoXml(Long billingRunId) {
-       if(billingRunId == null) {
-	   return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
-       }
-	return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+        if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
+        }
+        return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
 
     /**

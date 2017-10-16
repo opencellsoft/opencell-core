@@ -16,7 +16,8 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
@@ -43,15 +44,32 @@ public interface AccountOperationRs extends IBaseRs {
     ActionStatus create(AccountOperationDto postData);
 
     /**
-     * List of account operations
+     * List account operations matching a given criteria
      * 
-     * @param customerAccountCode The customer account's code
+     * @param customerAccountCode The customer account's code. Deprecated in v. 4.7.2 Use query=userAccount.code:code instead
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
      * @return A list of account operations
      */
     @GET
-	@Path("/list")
-	AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode, @DefaultValue("created") @QueryParam("sortBy") String sortBy,
-			@DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    @Path("/list")
+    public AccountOperationsResponseDto listGet(@Deprecated @QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("query") String query,
+            @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List account operations matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of account operations
+     */
+    @POST
+    @Path("/list")
+    public AccountOperationsResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Match operations

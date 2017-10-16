@@ -5,14 +5,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.payment.AccountOperationsDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "AccountOperationsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AccountOperationsResponseDto extends BaseResponse {
+public class AccountOperationsResponseDto extends SearchResponse {
 
 	private static final long serialVersionUID = 6443115315543724968L;
 

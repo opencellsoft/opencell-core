@@ -101,7 +101,7 @@ public class ChargeTemplateBean extends BaseBean<ChargeTemplate> {
 				chargeList.append(ids.toString());
 				sep=",";
 			} 
-			filters.put("inList-id", chargeList);
+			filters.put("inList id", chargeList);
 		}
 		return getLazyDataModel();
 	}
