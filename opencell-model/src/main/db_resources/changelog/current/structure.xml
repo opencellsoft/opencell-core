@@ -698,7 +698,7 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
     </changeSet>
     <!-- https://mariadb.com/kb/en/the-mariadb-library/drop-index/ -->
-	<changeSet id="performance_20170830" author="TienLanPHUNG">
+	<changeSet id="performance_20170830" author="TienLanPHUNG" dbms="postgresql">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
 		<sql>DROP INDEX IF EXISTS transaction_billing_account_index</sql>
@@ -775,7 +775,76 @@
 		<sql>CREATE INDEX rated_transaction_number ON billing_rated_transaction(order_number)</sql>
 	</changeSet>
 
-    
+	<changeSet id="performance_20171006" author="TienLanPHUNG" dbms="mysql">
+	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index ON billing_invoice_agregate</sql>
+		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
+		<sql>DROP INDEX IF EXISTS transaction_billing_account_index ON billing_rated_transaction</sql>
+		<sql>CREATE INDEX transaction_billing_account_index ON billing_rated_transaction(billing_account__id)</sql>
+		<sql>DROP INDEX IF EXISTS transaction_billing_index ON billing_rated_transaction</sql>
+		<sql>CREATE INDEX transaction_billing_index ON billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
+		<sql>DROP INDEX IF EXISTS invoice_agre_index ON billing_invoice_agregate</sql>
+		<sql>CREATE INDEX invoice_agre_index ON billing_invoice_agregate(invoice_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_recurring_charge_inst_index  ON billing_recurring_charge_inst</sql>
+		<sql>CREATE INDEX billing_recurring_charge_inst_index ON billing_recurring_charge_inst(service_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_chrginst_wallet_index ON billing_chrginst_wallet</sql>
+		<sql>CREATE INDEX billing_chrginst_wallet_index ON billing_chrginst_wallet(wallet_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS ar_customer_account_index ON ar_customer_account</sql>
+		<sql>CREATE INDEX ar_customer_account_index ON ar_customer_account(credit_category_id)</sql>
+		<sql>DROP INDEX IF EXISTS meveo_module_index ON meveo_module</sql>
+		<sql>CREATE INDEX meveo_module_index ON meveo_module(script_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_index ON account_entity</sql>
+		<sql>CREATE INDEX account_entity_index ON account_entity(primary_contact, title_id, bam_id)</sql>
+		<sql>DROP INDEX IF EXISTS meveo_module_item_index ON meveo_module_item</sql>
+		<sql>CREATE INDEX meveo_module_item_index ON meveo_module_item(module_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_service_instance_index ON billing_service_instance</sql>
+		<sql>CREATE INDEX billing_service_instance_index ON billing_service_instance(subscription_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_user_account_index ON billing_user_account</sql>
+		<sql>CREATE INDEX billing_user_account_index ON billing_user_account(billing_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_billing_account_index ON billing_billing_account</sql>
+		<sql>CREATE INDEX billing_billing_account_index ON billing_billing_account(customer_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_index ON crm_customer</sql>
+		<sql>CREATE INDEX crm_customer_index ON crm_customer(customer_brand_id)</sql>
+		<sql>DROP INDEX IF EXISTS ar_payment_customer_index ON ar_payment_token</sql>
+		<sql>CREATE INDEX ar_payment_customer_index ON ar_payment_token(customer_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_subscription_index ON billing_subscription</sql>
+		<sql>CREATE INDEX billing_subscription_index ON billing_subscription(user_account_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_index ON cat_chrg_edr</sql>
+		<sql>CREATE INDEX cat_chrg_edr_index ON cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
+		<sql>DROP INDEX IF EXISTS adm_messages_index ON adm_messages</sql>
+		<sql>CREATE INDEX adm_messages_index ON adm_messages (entity_code,language_code)</sql>
+		<sql>DROP INDEX IF EXISTS adm_title_index ON adm_title</sql>
+		<sql>CREATE INDEX adm_title_index ON adm_title(code)</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_brand_index ON crm_customer_brand</sql>
+		<sql>CREATE INDEX crm_customer_brand_index ON crm_customer_brand(code)</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_category_index ON crm_customer_category</sql>
+		<sql>CREATE INDEX crm_customer_category_index ON crm_customer_category(code)</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_trm_charge_template_index ON cat_serv_trm_charge_template</sql>
+		<sql>CREATE INDEX cat_serv_trm_charge_template_index ON cat_serv_trm_charge_template(service_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_usage_charge_template_index ON cat_serv_usage_charge_template</sql>
+		<sql>CREATE INDEX cat_serv_usage_charge_template_index ON cat_serv_usage_charge_template(service_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_usage_wallet_template_index ON cat_serv_usage_wallet_template</sql>
+		<sql>CREATE INDEX cat_serv_usage_wallet_template_index ON cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_calendar_days_index ON cat_calendar_days</sql>
+		<sql>CREATE INDEX cat_calendar_days_index ON cat_calendar_days(calendar_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_triggered_edr_index ON cat_triggered_edr</sql>
+		<sql>CREATE INDEX cat_triggered_edr_index ON cat_triggered_edr(meveo_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_index ON cat_chrg_edr</sql>
+		<sql>CREATE INDEX cat_chrg_edr_index ON cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_invoice_index ON billing_invoice</sql>
+		<sql>CREATE INDEX billing_invoice_index ON billing_invoice(invoice_id, invoice_type_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_operation_index ON billing_wallet_operation</sql>
+		<sql>CREATE INDEX billing_wallet_operation_index ON billing_wallet_operation(wallet_id, charge_instance_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_operation_status_index ON billing_wallet_operation</sql>
+		<sql>CREATE INDEX billing_wallet_operation_status_index ON billing_wallet_operation(invoicing_date,status)</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_index ON billing_wallet</sql>
+		<sql>CREATE INDEX billing_wallet_index ON billing_wallet(user_account_id,cat_wallet_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_charge_instance_index ON billing_charge_instance</sql>
+		<sql>CREATE INDEX billing_charge_instance_index ON billing_charge_instance(invoicing_calendar_id, code, charge_template_id)</sql>
+		<sql>DROP INDEX IF EXISTS billing_reservation_index ON billing_reservation</sql>
+		<sql>CREATE INDEX billing_reservation_index ON billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
+		<sql>DROP INDEX IF EXISTS rated_transaction_number_index ON billing_rated_transaction</sql>
+		<sql>CREATE INDEX rated_transaction_number_index ON billing_rated_transaction(order_number)</sql>
+	</changeSet>
     
     <changeSet id="#2761_20170831" author="AndriusKarpavicius">    
         <addColumn tableName="cat_offer_template">
@@ -856,28 +925,27 @@
     </changeSet>
     
     
-    <changeSet id="#2780_desc_migration_N1" author="AndriusKarpavicius" dbms="mysql">
+    <changeSet id="#2780_desc_migration_M1" author="AndriusKarpavicius" dbms="mysql">
 
         <sql>SET group_concat_max_len =300000</sql>
 
         <sql>delete from tmp_desc_values</sql>
-        <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, '{'.concat( GROUP_CONCAT('"'.concat(language_code).concat('":"').concat(description).concat('"')) ).concat('}') as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
-   
+        <sql>insert into tmp_desc_values (clazz, code, desc_values_txt) (select entity_class, entity_code, concat('{', GROUP_CONCAT(concat('"',language_code,'":"',description,'"')),'}') as desc_value from adm_messages group by entity_class, entity_code order by entity_class)</sql>
    
         <sql>update adm_title set description_i18n = null</sql>
-        <sql>update adm_title join tmp_desc_values on adm_title.code = tmp_desc_values.code set set description_i18n = desc_values_txt from tmp_desc_values where  tmp_desc_values.clazz='Title'</sql>
+        <sql>update adm_title join tmp_desc_values on adm_title.code = tmp_desc_values.code set description_i18n = desc_values_txt where  tmp_desc_values.clazz='Title'</sql>
         <sql>update billing_invoice_cat set description_i18n = null</sql>
-        <sql>update billing_invoice_cat join tmp_desc_values on billing_invoice_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='InvoiceCategory'</sql>
+        <sql>update billing_invoice_cat join tmp_desc_values on billing_invoice_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='InvoiceCategory'</sql>
         <sql>update billing_invoice_sub_cat set description_i18n = null</sql>
-        <sql>update billing_invoice_sub_cat join tmp_desc_values on billing_invoice_sub_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='InvoiceSubCategory'</sql>
+        <sql>update billing_invoice_sub_cat join tmp_desc_values on billing_invoice_sub_cat.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='InvoiceSubCategory'</sql>
         <sql>update billing_tax set description_i18n = null</sql>
-        <sql>update billing_tax join tmp_desc_values on billing_tax.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='Tax'</sql>
+        <sql>update billing_tax join tmp_desc_values on billing_tax.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='Tax'</sql>
         <sql>update cat_price_plan_matrix set description_i18n = null</sql>
-        <sql>update cat_price_plan_matrix join tmp_desc_values on cat_price_plan_matrix.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz='PricePlanMatrix'</sql>
+        <sql>update cat_price_plan_matrix join tmp_desc_values on cat_price_plan_matrix.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz='PricePlanMatrix'</sql>
         <sql>update cat_charge_template set description_i18n = null</sql>
-        <sql>update cat_charge_template join tmp_desc_values on cat_charge_template.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz in ('OneShotChargeTemplate','ProductChargeTemplate','RecurringChargeTemplate','UsageChargeTemplate','ChargeTemplate')</sql>
+        <sql>update cat_charge_template join tmp_desc_values on cat_charge_template.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz in ('OneShotChargeTemplate','ProductChargeTemplate','RecurringChargeTemplate','UsageChargeTemplate','ChargeTemplate')</sql>
         <sql>update cat_offer_template set description_i18n = null</sql>
-        <sql>update cat_offer_template join tmp_desc_values on cat_offer_template.code = tmp_desc_values.code set description_i18n = desc_values_txt from tmp_desc_values where tmp_desc_values.clazz in ('OfferTemplate','ProductTemplate','BundleTemplate','ProductOffering')</sql>
+        <sql>update cat_offer_template join tmp_desc_values on cat_offer_template.code = tmp_desc_values.code set description_i18n = desc_values_txt where tmp_desc_values.clazz in ('OfferTemplate','ProductTemplate','BundleTemplate','ProductOffering')</sql>
       
     </changeSet>
     
@@ -919,4 +987,68 @@
         <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
     </changeSet>
     
+    <changeSet id="#2879_20171002" author="AndriusKarpavicius"> 
+        <modifyDataType tableName="account_entity" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="account_entity" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="account_entity" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="com_sender_config" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="com_sender_config" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="com_sender_config" columnName="address_3" newDataType="varchar(255)"/>           
+        <modifyDataType tableName="crm_provider" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="crm_provider" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="crm_provider" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="crm_provider_contact" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="crm_provider_contact" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="crm_provider_contact" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="crm_seller" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="crm_seller" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="crm_seller" columnName="address_3" newDataType="varchar(255)"/>          
+        <modifyDataType tableName="ord_order_item" columnName="address_1" newDataType="varchar(255)"/>   
+        <modifyDataType tableName="ord_order_item" columnName="address_2" newDataType="varchar(255)"/>    
+        <modifyDataType tableName="ord_order_item" columnName="address_3" newDataType="varchar(255)"/>  
+    </changeSet>
+      
+    <changeSet id="#2824_20170928" author="AndriusKarpavicius">    
+        <addColumn tableName="billing_invoice">
+            <column name="pdf_filename" type="varchar(255)"  />           
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="pdf_filename_el" type="varchar(2000)"  />           
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="#2824_20170928_migration_P" author="AndriusKarpavicius" dbms="postgresql">    
+        <sql>update billing_invoice set pdf_filename=to_char(invoice_date,'YYYY.MM.DD')|| (case when billing_invoice_type.code='ADJ' then '_IA_' else  '_' end) ||case when invoice_number is not null then invoice_number else temporary_invoice_number end|| '.pdf' from billing_invoice_type where billing_invoice.invoice_type_id = billing_invoice_type.id and pdf_generated=1</sql> 
+    </changeSet>    
+    
+    <changeSet id="#2824_20170928_migration_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id set pdf_filename=concat(date_format(invoice_date,'%Y.%m.%d'), (case when billing_invoice_type.code='ADJ' then '_IA_' else  '_' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where pdf_generated=1</sql> 
+    </changeSet>
+           
+    <changeSet id="#2824_20170928_1" author="AndriusKarpavicius">     
+        <dropColumn tableName="billing_invoice" columnName="pdf_generated"/>
+    </changeSet> 
+       
+    
+    <changeSet id="#2824_20170929" author="AndriusKarpavicius">    
+        <addColumn tableName="billing_invoice">
+            <column name="xml_filename" type="varchar(255)"  />           
+        </addColumn>
+        <addColumn tableName="billing_invoice_type">
+            <column name="xml_filename_el" type="varchar(2000)"  />           
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="#2824_20170929_migration_P" author="AndriusKarpavicius" dbms="postgresql">    
+        <sql>update billing_invoice set xml_filename=(case when billing_run_id IS NOT NULL then billing_run_id::text else to_char(billing_invoice.invoice_date,'DDMMYYYY_HH24MISS') end) || '/' || (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end) ||case when invoice_number is not null then invoice_number else temporary_invoice_number end|| '.pdf' from billing_invoice_type, billing_billing_run where billing_invoice.invoice_type_id = billing_invoice_type.id and billing_invoice.billing_run_id = billing_billing_run.id and xml_invoice_generated=1</sql> 
+    </changeSet>    
+    
+    <changeSet id="#2824_20170929_migration_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update billing_invoice join billing_invoice_type on billing_invoice.invoice_type_id = billing_invoice_type.id join billing_billing_run on billing_invoice.billing_run_id = billing_billing_run.id set xml_filename=concat((case when billing_run_id IS NOT NULL then billing_run_id else date_format(billing_invoice.invoice_date,'%d%m%Y_%k%%S') end) , '/' , (case when billing_invoice_type.code='ADJ' then '_IA_' else  '' end), case when invoice_number is not null then invoice_number else temporary_invoice_number end, '.pdf') where xml_invoice_generated=1</sql> 
+    </changeSet>
+    
+    <changeSet id="#2827_20171002" author="anasseh">     
+        <dropColumn tableName="billing_billing_run" columnName="xml_invoice_generated"/>
+    </changeSet> 
+               
 </databaseChangeLog> 

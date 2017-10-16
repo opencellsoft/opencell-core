@@ -39,6 +39,16 @@ public class InvoiceTypeDto extends BusinessDto {
 
     private String billingTemplateName;
 
+    /**
+     * An EL expression to customize invoice PDF file name.
+     */
+    private String pdfFilenameEL;
+
+    /**
+     * An EL expression to customize invoice XML file name.
+     */
+    private String xmlFilenameEL;
+
     public InvoiceTypeDto() {
 
     }
@@ -59,6 +69,8 @@ public class InvoiceTypeDto extends BusinessDto {
         }
         this.matchingAuto = invoiceType.isMatchingAuto();
         this.billingTemplateName = invoiceType.getBillingTemplateName();
+        this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
+        this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
     }
 
     public String getOccTemplateCode() {
@@ -115,6 +127,22 @@ public class InvoiceTypeDto extends BusinessDto {
 
     public void setBillingTemplateName(String billingTemplateName) {
         this.billingTemplateName = billingTemplateName;
+    }
+
+    public String getPdfFilenameEL() {
+        return pdfFilenameEL;
+    }
+
+    public void setPdfFilenameEL(String pdfFilenameEL) {
+        this.pdfFilenameEL = pdfFilenameEL;
+    }
+
+    public String getXmlFilenameEL() {
+        return xmlFilenameEL;
+    }
+
+    public void setXmlFilenameEL(String xmlFilenameEL) {
+        this.xmlFilenameEL = xmlFilenameEL;
     }
 
     @Override

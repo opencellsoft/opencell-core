@@ -32,6 +32,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -53,6 +54,9 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     @Inject
     private CustomFieldTemplateService customFieldTemplateService;
+
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
 
     private static Map<JobCategoryEnum, List<Class<? extends Job>>> jobClasses = new HashMap<>();
     private static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
@@ -93,7 +97,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private void startTimers(Job job) {
 
         job.cleanTimers();
-        
+
         List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji LEFT JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
             .setParameter("jobName", ReflectionUtils.getCleanClassName(job.getClass().getSimpleName())).getResultList();
 
@@ -157,6 +161,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public void create(JobInstance jobInstance) throws BusinessException {
 
         super.create(jobInstance);
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
         scheduleJob(jobInstance, null);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.create);
@@ -166,6 +171,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     public JobInstance update(JobInstance jobInstance) throws BusinessException {
 
         super.update(jobInstance);
+        jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.update);
@@ -178,6 +184,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
         log.info("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
         if (jobInstance.getId() == null) {
             log.info("removing jobInstance entity with null id, something is wrong");
+
         } else if (jobTimers.containsKey(jobInstance.getId())) {
             try {
                 Timer timer = jobTimers.get(jobInstance.getId());
@@ -190,6 +197,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             log.info("jobInstance timer not found, cannot remove it");
         }
         super.remove(jobInstance);
+
+        jobCacheContainerProvider.removeJobInstance(jobInstance.getId());
 
         clusterEventPublisher.publishEvent(jobInstance, CrudActionEnum.remove);
     }

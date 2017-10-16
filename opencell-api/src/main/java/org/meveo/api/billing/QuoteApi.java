@@ -805,6 +805,12 @@ public class QuoteApi extends BaseApi {
         }
     }
 
+    /**
+     * @param quoteId quote id
+     * @return product quote
+     * @throws EntityDoesNotExistsException entity not exist exception
+     * @throws BusinessException business exception.
+     */
     public ProductQuote getQuote(String quoteId) throws EntityDoesNotExistsException, BusinessException {
 
         Quote quote = quoteService.findByCode(quoteId);
@@ -816,6 +822,11 @@ public class QuoteApi extends BaseApi {
         return quoteToDto(quote);
     }
 
+    /**
+     * @param filterCriteria filter criteria
+     * @return list of product quote.
+     * @throws BusinessException business exception
+     */
     public List<ProductQuote> findQuotes(Map<String, List<String>> filterCriteria) throws BusinessException {
 
         List<Quote> quotes = quoteService.list();
@@ -828,6 +839,13 @@ public class QuoteApi extends BaseApi {
         return productQuotes;
     }
 
+    /**
+     * @param quoteId quote id
+     * @param productQuote product quote.
+     * @return product quote
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api
+     */
     public ProductQuote updatePartiallyQuote(String quoteId, ProductQuote productQuote) throws BusinessException, MeveoApiException {
 
         Quote quote = quoteService.findByCode(quoteId);
@@ -854,6 +872,12 @@ public class QuoteApi extends BaseApi {
 
     }
 
+    /**
+     * @param quoteId quote id
+     * @throws EntityDoesNotExistsException exception when entity is not existed.
+     * @throws ActionForbiddenException forbidden exception
+     * @throws BusinessException business exception
+     */
     public void deleteQuote(String quoteId) throws EntityDoesNotExistsException, ActionForbiddenException, BusinessException {
 
         Quote quote = quoteService.findByCode(quoteId);
@@ -865,10 +889,9 @@ public class QuoteApi extends BaseApi {
 
     /**
      * Convert quote stored in DB to quote DTO expected by tmForum api.
-     * 
      * @param quote Quote to convert
      * @return Quote DTO object
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     private ProductQuote quoteToDto(Quote quote) throws BusinessException {
 
@@ -898,7 +921,7 @@ public class QuoteApi extends BaseApi {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());
             for (Invoice invoice : quote.getInvoices()) {
 
-                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false);
+                GenerateInvoiceResultDto invoiceDto = invoiceApi.createGenerateInvoiceResultDto(invoice, false, false);
                 productQuote.getInvoices().add(invoiceDto);
             }
         }
@@ -908,10 +931,9 @@ public class QuoteApi extends BaseApi {
 
     /**
      * Convert quote item stored in DB to quoteItem dto expected by tmForum api. As actual dto was serialized earlier, all need to do is to deserialize it and update the status.
-     * 
      * @param quoteItem Quote item to convert to dto
      * @return Quote item Dto
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     private ProductQuoteItem quoteItemToDto(QuoteItem quoteItem) throws BusinessException {
 
@@ -923,8 +945,7 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Distinguish bundled products which could be either services or products
-     * 
+     * Distinguish bundled products which could be either services or products.
      * @param productQuoteItem Product order item DTO
      * @param quoteItem Order item entity
      * @return An array of List<Product> elements, first being list of products, and second - list of services
@@ -947,17 +968,15 @@ public class QuoteApi extends BaseApi {
                 }
             }
         }
-        return new List[] { products, services };
+        return new List[] {products, services};
     }
 
     /**
-     * Place an order from a quote
-     * 
-     * @param quote Quote to convert to an order
-     * 
+     * Place an order from a quote.
+     * @param quoteCode code of quote to convert to an order
      * @return Product order DTO object
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
      */
     public ProductOrder placeOrder(String quoteCode) throws BusinessException, MeveoApiException {
 

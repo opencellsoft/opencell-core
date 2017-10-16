@@ -36,9 +36,6 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="21c1fb0e-ed84-4133-9d3e-82094b378947" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:definitionCache/><con:endpoints>
-      <con:endpoint>http://demo.meveo.info/meveo/CatalogWs</con:endpoint>
-      <con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint>
-      <con:endpoint>http://keepcool.i.opencellsoft.com/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6e828e4a-c533-4573-a2fe-77c2898a80c9">
@@ -22869,12 +22866,6 @@ public class InvoiceCreateScript extends Script {
 			throws IOException, SAXException, ParserConfigurationException {
               
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-		
-		SimpleDateFormat sdfPDF = new SimpleDateFormat("yyyy.MM.dd");
-
-        String pdfName = sdfPDF.format(context.get("INVOICE_DATE")) + "_" + context.get("INVOICE_NUMBER").toString() + ".pdf";
-        
-        String pdfUrl = "${#Project#opencell.url}/api/rest/admin/files/downloadFile?file=invoices/pdf/" + pdfName;
 
 		if(context !=null){
           log.debug("context is not null");
@@ -22917,12 +22908,6 @@ public class InvoiceCreateScript extends Script {
 			requestMain += "                    	<a:Value>"+invoiceTypeId+"</a:Value>";
 			requestMain += "                    </b:value>";
 			requestMain += "                  </a:KeyValuePairOfstringanyType>";
-			
-			requestMain += "                  <a:KeyValuePairOfstringanyType>";
-            requestMain += "                    <b:key>ocl_invoicepdfurl</b:key>";
-            requestMain += "                    <b:value i:type=\"c:string\" xmlns:c=\"http://www.w3.org/2001/XMLSchema\">"+pdfUrl+"</b:value>";
-            requestMain += "                  </a:KeyValuePairOfstringanyType>";
-			
 			requestMain += "                  <a:KeyValuePairOfstringanyType>";
 			requestMain += "                  	<b:key>customerid</b:key>";
 			requestMain += "                  	<b:value i:type=\"a:EntityReference\">";

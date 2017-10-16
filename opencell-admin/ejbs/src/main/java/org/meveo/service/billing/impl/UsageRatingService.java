@@ -325,7 +325,7 @@ public class UsageRatingService {
             if (counterValueChangeInfo == null) {
                 deducedQuantityInEDRUnit = edr.getQuantity();
 
-            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) > 0) {
+            } else if (counterValueChangeInfo.getDeltaValue().compareTo(BigDecimal.ZERO) != 0) {
 
                 BigDecimal deducedQuantity = counterValueChangeInfo.getDeltaValue();
 
@@ -604,11 +604,9 @@ public class UsageRatingService {
 
                 log.trace("try templateCache=" + chargeTemplate.toString());
                 try {
-					UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
-					if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
-							chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
-							chargeTemplate.getFilter2(),
-                        chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
+                    UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+                    if (!isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
+                        chargeTemplate.getFilter2(), chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
                         continue;
                     }
                 } catch (ChargeWitoutPricePlanException e) {
@@ -621,6 +619,7 @@ public class UsageRatingService {
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, isVirtual);
                 walletOperations.add(walletOperation);
+                
                 if (edrIsRated) {
                     edr.setStatus(EDRStatusEnum.RATED);
                     break;
@@ -664,8 +663,8 @@ public class UsageRatingService {
      * @throws BusinessException
      * @throws ChargeWitoutPricePlanException If charge has no price plan associated
      */
-    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3, String filter4)
-            throws BusinessException, ChargeWitoutPricePlanException {
+    private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3,
+            String filter4) throws BusinessException, ChargeWitoutPricePlanException {
 
         if (filter1 == null || filter1.equals(edr.getParameter1())) {
             log.trace("filter1 ok");
@@ -735,11 +734,9 @@ public class UsageRatingService {
                         CachedUsageChargeTemplate chargeTemplate = ratingCacheContainerProvider.getUsageChargeTemplate(charge.getChargeTemplateId());
                         log.info("try templateCache=" + chargeTemplate.toString());
 
-						UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
-						if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(),
-								chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
-								chargeTemplate.getFilter2(),
-                            chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
+                        UsageChargeInstance usageChargeInstance = usageChargeInstanceService.findById(charge.getId());
+                        if (isChargeMatch(usageChargeInstance, edr, chargeTemplate.getCode(), chargeTemplate.getFilterExpression(), chargeTemplate.getFilter1(),
+                            chargeTemplate.getFilter2(), chargeTemplate.getFilter3(), chargeTemplate.getFilter4())) {
 
                             log.debug("found matchig charge inst : id=" + charge.getId());
                             edrIsRated = reserveEDRonChargeAndCounters(reservation, edr, charge);

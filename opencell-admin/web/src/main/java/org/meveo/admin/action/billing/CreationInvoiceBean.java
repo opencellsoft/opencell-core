@@ -479,7 +479,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	}
 
 	/**
-	 * Includ a copy from linkedIncoice's RatedTransaction
+	 * Include a copy from linkedIncoice's RatedTransaction
 	 * 
 	 * @throws BusinessException
 	 */
