@@ -401,7 +401,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
-        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold() : billingAccount.getInvoicingThreshold();
+        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
+                : billingAccount.getInvoicingThreshold();
         if (invoicingThreshold != null) {
             BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
             if (invoiceAmount == null) {
@@ -608,7 +609,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice to generate pdf
      * @throws BusinessException
      */
-    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {	
+    public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
         long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
@@ -652,15 +653,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
 
-//                    if (!sourceFile.exists()) {
-//
-//                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
-//                        sourceFile = new File(sourcePath);
+                    // if (!sourceFile.exists()) {
+                    //
+                    // sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
+                    // sourceFile = new File(sourcePath);
 
-                        if (!sourceFile.exists()) {
-                            throw new BusinessException("embedded jasper report for invoice is missing..");
-                        }
-//                    }
+                    if (!sourceFile.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing..");
+                    }
+                    // }
                 }
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
@@ -840,28 +841,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param invoice invoice to delete
+     * @throws BusinessException 
      */
-    @SuppressWarnings("unchecked")
-    public void deleteInvoice(Invoice invoice) {
+    public void deleteInvoice(Invoice invoice) throws BusinessException {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice").setParameter("invoice", invoice).executeUpdate();
 
-        Query queryTrans = getEntityManager().createQuery(
-            "update " + RatedTransaction.class.getName() + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
-        queryTrans.setParameter("invoice", invoice);
-        queryTrans.executeUpdate();
-
-        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-
-        queryAgregate.setParameter("invoice", invoice);
-        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
-        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-            getEntityManager().remove(invoiceAgregate);
-        }
-        getEntityManager().flush();
-
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where id=:invoiceId");
-        queryInvoices.setParameter("invoiceId", invoice.getId());
-        queryInvoices.executeUpdate();
+        super.remove(invoice);
     }
 
     /**
@@ -1496,7 +1481,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
-        
+
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
@@ -1518,7 +1503,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice to cancel
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("unchecked")
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         if (invoice.getInvoiceNumber() != null) {
             throw new BusinessException("Can't cancel an invoice validated");
@@ -1526,28 +1510,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
-        Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
-                + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where invoice=:invoice");
-        queryTrans.setParameter("invoice", invoice);
-        queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
-        queryTrans.executeUpdate();
-        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-        queryAgregate.setParameter("invoice", invoice);
-        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
-        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                ((SubCategoryInvoiceAgregate) invoiceAgregate).setSubCategoryTaxes(null);
-            }
-        }
-        invoice.setOrders(null);
-        Query dropAgregats = getEntityManager().createQuery("delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-        dropAgregats.setParameter("invoice", invoice);
-        dropAgregats.executeUpdate();
-        getEntityManager().flush();
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where id=:id");
-        queryInvoices.setParameter("id", invoice.getId());
-        queryInvoices.executeUpdate();
-        log.debug("cancel invoice:{} done", invoice.getTemporaryInvoiceNumber());
+        
+        deleteInvoice(invoice);
+        log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }
 
     /**
@@ -1639,10 +1604,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of invoice identifiers
      */
     public List<Long> getInvoiceIdsByBRWithNoXml(Long billingRunId) {
-       if(billingRunId == null) {
-	   return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
-       }
-	return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+        if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
+        }
+        return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
 
     /**
