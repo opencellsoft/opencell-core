@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
@@ -18,7 +19,7 @@ import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.Paging;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -202,6 +203,8 @@ public class AccountOperationApi extends BaseApi {
 
     /**
      * List.
+     * @param limit 
+     * @param offset 
      *
      * @param customerAccountCode the customer account code
      * @param sortBy the sort by
@@ -209,29 +212,37 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
-    public AccountOperationsResponseDto list(String customerAccountCode, String sortBy, SortOrder sortOrder) throws MeveoApiException {
-	if (StringUtils.isBlank(customerAccountCode)) {
-	    missingParameters.add("customerAccountCode");
+	public AccountOperationsResponseDto list(String customerAccountCode, Paging paging) throws MeveoApiException {
+		if (StringUtils.isBlank(customerAccountCode)) {
+			missingParameters.add("customerAccountCode");
+		}
+		handleMissingParameters();
+
+		AccountOperationsResponseDto result = new AccountOperationsResponseDto();
+
+		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+		if (customerAccount == null) {
+			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+		}
+
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, null,
+				null, null, paging != null ? paging.getSortBy() : null,
+				paging != null && paging.getSortOrder() != null ? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name()) : org.primefaces.model.SortOrder.ASCENDING);
+
+		Long totalCount = accountOperationService.count(paginationConfiguration);
+		result.setPaging(paging != null ? paging : new Paging());
+		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+		if (totalCount > 0) {
+			List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
+			for (AccountOperation accountOp : accountOperations) {
+				AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
+				result.getAccountOperations().getAccountOperation().add(accountOperationDto);
+			}
+		}
+
+		return result;
 	}
-	handleMissingParameters();
-
-	AccountOperationsResponseDto result = new AccountOperationsResponseDto();
-
-	CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-	if (customerAccount == null) {
-	    throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-	}
-
-	List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount, sortBy,
-		sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
-
-	for (AccountOperation accountOp : accountOperations) {
-	    AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
-	    result.getAccountOperations().getAccountOperation().add(accountOperationDto);
-	}
-	return result;
-
-    }
 
     /**
      * Match operations.

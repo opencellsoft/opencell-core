@@ -600,7 +600,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public AccountOperationsResponseDto listAccountOperations(String customerAccountCode, String sortBy, SortOrder sortOrder) {
+	public AccountOperationsResponseDto listAccountOperations(String customerAccountCode, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
     	if(StringUtils.isBlank(sortBy)) {
     		sortBy = "id";
     	}
@@ -610,7 +610,7 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
         try {
-            result = accountOperationApi.list(customerAccountCode, sortBy, sortOrder);
+            result = accountOperationApi.list(customerAccountCode, new Paging(offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
