@@ -1604,6 +1604,9 @@ public class AccountHierarchyApi extends BaseApi {
 	public CustomerDto customerToDto(Customer customer) {
 		CustomerDto dto = new CustomerDto();
 		accountEntityToDto(dto, customer);
+		
+		dto.setVatNo(customer.getVatNo());
+		dto.setRegistrationNo(customer.getRegistrationNo());
 
 		if (customer.getCustomerCategory() != null) {
 			dto.setCustomerCategory(customer.getCustomerCategory().getCode());

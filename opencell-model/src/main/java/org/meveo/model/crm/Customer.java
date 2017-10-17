@@ -71,7 +71,7 @@ public class Customer extends AccountEntity {
     private Seller seller;
     
     @Column(name = "vat_no", length = 100)
-    private String varNo;
+    private String vatNo;
     
     @Column(name = "registration_no", length = 100)
     private String registrationNo;
@@ -143,12 +143,12 @@ public class Customer extends AccountEntity {
 		this.registrationNo = registrationNo;
 	}
 
-	public String getVarNo() {
-		return varNo;
+	public String getVatNo() {
+		return vatNo;
 	}
 
-	public void setVarNo(String varNo) {
-		this.varNo = varNo;
+	public void setVatNo(String vatNo) {
+		this.vatNo = vatNo;
 	}
 
 }
