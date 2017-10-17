@@ -447,10 +447,16 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (ratePrice.getAmountWithoutTaxEL() != null) {
                 unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(), ratePrice, bareWalletOperation, userAccount,
                     unitPriceWithoutTax);
+                if(unitPriceWithoutTax == null) {
+                    throw new BusinessException("Cant get price from EL:"+ratePrice.getAmountWithoutTaxEL());
+                }
             }
             if (ratePrice.getAmountWithTaxEL() != null) {
                 unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(), ratePrice, bareWalletOperation, userAccount,
                     unitPriceWithoutTax);
+                if(unitPriceWithTax == null) {
+                    throw new BusinessException("Cant get price from EL:"+ratePrice.getAmountWithTaxEL());
+                }
             }
         }
 
@@ -714,13 +720,21 @@ public class RatingService extends BusinessService<WalletOperation> {
                     operation.setUnitAmountWithoutTax(priceplan.getAmountWithoutTax());
                     operation.setUnitAmountWithTax(priceplan.getAmountWithTax());
                     if (priceplan.getAmountWithoutTaxEL() != null) {
-                        operation.setUnitAmountWithoutTax(getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation,
-                            userAccount, unitAmountWithoutTax));
+                	       BigDecimal priceFromEL = getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation,
+                                       userAccount, unitAmountWithoutTax);
+                	        if(priceFromEL == null) {
+                	            throw new BusinessException("Cant get price from EL:"+priceplan.getAmountWithoutTaxEL());
+                	        }
+                        operation.setUnitAmountWithoutTax(priceFromEL);
 
                     }
                     if (priceplan.getAmountWithTaxEL() != null) {
-                        operation.setUnitAmountWithTax(getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation,
-                            userAccount, unitAmountWithoutTax));
+                  	BigDecimal priceFromEL = getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation,
+                                userAccount, unitAmountWithoutTax);
+            	        if(priceFromEL == null) {
+            	            throw new BusinessException("Cant get price from EL:"+priceplan.getAmountWithTaxEL());
+            	        }
+                        operation.setUnitAmountWithTax(priceFromEL);
 
                     }
                     if (operation.getUnitAmountTax() != null && unitAmountWithTax != null) {
