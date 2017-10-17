@@ -2,6 +2,7 @@ package org.meveo.api.dto.account;
 
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,6 +31,8 @@ public class CustomerDto extends AccountDto {
 
 	private String mandateIdentification = "";
 	private Date mandateDate;
+	private String varNo;
+    private String registrationNo;
 
 	private ContactInformationDto contactInformation;
 
@@ -102,6 +105,22 @@ public class CustomerDto extends AccountDto {
 
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
+	}
+
+	public String getVarNo() {
+		return varNo;
+	}
+
+	public void setVarNo(String varNo) {
+		this.varNo = varNo;
+	}
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
 	}
 
 }

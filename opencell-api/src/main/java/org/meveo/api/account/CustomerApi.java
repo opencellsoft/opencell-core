@@ -115,6 +115,8 @@ public class CustomerApi extends AccountEntityApi {
         customer.setSeller(seller);
         customer.setExternalRef1(postData.getExternalRef1());
         customer.setExternalRef2(postData.getExternalRef2());
+        customer.setVarNo(postData.getVarNo());
+        customer.setRegistrationNo(postData.getRegistrationNo());
 
         if (postData.getContactInformation() != null) {
             if (customer.getContactInformation() == null) {
@@ -211,6 +213,12 @@ public class CustomerApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             customer.setExternalRef2(postData.getExternalRef2());
         }
+		if (!StringUtils.isBlank(postData.getVarNo())) {
+			customer.setVarNo(postData.getVarNo());
+		}
+		if (!StringUtils.isBlank(postData.getRegistrationNo())) {
+			customer.setRegistrationNo(postData.getRegistrationNo());
+		}
 
         if (postData.getContactInformation() != null) {
             if (customer.getContactInformation() == null) {

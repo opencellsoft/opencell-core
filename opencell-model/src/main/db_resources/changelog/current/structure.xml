@@ -1050,5 +1050,15 @@
     <changeSet id="#2827_20171002" author="anasseh">     
         <dropColumn tableName="billing_billing_run" columnName="xml_invoice_generated"/>
     </changeSet> 
+    
+    <changeSet id="#2837_20171016 - Add fields vat, reg no and job title" author="EdwardPLegaspi">
+     	<addColumn tableName="crm_customer">
+            <column name="vat_no" type="varchar(100)"  />
+            <column name="registration_no" type="varchar(100)"  />           
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="job_title" type="varchar(255)"  />           
+        </addColumn>
+    </changeSet>
                
 </databaseChangeLog> 

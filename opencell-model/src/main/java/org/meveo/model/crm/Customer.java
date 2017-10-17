@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -68,6 +69,12 @@ public class Customer extends AccountEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
     private Seller seller;
+    
+    @Column(name = "vat_no", length = 100)
+    private String varNo;
+    
+    @Column(name = "registration_no", length = 100)
+    private String registrationNo;
 
     public Customer() {
         accountType = ACCOUNT_TYPE;
@@ -127,5 +134,21 @@ public class Customer extends AccountEntity {
     public Class<? extends BusinessEntity> getParentEntityType() {
         return Seller.class;
     }
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
+	}
+
+	public String getVarNo() {
+		return varNo;
+	}
+
+	public void setVarNo(String varNo) {
+		this.varNo = varNo;
+	}
 
 }
