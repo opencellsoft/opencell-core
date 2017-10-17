@@ -1,8 +1,10 @@
 package org.meveo.api.payment;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -225,10 +227,13 @@ public class AccountOperationApi extends BaseApi {
 			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
 		}
 
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, null,
+		Map<String, Object> filters = new HashMap<>();
+		filters.put("customerAccount.code", customerAccountCode);
+		
+		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
 				null, null, paging != null ? paging.getSortBy() : null,
 				paging != null && paging.getSortOrder() != null ? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name()) : org.primefaces.model.SortOrder.ASCENDING);
-
+		
 		Long totalCount = accountOperationService.count(paginationConfiguration);
 		result.setPaging(paging != null ? paging : new Paging());
 		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
