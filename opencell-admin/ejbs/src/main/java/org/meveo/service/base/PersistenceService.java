@@ -79,7 +79,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
-    public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
+    public static String SEARCH_WILDCARD_OR = "wildcardOr";
     public static String SEARCH_SQL = "SQL";
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
@@ -584,6 +584,72 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * Creates query to filter entities according data provided in pagination configuration.
      * 
+     * Search filters (key = Filter key, value = search pattern or value).
+     * 
+     * Filter key can be:
+     * <ul>
+     * <li>"$FILTER". Value is a filter name</li>
+     * <li>"type_class". Value is a full classname. Used to limit search results to a particular entity type in case of entity subclasses. Can be combined to condition "ne" to
+     * exclude those classes.</li>
+     * <li>SQL. Additional sql to apply. Value is an array consisting of sql query and one or more paramaters to apply</li>
+     * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
+     * </ul>
+     * 
+     * A union between different filter items is AND.<br/>
+     * <br/>
+     * 
+     * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.<br/>
+     * <br/>
+     * 
+     * Following conditions are supported:
+     * <ul>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value<=field.value. Applies to date and number type fields.</li>
+     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value<=value</li>
+     * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li>inList. Field value is in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
+     * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
+     * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
+     * <li>overlapOptionalRange. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array of two
+     * values.</li>
+     * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
+     * be used. In either case case insensative matching is used. Applies to String type fields.</li>
+     * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
+     * String type fields.</li>
+     * <li>ne. Not equal.
+     * </ul>
+     * 
+     * Following special meaning values are supported:
+     * <ul>
+     * <li>IS_NULL. Field value is null</li>
+     * <li>IS_NOT_NULL. Field value is not null</li>
+     * </ul>
+     * 
+     * Examples:<br/>
+     * <ul>
+     * <li>invoice number equals "1578AU":<br/>
+     * Filter key: invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is not "1578AU":<br/>
+     * Filter key: ne invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is null:<br/>
+     * Filter key: invoiceNumber. Filter value: IS_NULL</li>
+     * <li>invoice number is not empty:<br/>
+     * Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
+     * <li>Invoice date is between 2017-05-01 and 2017-06-01:<br/>
+     * Filter key: fromRange invoiceDate. Filter value: 2017-05-01<br/>
+     * Filter key: toRange invoiceDate. Filter value: 2017-06-01</li>
+     * <li>Date is between creation and update dates:<br/>
+     * Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
+     * <li>invoice number is any of 158AU, 159KU or 189LL:<br/>
+     * Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
+     * <li>any of param1, param2 or param3 fields contains "energy":<br/>
+     * Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
+     * <li>any of param1, param2 or param3 fields start with "energy":<br/>
+     * Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
+     * <li>any of param1, param2 or param3 fields is "energy":<br/>
+     * Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
+     * </ul>
+     * 
+     * 
      * @param config PaginationConfiguration data holding object
      * @return query to filter entities according pagination configuration data.
      */
@@ -623,7 +689,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
                     }
 
-                    // if ranged search - field value in between from - to values. Specifies "from" value: e.g value>=field.value
+                    // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
                     if ("fromRange".equals(condition)) {
                         if (filterValue instanceof Double) {
                             BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
@@ -754,7 +820,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         // Any of the multiple field values wildcard match the value (OR criteria) - a diference from "likeCriterias" is that wildcard will be appended to the value
                         // automatically
-                    } else if (SEARCH_FIELD1_OR_FIELD2.equals(condition)) {
+                    } else if (SEARCH_WILDCARD_OR.equals(condition)) {
                         queryBuilder.startOrClause();
                         for (String field : fields) {
                             queryBuilder.addSql("a." + field + " like '%" + filterValue + "%'");
