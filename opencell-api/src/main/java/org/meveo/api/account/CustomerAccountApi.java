@@ -293,6 +293,10 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         }
         
+        if (!StringUtils.isBlank(postData.getDunningLevel())) {
+        	customerAccount.setDunningLevel(postData.getDunningLevel());
+        }
+        
         // Synchronize payment methods
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             if (customerAccount.getPaymentMethods() == null) {
