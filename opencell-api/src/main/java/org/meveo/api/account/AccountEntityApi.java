@@ -64,7 +64,7 @@ public class AccountEntityApi extends BaseApi {
         accountEntity.setExternalRef2(postData.getExternalRef2());
         accountEntity.setAddress(address);
         accountEntity.setName(name);
-
+        accountEntity.setJobTitle(postData.getJobTitle());
     }
 
     public void updateAccount(AccountEntity accountEntity, AccountDto postData) throws MeveoApiException {
@@ -133,6 +133,9 @@ public class AccountEntityApi extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             accountEntity.setExternalRef2(postData.getExternalRef2());
+        }
+        if (!StringUtils.isBlank(postData.getJobTitle())) {
+            accountEntity.setJobTitle(postData.getJobTitle());
         }
 
     }

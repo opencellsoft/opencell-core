@@ -1584,6 +1584,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setDescription(account.getDescription());
 		dto.setExternalRef1(account.getExternalRef1());
 		dto.setExternalRef2(account.getExternalRef2());
+		dto.setJobTitle(account.getJobTitle());
 		if (account.getName() != null) {
 			dto.setName(new NameDto(account.getName()));
 		}
