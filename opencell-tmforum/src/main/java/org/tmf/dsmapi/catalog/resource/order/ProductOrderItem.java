@@ -14,6 +14,7 @@ import javax.xml.bind.annotation.XmlType;
 
 import org.meveo.admin.exception.BusinessException;
 import org.tmf.dsmapi.catalog.resource.product.ProductOffering;
+import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -32,6 +33,21 @@ public class ProductOrderItem implements Serializable {
     private ProductOffering productOffering;
     private Product product;
 
+    private static Unmarshaller umar ;
+    private static Marshaller mar;
+    
+	static {
+		try {
+			
+			umar = JAXBContext.newInstance(ProductOrderItem.class).createUnmarshaller();
+			mar = JAXBContext.newInstance(ProductOrderItem.class).createMarshaller();
+			mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
     public String getId() {
         return id;
     }
@@ -98,10 +114,10 @@ public class ProductOrderItem implements Serializable {
      */
     public static String serializeOrderItem(ProductOrderItem productOrderItem) throws BusinessException {
         try {
-            Marshaller m = JAXBContext.newInstance(ProductOrderItem.class).createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            //Marshaller m = JAXBContext.newInstance(ProductOrderItem.class).createMarshaller();
+            //m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             StringWriter w = new StringWriter();
-            m.marshal(productOrderItem, w);
+            mar.marshal(productOrderItem, w);
 
             return w.toString();
 
@@ -121,9 +137,9 @@ public class ProductOrderItem implements Serializable {
     public static ProductOrderItem deserializeOrderItem(String orderItemSource) throws BusinessException {
         // Store orderItem DTO into DB to be retrieved for full information
         try {
-            Unmarshaller m = JAXBContext.newInstance(ProductOrderItem.class).createUnmarshaller();
+            //Unmarshaller m = JAXBContext.newInstance(ProductOrderItem.class).createUnmarshaller();
             // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            ProductOrderItem productOrderItem = (ProductOrderItem) m.unmarshal(new StringReader(orderItemSource));
+            ProductOrderItem productOrderItem = (ProductOrderItem) umar.unmarshal(new StringReader(orderItemSource));
 
             return productOrderItem;
 

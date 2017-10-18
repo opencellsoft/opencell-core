@@ -82,6 +82,23 @@ public class ProductQuoteItem implements Serializable {
 
     protected TimeRange subscriptionPeriod;
     protected List<String> consumptionCdr;
+    
+    private static Unmarshaller m ;
+    private static Marshaller mar;
+    
+	static {
+		try {
+			
+			m = JAXBContext.newInstance(ProductQuoteItem.class).createUnmarshaller();
+			//m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
+			mar = JAXBContext.newInstance(ProductQuoteItem.class).createMarshaller();
+			mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
     /**
      * Obtient la valeur de la propriété id.
@@ -383,11 +400,13 @@ public class ProductQuoteItem implements Serializable {
      */
     public static String serializeQuoteItem(ProductQuoteItem productQuoteItem) throws BusinessException {
         try {
-            Marshaller m = JAXBContext.newInstance(ProductQuoteItem.class).createMarshaller();
-            m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            StringWriter w = new StringWriter();
-            m.marshal(productQuoteItem, w);
-
+            //Marshaller m = JAXBContext.newInstance(ProductQuoteItem.class).createMarshaller();
+            //m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        	System.out.println("<XML><Marshaller> ProductQuoteItem -1-");
+        	
+        	StringWriter w = new StringWriter();
+            mar.marshal(productQuoteItem, w);
+            System.out.println("<XML><Marshaller> ProductQuoteItem -2-");
             return w.toString();
 
         } catch (JAXBException e) {
@@ -406,10 +425,12 @@ public class ProductQuoteItem implements Serializable {
     public static ProductQuoteItem deserializeQuoteItem(String quoteItemSource) throws BusinessException {
         // Store quoteItem DTO into DB to be retrieved for full information
         try {
-            Unmarshaller m = JAXBContext.newInstance(ProductQuoteItem.class).createUnmarshaller();
+            //Unmarshaller m = JAXBContext.newInstance(ProductQuoteItem.class).createUnmarshaller();
             // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        	System.out.println("<XML><Unmarshaller> ProductQuoteItem -1-");
             ProductQuoteItem productQuoteItem = (ProductQuoteItem) m.unmarshal(new StringReader(quoteItemSource));
-
+            System.out.println("<XML><Unmarshaller> ProductQuoteItem -2-");
+            
             return productQuoteItem;
 
         } catch (JAXBException e) {

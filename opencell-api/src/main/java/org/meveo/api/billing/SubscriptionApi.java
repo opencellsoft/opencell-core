@@ -299,6 +299,8 @@ public class SubscriptionApi extends BaseApi {
 
     public void activateServices(ActivateServicesRequestDto postData, String orderNumber, boolean ignoreAlreadyActivatedError) throws MeveoApiException, BusinessException {
 
+    	long startDate = System.currentTimeMillis();
+    	
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
         }
@@ -308,13 +310,16 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
+        System.out.println("> SubApi > activateServices > @ 1:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        System.out.println("> SubApi > activateServices > @ 2:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
 
         subscription = subscriptionService.refreshOrRetrieve(subscription);
-        subscription.getOffer().getOfferServiceTemplates().size();
+        //subscription.getOffer().getOfferServiceTemplates().size();
+        System.out.println("> SubApi > activateServices > @ 3:" + (Calendar.getInstance().getTimeInMillis() - startDate));
 
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
@@ -323,6 +328,7 @@ public class SubscriptionApi extends BaseApi {
         // check if exists
         List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
         for (ServiceToActivateDto serviceToActivateDto : postData.getServicesToActivateDto().getService()) {
+        	System.out.println("> SubApi > activateServices > @ 4:" + (Calendar.getInstance().getTimeInMillis() - startDate));
             if (StringUtils.isBlank(serviceToActivateDto.getSubscriptionDate())) {
                 missingParameters.add("SubscriptionDate");
                 handleMissingParameters();
@@ -332,21 +338,27 @@ public class SubscriptionApi extends BaseApi {
                 throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
             }
 
+            System.out.println("> SubApi > activateServices > @ 5:" + (Calendar.getInstance().getTimeInMillis() - startDate));
+            
             serviceToActivateDto.setServiceTemplate(serviceTemplate);
             serviceToActivateDtos.add(serviceToActivateDto);
         }
 
+        System.out.println("> SubApi > activateServices > @ 6:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         // instantiate
         List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
         for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
+        	System.out.println("> SubApi > activateServices > @ 7:" + (Calendar.getInstance().getTimeInMillis() - startDate));
             ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
             log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
             List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
+            System.out.println("> SubApi > activateServices > @ 8:" + (Calendar.getInstance().getTimeInMillis() - startDate));
             boolean alreadyActive = false;
             boolean alreadySuspended = false;
             ServiceInstance serviceInstance = null;
             for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
+            	System.out.println("> SubApi > activateServices > @ 9:" + (Calendar.getInstance().getTimeInMillis() - startDate));
                 if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
                         && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED) {
                     if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
@@ -364,6 +376,7 @@ public class SubscriptionApi extends BaseApi {
                             serviceInstances.add(serviceInstance);
                         }
                     } else if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
+                    	System.out.println("> SubApi > activateServices > @ 10:" + (Calendar.getInstance().getTimeInMillis() - startDate));
                         serviceInstance = subscriptionServiceInstance;
                         alreadyActive = true;
 
@@ -374,6 +387,7 @@ public class SubscriptionApi extends BaseApi {
                 }
 
             }
+            System.out.println("> SubApi > activateServices > @ 11:" + (Calendar.getInstance().getTimeInMillis() - startDate));
 
             if (alreadyActive && !ignoreAlreadyActivatedError) {
                 throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be ACTIVE.");
@@ -406,6 +420,7 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
                 serviceInstance.setOrderNumber(orderNumber);
 
+                System.out.println("> SubApi > activateServices > @ 12:" + (Calendar.getInstance().getTimeInMillis() - startDate));
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true);
@@ -417,6 +432,7 @@ public class SubscriptionApi extends BaseApi {
                     throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToActivateDto.getCode());
                 }
 
+                System.out.println("> SubApi > activateServices > @ 13:" + (Calendar.getInstance().getTimeInMillis() - startDate));
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance);
 
@@ -429,6 +445,7 @@ public class SubscriptionApi extends BaseApi {
                 }
             }
 
+            System.out.println("> SubApi > activateServices > @ 14:" + (Calendar.getInstance().getTimeInMillis() - startDate));
             // override price and description
             if (serviceToActivateDto.getChargeInstanceOverrides() != null && serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride() != null) {
                 for (ChargeInstanceOverrideDto chargeInstanceOverrideDto : serviceToActivateDto.getChargeInstanceOverrides().getChargeInstanceOverride()) {
@@ -461,8 +478,10 @@ public class SubscriptionApi extends BaseApi {
             }
         }
 
+        System.out.println("> SubApi > activateServices > @ 15:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         // activate services
         for (ServiceInstance serviceInstance : serviceInstances) {
+        	System.out.println("> SubApi > activateServices > @ 16:" + (Calendar.getInstance().getTimeInMillis() - startDate));
             if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
                 throw new MeveoApiException("Service " + serviceInstance.getCode() + " is Suspended");
             }
@@ -482,11 +501,13 @@ public class SubscriptionApi extends BaseApi {
                 throw new MeveoApiException(e.getMessage());
             }
         }
+        System.out.println("> SubApi > activateServices > @ 17:" + (Calendar.getInstance().getTimeInMillis() - startDate));
 
     }
 
     public void instantiateServices(InstantiateServicesRequestDto postData) throws MeveoApiException, BusinessException {
 
+    	long startDate = System.currentTimeMillis();
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
         }
@@ -496,7 +517,9 @@ public class SubscriptionApi extends BaseApi {
 
         handleMissingParametersAndValidate(postData);
 
+        System.out.println("> SubApi > instantiateServices > @ 1:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
+        System.out.println("> SubApi > instantiateServices > @ 2:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, postData.getSubscription());
         }
@@ -504,7 +527,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
-
+        System.out.println("> SubApi > instantiateServices > @ 4:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         // check if exists
         List<ServiceToInstantiateDto> serviceToInstantiateDtos = new ArrayList<>();
         for (ServiceToInstantiateDto serviceToInstantiateDto : postData.getServicesToInstantiate().getService()) {
@@ -515,6 +538,7 @@ public class SubscriptionApi extends BaseApi {
 
             serviceToInstantiateDto.setServiceTemplate(serviceTemplate);
             serviceToInstantiateDtos.add(serviceToInstantiateDto);
+            System.out.println("> SubApi > instantiateServices > @ 5:" + (Calendar.getInstance().getTimeInMillis() - startDate));
         }
 
         // instantiate
@@ -531,6 +555,7 @@ public class SubscriptionApi extends BaseApi {
                     alreadyinstanciated = true;
                     break;
                 }
+                System.out.println("> SubApi > instantiateServices > @ 6:" + (Calendar.getInstance().getTimeInMillis() - startDate));
 
             }
 
@@ -557,10 +582,11 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
-
+                System.out.println("> SubApi > instantiateServices > @ 8:" + (Calendar.getInstance().getTimeInMillis() - startDate));
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true);
+                    System.out.println("> SubApi > instantiateServices > @ 9:" + (Calendar.getInstance().getTimeInMillis() - startDate));
                 } catch (MissingParameterException e) {
                     log.error("Failed to associate custom field instance to an entity: {} {}", serviceToInstantiateDto.getCode(), e.getMessage());
                     throw e;
@@ -571,6 +597,7 @@ public class SubscriptionApi extends BaseApi {
 
                 try {
                     serviceInstanceService.serviceInstanciation(serviceInstance);
+                    System.out.println("> SubApi > instantiateServices > @ 10:" + (Calendar.getInstance().getTimeInMillis() - startDate));
 
                 } catch (BusinessException e) {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);

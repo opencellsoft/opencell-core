@@ -2,6 +2,7 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -128,18 +130,22 @@ public class QuoteApi extends BaseApi {
      * @throws MeveoApiException
      */
     public ProductQuote createQuote(ProductQuote productQuote) throws MeveoApiException, BusinessException {
-
-        if (productQuote.getQuoteItem() == null || productQuote.getQuoteItem().isEmpty()) {
+    	long l = Calendar.getInstance().getTimeInMillis();
+    	
+        List<ProductQuoteItem> quoteItem1 = productQuote.getQuoteItem();
+		if (quoteItem1 == null || quoteItem1.isEmpty()) {
             missingParameters.add("quoteItem");
         }
+		
         if (productQuote.getQuoteDate() == null) {
             missingParameters.add("quoteDate");
         }
-
         handleMissingParameters();
-
-        if (productQuote.getCharacteristic().size() > 0) {
-            for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
+        
+        List<Characteristic> characteristic = productQuote.getCharacteristic();
+        
+		if (characteristic.size() > 0) {
+            for (Characteristic quoteCharacteristic : characteristic) {
                 if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT.getCharacteristicName())) {
                     String scriptCode = quoteCharacteristic.getValue();
                     Map<String, Object> context = new HashMap<>();
@@ -161,24 +167,27 @@ public class QuoteApi extends BaseApi {
         quote.setQuoteDate(productQuote.getQuoteDate() != null ? productQuote.getQuoteDate() : new Date());
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
+        
         if (productQuote.getValidFor() != null) {
             quote.setValidity(productQuote.getValidFor().toDatePeriod());
         }
-
+        
         if (productQuote.getState() != null) {
             quote.setStatus(QuoteStatusEnum.valueByApiState(productQuote.getState()));
         } else {
             quote.setStatus(QuoteStatusEnum.IN_PROGRESS);
         }
-
+        
         UserAccount quoteLevelUserAccount = null;
         org.meveo.model.billing.BillingAccount billingAccount = null; // used for validation only
 
+        System.out.println("> QuoteApi > createQuote > <10> " + (Calendar.getInstance().getTimeInMillis() - l));
+        
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
             if (!StringUtils.isEmpty(billingAccountId)) {
-
-                quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
+                //quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
+            	quoteLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId).getSingleResult();
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
@@ -186,24 +195,32 @@ public class QuoteApi extends BaseApi {
             }
         }
 
-        for (ProductQuoteItem productQuoteItem : productQuote.getQuoteItem()) {
-
+        System.out.println("> QuoteApi > createQuote > <11> " + (Calendar.getInstance().getTimeInMillis() - l));
+        for (ProductQuoteItem productQuoteItem : quoteItem1) {
             UserAccount itemLevelUserAccount = null;
-
             if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
                 String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
+                System.out.println("> QuoteApi > createQuote > <11.3> " + (Calendar.getInstance().getTimeInMillis() - l));
                 if (!StringUtils.isEmpty(billingAccountId)) {
-                    itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
-                    if (itemLevelUserAccount == null) {
+                	System.out.println("> QuoteApi > createQuote > <11.3.1> " + (Calendar.getInstance().getTimeInMillis() - l));
+                    //itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
+                	itemLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId).getSingleResult();
+                	System.out.println("> QuoteApi > createQuote > <11.3.1.1> " + (Calendar.getInstance().getTimeInMillis() - l));
+                	if (itemLevelUserAccount == null) {
                         throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                     }
-
-                    if (billingAccount != null && !billingAccount.equals(itemLevelUserAccount.getBillingAccount())) {
+                    System.out.println("> QuoteApi > createQuote > <11.3.2> " + (Calendar.getInstance().getTimeInMillis() - l));
+                    
+                    BillingAccount billingAccount2 = itemLevelUserAccount.getBillingAccount();
+                    System.out.println("> QuoteApi > createQuote > <11.3.3> " + (Calendar.getInstance().getTimeInMillis() - l));
+					if (billingAccount != null && !billingAccount.equals(billingAccount2)) {
                         throw new InvalidParameterException("Accounts declared on quote level and item levels don't belong to the same billing account");
                     }
                 }
+                System.out.println("> QuoteApi > createQuote > <11.4> " + (Calendar.getInstance().getTimeInMillis() - l));
             }
 
+            System.out.println("> QuoteApi > createQuote > <12> " + (Calendar.getInstance().getTimeInMillis() - l));
             if (itemLevelUserAccount == null && quoteLevelUserAccount == null) {
                 missingParameters.add("billingAccount");
 
@@ -211,44 +228,62 @@ public class QuoteApi extends BaseApi {
                 productQuoteItem.addBillingAccount(quoteLevelUserAccount.getCode());
             }
 
+            System.out.println("> QuoteApi > createQuote > <13> " + (Calendar.getInstance().getTimeInMillis() - l));
+            
             handleMissingParameters();
 
             QuoteItem quoteItem = new QuoteItem();
             List<QuoteItemProductOffering> productOfferings = new ArrayList<>();
             ProductOffering mainProductOffering = null;
 
+            System.out.println("> QuoteApi > createQuote > <14> " + (Calendar.getInstance().getTimeInMillis() - l));
+            
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
                 Date subscriptionDate = ((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
                     Date.class, DateUtils.setTimeToZero(quote.getQuoteDate())));
 
+                System.out.println("> QuoteApi > createQuote > <15> " + (Calendar.getInstance().getTimeInMillis() - l));
+                
                 mainProductOffering = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
+                
+                System.out.println("> QuoteApi > createQuote > <16> " + (Calendar.getInstance().getTimeInMillis() - l));
+                
                 if (mainProductOffering == null) {
                     throw new EntityDoesNotExistsException(ProductOffering.class,
                         productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                 }
+                System.out.println("> QuoteApi > createQuote > <17> " + (Calendar.getInstance().getTimeInMillis() - l));
                 productOfferings.add(new QuoteItemProductOffering(quoteItem, mainProductOffering, 0));
 
+                System.out.println("> QuoteApi > createQuote > <18> " + (Calendar.getInstance().getTimeInMillis() - l));
                 if (productQuoteItem.getProductOffering().getBundledProductOffering() != null) {
+                	System.out.println("> QuoteApi > createQuote > <18.1> " + (Calendar.getInstance().getTimeInMillis() - l));
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
-                        ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
-                        if (productOfferingInDB == null) {
+                    	System.out.println("> QuoteApi > createQuote > <18.2> " + (Calendar.getInstance().getTimeInMillis() - l));
+                    	ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
+                    	System.out.println("> QuoteApi > createQuote > <18.3> " + (Calendar.getInstance().getTimeInMillis() - l));
+                    	if (productOfferingInDB == null) {
                             throw new EntityDoesNotExistsException(ProductOffering.class,
                                 bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
                         }
+                    	System.out.println("> QuoteApi > createQuote > <18.4> " + (Calendar.getInstance().getTimeInMillis() - l));
                         productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
+                        System.out.println("> QuoteApi > createQuote > <18.5> " + (Calendar.getInstance().getTimeInMillis() - l));
                     }
                 }
             } else {
                 // We need productOffering so we know if product is subscription or productInstance - NEED TO FIX IT
                 throw new MissingParameterException("productOffering");
             }
+            System.out.println("> QuoteApi > createQuote > <19> " + (Calendar.getInstance().getTimeInMillis() - l));
 
             // Validate or supplement if not provided subscription renewal fields
             if (mainProductOffering instanceof OfferTemplate) {
                 orderApi.validateOrSupplementSubscriptionRenewalFields(productQuoteItem.getProduct(), (OfferTemplate) mainProductOffering);
             }
 
+            System.out.println("> QuoteApi > createQuote > <20> " + (Calendar.getInstance().getTimeInMillis() - l));
             quoteItem.setItemId(productQuoteItem.getId());
 
             quoteItem.setQuote(quote);
@@ -256,11 +291,13 @@ public class QuoteApi extends BaseApi {
             quoteItem.setQuoteItemProductOfferings(productOfferings);
             quoteItem.setUserAccount(itemLevelUserAccount != null ? itemLevelUserAccount : quoteLevelUserAccount);
 
+            System.out.println("> QuoteApi > createQuote > <21> " + (Calendar.getInstance().getTimeInMillis() - l));
             if (productQuoteItem.getState() != null) {
                 quoteItem.setStatus(QuoteStatusEnum.valueByApiState(productQuoteItem.getState()));
             } else {
                 quoteItem.setStatus(QuoteStatusEnum.IN_PROGRESS);
             }
+            System.out.println("> QuoteApi > createQuote > <22> " + (Calendar.getInstance().getTimeInMillis() - l));
 
             // Extract products that are not services. For each product offering there must be a product. Products that exceed the number of product offerings are treated as
             // services.
@@ -281,6 +318,7 @@ public class QuoteApi extends BaseApi {
 
             List<Product> products = new ArrayList<>();
             products.add(productQuoteItem.getProduct());
+            System.out.println("> QuoteApi > createQuote > <23> " + (Calendar.getInstance().getTimeInMillis() - l));
             if (productOfferings.size() > 1 && productQuoteItem.getProduct().getProductRelationship() != null
                     && !productQuoteItem.getProduct().getProductRelationship().isEmpty()) {
                 for (ProductRelationship productRelationship : productQuoteItem.getProduct().getProductRelationship()) {
@@ -290,10 +328,12 @@ public class QuoteApi extends BaseApi {
                     }
                 }
             }
+            System.out.println("> QuoteApi > createQuote > <24> " + (Calendar.getInstance().getTimeInMillis() - l));
 
             quote.addQuoteItem(quoteItem);
         }
 
+        System.out.println("> QuoteApi > createQuote > <25> " + (Calendar.getInstance().getTimeInMillis() - l));
         // populate customFields
         try {
             populateCustomFields(productQuote.getCustomFields(), quote, true);
@@ -305,11 +345,13 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-
+        System.out.println("> QuoteApi > createQuote > <26> " + (Calendar.getInstance().getTimeInMillis() - l));
         quoteService.create(quote);
 
-        if (productQuote.getCharacteristic().size() > 0) {
-            for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
+        System.out.println("> QuoteApi > createQuote > <27> " + (Calendar.getInstance().getTimeInMillis() - l));
+        if (characteristic.size() > 0) {
+            for (Characteristic quoteCharacteristic : characteristic) {
+            	System.out.println("> QuoteApi > createQuote > <27.1> " + (Calendar.getInstance().getTimeInMillis() - l));
                 if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT.getCharacteristicName())) {
                     String scriptCode = quoteCharacteristic.getValue();
                     Map<String, Object> context = new HashMap<>();
@@ -319,14 +361,19 @@ public class QuoteApi extends BaseApi {
                     break;
                 }
             }
+            System.out.println("> QuoteApi > createQuote > <27.2> " + (Calendar.getInstance().getTimeInMillis() - l));
         }
 
         // Commit before initiating workflow/quote processing
         quoteService.commit();
 
+        System.out.println("> QuoteApi > createQuote > <28> " + (Calendar.getInstance().getTimeInMillis() - l));
         quote = initiateWorkflow(quote);
 
-        return quoteToDto(quote);
+        System.out.println("> QuoteApi > createQuote > <29> " + (Calendar.getInstance().getTimeInMillis() - l));
+        ProductQuote quoteToDto = quoteToDto(quote);
+        System.out.println("> QuoteApi > createQuote > <30> " + (Calendar.getInstance().getTimeInMillis() - l));
+		return quoteToDto;
     }
 
     /**
@@ -339,18 +386,22 @@ public class QuoteApi extends BaseApi {
      * @throws MeveoApiException
      */
     public Quote initiateWorkflow(Quote quote) throws BusinessException {
-
+    	System.out.println("> QuoteApi > initiateWorkflow <1>");
         if (workflowService.isWorkflowSetup(Quote.class)) {
+        	System.out.println("> QuoteApi > initiateWorkflow <2>");
             quote = (Quote) workflowService.executeMatchingWorkflows(quote);
+            System.out.println("> QuoteApi > initiateWorkflow <3>");
 
         } else {
+        	System.out.println("> QuoteApi > initiateWorkflow <4>");
             try {
                 quote = processQuote(quote);
+                System.out.println("> QuoteApi > initiateWorkflow <5>");
             } catch (MeveoApiException e) {
                 throw new BusinessException(e);
             }
         }
-
+        System.out.println("> QuoteApi > initiateWorkflow <6>");
         return quote;
 
     }
@@ -365,28 +416,30 @@ public class QuoteApi extends BaseApi {
      */
     public Quote processQuote(Quote quote) throws BusinessException, MeveoApiException {
 
+    	long l = Calendar.getInstance().getTimeInMillis();
         // Nothing to process in final state
         if (quote.getStatus() == QuoteStatusEnum.CANCELLED || quote.getStatus() == QuoteStatusEnum.ACCEPTED || quote.getStatus() == QuoteStatusEnum.REJECTED) {
             return quote;
         }
-
+        System.out.println("> QuoteApi > processQuote > <1> " + (Calendar.getInstance().getTimeInMillis() - l));
         log.info("Processing quote {}", quote.getCode());
-
+        System.out.println("> QuoteApi > processQuote > <2> " + (Calendar.getInstance().getTimeInMillis() - l));
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             processQuoteItem(quote, quoteItem);
         }
-
+        System.out.println("> QuoteApi > processQuote > <3> " + (Calendar.getInstance().getTimeInMillis() - l));
         quote.setStatus(QuoteStatusEnum.PENDING);
+        System.out.println("> QuoteApi > processQuote > <4> " + (Calendar.getInstance().getTimeInMillis() - l));
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             quoteItem.setStatus(QuoteStatusEnum.PENDING);
         }
-
+        System.out.println("> QuoteApi > processQuote > <5> " + (Calendar.getInstance().getTimeInMillis() - l));
         quote = invoiceQuote(quote);
-
+        System.out.println("> QuoteApi > processQuote > <6> " + (Calendar.getInstance().getTimeInMillis() - l));
         quote = quoteService.update(quote);
-
+        System.out.println("> QuoteApi > processQuote > <7> " + (Calendar.getInstance().getTimeInMillis() - l));
         log.trace("Finished processing quote {}", quote.getCode());
-
+        System.out.println("> QuoteApi > processQuote > <8> " + (Calendar.getInstance().getTimeInMillis() - l));
         return quote;
     }
 
@@ -415,37 +468,47 @@ public class QuoteApi extends BaseApi {
      * @throws MeveoApiException
      */
     public Quote invoiceQuote(Quote quote) throws BusinessException {
-
+    	long l = Calendar.getInstance().getTimeInMillis();
         log.info("Creating invoices for quote {}", quote.getCode());
-
+        System.out.println("> QuoteApi > invoiceQuote > <1> " + (Calendar.getInstance().getTimeInMillis() - l));
         try {
 
             Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos = new HashMap<>();
-
+            System.out.println("> QuoteApi > invoiceQuote > <2> " + (Calendar.getInstance().getTimeInMillis() - l));
             for (QuoteItem quoteItem : quote.getQuoteItems()) {
+            	System.out.println("> QuoteApi > invoiceQuote > <2.1> " + (Calendar.getInstance().getTimeInMillis() - l));
                 String baCode = quoteItem.getUserAccount().getBillingAccount().getCode();
+                System.out.println("> QuoteApi > invoiceQuote > <2.2> " + (Calendar.getInstance().getTimeInMillis() - l));
                 if (!quoteInvoiceInfos.containsKey(baCode)) {
+                	System.out.println("> QuoteApi > invoiceQuote > <2.3> " + (Calendar.getInstance().getTimeInMillis() - l));
                     quoteInvoiceInfos.put(baCode, new ArrayList<QuoteInvoiceInfo>());
+                    System.out.println("> QuoteApi > invoiceQuote > <2.4> " + (Calendar.getInstance().getTimeInMillis() - l));
                 }
                 quoteInvoiceInfos.get(baCode).add(preInvoiceQuoteItem(quote, quoteItem));
+                System.out.println("> QuoteApi > invoiceQuote > <2.5> " + (Calendar.getInstance().getTimeInMillis() - l));
             }
-
+            
             List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos);
-
+            System.out.println("> QuoteApi > invoiceQuote > <3> " + (Calendar.getInstance().getTimeInMillis() - l));
             List<QuoteInvoiceInfo> quoteInvoiceInfosAll = new ArrayList<>();
 
             for (List<QuoteInvoiceInfo> quoteInvoiceInfo : quoteInvoiceInfos.values()) {
                 quoteInvoiceInfosAll.addAll(quoteInvoiceInfo);
             }
-
+            System.out.println("> QuoteApi > invoiceQuote > <4> " + (Calendar.getInstance().getTimeInMillis() - l));
             destroyInvoiceQuoteItems(quoteInvoiceInfosAll);
-
+            System.out.println("> QuoteApi > invoiceQuote > <5> " + (Calendar.getInstance().getTimeInMillis() - l));
             for (Invoice invoice : invoices) {
+            	System.out.println("> QuoteApi > invoiceQuote > <5.1> " + (Calendar.getInstance().getTimeInMillis() - l));
                 invoice.setQuote(quote);
+                System.out.println("> QuoteApi > invoiceQuote > <5.2> " + (Calendar.getInstance().getTimeInMillis() - l));
                 invoice = invoiceService.update(invoice);
+                System.out.println("> QuoteApi > invoiceQuote > <5.3> " + (Calendar.getInstance().getTimeInMillis() - l));
                 quote.getInvoices().add(invoice);
+                System.out.println("> QuoteApi > invoiceQuote > <5.4> " + (Calendar.getInstance().getTimeInMillis() - l));
             }
             quote = quoteService.update(quote);
+            System.out.println("> QuoteApi > invoiceQuote > <6> " + (Calendar.getInstance().getTimeInMillis() - l));
 
         } catch (MeveoApiException e) {
             throw new BusinessException(e.getMessage());
@@ -961,35 +1024,47 @@ public class QuoteApi extends BaseApi {
      */
     public ProductOrder placeOrder(String quoteCode) throws BusinessException, MeveoApiException {
 
+    	long l = Calendar.getInstance().getTimeInMillis();
         if (StringUtils.isEmpty(quoteCode)) {
             missingParameters.add("quoteCode");
         }
 
         handleMissingParameters();
 
+        System.out.println("> QuoteApi > placeOrder > <1> " + (Calendar.getInstance().getTimeInMillis() - l));
         Quote quote = quoteService.findByCode(quoteCode);
+        System.out.println("> QuoteApi > placeOrder > <2> " + (Calendar.getInstance().getTimeInMillis() - l));
         ProductOrder productOrder = new ProductOrder();
         productOrder.setOrderDate(new Date());
         productOrder.setRequestedStartDate(quote.getFulfillmentStartDate());
         productOrder.setDescription(quote.getDescription());
         productOrder.setOrderItem(new ArrayList<ProductOrderItem>());
 
+        System.out.println("> QuoteApi > placeOrder > <3> " + (Calendar.getInstance().getTimeInMillis() - l));
         for (QuoteItem quoteItem : quote.getQuoteItems()) {
             ProductQuoteItem productQuoteItem = ProductQuoteItem.deserializeQuoteItem(quoteItem.getSource());
-
+            System.out.println("> QuoteApi > placeOrder > <3.1> " + (Calendar.getInstance().getTimeInMillis() - l));
             ProductOrderItem orderItem = new ProductOrderItem();
             orderItem.setId(productQuoteItem.getId());
+            System.out.println("> QuoteApi > placeOrder > <3.2> " + (Calendar.getInstance().getTimeInMillis() - l));
             orderItem.setAction(OrderItemActionEnum.ADD.toString().toLowerCase());
+            System.out.println("> QuoteApi > placeOrder > <3.3> " + (Calendar.getInstance().getTimeInMillis() - l));
             orderItem.setBillingAccount(productQuoteItem.getBillingAccount());
+            System.out.println("> QuoteApi > placeOrder > <3.4> " + (Calendar.getInstance().getTimeInMillis() - l));
             orderItem.setProduct(productQuoteItem.getProduct());
+            System.out.println("> QuoteApi > placeOrder > <3.5> " + (Calendar.getInstance().getTimeInMillis() - l));
             orderItem.setProductOffering(productQuoteItem.getProductOffering());
-
+            System.out.println("> QuoteApi > placeOrder > <3.6> " + (Calendar.getInstance().getTimeInMillis() - l));
             productOrder.getOrderItem().add(orderItem);
         }
 
+        System.out.println("> QuoteApi > placeOrder > <4> " + (Calendar.getInstance().getTimeInMillis() - l));
         productOrder = orderApi.createProductOrder(productOrder, quote.getId());
+        System.out.println("> QuoteApi > placeOrder > <5> " + (Calendar.getInstance().getTimeInMillis() - l));
         quote.setStatus(QuoteStatusEnum.ACCEPTED);
+        System.out.println("> QuoteApi > placeOrder > <6> " + (Calendar.getInstance().getTimeInMillis() - l));
         quoteService.update(quote);
+        System.out.println("> QuoteApi > placeOrder > <7> " + (Calendar.getInstance().getTimeInMillis() - l));
 
         return productOrder;
     }
