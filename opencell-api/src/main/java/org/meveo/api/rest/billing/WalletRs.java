@@ -18,7 +18,8 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -153,19 +154,46 @@ public interface WalletRs extends IBaseRs {
     ActionStatus createOperation(WalletOperationDto postData);
 
     /**
-     * Search for an operation with a given (example) code
+     * Search for an operation with a given (example) code. Deprecated in v.4.7.2
      * 
      * @param postData The operation's data (FindWalletOperationsDto)
      * @param offset Pagination - from record number
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      * @param sortOrder Sorting - sort order.
-     * @return
+     * @return List of wallet operations
      */
+    @Deprecated
     @POST
     @Path("/operation/find")
-    FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List wallet operations matching a given criteria
+     * 
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return List of wallet operations
+     */
+    @GET
+    @Path("/operation/list")
+    public FindWalletOperationsResponseDto listOperationsGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List wallet operations matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of wallet operations
+     */
+    @POST
+    @Path("/operation/list")
+    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Create new or update an existing wallet template

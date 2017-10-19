@@ -14,6 +14,8 @@ import org.meveo.api.dto.invoice.GetPdfInvoiceResponseDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
+import org.meveo.api.dto.response.InvoicesDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.InvoiceWs;
@@ -45,7 +47,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false));
 
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -168,7 +170,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     public CustomerInvoicesResponse listPresentInAR(String customerAccountCode) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, true));
 
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -189,6 +191,19 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
             super.processException(e, result.getActionStatus());
         }
         log.info("generateInvoice Response={}", result);
+        return result;
+    }
+
+    public InvoicesDto list(PagingAndFiltering pagingAndFiltering) {
+
+        InvoicesDto result = new InvoicesDto();
+
+        try {
+            result = invoiceApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
         return result;
     }
 }

@@ -17,6 +17,9 @@ import org.meveo.api.dto.invoice.GetXmlInvoiceRequestDto;
 import org.meveo.api.dto.invoice.GetXmlInvoiceResponseDto;
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.api.dto.response.CustomerInvoicesResponse;
+import org.meveo.api.dto.response.InvoicesDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
@@ -54,7 +57,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.list(customerAccountCode));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false));
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -113,7 +116,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
     @Override
     public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto) {
-	 GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
+        GetPdfInvoiceResponseDto result = new GetPdfInvoiceResponseDto();
         String invoiceNumber = pdfInvoiceRequestDto.getInvoiceNumber();
         String invoiceType = pdfInvoiceRequestDto.getInvoiceType();
         if (StringUtils.isBlank(invoiceType)) {
@@ -121,7 +124,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         }
         try {
 
-            result.setPdfContent(invoiceApi.getPdfInvoice(null, invoiceNumber, invoiceType,pdfInvoiceRequestDto.getGeneratePdf()));
+            result.setPdfContent(invoiceApi.getPdfInvoice(null, invoiceNumber, invoiceType, pdfInvoiceRequestDto.getGeneratePdf()));
             result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
         } catch (Exception e) {
@@ -185,7 +188,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listPresentInAR(customerAccountCode));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, true));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -205,4 +208,30 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         return result;
     }
 
+    @Override
+    public InvoicesDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        InvoicesDto result = new InvoicesDto();
+
+        try {
+            result = invoiceApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public InvoicesDto listPost(PagingAndFiltering pagingAndFiltering) {
+        InvoicesDto result = new InvoicesDto();
+
+        try {
+            result = invoiceApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 }

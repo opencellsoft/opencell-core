@@ -31,8 +31,6 @@ import org.meveo.commons.utils.ListUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.CounterTypeEnum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ObservableEntity
@@ -208,9 +206,6 @@ public class CounterPeriod extends BusinessEntity {
     }
 
     public boolean isCorrespondsToPeriod(Date dateToCheck) {
-
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKK period match {} {} to {} {} {}", periodStartDate, periodEndDate, dateToCheck, !dateToCheck.before(periodStartDate), !dateToCheck.after(periodEndDate));
         return !dateToCheck.before(periodStartDate) && !dateToCheck.after(periodEndDate);
     }
 

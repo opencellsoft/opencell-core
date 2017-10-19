@@ -9,13 +9,13 @@ public abstract class SearchResponse extends BaseResponse {
 
     private static final long serialVersionUID = -2374431968882480529L;
 
-    private Paging paging;
+    private PagingAndFiltering paging;
 
-    public void setPaging(Paging paging) {
+    public void setPaging(PagingAndFiltering paging) {
         this.paging = paging;
     }
 
-    public Paging getPaging() {
+    public PagingAndFiltering getPaging() {
         return paging;
     }
 
