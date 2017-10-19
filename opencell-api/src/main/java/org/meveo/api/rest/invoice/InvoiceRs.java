@@ -183,7 +183,7 @@ public interface InvoiceRs extends IBaseRs {
     /**
      * List invoices matching a given criteria
      * 
-     * @param query Search criteria
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma
      * @param offset Pagination - from record number
      * @param limit Pagination - number of records to retrieve

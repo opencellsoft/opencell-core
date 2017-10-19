@@ -83,6 +83,8 @@ public class PagingAndFiltering implements Serializable {
      * Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
      * 
+     * NOTE: Filters passed as string in Rest GET type method are in the following format: filterKey1:filterValue1|filterKey2:filterValue2
+     * 
      */
     private Map<String, Object> filters;
 
