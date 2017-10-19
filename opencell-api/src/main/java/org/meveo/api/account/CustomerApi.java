@@ -8,12 +8,13 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomersDto;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -36,6 +37,7 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.CustomerService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -286,50 +288,38 @@ public class CustomerApi extends AccountEntityApi {
     }
 
     @SecuredBusinessEntityMethod(resultFilter = AccountDtoListFilter.class, validate = @SecureMethodParameter(parser = NullParser.class))
-    public CustomersResponseDto filterCustomer(CustomerDto postData, Paging paging) throws MeveoApiException {
+    public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
-        CustomerCategory customerCategory = null;
-        if (!StringUtils.isBlank(postData.getCustomerCategory())) {
-            customerCategory = customerCategoryService.findByCode(postData.getCustomerCategory());
-            if (customerCategory == null) {
-                throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCustomerCategory());
-            }
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
         }
 
-        Seller seller = null;
-        if (!StringUtils.isBlank(postData.getSeller())) {
-            seller = sellerService.findByCode(postData.getSeller());
-            if (seller == null) {
-                throw new EntityDoesNotExistsException(Seller.class, postData.getSeller());
-            }
+        if (postData != null) {
+            pagingAndFiltering.addFilter("customerCategory.code", postData.getCustomerCategory());
+            pagingAndFiltering.addFilter("seller.code", postData.getSeller());
+            pagingAndFiltering.addFilter("customerBrand.code", postData.getCustomerBrand());
+            pagingAndFiltering.addFilter("code", postData.getCode());
         }
 
-        CustomerBrand customerBrand = null;
-        if (!StringUtils.isBlank(postData.getCustomerBrand())) {
-            customerBrand = customerBrandService.findByCode(postData.getCustomerBrand());
-            if (customerBrand == null) {
-                throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCustomerBrand());
-            }
-        }
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, Customer.class);
+
+        Long totalCount = customerService.count(paginationConfig);
 
         CustomersDto customerDtos = new CustomersDto();
-		
-		CustomersResponseDto result = new CustomersResponseDto();
-		
-        List<Customer> customers = customerService.filter(postData.getCode(), customerCategory, seller, customerBrand, paging != null ? paging.getOffset() : null,
-            paging != null ? paging.getLimit() : null, paging);
-        
-        customerDtos.setTotalNumberOfRecords(customerService.countFilter(postData.getCode(), customerCategory, seller, customerBrand, paging));
-        
-        if (customers != null) {
+        CustomersResponseDto result = new CustomersResponseDto();
+
+        result.setPaging(pagingAndFiltering);
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        customerDtos.setTotalNumberOfRecords(totalCount);
+
+        if (totalCount > 0) {
+            List<Customer> customers = customerService.list(paginationConfig);
             for (Customer c : customers) {
                 customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c));
             }
         }
 
         result.setCustomers(customerDtos);
-        result.setPaging(paging != null ? paging : new Paging());
-        result.getPaging().setTotalNumberOfRecords(customerDtos.getTotalNumberOfRecords().intValue());
         return result;
     }
 

@@ -65,12 +65,12 @@
 
         <!--  If the value binding is a date, display a p:calendar field. -->
         <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Date}">
-            <p:calendar id="${id}" value="#{backingBean.filters['minmaxRange-'.concat(minField).concat('-').concat(maxField)]}" pattern="#{datePattern}" disabled="#{disabled}" />
+            <p:calendar id="${id}" value="#{backingBean.filters['minmaxRange '.concat(minField).concat(' ').concat(maxField)]}" pattern="#{datePattern}" disabled="#{disabled}" />
         </c:if>
 
         <!--  If the value binding is a number display number field. -->
         <c:if test="${fieldInfo.fieldType == FieldTypeEnum.Number}">
-            <p:inputText id="${id}" value="#{backingBean.filters['minmaxRange-'.concat(minField).concat('-').concat(maxField)]}" size="5" maxlength="5"
+            <p:inputText id="${id}" value="#{backingBean.filters['minmaxRange '.concat(minField).concat(' ').concat(maxField)]}" size="5" maxlength="5"
                 disabled="#{cc.parent.attrs.disabled}">
                 <f:converter converterId="${fieldInfo.numberConverter}" />
             </p:inputText>

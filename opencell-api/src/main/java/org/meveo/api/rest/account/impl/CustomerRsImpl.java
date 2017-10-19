@@ -10,8 +10,8 @@ import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.api.dto.response.Paging;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -81,10 +81,35 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
     }
 
     @Override
-    public CustomersResponseDto list(CustomerDto postData, Integer firstRow, Integer numberOfRows, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+    public CustomersResponseDto list47(CustomerDto postData, Integer firstRow, Integer numberOfRows, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
 
         try {
-            return customerApi.filterCustomer(postData, new Paging(offset != null ? offset : firstRow, limit != null ? limit : numberOfRows, sortBy, sortOrder));
+            return customerApi.list(postData,
+                new PagingAndFiltering(null, null, offset != null ? offset : firstRow, limit != null ? limit : numberOfRows, sortBy, sortOrder));
+        } catch (Exception e) {
+            CustomersResponseDto result = new CustomersResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public CustomersResponseDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        try {
+            return customerApi.list(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            CustomersResponseDto result = new CustomersResponseDto();
+            processException(e, result.getActionStatus());
+            return result;
+        }
+    }
+
+    @Override
+    public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
+
+        try {
+            return customerApi.list(null, pagingAndFiltering);
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());

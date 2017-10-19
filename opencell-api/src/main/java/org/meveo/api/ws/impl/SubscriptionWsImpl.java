@@ -17,7 +17,7 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -148,11 +148,11 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
     }
     
     @Override
-    public SubscriptionsListResponseDto listAll(boolean mergedCF, Paging paging) {
+    public SubscriptionsListResponseDto listAll(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) {
     	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
         try {
-            result = subscriptionApi.listAll(mergedCF, paging);
+            result = subscriptionApi.list(mergedCF, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

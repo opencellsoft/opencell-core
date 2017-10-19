@@ -613,7 +613,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         invoiceService.commit();
 
         // create xml and pdf for invoice adjustment
-        entity = invoiceService.generateXmlAndPdfInvoice(entity);
+        entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
 
         return "/pages/billing/invoices/invoiceDetail.jsf?objectId=" + entity.getAdjustedInvoice().getId() + "&cid=" + conversation.getId()
                 + "&faces-redirect=true&includeViewParams=true";

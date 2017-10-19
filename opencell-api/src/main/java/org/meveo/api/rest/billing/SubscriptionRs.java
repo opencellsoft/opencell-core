@@ -21,11 +21,11 @@ import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
-import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -106,19 +106,43 @@ public interface SubscriptionRs extends IBaseRs {
     ActionStatus terminateServices(TerminateSubscriptionServicesRequestDto postData);
 
     /**
-     * List of subscriptions filter by user account's code.
+     * List subscriptions matching a given criteria
      * 
-     * @param userAccountCode The user account's code
-     * @return Subscriptions list
+     * @param userAccountCode The user account's code. Deprecated in v. 4.7.2 Use query=userAccount.code:code instead
+     * @param mergedCF Should inherited custom field values be included. Deprecated in v. 4.7.2 Use pagingAndFiltering.fields="inheritedCF" instead
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return List of subscriptions
      */
     @GET
     @Path("/list")
-	SubscriptionsResponseDto listByUserAccount(@QueryParam("userAccountCode") String userAccountCode,
-			@DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
-			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
-			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    public SubscriptionsListResponseDto listGet(@Deprecated @QueryParam("userAccountCode") String userAccountCode, @QueryParam("mergedCF") Boolean mergedCF,
+            @QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
-
+    /**
+     * List subscriptions matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of subscriptions
+     */
+    @POST
+    @Path("/list")
+    public SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * Deprecated in v.4.7.2 Use /list instead
+     * @param offset
+     * @param limit
+     * @param mergedCF
+     * @param sortBy
+     * @param sortOrder
+     * @return
+     */
     @GET
     @Path("/listAll")
 	SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,

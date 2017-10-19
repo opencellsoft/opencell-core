@@ -3,9 +3,7 @@ package org.meveo.api.billing;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -39,8 +37,8 @@ import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
-import org.meveo.api.dto.response.Paging;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -787,40 +785,29 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * @param pageSize page size
-     * @param pageNum page number
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
-     * @throws MeveoApiException
-     */
-    public SubscriptionsListResponseDto listAll(int pageSize, int pageNum) throws MeveoApiException {
-
-        return this.listAll(false, new Paging(pageNum, pageSize, "code", org.meveo.api.dto.response.Paging.SortOrder.ASCENDING));
-
-    }
-
-    /**
      * @param from first row
      * @param numberOfRows number of rows
      * @param mergedCF
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsListResponseDto listAll(boolean mergedCF, Paging paging) throws MeveoApiException {
-        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
-        Map<String, Object> filters = new HashMap<>();
-        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null,
-            filters, null, null, paging != null ? paging.getSortBy() : null,
-            paging != null && paging.getSortOrder() != null ? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name()) : org.primefaces.model.SortOrder.ASCENDING);
+    public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
         Long totalCount = subscriptionService.count(paginationConfiguration);
-        result.setPaging(paging != null ? paging : new Paging());
+
+        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {
             List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
                 for (Subscription subscription : subscriptions) {
-                    result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, mergedCF));
+                    result.getSubscriptions().getSubscription()
+                        .add(subscriptionToDto(subscription, mergedCF != null ? mergedCF : pagingAndFiltering != null ? pagingAndFiltering.hasFieldOption("inheritedCF") : false));
                 }
             }
         }
@@ -1007,7 +994,7 @@ public class SubscriptionApi extends BaseApi {
                 existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
             }
 
-            if (subscriptionDto.getCustomFields() != null && !subscriptionDto.getCustomFields().isEmpty()) {
+                if (subscriptionDto.getCustomFields() != null && !subscriptionDto.getCustomFields().isEmpty()) {
                 existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
             }
             update(existedSubscriptionDto);

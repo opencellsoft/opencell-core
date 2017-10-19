@@ -25,6 +25,7 @@ import org.meveo.api.payment.PaymentApi;
 
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author R.AITYAAZZA
@@ -189,12 +190,11 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     }
 
     @Override
-    public PaymentMethodTokensDto listPaymentMethods(Long customerAccountId, String customerAccountCode) {
-
+    public PaymentMethodTokensDto listPaymentMethods(Long customerAccountId, String customerAccountCode, PaymentMethodEnum type, Boolean isPreferred, String info1, String info2,
+	    String info3, String info4, String info5) {
         PaymentMethodTokensDto response = new PaymentMethodTokensDto();
-
         try {
-            response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode));
+            response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode, type, isPreferred, info1, info2, info3, info4, info5));
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }

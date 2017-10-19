@@ -21,7 +21,7 @@ import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -214,38 +214,27 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
-	public AccountOperationsResponseDto list(String customerAccountCode, Paging paging) throws MeveoApiException {
-		if (StringUtils.isBlank(customerAccountCode)) {
-			missingParameters.add("customerAccountCode");
-		}
-		handleMissingParameters();
+    public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
-		AccountOperationsResponseDto result = new AccountOperationsResponseDto();
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
+            AccountOperation.class);
 
-		CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-		if (customerAccount == null) {
-			throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-		}
+        Long totalCount = accountOperationService.count(paginationConfiguration);
 
-		Map<String, Object> filters = new HashMap<>();
-		filters.put("customerAccount.code", customerAccountCode);
+        AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 		
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
-				null, null, paging != null ? paging.getSortBy() : null,
-				paging != null && paging.getSortOrder() != null ? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name()) : org.primefaces.model.SortOrder.ASCENDING);
-		
-		Long totalCount = accountOperationService.count(paginationConfiguration);
-		result.setPaging(paging != null ? paging : new Paging());
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
 		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
 		if (totalCount > 0) {
 			List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
-			for (AccountOperation accountOp : accountOperations) {
-				AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
+            if (accountOperations != null) {
+                for (AccountOperation accountOperation : accountOperations) {
+                    AccountOperationDto accountOperationDto = accountOperationToDto(accountOperation);
 				result.getAccountOperations().getAccountOperation().add(accountOperationDto);
 			}
 		}
-
+        }
 		return result;
 	}
 
