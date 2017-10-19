@@ -390,7 +390,8 @@ public interface AccountWs extends IBaseWs {
     ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
 
     @WebMethod
-    AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "sortBy") String sortBy, @WebParam(name = "sortOrder") SortOrder sortOrder);
+	AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "offset") Integer offset,
+			@WebParam(name = "limit") Integer limit, @WebParam(name = "sortBy") String sortBy, @WebParam(name = "sortOrder") SortOrder sortOrder);
 
     @WebMethod
     ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);

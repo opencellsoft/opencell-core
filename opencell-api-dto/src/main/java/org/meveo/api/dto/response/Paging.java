@@ -13,7 +13,7 @@ public class Paging implements Serializable {
     /**
      * Pagination - from record number
      */
-    public Integer offset;
+    public Integer offset = 0;
 
     /**
      * Pagination - number of items to retrieve
@@ -23,12 +23,12 @@ public class Paging implements Serializable {
     /**
      * Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
      */
-    public String sortBy;
+    private String sortBy;
 
     /**
      * Sorting - sort order.
      */
-    public SortOrder sortOrder;
+    public SortOrder sortOrder = SortOrder.ASCENDING;
 
     /**
      * Total number of records. Note - filled on response only.

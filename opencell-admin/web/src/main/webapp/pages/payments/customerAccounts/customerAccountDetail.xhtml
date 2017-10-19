@@ -86,12 +86,8 @@
                                         <hftl:formField id="trLanguageSelectId" label="#{messages['tradingLanguage.tradingLanguage']}" field="tradingLanguage" valueLabelField="languageCode"
                                             required="true" listBean="#{tradingLanguageBean}" componentWidth="10" />
 
-
                                         <h:panelGroup rendered="#{not empty customerAccountBean.entity.id}">
-                                            <hftl:decorateFormField fieldId="dunning_text" label="#{messages['customerAccount.dunningLevel']}" newLine="true">
-                                                <h:outputText id="dunning_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.entity.getDunningLevel()}"
-                                                    style="font-weight:bold;" />
-                                            </hftl:decorateFormField>
+                                            <hftl:formField label="#{messages['customerAccount.dunningLevel']}" field="dunningLevel" rendered="#{true or !customerAccountBean.edit}" newLine="true" />
                                             <hftl:decorateFormField fieldId="dunning_date_text" label="#{messages['customerAccount.dateDunningLevel']}">
                                                 <h:outputText id="dunning_date_text" rendered="#{true or !customerAccountBean.edit}" value="#{customerAccountBean.entity.getDateDunningLevel()}"
                                                     style="font-weight:bold;">
@@ -393,7 +389,8 @@
 
                             <hftl:column label="#{messages['accountOperation.excludedFromDunning']}" field="excludedFromDunning" isMessage="true" width="10%" />
 
-                            <hftl:actionsColumn width="15%" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
+                            <hftl:actionsColumn width="15%" renderDeleteLink="false" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
+                            
                             <ui:define name="add-on-buttons">
                                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
                                     <p:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonLettrage']}"

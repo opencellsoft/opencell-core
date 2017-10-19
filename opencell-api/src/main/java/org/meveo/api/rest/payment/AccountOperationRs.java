@@ -48,9 +48,10 @@ public interface AccountOperationRs extends IBaseRs {
      * @param customerAccountCode The customer account's code
      * @return A list of account operations
      */
-    @GET
+	@GET
 	@Path("/list")
-	AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode, @DefaultValue("created") @QueryParam("sortBy") String sortBy,
+	AccountOperationsResponseDto list(@QueryParam("customerAccountCode") String customerAccountCode, @DefaultValue("0") @QueryParam("offset") Integer offset,
+			@DefaultValue("10") @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy,
 			@DefaultValue("DESCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
