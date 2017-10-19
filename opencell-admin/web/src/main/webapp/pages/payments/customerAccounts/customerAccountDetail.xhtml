@@ -254,9 +254,7 @@
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
                                                             childField="bic" size="15" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
-                                                            childField="iban" size="45" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.ics']}" field="bankCoordinates"
-                                                            childField="ics" size="35" required="true" />                                                            
+                                                            childField="iban" size="45" required="true" />                                                                                                     
                                                     </c:if>
                                                     
                                                     <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
