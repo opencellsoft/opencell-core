@@ -249,14 +249,14 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (postData.getOfferTemplate() != null) {
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
-        if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class,
-                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+            OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
+            if (offerTemplate == null) {
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
 
             } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
                 throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
-                
+
             } else if (offerTemplate.isDisabled()) {
                 throw new InvalidParameterException("Cannot subscribe to disabled offer");
             }
@@ -297,7 +297,7 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
-    public void activateServices(ActivateServicesRequestDto postData, String orderNumber, boolean ignoreAlreadyActivatedError) throws MeveoApiException, BusinessException {
+    public void activateServices(ActivateServicesRequestDto postData, String orderNumber) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
@@ -343,44 +343,28 @@ public class SubscriptionApi extends BaseApi {
             log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
 
             List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
-            boolean alreadyActive = false;
-            boolean alreadySuspended = false;
             ServiceInstance serviceInstance = null;
             for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
-                if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
-                        && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED) {
-                    if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
-                        if (serviceToActivateDto.getSubscriptionDate() != null) {
-                            log.warn("need date for serviceInstance with code={}", subscriptionServiceInstance.getCode());
-                            // subscriptionServiceInstance.setDescription(serviceTemplate.getDescription());
-                            // // Is there a need to reset it?
-                            subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
-                            subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
-                            // Do not update existing value
-                            if (orderNumber != null) {
-                                subscriptionServiceInstance.setOrderNumber(orderNumber);
-                            }
-                            serviceInstance = subscriptionServiceInstance;
-                            serviceInstances.add(serviceInstance);
-                        }
-                    } else if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
-                        serviceInstance = subscriptionServiceInstance;
-                        alreadyActive = true;
-
-                    } else {
-                        alreadySuspended = true;
+                if (subscriptionServiceInstance.getStatus().equals(InstanceStatusEnum.INACTIVE)) {
+                    if (serviceToActivateDto.getSubscriptionDate() != null) {
+                        subscriptionServiceInstance.setSubscriptionDate(serviceToActivateDto.getSubscriptionDate());
                     }
+                    if (serviceToActivateDto.getQuantity() != null) {
+                        subscriptionServiceInstance.setQuantity(serviceToActivateDto.getQuantity());
+                    }
+                    // Do not update existing value
+                    if (orderNumber != null) {
+                        subscriptionServiceInstance.setOrderNumber(orderNumber);
+                    }
+                    serviceInstance = subscriptionServiceInstance;
+                    serviceInstances.add(serviceInstance);
                     break;
                 }
-
             }
 
-            if (alreadyActive && !ignoreAlreadyActivatedError) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be ACTIVE.");
-            }
-
-            if (alreadySuspended) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToActivateDto.getCode() + " must not be SUSPENDED.");
+            // Require a quantity if service was not instantiated before
+            if (serviceInstance == null && serviceToActivateDto.getQuantity() == null) {
+                throw new MissingParameterException("quantity for service " + serviceToActivateDto.getCode());
             }
 
             // Instantiate if it was not instantiated earlier
@@ -463,13 +447,6 @@ public class SubscriptionApi extends BaseApi {
 
         // activate services
         for (ServiceInstance serviceInstance : serviceInstances) {
-            if (serviceInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-                throw new MeveoApiException("Service " + serviceInstance.getCode() + " is Suspended");
-            }
-
-            if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-                throw new MeveoApiException("Service " + serviceInstance.getCode() + " is already Active");
-            }
 
             OfferTemplate offer = serviceInstance.getSubscription().getOffer();
             if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
@@ -508,6 +485,9 @@ public class SubscriptionApi extends BaseApi {
         // check if exists
         List<ServiceToInstantiateDto> serviceToInstantiateDtos = new ArrayList<>();
         for (ServiceToInstantiateDto serviceToInstantiateDto : postData.getServicesToInstantiate().getService()) {
+            if (serviceToInstantiateDto.getQuantity() == null) {
+                throw new MissingParameterException("quantity for service " + serviceToInstantiateDto.getCode());
+            }
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToInstantiateDto.getCode());
             if (serviceTemplate == null) {
                 throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToInstantiateDto.getCode());
@@ -520,30 +500,29 @@ public class SubscriptionApi extends BaseApi {
         // instantiate
         for (ServiceToInstantiateDto serviceToInstantiateDto : serviceToInstantiateDtos) {
             ServiceTemplate serviceTemplate = serviceToInstantiateDto.getServiceTemplate();
-            log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), 1);
+            log.debug("instanciateService id={} checked, quantity={}", serviceTemplate.getId(), serviceToInstantiateDto.getQuantity());
 
             ServiceInstance serviceInstance = null;
             List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription);
             boolean alreadyinstanciated = false;
             for (ServiceInstance subscriptionServiceInstance : subscriptionServiceInstances) {
-                if (subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CANCELED && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED
-                        && subscriptionServiceInstance.getStatus() != InstanceStatusEnum.CLOSED) {
+                if (subscriptionServiceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
                     alreadyinstanciated = true;
                     break;
                 }
-
             }
 
             if (alreadyinstanciated) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " must instanciated.");
+                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instanciated.");
             }
             if (serviceInstance == null) {
                 serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
                 serviceInstance.setDescription(serviceTemplate.getDescription());
                 serviceInstance.setServiceTemplate(serviceTemplate);
-                serviceInstance.setSubscription(subscription);      
+                serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
+                serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
 
                 if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
@@ -556,7 +535,6 @@ public class SubscriptionApi extends BaseApi {
                 } else {
                     serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
-                serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
 
                 // populate customFields
                 try {
@@ -796,9 +774,8 @@ public class SubscriptionApi extends BaseApi {
         }
 
         SubscriptionsDto result = new SubscriptionsDto();
-		List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
-				sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name())
-						: org.primefaces.model.SortOrder.ASCENDING);
+        List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
+            sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, mergedCF));
@@ -829,21 +806,18 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException
      */
     public SubscriptionsListResponseDto listAll(boolean mergedCF, Paging paging) throws MeveoApiException {
-    	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
         Map<String, Object> filters = new HashMap<>();
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
-				paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
-				null, null, paging != null ? paging.getSortBy() : null,
-				paging != null && paging.getSortOrder() != null
-						? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name())
-						: org.primefaces.model.SortOrder.ASCENDING);
-		
-		Long totalCount = subscriptionService.count(paginationConfiguration);
+        PaginationConfiguration paginationConfiguration = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null,
+            filters, null, null, paging != null ? paging.getSortBy() : null,
+            paging != null && paging.getSortOrder() != null ? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name()) : org.primefaces.model.SortOrder.ASCENDING);
+
+        Long totalCount = subscriptionService.count(paginationConfiguration);
         result.setPaging(paging != null ? paging : new Paging());
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-		
+
         if (totalCount > 0) {
-        	List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
+            List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
                 for (Subscription subscription : subscriptions) {
                     result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, mergedCF));
@@ -1003,41 +977,42 @@ public class SubscriptionApi extends BaseApi {
         log.debug("createOrUpdate subscription {}", subscriptionDto);
         if (existedSubscriptionDto == null) {
             create(subscriptionDto);
+
+        } else if (!StringUtils.isBlank(subscriptionDto.getTerminationDate())) {
+            TerminateSubscriptionRequestDto terminateSubscriptionDto = new TerminateSubscriptionRequestDto();
+            terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
+            terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
+            terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
+            terminateSubscription(terminateSubscriptionDto, existedSubscriptionDto.getOrderNumber());
+            return;
+
         } else {
-            if (!StringUtils.isBlank(subscriptionDto.getTerminationDate())) {
-                TerminateSubscriptionRequestDto terminateSubscriptionDto = new TerminateSubscriptionRequestDto();
-                terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
-                terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
-                terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
-                terminateSubscription(terminateSubscriptionDto, existedSubscriptionDto.getOrderNumber());
-                return;
-            } else {
 
-                if (!StringUtils.isBlank(subscriptionDto.getUserAccount())) {
-                    existedSubscriptionDto.setUserAccount(subscriptionDto.getUserAccount());
-                }
-
-                if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
-                    existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
-                }
-
-                if (!StringUtils.isBlank(subscriptionDto.getDescription())) {
-                    existedSubscriptionDto.setDescription(subscriptionDto.getDescription());
-                }
-                if (!StringUtils.isBlank(subscriptionDto.getSubscriptionDate())) {
-                    existedSubscriptionDto.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
-                }
-
-                if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
-                    existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
-                }
-
-                if (subscriptionDto.getCustomFields()!=null && !subscriptionDto.getCustomFields().isEmpty()) {
-                    existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
-                }
-                update(existedSubscriptionDto);
+            if (!StringUtils.isBlank(subscriptionDto.getUserAccount())) {
+                existedSubscriptionDto.setUserAccount(subscriptionDto.getUserAccount());
             }
+
+            if (!StringUtils.isBlank(subscriptionDto.getOfferTemplate())) {
+                existedSubscriptionDto.setOfferTemplate(subscriptionDto.getOfferTemplate());
+            }
+
+            if (!StringUtils.isBlank(subscriptionDto.getDescription())) {
+                existedSubscriptionDto.setDescription(subscriptionDto.getDescription());
+            }
+            if (!StringUtils.isBlank(subscriptionDto.getSubscriptionDate())) {
+                existedSubscriptionDto.setSubscriptionDate(subscriptionDto.getSubscriptionDate());
+            }
+
+            if (!StringUtils.isBlank(subscriptionDto.getEndAgreementDate())) {
+                existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
+            }
+
+            if (subscriptionDto.getCustomFields() != null && !subscriptionDto.getCustomFields().isEmpty()) {
+                existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
+            }
+            update(existedSubscriptionDto);
         }
+
         // accesses
         if (subscriptionDto.getAccesses() != null) {
             for (AccessDto accessDto : subscriptionDto.getAccesses().getAccess()) {
@@ -1079,10 +1054,7 @@ public class SubscriptionApi extends BaseApi {
                     continue;
                 }
 
-                if (StringUtils.isBlank(serviceInstanceDto.getSubscriptionDate())) {// instance
-                                                                                    // service
-                                                                                    // in
-                                                                                    // sub's
+                if (StringUtils.isBlank(serviceInstanceDto.getSubscriptionDate())) {// instance service in sub's
                     ServiceToInstantiateDto serviceToInstantiate = new ServiceToInstantiateDto();
                     serviceToInstantiate.setCode(serviceInstanceDto.getCode());
                     serviceToInstantiate.setQuantity(serviceInstanceDto.getQuantity());
@@ -1106,7 +1078,7 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 if (!serviceToActivates.isEmpty()) {
-                    activateServices(activateServicesDto, null, true);
+                    activateServices(activateServicesDto, null);
                     serviceToActivates.clear();
                 }
             }

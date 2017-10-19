@@ -839,7 +839,7 @@ public class OrderApi extends BaseApi {
 
 		// Activate services
 		if (!activateServicesRequestDto.getServicesToActivateDto().getService().isEmpty()) {
-			subscriptionApi.activateServices(activateServicesRequestDto, orderNumber, true);
+			subscriptionApi.activateServices(activateServicesRequestDto, orderNumber);
 		}
 		if (!servicesToTerminate.isEmpty()) {
 			for (TerminateSubscriptionServicesRequestDto terminationDto : servicesToTerminate) {

@@ -161,7 +161,7 @@
 							<p:commandButton action="#{subscriptionBean.terminateService()}"
 								value="#{messages['button.terminateButton']}"
 								oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_serviceTerminationPopup').hide()"
-								update=":subscriptionTab:headerInfo1 :subscriptionTab:ST_results2_form:instantiatePanelActions :#{p:component('srvInstansFrm')} :subscriptionTab:headerInfo1:messages :subscriptionTab:ST_results2_form terminationMessages :subscriptionTab:subscriptionFormId:informationTab" />
+								update="@form :subscriptionTab" />
 							<p:commandButton immediate="true"
 								onclick="PF('dlg_serviceTerminationPopup').hide()" type="button"
 								value="#{messages['management.close']}" />
@@ -284,7 +284,7 @@
 									</p:button>
 									<p:commandButton rendered="#{entity.status eq 'INACTIVE' and subscriptionBean.canUserUpdateEntity()}"
 										action="#{subscriptionBean.deleteServiceInstance(entity)}"
-										icon="ui-icon-trash" update="@form :subscriptionTab:ST_results2_form :subscriptionTab:oneShotChgTabPanel :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages :subscriptionTab:subscriptionFormId:informationTab">
+										icon="ui-icon-trash" update=":subscriptionTab">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['commons.confirmDelete']}"
 											icon="ui-icon-alert" />
@@ -296,7 +296,7 @@
 								<p:panel styleClass="action-buttons">
 									<p:commandButton action="#{subscriptionBean.activateService}"
 										value="#{messages['button.activateButton']}"
-										update=":subscriptionTab:srvInstansFrm :subscriptionTab:headerInfo1:messages :subscriptionTab:subscriptionFormId"
+										update=":subscriptionTab"
 										disabled="#{subscriptionBean.selectedServiceInstance==null || subscriptionBean.selectedServiceInstance.status!='INACTIVE'}">
 										<p:confirm header="#{messages['commons.confirmationHeader']}"
 											message="#{messages['confirmationMessage.confirmActivation']}"
@@ -336,7 +336,7 @@
 								<p:commandButton id="cbutton"
 									action="#{subscriptionBean.instanciateManyServices}"
 									value="#{messages['button.instanciateButton']}"
-									update=":subscriptionTab:ST_results2_form:ST_results2_formPanel :subscriptionTab:srvInstansFrm :subscriptionTab:oneShotChgTabPanel :subscriptionTab:OS_recurring_results_form :subscriptionTab:headerInfo1:messages :subscriptionTab:subscriptionFormId:informationTab"
+									update=":subscriptionTab"
 									disabled="#{subscriptionBean.entity.status != 'ACTIVE' and subscriptionBean.entity.status != 'CREATED'}" />
 							</h:panelGroup>
 						</h:form>
@@ -459,6 +459,8 @@
 															<hftl:column
 																label="#{messages['recurringChargeInstance.nextChargeDate']}"
 																field="nextChargeDate" isDate="true" />
+                                                                
+                                                            <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity"  />
 															<hftl:column
 																label="#{messages['pricePlanMatrix.amountWithoutTax']}"
 																field="amountWithoutTax" isMessage="false" />
@@ -716,7 +718,7 @@
 		<p:dialog id="recurringChgPopup"
 			header="#{messages['subscription.tab.recurringShotChg']}"
 			widgetVar="dlg_recurringChgPopup" modal="true" dynamic="false" width="90%" closeOnEscape="true">
-			<p:outputPanel id="recurringChgPanel">
+			<h:panelGroup id="recurringChgPanel">
 				<hftl:formPanel edit="true"
 					label="#{messages['subscription.tab.recurringShotChg']}"
 					backingBean="#{subscriptionBean}" columns="1"
@@ -732,6 +734,7 @@
 						<hftl:formField
 							label="#{messages['recurringChargeInstance.subscriptionDate']}"
 							field="subscriptionDate" edit="false" componentWidth="15"/>
+                        <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity" edit="false" />
                         <hftl:decorateFormField fieldId="RCamountWithoutTax" label="#{messages['recurringChargeInstance.amountWithoutTax']}" componentWidth="15">
 							<p:inputText id="RCamountWithoutTax"
 								value="#{subscriptionBean.recurringChargeInstance.amountWithoutTax}"
@@ -870,7 +873,7 @@
 						</h:form>
 <!-- 					</h:panelGroup> -->
 				</p:outputPanel>
-			</p:outputPanel>
+			</h:panelGroup>
 		</p:dialog>
 		
 	</ui:define>

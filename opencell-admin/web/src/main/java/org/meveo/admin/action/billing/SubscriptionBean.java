@@ -153,8 +153,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private UsageChargeInstance usageChargeInstance;
 
-    private BigDecimal oneShotChargeInstanceQuantity = BigDecimal.ONE;
-
     private WalletTemplate selectedWalletTemplate;
 
     private boolean showApplyOneShotForm = false;
@@ -239,12 +237,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             boolean alreadyInstanciated = false;
 
             for (ServiceInstance serviceInstance : serviceInstances) {
-                if (serviceInstance.getStatus() != InstanceStatusEnum.CANCELED && serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED
-                        && serviceInstance.getStatus() != InstanceStatusEnum.CLOSED)
-                    if (serviceTemplate.getCode().equals(serviceInstance.getCode())) {
-                        alreadyInstanciated = true;
-                        break;
-                    }
+                if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE && serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+                    alreadyInstanciated = true;
+                    break;
+                }
             }
 
             if (!alreadyInstanciated) {
@@ -297,17 +293,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
         this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns);
 
-        if (this.oneShotChargeInstance.getSubscriptionServiceInstance() != null) {
-            // subscription
-            setOneShotChargeInstanceQuantity(this.oneShotChargeInstance.getSubscriptionServiceInstance().getQuantity());
-        } else if (this.oneShotChargeInstance.getTerminationServiceInstance() != null) {
-            // termination
-            setOneShotChargeInstanceQuantity(this.oneShotChargeInstance.getTerminationServiceInstance().getQuantity());
-        } else {
-            // charge
-            setOneShotChargeInstanceQuantity(this.getOneShotWalletOperations().get(0).getQuantity());
-        }
-
         selectedWalletTemplate = new WalletTemplate();
         selectedWalletTemplateCode = null;
     }
@@ -344,7 +329,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             oneShotChargeInstance.setCountry(entity.getUserAccount().getBillingAccount().getTradingCountry());
 
             oneShotChargeInstanceService.oneShotChargeApplication(entity, (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate(), selectedWalletTemplate.getCode(),
-                oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstanceQuantity,
+                oneShotChargeInstance.getChargeDate(), oneShotChargeInstance.getAmountWithoutTax(), oneShotChargeInstance.getAmountWithTax(), oneShotChargeInstance.getQuantity(),
                 oneShotChargeInstance.getCriteria1(), oneShotChargeInstance.getCriteria2(), oneShotChargeInstance.getCriteria3(), description, null, true);
 
             oneShotChargeInstance = null;
@@ -362,10 +347,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             log.error("exception when applying one shot charge! {}", e.getMessage());
             messages.error(e.getMessage());
         }
-    }
-
-    public void newRecurringChargeInstance() {
-        this.recurringChargeInstance = new RecurringChargeInstance();
     }
 
     public void editRecurringChargeIns(RecurringChargeInstance recurringChargeIns) {
@@ -586,8 +567,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
                 String datePattern = paramBean.getDateFormat();
                 messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
-                    productInstance.getProductTemplate().getValidity().toString(datePattern),
-                    DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
+                    productInstance.getProductTemplate().getValidity().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
                 FacesContext.getCurrentInstance().validationFailed();
                 return;
             }
@@ -598,8 +578,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 productInstance.setApplicationDate(new Date());
             }
 
-            productInstance.setSubscription(getPersistenceService().refreshOrRetrieve(entity));
-            productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity).getUserAccount());
+            entity = getPersistenceService().refreshOrRetrieve(entity);
+            productInstance.setSubscription(entity);
+            productInstance.setUserAccount(entity.getUserAccount());
             productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
 
             try {
@@ -748,14 +729,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         this.quantity = quantity;
     }
 
-    public BigDecimal getOneShotChargeInstanceQuantity() {
-        return oneShotChargeInstanceQuantity;
-    }
-
-    public void setOneShotChargeInstanceQuantity(BigDecimal oneShotChargeInstanceQuantity) {
-        this.oneShotChargeInstanceQuantity = oneShotChargeInstanceQuantity;
-    }
-
     public ServiceInstance getSelectedServiceInstance() {
         return selectedServiceInstance;
     }
@@ -869,13 +842,14 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void deleteServiceInstance(ServiceInstance serviceInstance) {
         try {
-            entity = subscriptionService.attach(entity);
+            entity = subscriptionService.refreshOrRetrieve(entity);
 
             serviceTemplates.add(serviceInstance.getServiceTemplate());
             serviceInstanceService.remove(serviceInstance.getId());
             serviceInstances.remove(serviceInstance);
             selectedServiceInstance = null;
             subscriptionService.refresh(entity);
+            resetChargesDataModels();
 
             messages.info(new BundleKey("messages", "delete.successful"));
         } catch (Exception e) {
@@ -1003,17 +977,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public BigDecimal getServiceAmountWithoutTax() {
-        BigDecimal quantity = BigDecimal.ONE;
-        if (this.oneShotChargeInstance.getSubscriptionServiceInstance() != null) {
-            // subscription
-            quantity = this.oneShotChargeInstance.getSubscriptionServiceInstance().getQuantity();
-        } else if (this.oneShotChargeInstance.getTerminationServiceInstance() != null) {
-            // termination
-            quantity = this.oneShotChargeInstance.getTerminationServiceInstance().getQuantity();
-        } else {
-            // charge
-            quantity = this.getOneShotWalletOperations().get(0).getQuantity();
-        }
+        BigDecimal quantity = this.oneShotChargeInstance.getQuantity();
 
         return quantity.multiply(this.getOneShotWalletOperations().get(0).getAmountWithoutTax());
     }
