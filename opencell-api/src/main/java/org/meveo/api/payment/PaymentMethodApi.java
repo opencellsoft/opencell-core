@@ -72,18 +72,14 @@ public class PaymentMethodApi extends BaseApi {
     }
 
     public List<PaymentMethodDto> list(Long customerAccountId, String customerAccountCode) throws MissingParameterException, EntityDoesNotExistsException {
-        return list(customerAccountId, customerAccountCode, null);
+        return list(customerAccountId, customerAccountCode, null,null,null,null,null,null,null);
     }
 
-    public List<PaymentMethodDto> list(Long customerAccountId, String customerAccountCode, PaymentMethodEnum paymentMethodEnum)
+    public List<PaymentMethodDto> list(Long customerAccountId, String customerAccountCode, PaymentMethodEnum type, Boolean isPreferred, String info1, String info2,
+	    String info3, String info4, String info5)
             throws MissingParameterException, EntityDoesNotExistsException {
 
-        if (StringUtils.isBlank(customerAccountId) && StringUtils.isBlank(customerAccountCode)) {
-            missingParameters.add("customerAccountId or customerAccountCode");
-        }
-
-        handleMissingParameters();
-
+       
         CustomerAccount customerAccount = null;
 
         if (!StringUtils.isBlank(customerAccountId)) {
@@ -92,23 +88,13 @@ public class PaymentMethodApi extends BaseApi {
         if (!StringUtils.isBlank(customerAccountCode)) {
             customerAccount = customerAccountService.findByCode(customerAccountCode);
         }
-
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountId == null ? customerAccountCode : "" + customerAccountId);
-        }
-
-        List<PaymentMethodDto> paymentMethodDtos = new ArrayList<PaymentMethodDto>();
-        if (paymentMethodEnum != null && paymentMethodEnum == PaymentMethodEnum.CARD) {
-            for (CardPaymentMethod paymentMethod : customerAccount.getCardPaymentMethods(false)) {
-                paymentMethodDtos.add(new PaymentMethodDto(paymentMethod));
-            }
-        } else if (customerAccount.getPaymentMethods() != null) {
-
-            for (PaymentMethod paymentMethod : customerAccount.getPaymentMethods()) {
+        List<PaymentMethodDto> paymentMethodDtos = new ArrayList<PaymentMethodDto>();        
+        List<PaymentMethod> paymentMethods = paymentMethodService.list(customerAccount, type, isPreferred, info1, info2, info3, info4, info5);
+        if(paymentMethods != null) {
+            for (PaymentMethod paymentMethod : paymentMethods) {
                 paymentMethodDtos.add(new PaymentMethodDto(paymentMethod));
             }
         }
-
         return paymentMethodDtos;
     }
 
