@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
@@ -20,7 +21,6 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
-import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
@@ -31,6 +31,7 @@ import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -166,7 +167,7 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 	PaymentMethodTokensDto response = new PaymentMethodTokensDto();
 
 	try {
-	    response = paymentMethodApi.list(customerAccountId, customerAccountCode);
+	    response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode, PaymentMethodEnum.CARD,null,null,null,null,null,null));
 	} catch (Exception e) {
 	    processException(e, response.getActionStatus());
 	}
@@ -233,12 +234,13 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public PaymentMethodTokensDto listPaymentMethods(PagingAndFiltering pagingAndFiltering) {
+    public PaymentMethodTokensDto listPaymentMethods(Long customerAccountId, String customerAccountCode, PaymentMethodEnum type, Boolean isPreferred, String info1, String info2,
+	    String info3, String info4, String info5) {
 
 	PaymentMethodTokensDto response = new PaymentMethodTokensDto();
 
 	try {
-	    response = paymentMethodApi.list(pagingAndFiltering);
+	    response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode, type, isPreferred, info1, info2, info3, info4, info5));
 	} catch (Exception e) {
 	    processException(e, response.getActionStatus());
 	}

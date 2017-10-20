@@ -2,7 +2,6 @@ package org.meveo.api.rest.payment;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -21,9 +20,6 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
-import org.meveo.api.dto.response.InvoicesDto;
-import org.meveo.api.dto.response.PagingAndFiltering;
-import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.model.payments.PaymentMethodEnum;
 
@@ -151,39 +147,27 @@ public interface PaymentRs extends IBaseRs {
     @DELETE
     @Path("/paymentMethod")
     public ActionStatus removePaymentMethod(@QueryParam("id") Long id);
+    
 
     /**
-     * List Payment Methods matching a given criteria
+     * List available payment methods for a given customer account identified either by id or by code, or paymentMethod type, isPreferred, infos
      * 
-     * @param query
-     *            Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
-     * @param fields
-     *            Data retrieval options/fieldnames separated by a comma
-     * @param offset
-     *            Pagination - from record number
-     * @param limit
-     *            Pagination - number of records to retrieve
-     * @param sortBy
-     *            Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
-     * @param sortOrder
-     *            Sorting - sort order.
-     * @return An payment method list
+     * @param customerAccountId  Customer account id
+     * @param customerAccountCode  Customer account code
+     * @param type  PaymentMethod type
+     * @param isPrefered is the  preferred payment method
+     * @param info1 additional info1
+     * @param info2 additional info2
+     * @param info3 additional info3
+     * @param info4 additional info4
+     * @param info5 additional info5
+     * @return A list of payment methods
      */
     @GET
-    @Path("/listPaymentMethod")
-    public PaymentMethodTokensDto listPaymentMethodGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
-	    @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
-
-    /**
-     * List Payment Methods matching a given criteria
-     * 
-     * @param pagingAndFiltering
-     *            Pagination and filtering criteria
-     * @return An payment method list
-     */
-    @POST
-    @Path("/listPaymentMethod")
-    public PaymentMethodTokensDto listPaymentMethodPost(PagingAndFiltering pagingAndFiltering);
+    @Path("/paymentMethod/list")
+    public PaymentMethodTokensDto listPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId, @QueryParam("customerAccountCode") String customerAccountCode,
+	    @QueryParam("type") PaymentMethodEnum type, @QueryParam("isPreferred") Boolean isPreferred, @QueryParam("info1") String info1, @QueryParam("info2") String info2,
+	    @QueryParam("info3") String info3, @QueryParam("ifo4") String info4, @QueryParam("info5") String info5);
 
     /**
      * Retrieve payment method by its id

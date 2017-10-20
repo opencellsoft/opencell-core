@@ -145,4 +145,48 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 	queryBuilder.addCriterion("tokenId", "=", tokenId, true);
 	return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
     }
+
+    /**
+     * 
+     * @param customerAccount
+     * @param paymentMethodEnum
+     * @param isPreferred
+     * @param info1
+     * @param info2
+     * @param info3
+     * @param info4
+     * @param info5
+     * @return
+     */
+    public List<PaymentMethod> list(CustomerAccount customerAccount, PaymentMethodEnum paymentMethodEnum, Boolean isPreferred, String info1, String info2, String info3,
+	    String info4, String info5) {
+	QueryBuilder queryBuilder = new QueryBuilder(PaymentMethod.class, "pm", null);
+	if (customerAccount != null) {
+	    queryBuilder.addCriterionEntity("pm.customerAccount", customerAccount);
+	}
+	if (paymentMethodEnum != null) {
+	    queryBuilder.addCriterionEnum("pm.paymentType", paymentMethodEnum);
+	}
+	if (isPreferred != null) {
+	    queryBuilder.addBooleanCriterion("pm.preferred", isPreferred);
+	}
+	if (!StringUtils.isBlank(info1)) {
+	    queryBuilder.addCriterion("pm.info1", "=", info1, false);
+	}
+	if (!StringUtils.isBlank(info2)) {
+	    queryBuilder.addCriterion("pm.info2", "=", info2, false);
+	}
+	if (!StringUtils.isBlank(info3)) {
+	    queryBuilder.addCriterion("pm.info3", "=", info3, false);
+	}
+	if (!StringUtils.isBlank(info4)) {
+	    queryBuilder.addCriterion("pm.info4", "=", info4, false);
+	}
+	if (!StringUtils.isBlank(info5)) {
+	    queryBuilder.addCriterion("pm.info5", "=", info5, false);
+	}
+	queryBuilder.addOrderCriterion("pm.auditable.created", false);
+
+	return (List<PaymentMethod>) queryBuilder.getQuery(getEntityManager()).getResultList();
+    }
 }
