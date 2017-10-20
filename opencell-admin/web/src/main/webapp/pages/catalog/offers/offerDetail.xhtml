@@ -336,7 +336,7 @@
 			</p:panel>
 
 			<p:panel
-				rendered="#{offerTemplateBean.businessOfferModel != null and offerTemplateBean.bsmsDualListModel != null and offerTemplateBean.bsmsDualListModel.source.size() != 0}">
+				rendered="#{offerTemplateBean.businessOfferModel != null and offerTemplateBean.bsmsDualListModel != null and ((offerTemplateBean.bsmsDualListModel.source != null and offerTemplateBean.bsmsDualListModel.source.size() != 0) || (offerTemplateBean.bsmsDualListModel.target != null and offerTemplateBean.bsmsDualListModel.target.size() != 0))}">
 				<div class="CenterDiv" style="width: 460px;">
 					<f:facet name="header">#{messages['marketingManager.catalog.businessServiceModels']}</f:facet>
 
@@ -351,9 +351,9 @@
 
 					<div class="form-panel-actions TexAlRight">
 						<p:commandButton update="offerServices bsmMessage"
-							value="Add / Remove BSM"
+							value="#{messages['action.bsm.addRemove']}"
 							actionListener="#{offerTemplateBean.addRemoveBsm()}"
-							immediate="true"></p:commandButton>
+							immediate="true" process="@this,bsm"></p:commandButton>
 					</div>
 				</div>
 			</p:panel>
