@@ -86,10 +86,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {
-
-    	long l = Calendar.getInstance().getTimeInMillis();
-    	
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {    	
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<Invoice>();
@@ -115,8 +112,6 @@ public class QuoteService extends BusinessService<Quote> {
                 }
 
                 Subscription subscription = quoteInvoiceInfo.getSubscription();
-                System.out.println("> QuoteService > sub > toString > "+ subscription.toString());
-                System.out.println("> QuoteService > sub > code > "+ subscription.getCode());
 				if (subscription != null) {
                     billingAccount = subscription.getUserAccount().getBillingAccount();
 
@@ -187,21 +182,14 @@ public class QuoteService extends BusinessService<Quote> {
                         }
                     }
                 }
-            }
-
-            System.out.println("> QuoteService > provideQuote > <1> " + (Calendar.getInstance().getTimeInMillis() - l));
-            
+            }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
-            System.out.println("> QuoteService > provideQuote > <2> " + (Calendar.getInstance().getTimeInMillis() - l));
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
-            System.out.println("> QuoteService > provideQuote > <3> " + (Calendar.getInstance().getTimeInMillis() - l));
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
-            System.out.println("> QuoteService > provideQuote > <4> " + (Calendar.getInstance().getTimeInMillis() - l));
             invoiceService.produceInvoicePdfNoUpdate(invoice);
-            System.out.println("> QuoteService > provideQuote > <5> " + (Calendar.getInstance().getTimeInMillis() - l));
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
             invoice.setRatedTransactions(null);
@@ -227,11 +215,8 @@ public class QuoteService extends BusinessService<Quote> {
                     ((SubCategoryInvoiceAgregate) invoiceAgregate).setRatedtransactions(null);
                 }
             }
-            System.out.println("> QuoteService > provideQuote > <6> " + (Calendar.getInstance().getTimeInMillis() - l));
             invoiceService.create(invoice);
-            System.out.println("> QuoteService > provideQuote > <7> " + (Calendar.getInstance().getTimeInMillis() - l));
             invoices.add(invoice);
-            System.out.println("> QuoteService > provideQuote > <8> " + (Calendar.getInstance().getTimeInMillis() - l));
         }
         return invoices;
     }

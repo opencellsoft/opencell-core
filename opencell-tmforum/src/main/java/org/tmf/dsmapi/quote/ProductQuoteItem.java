@@ -86,14 +86,10 @@ public class ProductQuoteItem implements Serializable {
     private static Unmarshaller m ;
     private static Marshaller mar;
     
+    private static JAXBContext jaxbCxt;
 	static {
 		try {
-			
-			m = JAXBContext.newInstance(ProductQuoteItem.class).createUnmarshaller();
-			//m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			
-			mar = JAXBContext.newInstance(ProductQuoteItem.class).createMarshaller();
-			mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			jaxbCxt = JAXBContext.newInstance(ProductQuoteItem.class);
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -402,11 +398,10 @@ public class ProductQuoteItem implements Serializable {
         try {
             //Marshaller m = JAXBContext.newInstance(ProductQuoteItem.class).createMarshaller();
             //m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        	System.out.println("<XML><Marshaller> ProductQuoteItem -1-");
-        	
+        	Marshaller mar = jaxbCxt.createMarshaller();
+        	mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         	StringWriter w = new StringWriter();
             mar.marshal(productQuoteItem, w);
-            System.out.println("<XML><Marshaller> ProductQuoteItem -2-");
             return w.toString();
 
         } catch (JAXBException e) {
@@ -427,9 +422,8 @@ public class ProductQuoteItem implements Serializable {
         try {
             //Unmarshaller m = JAXBContext.newInstance(ProductQuoteItem.class).createUnmarshaller();
             // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-        	System.out.println("<XML><Unmarshaller> ProductQuoteItem -1-");
-            ProductQuoteItem productQuoteItem = (ProductQuoteItem) m.unmarshal(new StringReader(quoteItemSource));
-            System.out.println("<XML><Unmarshaller> ProductQuoteItem -2-");
+        	Unmarshaller umar = jaxbCxt.createUnmarshaller();
+            ProductQuoteItem productQuoteItem = (ProductQuoteItem) umar.unmarshal(new StringReader(quoteItemSource));
             
             return productQuoteItem;
 

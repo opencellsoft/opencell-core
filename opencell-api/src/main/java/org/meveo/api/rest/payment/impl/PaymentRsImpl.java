@@ -81,19 +81,12 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
     @Override
     public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto) {
-		long l = Calendar.getInstance().getTimeInMillis();
         PaymentMethodTokenDto response = new PaymentMethodTokenDto();
         try {
-        	System.out.println("> PaymentRSImpl > addCard > <1>"+ (Calendar.getInstance().getTimeInMillis() - l));
             PaymentMethodDto paymentMethodDto = new PaymentMethodDto(cardPaymentMethodDto);
-            System.out.println("> PaymentRSImpl > addCard > <2>"+ (Calendar.getInstance().getTimeInMillis() - l));
 			Long tokenId = paymentMethodApi.create(paymentMethodDto);
-			System.out.println("> PaymentRSImpl > addCard > <3>"+ (Calendar.getInstance().getTimeInMillis() - l));
             PaymentMethodDto find = paymentMethodApi.find(tokenId);
-            System.out.println("> PaymentRSImpl > addCard > <4>"+ (Calendar.getInstance().getTimeInMillis() - l));
 			response.setPaymentMethod(find);
-			System.out.println("> PaymentRSImpl > addCard > <5>"+ (Calendar.getInstance().getTimeInMillis() - l));
-
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }

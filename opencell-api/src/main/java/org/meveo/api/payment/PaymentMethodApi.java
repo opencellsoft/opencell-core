@@ -32,23 +32,14 @@ public class PaymentMethodApi extends BaseApi {
     private PaymentMethodService paymentMethodService;
 
     public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-    	long l = Calendar.getInstance().getTimeInMillis();
     	paymentMethodDto.validate(true);
-    	System.out.println("> PaymentAPI > create > <1>"+ (Calendar.getInstance().getTimeInMillis() - l));
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
-        System.out.println("> PaymentAPI > create > <2>"+ (Calendar.getInstance().getTimeInMillis() - l));
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
         }
-
-        System.out.println("> PaymentAPI > create > <3>"+ (Calendar.getInstance().getTimeInMillis() - l));
-        
         PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
-        System.out.println("> PaymentAPI > create > <4>"+ (Calendar.getInstance().getTimeInMillis() - l));
         paymentMethodService.create(paymentMethod);
-        System.out.println("> PaymentAPI > create > <5>"+ (Calendar.getInstance().getTimeInMillis() - l));
         Long id = paymentMethod.getId();
-        System.out.println("> PaymentAPI > create > <6>"+ (Calendar.getInstance().getTimeInMillis() - l));
 		return id;
     }
 

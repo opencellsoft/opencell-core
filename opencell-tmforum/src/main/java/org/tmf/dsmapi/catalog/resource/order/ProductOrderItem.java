@@ -32,16 +32,14 @@ public class ProductOrderItem implements Serializable {
     private List<BillingAccount> billingAccount;
     private ProductOffering productOffering;
     private Product product;
-
-    private static Unmarshaller umar ;
-    private static Marshaller mar;
+    
+    private static JAXBContext jaxbCxt;
     
 	static {
 		try {
 			
-			umar = JAXBContext.newInstance(ProductOrderItem.class).createUnmarshaller();
-			mar = JAXBContext.newInstance(ProductOrderItem.class).createMarshaller();
-			mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			jaxbCxt =  JAXBContext.newInstance(ProductOrderItem.class);
+			
 		} catch (JAXBException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,6 +114,10 @@ public class ProductOrderItem implements Serializable {
         try {
             //Marshaller m = JAXBContext.newInstance(ProductOrderItem.class).createMarshaller();
             //m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        	Marshaller mar;
+        	mar = jaxbCxt.createMarshaller();
+			mar.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+			
             StringWriter w = new StringWriter();
             mar.marshal(productOrderItem, w);
 
@@ -139,7 +141,9 @@ public class ProductOrderItem implements Serializable {
         try {
             //Unmarshaller m = JAXBContext.newInstance(ProductOrderItem.class).createUnmarshaller();
             // m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-            ProductOrderItem productOrderItem = (ProductOrderItem) umar.unmarshal(new StringReader(orderItemSource));
+        	Unmarshaller umar;
+			umar =jaxbCxt.createUnmarshaller();
+        	ProductOrderItem productOrderItem = (ProductOrderItem) umar.unmarshal(new StringReader(orderItemSource));
 
             return productOrderItem;
 
