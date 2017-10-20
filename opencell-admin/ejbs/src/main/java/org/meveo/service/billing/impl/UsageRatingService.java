@@ -357,6 +357,10 @@ public class UsageRatingService {
         return deducedQuantityInEDRUnit;
     }
 
+    /**
+     * @param counterPeriod
+     * @param counterPeriodEventLevels
+     */
     private void triggerCounterPeriodEvent(CounterPeriod counterPeriod, List<Entry<String, BigDecimal>> counterPeriodEventLevels) {
         for (Entry<String, BigDecimal> counterValue : counterPeriodEventLevels) {
             try {
@@ -800,6 +804,13 @@ public class UsageRatingService {
         return result;
     }
 
+    /**
+     * @param expression EL expression
+     * @param edr element description record.
+     * @param walletOperation wallet operation
+     * @return evaluated value
+     * @throws BusinessException business exception.
+     */
     private String evaluateStringExpression(String expression, EDR edr, WalletOperation walletOperation) throws BusinessException {
         if (expression == null) {
             return null;
@@ -828,6 +839,13 @@ public class UsageRatingService {
         return result;
     }
 
+    /**
+     * @param expression EL expression
+     * @param edr instance of EDR
+     * @param walletOperation wallet operation
+     * @return evaluated value 
+     * @throws BusinessException business exception
+     */
     private Double evaluateDoubleExpression(String expression, EDR edr, WalletOperation walletOperation) throws BusinessException {
         Double result = null;
         Map<Object, Object> userMap = new HashMap<Object, Object>();

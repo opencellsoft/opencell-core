@@ -36,9 +36,6 @@
   <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="21c1fb0e-ed84-4133-9d3e-82094b378947" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:definitionCache/><con:endpoints>
-      <con:endpoint>http://demo.meveo.info/meveo/CatalogWs</con:endpoint>
-      <con:endpoint>http://i.meveo.info/meveo/CatalogWs</con:endpoint>
-      <con:endpoint>http://keepcool.i.opencellsoft.com/meveo/CatalogWs</con:endpoint>
       <con:endpoint>http://localhost:8080/meveo/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="6e828e4a-c533-4573-a2fe-77c2898a80c9">

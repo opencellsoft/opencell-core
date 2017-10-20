@@ -12,8 +12,8 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
-import org.meveo.api.dto.response.Paging;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -139,7 +139,33 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(postData, new Paging(offset, limit, sortBy, sortOrder));
+            result = walletApi.findOperations(postData, new PagingAndFiltering(null, null, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public FindWalletOperationsResponseDto listOperationsGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+        FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
+
+        try {
+            result = walletApi.findOperations(null, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public FindWalletOperationsResponseDto listOperationsPost(PagingAndFiltering pagingAndFiltering) {
+        FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
+
+        try {
+            result = walletApi.findOperations(null, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

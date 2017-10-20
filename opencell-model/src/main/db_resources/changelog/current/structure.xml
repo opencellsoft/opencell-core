@@ -774,7 +774,7 @@
 		<sql>DROP INDEX IF EXISTS rated_transaction_number</sql>
 		<sql>CREATE INDEX rated_transaction_number ON billing_rated_transaction(order_number)</sql>
 	</changeSet>
-	
+
 	<changeSet id="performance_20171006" author="TienLanPHUNG" dbms="mysql">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index ON billing_invoice_agregate</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
@@ -845,7 +845,7 @@
 		<sql>DROP INDEX IF EXISTS rated_transaction_number_index ON billing_rated_transaction</sql>
 		<sql>CREATE INDEX rated_transaction_number_index ON billing_rated_transaction(order_number)</sql>
 	</changeSet>
-
+    
     <changeSet id="#2761_20170831" author="AndriusKarpavicius">    
         <addColumn tableName="cat_offer_template">
             <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">

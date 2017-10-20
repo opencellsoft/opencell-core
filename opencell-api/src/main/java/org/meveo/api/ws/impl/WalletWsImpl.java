@@ -12,7 +12,7 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -133,11 +133,11 @@ public class WalletWsImpl extends BaseWs implements WalletWs {
     }
 
     @Override
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Paging paging) {
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering) {
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
 
         try {
-            result = walletApi.findOperations(postData, paging);
+            result = walletApi.findOperations(postData, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

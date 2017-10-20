@@ -221,7 +221,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         counterPeriod.setCounterType(counterTemplate.getCounterType());
         counterPeriod.setNotificationLevels(counterTemplate.getNotificationLevels(), initialValue);
 
-        log.error("AKK is correspond to period in period instantiation");
         counterPeriod.isCorrespondsToPeriod(chargeDate);
 
         return counterPeriod;

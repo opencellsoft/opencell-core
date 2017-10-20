@@ -147,7 +147,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 			    wpIds.append(ids.toString());
 			    sep=",";
 			   }
-			   filters.put("inList-id", wpIds);
+			   filters.put("inList id", wpIds);
 			  }
 			else{
 				return null;

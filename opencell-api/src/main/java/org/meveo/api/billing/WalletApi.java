@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -19,7 +17,7 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -438,56 +436,45 @@ public class WalletApi extends BaseApi {
 
     }
 
-    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, Paging paging) throws MeveoApiException {
+    public FindWalletOperationsResponseDto findOperations(FindWalletOperationsDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
-        if (StringUtils.isBlank(postData.getUserAccount())) {
-            missingParameters.add("userAccount");
-            handleMissingParameters();
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
         }
 
-        WalletTemplate walletTemplate = null;
-        WalletInstance walletInstance = null;
-        UserAccount userAccount = userAccountService.findByCode(postData.getUserAccount());
-        if (userAccount == null) {
-            throw new EntityDoesNotExistsException(UserAccount.class, postData.getUserAccount());
-        }
-
-        if (!StringUtils.isBlank(postData.getWalletTemplate()) && !postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
-            walletTemplate = walletTemplateService.findByCode(postData.getWalletTemplate());
-            if (walletTemplate == null) {
-                throw new EntityDoesNotExistsException(WalletTemplate.class, postData.getWalletTemplate());
+        if (postData != null) {
+            if (StringUtils.isBlank(postData.getUserAccount())) {
+                missingParameters.add("userAccount");
+                handleMissingParameters();
             }
-        } else {
-            walletInstance = walletService.findByUserAccountAndCode(userAccount, WalletTemplate.PRINCIPAL);
+
+            pagingAndFiltering.addFilter("wallet.userAccount.code", postData.getUserAccount());
+
+            if (!StringUtils.isBlank(postData.getWalletTemplate()) && !postData.getWalletTemplate().equals(WalletTemplate.PRINCIPAL)) {
+                pagingAndFiltering.addFilter("wallet.walletTemplate.code", postData.getWalletTemplate());
+            } else {
+                pagingAndFiltering.addFilter("wallet.code", WalletTemplate.PRINCIPAL);
+            }
+
+            pagingAndFiltering.addFilter("status", postData.getStatus());
+            pagingAndFiltering.addFilter("chargeInstance.code", postData.getChargeTemplateCode());
+            pagingAndFiltering.addFilter("fromRange operationDate", postData.getFromDate());
+            pagingAndFiltering.addFilter("toRange operationDate", postData.getToDate());
+            pagingAndFiltering.addFilter("offerCode", postData.getOfferTemplateCode());
+            pagingAndFiltering.addFilter("orderNumber", postData.getOrderNumber());
+            pagingAndFiltering.addFilter("parameter1", postData.getParameter1());
+            pagingAndFiltering.addFilter("parameter2", postData.getParameter2());
+            pagingAndFiltering.addFilter("parameter3", postData.getParameter3());
+            pagingAndFiltering.addFilter("chargeInstance.subscription.code", postData.getSubscriptionCode());
+
         }
 
-        Map<String, Object> filters = new HashMap<>();
-
-        if (walletTemplate != null) {
-            filters.put("wallet.walletTemplate", walletTemplate);
-            filters.put("wallet.userAccount", userAccount);
-        } else {
-            filters.put("wallet", walletInstance);
-        }
-        filters.put("status", postData.getStatus());
-        filters.put("chargeInstance.code", postData.getChargeTemplateCode());
-        filters.put("fromRange-operationDate", postData.getFromDate());
-        filters.put("toRange-operationDate", postData.getToDate());
-        filters.put("offerCode", postData.getOfferTemplateCode());
-        filters.put("orderNumber", postData.getOrderNumber());
-        filters.put("parameter1", postData.getParameter1());
-        filters.put("parameter2", postData.getParameter2());
-        filters.put("parameter3", postData.getParameter3());
-        filters.put("chargeInstance.subscription.code", postData.getSubscriptionCode());
-
-        PaginationConfiguration paginationConfig = new PaginationConfiguration(paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
-            null, Arrays.asList("wallet"), paging != null && paging.getSortBy() != null ? paging.getSortBy() : "id",
-            paging != null && paging.getSortOrder() != null ? SortOrder.valueOf(paging.getSortOrder().name()) : SortOrder.ASCENDING);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("wallet"), pagingAndFiltering, WalletOperation.class);
 
         Long totalCount = walletOperationService.count(paginationConfig);
 
         FindWalletOperationsResponseDto result = new FindWalletOperationsResponseDto();
-        result.setPaging(paging != null ? paging : new Paging());
+        result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {
