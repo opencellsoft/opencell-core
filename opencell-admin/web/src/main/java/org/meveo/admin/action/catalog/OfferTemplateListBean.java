@@ -96,7 +96,7 @@ public class OfferTemplateListBean extends OfferTemplateBean {
 			for (OfferTemplateCategory otc : selOfferTemplateCategories) {
 				offerTemplateCatIds.add(otc.getId());
 			}
-			filters.put("inList-offerTemplateCategories.id", offerTemplateCatIds);
+			filters.put("inList offerTemplateCategories.id", offerTemplateCatIds);
 		}
 
 		return getLazyDataModel();

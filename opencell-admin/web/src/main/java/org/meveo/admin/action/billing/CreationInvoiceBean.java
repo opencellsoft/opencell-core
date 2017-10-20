@@ -466,7 +466,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	
 			try {
 				invoiceService.commit();
-				entity = invoiceService.generateXmlAndPdfInvoice(entity);
+				entity = invoiceService.generateXmlAndPdfInvoice(entity, true);
 			} catch (Exception e) {				
 				messages.error("Error generating xml / pdf invoice=" + e.getMessage());
 			}
@@ -730,7 +730,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 					invoiceTypeIds.append(invoiceType.getId() + ",");
 				}
 				invoiceTypeIds.deleteCharAt(invoiceTypeIds.length() - 1);
-				filters.put("inList-invoiceType.id", invoiceTypeIds);
+				filters.put("inList invoiceType.id", invoiceTypeIds);
 			}
 		}
 

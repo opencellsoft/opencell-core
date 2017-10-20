@@ -18,10 +18,10 @@
         <c:if test="#{rangeSearch}">
             <h:panelGrid columns="3">
 <!--                 <h:outputText value="#{messages['commons.dateFrom']}" style="padding-right:5px" /> -->
-                <p:calendar id="#{id}" value="#{backingBean.filters['fromRange-'.concat(field)]}" pattern="#{datePattern}" disabled="#{disabled}" size="16" placeholder="#{messages['commons.dateFrom']}"/>
+                <p:calendar id="#{id}" value="#{backingBean.filters['fromRange '.concat(field)]}" pattern="#{datePattern}" disabled="#{disabled}" size="16" placeholder="#{messages['commons.dateFrom']}"/>
 
                 <h:outputText value="-" style="padding:5px" />
-                <p:calendar id="#{id}_toRange" value="#{backingBean.filters['toRange-'.concat(field)]}" pattern="#{datePattern}" disabled="#{disabled}" size="16" placeholder="#{messages['commons.dateTill']}"/>
+                <p:calendar id="#{id}_toRange" value="#{backingBean.filters['toRange '.concat(field)]}" pattern="#{datePattern}" disabled="#{disabled}" size="16" placeholder="#{messages['commons.dateTill']}"/>
             </h:panelGrid>
         </c:if>
     </hftl:decorateFormField>

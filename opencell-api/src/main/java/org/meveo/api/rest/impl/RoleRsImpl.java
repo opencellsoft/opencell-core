@@ -44,10 +44,10 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     }
 
     @Override
-    public ActionStatus remove(String roleName, String provider) {
+    public ActionStatus remove(String roleName) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.remove(roleName, provider);
+            roleApi.remove(roleName);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -56,10 +56,10 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
     }
 
     @Override
-    public GetRoleResponse find(String roleName, String provider) {
+    public GetRoleResponse find(String roleName) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(roleName, provider));
+            result.setRoleDto(roleApi.find(roleName));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

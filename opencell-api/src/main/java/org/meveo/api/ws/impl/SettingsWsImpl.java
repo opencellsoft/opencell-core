@@ -1217,10 +1217,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public ActionStatus removeRole(String name, String provider) {
+    public ActionStatus removeRole(String name) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            roleApi.remove(name, provider);
+            roleApi.remove(name);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1229,22 +1229,10 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
-    public GetRoleResponse findRole(String name, String provider) {
+    public GetRoleResponse findRole(String name) {
         GetRoleResponse result = new GetRoleResponse();
         try {
-            result.setRoleDto(roleApi.find(name, provider));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-
-        return result;
-    }
-
-    @Override
-    public GetRoleResponse findRole4_2(String name) {
-        GetRoleResponse result = new GetRoleResponse();
-        try {
-            result.setRoleDto(roleApi.find(name, null));
+            result.setRoleDto(roleApi.find(name));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
