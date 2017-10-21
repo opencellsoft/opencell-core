@@ -100,6 +100,9 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	
 	@Transient
 	private boolean selected;
+	
+	@Transient
+	private String descriptionOverride;
 
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -236,6 +239,14 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
+
+    public String getDescriptionOverride() {
+        return descriptionOverride;
+    }
+
+    public void setDescriptionOverride(String descriptionOverride) {
+        this.descriptionOverride = descriptionOverride;
+    }
 
 
 }

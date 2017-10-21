@@ -570,7 +570,8 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
+                    String descriptionOverride = !StringUtils.isBlank(serviceToInstantiateDto.getDescriptionOverride()) ? serviceToInstantiateDto.getDescriptionOverride() : null; 
+                    serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
                 } catch (BusinessException e) {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
