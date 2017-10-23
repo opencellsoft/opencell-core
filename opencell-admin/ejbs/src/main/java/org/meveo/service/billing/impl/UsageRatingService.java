@@ -400,8 +400,8 @@ public class UsageRatingService {
         }
 
         if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
-            log.warn("deduceQuantity is null");
-            return stopEDRRating;
+            //we continue the rating  to  have a WO that its needed in pricePlan.script
+            log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");           
         }
 
         BigDecimal quantityToCharge = null;
