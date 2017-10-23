@@ -2,6 +2,7 @@ package org.meveo.service.quote;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -79,8 +80,7 @@ public class QuoteService extends BusinessService<Quote> {
      * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
-    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {
-
+    public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {    	
         log.info("Creating simulated invoice for {}", quoteInvoiceInfos);
 
         List<Invoice> invoices = new ArrayList<Invoice>();
@@ -109,7 +109,8 @@ public class QuoteService extends BusinessService<Quote> {
                 }
 
                 Subscription subscription = quoteInvoiceInfo.getSubscription();
-                if (subscription != null) {
+				if (subscription != null) {
+
                     billingAccount = subscription.getUserAccount().getBillingAccount();
 
                     // Add Service charges
@@ -179,18 +180,14 @@ public class QuoteService extends BusinessService<Quote> {
                         }
                     }
                 }
-            }
-
+            }            
             // Create rated transactions from wallet operations
             for (WalletOperation walletOperation : walletOperations) {
                 ratedTransactions.add(ratedTransactionService.createRatedTransaction(walletOperation, true));
             }
-
             Invoice invoice = invoiceService.createAgregatesAndInvoiceVirtual(ratedTransactions, billingAccount, invoiceTypeService.getDefaultQuote());
-
             File xmlInvoiceFile = xmlInvoiceCreator.createXMLInvoice(invoice, true);
             invoiceService.produceInvoicePdfNoUpdate(invoice);
-
             // Clean up data (left only the methods that remove FK data that would fail to persist in case of virtual operations)
             // invoice.setBillingAccount(null);
             invoice.setRatedTransactions(null);

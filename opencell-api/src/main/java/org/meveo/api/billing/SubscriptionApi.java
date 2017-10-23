@@ -296,7 +296,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     public void activateServices(ActivateServicesRequestDto postData, String orderNumber, boolean ignoreAlreadyActivatedError) throws MeveoApiException, BusinessException {
-
+    	
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
         }
@@ -312,8 +312,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscription = subscriptionService.refreshOrRetrieve(subscription);
-        subscription.getOffer().getOfferServiceTemplates().size();
-
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
@@ -328,8 +326,7 @@ public class SubscriptionApi extends BaseApi {
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
             if (serviceTemplate == null) {
                 throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
-            }
-
+            }            
             serviceToActivateDto.setServiceTemplate(serviceTemplate);
             serviceToActivateDtos.add(serviceToActivateDto);
         }
@@ -480,7 +477,6 @@ public class SubscriptionApi extends BaseApi {
                 throw new MeveoApiException(e.getMessage());
             }
         }
-
     }
 
     public void instantiateServices(InstantiateServicesRequestDto postData) throws MeveoApiException, BusinessException {
@@ -502,7 +498,6 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
-
         // check if exists
         List<ServiceToInstantiateDto> serviceToInstantiateDtos = new ArrayList<>();
         for (ServiceToInstantiateDto serviceToInstantiateDto : postData.getServicesToInstantiate().getService()) {
@@ -555,7 +550,6 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
-
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true);

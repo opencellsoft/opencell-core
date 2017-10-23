@@ -46,7 +46,6 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
             responseBuilder.entity(result);
         }
 
-
         Response response = responseBuilder.build();
         log.debug("RESPONSE={}", response.getEntity());
         return response;
@@ -149,11 +148,11 @@ public class QuoteRsImpl extends BaseRs implements QuoteRs {
 
     @Override
     public Response placeOrder(String quoteId, UriInfo info) {
+    	
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-
         Response.ResponseBuilder responseBuilder = null;
-
         try {
+        	
             ProductOrder productOrder = quoteApi.placeOrder(quoteId);
             responseBuilder = Response.ok().entity(productOrder);
 

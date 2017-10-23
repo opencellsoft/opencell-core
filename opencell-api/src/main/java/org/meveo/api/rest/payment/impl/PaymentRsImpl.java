@@ -1,5 +1,7 @@
 package org.meveo.api.rest.payment.impl;
 
+import java.util.Calendar;
+
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -76,16 +78,17 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
 
     @Override
     public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto) {
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
-	try {
-	    Long tokenId = paymentMethodApi.create(new PaymentMethodDto(cardPaymentMethodDto));
-	    response.setPaymentMethod(paymentMethodApi.find(tokenId));
-
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
-
-	return new CardPaymentMethodTokenDto(response);
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        try {
+            PaymentMethodDto paymentMethodDto = new PaymentMethodDto(cardPaymentMethodDto);
+			Long tokenId = paymentMethodApi.create(paymentMethodDto);
+            PaymentMethodDto find = paymentMethodApi.find(tokenId);
+			response.setPaymentMethod(find);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+        
+        return new CardPaymentMethodTokenDto(response);
     }
 
     @Override

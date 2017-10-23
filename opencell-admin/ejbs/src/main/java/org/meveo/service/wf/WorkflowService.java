@@ -72,6 +72,11 @@ public class WorkflowService extends BusinessService<Workflow> {
     @Inject
     private WorkflowHistoryService workflowHistoryService;
 
+    static Set<Class<?>>  meveo_classes;
+    static {
+    	meveo_classes = ReflectionUtils.getClassesAnnotatedWith(WorkflowTypeClass.class, "org.meveo");
+    }
+    
     @SuppressWarnings("unchecked")
     public List<Workflow> getWorkflows() {
         return (List<Workflow>) getEntityManager().createQuery("from " + Workflow.class.getSimpleName() + " where disabled=:disabled ")
@@ -96,11 +101,9 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @return
      */
     public List<Class<?>> getAllWFTypes() {
-        Set<Class<?>> classes = null;
         List<Class<?>> result = new ArrayList<Class<?>>();
-        classes = ReflectionUtils.getClassesAnnotatedWith(WorkflowTypeClass.class, "org.meveo");
-        if (CollectionUtils.isNotEmpty(classes)) {
-            for (Class<?> cls : classes) {
+        if (CollectionUtils.isNotEmpty(meveo_classes)) {
+            for (Class<?> cls : meveo_classes) {
                 if (!Modifier.isAbstract(cls.getModifiers())) {
                     result.add(cls);
                 }
@@ -133,7 +136,6 @@ public class WorkflowService extends BusinessService<Workflow> {
                 clazz = clazz.getSuperclass();
             }
             Object o = ((ParameterizedType) clazz.getGenericSuperclass()).getActualTypeArguments()[0];
-
             if (o instanceof TypeVariable) {
                 genericClass = (Class<?>) ((TypeVariable) o).getBounds()[0];
             } else {
@@ -171,7 +173,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      */
     public boolean isWorkflowSetup(Class<? extends BusinessEntity> entityClass) {
         List<Workflow> workflows = findByEntity(entityClass);
-        return !workflows.isEmpty();
+		return !workflows.isEmpty();
     }
 
     /**

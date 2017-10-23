@@ -19,22 +19,18 @@
 package org.meveo.service.crm.impl;
 
 import java.util.List;
-
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
-
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
 import org.meveo.service.base.AccountService;
-
 /**
  * Customer service implementation.
  */
 @Stateless
 public class CustomerService extends AccountService<Customer> {
-
     public Customer findByCode(String code) {
         Query query = getEntityManager().createQuery("from " + Customer.class.getSimpleName() + " where code=:code").setParameter("code", code);
         if (query.getResultList().size() == 0) {
@@ -42,18 +38,15 @@ public class CustomerService extends AccountService<Customer> {
         }
         return (Customer) query.getResultList().get(0);
     }
-
     public Customer findByCodeAndFetch(String code, List<String> fetchFields) {
         QueryBuilder qb = new QueryBuilder(Customer.class, "c", fetchFields);
         qb.addCriterion("c.code", "=", code, true);
-
         try {
             return (Customer) qb.getQuery(getEntityManager()).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
     }
-
     @SuppressWarnings("unchecked")
     public List<Customer> listBySellerCode(String code) {
         QueryBuilder qb = new QueryBuilder(Customer.class, "c");
@@ -64,7 +57,6 @@ public class CustomerService extends AccountService<Customer> {
             return null;
         }
     }
-
     @SuppressWarnings("unchecked")
     public List<Seller> listSellersWithCustomers() {
         try {
@@ -73,5 +65,4 @@ public class CustomerService extends AccountService<Customer> {
             return null;
         }
     }
-
 }
