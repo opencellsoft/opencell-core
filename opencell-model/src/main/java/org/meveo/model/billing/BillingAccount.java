@@ -21,6 +21,7 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -159,7 +160,7 @@ public class BillingAccount extends AccountEntity {
     // TODO : Add orphanRemoval annotation.
     // @Cascade(org.hibernate.annotations.CascadeType.DELETE_ORPHAN)
     // key is the counter template code
-    Map<String, CounterInstance> counters;
+    Map<String, CounterInstance> counters = new HashMap<String, CounterInstance>();
 
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
