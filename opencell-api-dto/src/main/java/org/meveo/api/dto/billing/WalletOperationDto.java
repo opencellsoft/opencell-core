@@ -73,6 +73,7 @@ public class WalletOperationDto extends BaseDto {
 
 	public WalletOperationDto(WalletOperation wo) {
 		code = wo.getCode();
+		description = wo.getDescription();
 		seller = wo.getSeller().getCode();
 
 		if (wo.getWallet() != null && wo.getWallet().getWalletTemplate() != null) {
