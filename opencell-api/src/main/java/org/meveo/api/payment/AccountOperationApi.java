@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
@@ -18,6 +19,7 @@ import org.meveo.api.dto.payment.MatchingAmountDto;
 import org.meveo.api.dto.payment.MatchingAmountsDto;
 import org.meveo.api.dto.payment.MatchingCodeDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -42,29 +44,45 @@ import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
+ * The Class AccountOperationApi.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @Stateless
 public class AccountOperationApi extends BaseApi {
 
+    /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
 
+    /** The account operation service. */
     @Inject
     private AccountOperationService accountOperationService;
 
+    /** The matching code service. */
     @Inject
     private MatchingCodeService matchingCodeService;
 
+    /** The matching amount service. */
     @Inject
     private MatchingAmountService matchingAmountService;
 
+    /** The recorded invoice service. */
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
 
+    /** The payment service. */
     @Inject
     private PaymentService paymentService;
 
+    /**
+     * Creates the.
+     *
+     * @param postData the post data
+     * @return the long
+     * @throws MeveoApiException the meveo api exception
+     * @throws BusinessException the business exception
+     */
     public Long create(AccountOperationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getType())) {
@@ -183,29 +201,50 @@ public class AccountOperationApi extends BaseApi {
         return accountOperation.getId();
     }
 
-    public AccountOperationsResponseDto list(String customerAccountCode) throws MeveoApiException {
-        if (StringUtils.isBlank(customerAccountCode)) {
-            missingParameters.add("customerAccountCode");
-        }
-        handleMissingParameters();
+    /**
+     * List.
+     * @param limit 
+     * @param offset 
+     *
+     * @param customerAccountCode the customer account code
+     * @param sortBy the sort by
+     * @param sortOrder the sort order
+     * @return the account operations response dto
+     * @throws MeveoApiException the meveo api exception
+     */
+    public AccountOperationsResponseDto list(PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.DESCENDING, null, pagingAndFiltering,
+            AccountOperation.class);
+
+        Long totalCount = accountOperationService.count(paginationConfiguration);
 
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-        if (customerAccount == null) {
-            throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-        }
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-        List<AccountOperation> accountOperations = accountOperationService.listAccountOperationByCustomerAccount(customerAccount);
-
-        for (AccountOperation accountOp : accountOperations) {
-            AccountOperationDto accountOperationDto = accountOperationToDto(accountOp);
-            result.getAccountOperations().getAccountOperation().add(accountOperationDto);
+        if (totalCount > 0) {
+            List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
+            if (accountOperations != null) {
+                for (AccountOperation accountOperation : accountOperations) {
+                    AccountOperationDto accountOperationDto = accountOperationToDto(accountOperation);
+                    result.getAccountOperations().getAccountOperation().add(accountOperationDto);
+                }
+            }
         }
         return result;
-
     }
 
+    /**
+     * Match operations.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws NoAllOperationUnmatchedException the no all operation unmatched exception
+     * @throws UnbalanceAmountException the unbalance amount exception
+     * @throws Exception the exception
+     */
     public void matchOperations(MatchOperationRequestDto postData) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
         if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
@@ -237,6 +276,13 @@ public class AccountOperationApi extends BaseApi {
 
     }
 
+    /**
+     * Un matching operations.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws Exception the exception
+     */
     public void unMatchingOperations(UnMatchingOperationRequestDto postData) throws BusinessException, Exception {
         if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
@@ -276,6 +322,13 @@ public class AccountOperationApi extends BaseApi {
         }
     }
 
+    /**
+     * Checking litigation.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws Exception the exception
+     */
     private void checkingLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
@@ -307,16 +360,37 @@ public class AccountOperationApi extends BaseApi {
         }
     }
 
+    /**
+     * Adds the litigation.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws Exception the exception
+     */
     public void addLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         checkingLitigation(postData);
         recordedInvoiceService.addLitigation(postData.getAccountOperationId());
     }
 
+    /**
+     * Cancel litigation.
+     *
+     * @param postData the post data
+     * @throws BusinessException the business exception
+     * @throws Exception the exception
+     */
     public void cancelLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
         checkingLitigation(postData);
         recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
     }
 
+    /**
+     * Find.
+     *
+     * @param id the id
+     * @return the account operation dto
+     * @throws MeveoApiException the meveo api exception
+     */
     public AccountOperationDto find(Long id) throws MeveoApiException {
         AccountOperationDto result = new AccountOperationDto();
         AccountOperation ao = accountOperationService.findById(id);
@@ -331,13 +405,13 @@ public class AccountOperationApi extends BaseApi {
 
     /**
      * Update payment method for all customerAccount AO's if customerAccountCode is set.Or single AO if aoId is set.
-     * 
-     * @param customerAccountCode
-     * @param aoId
-     * @param paymentMethod
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws BusinessException
+     *
+     * @param customerAccountCode the customer account code
+     * @param aoId the ao id
+     * @param paymentMethod the payment method
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
      */
     public void updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod)
             throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
@@ -367,6 +441,13 @@ public class AccountOperationApi extends BaseApi {
 
     }
 
+    /**
+     * Update payment method.
+     *
+     * @param ao the ao
+     * @param paymentMethod the payment method
+     * @throws BusinessException the business exception
+     */
     private void updatePaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethod) throws BusinessException {
         if (MatchingStatusEnum.O == ao.getMatchingStatus()) {
             if (ao instanceof RecordedInvoice) {
@@ -382,6 +463,12 @@ public class AccountOperationApi extends BaseApi {
         }
     }
 
+    /**
+     * Account operation to dto.
+     *
+     * @param accountOp the account op
+     * @return the account operation dto
+     */
     private AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
         AccountOperationDto accountOperationDto = new AccountOperationDto();
         accountOperationDto.setId(accountOp.getId());
@@ -421,6 +508,14 @@ public class AccountOperationApi extends BaseApi {
         return accountOperationDto;
     }
 
+    /**
+     * List matched operations.
+     *
+     * @param accountOperationId the account operation id
+     * @return the list
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws MissingParameterException the missing parameter exception
+     */
     public List<MatchedOperationDto> listMatchedOperations(Long accountOperationId) throws EntityDoesNotExistsException, MissingParameterException {
 
         List<MatchedOperationDto> matchedOperationsDtos = new ArrayList<>();

@@ -16,7 +16,8 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -81,12 +82,36 @@ public interface CustomerRs extends IBaseRs {
      * @return
      */
     @POST
+    @Path("/list47")
+    public CustomersResponseDto list47(@Deprecated CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow,
+            @QueryParam("numberOfRows") @Deprecated Integer numberOfRows, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("c.code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List customers matching a given criteria
+     * 
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return List of customers
+     */
+    @GET
     @Path("/list")
-    CustomersResponseDto list(CustomerDto postData, @QueryParam("firstRow") @Deprecated Integer firstRow, @QueryParam("numberOfRows") @Deprecated Integer numberOfRows,
-            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-            @DefaultValue("c.code") @QueryParam("sortBy") String sortBy,
-			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder
-			);
+    public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List customers matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of customers
+     */
+    @POST
+    @Path("/list")
+    public CustomersResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Create a new customer brand

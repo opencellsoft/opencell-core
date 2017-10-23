@@ -35,7 +35,7 @@
 						columnClasses="Wid95, Wid5" columns="2">
 						<p:inputText placeholder="#{messages['action.search']}"
 							syle="float:right;"
-							value="#{businessOfferModelListBean.filters['FIELD1_OR_FIELD2 offerTemplate.name offerTemplate.description']}" />
+							value="#{businessOfferModelListBean.filters['wildcardOr offerTemplate.name offerTemplate.description']}" />
 						<p:commandLink styleClass="Padding3 fa fa-search"
 							update=":mainForm:dataGrid"></p:commandLink>
 					</h:panelGrid>					

@@ -186,7 +186,10 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         offerTemplate.setLongDescription(postData.getLongDescription());
         offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
-        offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+        if(postData.getLifeCycleStatus() != null) {
+            offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+        }
+        
         if (postData.getLanguageDescriptions() != null) {
             offerTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), offerTemplate.getDescriptionI18n()));
         }

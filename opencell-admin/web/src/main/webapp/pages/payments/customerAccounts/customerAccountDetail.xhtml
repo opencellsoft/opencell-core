@@ -393,7 +393,8 @@
 
                             <hftl:column label="#{messages['accountOperation.excludedFromDunning']}" field="excludedFromDunning" isMessage="true" width="10%" />
 
-                            <hftl:actionsColumn width="15%" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
+                            <hftl:actionsColumn width="15%" renderDeleteLink="false" editView="#{accountOperationBean.displayOperation(entity)}" renderViewLink="true" />
+                            
                             <ui:define name="add-on-buttons">
                                 <h:panelGroup layout="block" styleClass="form-panel-actions" rendered="#{accountOperationBean.canUserUpdateEntity()}">
                                     <p:commandButton action="#{accountOperationBean.matching(customerAccountBean.entity.id)}" value="#{messages['customerAccount.buttonLettrage']}"

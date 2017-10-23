@@ -9,25 +9,39 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
 
+/**
+ * The Class PaymentMethodTokensDto.
+ */
 @XmlRootElement(name = "PaymentMethodTokens")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentMethodTokensDto extends BaseResponse {
+public class PaymentMethodTokensDto extends SearchResponse {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6255115951743225824L;
 
+    /** The payment methods. */
     @XmlElementWrapper(name = "paymentMethods")
     @XmlElement(name = "paymentMethod")
     private List<PaymentMethodDto> paymentMethods = new ArrayList<PaymentMethodDto>();
 
-	public List<PaymentMethodDto> getPaymentMethods() {
-		return paymentMethods;
-	}
+    /**
+     * Gets the payment methods.
+     *
+     * @return the payment methods
+     */
+    public List<PaymentMethodDto> getPaymentMethods() {
+	return paymentMethods;
+    }
 
-	public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
-		this.paymentMethods = paymentMethods;
-	}
+    /**
+     * Sets the payment methods.
+     *
+     * @param paymentMethods the new payment methods
+     */
+    public void setPaymentMethods(List<PaymentMethodDto> paymentMethods) {
+	this.paymentMethods = paymentMethods;
+    }
 
-  
 }

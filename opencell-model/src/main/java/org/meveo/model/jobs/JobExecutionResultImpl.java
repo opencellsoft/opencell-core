@@ -59,7 +59,7 @@ public class JobExecutionResultImpl extends BaseEntity {
     /**
      * True if the job didn't detect anything else to do. If false the Jobservice will execute it again immediatly
      */
-    @Type(type = "numeric_boolean")
+    @Type(type="numeric_boolean")
     @Column(name = "job_done")
     private boolean done = true;
 
@@ -82,7 +82,7 @@ public class JobExecutionResultImpl extends BaseEntity {
     /**
      * General report displayed in GUI, put here info that do not fit other places
      */
-    @Column(name = "report", columnDefinition = "LONGTEXT")
+    @Column(name = "report", columnDefinition="LONGTEXT")
     private String report;
 
     public synchronized void registerSucces() {
@@ -292,12 +292,12 @@ public class JobExecutionResultImpl extends BaseEntity {
         return warningBuffer.toString();
     }
 
-    @Override
-    public String toString() {
+	@Override
+	public String toString() {
         return "JobExecutionResultImpl [jobInstanceCode=" + (jobInstance == null ? null : jobInstance.getCode()) + ", startDate=" + startDate + ", endDate=" + endDate
                 + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
                 + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", jobLauncherEnum=" + jobLauncherEnum
                 + ", warnings=" + warnings + ", errors=" + errors + ", report=" + report + "]";
-    }
+	}
 
 }
