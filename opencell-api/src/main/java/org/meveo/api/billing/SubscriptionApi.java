@@ -416,7 +416,8 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
+                    String descriptionOverride = !StringUtils.isBlank(serviceToActivateDto.getDescriptionOverride()) ? serviceToActivateDto.getDescriptionOverride() : null;
+                    serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
                     if (serviceToActivateDto.getSubscriptionDate() != null) {
                         serviceInstances.add(serviceInstance);
