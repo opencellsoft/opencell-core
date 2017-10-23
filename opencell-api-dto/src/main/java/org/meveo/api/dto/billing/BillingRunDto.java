@@ -16,426 +16,436 @@ import org.meveo.model.billing.BillingRunStatusEnum;
 
 @XmlRootElement(name = "BillingRun")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BillingRunDto  extends BaseDto{
-	
-		private static final long serialVersionUID = 1L;
+public class BillingRunDto extends BaseDto {
 
-		private Date processDate;
-		private BillingRunStatusEnum status;
-		private Date statusDate;
-		private BillingCycleDto billingCycle;
-		private Integer billingAccountNumber;
-		private Integer billableBillingAcountNumber;
-		private Integer producibleInvoiceNumber;
-		private BigDecimal producibleAmountWithoutTax;
-		private BigDecimal producibleAmountTax;
-		private Integer InvoiceNumber;
-		private BigDecimal producibleAmountWithTax;
-		private BigDecimal prAmountWithoutTax;
-		private BigDecimal prAmountWithTax;
-		private BigDecimal prAmountTax;
-		private BillingProcessTypesEnum processType;
-		private Date startDate;
-		private Date endDate;
-	    private Date invoiceDate;
-	    private Date lastTransactionDate;
-		private String rejectionReason;
-		private String currencyCode;
-		private String countryCode;
-		private String languageCode;
-		private String selectedBillingAccounts;
-		private Boolean xmlInvoiceGenerated = Boolean.FALSE;
-		
-		public BillingRunDto(){
-			
-		}
+    private static final long serialVersionUID = 1L;
 
-		/**
-		 * @return the processDate
-		 */
-		public Date getProcessDate() {
-			return processDate;
-		}
+    private Date processDate;
+    private BillingRunStatusEnum status;
+    private Date statusDate;
+    private BillingCycleDto billingCycle;
+    private Integer billingAccountNumber;
+    private Integer billableBillingAcountNumber;
+    private Integer producibleInvoiceNumber;
+    private BigDecimal producibleAmountWithoutTax;
+    private BigDecimal producibleAmountTax;
+    private Integer InvoiceNumber;
+    private BigDecimal producibleAmountWithTax;
+    private BigDecimal prAmountWithoutTax;
+    private BigDecimal prAmountWithTax;
+    private BigDecimal prAmountTax;
+    private BillingProcessTypesEnum processType;
+    private Date startDate;
+    private Date endDate;
+    private Date invoiceDate;
+    private Date lastTransactionDate;
+    private String rejectionReason;
+    private String currencyCode;
+    private String countryCode;
+    private String languageCode;
+    private String selectedBillingAccounts;
 
-		/**
-		 * @param processDate the processDate to set
-		 */
-		public void setProcessDate(Date processDate) {
-			this.processDate = processDate;
-		}
+    public BillingRunDto() {
 
-		/**
-		 * @return the status
-		 */
-		public BillingRunStatusEnum getStatus() {
-			return status;
-		}
+    }
 
-		/**
-		 * @param status the status to set
-		 */
-		public void setStatus(BillingRunStatusEnum status) {
-			this.status = status;
-		}
+    /**
+     * @return the processDate
+     */
+    public Date getProcessDate() {
+	return processDate;
+    }
 
-		/**
-		 * @return the statusDate
-		 */
-		public Date getStatusDate() {
-			return statusDate;
-		}
+    /**
+     * @param processDate
+     *            the processDate to set
+     */
+    public void setProcessDate(Date processDate) {
+	this.processDate = processDate;
+    }
 
-		/**
-		 * @param statusDate the statusDate to set
-		 */
-		public void setStatusDate(Date statusDate) {
-			this.statusDate = statusDate;
-		}
+    /**
+     * @return the status
+     */
+    public BillingRunStatusEnum getStatus() {
+	return status;
+    }
 
-		/**
-		 * @return the billingCycle
-		 */
-		public BillingCycleDto getBillingCycle() {
-			return billingCycle;
-		}
+    /**
+     * @param status
+     *            the status to set
+     */
+    public void setStatus(BillingRunStatusEnum status) {
+	this.status = status;
+    }
 
-		/**
-		 * @param billingCycle the billingCycle to set
-		 */
-		public void setBillingCycle(BillingCycleDto billingCycle) {
-			this.billingCycle = billingCycle;
-		}
+    /**
+     * @return the statusDate
+     */
+    public Date getStatusDate() {
+	return statusDate;
+    }
 
-		/**
-		 * @return the billingAccountNumber
-		 */
-		public Integer getBillingAccountNumber() {
-			return billingAccountNumber;
-		}
+    /**
+     * @param statusDate
+     *            the statusDate to set
+     */
+    public void setStatusDate(Date statusDate) {
+	this.statusDate = statusDate;
+    }
 
-		/**
-		 * @param billingAccountNumber the billingAccountNumber to set
-		 */
-		public void setBillingAccountNumber(Integer billingAccountNumber) {
-			this.billingAccountNumber = billingAccountNumber;
-		}
+    /**
+     * @return the billingCycle
+     */
+    public BillingCycleDto getBillingCycle() {
+	return billingCycle;
+    }
 
-		/**
-		 * @return the billableBillingAcountNumber
-		 */
-		public Integer getBillableBillingAcountNumber() {
-			return billableBillingAcountNumber;
-		}
+    /**
+     * @param billingCycle
+     *            the billingCycle to set
+     */
+    public void setBillingCycle(BillingCycleDto billingCycle) {
+	this.billingCycle = billingCycle;
+    }
 
-		/**
-		 * @param billableBillingAcountNumber the billableBillingAcountNumber to set
-		 */
-		public void setBillableBillingAcountNumber(Integer billableBillingAcountNumber) {
-			this.billableBillingAcountNumber = billableBillingAcountNumber;
-		}
+    /**
+     * @return the billingAccountNumber
+     */
+    public Integer getBillingAccountNumber() {
+	return billingAccountNumber;
+    }
 
-		/**
-		 * @return the producibleInvoiceNumber
-		 */
-		public Integer getProducibleInvoiceNumber() {
-			return producibleInvoiceNumber;
-		}
+    /**
+     * @param billingAccountNumber
+     *            the billingAccountNumber to set
+     */
+    public void setBillingAccountNumber(Integer billingAccountNumber) {
+	this.billingAccountNumber = billingAccountNumber;
+    }
 
-		/**
-		 * @param producibleInvoiceNumber the producibleInvoiceNumber to set
-		 */
-		public void setProducibleInvoiceNumber(Integer producibleInvoiceNumber) {
-			this.producibleInvoiceNumber = producibleInvoiceNumber;
-		}
+    /**
+     * @return the billableBillingAcountNumber
+     */
+    public Integer getBillableBillingAcountNumber() {
+	return billableBillingAcountNumber;
+    }
 
-		/**
-		 * @return the producibleAmountWithoutTax
-		 */
-		public BigDecimal getProducibleAmountWithoutTax() {
-			return producibleAmountWithoutTax;
-		}
+    /**
+     * @param billableBillingAcountNumber
+     *            the billableBillingAcountNumber to set
+     */
+    public void setBillableBillingAcountNumber(Integer billableBillingAcountNumber) {
+	this.billableBillingAcountNumber = billableBillingAcountNumber;
+    }
 
-		/**
-		 * @param producibleAmountWithoutTax the producibleAmountWithoutTax to set
-		 */
-		public void setProducibleAmountWithoutTax(BigDecimal producibleAmountWithoutTax) {
-			this.producibleAmountWithoutTax = producibleAmountWithoutTax;
-		}
+    /**
+     * @return the producibleInvoiceNumber
+     */
+    public Integer getProducibleInvoiceNumber() {
+	return producibleInvoiceNumber;
+    }
 
-		/**
-		 * @return the producibleAmountTax
-		 */
-		public BigDecimal getProducibleAmountTax() {
-			return producibleAmountTax;
-		}
+    /**
+     * @param producibleInvoiceNumber
+     *            the producibleInvoiceNumber to set
+     */
+    public void setProducibleInvoiceNumber(Integer producibleInvoiceNumber) {
+	this.producibleInvoiceNumber = producibleInvoiceNumber;
+    }
 
-		/**
-		 * @param producibleAmountTax the producibleAmountTax to set
-		 */
-		public void setProducibleAmountTax(BigDecimal producibleAmountTax) {
-			this.producibleAmountTax = producibleAmountTax;
-		}
+    /**
+     * @return the producibleAmountWithoutTax
+     */
+    public BigDecimal getProducibleAmountWithoutTax() {
+	return producibleAmountWithoutTax;
+    }
 
-		/**
-		 * @return the invoiceNumber
-		 */
-		public Integer getInvoiceNumber() {
-			return InvoiceNumber;
-		}
+    /**
+     * @param producibleAmountWithoutTax
+     *            the producibleAmountWithoutTax to set
+     */
+    public void setProducibleAmountWithoutTax(BigDecimal producibleAmountWithoutTax) {
+	this.producibleAmountWithoutTax = producibleAmountWithoutTax;
+    }
 
-		/**
-		 * @param invoiceNumber the invoiceNumber to set
-		 */
-		public void setInvoiceNumber(Integer invoiceNumber) {
-			InvoiceNumber = invoiceNumber;
-		}
+    /**
+     * @return the producibleAmountTax
+     */
+    public BigDecimal getProducibleAmountTax() {
+	return producibleAmountTax;
+    }
 
-		/**
-		 * @return the producibleAmountWithTax
-		 */
-		public BigDecimal getProducibleAmountWithTax() {
-			return producibleAmountWithTax;
-		}
+    /**
+     * @param producibleAmountTax
+     *            the producibleAmountTax to set
+     */
+    public void setProducibleAmountTax(BigDecimal producibleAmountTax) {
+	this.producibleAmountTax = producibleAmountTax;
+    }
 
-		/**
-		 * @param producibleAmountWithTax the producibleAmountWithTax to set
-		 */
-		public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
-			this.producibleAmountWithTax = producibleAmountWithTax;
-		}
+    /**
+     * @return the invoiceNumber
+     */
+    public Integer getInvoiceNumber() {
+	return InvoiceNumber;
+    }
 
-		/**
-		 * @return the prAmountWithoutTax
-		 */
-		public BigDecimal getPrAmountWithoutTax() {
-			return prAmountWithoutTax;
-		}
+    /**
+     * @param invoiceNumber
+     *            the invoiceNumber to set
+     */
+    public void setInvoiceNumber(Integer invoiceNumber) {
+	InvoiceNumber = invoiceNumber;
+    }
 
-		/**
-		 * @param prAmountWithoutTax the prAmountWithoutTax to set
-		 */
-		public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
-			this.prAmountWithoutTax = prAmountWithoutTax;
-		}
+    /**
+     * @return the producibleAmountWithTax
+     */
+    public BigDecimal getProducibleAmountWithTax() {
+	return producibleAmountWithTax;
+    }
 
-		/**
-		 * @return the prAmountWithTax
-		 */
-		public BigDecimal getPrAmountWithTax() {
-			return prAmountWithTax;
-		}
+    /**
+     * @param producibleAmountWithTax
+     *            the producibleAmountWithTax to set
+     */
+    public void setProducibleAmountWithTax(BigDecimal producibleAmountWithTax) {
+	this.producibleAmountWithTax = producibleAmountWithTax;
+    }
 
-		/**
-		 * @param prAmountWithTax the prAmountWithTax to set
-		 */
-		public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
-			this.prAmountWithTax = prAmountWithTax;
-		}
+    /**
+     * @return the prAmountWithoutTax
+     */
+    public BigDecimal getPrAmountWithoutTax() {
+	return prAmountWithoutTax;
+    }
 
-		/**
-		 * @return the prAmountTax
-		 */
-		public BigDecimal getPrAmountTax() {
-			return prAmountTax;
-		}
+    /**
+     * @param prAmountWithoutTax
+     *            the prAmountWithoutTax to set
+     */
+    public void setPrAmountWithoutTax(BigDecimal prAmountWithoutTax) {
+	this.prAmountWithoutTax = prAmountWithoutTax;
+    }
 
-		/**
-		 * @param prAmountTax the prAmountTax to set
-		 */
-		public void setPrAmountTax(BigDecimal prAmountTax) {
-			this.prAmountTax = prAmountTax;
-		}
+    /**
+     * @return the prAmountWithTax
+     */
+    public BigDecimal getPrAmountWithTax() {
+	return prAmountWithTax;
+    }
 
-		/**
-		 * @return the processType
-		 */
-		public BillingProcessTypesEnum getProcessType() {
-			return processType;
-		}
+    /**
+     * @param prAmountWithTax
+     *            the prAmountWithTax to set
+     */
+    public void setPrAmountWithTax(BigDecimal prAmountWithTax) {
+	this.prAmountWithTax = prAmountWithTax;
+    }
 
-		/**
-		 * @param processType the processType to set
-		 */
-		public void setProcessType(BillingProcessTypesEnum processType) {
-			this.processType = processType;
-		}
+    /**
+     * @return the prAmountTax
+     */
+    public BigDecimal getPrAmountTax() {
+	return prAmountTax;
+    }
 
-		/**
-		 * @return the startDate
-		 */
-		public Date getStartDate() {
-			return startDate;
-		}
+    /**
+     * @param prAmountTax
+     *            the prAmountTax to set
+     */
+    public void setPrAmountTax(BigDecimal prAmountTax) {
+	this.prAmountTax = prAmountTax;
+    }
 
-		/**
-		 * @param startDate the startDate to set
-		 */
-		public void setStartDate(Date startDate) {
-			this.startDate = startDate;
-		}
+    /**
+     * @return the processType
+     */
+    public BillingProcessTypesEnum getProcessType() {
+	return processType;
+    }
 
-		/**
-		 * @return the endDate
-		 */
-		public Date getEndDate() {
-			return endDate;
-		}
+    /**
+     * @param processType
+     *            the processType to set
+     */
+    public void setProcessType(BillingProcessTypesEnum processType) {
+	this.processType = processType;
+    }
 
-		/**
-		 * @param endDate the endDate to set
-		 */
-		public void setEndDate(Date endDate) {
-			this.endDate = endDate;
-		}
+    /**
+     * @return the startDate
+     */
+    public Date getStartDate() {
+	return startDate;
+    }
 
-		/**
-		 * @return the invoiceDate
-		 */
-		public Date getInvoiceDate() {
-			return invoiceDate;
-		}
+    /**
+     * @param startDate
+     *            the startDate to set
+     */
+    public void setStartDate(Date startDate) {
+	this.startDate = startDate;
+    }
 
-		/**
-		 * @param invoiceDate the invoiceDate to set
-		 */
-		public void setInvoiceDate(Date invoiceDate) {
-			this.invoiceDate = invoiceDate;
-		}
+    /**
+     * @return the endDate
+     */
+    public Date getEndDate() {
+	return endDate;
+    }
 
-		/**
-		 * @return the lastTransactionDate
-		 */
-		public Date getLastTransactionDate() {
-			return lastTransactionDate;
-		}
+    /**
+     * @param endDate
+     *            the endDate to set
+     */
+    public void setEndDate(Date endDate) {
+	this.endDate = endDate;
+    }
 
-		/**
-		 * @param lastTransactionDate the lastTransactionDate to set
-		 */
-		public void setLastTransactionDate(Date lastTransactionDate) {
-			this.lastTransactionDate = lastTransactionDate;
-		}
+    /**
+     * @return the invoiceDate
+     */
+    public Date getInvoiceDate() {
+	return invoiceDate;
+    }
 
-		/**
-		 * @return the rejectionReason
-		 */
-		public String getRejectionReason() {
-			return rejectionReason;
-		}
+    /**
+     * @param invoiceDate
+     *            the invoiceDate to set
+     */
+    public void setInvoiceDate(Date invoiceDate) {
+	this.invoiceDate = invoiceDate;
+    }
 
-		/**
-		 * @param rejectionReason the rejectionReason to set
-		 */
-		public void setRejectionReason(String rejectionReason) {
-			this.rejectionReason = rejectionReason;
-		}
+    /**
+     * @return the lastTransactionDate
+     */
+    public Date getLastTransactionDate() {
+	return lastTransactionDate;
+    }
 
-		/**
-		 * @return the currencyCode
-		 */
-		public String getCurrencyCode() {
-			return currencyCode;
-		}
+    /**
+     * @param lastTransactionDate
+     *            the lastTransactionDate to set
+     */
+    public void setLastTransactionDate(Date lastTransactionDate) {
+	this.lastTransactionDate = lastTransactionDate;
+    }
 
-		/**
-		 * @param currencyCode the currencyCode to set
-		 */
-		public void setCurrencyCode(String currencyCode) {
-			this.currencyCode = currencyCode;
-		}
+    /**
+     * @return the rejectionReason
+     */
+    public String getRejectionReason() {
+	return rejectionReason;
+    }
 
-		/**
-		 * @return the countryCode
-		 */
-		public String getCountryCode() {
-			return countryCode;
-		}
+    /**
+     * @param rejectionReason
+     *            the rejectionReason to set
+     */
+    public void setRejectionReason(String rejectionReason) {
+	this.rejectionReason = rejectionReason;
+    }
 
-		/**
-		 * @param countryCode the countryCode to set
-		 */
-		public void setCountryCode(String countryCode) {
-			this.countryCode = countryCode;
-		}
+    /**
+     * @return the currencyCode
+     */
+    public String getCurrencyCode() {
+	return currencyCode;
+    }
 
-		/**
-		 * @return the languageCode
-		 */
-		public String getLanguageCode() {
-			return languageCode;
-		}
+    /**
+     * @param currencyCode
+     *            the currencyCode to set
+     */
+    public void setCurrencyCode(String currencyCode) {
+	this.currencyCode = currencyCode;
+    }
 
-		/**
-		 * @param languageCode the languageCode to set
-		 */
-		public void setLanguageCode(String languageCode) {
-			this.languageCode = languageCode;
-		}
+    /**
+     * @return the countryCode
+     */
+    public String getCountryCode() {
+	return countryCode;
+    }
 
-		/**
-		 * @return the selectedBillingAccounts
-		 */
-		public String getSelectedBillingAccounts() {
-			return selectedBillingAccounts;
-		}
+    /**
+     * @param countryCode
+     *            the countryCode to set
+     */
+    public void setCountryCode(String countryCode) {
+	this.countryCode = countryCode;
+    }
 
-		/**
-		 * @param selectedBillingAccounts the selectedBillingAccounts to set
-		 */
-		public void setSelectedBillingAccounts(String selectedBillingAccounts) {
-			this.selectedBillingAccounts = selectedBillingAccounts;
-		}
+    /**
+     * @return the languageCode
+     */
+    public String getLanguageCode() {
+	return languageCode;
+    }
 
-		/**
-		 * @return the xmlInvoiceGenerated
-		 */
-		public Boolean getXmlInvoiceGenerated() {
-			return xmlInvoiceGenerated;
-		}
+    /**
+     * @param languageCode
+     *            the languageCode to set
+     */
+    public void setLanguageCode(String languageCode) {
+	this.languageCode = languageCode;
+    }
 
-		/**
-		 * @param xmlInvoiceGenerated the xmlInvoiceGenerated to set
-		 */
-		public void setXmlInvoiceGenerated(Boolean xmlInvoiceGenerated) {
-			this.xmlInvoiceGenerated = xmlInvoiceGenerated;
-		}
+    /**
+     * @return the selectedBillingAccounts
+     */
+    public String getSelectedBillingAccounts() {
+	return selectedBillingAccounts;
+    }
 
-		/* (non-Javadoc)
-		 * @see java.lang.Object#toString()
-		 */
-		@Override
-		public String toString() {
-			return "BillingRunDto [processDate=" + processDate + ", status=" + status + ", statusDate=" + statusDate + ", billingCycle=" + billingCycle + ", billingAccountNumber=" + billingAccountNumber + ", billableBillingAcountNumber=" + billableBillingAcountNumber + ", producibleInvoiceNumber=" + producibleInvoiceNumber + ", producibleAmountWithoutTax=" + producibleAmountWithoutTax + ", producibleAmountTax=" + producibleAmountTax + ", InvoiceNumber=" + InvoiceNumber
-					+ ", producibleAmountWithTax=" + producibleAmountWithTax + ", prAmountWithoutTax=" + prAmountWithoutTax + ", prAmountWithTax=" + prAmountWithTax + ", prAmountTax=" + prAmountTax + ", processType=" + processType + ", startDate=" + startDate + ", endDate=" + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate=" + lastTransactionDate + ", rejectionReason=" + rejectionReason + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode
-					+ ", languageCode=" + languageCode + ", selectedBillingAccounts=" + selectedBillingAccounts + ", xmlInvoiceGenerated=" + xmlInvoiceGenerated + "]";
-		}
-		
-		public void setFromEntity(BillingRun billingRunEntity){
-			setProcessDate(billingRunEntity.getProcessDate());
-			setStatus(billingRunEntity.getStatus());
-			setStatusDate(billingRunEntity.getStatusDate());
-			setBillingCycle(new BillingCycleDto(billingRunEntity.getBillingCycle(),new CustomFieldsDto()));
-			setBillingAccountNumber(billingRunEntity.getBillingAccountNumber());
-			setBillableBillingAcountNumber(billingRunEntity.getBillableBillingAcountNumber());
-			setProducibleInvoiceNumber(billingRunEntity.getProducibleInvoiceNumber());
-			setProducibleAmountWithoutTax(billingRunEntity.getProducibleAmountWithoutTax());
-			setProducibleAmountTax(billingRunEntity.getProducibleAmountTax());
-			setInvoiceNumber(billingRunEntity.getInvoiceNumber());
-			setProducibleAmountWithTax(billingRunEntity.getProducibleAmountWithTax());
-			setPrAmountWithoutTax(billingRunEntity.getPrAmountWithoutTax());
-			setPrAmountWithTax(billingRunEntity.getPrAmountWithTax());
-			setPrAmountTax(billingRunEntity.getPrAmountTax());
-			setProcessType(billingRunEntity.getProcessType());
-			setStartDate(billingRunEntity.getStartDate());
-			setEndDate(billingRunEntity.getEndDate());
-			setInvoiceDate(billingRunEntity.getInvoiceDate());
-			setLastTransactionDate(billingRunEntity.getLastTransactionDate());
-			setRejectionReason(billingRunEntity.getRejectionReason());
-			setCurrencyCode(billingRunEntity.getCurrency()==null?null:billingRunEntity.getCurrency().getCurrencyCode());
-			setCountryCode(billingRunEntity.getCountry()==null?null:billingRunEntity.getCountry().getCountryCode());
-			setLanguageCode(billingRunEntity.getLanguage()==null?null:billingRunEntity.getLanguage().getLanguageCode());
-			setSelectedBillingAccounts(billingRunEntity.getSelectedBillingAccounts());
-			setXmlInvoiceGenerated(billingRunEntity.getXmlInvoiceGenerated());
-		}
-	
+    /**
+     * @param selectedBillingAccounts
+     *            the selectedBillingAccounts to set
+     */
+    public void setSelectedBillingAccounts(String selectedBillingAccounts) {
+	this.selectedBillingAccounts = selectedBillingAccounts;
+    }
+
+    @Override
+    public String toString() {
+	return "BillingRunDto [processDate=" + processDate + ", status=" + status + ", statusDate=" + statusDate + ", billingCycle=" + billingCycle + ", billingAccountNumber="
+		+ billingAccountNumber + ", billableBillingAcountNumber=" + billableBillingAcountNumber + ", producibleInvoiceNumber=" + producibleInvoiceNumber
+		+ ", producibleAmountWithoutTax=" + producibleAmountWithoutTax + ", producibleAmountTax=" + producibleAmountTax + ", InvoiceNumber=" + InvoiceNumber
+		+ ", producibleAmountWithTax=" + producibleAmountWithTax + ", prAmountWithoutTax=" + prAmountWithoutTax + ", prAmountWithTax=" + prAmountWithTax + ", prAmountTax="
+		+ prAmountTax + ", processType=" + processType + ", startDate=" + startDate + ", endDate=" + endDate + ", invoiceDate=" + invoiceDate + ", lastTransactionDate="
+		+ lastTransactionDate + ", rejectionReason=" + rejectionReason + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode="
+		+ languageCode + ", selectedBillingAccounts=" + selectedBillingAccounts + "]";
+    }
+
+    public void setFromEntity(BillingRun billingRunEntity) {
+	setProcessDate(billingRunEntity.getProcessDate());
+	setStatus(billingRunEntity.getStatus());
+	setStatusDate(billingRunEntity.getStatusDate());
+	setBillingCycle(new BillingCycleDto(billingRunEntity.getBillingCycle(), new CustomFieldsDto()));
+	setBillingAccountNumber(billingRunEntity.getBillingAccountNumber());
+	setBillableBillingAcountNumber(billingRunEntity.getBillableBillingAcountNumber());
+	setProducibleInvoiceNumber(billingRunEntity.getProducibleInvoiceNumber());
+	setProducibleAmountWithoutTax(billingRunEntity.getProducibleAmountWithoutTax());
+	setProducibleAmountTax(billingRunEntity.getProducibleAmountTax());
+	setInvoiceNumber(billingRunEntity.getInvoiceNumber());
+	setProducibleAmountWithTax(billingRunEntity.getProducibleAmountWithTax());
+	setPrAmountWithoutTax(billingRunEntity.getPrAmountWithoutTax());
+	setPrAmountWithTax(billingRunEntity.getPrAmountWithTax());
+	setPrAmountTax(billingRunEntity.getPrAmountTax());
+	setProcessType(billingRunEntity.getProcessType());
+	setStartDate(billingRunEntity.getStartDate());
+	setEndDate(billingRunEntity.getEndDate());
+	setInvoiceDate(billingRunEntity.getInvoiceDate());
+	setLastTransactionDate(billingRunEntity.getLastTransactionDate());
+	setRejectionReason(billingRunEntity.getRejectionReason());
+	setCurrencyCode(billingRunEntity.getCurrency() == null ? null : billingRunEntity.getCurrency().getCurrencyCode());
+	setCountryCode(billingRunEntity.getCountry() == null ? null : billingRunEntity.getCountry().getCountryCode());
+	setLanguageCode(billingRunEntity.getLanguage() == null ? null : billingRunEntity.getLanguage().getLanguageCode());
+	setSelectedBillingAccounts(billingRunEntity.getSelectedBillingAccounts());
+
+    }
+
 }

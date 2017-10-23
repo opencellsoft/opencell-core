@@ -26,6 +26,7 @@ import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.rating.EDR;
@@ -73,17 +74,10 @@ public class QuoteService extends BusinessService<Quote> {
     private InvoiceTypeService invoiceTypeService;
 
     /**
-     * Create a simulated invoice for quote
-     * 
-     * @param quoteCode Quote code
-     * @param cdrs Cdrs for simulation
-     * @param subscription Simulated subscription
-     * @param productInstances Sumulated product instances
-     * @param fromDate Date range for recuring charges - from
-     * @param toDate Date range for recuring charges - to
-     * 
-     * @return
-     * @throws BusinessException
+     * Create a simulated invoice for quote.
+     * @param quoteInvoiceInfos map of quote invoice info
+     * @return list of invoice
+     * @throws BusinessException business exception
      */
     @SuppressWarnings("unused")
     public List<Invoice> provideQuote(Map<String, List<QuoteInvoiceInfo>> quoteInvoiceInfos) throws BusinessException {    	
@@ -100,12 +94,15 @@ public class QuoteService extends BusinessService<Quote> {
             for (QuoteInvoiceInfo quoteInvoiceInfo : invoiceInfoEntry.getValue()) {
 
                 // Add Product charges
-                if (quoteInvoiceInfo.getProductInstances() != null) {
-                    for (ProductInstance productInstance : quoteInvoiceInfo.getProductInstances()) {
-                        if (productInstance.getUserAccount() != null) {
-                            billingAccount = productInstance.getUserAccount().getBillingAccount();
+                List<ProductInstance> productInstances = quoteInvoiceInfo.getProductInstances();
+                if (productInstances != null) {
+                    for (ProductInstance productInstance : productInstances) {
+                        UserAccount userAccount = productInstance.getUserAccount();
+                        if (userAccount != null) {
+                            billingAccount = userAccount.getBillingAccount();
                         }
-                        for (ProductChargeInstance productChargeInstance : productInstance.getProductChargeInstances()) {
+                        List<ProductChargeInstance> productChargeInstances = productInstance.getProductChargeInstances();
+                        for (ProductChargeInstance productChargeInstance : productChargeInstances) {
                             walletOperations.addAll(productChargeInstanceService.applyProductChargeInstance(productChargeInstance, true));
                         }
                     }
@@ -113,6 +110,7 @@ public class QuoteService extends BusinessService<Quote> {
 
                 Subscription subscription = quoteInvoiceInfo.getSubscription();
 				if (subscription != null) {
+
                     billingAccount = subscription.getUserAccount().getBillingAccount();
 
                     // Add Service charges

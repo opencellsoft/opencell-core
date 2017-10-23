@@ -39,7 +39,8 @@ import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -530,14 +531,10 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows, Paging paging) {
+    public CustomersResponseDto listCustomerWithFilter(CustomerDto postData, @Deprecated Integer firstRow, @Deprecated Integer numberOfRows, PagingAndFiltering pagingAndFiltering) {
 
         try {
-        	if(paging!=null && paging.sortOrder==null) {//setup defauly sort order
-        		paging.setSortOrder(Paging.SortOrder.ASCENDING);
-        		paging.setSortBy("code");
-        	}
-            return customerApi.filterCustomer(postData, paging == null ? new Paging(firstRow, numberOfRows, null, null) : paging);
+            return customerApi.list(postData, pagingAndFiltering == null ? new PagingAndFiltering(null, null, firstRow, numberOfRows, null, null) : pagingAndFiltering);
         } catch (Exception e) {
             CustomersResponseDto result = new CustomersResponseDto();
             processException(e, result.getActionStatus());
@@ -598,11 +595,14 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     }
 
     @Override
-    public AccountOperationsResponseDto listAccountOperations(String customerAccountCode) {
+    public AccountOperationsResponseDto listAccountOperations(String customerAccountCode, String sortBy, SortOrder sortOrder, PagingAndFiltering pagingAndFiltering) {
+
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
         try {
-            result = accountOperationApi.list(customerAccountCode);
+            result = accountOperationApi.list(pagingAndFiltering == null
+                    ? new PagingAndFiltering(customerAccountCode != null ? "customerAccount.code:" + customerAccountCode : null, null, null, null, sortBy, sortOrder)
+                    : pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

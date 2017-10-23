@@ -35,8 +35,10 @@ import org.meveo.model.catalog.CounterTypeEnum;
 @Entity
 @ObservableEntity
 @Table(name = "billing_counter_period", uniqueConstraints = @UniqueConstraint(columnNames = { "counter_instance_id", "period_start_date" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
-@NamedQueries({ @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_counter_period_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "CounterPeriod.findByPeriodDate", query = "SELECT cp FROM CounterPeriod cp WHERE cp.counterInstance=:counterInstance AND cp.periodStartDate<=:date AND cp.periodEndDate>:date"), })
 public class CounterPeriod extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 
@@ -202,4 +204,9 @@ public class CounterPeriod extends BusinessEntity {
 
         this.notificationLevels = JsonUtils.toJson(convertedLevels, false);
     }
+
+    public boolean isCorrespondsToPeriod(Date dateToCheck) {
+        return !dateToCheck.before(periodStartDate) && !dateToCheck.after(periodEndDate);
+    }
+
 }

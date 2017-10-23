@@ -10,6 +10,8 @@ import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.payment.AccountOperationResponseDto;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationsResponseDto;
@@ -43,11 +45,29 @@ public class AccountOperationRsImpl extends BaseRs implements AccountOperationRs
     }
 
     @Override
-    public AccountOperationsResponseDto list(String customerAccountCode) {
+    public AccountOperationsResponseDto listGet(String customerAccountCode, String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        AccountOperationsResponseDto result = new AccountOperationsResponseDto();
+
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering(customerAccountCode != null ? "customerAccount.code:" + customerAccountCode : query, null, offset, limit,
+                sortBy, sortOrder);
+        
+        try {
+            result = accountOperationApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public AccountOperationsResponseDto listPost(PagingAndFiltering pagingAndFiltering) {
+
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
 
         try {
-            result = accountOperationApi.list(customerAccountCode);
+            result = accountOperationApi.list(pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

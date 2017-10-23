@@ -23,7 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -34,11 +36,14 @@ import javax.persistence.Query;
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -318,5 +323,49 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         return offer;
+    }
+    
+    public List<OfferTemplate> list(String code, Date validFrom, Date validTo) {
+    	return list(code, validFrom, validTo, null);
+    }
+    
+	public List<OfferTemplate> list(String code, Date validFrom, Date validTo,
+			LifeCycleStatusEnum lifeCycleStatusEnum) {
+		List<OfferTemplate> listOfferTemplates = null;
+
+        if (StringUtils.isBlank(code) && validFrom == null && validTo == null && lifeCycleStatusEnum == null) {
+            listOfferTemplates = list();
+        } else {
+
+            Map<String, Object> filters = new HashMap<String, Object>();
+            if (!StringUtils.isBlank(code)) {
+                filters.put("code", code);
+            }
+
+            // If only validTo date is provided, a search will return products valid from today to a given date.
+            if (validFrom == null && validTo != null) {
+                validFrom = new Date();
+            }
+
+            // search by a single date
+            if (validFrom != null && validTo == null) {
+                filters.put("minmaxOptionalRange validity.from validity.to", validFrom);
+
+                // search by date range
+            } else if (validFrom != null && validTo != null) {
+                filters.put("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
+            }
+            
+			if (!StringUtils.isBlank(lifeCycleStatusEnum)) {
+				filters.put("lifeCycleStatus", lifeCycleStatusEnum);
+			}
+			
+			filters.put("disabled", false);
+
+            PaginationConfiguration config = new PaginationConfiguration(filters);
+            listOfferTemplates = list(config);
+        }
+        
+        return listOfferTemplates;
     }
 }

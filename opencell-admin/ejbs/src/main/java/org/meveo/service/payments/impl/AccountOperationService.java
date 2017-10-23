@@ -32,6 +32,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
+import org.primefaces.model.SortOrder;
 
 /**
  * AccountOperation service implementation.
@@ -67,18 +68,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			qb.addCriterion("reference", "=", reference, false);
 			return (AccountOperation) qb.getQuery(getEntityManager()).getSingleResult();
 		} catch (NoResultException ne) {
-			return null;
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca) {
-		QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a", null);
-		qb.addCriterionEntity("customerAccount", ca);
-
-		try {
-			return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
 			return null;
 		}
 	}

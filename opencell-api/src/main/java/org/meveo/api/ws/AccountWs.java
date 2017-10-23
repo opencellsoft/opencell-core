@@ -28,7 +28,8 @@ import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
 import org.meveo.api.dto.response.CustomerListResponse;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.dto.response.account.AccessesResponseDto;
 import org.meveo.api.dto.response.account.BillingAccountsResponseDto;
@@ -102,13 +103,13 @@ public interface AccountWs extends IBaseWs {
     /**
      * Retrieves a list of Customers filtered by code, customerCategory, seller, or customerBrand.
      * 
-     * @param postData Contains filter parameters code, customerCategory, seller or customerBrand.
-     * @param paging Pagination criteria
+     * @param postData Contains filter parameters code, customerCategory, seller or customerBrand. Deprecated in v.4.7.2 Use "pagingAndFiltering" instead
+     * @param pagingAndFiltering Pagination criteria
      * @return
      */
     @WebMethod
-    CustomersResponseDto listCustomerWithFilter(@WebParam(name = "customer") CustomerDto postData, @Deprecated @WebParam(name = "firstRow") Integer firstRow,
-            @Deprecated @WebParam(name = "numberOfRows") Integer numberOfRows, @WebParam(name = "paging") Paging paging);
+    CustomersResponseDto listCustomerWithFilter(@Deprecated @WebParam(name = "customer") CustomerDto postData, @Deprecated @WebParam(name = "firstRow") Integer firstRow,
+            @Deprecated @WebParam(name = "numberOfRows") Integer numberOfRows, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     // customer brand
 
@@ -388,8 +389,19 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus createAccountOperation(@WebParam(name = "accountOperation") AccountOperationDto postData);
 
+    /**
+     * Find account operations matching a given search criteria
+     * 
+     * @param customerAccountCode Customer account code. Deprecated in v.4.7.2. Use pagingAndFiltering instead
+     * @param sortBy Sort by. Deprecated in v.4.7.2. Use pagingAndFiltering instead
+     * @param sortOrder Sort order. Deprecated in v.4.7.2. Use pagingAndFiltering instead
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return A list of account operations
+     */
     @WebMethod
-    AccountOperationsResponseDto listAccountOperations(@WebParam(name = "customerAccountCode") String customerAccountCode);
+    AccountOperationsResponseDto listAccountOperations(@Deprecated @WebParam(name = "customerAccountCode") String customerAccountCode,
+            @Deprecated @WebParam(name = "sortBy") String sortBy, @Deprecated @WebParam(name = "sortOrder") SortOrder sortOrder,
+            @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     @WebMethod
     ActionStatus matchOperations(@WebParam(name = "matchOperationRequest") MatchOperationRequestDto postData);

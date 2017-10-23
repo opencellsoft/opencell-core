@@ -2,8 +2,6 @@ package org.meveo.util.view;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 import javax.el.ELContext;
 import javax.el.ExpressionFactory;
@@ -29,6 +26,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.meveo.admin.action.BaseBean;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.IEntity;
 import org.meveo.model.annotation.ImageType;
@@ -160,8 +158,8 @@ public class GetFieldInformationHandler extends TagHandler {
         // log.error("AKK determining field type for {}", fullFieldName);
         Field field = null;
         try {
-            field = getBeanFieldThrowException(entityClass, fullFieldName);
-        } catch (SecurityException | NoSuchFieldException | IllegalStateException e) {
+            field = ReflectionUtils.getFieldThrowException(entityClass, fullFieldName);
+        } catch (NoSuchFieldException e) {
             // log.error("Not able to access field information for {} field of {} class backing bean {} entity {}", fullFieldName, entityClass.getName(), backingBean, entity);
             context.setAttribute(varName, new FieldInformation());
             return;
@@ -213,11 +211,11 @@ public class GetFieldInformationHandler extends TagHandler {
 
         } else if (fieldClassType == List.class || fieldClassType == Set.class) {
             fieldInfo.fieldType = FieldTypeEnum.List;
-            fieldInfo.fieldGenericsType = getFieldGenericsType(field);
+            fieldInfo.fieldGenericsType = ReflectionUtils.getFieldGenericsType(field);
 
         } else if (fieldClassType == Map.class || fieldClassType == HashMap.class) {
             fieldInfo.fieldType = FieldTypeEnum.Map;
-            fieldInfo.fieldGenericsType = getFieldGenericsType(field);
+            fieldInfo.fieldGenericsType = ReflectionUtils.getFieldGenericsType(field);
 
         } else if (fieldClassType == Integer.class || fieldClassType == Long.class || fieldClassType == Byte.class || fieldClassType == Short.class
                 || fieldClassType == Double.class || fieldClassType == Float.class || fieldClassType == BigDecimal.class
@@ -276,73 +274,5 @@ public class GetFieldInformationHandler extends TagHandler {
         ExpressionFactory expressionFactory = application.getExpressionFactory();
         ValueExpression exp = expressionFactory.createValueExpression(elContext, expression, Object.class);
         return exp.getValue(elContext);
-    }
-
-    private Field getBeanFieldThrowException(Class<?> c, String fieldName) throws SecurityException, NoSuchFieldException {
-
-        Field field = getBeanField(c, fieldName);
-        if (field == null) {
-            throw new IllegalStateException("No field with name '" + fieldName + "' was found. EntityClass " + c);
-        }
-        return field;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private Field getBeanField(Class<?> c, String fieldName) {
-
-        Field field = null;
-
-        if (fieldName.contains(".")) {
-            Class iterationClazz = c;
-            StringTokenizer tokenizer = new StringTokenizer(fieldName, ".");
-            while (tokenizer.hasMoreElements()) {
-                String iterationFieldName = tokenizer.nextToken();
-                field = getBeanField(iterationClazz, iterationFieldName);
-                if (field != null) {
-                    iterationClazz = field.getType();
-                } else {
-                    log.error("No field {} in {}", iterationFieldName, iterationClazz);
-                    return null;
-                }
-            }
-
-        } else {
-
-            try {
-                // log.debug("get declared field {}",fieldName);
-                field = c.getDeclaredField(fieldName);
-            } catch (NoSuchFieldException e) {
-
-                // log.debug("No field {} in {} might be in super {} ", fieldName, c, c.getSuperclass());
-                if (field == null && c.getSuperclass() != null) {
-                    return getBeanField(c.getSuperclass(), fieldName);
-                }
-            }
-
-        }
-
-        return field;
-    }
-
-    /**
-     * Determine a generics type of a field (eg. for Set<String> field should return String)
-     * 
-     * @param fieldName Field name
-     * @param childFieldName child field name in case of field hierarchy
-     * @return A class
-     */
-    @SuppressWarnings("rawtypes")
-    private Class getFieldGenericsType(Field field) {
-
-        if (field.getGenericType() instanceof ParameterizedType) {
-            ParameterizedType aType = (ParameterizedType) field.getGenericType();
-            Type[] fieldArgTypes = aType.getActualTypeArguments();
-            for (Type fieldArgType : fieldArgTypes) {
-                Class fieldArgClass = (Class) fieldArgType;
-                return fieldArgClass;
-            }
-
-        }
-        return null;
     }
 }

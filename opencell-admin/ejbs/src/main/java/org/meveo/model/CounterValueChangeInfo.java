@@ -41,4 +41,9 @@ public class CounterValueChangeInfo {
     public BigDecimal getNewValue() {
         return newValue;
     }
+
+    @Override
+    public String toString() {
+        return "from " + previousValue + " by " + deltaValue + " to " + newValue;
+    }
 }

@@ -172,7 +172,7 @@ public class RoleApi extends BaseApi {
         return roleService.update(role);
     }
 
-    public RoleDto find(String name, String providerCode) throws MeveoApiException {
+    public RoleDto find(String name) throws MeveoApiException {
 
         if (StringUtils.isBlank(name)) {
             missingParameters.add("roleName");
@@ -194,7 +194,7 @@ public class RoleApi extends BaseApi {
         return roleDto;
     }
 
-    public void remove(String name, String providerCode) throws MeveoApiException, BusinessException {
+    public void remove(String name) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(name)) {
             missingParameters.add("role");
         }

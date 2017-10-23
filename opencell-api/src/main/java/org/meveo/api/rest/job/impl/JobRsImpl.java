@@ -6,6 +6,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.job.TimerEntityDto;
@@ -36,13 +37,16 @@ public class JobRsImpl extends BaseRs implements JobRs {
     private TimerEntityApi timerEntityApi;
 
     @Override
-    public ActionStatus execute(JobInstanceInfoDto postData) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    public JobExecutionResultResponseDto execute(JobInstanceInfoDto jobInstanceInfoDto) {
+        JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
+
         try {
-            Long resultId = jobApi.executeJob(postData);
-            result.setMessage(resultId == null ? "NOTHING_TO_DO" : String.valueOf(resultId));
+            JobExecutionResultDto executionResult = jobApi.executeJob(jobInstanceInfoDto);
+            result.setJobExecutionResultDto(executionResult);
+            result.getActionStatus().setMessage(executionResult.getId() == null ? "NOTHING_TO_DO" : executionResult.getId().toString());
+
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;

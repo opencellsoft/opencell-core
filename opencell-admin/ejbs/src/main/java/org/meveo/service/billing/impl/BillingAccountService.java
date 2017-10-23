@@ -225,7 +225,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) {
+    public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, new Date(0), billingRun.getLastTransactionDate());
