@@ -183,7 +183,8 @@ public class OrderApi extends BaseApi {
 				throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
 			}
 
-			UserAccount userAccount = userAccountService.findByCode(billingAccountId);
+			UserAccount userAccount =  (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId).getSingleResult();
+			
 			if (userAccount == null) {
 				throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
 			}

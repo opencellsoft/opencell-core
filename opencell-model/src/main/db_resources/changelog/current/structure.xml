@@ -1050,5 +1050,214 @@
     <changeSet id="#2827_20171002" author="anasseh">     
         <dropColumn tableName="billing_billing_run" columnName="xml_invoice_generated"/>
     </changeSet> 
-               
+      
+    <changeSet id="Perf_Improvement_20171023" author="WassimDRIRA" dbms="postgresql">       
+        <sql>DROP INDEX IF EXISTS customer_code;</sql>
+		<sql>CREATE INDEX customer_code ON account_entity(lower(code));</sql>
+		<sql>DROP INDEX IF EXISTS billing_one_shot_charge_inst_subs_serv_inst_id;</sql>
+		<sql>CREATE INDEX billing_one_shot_charge_inst_subs_serv_inst_id ON billing_one_shot_charge_inst(subs_serv_inst_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_calendar_join_cal_1_id;</sql>
+		<sql>CREATE INDEX cat_calendar_join_cal_1_id ON cat_calendar(join_cal_1_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_calendar_join_cal_2_id;</sql>
+		<sql>CREATE INDEX cat_calendar_join_cal_2_id ON cat_calendar(join_cal_2_id);</sql>
+		<sql>DROP INDEX IF EXISTS bc_instance_inv_cal_id;</sql>
+		<sql>CREATE INDEX bc_instance_inv_cal_id ON billing_charge_instance(invoicing_calendar_id);</sql>
+		<sql>DROP INDEX IF EXISTS term_serv_inst_id_index;</sql>
+		<sql>CREATE INDEX term_serv_inst_id_index ON billing_one_shot_charge_inst(term_serv_inst_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_usage_charge_inst_index ;</sql>
+		<sql>CREATE INDEX billing_usage_charge_inst_index ON billing_usage_charge_inst(service_instance_id);</sql>
+		<sql>DROP INDEX IF EXISTS invoicing_calendar_id_index ;</sql>
+		<sql>CREATE INDEX invoicing_calendar_id_index ON cat_offer_template(invoicing_calendar_id);</sql>
+		<sql>DROP INDEX IF EXISTS cb_product_template_id_index ;</sql>
+		<sql>CREATE INDEX cb_product_template_id_index ON cat_business_product_model(product_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_product_wallet_template_id_index ;</sql>
+		<sql>CREATE INDEX cat_product_wallet_template_id_index ON cat_product_wallet_template(wallet_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS adm_sc_instance_id_inde;</sql>
+		<sql>CREATE INDEX adm_sc_instance_id_index ON adm_script_sourc_role(script_instance_id);</sql>
+		<sql>DROP INDEX IF EXISTS adm_sc_role_id_index;</sql>
+		<sql>CREATE INDEX adm_sc_role_id_index ON adm_script_sourc_role(role_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_bsm_st_id_index;</sql>
+		<sql>CREATE INDEX cat_bsm_st_id_index ON cat_business_serv_model(service_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_st_inv_cal_id_index ;</sql>
+		<sql>CREATE INDEX cat_st_inv_cal_id_index ON cat_service_template(invoicing_calendar_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_st_serv_mod_id_index ;</sql>
+		<sql>CREATE INDEX cat_st_serv_mod_id_index ON cat_service_template(business_service_model_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_rct_service_template_index ;</sql>
+		<sql>CREATE INDEX cat_rct_service_template_index ON cat_serv_rec_charge_template(service_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_rwt_wallet_template_index ;</sql>
+		<sql>CREATE INDEX cat_rwt_wallet_template_index ON cat_serv_rec_wallet_template(wallet_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_su_wallet_template_index ;</sql>
+		<sql>CREATE INDEX cat_su_wallet_template_index ON cat_serv_usage_wallet_template(wallet_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_bp_model_index ;</sql>
+		<sql>CREATE INDEX cat_ofrt_bp_model_index ON cat_offer_template(business_product_model_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_valid_to_index ;</sql>
+		<sql>CREATE INDEX cat_ofrt_valid_to_index ON cat_offer_template(valid_to);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_valid_from_index ;</sql>
+		<sql>CREATE INDEX cat_ofrt_valid_from_index ON cat_offer_template(valid_from);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_code_index ;</sql>
+		<sql>CREATE INDEX cat_ofrt_code_index ON cat_offer_template((lower(code)));</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrpt_ofr_template_index ;</sql>
+		<sql>CREATE INDEX cat_ofrpt_ofr_template_index ON cat_offer_product_template(offer_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ;</sql>
+		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ;</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template((lower(code)));</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index;</sql>
+		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_title_id_index;</sql>
+		<sql>CREATE INDEX account_entity_title_id_index ON account_entity(title_id);</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_primary_contact_index;</sql>
+		<sql>CREATE INDEX account_entity_primary_contact_index ON account_entity(primary_contact);</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_primary_contact_index;</sql>
+		<sql>CREATE INDEX crm_customer_primary_contact_index ON crm_customer(customer_category_id);</sql>
+		<sql>DROP INDEX IF EXISTS crm_seller_bam_id_index;</sql>
+		<sql>CREATE INDEX crm_seller_bam_id_index ON crm_seller(bam_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_charge_template_code_index;</sql>
+		<sql>CREATE INDEX cat_charge_template_code_index ON cat_charge_template(lower(code));</sql>
+		<sql>DROP INDEX IF EXISTS ord_quote_version_index;</sql>
+		<sql>CREATE INDEX ord_quote_version_index ON ord_quote(version);</sql>
+		<sql>DROP INDEX IF EXISTS billing_invoice_version_index;</sql>
+		<sql>CREATE INDEX billing_invoice_version_index ON billing_invoice(version);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_payment_index;</sql>
+		<sql>CREATE INDEX ord_order_payment_index ON ord_order(payment_method_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_quote_index;</sql>
+		<sql>CREATE INDEX ord_order_quote_index ON ord_order(quote_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_item_ua_index;</sql>
+		<sql>CREATE INDEX ord_order_item_ua_index ON ord_order_item(user_account_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_item_order_index;</sql>
+		<sql>CREATE INDEX ord_order_item_order_index ON ord_order_item(order_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_item_sub_index;</sql>
+		<sql>CREATE INDEX ord_order_item_sub_index ON ord_order_item(subscription_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_subscription_code_index;</sql>
+		<sql>CREATE INDEX billing_subscription_code_index ON  billing_subscription(lower(code));</sql>
+		<sql>DROP INDEX IF EXISTS cat_offer_serv_templates_svtmpte_index;</sql>
+		<sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON  cat_offer_serv_templates(service_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_service_template_bsm_index ;</sql>
+		<sql>CREATE INDEX cat_service_template_bsm_index ON cat_service_template(business_service_model_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_service_instance_code_index;</sql>
+		<sql>CREATE INDEX billing_service_instance_code_index ON  billing_service_instance(lower(code));</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_sub_wallet_template_srvsubtmp_index ;</sql>
+		<sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON  cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_charge_instance_code_index;</sql>
+		<sql>CREATE INDEX billing_charge_instance_code_index ON  billing_charge_instance(lower(code));</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_ua_index;</sql>
+		<sql>CREATE INDEX billing_wallet_ua_index ON  billing_wallet (user_account_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_user_account_id_index ;</sql>
+		<sql>CREATE INDEX  billing_user_account_id_index ON  billing_user_account(id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofr_srv_tmpl_ofrtmpl_id_index ;</sql>
+		<sql>CREATE INDEX  cat_ofr_srv_tmpl_ofrtmpl_id_index ON cat_offer_serv_templates(offer_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS bbilling_account_disc_plan_index ;</sql>
+		<sql>CREATE INDEX  bbilling_account_disc_plan_index ON billing_billing_account(discount_plan_id);</sql>
+		<sql>DROP INDEX IF EXISTS adm_user_title_index;</sql>
+		<sql>CREATE INDEX  adm_user_title_index ON adm_user(title_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_chtmpl_index;</sql>
+		<sql>CREATE INDEX  cat_chrg_edr_chtmpl_index ON cat_chrg_edr(charge_tmpl_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index;</sql>
+		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
+    </changeSet>
+    
+    <changeSet id="Perf_Improvement_20171023" author="WassimDRIRA" dbms="mysql">       
+        <sql>DROP INDEX IF EXISTS customer_code ON account_entity;</sql>
+		<sql>CREATE INDEX customer_code ON account_entity(code);</sql>
+		<sql>DROP INDEX IF EXISTS billing_one_shot_charge_inst_subs_serv_inst_id ON billing_one_shot_charge_inst;</sql>
+		<sql>CREATE INDEX billing_one_shot_charge_inst_subs_serv_inst_id ON billing_one_shot_charge_inst(subs_serv_inst_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_calendar_join_cal_1_id ON cat_calendar;</sql>
+		<sql>CREATE INDEX cat_calendar_join_cal_1_id ON cat_calendar(join_cal_1_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_calendar_join_cal_2_id ON cat_calendar;</sql>
+		<sql>CREATE INDEX cat_calendar_join_cal_2_id ON cat_calendar(join_cal_2_id);</sql>
+		<sql>DROP INDEX IF EXISTS bc_instance_inv_cal_id ON billing_charge_instance;</sql>
+		<sql>CREATE INDEX bc_instance_inv_cal_id ON billing_charge_instance(invoicing_calendar_id);</sql>
+		<sql>DROP INDEX IF EXISTS term_serv_inst_id_index ON billing_one_shot_charge_inst;</sql>
+		<sql>CREATE INDEX term_serv_inst_id_index ON billing_one_shot_charge_inst(term_serv_inst_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_usage_charge_inst_index ON billing_usage_charge_inst;</sql>
+		<sql>CREATE INDEX billing_usage_charge_inst_index ON billing_usage_charge_inst(service_instance_id);</sql>
+		<sql>DROP INDEX IF EXISTS invoicing_calendar_id_index ON cat_offer_template;</sql>
+		<sql>CREATE INDEX invoicing_calendar_id_index ON cat_offer_template(invoicing_calendar_id);</sql>
+		<sql>DROP INDEX IF EXISTS cb_product_template_id_index ON cat_business_product_model;</sql>
+		<sql>CREATE INDEX cb_product_template_id_index ON cat_business_product_model(product_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_product_wallet_template_id_index ON cat_product_wallet_template;</sql>
+		<sql>CREATE INDEX cat_product_wallet_template_id_index ON cat_product_wallet_template(wallet_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS adm_sc_instance_id_inde ON adm_script_sourc_role;</sql>
+		<sql>CREATE INDEX adm_sc_instance_id_index ON adm_script_sourc_role(script_instance_id);</sql>
+		<sql>DROP INDEX IF EXISTS adm_sc_role_id_index ON adm_script_sourc_role;</sql>
+		<sql>CREATE INDEX adm_sc_role_id_index ON adm_script_sourc_role(role_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_bsm_st_id_index ON cat_business_serv_model;</sql>
+		<sql>CREATE INDEX cat_bsm_st_id_index ON cat_business_serv_model(service_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_st_inv_cal_id_index ON cat_service_template;</sql>
+		<sql>CREATE INDEX cat_st_inv_cal_id_index ON cat_service_template(invoicing_calendar_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_st_serv_mod_id_index ON cat_service_template;</sql>
+		<sql>CREATE INDEX cat_st_serv_mod_id_index ON cat_service_template(business_service_model_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_rct_service_template_index ON cat_serv_rec_charge_template;</sql>
+		<sql>CREATE INDEX cat_rct_service_template_index ON cat_serv_rec_charge_template(service_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_rwt_wallet_template_index ON cat_serv_rec_wallet_template;</sql>
+		<sql>CREATE INDEX cat_rwt_wallet_template_index ON cat_serv_rec_wallet_template(wallet_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_su_wallet_template_index ON cat_serv_usage_wallet_template;</sql>
+		<sql>CREATE INDEX cat_su_wallet_template_index ON cat_serv_usage_wallet_template(wallet_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_bp_model_index ON cat_offer_template;</sql>
+		<sql>CREATE INDEX cat_ofrt_bp_model_index ON cat_offer_template(business_product_model_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_valid_to_index ON cat_offer_template;</sql>
+		<sql>CREATE INDEX cat_ofrt_valid_to_index ON cat_offer_template(valid_to);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_valid_from_index ON cat_offer_template;</sql>
+		<sql>CREATE INDEX cat_ofrt_valid_from_index ON cat_offer_template(valid_from);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrt_code_index ON cat_offer_template;</sql>
+		<sql>CREATE INDEX cat_ofrt_code_index ON cat_offer_template(code);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrpt_ofr_template_index ON cat_offer_product_template;</sql>
+		<sql>CREATE INDEX cat_ofrpt_ofr_template_index ON cat_offer_product_template(offer_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ON cat_offer_product_template;</sql>
+		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ON cat_service_template;</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code));</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index ON account_entity;</sql>
+		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_title_id_index ON account_entity;</sql>
+		<sql>CREATE INDEX account_entity_title_id_index ON account_entity(title_id);</sql>
+		<sql>DROP INDEX IF EXISTS account_entity_primary_contact_index ON account_entity;</sql>
+		<sql>CREATE INDEX account_entity_primary_contact_index ON account_entity(primary_contact);</sql>
+		<sql>DROP INDEX IF EXISTS crm_customer_primary_contact_index ON crm_customer;</sql>
+		<sql>CREATE INDEX crm_customer_primary_contact_index ON crm_customer(customer_category_id);</sql>
+		<sql>DROP INDEX IF EXISTS crm_seller_bam_id_index ON crm_seller;</sql>
+		<sql>CREATE INDEX crm_seller_bam_id_index ON crm_seller(bam_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_charge_template_code_index ON cat_charge_template;</sql>
+		<sql>CREATE INDEX cat_charge_template_code_index ON cat_charge_template(code);</sql>
+		<sql>DROP INDEX IF EXISTS ord_quote_version_index ON ord_quote;</sql>
+		<sql>CREATE INDEX ord_quote_version_index ON ord_quote(version);</sql>
+		<sql>DROP INDEX IF EXISTS billing_invoice_version_index ON billing_invoice;</sql>
+		<sql>CREATE INDEX billing_invoice_version_index ON billing_invoice(version);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_payment_index ON ord_order;</sql>
+		<sql>CREATE INDEX ord_order_payment_index ON ord_order(payment_method_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_quote_index ON ord_order;</sql>
+		<sql>CREATE INDEX ord_order_quote_index ON ord_order(quote_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_item_ua_index ON ord_order_item;</sql>
+		<sql>CREATE INDEX ord_order_item_ua_index ON ord_order_item(user_account_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_item_order_index ON ord_order_item;</sql>
+		<sql>CREATE INDEX ord_order_item_order_index ON ord_order_item(order_id);</sql>
+		<sql>DROP INDEX IF EXISTS ord_order_item_sub_index ON ord_order_item;</sql>
+		<sql>CREATE INDEX ord_order_item_sub_index ON ord_order_item(subscription_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_subscription_code_index ON  billing_subscription;</sql>
+		<sql>CREATE INDEX billing_subscription_code_index ON  billing_subscription(code);</sql>
+		<sql>DROP INDEX IF EXISTS cat_offer_serv_templates_svtmpte_index ON  cat_offer_serv_templates;</sql>
+		<sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON  cat_offer_serv_templates(service_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_service_template_bsm_index ON cat_service_template;</sql>
+		<sql>CREATE INDEX cat_service_template_bsm_index ON cat_service_template(business_service_model_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_service_instance_code_index ON  billing_service_instance;</sql>
+		<sql>CREATE INDEX billing_service_instance_code_index ON  billing_service_instance(code);</sql>
+		<sql>DROP INDEX IF EXISTS cat_serv_sub_wallet_template_srvsubtmp_index ON  cat_serv_sub_wallet_template;</sql>
+		<sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON  cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_charge_instance_code_index ON  billing_charge_instance;</sql>
+		<sql>CREATE INDEX billing_charge_instance_code_index ON  billing_charge_instance(code);</sql>
+		<sql>DROP INDEX IF EXISTS billing_wallet_ua_index ON  billing_wallet;</sql>
+		<sql>CREATE INDEX billing_wallet_ua_index ON  billing_wallet (user_account_id);</sql>
+		<sql>DROP INDEX IF EXISTS billing_user_account_id_index ON  billing_user_account;</sql>
+		<sql>CREATE INDEX  billing_user_account_id_index ON  billing_user_account(id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_ofr_srv_tmpl_ofrtmpl_id_index ON cat_offer_serv_templates;</sql>
+		<sql>CREATE INDEX  cat_ofr_srv_tmpl_ofrtmpl_id_index ON cat_offer_serv_templates(offer_template_id);</sql>
+		<sql>DROP INDEX IF EXISTS bbilling_account_disc_plan_index ON billing_billing_account;</sql>
+		<sql>CREATE INDEX  bbilling_account_disc_plan_index ON billing_billing_account(discount_plan_id);</sql>
+		<sql>DROP INDEX IF EXISTS adm_user_title_index ON adm_user;</sql>
+		<sql>CREATE INDEX  adm_user_title_index ON adm_user(title_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_chtmpl_index ON cat_chrg_edr;</sql>
+		<sql>CREATE INDEX  cat_chrg_edr_chtmpl_index ON cat_chrg_edr(charge_tmpl_id);</sql>
+		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
+		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
+    </changeSet>                  
 </databaseChangeLog> 
