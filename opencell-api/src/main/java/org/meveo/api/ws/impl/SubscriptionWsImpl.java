@@ -18,6 +18,7 @@ import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
 import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
@@ -77,7 +78,7 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData, null);
+            subscriptionApi.activateServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -97,19 +98,19 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
         return result;
     }
-    
-	@Override
-	public ActionStatus applyProduct(ApplyProductRequestDto postData) {
+
+    @Override
+    public ActionStatus applyProduct(ApplyProductRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-        	subscriptionApi.applyProduct(postData);
+            subscriptionApi.applyProduct(postData);
         } catch (Exception e) {
             processException(e, result);
         }
         return result;
-	}
-	
+    }
+
     @Override
     public ActionStatus terminateSubscription(TerminateSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -127,7 +128,9 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.terminateServices(postData, ChargeInstance.NO_ORDER_NUMBER);
+            
+            postData.setOrderNumber(ChargeInstance.NO_ORDER_NUMBER);            
+            subscriptionApi.terminateServices(postData );
         } catch (Exception e) {
             processException(e, result);
         }
@@ -139,17 +142,17 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         SubscriptionsResponseDto result = new SubscriptionsResponseDto();
 
         try {
-            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode));
+            result.setSubscriptions(subscriptionApi.listByUserAccount(userAccountCode, false, "code", SortOrder.ASCENDING));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
 
         return result;
     }
-    
+
     @Override
     public SubscriptionsListResponseDto listAll(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) {
-    	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
         try {
             result = subscriptionApi.list(mergedCF, pagingAndFiltering);
@@ -183,8 +186,8 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         return result;
     }
 
-	@Override
-	public ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData) {
+    @Override
+    public ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -194,10 +197,10 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData) {
+    @Override
+    public ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -207,10 +210,10 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus suspendServices(OperationServicesRequestDto postData) {
+    @Override
+    public ActionStatus suspendServices(OperationServicesRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -220,21 +223,21 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public ActionStatus resumeServices(OperationServicesRequestDto postData) {
-		ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+    @Override
+    public ActionStatus resumeServices(OperationServicesRequestDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             subscriptionApi.resumeServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
         return result;
-	}
-	
-	@Override
-	public ActionStatus updateServices(UpdateServicesRequestDto postData) {
+    }
+
+    @Override
+    public ActionStatus updateServices(UpdateServicesRequestDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
@@ -244,34 +247,31 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, String serviceInstanceCode) {
-		GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
+    @Override
+    public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, Long serviceInstanceId, String serviceInstanceCode) {
+        GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
 
-		try {
-			result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceCode));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
-		
-		return result;
-	}
+        try {
+            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
+        return result;
+    }
 
-	public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, String invoiceNumber,
-			String invoiceTypeCode, String orderCode) {
-		GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
+    public GetDueDateDelayResponseDto findDueDateDelay(String subscriptionCode, String invoiceNumber, String invoiceTypeCode, String orderCode) {
+        GetDueDateDelayResponseDto result = new GetDueDateDelayResponseDto();
 
-		try {
-			result.setDueDateDelay(
-					subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
-		
-		return result;
-	}
-	
+        try {
+            result.setDueDateDelay(subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
 }

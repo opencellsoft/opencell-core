@@ -103,8 +103,16 @@ public interface SubscriptionWs extends IBaseWs {
     GetDueDateDelayResponseDto findDueDateDelay(@WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "invoiceNumber") String invoiceNumber,
             @WebParam(name = "invoiceTypeCode") String invoiceTypeCode, @WebParam(name = "orderCode") String orderCode);
 
+    /**
+     * Find service instance
+     * 
+     * @param subscriptionCode Subscription code
+     * @param serviceInstanceId Service instance id
+     * @param serviceInstanceCode Service instance code
+     * @return Service instance
+     */
     @WebMethod
-    GetServiceInstanceResponseDto findServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
+    GetServiceInstanceResponseDto findServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "serviceInstanceId") Long serviceInstanceId,
             @WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
 
 }

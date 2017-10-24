@@ -443,7 +443,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
                 throw new BusinessException("Invalid price plan for charge code " + bareWalletOperation.getCode());
             }
-            log.debug("found ratePrice:" + ratePrice.getId());
+            log.debug("found ratePrice {} for {}",ratePrice.getId(), bareWalletOperation.getCode());
             unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
             unitPriceWithTax = ratePrice.getAmountWithTax();
             WalletInstance wallet = bareWalletOperation.getWallet();
@@ -462,6 +462,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
 
+        
         log.debug("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
 
         // if the wallet operation correspond to a recurring charge that is
@@ -511,7 +512,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             priceWithoutTax = NumberUtils.round(priceWithoutTax, rounding);
             priceWithTax = NumberUtils.round(priceWithTax, rounding);
         }
-
+        
         bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
         bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
         bareWalletOperation.setUnitAmountTax(unitPriceAmountTax);

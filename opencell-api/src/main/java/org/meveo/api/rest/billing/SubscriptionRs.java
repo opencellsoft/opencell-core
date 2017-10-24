@@ -133,9 +133,10 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/list")
     public SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
-    
+
     /**
      * Deprecated in v.4.7.2 Use /list instead
+     * 
      * @param offset
      * @param limit
      * @param mergedCF
@@ -145,25 +146,21 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @GET
     @Path("/listAll")
-	SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
-			@DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
-			@DefaultValue("code") @QueryParam("sortBy") String sortBy,
-			@DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+    SubscriptionsListResponseDto listAll(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF,
+            @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
-     * Search for a subscription with a given code 
+     * Search for a subscription with a given code
      * 
      * @param subscriptionCode The subscription's code
      * @return A subscription
      */
     @GET
     @Path("/")
-    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF );
-    
-    
-    
+    GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF);
+
     /**
-     * Search for a subscription with a given code 
+     * Search for a subscription with a given code
      * 
      * @param subscriptionCode The subscription's code
      * @return A subscription
@@ -191,7 +188,7 @@ public interface SubscriptionRs extends IBaseRs {
     @POST
     @Path("/applyProduct")
     ActionStatus applyProduct(ApplyProductRequestDto postData);
-    
+
     /**
      * Suspend an existing subscription
      * 
@@ -200,8 +197,8 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("suspend")
-	ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData);
-	
+    ActionStatus suspendSubscription(OperationSubscriptionRequestDto postData);
+
     /**
      * Resume an existing subscription
      * 
@@ -210,8 +207,8 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("resume")
-	ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData);
-	
+    ActionStatus resumeSubscription(OperationSubscriptionRequestDto postData);
+
     /**
      * Suspend an existing services
      * 
@@ -220,8 +217,8 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("suspendServices")
-	ActionStatus suspendServices(OperationServicesRequestDto postData);
-	
+    ActionStatus suspendServices(OperationServicesRequestDto postData);
+
     /**
      * Resume an existing services
      * 
@@ -230,8 +227,8 @@ public interface SubscriptionRs extends IBaseRs {
      */
     @PUT
     @Path("resumeServices")
-	ActionStatus resumeServices(OperationServicesRequestDto postData);
-    
+    ActionStatus resumeServices(OperationServicesRequestDto postData);
+
     /**
      * Update an existing services
      * 
@@ -239,13 +236,20 @@ public interface SubscriptionRs extends IBaseRs {
      * @return Request processing status
      */
     @PUT
-	@Path("updateServices")
-	ActionStatus updateServices(UpdateServicesRequestDto postData);
-    
-	@GET
-	@Path("serviceInstance")
-	GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode,
-			@QueryParam("serviceInstanceCode") String serviceInstanceCode);
+    @Path("updateServices")
+    ActionStatus updateServices(UpdateServicesRequestDto postData);
+
+    /**
+     * Find service instance.
+     * 
+     * @param subscriptionCode Subscription code
+     * @param serviceInstanceCode Service instance code
+     * @return Service instance
+     */
+    @GET
+    @Path("serviceInstance")
+    GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
+            @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.
@@ -256,10 +260,9 @@ public interface SubscriptionRs extends IBaseRs {
      * @param orderCode - can be null
      * @return
      */
-	@GET
-	@Path("/dueDateDelay")
-	GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode,
-			@QueryParam("invoiceNumber") String invoiceNumber, @QueryParam("invoiceTypeCode") String invoiceTypeCode,
-			@QueryParam("orderCode") String orderCode);
-	
+    @GET
+    @Path("/dueDateDelay")
+    GetDueDateDelayResponseDto findDueDateDelay(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("invoiceNumber") String invoiceNumber,
+            @QueryParam("invoiceTypeCode") String invoiceTypeCode, @QueryParam("orderCode") String orderCode);
+
 }

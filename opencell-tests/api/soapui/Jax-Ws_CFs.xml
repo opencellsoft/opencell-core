@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.2.1" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -11382,14 +11382,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="6c6b1925-14ca-402f-9c80-087ecb466fbb" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
-                     &lt;status>INACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="Simple Contains" id="294cb757-6e2c-403d-8c6e-fa3424ee5c36" name="Contains 4">
               <con:configuration>
                 <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_NV">
@@ -11421,6 +11413,15 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1']/quantity</path>
                 <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e6f3ebee-11d2-4989-9ac4-8b34c6dcfd0d" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1"]/status</path>
+                <content>INACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -11550,22 +11551,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="6c6b1925-14ca-402f-9c80-087ecb466fbb" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
-                     &lt;status>INACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="320d8297-3fc2-43b0-95d8-e80d0bc4aaba" name="Contains 4">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="Simple Contains" id="9d489887-7ea8-4ca2-b9b1-c962e25b2022" name="Contains 5">
               <con:configuration>
                 <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_NV">
@@ -11633,6 +11618,24 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2']/subscriptionDate</path>
                 <content>2016-04-08T00:00:00${#Project#timezone2}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ee5a45c8-9e75-45c6-9fd5-2d6dbdac4377" name="XPath Match 4">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1"]/status</path>
+                <content>INACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5a573591-8b2c-49af-9353-6f3d9c423891" name="XPath Match 5">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -12310,14 +12313,6 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="6994047b-dfad-4cd1-8238-26e2754989ac" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1">
-                     &lt;status>INACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="Simple Contains" id="87b76f4b-23f4-4ca8-a070-08bc0f3e5879" name="Contains 4">
               <con:configuration>
                 <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_LONG_SINGLE_V" valuePeriodStartDate="2016-07-08T00:00:00${#Project#timezone2}" valuePeriodEndDate="2016-09-24T00:00:00${#Project#timezone2}" valuePeriodPriority="1">
@@ -12332,14 +12327,6 @@ public class Action1 extends Script {
                 <token>&lt;customField code="${#Project#baseEntityPrefix}_SERVICE_INSTANCE_DATE_SINGLE_V" valuePeriodStartDate="2015-12-08T00:00:00${#Project#timezone}" valuePeriodEndDate="2015-12-24T00:00:00${#Project#timezone}" valuePeriodPriority="2">
                            &lt;dateValue>2015-09-24T00:00:00${#Project#timezone2}&lt;/dateValue>
                         &lt;/customField></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="3447953d-f5a1-4143-a49c-7e7b7464b6c3" name="Contains 6">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2" description="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2">
-                     &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -12375,6 +12362,24 @@ public class Action1 extends Script {
               <con:configuration>
                 <path>//serviceInstance[@code='${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2']/subscriptionDate</path>
                 <content>2016-01-09T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="b032f43d-763c-4c0f-9fce-a71d36221f75" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE1"]/status</path>
+                <content>INACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="eb93c5c5-7745-41c2-a3b4-78de991f3fbf" name="XPath Match 3">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#entityPrefix}_${#TestSuite#index}_SERVICE2"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
