@@ -426,6 +426,10 @@ public class SubscriptionApi extends BaseApi {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToActivateDto.getCode(), subscription.getCode(), e);
                     throw e;
                 }
+            } else {
+                if(!StringUtils.isBlank(serviceToActivateDto.getDescriptionOverride())) {
+                    serviceInstance.setDescription(serviceToActivateDto.getDescriptionOverride());    
+                }
             }
 
             // override price and description
