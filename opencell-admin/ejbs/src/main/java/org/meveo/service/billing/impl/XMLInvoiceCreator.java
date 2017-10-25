@@ -25,6 +25,7 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -288,7 +289,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
         long startDate = System.currentTimeMillis();
-        Long id = invoice.getId();
+    	Long id = invoice.getId();
         String alias = invoice.getAlias();
         String invoiceNumber = invoice.getInvoiceNumber();
         BillingAccount billingAccount = invoice.getBillingAccount();
@@ -303,6 +304,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         List<InvoiceAgregate> invoiceAgregates = invoice.getInvoiceAgregates();
         List<RatedTransaction> ratedTransactions = null;
         List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates = null;
+        
         if (!isVirtual) {
         	ratedTransactions = ratedTransactionService.getRatedTransactionsForXmlInvoice(invoice);
             subCategoryInvoiceAgregates = invoiceService.listByInvoice(invoice);
@@ -535,7 +537,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addHeaderCategories(invoiceAgregates, doc, header, subCategoryInvoiceAgregates);
 
         addDiscounts(invoice, doc, header, isVirtual);
-
+        
         Element amount = doc.createElement("amount");
         invoiceTag.appendChild(amount);
         Element currency = doc.createElement("currency");
@@ -636,6 +638,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 			List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates)
 			throws BusinessException {
         // log.debug("add user account");
+		long startDate = System.currentTimeMillis();
         Element userAccountsTag = null;
         if (displayDetail) {
             userAccountsTag = doc.createElement("userAccounts");
@@ -646,7 +649,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Language language = tradingLanguage.getLanguage();
         String billingAccountLanguage = language.getLanguageCode();
         List<UserAccount> usersAccounts = billingAccount.getUsersAccounts();
-
         for (UserAccount userAccount : usersAccounts) {
             List<Subscription> subscriptions = userAccount.getSubscriptions();
             Element userAccountTag = doc.createElement("userAccount");
@@ -655,11 +657,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("code", code != null ? code : "");
             String description = userAccount.getDescription();
             userAccountTag.setAttribute("description", description != null ? description : "");
-
             addCustomFields(userAccount, doc, userAccountTag);
-
-            List<ServiceInstance> allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions);
-
+            List<ServiceInstance> allServiceInstances = new ArrayList<ServiceInstance>();
+            if(!isVirtual) { // if it is not virtual (not quote) add all subscriptions to XML (DO NOT KNOW if required or NO)
+            	allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions);
+            }
             if (displayDetail) {
                 userAccountsTag.appendChild(userAccountTag);
                 addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);
@@ -668,7 +670,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
 
         }
-
     }
 
     /**
@@ -681,7 +682,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      */
     private List<ServiceInstance> addSubscriptions(UserAccount userAccount, Document doc, Element userAccountTag, Element invoiceTag, List<Subscription> subscriptions) {
         long startDate = System.currentTimeMillis();
-        List<ServiceInstance> allServiceInstances = new ArrayList<>();
+    	List<ServiceInstance> allServiceInstances = new ArrayList<>();
         // List<Subscription> subscriptions = userAccountService.listByUserAccount(userAccount);//userAccount.getSubscriptions();//
         if (subscriptions != null && subscriptions.size() > 0) {
             log.info(" :" + (System.currentTimeMillis() - startDate));
@@ -696,7 +697,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 subscriptionsTag = doc.createElement("subscriptions");
                 userAccountTag.appendChild(subscriptionsTag);
             }
-
             for (Subscription subscription : subscriptions) {
                 OfferTemplate offer = subscription.getOffer();
                 if (displaySubscription) {
@@ -705,12 +705,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     subscriptionTag.setAttribute("code", subscription.getCode() != null ? subscription.getCode() : "");
                     subscriptionTag.setAttribute("description", subscription.getDescription() != null ? subscription.getDescription() : "");
                     subscriptionTag.setAttribute("offerCode", offer != null ? offer.getCode() : "");
-
                     Element subscriptionDateTag = doc.createElement("subscriptionDate");
                     Text subscriptionDateText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getSubscriptionDate(), invoiceDateFormat));
                     subscriptionDateTag.appendChild(subscriptionDateText);
                     subscriptionTag.appendChild(subscriptionDateTag);
-
                     Element endAgreementTag = doc.createElement("endAgreementDate");
                     Text endAgreementText = doc.createTextNode(DateUtils.formatDateWithPattern(subscription.getEndAgreementDate(), invoiceDateTimeFormat));
                     endAgreementTag.appendChild(endAgreementText);
@@ -718,7 +716,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     addCustomFields(subscription, doc, subscriptionTag);
                     subscriptionsTag.appendChild(subscriptionTag);
                 }
-
                 if (offer != null) {
 
                     OfferTemplate offerTemplate = offer;
@@ -727,7 +724,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         addOffers(offerTemplate, doc, invoiceTag);
                         offerIds.add(offerTemplate.getId());
                     }
-
                     if (invoiceConfiguration != null && invoiceConfiguration.getDisplayServices() != null && invoiceConfiguration.getDisplayServices()) {
                         List<ServiceInstance> addServices = addServices(subscription, doc, invoiceTag);
                         for (ServiceInstance serviceInstance : addServices) {
@@ -736,8 +732,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             }
                         }
                     }
-
-                    log.debug("After addServices(subscription, invoice, doc, subscriptionTag):" + (System.currentTimeMillis() - startDate));
                 }
             }
         }
@@ -786,7 +780,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @return list of service instance
      */
     private List<ServiceInstance> addServices(Subscription subscription, Document doc, Element invoiceTag) {
-        long startDate = System.currentTimeMillis();
         OfferTemplate offerTemplate = subscription.getOffer();
         String code = offerTemplate.getCode();
         List<ServiceInstance> serviceInstances = subscriptionService.listBySubscription(subscription);// subscription.getServiceInstances();
@@ -798,7 +791,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 if (!serviceIds.contains(serviceTemplate.getId())) {
                     addService(serviceInstance, doc, code, servicesTag);
                     serviceIds.add(serviceTemplate.getId());
-                    log.debug("After addService(subscription, invoice, doc, subscriptionTag):" + (System.currentTimeMillis() - startDate));
                 }
             }
         }
@@ -1490,12 +1482,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         subCategory.appendChild(line);
                     }
                     addCustomFields(invoiceSubCat, doc, subCategory);
-                    log.debug("After addCustomFields:" + (System.currentTimeMillis() - startDate));
                 }
             }
         }
-
-        log.info("addCategorries time: " + (System.currentTimeMillis() - startDate));
     }
 
     /**
@@ -1731,8 +1720,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 }
             }
         }
-
-        log.debug("After addHeaderCategories :" + (System.currentTimeMillis() - startDate));
     }
 
     /**
@@ -1750,8 +1737,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         List<SubCategoryInvoiceAgregate> discountInvoiceAgregates = new ArrayList<>();
 
+        
         if (isVirtual) {
-            discountInvoiceAgregates = invoice.getDiscountAgregates();
+        	long startDate = System.currentTimeMillis();
+            discountInvoiceAgregates = invoice.getDiscountAgregates();            
 
         } else {
             discountInvoiceAgregates = invoiceAgregateService.findDiscountAggregates(invoice);

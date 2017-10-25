@@ -71,23 +71,6 @@ public class AccountOperationService extends PersistenceService<AccountOperation
 			return null;
 		}
 	}
-	
-	@SuppressWarnings("unchecked")
-	public List<AccountOperation> listAccountOperationByCustomerAccount(CustomerAccount ca, String sortBy, SortOrder sortOrder) {
-		QueryBuilder qb = new QueryBuilder(AccountOperation.class, "a", null);
-		qb.addCriterionEntity("customerAccount", ca);
-		boolean ascending = true;
-		if (sortOrder != null) {
-			ascending = sortOrder.equals(SortOrder.ASCENDING);
-		}
-		qb.addOrderCriterion(sortBy, ascending);
-		
-		try {
-			return (List<AccountOperation>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away

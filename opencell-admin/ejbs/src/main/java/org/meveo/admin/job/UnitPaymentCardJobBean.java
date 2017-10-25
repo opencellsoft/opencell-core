@@ -25,37 +25,38 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitPaymentCardJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private RecordedInvoiceService recordedInvoiceService;
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
 
-	@Inject
-	private PaymentService paymentService;
+    @Inject
+    private PaymentService paymentService;
 
-	// @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO) {
-		log.debug("Running with RecordedInvoice ID={}", aoId);
+    // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO) {
+	log.debug("Running with RecordedInvoice ID={}", aoId);
 
-		RecordedInvoice recordedInvoice = null;
-		try {
-			recordedInvoice = recordedInvoiceService.findById(aoId);
-			if (recordedInvoice == null) {
-				return;
-			}
-			List<Long> listAOids = new ArrayList<>();
-			listAOids.add(aoId);
-			PayByCardResponseDto doPaymentResponseDto =  paymentService.payByCard(recordedInvoice.getCustomerAccount(), recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
-			if(!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())){
-				result.registerSucces();
-			}
+	RecordedInvoice recordedInvoice = null;
+	try {
+	    recordedInvoice = recordedInvoiceService.findById(aoId);
+	    if (recordedInvoice == null) {
+		return;
+	    }
+	    List<Long> listAOids = new ArrayList<>();
+	    listAOids.add(aoId);
+	    PayByCardResponseDto doPaymentResponseDto = paymentService.payByCard(recordedInvoice.getCustomerAccount(),
+		    recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+	    if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
+		result.registerSucces();
+	    }
 
-		} catch (Exception e) {
-			log.error("Failed to pay recorded invoice id:"+aoId, e);
-			result.registerError(aoId, e.getMessage());
-			result.addReport("RecordedInvoice id : " + aoId + " RejectReason : " + e.getMessage());            
-		}
+	} catch (Exception e) {
+	    log.error("Failed to pay recorded invoice id:" + aoId, e);
+	    result.registerError(aoId, e.getMessage());
+	    result.addReport("RecordedInvoice id : " + aoId + " RejectReason : " + e.getMessage());
 	}
+    }
 }

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.Sequence;
 
 /**
@@ -31,72 +32,91 @@ import org.meveo.model.billing.Sequence;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SequenceDto extends BaseDto {
 
-	private static final long serialVersionUID = 4763606402719751014L;
-	private String prefixEL;
-	private Integer sequenceSize;
-	private Long currentInvoiceNb;
+    private static final long serialVersionUID = 4763606402719751014L;
+    private String prefixEL;
+    private Integer sequenceSize;
+    private Long currentInvoiceNb;
 
-	
-	public SequenceDto() {
-	}
-	
-	public SequenceDto(Sequence sequence) {
-		if(sequence != null){				
-			this.prefixEL = sequence.getPrefixEL();
-			this.sequenceSize = sequence.getSequenceSize();
-			this.currentInvoiceNb = sequence.getCurrentInvoiceNb();
-		}
-	}
-	
-	public Sequence fromDto(){
-		Sequence sequence = new Sequence();
-		sequence.setPrefixEL(getPrefixEL());
-		sequence.setSequenceSize(getSequenceSize());
-		sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
-		return sequence;
-	}
+    public SequenceDto() {
+    }
 
-	/**
-	 * @return the prefixEL
-	 */
-	public String getPrefixEL() {
-		return prefixEL;
+    public SequenceDto(Sequence sequence) {
+	if (sequence != null) {
+	    this.prefixEL = sequence.getPrefixEL();
+	    this.sequenceSize = sequence.getSequenceSize();
+	    this.currentInvoiceNb = sequence.getCurrentInvoiceNb();
 	}
-	/**
-	 * @param prefixEL the prefixEL to set
-	 */
-	public void setPrefixEL(String prefixEL) {
-		this.prefixEL = prefixEL;
+    }
+
+    public Sequence fromDto() {
+	Sequence sequence = new Sequence();
+	sequence.setPrefixEL(getPrefixEL());
+	sequence.setSequenceSize(getSequenceSize());
+	sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
+	return sequence;
+    }
+
+    public Sequence updateFromDto(Sequence sequence) {
+	if (!StringUtils.isBlank(getPrefixEL())) {
+	    sequence.setPrefixEL(getPrefixEL());
 	}
-	/**
-	 * @return the sequenceSize
-	 */
-	public Integer getSequenceSize() {
-		return sequenceSize;
+	if (getSequenceSize() != null) {
+	    sequence.setSequenceSize(getSequenceSize());
 	}
-	/**
-	 * @param sequenceSize the sequenceSize to set
-	 */
-	public void setSequenceSize(Integer sequenceSize) {
-		this.sequenceSize = sequenceSize;
+	if (getCurrentInvoiceNb() != null) {
+	    sequence.setCurrentInvoiceNb(getCurrentInvoiceNb());
 	}
-	/**
-	 * @return the currentInvoiceNb
-	 */
-	public Long getCurrentInvoiceNb() {
-		return currentInvoiceNb;
-	}
-	/**
-	 * @param currentInvoiceNb the currentInvoiceNb to set
-	 */
-	public void setCurrentInvoiceNb(Long currentInvoiceNb) {
-		this.currentInvoiceNb = currentInvoiceNb;
-	}
-	
-	
-	@Override
-	public String toString() {
-		return "SequenceDto [prefixEL=" + prefixEL + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
-	}
+	return sequence;
+    }
+
+    /**
+     * @return the prefixEL
+     */
+    public String getPrefixEL() {
+	return prefixEL;
+    }
+
+    /**
+     * @param prefixEL
+     *            the prefixEL to set
+     */
+    public void setPrefixEL(String prefixEL) {
+	this.prefixEL = prefixEL;
+    }
+
+    /**
+     * @return the sequenceSize
+     */
+    public Integer getSequenceSize() {
+	return sequenceSize;
+    }
+
+    /**
+     * @param sequenceSize
+     *            the sequenceSize to set
+     */
+    public void setSequenceSize(Integer sequenceSize) {
+	this.sequenceSize = sequenceSize;
+    }
+
+    /**
+     * @return the currentInvoiceNb
+     */
+    public Long getCurrentInvoiceNb() {
+	return currentInvoiceNb;
+    }
+
+    /**
+     * @param currentInvoiceNb
+     *            the currentInvoiceNb to set
+     */
+    public void setCurrentInvoiceNb(Long currentInvoiceNb) {
+	this.currentInvoiceNb = currentInvoiceNb;
+    }
+
+    @Override
+    public String toString() {
+	return "SequenceDto [prefixEL=" + prefixEL + ", sequenceSize=" + sequenceSize + ", currentInvoiceNb=" + currentInvoiceNb + "]";
+    }
 
 }

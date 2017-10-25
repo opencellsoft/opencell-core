@@ -399,14 +399,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-
-        // If invoicing run as part of billing run, this check has been done in pre-invoiced step of BR, so no need to ru it again.
-        if (billingRun == null && billingAccount.getInvoicingThreshold() != null) {
+        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
+                : billingAccount.getInvoicingThreshold();
+        if (invoicingThreshold != null) {
             BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
             if (invoiceAmount == null) {
                 throw new BusinessException("Cant compute invoice amount");
             }
-            if (billingAccount.getInvoicingThreshold().compareTo(invoiceAmount) > 0) {
+            if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
                 throw new BusinessException("Invoice amount below the threshold");
             }
         }
@@ -832,29 +832,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param invoice invoice to delete
+     * @throws BusinessException 
      */
-    @SuppressWarnings("unchecked")
-    public void deleteInvoice(Invoice invoice) {
+    public void deleteInvoice(Invoice invoice) throws BusinessException {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice").setParameter("invoice", invoice).executeUpdate();
 
-        Query queryTrans = getEntityManager().createQuery(
-            "update " + RatedTransaction.class.getName() + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null where invoice=:invoice");
-        queryTrans.setParameter("invoice", invoice);
-        queryTrans.executeUpdate();
-
-        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-
-        queryAgregate.setParameter("invoice", invoice);
-        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
-        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-            getEntityManager().remove(invoiceAgregate);
+        super.remove(invoice);
         }
-        getEntityManager().flush();
-
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where id=:invoiceId");
-        queryInvoices.setParameter("invoiceId", invoice.getId());
-        queryInvoices.executeUpdate();
-    }
 
     /**
      * @param prefix prefix of EL expression
@@ -1386,15 +1370,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Generate XML and PDF files for Invoice.
+     * Generate XML (if neeed) and PDF files for Invoice.
      * 
      * @param invoice Invoice
+     * @param regenerate Regenerate XML and PDF files ignoring id they exist already
      * @return invoice
+     * 
      * @throws BusinessException business exception
      */
-    public Invoice generateXmlAndPdfInvoice(Invoice invoice) throws BusinessException {
+    public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
 
+        if (regenerate || !isInvoiceXmlExist(invoice)) {
         produceInvoiceXmlNoUpdate(invoice);
+        }
         invoice = produceInvoicePdf(invoice);
         return invoice;
     }
@@ -1512,7 +1500,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice invoice to cancel
      * @throws BusinessException business exception
      */
-    @SuppressWarnings("unchecked")
     public void cancelInvoice(Invoice invoice) throws BusinessException {
         if (invoice.getInvoiceNumber() != null) {
             throw new BusinessException("Can't cancel an invoice validated");
@@ -1520,29 +1507,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
-        Query queryTrans = getEntityManager().createQuery("update " + RatedTransaction.class.getName()
-                + " set invoice=null,invoiceAgregateF=null,invoiceAgregateR=null,invoiceAgregateT=null,status=:status where invoice=:invoice");
-        queryTrans.setParameter("invoice", invoice);
-        queryTrans.setParameter("status", RatedTransactionStatusEnum.OPEN);
-        queryTrans.executeUpdate();
-        Query queryAgregate = getEntityManager().createQuery("from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-        queryAgregate.setParameter("invoice", invoice);
-        List<InvoiceAgregate> invoiceAgregates = (List<InvoiceAgregate>) queryAgregate.getResultList();
-        for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-            if (invoiceAgregate instanceof SubCategoryInvoiceAgregate) {
-                ((SubCategoryInvoiceAgregate) invoiceAgregate).setSubCategoryTaxes(null);
+        
+        deleteInvoice(invoice);
+        log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
             }
-        }
-        invoice.setOrders(null);
-        Query dropAgregats = getEntityManager().createQuery("delete from " + InvoiceAgregate.class.getName() + " where invoice=:invoice");
-        dropAgregats.setParameter("invoice", invoice);
-        dropAgregats.executeUpdate();
-        getEntityManager().flush();
-        Query queryInvoices = getEntityManager().createQuery("delete from " + Invoice.class.getName() + " where id=:id");
-        queryInvoices.setParameter("id", invoice.getId());
-        queryInvoices.executeUpdate();
-        log.debug("cancel invoice:{} done", invoice.getTemporaryInvoiceNumber());
-    }
 
     /**
      * @param expression expression as string
@@ -1636,7 +1604,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public List<Long> getInvoiceIdsByBRWithNoXml(Long billingRunId) {
        if(billingRunId == null) {
 	   return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
-    }
+        }
 	return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
 

@@ -329,11 +329,11 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
             // search by a single date
             if (validFrom != null && validTo == null) {
 
-                filters.put("minmaxOptionalRange-validity.from-validity.to", validFrom);
+                filters.put("minmaxOptionalRange validity.from validity.to", validFrom);
 
                 // search by date range
             } else if (validFrom != null && validTo != null) {
-                filters.put("overlapOptionalRange-validity.from-validity.to", new Date[] { validFrom, validTo });
+                filters.put("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
             }
         }
 

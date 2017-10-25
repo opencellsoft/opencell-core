@@ -3,9 +3,7 @@ package org.meveo.api.billing;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -39,8 +37,8 @@ import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.billing.UpdateServicesRequestDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.catalog.OneShotChargeTemplateDto;
-import org.meveo.api.dto.response.Paging;
-import org.meveo.api.dto.response.Paging.SortOrder;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -249,14 +247,14 @@ public class SubscriptionApi extends BaseApi {
         }
 
         if (postData.getOfferTemplate() != null) {
-        OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
-        if (offerTemplate == null) {
-            throw new EntityDoesNotExistsException(OfferTemplate.class,
-                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+            OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
+            if (offerTemplate == null) {
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
 
             } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
                 throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
-                
+
             } else if (offerTemplate.isDisabled()) {
                 throw new InvalidParameterException("Cannot subscribe to disabled offer");
             }
@@ -298,7 +296,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     public void activateServices(ActivateServicesRequestDto postData, String orderNumber, boolean ignoreAlreadyActivatedError) throws MeveoApiException, BusinessException {
-
+    	
         if (StringUtils.isBlank(postData.getSubscription())) {
             missingParameters.add("subscription");
         }
@@ -314,8 +312,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscription = subscriptionService.refreshOrRetrieve(subscription);
-        subscription.getOffer().getOfferServiceTemplates().size();
-
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
@@ -330,8 +326,7 @@ public class SubscriptionApi extends BaseApi {
             ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(serviceToActivateDto.getCode());
             if (serviceTemplate == null) {
                 throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
-            }
-
+            }            
             serviceToActivateDto.setServiceTemplate(serviceTemplate);
             serviceToActivateDtos.add(serviceToActivateDto);
         }
@@ -482,7 +477,6 @@ public class SubscriptionApi extends BaseApi {
                 throw new MeveoApiException(e.getMessage());
             }
         }
-
     }
 
     public void instantiateServices(InstantiateServicesRequestDto postData) throws MeveoApiException, BusinessException {
@@ -504,7 +498,6 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
-
         // check if exists
         List<ServiceToInstantiateDto> serviceToInstantiateDtos = new ArrayList<>();
         for (ServiceToInstantiateDto serviceToInstantiateDto : postData.getServicesToInstantiate().getService()) {
@@ -542,7 +535,7 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setCode(serviceTemplate.getCode());
                 serviceInstance.setDescription(serviceTemplate.getDescription());
                 serviceInstance.setServiceTemplate(serviceTemplate);
-                serviceInstance.setSubscription(subscription);      
+                serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
 
                 if (serviceToInstantiateDto.getSubscriptionDate() == null) {
@@ -557,7 +550,6 @@ public class SubscriptionApi extends BaseApi {
                     serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
                 }
                 serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
-
                 // populate customFields
                 try {
                     populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true);
@@ -796,9 +788,8 @@ public class SubscriptionApi extends BaseApi {
         }
 
         SubscriptionsDto result = new SubscriptionsDto();
-		List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
-				sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name())
-						: org.primefaces.model.SortOrder.ASCENDING);
+        List<Subscription> subscriptions = subscriptionService.listByUserAccount(userAccount, sortBy,
+            sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
                 result.getSubscription().add(subscriptionToDto(s, mergedCF));
@@ -810,43 +801,29 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * @param pageSize page size
-     * @param pageNum page number
-     * @return instance of SubscriptionsListDto which contains list of Subscription DTO
-     * @throws MeveoApiException
-     */
-    public SubscriptionsListResponseDto listAll(int pageSize, int pageNum) throws MeveoApiException {
-
-        return this.listAll(false, new Paging(pageNum, pageSize, "code", org.meveo.api.dto.response.Paging.SortOrder.ASCENDING));
-
-    }
-
-    /**
      * @param from first row
      * @param numberOfRows number of rows
      * @param mergedCF
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException
      */
-    public SubscriptionsListResponseDto listAll(boolean mergedCF, Paging paging) throws MeveoApiException {
-    	SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
-        Map<String, Object> filters = new HashMap<>();
-		PaginationConfiguration paginationConfiguration = new PaginationConfiguration(
-				paging != null ? paging.getOffset() : null, paging != null ? paging.getLimit() : null, filters,
-				null, null, paging != null ? paging.getSortBy() : null,
-				paging != null && paging.getSortOrder() != null
-						? org.primefaces.model.SortOrder.valueOf(paging.getSortOrder().name())
-						: org.primefaces.model.SortOrder.ASCENDING);
-		
-		Long totalCount = subscriptionService.count(paginationConfiguration);
-        result.setPaging(paging != null ? paging : new Paging());
+    public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+
+        PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
+
+        Long totalCount = subscriptionService.count(paginationConfiguration);
+
+        SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
+
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-		
+
         if (totalCount > 0) {
-        	List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
+            List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
                 for (Subscription subscription : subscriptions) {
-                    result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, mergedCF));
+                    result.getSubscriptions().getSubscription()
+                        .add(subscriptionToDto(subscription, mergedCF != null ? mergedCF : pagingAndFiltering != null ? pagingAndFiltering.hasFieldOption("inheritedCF") : false));
                 }
             }
         }
@@ -1032,7 +1009,7 @@ public class SubscriptionApi extends BaseApi {
                     existedSubscriptionDto.setEndAgreementDate(subscriptionDto.getEndAgreementDate());
                 }
 
-                if (subscriptionDto.getCustomFields()!=null && !subscriptionDto.getCustomFields().isEmpty()) {
+                if (subscriptionDto.getCustomFields() != null && !subscriptionDto.getCustomFields().isEmpty()) {
                     existedSubscriptionDto.setCustomFields(subscriptionDto.getCustomFields());
                 }
                 update(existedSubscriptionDto);

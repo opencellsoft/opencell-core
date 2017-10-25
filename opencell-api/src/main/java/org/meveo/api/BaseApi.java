@@ -3,8 +3,11 @@ package org.meveo.api;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.math.BigDecimal;
 import java.nio.file.AccessDeniedException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -25,12 +28,14 @@ import javax.validation.Validator;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.util.ImageUploadEventHandler;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
@@ -51,6 +56,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.api.EntityToDtoConverter;
@@ -61,6 +67,7 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.ApplicationProvider;
+import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -309,12 +316,12 @@ public abstract class BaseApi {
                     hasValue = value != null;
                 }
 
-                    // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
-                    // field validation should pass even though current period wont have any value
+                // If no value was created, then check if there is any inherited value, as in case of versioned values, value could be set in some other period, and required
+                // field validation should pass even though current period wont have any value
                 if (!hasValue) {
                     if (cft.isVersionable()) {
                         hasValue = customFieldInstanceService.hasInheritedOnlyCFValue(entity, cft.getCode());
-                } else {
+                    } else {
                         Object value = customFieldInstanceService.getInheritedOnlyCFValue(entity, cft.getCode());
                         hasValue = value != null;
                     }
@@ -364,10 +371,10 @@ public abstract class BaseApi {
     protected void validateAndConvertCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomFieldDto> customFieldDtos, boolean checkCustomFields,
             boolean isNewEntity, ICustomFieldEntity entity) throws MeveoApiException {
 
-        if (customFieldDtos==null){
+        if (customFieldDtos == null) {
             return;
         }
-        
+
         for (CustomFieldDto cfDto : customFieldDtos) {
             CustomFieldTemplate cft = customFieldTemplates.get(cfDto.getCode());
 
@@ -1011,5 +1018,261 @@ public abstract class BaseApi {
         } else {
             return values;
         }
+    }
+
+    /**
+     * Convert pagination and filtering DTO to a pagination configuration used in services
+     * 
+     * @param defaultSortBy A default value to sortBy
+     * @param defaultSortOrder A default sort order
+     * @param fetchFields Fields to fetch
+     * @param pagingAndFiltering Paging and filtering criteria
+     * @return Pagination configuration
+     * @throws InvalidParameterException
+     */
+    @SuppressWarnings("rawtypes")
+    protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
+            Class targetClass) throws InvalidParameterException {
+
+        if (pagingAndFiltering != null) {
+            pagingAndFiltering.setFilters(convertFilters(targetClass, pagingAndFiltering.getFilters()));
+        }
+
+        PaginationConfiguration paginationConfig = new PaginationConfiguration(pagingAndFiltering != null ? pagingAndFiltering.getOffset() : null,
+            pagingAndFiltering != null ? pagingAndFiltering.getLimit() : null, pagingAndFiltering != null ? pagingAndFiltering.getFilters() : null,
+            pagingAndFiltering != null ? pagingAndFiltering.getFullTextFilter() : null, fetchFields,
+            pagingAndFiltering != null && pagingAndFiltering.getSortBy() != null ? pagingAndFiltering.getSortBy() : defaultSortBy,
+            pagingAndFiltering != null && pagingAndFiltering.getSortOrder() != null ? SortOrder.valueOf(pagingAndFiltering.getSortOrder().name()) : defaultSortOrder);
+
+        return paginationConfig;
+    }
+
+    /**
+     * Convert string type filter criteria to a data type corresponding to a particular field
+     * 
+     * @param targetClass Principal class that filter criteria is targeting
+     * @param filtersToConvert Filtering criteria
+     * @return A converted filter
+     * @throws InvalidParameterException
+     */
+    @SuppressWarnings({ "rawtypes" })
+    private Map<String, Object> convertFilters(Class targetClass, Map<String, Object> filtersToConvert) throws InvalidParameterException {
+
+        log.error("Converting filters {}", filtersToConvert);
+
+        Map<String, Object> filters = new HashMap<>();
+        if (filtersToConvert == null) {
+            return filters;
+
+            // Search by filter - nothing to convert
+        } else if (filtersToConvert.containsKey(PersistenceService.SEARCH_FILTER)) {
+            return filtersToConvert;
+        }
+
+        for (Entry<String, Object> filterInfo : filtersToConvert.entrySet()) {
+
+            if (filterInfo.getValue() == null) {
+                continue;
+            }
+
+            String key = filterInfo.getKey();
+            Object value = filterInfo.getValue();
+
+            String[] fieldInfo = key.split(" ");
+            String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
+            String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+
+            // Nothing to convert
+            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)) {
+                filters.put(key, value);
+
+                // Determine what the target field type is and convert to that data type
+            } else {
+
+                Field field;
+                try {
+                    field = ReflectionUtils.getFieldThrowException(targetClass, fieldName);
+                } catch (NoSuchFieldException e) {
+                    throw new InvalidParameterException(e.getMessage());
+                }
+                Class<?> fieldClassType = field.getType();
+                if (fieldClassType == List.class || fieldClassType == Set.class) {
+                    fieldClassType = ReflectionUtils.getFieldGenericsType(field);
+                }
+
+                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition));
+                if (valueConverted != null) {
+                    filters.put(key, valueConverted);
+                } else {
+                    throw new InvalidParameterException("Filter " + key + " value " + value + " does not match " + fieldClassType.getSimpleName());
+                }
+            }
+        }
+
+        return filters;
+    }
+
+    /**
+     * Convert value of unknown data type to a target data type. A value of type list is considered as already converted value, as would come only from WS.
+     * 
+     * @param value Value to convert
+     * @param targetClass Target data type class to convert to
+     * @param expectedList Is return value expected to be a list. If value is not a list and is a string a value will be parsed as comma separated string and each value will be
+     *        converted accordingly. If a single value is passed, it will be added to a list.
+     * @return A converted data type
+     * @throws InvalidParameterException
+     */
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
+
+        log.error("Casting {} of class {} ", value, value != null ? value.getClass() : null);
+        // Nothing to cast - same data type
+        if (targetClass.isAssignableFrom(value.getClass())) {
+            return value;
+        }
+
+        // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
+        if (expectedList) {
+            if (value instanceof List || value instanceof Set) {
+                return value;
+
+            } else if (value instanceof String) {
+                List valuesConverted = new ArrayList<>();
+                String[] valueItems = ((String) value).split(",");
+                for (String valueItem : valueItems) {
+                    Object valueConverted = castFilterValue(valueItem, targetClass, false);
+                    if (valueConverted != null) {
+                        valuesConverted.add(valueConverted);
+                    } else {
+                        throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                    }
+                }
+                return valuesConverted;
+
+            } else {
+                Object valueConverted = castFilterValue(value, targetClass, false);
+                if (valueConverted != null) {
+                    return Arrays.asList(valueConverted);
+                } else {
+                    throw new InvalidParameterException("Filter value " + value + " does not match " + targetClass.getSimpleName());
+                }
+            }
+        }
+
+        Number numberVal = null;
+        BigDecimal bdVal = null;
+        String stringVal = null;
+        Boolean booleanVal = null;
+        Date dateVal = null;
+        List listVal = null;
+
+        if (value instanceof Number) {
+            numberVal = (Number) value;
+        } else if (value instanceof BigDecimal) {
+            bdVal = (BigDecimal) value;
+        } else if (value instanceof Boolean) {
+            booleanVal = (Boolean) value;
+        } else if (value instanceof Date) {
+            dateVal = (Date) value;
+        } else if (value instanceof String) {
+            stringVal = (String) value;
+        } else if (value instanceof List) {
+            listVal = (List) value;
+        } else {
+            throw new InvalidParameterException("Unrecognized data type for filter criteria value " + value);
+        }
+
+        try {
+            if (targetClass == String.class) {
+                if (stringVal != null || listVal != null) {
+                    return value;
+                } else {
+                    return value.toString();
+                }
+
+            } else if (targetClass == Boolean.class || (targetClass.isPrimitive() && targetClass.getName().equals("boolean"))) {
+                if (booleanVal != null) {
+                    return value;
+                } else {
+                    return Boolean.parseBoolean(value.toString());
+                }
+
+            } else if (targetClass == Date.class) {
+                if (dateVal != null || listVal != null) {
+                    return value;
+                } else if (numberVal != null) {
+                    return new Date(numberVal.longValue());
+                } else if (stringVal != null) {
+                    // first try with date and time and then only with date format
+                    Date date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_TIME_PATTERN);
+                    if (date == null) {
+                        date = DateUtils.parseDateWithPattern(stringVal, DateUtils.DATE_PATTERN);
+                    }
+                    return date;
+                }
+
+            } else if (targetClass.isEnum()) {
+                if (listVal != null || targetClass.isAssignableFrom(value.getClass())) {
+                    return value;
+                } else if (stringVal != null) {
+                    Enum enumVal = ReflectionUtils.getEnumFromString((Class<? extends Enum>) targetClass, stringVal);
+                    if (enumVal != null) {
+                        return enumVal;
+                    }
+                }
+
+            } else if (targetClass == Integer.class || (targetClass.isPrimitive() && targetClass.getName().equals("int"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Integer.parseInt(stringVal);
+                }
+
+            } else if (targetClass == Long.class || (targetClass.isPrimitive() && targetClass.getName().equals("long"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Long.parseLong(stringVal);
+                }
+
+            } else if (targetClass == Byte.class || (targetClass.isPrimitive() && targetClass.getName().equals("byte"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Byte.parseByte(stringVal);
+                }
+
+            } else if (targetClass == Short.class || (targetClass.isPrimitive() && targetClass.getName().equals("short"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Short.parseShort(stringVal);
+                }
+
+            } else if (targetClass == Double.class || (targetClass.isPrimitive() && targetClass.getName().equals("double"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Double.parseDouble(stringVal);
+                }
+
+            } else if (targetClass == Float.class || (targetClass.isPrimitive() && targetClass.getName().equals("float"))) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return Float.parseFloat(stringVal);
+                }
+
+            } else if (targetClass == BigDecimal.class) {
+                if (numberVal != null || bdVal != null || listVal != null) {
+                    return value;
+                } else if (stringVal != null) {
+                    return new BigDecimal(stringVal);
+                }
+            }
+        } catch (NumberFormatException e) {
+            // Swallow - validation will take care of it later
+        }
+        return null;
     }
 }

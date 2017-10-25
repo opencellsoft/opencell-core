@@ -275,29 +275,32 @@ public class QueryBuilder {
      * @return
      */
     public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
-        if (StringUtils.isBlank(value))
+        if (StringUtils.isBlank(value)){
             return this;
+        }
 
         StringBuffer sql = new StringBuffer();
         String param = convertFieldToParam(field);
         Object nvalue = value;
 
-        if (caseInsensitive && (value instanceof String))
+        if (caseInsensitive && (value instanceof String)) {
             sql.append("lower(" + field + ")");
-        else
+        } else {
             sql.append(field);
-
+        }
         sql.append(operator + ":" + param);
 
-        if (caseInsensitive && (value instanceof String))
+        if (caseInsensitive && (value instanceof String)) {
             nvalue = ((String) value).toLowerCase();
+        }
 
         return addSqlCriterion(sql.toString(), param, nvalue);
     }
 
     public QueryBuilder addCriterionEntityInList(String field, Object entity) {
-        if (entity == null)
+        if (entity == null){
             return this;
+        }
 
         String param = convertFieldToParam(field);
 

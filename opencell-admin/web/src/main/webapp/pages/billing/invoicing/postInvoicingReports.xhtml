@@ -157,25 +157,14 @@
 
 		</hftl:formPanel>
 
-		<p:panel header="#{messages['postInvoicingReport.billableBA']}">		
-			<hftl:dataList  dataModel="#{billingRunBean.entity.invoices}"  
-				backingBean="#{invoiceBean}">
+		<p:panel header="#{messages['postInvoicingReport.billableBA']}" id="billableBA">		
+			<hftl:dataList  id="dataListInvoicess" dataModel="#{invoiceBean.getBillingRunInvoices(billingRunBean.entity)}"   backingBean="#{invoiceBean}">
 	        <p:ajax event="rowSelectCheckbox"    listener="#{invoiceBean.onRowSelectCheckbox}" update=":excludeBa" />
 	        <p:ajax event="rowUnselectCheckbox"  listener="#{invoiceBean.onRowUnSelectCheckbox}"  update=":excludeBa"  /> 
 	
 				<hftl:column label="#{messages['businessEntity.code']}" objectIdParamName="billingAccountId"
 					field="billingAccount.code" entityView="billingAccountDetail" valueIdField="billingAccount.id"/>
-				<p:column width="100">
-					<f:facet name="header">
-						<h:outputText value="#{messages['name.title']}" />
-					</f:facet>
-					<e:cell>
-						<h:outputText
-							rendered="#{entity.billingAccount.name.title != null}"
-							value="#{entity.billingAccount.name.title.description}" />
-					</e:cell>
-				</p:column>
-	
+			
 				<hftl:column label="#{messages['billingAccount.name']}"
 					field="billingAccount.name" />
 	
@@ -186,7 +175,7 @@
 				<hftl:column label="#{messages['invoice.amountWithTax']}"
 					field="amountWithTax" converterParam="4digits" />
 			</hftl:dataList>
-			 <p:panel styleClass="action-buttons" >
+			 <p:panel styleClass="action-buttons" id="actionsButtons" >
 				<p:tooltip for="excludeBa"
 					showEffect="slide" hideEffect="slide" />
 				<p:commandButton id="excludeBa" style="left:10px; top:-26px" disabled="#{!invoiceBean.selectedInvoices}"
@@ -201,27 +190,12 @@
 		</p:panel>
 	
 		<p:panel header="#{messages['postInvoicingReport.rejectedBillingAccounts']}"  id="rejectedBA_panel" width="100">
-			<h:form id="rejectedBA_formId" prependId="false">
-				<p:dataTable id="dataTable_rejectedBA" var="entity"
-					value="#{billingRunBean.entity.rejectedBillingAccounts}"
-					paginator="true" rows="10" resizableColumns="true"
-					paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-					rowsPerPageTemplate="5,10,15" lazy="true" styleClass="custom-grid"
-					rowKey="#{entity.id}">
+			
+			<hftl:dataList exportToXml="false" resultsId="dataListRekectedBAs" dataModel="#{rejectedBillingAccountBean.getBArejected(billingRunBean.entity)}"   backingBean="#{rejectedBillingAccountBean}">
+
 
 					<hftl:column label="#{messages['businessEntity.code']}"
 						field="billingAccount.code" />
-
-					<p:column width="100">
-						<f:facet name="header">
-							<h:outputText value="#{messages['name.title']}" />
-						</f:facet>
-						<e:cell>
-							<h:outputText
-								rendered="#{entity.billingAccount.name.title != null}"
-								value="#{entity.billingAccount.name.title.description}" />
-						</e:cell>
-					</p:column>
 
 					<hftl:column label="#{messages['billingAccount.name']}"
 						field="billingAccount.name" />
@@ -230,14 +204,9 @@
 						label="#{messages['RejectedBillingAccounts.rejectCause']}"
 						field="rejectCause" />
 
-				</p:dataTable>
+				</hftl:dataList>
 
-				<p:blockUI block="dataTable_rejectedBA"
-					trigger="dataTable_rejectedBA">
-        		LOADING<br />
-					<p:graphicImage name="ajax-loader1.gif" library="img" />
-				</p:blockUI>
-			</h:form>
+		
 
 			<hftl:decorateFormField label="#{messages['billingRuns.launchInvoicing']}" displayOneLine="true" componentWidth="50">
 				<p:selectBooleanCheckbox

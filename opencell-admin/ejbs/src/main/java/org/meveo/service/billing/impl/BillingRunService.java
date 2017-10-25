@@ -608,7 +608,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis) throws Exception {
-
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {

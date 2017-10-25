@@ -73,6 +73,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal amountDebit = amount;
         boolean fullMatch = false;
 
+        log.error("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
         for (AccountOperation accountOperation : listOcc) {
 
             if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {

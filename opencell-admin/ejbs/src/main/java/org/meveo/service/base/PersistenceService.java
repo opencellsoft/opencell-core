@@ -79,9 +79,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_ATTR_TYPE_CLASS = "type_class";
     public static String SEARCH_IS_NULL = "IS_NULL";
     public static String SEARCH_IS_NOT_NULL = "IS_NOT_NULL";
-    public static String SEARCH_FIELD1_OR_FIELD2 = "FIELD1_OR_FIELD2";
+    public static String SEARCH_WILDCARD_OR = "wildcardOr";
     public static String SEARCH_SQL = "SQL";
-    
+    public static String SEARCH_FILTER = "$FILTER";
+    public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
+
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
@@ -151,10 +153,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     public E updateNoCheck(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
-        
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {            
+
+        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
             // validate code
-			validateCode((BusinessEntity) entity);
+            validateCode((BusinessEntity) entity);
         }
 
         updateAudit(entity);
@@ -368,22 +370,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         } else if (entity instanceof BusinessEntity) {
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
-            
+
             // validate code
-			validateCode((BusinessEntity) entity);
+            validateCode((BusinessEntity) entity);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
 
         return entity;
     }
-    
+
     private boolean validateCode(BusinessEntity entity) throws BusinessException {
-		if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-			throw new BusinessException("Invalid characters found in entity code.");
-		}
-		
-		return true;
+        if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+            throw new BusinessException("Invalid characters found in entity code.");
+        }
+
+        return true;
     }
 
     /**
@@ -412,9 +414,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // Add entity to Elastic Search
         if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
             elasticClient.createOrFullUpdate((BusinessEntity) entity);
-            
+
             // validate code
-			validateCode((BusinessEntity) entity);
+            validateCode((BusinessEntity) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());
@@ -582,6 +584,72 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     /**
      * Creates query to filter entities according data provided in pagination configuration.
      * 
+     * Search filters (key = Filter key, value = search pattern or value).
+     * 
+     * Filter key can be:
+     * <ul>
+     * <li>"$FILTER". Value is a filter name</li>
+     * <li>"type_class". Value is a full classname. Used to limit search results to a particular entity type in case of entity subclasses. Can be combined to condition "ne" to
+     * exclude those classes.</li>
+     * <li>SQL. Additional sql to apply. Value is an array consisting of sql query and one or more paramaters to apply</li>
+     * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
+     * </ul>
+     * 
+     * A union between different filter items is AND.<br/>
+     * <br/>
+     * 
+     * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.<br/>
+     * <br/>
+     * 
+     * Following conditions are supported:
+     * <ul>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value<=field.value. Applies to date and number type fields.</li>
+     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value<=value</li>
+     * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
+     * <li>inList. Field value is in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
+     * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
+     * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
+     * <li>overlapOptionalRange. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array of two
+     * values.</li>
+     * <li>likeCriterias. Multiple fieldnames can be specified. Any of the multiple field values match the value (OR criteria). In case value contains *, a like criteria match will
+     * be used. In either case case insensative matching is used. Applies to String type fields.</li>
+     * <li>wildcardOr. Similar to likeCriterias. A wildcard match will always used. A * will be appended to start and end of the value automatically if not present. Applies to
+     * String type fields.</li>
+     * <li>ne. Not equal.
+     * </ul>
+     * 
+     * Following special meaning values are supported:
+     * <ul>
+     * <li>IS_NULL. Field value is null</li>
+     * <li>IS_NOT_NULL. Field value is not null</li>
+     * </ul>
+     * 
+     * Examples:<br/>
+     * <ul>
+     * <li>invoice number equals "1578AU":<br/>
+     * Filter key: invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is not "1578AU":<br/>
+     * Filter key: ne invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is null:<br/>
+     * Filter key: invoiceNumber. Filter value: IS_NULL</li>
+     * <li>invoice number is not empty:<br/>
+     * Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
+     * <li>Invoice date is between 2017-05-01 and 2017-06-01:<br/>
+     * Filter key: fromRange invoiceDate. Filter value: 2017-05-01<br/>
+     * Filter key: toRange invoiceDate. Filter value: 2017-06-01</li>
+     * <li>Date is between creation and update dates:<br/>
+     * Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
+     * <li>invoice number is any of 158AU, 159KU or 189LL:<br/>
+     * Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
+     * <li>any of param1, param2 or param3 fields contains "energy":<br/>
+     * Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
+     * <li>any of param1, param2 or param3 fields start with "energy":<br/>
+     * Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
+     * <li>any of param1, param2 or param3 fields is "energy":<br/>
+     * Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
+     * </ul>
+     * 
+     * 
      * @param config PaginationConfiguration data holding object
      * @return query to filter entities according pagination configuration data.
      */
@@ -596,57 +664,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         if (filters != null && !filters.isEmpty()) {
 
-            if (filters.containsKey("$FILTER")) {
-                Filter filter = (Filter) filters.get("$FILTER");
-                Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get("$FILTER_PARAMETERS");
+            if (filters.containsKey(SEARCH_FILTER)) {
+                Filter filter = (Filter) filters.get(SEARCH_FILTER);
+                Map<CustomFieldTemplate, Object> parameterMap = (Map<CustomFieldTemplate, Object>) filters.get(SEARCH_FILTER_PARAMETERS);
                 queryBuilder = new FilteredQueryBuilder(filter, parameterMap, false, false);
             } else {
 
                 for (String key : filters.keySet()) {
-
-                    // Key fomat is: condition field1 field2
-                    // example: "ne code", condition=code, fieldName=code, fieldName2=null
-                    String[] fieldInfo = key.split(" ");
-                    String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
-                    String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
-                    String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
 
                     Object filterValue = filters.get(key);
                     if (filterValue == null) {
                         continue;
                     }
 
-                    // if ranged search - field value in between from - to values
-                    if (key.contains("fromRange-")) {
-                        String parsedKey = key.substring(10);
+                    // Key format is: condition field1 field2 or condition-field1-field2-fieldN
+                    // example: "ne code", condition=code, fieldName=code, fieldName2=null
+                    String[] fieldInfo = key.split(" ");
+                    String condition = fieldInfo.length == 1 ? null : fieldInfo[0];
+                    String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
+                    String fieldName2 = fieldInfo.length == 3 ? fieldInfo[2] : null;
+
+                    String[] fields = null;
+                    if (condition != null) {
+                        fields = Arrays.copyOfRange(fieldInfo, 1, fieldInfo.length);
+                    }
+
+                    // if ranged search - field value in between from - to values. Specifies "from" value: e.g value<=field.value
+                    if ("fromRange".equals(condition)) {
                         if (filterValue instanceof Double) {
                             BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                            queryBuilder.addCriterion("a." + parsedKey, " >= ", rationalNumber, true);
+                            queryBuilder.addCriterion("a." + fieldName, " >= ", rationalNumber, true);
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion("a." + parsedKey, " >= ", filterValue, true);
+                            queryBuilder.addCriterion("a." + fieldName, " >= ", filterValue, true);
                         } else if (filterValue instanceof Date) {
-                            queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + parsedKey, (Date) filterValue);
+                            queryBuilder.addCriterionDateRangeFromTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
-                    } else if (key.contains("toRange-")) {
-                        String parsedKey = key.substring(8);
+
+                        // if ranged search - field value in between from - to values. Specifies "to" value: e.g field.value<=value
+                    } else if ("toRange".equals(condition)) {
                         if (filterValue instanceof Double) {
                             BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                            queryBuilder.addCriterion("a." + parsedKey, " <= ", rationalNumber, true);
+                            queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, true);
                         } else if (filterValue instanceof Number) {
-                            queryBuilder.addCriterion("a." + parsedKey, " <= ", filterValue, true);
+                            queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, true);
                         } else if (filterValue instanceof Date) {
-                            queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + parsedKey, (Date) filterValue);
+                            queryBuilder.addCriterionDateRangeToTruncatedToDay("a." + fieldName, (Date) filterValue);
                         }
 
                         // Value is in field value (list)
-                    } else if (key.contains("list-")) {
-                        String parsedKey = key.substring(5);
-                        queryBuilder.addSqlCriterion(":" + parsedKey + " in elements(a." + parsedKey + ")", parsedKey, filterValue);
+                    } else if ("list".equals(condition)) {
+                        String paramName = queryBuilder.convertFieldToParam(fieldName);
+                        queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
 
                         // Field value is in value (list)
-                    } else if (key.contains("inList-")) {
-                        String parsedKey = key.substring(7);
-                        queryBuilder.addSql("a." + parsedKey + " in (" + filterValue + ")");
+                    } else if ("inList".equals(condition)) {
+                        queryBuilder.addSql("a." + fieldName + " in (" + filterValue + ")");
 
                         // Search by an entity type
                     } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
@@ -690,81 +762,73 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         }
 
                         // The value is in between two field values
-                    } else if (key.contains("minmaxRange-")) {
-                        String parsedKey = key.substring(12);
-                        String[] minmaxFieldNames = parsedKey.split("-");
-                        if (minmaxFieldNames.length == 2) {
-                            if (filterValue instanceof Double) {
-                                BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
-                                queryBuilder.addCriterion("a." + minmaxFieldNames[0], " <= ", rationalNumber, false);
-                                queryBuilder.addCriterion("a." + minmaxFieldNames[1], " >= ", rationalNumber, false);
-                            } else if (filterValue instanceof Number) {
-                                queryBuilder.addCriterion("a." + minmaxFieldNames[0], " <= ", filterValue, false);
-                                queryBuilder.addCriterion("a." + minmaxFieldNames[1], " >= ", filterValue, false);
-                            }
-                            if (filterValue instanceof Date) {
-                                Date value = (Date) filterValue;
-                                Calendar c = Calendar.getInstance();
-                                c.setTime(value);
-                                int year = c.get(Calendar.YEAR);
-                                int month = c.get(Calendar.MONTH);
-                                int date = c.get(Calendar.DATE);
-                                c.set(year, month, date, 0, 0, 0);
-                                value = c.getTime();
-                                queryBuilder.addCriterion("a." + minmaxFieldNames[0], "<=", value, false);
-                                queryBuilder.addCriterion("a." + minmaxFieldNames[1], ">=", value, false);
-                            }
+                    } else if ("minmaxRange".equals(condition)) {
+                        if (filterValue instanceof Double) {
+                            BigDecimal rationalNumber = new BigDecimal((Double) filterValue);
+                            queryBuilder.addCriterion("a." + fieldName, " <= ", rationalNumber, false);
+                            queryBuilder.addCriterion("a." + fieldName2, " >= ", rationalNumber, false);
+                        } else if (filterValue instanceof Number) {
+                            queryBuilder.addCriterion("a." + fieldName, " <= ", filterValue, false);
+                            queryBuilder.addCriterion("a." + fieldName2, " >= ", filterValue, false);
+                        }
+                        if (filterValue instanceof Date) {
+                            Date value = (Date) filterValue;
+                            Calendar c = Calendar.getInstance();
+                            c.setTime(value);
+                            int year = c.get(Calendar.YEAR);
+                            int month = c.get(Calendar.MONTH);
+                            int date = c.get(Calendar.DATE);
+                            c.set(year, month, date, 0, 0, 0);
+                            value = c.getTime();
+                            queryBuilder.addCriterion("a." + fieldName, "<=", value, false);
+                            queryBuilder.addCriterion("a." + fieldName2, ">=", value, false);
                         }
 
                         // The value is in between two field values with either them being optional
-                    } else if (key.contains("minmaxOptionalRange-")) {
+                    } else if ("minmaxOptionalRange".equals(condition)) {
 
-                        String parsedKey = key.substring(20);
-                        String[] minmaxFieldNames = parsedKey.split("-");
-                        String paramName = queryBuilder.convertFieldToParam(minmaxFieldNames[0]);
+                        String paramName = queryBuilder.convertFieldToParam(fieldName);
 
-                        String sql = "((a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + " IS NULL) or (a." + minmaxFieldNames[0] + "<=:" + paramName
-                                + " and :" + paramName + "<a." + minmaxFieldNames[1] + ") or (a." + minmaxFieldNames[0] + "<=:" + paramName + " and a." + minmaxFieldNames[1]
-                                + " IS NULL) or (a." + minmaxFieldNames[0] + " IS NULL and :" + paramName + "<a." + minmaxFieldNames[1] + "))";
+                        String sql = "((a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or (a." + fieldName + "<=:" + paramName + " and :" + paramName + "<a."
+                                + fieldName2 + ") or (a." + fieldName + "<=:" + paramName + " and a." + fieldName2 + " IS NULL) or (a." + fieldName + " IS NULL and :" + paramName
+                                + "<a." + fieldName2 + "))";
                         queryBuilder.addSqlCriterionMultiple(sql, paramName, filterValue);
 
                         // The value range is overlapping two field values with either them being optional
-                    } else if (key.contains("overlapOptionalRange-")) {
+                    } else if ("overlapOptionalRange".equals(condition)) {
 
-                        String parsedKey = key.substring(21);
-                        String[] minmaxFieldNames = parsedKey.split("-");
-                        String paramNameFrom = queryBuilder.convertFieldToParam(minmaxFieldNames[0]);
-                        String paramNameTo = queryBuilder.convertFieldToParam(minmaxFieldNames[1]);
+                        String paramNameFrom = queryBuilder.convertFieldToParam(fieldName);
+                        String paramNameTo = queryBuilder.convertFieldToParam(fieldName2);
 
-                        String sql = "(( a." + minmaxFieldNames[0] + " IS NULL and a." + minmaxFieldNames[1] + " IS NULL) or  ( a." + minmaxFieldNames[0] + " IS NULL and a."
-                                + minmaxFieldNames[1] + ">:" + paramNameFrom + ") or (a." + minmaxFieldNames[1] + " IS NULL and a." + minmaxFieldNames[0] + "<:" + paramNameTo
-                                + ") or (a." + minmaxFieldNames[0] + " IS NOT NULL and a." + minmaxFieldNames[1] + " IS NOT NULL and ((a." + minmaxFieldNames[0] + "<=:"
-                                + paramNameFrom + " and :" + paramNameFrom + "<a." + minmaxFieldNames[1] + ") or (:" + paramNameFrom + "<=a." + minmaxFieldNames[0] + " and a."
-                                + minmaxFieldNames[0] + "<:" + paramNameTo + "))))";
+                        String sql = "(( a." + fieldName + " IS NULL and a." + fieldName2 + " IS NULL) or  ( a." + fieldName + " IS NULL and a." + fieldName2 + ">:" + paramNameFrom
+                                + ") or (a." + fieldName2 + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2
+                                + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a."
+                                + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
                         queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
 
-                    } else if (key.contains("likeCriterias-")) {
-                        // if searching elements from list
-                        String parsedKey = key.substring(14);
-                        String[] fields = parsedKey.split("-");
+                        // Any of the multiple field values wildcard or not wildcard match the value (OR criteria)
+                    } else if ("likeCriterias".equals(condition)) {
+
                         queryBuilder.startOrClause();
-                        for (String field : fields) {
-                            if (filterValue instanceof String) {
-                                String filterString = (String) filterValue;
+                        if (filterValue instanceof String) {
+                            String filterString = (String) filterValue;
+                            for (String field : fields) {
                                 queryBuilder.addCriterionWildcard("a." + field, filterString, true);
                             }
                         }
                         queryBuilder.endOrClause();
 
-                        // if not ranged search
-                    } else if (key.contains(SEARCH_FIELD1_OR_FIELD2)) {
+                        // Any of the multiple field values wildcard match the value (OR criteria) - a diference from "likeCriterias" is that wildcard will be appended to the value
+                        // automatically
+                    } else if (SEARCH_WILDCARD_OR.equals(condition)) {
                         queryBuilder.startOrClause();
-                        queryBuilder.addSql("a." + fieldName + " like '%" + filterValue + "%'");
-                        queryBuilder.addSql("a." + fieldName2 + " like '%" + filterValue + "%'");
+                        for (String field : fields) {
+                            queryBuilder.addSql("a." + field + " like '%" + filterValue + "%'");
+                        }
                         queryBuilder.endOrClause();
 
                         // Search by additional Sql clause with specified parameters
-                    } else if (key.startsWith(SEARCH_SQL)) {
+                    } else if (SEARCH_SQL.equals(key)) {
                         String additionalSql = (String) ((Object[]) filterValue)[0];
                         Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);
                         queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
@@ -827,6 +891,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         // log.trace("Filters is {}", filters);
         // log.trace("Query is {}", queryBuilder.getSqlString());
+        // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
     }
 
