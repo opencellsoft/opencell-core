@@ -803,8 +803,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				ServiceTemplate stSource = bsm.getServiceTemplate();
 				ServiceTemplate stTarget = new ServiceTemplate();
 				stTarget.setCode(stSource.getCode());
-				stTarget.setDescription(stSource.getDescription());
-				stTarget.clearUuid();
+                stTarget.setDescription(stSource.getDescription() + " (" + bsm.getDescriptionOrCode() + ")");
+                stTarget.clearUuid();
 				stTarget.clearCfValues();
 				stTarget.setInstantiatedFromBSM(true);
 				
