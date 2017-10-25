@@ -1377,15 +1377,19 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Generate XML and PDF files for Invoice.
+     * Generate XML (if neeed) and PDF files for Invoice.
      * 
      * @param invoice Invoice
+     * @param regenerate Regenerate XML and PDF files ignoring id they exist already
      * @return invoice
+     * 
      * @throws BusinessException business exception
      */
-    public Invoice generateXmlAndPdfInvoice(Invoice invoice) throws BusinessException {
+    public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
 
-        produceInvoiceXmlNoUpdate(invoice);
+        if (regenerate || !isInvoiceXmlExist(invoice)) {
+            produceInvoiceXmlNoUpdate(invoice);
+        }
         invoice = produceInvoicePdf(invoice);
         return invoice;
     }

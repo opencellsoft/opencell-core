@@ -374,13 +374,10 @@ public interface SettingsWs extends IBaseWs {
     ActionStatus updateRole(@WebParam(name = "role") RoleDto postData);
 
     @WebMethod
-    ActionStatus removeRole(@WebParam(name = "role") String name, @WebParam(name = "provider") String provider);
+    ActionStatus removeRole(@WebParam(name = "role") String name);
 
     @WebMethod
-    GetRoleResponse findRole(@WebParam(name = "roleName") String name, @WebParam(name = "provider") String provider);
-
-    @WebMethod
-    GetRoleResponse findRole4_2(@WebParam(name = "roleName") String name);
+    GetRoleResponse findRole(@WebParam(name = "roleName") String name);
 
     @WebMethod
     ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);

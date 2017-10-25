@@ -12,7 +12,7 @@ import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
 import org.meveo.api.dto.billing.WalletReservationDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
-import org.meveo.api.dto.response.Paging;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 
@@ -65,10 +65,11 @@ public interface WalletWs extends IBaseWs {
     /**
      * List wallet operations matching a given criteria
      * 
-     * @param postData Search criteria
-     * @param paging Pagination criteria
+     * @param postData Search criteria. Deprecated in v.4.7.2. Use pagingAndFiltering instead
+     * @param pagingAndFiltering Pagination and filtering criteria
      * @return
      */
     @WebMethod
-    FindWalletOperationsResponseDto findOperations(@WebParam(name = "findWalletOperations") FindWalletOperationsDto postData, @WebParam(name = "paging") Paging paging);
+    FindWalletOperationsResponseDto findOperations(@Deprecated @WebParam(name = "findWalletOperations") FindWalletOperationsDto postData,
+            @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 }
