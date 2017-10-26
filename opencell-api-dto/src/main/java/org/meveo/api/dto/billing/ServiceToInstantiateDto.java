@@ -27,7 +27,7 @@ public class ServiceToInstantiateDto implements Serializable {
     private String code;
     
     @XmlAttribute
-    private String descriptionOverride;
+    private String description;
 
     @XmlElement(required = true)
     private BigDecimal quantity;
@@ -109,12 +109,12 @@ public class ServiceToInstantiateDto implements Serializable {
 		this.rateUntilDate = rateUtilDate;
 	}
 
-    public String getDescriptionOverride() {
-        return descriptionOverride;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescriptionOverride(String descriptionOverride) {
-        this.descriptionOverride = descriptionOverride;
+    public void setDescription(String description) {
+        this.description = description;
     }
     
 }

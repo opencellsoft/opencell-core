@@ -417,7 +417,7 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    String descriptionOverride = !StringUtils.isBlank(serviceToActivateDto.getDescriptionOverride()) ? serviceToActivateDto.getDescriptionOverride() : null;
+                    String descriptionOverride = !StringUtils.isBlank(serviceToActivateDto.getDescription()) ? serviceToActivateDto.getDescription() : null;
                     serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
                     if (serviceToActivateDto.getSubscriptionDate() != null) {
@@ -428,8 +428,8 @@ public class SubscriptionApi extends BaseApi {
                     throw e;
                 }
             } else {
-                if(!StringUtils.isBlank(serviceToActivateDto.getDescriptionOverride())) {
-                    serviceInstance.setDescription(serviceToActivateDto.getDescriptionOverride());    
+                if(!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
+                    serviceInstance.setDescription(serviceToActivateDto.getDescription());    
                 }
             }
 
@@ -574,7 +574,7 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    String descriptionOverride = !StringUtils.isBlank(serviceToInstantiateDto.getDescriptionOverride()) ? serviceToInstantiateDto.getDescriptionOverride() : null; 
+                    String descriptionOverride = !StringUtils.isBlank(serviceToInstantiateDto.getDescription()) ? serviceToInstantiateDto.getDescription() : null; 
                     serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
                 } catch (BusinessException e) {
@@ -1226,8 +1226,8 @@ public class SubscriptionApi extends BaseApi {
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
             }
             
-            if (!StringUtils.isBlank(serviceToUpdateDto.getDescriptionOverride())) {
-                serviceToUpdate.setDescription(serviceToUpdateDto.getDescriptionOverride());
+            if (!StringUtils.isBlank(serviceToUpdateDto.getDescription())) {
+                serviceToUpdate.setDescription(serviceToUpdateDto.getDescription());
             }
 
             // populate customFields
