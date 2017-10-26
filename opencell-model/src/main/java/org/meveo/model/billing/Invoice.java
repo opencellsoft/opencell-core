@@ -49,6 +49,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -620,7 +621,8 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     }
 
     public void setPdfFilename(String pdfFilename) {
-        this.pdfFilename = pdfFilename;
+	
+        this.pdfFilename = StringUtils.normalizeFileName(pdfFilename);
     }
 
     /**
@@ -647,7 +649,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     }
 
     public void setXmlFilename(String xmlFilename) {
-        this.xmlFilename = xmlFilename;
+        this.xmlFilename = StringUtils.normalizeFileName(xmlFilename);;
     }
 
     /**
@@ -655,12 +657,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
      * 
      * @return XML file name without any subdirectories it might contain.
      */
-    public String getXmlFilenameOnly() {
-	
-	System.out.println("\n\n\n\n getXmlFilenameOnly \n\n\n\n");
-	System.out.println("\n\n\n\n xmlFilename="+xmlFilename+" \n\n\n\n");
-	
-
+    public String getXmlFilenameOnly() {	
         int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
         if (pos > -1) {
             return xmlFilename.substring(pos + 1);
