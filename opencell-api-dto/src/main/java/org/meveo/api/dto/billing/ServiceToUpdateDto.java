@@ -21,6 +21,7 @@ public class ServiceToUpdateDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
+    private String descriptionOverride;
     private Date actionDate;    
     private Date endAgreementDate;
     private CustomFieldsDto customFields;
@@ -61,5 +62,13 @@ public class ServiceToUpdateDto implements Serializable {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+    public String getDescriptionOverride() {
+        return descriptionOverride;
+    }
+
+    public void setDescriptionOverride(String descriptionOverride) {
+        this.descriptionOverride = descriptionOverride;
+    }
     
     }

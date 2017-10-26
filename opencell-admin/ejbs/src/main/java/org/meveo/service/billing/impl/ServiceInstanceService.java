@@ -693,4 +693,22 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	return serviceInstance;
     }
 
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> listServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+        List<ServiceInstance> serviceInstances = null;
+        try {
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            qb.addCriterion("c.code", "=", serviceInstanceCode, true);
+            qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", serviceInstanceCode, serviceInstances != null });
+        } catch (NoResultException nre) {
+            log.debug("listServiceInstance : no service has been found");
+        } catch (Exception e) {
+            log.error("listServiceInstance error={} ", e.getMessage());
+        }
+
+        return serviceInstances;
+    }
+
 }

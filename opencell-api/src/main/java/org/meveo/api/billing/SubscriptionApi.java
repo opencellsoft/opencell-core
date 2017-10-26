@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -1224,6 +1225,10 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
             }
+            
+            if (!StringUtils.isBlank(serviceToUpdateDto.getDescriptionOverride())) {
+                serviceToUpdate.setDescription(serviceToUpdateDto.getDescriptionOverride());
+            }
 
             // populate customFields
             try {
@@ -1417,5 +1422,26 @@ public class SubscriptionApi extends BaseApi {
         }
 
         return renewalInfo;
+    }
+
+    public List<ServiceInstanceDto> listServiceInstance(String subscriptionCode, String serviceInstanceCode) throws MissingParameterException {
+        List<ServiceInstanceDto> result = new ArrayList<>();
+
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        if (StringUtils.isBlank(serviceInstanceCode)) {
+            missingParameters.add("serviceInstanceCode");
+        }
+
+        handleMissingParameters();
+
+        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
+        if (serviceInstances != null && !serviceInstances.isEmpty()) {
+            result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsWithInheritedDTO(p, true))).collect(Collectors.toList());
+        }
+
+        return result;
     }
 }
