@@ -322,7 +322,6 @@
 									editable="true" editMode="cell">
 
 									<p:ajax event="cellEdit"
-										
 										update=":subscriptionTab:headerInfo1:messages" />
 
 									<p:column selectionMode="multiple" width="4%" />
@@ -344,8 +343,9 @@
 								</p:dataTable>
 							</p:outputPanel>
 
-
 							<h:panelGroup id="instantiatePanelActions" rendered="#{subscriptionBean.canUserUpdateEntity()}">
+								<h:outputText styleClass="note FRight" value="*#{messages['serviceTemplate.descriptionOverride']} #{messages['label.isEditable']}"></h:outputText>
+								<br />
 								<p:outputLabel for="quantity"
 									value="#{messages['serviceInstance.quantity']}:"></p:outputLabel>
 								<p:inputText id="quantity" value="#{subscriptionBean.quantity}"
