@@ -92,9 +92,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     private static final long serialVersionUID = 1L;
 
     @Inject
-    private Logger log;
-
-    @Inject
     private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
 
     /**
@@ -251,6 +248,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             if (!alreadyInstanciated) {
+                serviceTemplate.setDescriptionOverride(serviceTemplate.getDescription());
                 serviceTemplates.add(serviceTemplate);
             }
         }
