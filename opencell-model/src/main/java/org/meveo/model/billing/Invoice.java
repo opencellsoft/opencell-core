@@ -620,9 +620,8 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         return pdfFilename;
     }
 
-    public void setPdfFilename(String pdfFilename) {
-	
-        this.pdfFilename = StringUtils.normalizeFileName(pdfFilename);
+    public void setPdfFilename(String pdfFilename) {	
+        this.pdfFilename = pdfFilename;
     }
 
     /**
@@ -649,7 +648,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     }
 
     public void setXmlFilename(String xmlFilename) {
-        this.xmlFilename = StringUtils.normalizeFileName(xmlFilename);;
+        this.xmlFilename = xmlFilename;
     }
 
     /**
