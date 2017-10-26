@@ -328,7 +328,7 @@
 									<hftl:column label="#{messages['serviceTemplate.code']}"
 										field="code" />
 									<p:column
-										headerText="#{messages['serviceTemplate.descriptionOverride']}">
+										headerText="#{messages['serviceTemplate.description']}">
 										<p:cellEditor>
 											<f:facet name="output">
 												<h:outputText value="#{entity.descriptionOverride}" />
@@ -342,7 +342,7 @@
 							</p:outputPanel>
 
 							<h:panelGroup id="instantiatePanelActions" rendered="#{subscriptionBean.canUserUpdateEntity()}">
-								<h:outputText styleClass="note FRight" value="*#{messages['serviceTemplate.descriptionOverride']} #{messages['label.isEditable']}"></h:outputText>
+								<h:outputText styleClass="note FRight" value="*#{messages['serviceTemplate.description']} #{messages['label.isEditable']}"></h:outputText>
 								<br />
 								<p:outputLabel for="quantity"
 									value="#{messages['serviceInstance.quantity']}:"></p:outputLabel>
