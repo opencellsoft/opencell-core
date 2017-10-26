@@ -170,7 +170,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id) {
-        return findById(id, false);
+
+        log.trace("Find {}/{} by id", entityClass.getSimpleName(), id);
+        return getEntityManager().find(entityClass, id);
+
     }
 
     /**
@@ -178,17 +181,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-        final Class<? extends E> productClass = getEntityClass();
-        E e = getEntityManager().find(productClass, id);
+        log.trace("start of find {}/{} by id ..", entityClass.getSimpleName(), id);
+        E e = getEntityManager().find(entityClass, id);
         if (e != null) {
             if (refresh) {
                 log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        log.trace("end of find {}/{} by id. Result found={}.", entityClass.getSimpleName(), id, e != null);
         return e;
+
     }
 
     /**
@@ -204,7 +207,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings("unchecked")
     public E findById(Long id, List<String> fetchFields, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        log.debug("start of find {}/{} by id ..", getEntityClass().getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -225,7 +228,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        log.trace("end of find {}/{} by id. Result found={}.", getEntityClass().getSimpleName(), id, e != null);
         return e;
     }
 
@@ -541,6 +544,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E refreshOrRetrieve(E entity) {
 
         if (getEntityManager().contains(entity)) {
+            log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);
             return entity;
         } else {
@@ -893,10 +897,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
-    }
-
-    public E attach(E entity) {
-        return (E) getEntityManager().merge(entity);
     }
 
     protected boolean isConversationScoped() {

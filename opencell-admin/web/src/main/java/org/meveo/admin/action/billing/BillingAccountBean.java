@@ -18,19 +18,15 @@
  */
 package org.meveo.admin.action.billing;
 
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import javax.enterprise.inject.Produces;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletResponse;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -42,8 +38,6 @@ import org.meveo.admin.util.ListItemsSelector;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
-import org.meveo.model.billing.BillingRun;
-import org.meveo.model.billing.BillingRunStatusEnum;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
@@ -157,11 +151,9 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        entity.setCustomerAccount(customerAccountService.attach(entity.getCustomerAccount()));
+        entity.setCustomerAccount(customerAccountService.findById(entity.getCustomerAccount().getId()));
 
         try {
-
-            entity.setCustomerAccount(customerAccountService.refreshOrRetrieve(entity.getCustomerAccount()));
 
             if (entity.isTransient()) {
                 billingAccountService.initBillingAccount(entity);
@@ -192,7 +184,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
         log.debug("terminateAccount billingAccountId: {}", entity.getId());
         try {
 
-            entity = billingAccountService.attach(entity);
+            entity = billingAccountService.refreshOrRetrieve(entity);
             entity = billingAccountService.billingAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
@@ -207,7 +199,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
     public String cancelAccount() {
         log.info("cancelAccount billingAccountId:" + entity.getId());
         try {
-            entity = billingAccountService.attach(entity);
+            entity = billingAccountService.refreshOrRetrieve(entity);
             entity = billingAccountService.billingAccountCancellation(entity, new Date());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 

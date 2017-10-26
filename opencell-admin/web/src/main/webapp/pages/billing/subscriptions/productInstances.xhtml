@@ -31,7 +31,7 @@
 
             <h:panelGroup id="applyProductPanel">
                 <hftl:formPanel edit="#{parentEntityIsEditable and parentBackingBean.productInstance.transient}" backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" styleClass="formPanel" formId="applyProductForm"
-                    showFormButtons="false" rendered="#{parentBackingBean.productInstance!=null}">
+                    showFormButtons="false" rendered="#{parentBackingBean.productInstance!=null}" label="#{messages['productInstance.details']}">
                     <hftl:formField label="#{messages['commons.quantity']}" field="quantity" required="true" width="10" allowEdit="false" />
                     <hftl:formField label="#{messages['chargeApplication.applicationDate']}" field="applicationDate" required="true" listenerUpdate="productTemplatePopup" allowEdit="false" />
                     <hftl:formField id="productTemplateSelectedId" label="#{messages['productTemplate.title']}" field="productTemplate" popup="true" required="true" popupId="productTemplatePopup"

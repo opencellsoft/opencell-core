@@ -291,7 +291,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
-        this.oneShotChargeInstance = oneShotChargeInstanceService.attach(oneShotChargeIns);
+        this.oneShotChargeInstance = oneShotChargeInstanceService.refreshOrRetrieve(oneShotChargeIns);
 
         selectedWalletTemplate = new WalletTemplate();
         selectedWalletTemplateCode = null;
@@ -312,7 +312,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             entity = subscriptionService.refreshOrRetrieve(entity);
             String description = oneShotChargeInstance.getDescription();
-            oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.attach((OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate()));
+            oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId()));
             oneShotChargeInstance.setDescription(description);
 
             if (oneShotChargeInstance.getChargeDate() == null) {
@@ -350,7 +350,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void editRecurringChargeIns(RecurringChargeInstance recurringChargeIns) {
-        this.recurringChargeInstance = recurringChargeInstanceService.attach(recurringChargeIns);
+        this.recurringChargeInstance = recurringChargeInstanceService.refreshOrRetrieve(recurringChargeIns);
     }
 
     public void saveRecurringChargeIns() {
@@ -459,7 +459,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void instanciateManyServices() {
-        log.debug("instanciateManyServices");
+
         try {
             if (quantity == null || quantity.compareTo(BigDecimal.ZERO) <= 0) {
                 log.warn("instanciateManyServices quantity is negative! set it to 1");
@@ -467,13 +467,13 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
             boolean isChecked = false;
 
-            entity = subscriptionService.attach(entity);
+            entity = subscriptionService.refreshOrRetrieve(entity);
 
             log.debug("Instantiating serviceTemplates {}", serviceTemplates.getSelectedItemsAsList());
 
             for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 
-                serviceTemplate = serviceTemplateService.attach(serviceTemplate);
+                serviceTemplate = serviceTemplateService.findById(serviceTemplate.getId());
 
                 isChecked = true;
                 log.debug("instanciateManyServices id={} checked, quantity={}", serviceTemplate.getId(), quantity);
@@ -529,18 +529,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     return;
                 }
 
-                // Replace selected service instance with a EM attached entity
-                entity = subscriptionService.attach(entity);
-                selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
-                int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
-                entity.getServiceInstances().remove(index);
-                entity.getServiceInstances().add(index, selectedServiceInstance);
+                // Obtain EM attached service instance entity
+                entity = subscriptionService.refreshOrRetrieve(entity);
+                selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
 
                 log.debug("activateService:serviceInstance.getRecurrringChargeInstances.size={}", selectedServiceInstance.getRecurringChargeInstances().size());
 
                 serviceInstanceService.serviceActivation(selectedServiceInstance, null, null);
+                subscriptionService.refresh(entity);
 
                 initServiceInstances(entity.getServiceInstances());
+                initServiceTemplates();
                 resetChargesDataModels();
 
             } else {
@@ -623,18 +622,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 new Object[] { newSubscriptionTerminationReason != null ? newSubscriptionTerminationReason.getId() : null, terminationDate, selectedServiceInstance.getId(),
                         selectedServiceInstance.getStatus() });
 
-            // Replace selected service instance with a EM attacked entity
-            entity = subscriptionService.attach(entity);
-            selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
-            int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
-            entity.getServiceInstances().remove(index);
-            entity.getServiceInstances().add(index, selectedServiceInstance);
+            // Obtain EM attached service instance entity
+            entity = subscriptionService.refreshOrRetrieve(entity);
+            selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
 
             if (selectedServiceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
                 serviceInstanceService.terminateService(selectedServiceInstance, terminationDate, newSubscriptionTerminationReason, entity.getOrderNumber());
             } else {
                 serviceInstanceService.updateTerminationMode(selectedServiceInstance, terminationDate);
             }
+
+            subscriptionService.refresh(entity);
 
             initServiceInstances(entity.getServiceInstances());
             initServiceTemplates();
@@ -699,17 +697,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void suspendService() {
         try {
-            // Replace selected service instance with a EM attacked entity
-            entity = subscriptionService.attach(entity);
-            selectedServiceInstance = serviceInstanceService.attach(selectedServiceInstance);
-            int index = entity.getServiceInstances().indexOf(selectedServiceInstance);
-            entity.getServiceInstances().remove(index);
-            entity.getServiceInstances().add(index, selectedServiceInstance);
+            // Obtain EM attached service instance entity
+            entity = subscriptionService.refreshOrRetrieve(entity);
+            selectedServiceInstance = entity.getServiceInstances().get(entity.getServiceInstances().indexOf(selectedServiceInstance));
 
             serviceInstanceService.serviceSuspension(selectedServiceInstance, new Date());
 
-            initServiceInstances(entity.getServiceInstances());
+            subscriptionService.refresh(entity);
 
+            initServiceInstances(entity.getServiceInstances());
+            initServiceTemplates();
+            resetChargesDataModels();
+            
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 
@@ -777,7 +776,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public void editUsageChargeIns(UsageChargeInstance chargeInstance) {
-        this.usageChargeInstance = usageChargeInstanceService.attach(chargeInstance);
+        this.usageChargeInstance = usageChargeInstanceService.refreshOrRetrieve(chargeInstance);
         log.debug("setting usageChargeIns " + chargeInstance);
     }
 
@@ -806,17 +805,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         List<WalletTemplate> result = new ArrayList<WalletTemplate>();
 
-        OneShotChargeTemplate oneShotChargeTemplate = null;
+        OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
 
-        if (oneShotChargeInstance.getChargeTemplate() instanceof OneShotChargeTemplate) {
-            oneShotChargeTemplate = (OneShotChargeTemplate) oneShotChargeInstance.getChargeTemplate();
-        } else {
-            oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
-        }
-
-        OneShotChargeTemplate chargeTemplate = oneShotChargeTemplateService.attach(oneShotChargeTemplate);
-
-        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService.findBySubscriptionChargeTemplate(chargeTemplate);
+        List<ServiceChargeTemplateSubscription> serviceChargeTemplateSubscriptions = serviceChargeTemplateSubscriptionService
+            .findBySubscriptionChargeTemplate(oneShotChargeTemplate);
 
         if (serviceChargeTemplateSubscriptions != null) {
             for (ServiceChargeTemplateSubscription serviceChargeTemplateSubscription : serviceChargeTemplateSubscriptions) {
