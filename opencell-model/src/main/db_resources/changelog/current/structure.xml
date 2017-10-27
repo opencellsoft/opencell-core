@@ -1102,7 +1102,7 @@
 		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ;</sql>
 		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ;</sql>
-		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template((lower(code)));</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(lower(code));</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index;</sql>
 		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_title_id_index;</sql>
@@ -1207,7 +1207,7 @@
 		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ON cat_offer_product_template;</sql>
 		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ON cat_service_template;</sql>
-		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code));</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index ON account_entity;</sql>
 		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_title_id_index ON account_entity;</sql>
