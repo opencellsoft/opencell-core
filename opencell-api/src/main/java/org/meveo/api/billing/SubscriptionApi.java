@@ -528,7 +528,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
             if (alreadyinstanciated) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " must instanciated.");
+                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instantiated.");
             }
             if (serviceInstance == null) {
                 serviceInstance = new ServiceInstance();
