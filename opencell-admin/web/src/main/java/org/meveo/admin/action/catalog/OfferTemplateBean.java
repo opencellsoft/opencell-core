@@ -448,6 +448,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 				if (outcome.equals("mm_offers")) {
 					if (isNewEntity) {
+					    entity.getOfferServiceTemplates().clear();
 						for (OfferServiceTemplate ostGui : sortedOfferServiceTemplates) {
 							if (ostGui.getServiceTemplate().isSelected()) {
 								entity.addOfferServiceTemplate(ostGui);
