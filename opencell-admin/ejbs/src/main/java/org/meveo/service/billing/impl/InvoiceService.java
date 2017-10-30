@@ -524,7 +524,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
             if (billingRun != null) {
                 RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
-                rejectedBillingAccountService.create(rejectedBA);               
+                rejectedBillingAccountService.create(rejectedBA);    
+                //TODO if the invoice is created before the exception will not be rollbacked
             }else {
         		throw e;
             }
