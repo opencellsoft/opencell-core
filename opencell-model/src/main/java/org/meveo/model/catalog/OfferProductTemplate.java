@@ -29,7 +29,12 @@ import org.meveo.model.IEntity;
 @Table(name = "cat_offer_product_template")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_product_template_seq"), })
-public class OfferProductTemplate implements IEntity {
+public class OfferProductTemplate implements IEntity, Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = -3681938016130405800L;
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)

@@ -1139,6 +1139,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
         }
+        xmlFileName = StringUtils.normalizeFileName(xmlFileName);
         return xmlFileName;
     }
 
@@ -1210,6 +1211,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!pdfFileName.toLowerCase().endsWith(".pdf")) {
             pdfFileName = pdfFileName + ".pdf";
         }
+        pdfFileName = StringUtils.normalizeFileName(pdfFileName);
         return pdfFileName;
     }
 
