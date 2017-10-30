@@ -227,4 +227,15 @@ public class StringUtils {
 		return m.find();
 	}
     
+   
+    public static String normalizeFileName(String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        String newValue = enleverAccent(value);
+        newValue = newValue.replaceAll("[\\\\/:*?\"<>|]", "");
+        newValue = newValue.replaceAll("\\s+", "_");
+        return newValue;
+    }
+    
 }

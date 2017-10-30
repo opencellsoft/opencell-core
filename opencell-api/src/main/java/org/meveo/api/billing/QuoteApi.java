@@ -128,8 +128,9 @@ public class QuoteApi extends BaseApi {
      * @throws MeveoApiException
      */
     public ProductQuote createQuote(ProductQuote productQuote) throws MeveoApiException, BusinessException {
-
-        if (productQuote.getQuoteItem() == null || productQuote.getQuoteItem().isEmpty()) {
+    	
+        List<ProductQuoteItem> quoteItem1 = productQuote.getQuoteItem();
+		if (quoteItem1 == null || quoteItem1.isEmpty()) {
             missingParameters.add("quoteItem");
         }
         if (productQuote.getQuoteDate() == null) {
@@ -137,9 +138,11 @@ public class QuoteApi extends BaseApi {
         }
 
         handleMissingParameters();
-
-        if (productQuote.getCharacteristic().size() > 0) {
-            for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
+        
+        List<Characteristic> characteristic = productQuote.getCharacteristic();
+        
+		if (characteristic.size() > 0) {
+            for (Characteristic quoteCharacteristic : characteristic) {
                 if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT.getCharacteristicName())) {
                     String scriptCode = quoteCharacteristic.getValue();
                     Map<String, Object> context = new HashMap<>();
@@ -177,8 +180,10 @@ public class QuoteApi extends BaseApi {
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
             if (!StringUtils.isEmpty(billingAccountId)) {
-
-                quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
+                //quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
+            	quoteLevelUserAccount = (UserAccount) userAccountService.getEntityManager()
+            			.createNamedQuery("UserAccount.findByCode")
+            			.setParameter("code", billingAccountId).getSingleResult();
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
@@ -186,8 +191,7 @@ public class QuoteApi extends BaseApi {
             }
         }
 
-        for (ProductQuoteItem productQuoteItem : productQuote.getQuoteItem()) {
-
+        for (ProductQuoteItem productQuoteItem : quoteItem1) {
             UserAccount itemLevelUserAccount = null;
 
             if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
@@ -308,8 +312,8 @@ public class QuoteApi extends BaseApi {
 
         quoteService.create(quote);
 
-        if (productQuote.getCharacteristic().size() > 0) {
-            for (Characteristic quoteCharacteristic : productQuote.getCharacteristic()) {
+        if (characteristic.size() > 0) {
+            for (Characteristic quoteCharacteristic : characteristic) {
                 if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.POST_QUOTE_SCRIPT.getCharacteristicName())) {
                     String scriptCode = quoteCharacteristic.getValue();
                     Map<String, Object> context = new HashMap<>();

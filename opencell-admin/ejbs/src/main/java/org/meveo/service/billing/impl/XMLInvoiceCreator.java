@@ -657,9 +657,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("description", description != null ? description : "");
 
             addCustomFields(userAccount, doc, userAccountTag);
-
-            List<ServiceInstance> allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions);
-
+            List<ServiceInstance> allServiceInstances = new ArrayList<ServiceInstance>();
+            if(!isVirtual) { // if it is not virtual (not quote) add all subscriptions to XML (DO NOT KNOW if required or NO)
+            	allServiceInstances = addSubscriptions(userAccount, doc, userAccountTag, invoiceTag, subscriptions);
+            }
             if (displayDetail) {
                 userAccountsTag.appendChild(userAccountTag);
                 addNameAndAdress(userAccount, doc, userAccountTag, billingAccountLanguage);

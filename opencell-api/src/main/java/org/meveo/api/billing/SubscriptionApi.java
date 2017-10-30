@@ -313,8 +313,6 @@ public class SubscriptionApi extends BaseApi {
         }
 
         subscription = subscriptionService.refreshOrRetrieve(subscription);
-        subscription.getOffer().getOfferServiceTemplates().size();
-
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
@@ -539,7 +537,7 @@ public class SubscriptionApi extends BaseApi {
             }
 
             if (alreadyinstanciated) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " must instanciated.");
+                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instantiated.");
             }
             if (serviceInstance == null) {
                 serviceInstance = new ServiceInstance();
