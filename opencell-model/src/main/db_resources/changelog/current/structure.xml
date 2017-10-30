@@ -1259,5 +1259,16 @@
 		<sql>CREATE INDEX  cat_chrg_edr_chtmpl_index ON cat_chrg_edr(charge_tmpl_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
 		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
-    </changeSet>                  
+    </changeSet>     
+    
+    <changeSet id="#2994_20171026" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+    </changeSet>
+    
+                 
 </databaseChangeLog> 
