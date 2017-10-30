@@ -54,7 +54,7 @@
 						</f:facet>
 						<p:commandButton id="editOneShotChgInsLink"
 							action="#{subscriptionBean.editOneShotChargeIns(entity)}"
-							rendered="#{subscriptionBean.canUserUpdateEntity()}"
+							rendered="#{subscriptionBean.canUserUpdateEntity()} and subscriptionBean.edit}"
 							update=":#{p:component('oneShotChgForm1')} :#{p:component('oneShotChgDiv')}"
 							icon="ui-icon-document">
 							<f:setPropertyActionListener value="true"
@@ -74,7 +74,7 @@
 				<p:commandButton
 					value="#{messages['subscription.oneShotChgButton']}"
 					actionListener="#{subscriptionBean.newOneShotChargeInstance}"
-					rendered="#{subscriptionBean.canUserUpdateEntity()}"
+					rendered="#{subscriptionBean.canUserUpdateEntity() and subscriptionBean.edit}"
 					update=":#{p:component('oneShotChgDiv')}">
 					<f:setPropertyActionListener value="true"
 						target="#{subscriptionBean.showApplyOneShotForm}" />
@@ -195,7 +195,7 @@
 							field="criteria3" edit="true" />
 						<hftl:decorateFormField fieldId="quantity"
 							label="#{subscriptionBean.oneShotChargeInstance.subscriptionServiceInstance ne null ? messages['oneShotChargeInstance.serviceQuantity'] : messages['serviceInstance.quantity']}">
-							<p:inputText id="quantity" rendered="#{subscriptionBean.edit}"
+							<p:inputText id="quantity" 
 								value="#{subscriptionBean.oneShotChargeInstanceQuantity}"
 								size="5" maxlength="3">
 							</p:inputText>
