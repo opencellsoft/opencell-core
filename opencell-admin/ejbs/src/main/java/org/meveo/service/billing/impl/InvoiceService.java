@@ -413,7 +413,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
 
-        try {
+        try {           
             BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
             if (billingCycle == null) {
                 billingCycle = billingAccount.getBillingCycle();
@@ -491,6 +491,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             for (int i = 0; i < invoiceNumber.length(); i++) {
                 key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
             }
+            
+
 
             invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
             // getEntityManager().merge(invoice);
@@ -522,9 +524,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
             if (billingRun != null) {
                 RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
-                rejectedBillingAccountService.create(rejectedBA);
+                rejectedBillingAccountService.create(rejectedBA);               
+            }else {
+        		throw e;
             }
-            throw e;
         }
         return invoice;
     }
