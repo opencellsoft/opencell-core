@@ -233,7 +233,7 @@ public class StringUtils {
             return value;
         }
         String newValue = enleverAccent(value);
-        newValue = newValue.replaceAll("[\\\\/:*?\"<>|]", "");
+        newValue = newValue.replaceAll("[:*?\"<>|]", "");
         newValue = newValue.replaceAll("\\s+", "_");
         return newValue;
     }
