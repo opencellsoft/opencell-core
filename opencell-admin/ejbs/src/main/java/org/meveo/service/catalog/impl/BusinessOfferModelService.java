@@ -301,15 +301,6 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
         return newOfferProductTemplates;
     }
-    
-	private void findNonTransientDuplicateAndRemove(List<OfferServiceTemplate> offerServiceTemplates, ServiceTemplate serviceTemplate) {
-		for (OfferServiceTemplate ost : offerServiceTemplates) {
-			if (ost.getServiceTemplate().equals(serviceTemplate) && !ost.isTransient()) {
-				offerServiceTemplates.remove(ost);
-				break;
-			}
-		}
-	}
 
 	private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer, OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
 			BusinessOfferModel businessOfferModel) throws BusinessException {
@@ -375,6 +366,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
             ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
             for (ServiceConfigurationDto tempServiceCodeDto : serviceCodes) {
                 String serviceCode = tempServiceCodeDto.getCode();
+                // set match to true when a match is found
                 if (serviceCode.equals(serviceTemplate.getCode()) && !tempServiceCodeDto.isMatch()) {
                 	tempServiceCodeDto.setMatch(true);
                     serviceConfigurationDto = tempServiceCodeDto;
