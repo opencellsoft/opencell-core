@@ -41,7 +41,7 @@
                     <hftl:formField id="subscriptionSelectedId" label="#{messages['serviceInstance.subscription']}" field="subscription" valueLabelField="code" required="true"
                         popup="true" popupId="subscriptionPopup" allowEdit="false" />
 
-                    <hftl:formField label="#{messages['serviceInstance.description']}" field="description" size="40" allowEdit="false" />
+                    <hftl:formField label="#{messages['serviceInstance.description']}" field="description" allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />
                     <hftl:formField label="#{messages['serviceInstance.status']}" field="status" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.statusDate']}" field="statusDate" allowEdit="false" />
                     <hftl:formField label="#{messages['serviceInstance.subscriptionDate']}" field="subscriptionDate" allowEdit="#{serviceInstanceBean.entity.status eq 'INACTIVE'}" />

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -414,7 +415,8 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
+                    String descriptionOverride = !StringUtils.isBlank(serviceToActivateDto.getDescription()) ? serviceToActivateDto.getDescription() : null;
+                    serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
                     if (serviceToActivateDto.getSubscriptionDate() != null) {
                         serviceInstances.add(serviceInstance);
@@ -422,6 +424,10 @@ public class SubscriptionApi extends BaseApi {
                 } catch (BusinessException e) {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToActivateDto.getCode(), subscription.getCode(), e);
                     throw e;
+                }
+            } else {
+                if(!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
+                    serviceInstance.setDescription(serviceToActivateDto.getDescription());    
                 }
             }
 
@@ -566,7 +572,8 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
+                    String descriptionOverride = !StringUtils.isBlank(serviceToInstantiateDto.getDescription()) ? serviceToInstantiateDto.getDescription() : null; 
+                    serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
                 } catch (BusinessException e) {
                     log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
@@ -1216,6 +1223,10 @@ public class SubscriptionApi extends BaseApi {
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
             }
+            
+            if (!StringUtils.isBlank(serviceToUpdateDto.getDescription())) {
+                serviceToUpdate.setDescription(serviceToUpdateDto.getDescription());
+            }
 
             // populate customFields
             try {
@@ -1409,5 +1420,26 @@ public class SubscriptionApi extends BaseApi {
         }
 
         return renewalInfo;
+    }
+
+    public List<ServiceInstanceDto> listServiceInstance(String subscriptionCode, String serviceInstanceCode) throws MissingParameterException {
+        List<ServiceInstanceDto> result = new ArrayList<>();
+
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        if (StringUtils.isBlank(serviceInstanceCode)) {
+            missingParameters.add("serviceInstanceCode");
+        }
+
+        handleMissingParameters();
+
+        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
+        if (serviceInstances != null && !serviceInstances.isEmpty()) {
+            result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsWithInheritedDTO(p, true))).collect(Collectors.toList());
+        }
+
+        return result;
     }
 }
