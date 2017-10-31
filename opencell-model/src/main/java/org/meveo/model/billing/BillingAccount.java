@@ -164,6 +164,10 @@ public class BillingAccount extends AccountEntity {
 
     @Column(name = "invoicing_threshold")
     private BigDecimal invoicingThreshold;
+    
+    @Column(name = "phone", length = 15)
+	@Size(max = 15)
+	protected String phone;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -392,5 +396,13 @@ public class BillingAccount extends AccountEntity {
     public void setInvoicingThreshold(BigDecimal invoicingThreshold) {
         this.invoicingThreshold = invoicingThreshold;
     }
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
 }

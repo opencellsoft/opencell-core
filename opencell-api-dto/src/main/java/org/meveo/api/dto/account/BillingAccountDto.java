@@ -45,9 +45,10 @@ public class BillingAccountDto extends AccountDto {
     private Date statusDate;
     private String terminationReason;
     private String email;
-    private List<InvoiceDto> invoices = new ArrayList<InvoiceDto>();
+    private List<InvoiceDto> invoices = new ArrayList<>();
     private BigDecimal invoicingThreshold;
     private String discountPlan;
+    protected String phone;
 
     /**
      * Field was deprecated in 4.6 version. Use 'paymentMethods' field on CustomerAccount entity instead.
@@ -238,4 +239,12 @@ public class BillingAccountDto extends AccountDto {
     public void setPaymentTerms(String paymentTerms) {
         this.paymentTerms = paymentTerms;
     }
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 }

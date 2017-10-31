@@ -1712,6 +1712,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setElectronicBilling(ba.getElectronicBilling());
 		dto.setStatus(ba.getStatus());
 		dto.setStatusDate(ba.getStatusDate());
+		dto.setPhone(ba.getPhone());
 		if (ba.getTerminationReason() != null) {
 			dto.setTerminationReason(ba.getTerminationReason().getCode());
 		}

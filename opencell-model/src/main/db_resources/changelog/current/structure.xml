@@ -1261,4 +1261,10 @@
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
 		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
     </changeSet>         
+    
+    <changeSet id="#3017_20171031 Add phone to ba" author="EdwardPLegapi">
+    	<addColumn tableName="billing_billing_account">
+    		<column name="phone" type="varchar(15)" />
+    	</addColumn>
+    </changeSet>
 </databaseChangeLog> 
