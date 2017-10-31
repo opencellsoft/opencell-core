@@ -193,4 +193,11 @@ public class OfferServiceTemplate implements IEntity {
 		}
 		return newOst;
 	}
+
+	@Override
+	public String toString() {
+		return "OfferServiceTemplate [id=" + id + ", offerTemplate=" + offerTemplate + ", serviceTemplate="
+				+ serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices
+				+ ", validity=" + validity + "]";
+	}
 }

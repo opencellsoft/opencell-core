@@ -25,7 +25,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
@@ -310,10 +309,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				sortedOfferServiceTemplates = new ArrayList<>();
 				
 				// add all offer service templates
+				log.debug("IPIEL: adding entity ost " + entity.getOfferServiceTemplates());
 				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
 				
 				// add bsm service templates
 				if (getBsmServiceTemplates() != null) {
+					log.debug("IPIEL: adding BSM services " + getBsmServiceTemplates());
 					for (OfferServiceTemplate ost : getBsmServiceTemplates()) {
 						if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isInstantiatedFromBSM()) {
 							sortedOfferServiceTemplates.add(ost);
@@ -327,6 +328,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						ostOffer.getServiceTemplate().setSelected(true);
 					}
 
+					log.debug("IPIEL: adding services from entity's bom's offer " + entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates());
 					for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates()) {
 						boolean found = false;
 						for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
