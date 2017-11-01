@@ -369,7 +369,7 @@ public class CatalogHierarchyBuilderService {
 			serviceTemplateService.create(newServiceTemplate);
 
 			// update code if duplicate
-			if (serviceConfiguration.isInstantiatedFromBSM()) {
+			if (instantiatedFromBOM) {
 			    prefix = prefix + newServiceTemplate.getId() + "_";
 				newServiceTemplate.setCode(prefix + serviceTemplate.getCode());
 				newServiceTemplate = serviceTemplateService.update(newServiceTemplate);

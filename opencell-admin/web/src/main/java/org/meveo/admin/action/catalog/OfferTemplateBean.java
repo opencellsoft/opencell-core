@@ -62,7 +62,6 @@ import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.primefaces.event.TransferEvent;
 import org.primefaces.model.DualListModel;
 
 /**
@@ -122,8 +121,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private BusinessOfferModel businessOfferModel;
 	private List<ProductTemplate> productTemplatesLookup;
 	private List<OfferServiceTemplate> sortedOfferServiceTemplates;
-	private DualListModel<BusinessServiceModel> bsmsDualListModel;
 	private List<OfferServiceTemplate> bsmServiceTemplates;
+	private List<BusinessServiceModel> businessServiceModels;
+	private List<BusinessServiceModel> selectedBsms;
 
 	/**
 	 * Constructor. Invokes super constructor and provides class type of this bean
@@ -311,16 +311,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				// add all offer service templates
 				log.debug("IPIEL: adding entity ost " + entity.getOfferServiceTemplates());
 				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
-				
-				// add bsm service templates
-				if (getBsmServiceTemplates() != null) {
-					log.debug("IPIEL: adding BSM services " + getBsmServiceTemplates());
-					for (OfferServiceTemplate ost : getBsmServiceTemplates()) {
-						if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isInstantiatedFromBSM()) {
-							sortedOfferServiceTemplates.add(ost);
-						}
-					}
-				}
 
 				// duplication, new version
 				if (entity.isTransient() && entity.getBusinessOfferModel() != null) {
@@ -657,26 +647,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	public boolean isNewVersion() {
 		return newVersion;
 	}
-
-	public DualListModel<BusinessServiceModel> getBsmsDualListModel() {
-		if (businessOfferModel != null && bsmsDualListModel == null) {
-			List<BusinessServiceModel> source = businessOfferModelService.getBusinessServiceModels(businessOfferModel);
-			List<BusinessServiceModel> target = new ArrayList<BusinessServiceModel>();
-
-			if (source == null) {
-				source = new ArrayList<>();
-			}
-
-			bsmsDualListModel = new DualListModel<BusinessServiceModel>(source, target);
-		}
-
-		return bsmsDualListModel;
-	}
-
-	public void setBsmsDualListModel(DualListModel<BusinessServiceModel> bsmsDualListModel) {
-		this.bsmsDualListModel = bsmsDualListModel;
-	}
-
+	
 	public List<OfferServiceTemplate> getBsmServiceTemplates() {
 		return bsmServiceTemplates;
 	}
@@ -797,34 +768,32 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		}
 	}
 
-	public void addRemoveBsm() {
-		List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>();
-		List<BusinessServiceModel> businessServiceModels = bsmsDualListModel.getTarget();
-		if (businessServiceModels != null && !businessServiceModels.isEmpty()) {
-			for (BusinessServiceModel bsm : businessServiceModels) {
+	public void instantiateBSM() {		
+		if (selectedBsms != null && !selectedBsms.isEmpty()) {
+			for (BusinessServiceModel bsm : selectedBsms) {
 				OfferServiceTemplate ost = new OfferServiceTemplate();
 				ServiceTemplate stSource = bsm.getServiceTemplate();
+				
 				ServiceTemplate stTarget = new ServiceTemplate();
 				stTarget.setCode(stSource.getCode());
                 stTarget.setDescription(stSource.getDescription() + " (" + bsm.getDescriptionOrCode() + ")");
+                stTarget.setSelected(true);
                 stTarget.clearUuid();
 				stTarget.clearCfValues();
 				stTarget.setInstantiatedFromBSM(true);
 				
 				ost.setServiceTemplate(stTarget);
-				ost.setOfferTemplate(entity);
-				
-				offerServiceTemplates.add(ost);
+				ost.setOfferTemplate(entity);			
+		
+				if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isInstantiatedFromBSM()) {
+					sortedOfferServiceTemplates.add(ost);
+				}
 			}
 		}
-
-		bsmServiceTemplates = new ArrayList<>();
-		bsmServiceTemplates.addAll(offerServiceTemplates);
-		sortedOfferServiceTemplates = null;
 	}
-
-	public void onBsmTransfer(TransferEvent event) {
-
+	
+	public void resetBsm() {
+		sortedOfferServiceTemplates = null;
 	}
 
 	public boolean isVisibleServiceCF() {
@@ -857,6 +826,26 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void setNewVersionFlag(boolean newVersionFlag) {
 		this.newVersionFlag = newVersionFlag;
+	}
+
+	public List<BusinessServiceModel> getBusinessServiceModels() {
+		if (businessOfferModel != null && businessServiceModels == null) {
+			businessServiceModels = businessOfferModelService.getBusinessServiceModels(businessOfferModel);
+		}
+
+		return businessServiceModels;
+	}
+
+	public void setBusinessServiceModels(List<BusinessServiceModel> businessServiceModels) {
+		this.businessServiceModels = businessServiceModels;
+	}
+
+	public List<BusinessServiceModel> getSelectedBsms() {
+		return selectedBsms;
+	}
+
+	public void setSelectedBsms(List<BusinessServiceModel> selectedBsms) {
+		this.selectedBsms = selectedBsms;
 	}
 
 }
