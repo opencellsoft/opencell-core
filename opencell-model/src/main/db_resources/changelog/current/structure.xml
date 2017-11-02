@@ -1259,5 +1259,15 @@
 		<sql>CREATE INDEX  cat_chrg_edr_chtmpl_index ON cat_chrg_edr(charge_tmpl_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
 		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
-    </changeSet>                  
+    </changeSet>    
+    
+    <changeSet id="#2837_20171016 - Add fields vat, reg no and job title" author="EdwardPLegaspi">
+     	<addColumn tableName="crm_customer">
+            <column name="vat_no" type="varchar(100)"  />
+            <column name="registration_no" type="varchar(100)"  />           
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="job_title" type="varchar(255)"  />           
+        </addColumn>
+    </changeSet>              
 </databaseChangeLog> 

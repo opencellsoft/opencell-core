@@ -30,6 +30,8 @@ public class CustomerDto extends AccountDto {
 
 	private String mandateIdentification = "";
 	private Date mandateDate;
+	private String vatNo;
+    private String registrationNo;
 
 	private ContactInformationDto contactInformation;
 
@@ -102,6 +104,22 @@ public class CustomerDto extends AccountDto {
 
 	public void setMandateDate(Date mandateDate) {
 		this.mandateDate = mandateDate;
+	}
+
+	public String getRegistrationNo() {
+		return registrationNo;
+	}
+
+	public void setRegistrationNo(String registrationNo) {
+		this.registrationNo = registrationNo;
+	}
+
+	public String getVatNo() {
+		return vatNo;
+	}
+
+	public void setVatNo(String vatNo) {
+		this.vatNo = vatNo;
 	}
 
 }

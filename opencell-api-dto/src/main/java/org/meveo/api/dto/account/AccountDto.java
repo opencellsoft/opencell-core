@@ -24,6 +24,7 @@ public abstract class AccountDto extends BusinessDto {
 	private String externalRef2;
 	private NameDto name;
 	private AddressDto address;
+	private String jobTitle;
 
 	@XmlElement(name = "businessAccountModel")
 	private BusinessEntityDto businessAccountModel;
@@ -145,6 +146,14 @@ public abstract class AccountDto extends BusinessDto {
 				+ externalRef2 + ", name=" + name + ", address=" + address
 				+ ", customFields=" + customFields + ", loaded=" + loaded
 				+ ", businessAccountModel=" + businessAccountModel +  "]";
+	}
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
 	}
 
 }
