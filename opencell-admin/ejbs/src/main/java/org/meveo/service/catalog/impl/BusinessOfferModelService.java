@@ -359,9 +359,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			boolean serviceFound = false;
 			ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
 			for (ServiceConfigurationDto tempServiceCodeDto : serviceCodes) {
-				String serviceCode = tempServiceCodeDto.getCode();
+				String serviceConfigurationCode = tempServiceCodeDto.getCode();
 				// set match to true when a match is found
-				if (serviceCode.equals(serviceTemplate.getCode()) && !tempServiceCodeDto.isMatch()) {
+				if (serviceConfigurationCode.equals(serviceTemplate.getCode()) && !tempServiceCodeDto.isMatch()) {
 					tempServiceCodeDto.setMatch(true);
 					serviceConfigurationDto = tempServiceCodeDto;
 					serviceFound = true;

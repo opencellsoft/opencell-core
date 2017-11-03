@@ -52,7 +52,7 @@ public class ServiceConfigurationDto {
 	/**
 	 * Use when matching service template in bsm vs offer.
 	 */
-	private boolean match;
+	private boolean match = false;
 
 	public String getCode() {
 		return code;
