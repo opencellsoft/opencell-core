@@ -1121,7 +1121,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BillingAccount billingAccount = userAccount.getBillingAccount();
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), unitAmountWithTax,
             unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
-            invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(),
+            invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getParameterExtra(), walletOperation.getOrderNumber(),
             walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(), walletOperation.getOfferCode(),
             walletOperation.getEdr(), null, null);
 
