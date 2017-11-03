@@ -1267,4 +1267,14 @@
     		<column name="phone" type="varchar(15)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="#2837_20171016 - Add fields vat, reg no and job title" author="EdwardPLegaspi">
+     	<addColumn tableName="crm_customer">
+            <column name="vat_no" type="varchar(100)"  />
+            <column name="registration_no" type="varchar(100)"  />           
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="job_title" type="varchar(255)"  />           
+        </addColumn>
+    </changeSet>
 </databaseChangeLog> 

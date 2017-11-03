@@ -53,16 +53,16 @@
 								
                             <hftl:formField id="code" label="#{messages['businessEntity.code']}"
 										field="code" validateUnique="true" required="true" displayOneLine="true" componentWidth="50"/>
-									
-									<hftl:formField label="#{messages['businessEntity.description']}"
-											field="description" useConverter="false" id="description"
-											newLine="true"/>
-										<hftl:formField label="#{messages['customer.externalRef1']}"
-											field="externalRef1" validateUnique="false" />
-										<hftl:formField label="#{messages['customer.externalRef2']}"
-											field="externalRef2" />
 
-                                    <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
+							<hftl:formField label="#{messages['businessEntity.description']}"
+								field="description" useConverter="false" id="description"
+								newLine="true" />
+							<hftl:formField label="#{messages['customer.externalRef1']}"
+								field="externalRef1" validateUnique="false" />
+							<hftl:formField label="#{messages['customer.externalRef2']}"
+								field="externalRef2" />							
+
+							<hftl:formField newLine="true" label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false"
                                         listBean="#{titleBean}" listenerUpdate=":formCustomer:tabView:userNamePanel" styleClass="clearLeft"/>
 
 									<h:panelGroup id="userNamePanel" layout="block">
@@ -73,7 +73,15 @@
                                                 field="name" childField="firstName" 
                                                 rendered="#{customerBean.entity.name.title == null or !customerBean.entity.name.title.isCompany}"/>
 									</h:panelGroup>
-	
+
+
+							<hftl:formField label="#{messages['customer.jobTitle']}"
+								field="jobTitle" newLine="true" />
+							<hftl:formField label="#{messages['customer.vatNo']}"
+								field="vatNo" />
+							<hftl:formField label="#{messages['customer.registrationNo']}"
+								field="registrationNo" />
+
 									<hftl:formField
 										label="#{messages['customer.customerCategory']}"
 										field="customerCategory" valueLabelField="descriptionOrCode"

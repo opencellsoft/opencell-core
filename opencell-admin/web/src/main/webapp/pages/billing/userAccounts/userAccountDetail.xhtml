@@ -143,7 +143,10 @@
                                             <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName"
                                                 rendered="#{userAccountBean.entity.name.title == null or !userAccountBean.entity.name.title.isCompany}" />
                                         </h:panelGroup>
+                                        
+                                        <hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />
                                     </p:fieldset>
+                                    
                                     <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft">
                                         <hftl:formField label="#{messages['billingAccount.subscriptionDate']}" field="subscriptionDate" />
                                         <hftl:formField label="#{messages['billingAccount.status']}" field="status" doNotShowOnNew="true" allowEdit="false" />
