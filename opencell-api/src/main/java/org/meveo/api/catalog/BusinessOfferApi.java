@@ -23,6 +23,7 @@ import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 
@@ -68,8 +69,15 @@ public class BusinessOfferApi extends BaseApi {
 
 		OfferTemplate newOfferTemplate = null;
 		try {
-			newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, postData.getCustomFields(), postData.getCode(), postData.getName(),
-					postData.getDescription(), postData.getServicesToActivate(), postData.getProductsToActivate());
+			BOMInstantiationParameters bomParams = new BOMInstantiationParameters();
+			bomParams.setBusinessOfferModel(businessOfferModel);
+			bomParams.setCustomFields(postData.getCustomFields());
+			bomParams.setCode(postData.getCode());
+			bomParams.setName(postData.getName());
+			bomParams.setOfferDescription(postData.getDescription());
+			bomParams.setServiceCodes(postData.getServicesToActivate());
+			bomParams.setProductCodes(postData.getProductsToActivate());
+			newOfferTemplate = businessOfferModelService.createOfferFromBOM(bomParams);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
@@ -106,21 +114,20 @@ public class BusinessOfferApi extends BaseApi {
 					if (serviceTemplate.isInstantiatedFromBSM()) {
 						serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getId() + "_" + serviceTemplate.getCode();
 					}
-					if (serviceTemplateCode.equals(serviceTemplate.getCode())) {
-						if (serviceCodeDto.getCustomFields() != null) {
-							try {
-								CustomFieldsDto cfsDto = new CustomFieldsDto();
-								cfsDto.setCustomField(serviceCodeDto.getCustomFields());
-								populateCustomFields(cfsDto, serviceTemplate, true);
-							} catch (MissingParameterException e) {
-								log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-								throw e;
-							} catch (Exception e) {
-								log.error("Failed to associate custom field instance to an entity", e);
-								throw e;
-							}
-							break;
+					if (serviceTemplateCode.equals(serviceTemplate.getCode())
+							&& serviceCodeDto.getCustomFields() != null) {
+						try {
+							CustomFieldsDto cfsDto = new CustomFieldsDto();
+							cfsDto.setCustomField(serviceCodeDto.getCustomFields());
+							populateCustomFields(cfsDto, serviceTemplate, true);
+						} catch (MissingParameterException e) {
+							log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+							throw e;
+						} catch (Exception e) {
+							log.error("Failed to associate custom field instance to an entity", e);
+							throw e;
 						}
+						break;
 					}
 				}
 			}

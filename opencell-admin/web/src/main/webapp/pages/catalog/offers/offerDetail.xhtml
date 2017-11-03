@@ -336,24 +336,25 @@
 			</p:panel>
 
 			<p:panel
-				rendered="#{offerTemplateBean.businessOfferModel != null and offerTemplateBean.businessServiceModels != null and !offerTemplateBean.businessServiceModels.isEmpty()}">
+				rendered="#{(offerTemplateBean.businessOfferModel != null or offerTemplateBean.newVersionFlag) and offerTemplateBean.businessServiceModels != null and !offerTemplateBean.businessServiceModels.isEmpty()}">
 				<div class="CenterDiv" style="width: 460px;">
 					<f:facet name="header">#{messages['marketingManager.catalog.businessServiceModels']}</f:facet>
 
-					<p:messages id="bsmMessage"></p:messages>
+					<p:messages id="bsmMessage" globalOnly="false" redisplay="false"></p:messages>
 
 					<p:selectManyMenu id="bsm" styleClass="Wid100"
 						value="#{offerTemplateBean.selectedBsms}">
 						<hftl:objectConverter />
 						<p:ajax update="@this"></p:ajax>
-						<f:selectItems value="#{offerTemplateBean.businessServiceModels}" var="e"
-							itemLabel="#{e.descriptionOrCode}" itemValue="#{e}" />
+						<f:selectItems value="#{offerTemplateBean.businessServiceModels}"
+							var="e" itemLabel="#{e.descriptionOrCode}" itemValue="#{e}" />
 					</p:selectManyMenu>
 
 					<div class="form-panel-actions TexAlRight">
 						<p:commandButton value="#{messages['action.reset']}"
 							update="offerServices bsmMessage"
-							actionListener="#{offerTemplateBean.resetBsm()}" process="@this,offerServices">
+							actionListener="#{offerTemplateBean.resetBsm()}"
+							process="@this,offerServices">
 						</p:commandButton>
 						<p:commandButton update="offerServices bsmMessage"
 							value="#{messages['action.bsm.instantiate']}"
@@ -378,7 +379,7 @@
 									rendered="#{offerTemplateBean.visibleServiceCheckbox}">
 									<p:ajax update="serviceCf_panel_#{loopStatus.index}"></p:ajax>
 								</p:selectBooleanCheckbox>
-
+						
 								<p:inplace id="serviceDescription_#{loopStatus.index}"
 									editor="true" rendered="#{offerTemplateBean.edit}">
 									<p:inputText value="#{ost.serviceTemplate.description}"

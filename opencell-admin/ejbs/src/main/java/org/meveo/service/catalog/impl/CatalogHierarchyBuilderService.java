@@ -173,6 +173,7 @@ public class CatalogHierarchyBuilderService {
 
 			newProductTemplate.setId(null);
 			newProductTemplate.clearUuid();
+			newProductTemplate.clearCfValues();
 			newProductTemplate.setVersion(0);
 
 			newProductTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
@@ -196,6 +197,13 @@ public class CatalogHierarchyBuilderService {
 				newProductTemplate.setImagePath(newImagePath);
 			} catch (IOException e1) {
 				log.error("IPIEL: Failed duplicating product image: {}", e1.getMessage());
+			}
+
+			// set custom fields
+			if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
+				newProductTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
+			} else {
+				newProductTemplate.setCfValues(productTemplate.getCfValues());
 			}
 
 			productTemplateService.create(newProductTemplate);
@@ -345,15 +353,14 @@ public class CatalogHierarchyBuilderService {
 				newCode = newCode + "-" + UUID.randomUUID();
 			}
 			newServiceTemplate.setCode(newCode);
-			newServiceTemplate.setDescription(serviceConfiguration.getDescription());
+			if (serviceConfiguration != null) {
+				newServiceTemplate.setDescription(serviceConfiguration.getDescription());
+			}
 			
-			// duplicate custom field values - // TODO neeed to check if it is not covered
-			// by BeanUtils.copyProperties
-			newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
-
 			newServiceTemplate.setId(null);
-			newServiceTemplate.clearUuid();
 			newServiceTemplate.setVersion(0);
+			newServiceTemplate.clearCfValues();
+			newServiceTemplate.clearUuid();			
 			newServiceTemplate.setServiceRecurringCharges(new ArrayList<ServiceChargeTemplateRecurring>());
 			newServiceTemplate.setServiceTerminationCharges(new ArrayList<ServiceChargeTemplateTermination>());
 			newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
@@ -366,7 +373,14 @@ public class CatalogHierarchyBuilderService {
 				log.error("IPIEL: Failed duplicating service image: {}", e1.getMessage());
 			}
 
-			serviceTemplateService.create(newServiceTemplate);
+			// set custom fields
+			if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
+				newServiceTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
+			} else {
+				newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
+			}
+
+			serviceTemplateService.create(newServiceTemplate);			
 
 			// update code if duplicate
 			if (instantiatedFromBOM) {

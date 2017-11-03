@@ -70,16 +70,16 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	private static final long serialVersionUID = 1L;
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
+	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
+	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
+	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
+	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "invoicing_calendar_id")
@@ -250,6 +250,5 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
 		this.instantiatedFromBSM = instantiatedFromBSM;
 	}
-
 
 }

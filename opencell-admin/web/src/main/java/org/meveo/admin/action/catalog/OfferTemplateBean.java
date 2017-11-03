@@ -58,6 +58,7 @@ import org.meveo.service.api.EntityToDtoConverter;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
@@ -282,7 +283,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			OfferTemplate offer = offerTemplateService.findById(getObjectId());
 			if (offer != null) {
 				try {
-					entity = offerTemplateService.instantiateNewVersion(offer);
+					businessOfferModel = offer.getBusinessOfferModel();
+					entity = offerTemplateService.instantiateNewVersion(offer);					
 
 					setObjectId(null);
 					messages.info(new BundleKey("messages", "newVersion.successful"));
@@ -354,16 +356,15 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		// Instantiating a new offer from BOM by using the data entered in offer
 		// template that was duplicated in initEntity() method
 		if (businessOfferModel != null) {
-			Map<String, List<CustomFieldValue>> cfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
-			CustomFieldsDto cfsDto = entityToDtoConverter.getCustomFieldsDTO(entity, cfValues);
+			Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
+			CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues);
 
 			List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
 			// process the services
 			for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
 				ServiceTemplate st = ost.getServiceTemplate();
 				if (st.isSelected()) {
-					Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(st.getUuid()).getValuesByCode();
-					CustomFieldsDto stCfsDto = entityToDtoConverter.getCustomFieldsDTO(st, stCfValues);
+					Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true);
 
 					ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
 					serviceConfigurationDto.setCode(st.getCode());
@@ -371,8 +372,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 					serviceConfigurationDto.setMandatory(ost.isMandatory());
 					serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
 					servicesConfigurations.add(serviceConfigurationDto);
-					if (stCfsDto != null) {
-						serviceConfigurationDto.setCustomFields(stCfsDto.getCustomField());
+					if (stCfValues != null) {
+						serviceConfigurationDto.setCfValues(stCfValues);
 					}
 				}
 			}
@@ -386,43 +387,32 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				serviceConfigurationDto.setDescription(pt.getDescription());
 				productsConfigurations.add(serviceConfigurationDto);
 			}
-
-			OfferTemplate newOfferTemplate = businessOfferModelService.createOfferFromBOM(businessOfferModel, cfsDto != null ? cfsDto.getCustomField() : null, entity.getCode(),
-					entity.getName(), entity.getDescription(), servicesConfigurations, productsConfigurations, entity.getChannels(), entity.getBusinessAccountModels(),
-					entity.getOfferTemplateCategories(), entity.getLifeCycleStatus(), entity.getImagePath(), entity.getValidity() != null ? entity.getValidity().getFrom() : null,
-					entity.getValidity() != null ? entity.getValidity().getTo() : null, entity.getDescriptionI18n(), entity.getLongDescription(), entity.getLongDescriptionI18n());
-
-			// populate service custom fields
-			for (OfferServiceTemplate newOst : newOfferTemplate.getOfferServiceTemplates()) {
-				ServiceTemplate newServiceTemplate = newOst.getServiceTemplate();
-				for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
-					ServiceTemplate serviceTemplate = ost.getServiceTemplate();
-					if (serviceTemplate.isSelected()) {
-						String serviceTemplateCode = newOfferTemplate.getId() + "_" + serviceTemplate.getCode();
-						if (serviceTemplate.isInstantiatedFromBSM()) {
-							serviceTemplateCode = newOfferTemplate.getId() + "_" + newServiceTemplate.getId() + "_" + serviceTemplate.getCode();
-						}
-						if (serviceTemplateCode.equals(newServiceTemplate.getCode())) {
-							Map<String, List<CustomFieldValue>> stCustomFieldInstances = customFieldDataEntryBean.getFieldValueHolderByUUID(serviceTemplate.getUuid())
-									.getValuesByCode();
-							if (stCustomFieldInstances != null) {
-								// populate offer cf
-								customFieldDataEntryBean.saveCustomFieldsToEntity(newServiceTemplate, serviceTemplate.getUuid(), true, false, false);
-								newServiceTemplate = serviceTemplateService.update(newServiceTemplate);
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			// populate offer cf
-			customFieldDataEntryBean.saveCustomFieldsToEntity(newOfferTemplate, entity.getUuid(), true, false);
-			newOfferTemplate = offerTemplateService.update(newOfferTemplate);
+			
+			BOMInstantiationParameters bomParams = new BOMInstantiationParameters();
+			bomParams.setBusinessOfferModel(businessOfferModel);
+			bomParams.setCustomFields(offerCfs != null ? offerCfs.getCustomField() : null);
+			bomParams.setCode(entity.getCode());
+			bomParams.setName(entity.getName());
+			bomParams.setOfferDescription(entity.getDescription());
+			bomParams.setServiceCodes(servicesConfigurations);
+			bomParams.setProductCodes(productsConfigurations);
+			bomParams.setChannels(entity.getChannels());
+			bomParams.setBams(entity.getBusinessAccountModels());
+			bomParams.setOfferTemplateCategories(entity.getOfferTemplateCategories());
+			bomParams.setLifeCycleStatusEnum(entity.getLifeCycleStatus());
+			bomParams.setImagePath(entity.getImagePath());
+			bomParams.setValidFrom(entity.getValidity() != null ? entity.getValidity().getFrom() : null);
+			bomParams.setValidTo(entity.getValidity() != null ? entity.getValidity().getTo() : null);
+			bomParams.setDescriptionI18n(entity.getDescriptionI18n());
+			bomParams.setLongDescription(entity.getLongDescription());
+			bomParams.setLongDescriptionI18n(entity.getLongDescriptionI18n());
+			bomParams.setOfferCfValue(offerCfValues);
+			
+			businessOfferModelService.createOfferFromBOM(bomParams);
 
 			if (entity.getImagePath() != null) {
 				try {
-					ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<OfferTemplate>(appProvider);
+					ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
 					imageUploadEventHandler.deleteImage(entity);
 				} catch (IOException e) {
 					log.error("Failed deleting image file", e);
@@ -783,11 +773,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				stTarget.setInstantiatedFromBSM(true);
 				
 				ost.setServiceTemplate(stTarget);
-				ost.setOfferTemplate(entity);			
-		
-				if (!sortedOfferServiceTemplates.contains(ost) || ost.getServiceTemplate().isInstantiatedFromBSM()) {
-					sortedOfferServiceTemplates.add(ost);
-				}
+				ost.setOfferTemplate(entity);
+				
+				sortedOfferServiceTemplates.add(ost);				
 			}
 		}
 	}

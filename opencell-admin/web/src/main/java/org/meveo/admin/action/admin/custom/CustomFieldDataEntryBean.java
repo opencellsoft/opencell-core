@@ -798,15 +798,16 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param entity Entity, the fields relate to
      * @param isNewEntity Is it a new entity
+     * @return 
      * @throws BusinessException
      */
-    public void saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
+    public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
         String uuid = entity.getUuid();
-        saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
+        return saveCustomFieldsToEntity(entity, uuid, false, isNewEntity);
     }
 
-    public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity) throws BusinessException {
-        saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
+    public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity) throws BusinessException {
+        return saveCustomFieldsToEntity(entity, uuid, duplicateCFI, isNewEntity, false);
     }
 
     /**
@@ -817,9 +818,10 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
      *        instead we duplicate again.
+     * @return 
      * @throws BusinessException
      */
-    public void saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity, boolean removedOriginalCFI) throws BusinessException {
+    public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity, boolean removedOriginalCFI) throws BusinessException {
 
         Map<String, List<CustomFieldValue>> newValuesByCode = new HashMap<>();
 
@@ -831,7 +833,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                 // Do not update existing CF value if it is not updatable
                 if (!isNewEntity && !cft.isAllowEdit()) {
 
-                    if (entity.getCfValues() != null) {
+                    if (entity != null && entity.getCfValues() != null) {
                         List<CustomFieldValue> previousCfValues = entity.getCfValues().getValuesByCode().get(cft.getCode());
                         if (previousCfValues != null && !previousCfValues.isEmpty()) {
                             newValuesByCode.put(cft.getCode(), previousCfValues);
@@ -862,8 +864,12 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // Not saving empty values unless template has a default value or is versionable (to prevent that for SINGLE type CFT with a default value, value is
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
-                    if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew()) || !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity))) {
+					if ((cfValue.isValueEmptyForGui()
+							&& (cft.getDefaultValue() == null
+									|| cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE)
+							&& !cft.isVersionable())
+							|| ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper
+									.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update
@@ -881,11 +887,16 @@ public class CustomFieldDataEntryBean implements Serializable {
             }
         }
         // Update entity custom values field
-        if (newValuesByCode.isEmpty()) {
-            entity.clearCfValues();
-        } else {
-            entity.getCfValuesNullSafe().setValuesByCode(newValuesByCode);
-        }
+        
+		if (entity != null) {
+			if (newValuesByCode.isEmpty()) {
+				entity.clearCfValues();
+			} else {
+				entity.getCfValuesNullSafe().setValuesByCode(newValuesByCode);
+			}
+		}
+        
+        return newValuesByCode;
     }
 
     /**
