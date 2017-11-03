@@ -126,6 +126,16 @@ public class PagingAndFiltering implements Serializable {
 
     }
 
+    /**
+     * Paging and filtering criteria
+     * 
+     * @param encodedQuery Encoded query in format: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Fields to retrieve
+     * @param offset Retrieve from record number
+     * @param limit How many records to retrieve
+     * @param sortBy Sort by field name
+     * @param sortOrder Sort order
+     */
     public PagingAndFiltering(String encodedQuery, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
         this.filters = decodeQuery(encodedQuery);
@@ -136,6 +146,17 @@ public class PagingAndFiltering implements Serializable {
         this.sortOrder = sortOrder;
     }
 
+    /**
+     * Paging and filtering criteria
+     * 
+     * @param fullTextFilter Full text filter query
+     * @param filters Filtering criteria - a map of field names and values. See PersistenceService.getQuery for more details.
+     * @param fields Fields to retrieve
+     * @param offset Retrieve from record number
+     * @param limit How many records to retrieve
+     * @param sortBy Sort by field name
+     * @param sortOrder Sort order
+     */
     public PagingAndFiltering(String fullTextFilter, Map<String, Object> filters, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
         this.fullTextFilter = fullTextFilter;

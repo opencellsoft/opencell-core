@@ -370,7 +370,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = CustomerAccount.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
 
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -407,6 +407,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccountDto;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public void remove(String customerAccountCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerAccountCode)) {

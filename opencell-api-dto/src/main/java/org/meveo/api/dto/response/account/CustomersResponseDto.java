@@ -5,6 +5,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.response.SearchResponse;
 import org.meveo.model.crm.Customer;
@@ -14,23 +15,23 @@ import org.meveo.model.crm.Customer;
  **/
 @XmlRootElement(name = "CustomersResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(property = "customers.customer", entityClass = Customer.class)
+@FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
 public class CustomersResponseDto extends SearchResponse {
 
-	private static final long serialVersionUID = -7212880976584184812L;
+    private static final long serialVersionUID = -7212880976584184812L;
 
-	private CustomersDto customers = new CustomersDto();
+    private CustomersDto customers = new CustomersDto();
 
-	public CustomersDto getCustomers() {
-		return customers;
-	}
+    public CustomersDto getCustomers() {
+        return customers;
+    }
 
-	public void setCustomers(CustomersDto customers) {
-		this.customers = customers;
-	}
+    public void setCustomers(CustomersDto customers) {
+        this.customers = customers;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomersResponseDto [customers=" + customers + ", toString()=" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "CustomersResponseDto [customers=" + customers + ", toString()=" + super.toString() + "]";
+    }
 }

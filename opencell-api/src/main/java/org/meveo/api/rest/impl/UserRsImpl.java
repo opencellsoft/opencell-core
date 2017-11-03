@@ -9,7 +9,10 @@ import javax.ws.rs.QueryParam;
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.UserRs;
 
@@ -83,6 +86,34 @@ public class UserRsImpl extends BaseRs implements UserRs {
             userApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public UsersDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        UsersDto result = new UsersDto();
+
+        try {
+            result = userApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public UsersDto listPost(PagingAndFiltering pagingAndFiltering) {
+
+        UsersDto result = new UsersDto();
+
+        try {
+            result = userApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;

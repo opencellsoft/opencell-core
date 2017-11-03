@@ -79,7 +79,7 @@ public class UserDto extends BaseDto {
     public UserDto() {
     }
 
-    public UserDto(User user) {
+    public UserDto(User user, boolean includeSecuredEntities) {
         if (user.getName() != null) {
             firstName = user.getName().getFirstName();
             lastName = user.getName().getLastName();
@@ -99,7 +99,7 @@ public class UserDto extends BaseDto {
             userLevel = user.getUserLevel().getCode();
         }
 
-        if (user.getSecuredEntities() != null) {
+        if (includeSecuredEntities && user.getSecuredEntities() != null) {
             this.securedEntities = new ArrayList<>();
             SecuredEntityDto securedEntityDto = null;
             for (SecuredEntity securedEntity : user.getSecuredEntities()) {

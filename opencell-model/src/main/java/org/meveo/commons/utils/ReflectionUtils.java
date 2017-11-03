@@ -407,4 +407,28 @@ public class ReflectionUtils {
         }
         return null;
     }
+
+    /**
+     * This is a recursive function that aims to walk through the properties of an object until it gets the final value.
+     * 
+     * e.g. If we received an Object named obj and given a string property of "code.name", then the value of obj.code.name will be returned.
+     * 
+     * @param obj The object that contains the property value.
+     * @param property The property of the object that contains the data.
+     * @return The value of the data contained in obj.property
+     * @throws IllegalAccessException
+     */
+    public static Object getPropertyValue(Object obj, String property) throws IllegalAccessException {
+        int fieldIndex = property.indexOf(".");
+        if (property.indexOf(".") != -1) {
+            String fieldName = property.substring(0, fieldIndex);
+            Object fieldValue = FieldUtils.readField(obj, fieldName, true);
+            if (fieldValue == null) {
+                return null;
+            }
+            return getPropertyValue(fieldValue, property.substring(fieldIndex + 1));
+        } else {
+            return FieldUtils.readField(obj, property, true);
+        }
+    }
 }

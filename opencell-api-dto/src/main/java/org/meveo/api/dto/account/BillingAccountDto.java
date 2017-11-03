@@ -20,7 +20,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(property = "userAccounts.userAccount", entityClass = UserAccount.class)
+@FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
 public class BillingAccountDto extends AccountDto {
 
     private static final long serialVersionUID = 8701417481481359155L;

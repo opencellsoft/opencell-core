@@ -15,14 +15,16 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+
 /**
  * Customer Account DTO
+ * 
  * @author anasseh
  *
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(property = "billingAccounts.billingAccount", entityClass = BillingAccount.class)
+@FilterResults(propertyToFilter = "billingAccounts.billingAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = BillingAccount.class) })
 public class CustomerAccountDto extends AccountDto {
 
     private static final long serialVersionUID = -137632696663739285L;
@@ -61,8 +63,8 @@ public class CustomerAccountDto extends AccountDto {
     private Date terminationDate;
     private String dueDateDelayEL;
 
-    @XmlElementWrapper(name = "paymentMethods")  
-    @XmlElement(name="methodOfPayment")
+    @XmlElementWrapper(name = "paymentMethods")
+    @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     private boolean excludedFromPayment;
@@ -79,15 +81,14 @@ public class CustomerAccountDto extends AccountDto {
     private BillingAccountsDto billingAccounts;
 
     public CustomerAccountDto() {
-	super();
+        super();
     }
 
     @Override
     public String toString() {
-	return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
-		+ ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
-		+ ",  balance=" + balance + ", terminationDate=" + terminationDate
-		+ ", billingAccounts=" + billingAccounts + "]";
+        return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
+                + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
+                + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
     }
 
     /**

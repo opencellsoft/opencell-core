@@ -13,7 +13,7 @@ import org.meveo.model.crm.Customer;
  * @author Edward P. Legaspi
  **/
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(property = "customer", entityClass = Customer.class)
+@FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
 public class CustomersDto implements Serializable {
 
 	private static final long serialVersionUID = -1693325835765290126L;

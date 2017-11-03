@@ -2,6 +2,7 @@ package org.meveo.api.rest;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -13,11 +14,13 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 
 /**
- * Web service for managing {@link org.meveo.model.admin.User}. 
- * User has a unique username that is use for update, search and remove operation.
+ * Web service for managing {@link org.meveo.model.admin.User}. User has a unique username that is use for update, search and remove operation.
  * 
  * @author Mohamed Hamidi
  **/
@@ -76,5 +79,31 @@ public interface UserRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(UserDto postData);
+
+    /**
+     * List users matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "securedEntities" in fields to include the secured entities.
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return A list of users
+     */
+    @GET
+    @Path("/list")
+    public UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+            @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List users matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
+     * @return A list of users
+     */
+    @POST
+    @Path("/list")
+    public UsersDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

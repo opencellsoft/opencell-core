@@ -31,5 +31,19 @@
 		</insert>
 
 	</changeSet>
+    
+    <changeSet id="#3006_2017-10-31" author="AndriusKarpavicius">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-27" />
+            <column name="name" value="User visualization" />
+            <column name="permission" value="userVisualization" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-27" />
+        </insert>  
+        <!--  assign userVisualization permission to roles that currently have userManament role -->
+        <sql>insert into adm_role_permission (role_id, permission_id) (select role_id, -27 from adm_role_permission where role_id&lt;&gt;-1 and permission_id=-25)</sql>        
+    </changeSet>
 
 </databaseChangeLog>
