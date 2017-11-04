@@ -1277,4 +1277,14 @@
             <column name="job_title" type="varchar(255)"  />           
         </addColumn>
     </changeSet>
+    <changeSet id="#2994_20171026" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+    </changeSet>
+    
+                 
 </databaseChangeLog> 

@@ -25,6 +25,9 @@ public class ServiceToActivateDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
+    
+    @XmlAttribute
+    private String description;
 
     @XmlElement(required = true)
     private BigDecimal quantity;
@@ -103,5 +106,13 @@ public class ServiceToActivateDto implements Serializable {
 	public void setRateUntilDate(Date rateUtilDate) {
 		this.rateUntilDate = rateUtilDate;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
         
 }

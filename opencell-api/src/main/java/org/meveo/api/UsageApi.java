@@ -145,6 +145,7 @@ public class UsageApi extends BaseApi {
 						usageDto.setParameter1(op.getParameter1());
 						usageDto.setParameter2(op.getParameter2());
 						usageDto.setParameter3(op.getParameter3());
+						usageDto.setParameterExtra(op.getParameterExtra());
 						usageDto.setPriceplanCode(op.getPriceplan() == null ? null : op.getPriceplan().getCode());
 						usageDto.setQuantity(op.getQuantity());
 						usageDto.setUnitAmountWithoutTax(op.getUnitAmountWithoutTax());

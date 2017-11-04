@@ -42,162 +42,137 @@ public class PaymentMethodApi extends BaseApi {
     /**
      * Creates the PaymentMethod.
      *
-     * @param paymentMethodDto
-     *            the payment method dto
+     * @param paymentMethodDto the payment method dto
      * @return the long
-     * @throws InvalidParameterException
-     *             the invalid parameter exception
-     * @throws MissingParameterException
-     *             the missing parameter exception
-     * @throws EntityDoesNotExistsException
-     *             the entity does not exists exception
-     * @throws BusinessException
-     *             the business exception
+     * @throws InvalidParameterException the invalid parameter exception
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
      */
     public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-    	paymentMethodDto.validate(true);
-    	CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
-    	if (customerAccount == null) {
-    		throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
-    	}
+        paymentMethodDto.validate(true);
+        CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
+        }
 
-    	PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
-    	paymentMethodService.create(paymentMethod);
-    	return paymentMethod.getId();
+        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
+        paymentMethodService.create(paymentMethod);
+        return paymentMethod.getId();
     }
 
     /**
      * Update the PaymentMethod.
      *
-     * @param paymentMethodDto
-     *            the payment method dto
-     * @throws InvalidParameterException
-     *             the invalid parameter exception
-     * @throws MissingParameterException
-     *             the missing parameter exception
-     * @throws EntityDoesNotExistsException
-     *             the entity does not exists exception
-     * @throws BusinessException
-     *             the business exception
+     * @param paymentMethodDto the payment method dto
+     * @throws InvalidParameterException the invalid parameter exception
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
      */
     public void update(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-	if (StringUtils.isBlank(paymentMethodDto.getId())) {
-	    missingParameters.add("Id");
-	}
-	handleMissingParameters();
-	PaymentMethod paymentMethod = null;
-	paymentMethod = paymentMethodService.findById(paymentMethodDto.getId());
-	if (paymentMethod == null) {
-	    throw new EntityDoesNotExistsException(PaymentMethod.class, paymentMethodDto.getId());
-	}
+        if (StringUtils.isBlank(paymentMethodDto.getId())) {
+            missingParameters.add("Id");
+        }
+        handleMissingParameters();
+        PaymentMethod paymentMethod = null;
+        paymentMethod = paymentMethodService.findById(paymentMethodDto.getId());
+        if (paymentMethod == null) {
+            throw new EntityDoesNotExistsException(PaymentMethod.class, paymentMethodDto.getId());
+        }
 
-	paymentMethodService.update(paymentMethodDto.updateFromDto(paymentMethod));
+        paymentMethodService.update(paymentMethodDto.updateFromDto(paymentMethod));
     }
 
     /**
      * Removes the PaymentMethod.
      *
-     * @param id
-     *            the id
-     * @throws InvalidParameterException
-     *             the invalid parameter exception
-     * @throws MissingParameterException
-     *             the missing parameter exception
-     * @throws EntityDoesNotExistsException
-     *             the entity does not exists exception
-     * @throws BusinessException
-     *             the business exception
+     * @param id the id
+     * @throws InvalidParameterException the invalid parameter exception
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
      */
     public void remove(Long id) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-	if (id == null) {
-	    missingParameters.add("id");
-	}
-	handleMissingParameters();
-	PaymentMethod paymentMethod = null;
-	if (id != null) {
-	    paymentMethod = (PaymentMethod) paymentMethodService.findById(id);
-	}
-	if (paymentMethod == null) {
-	    throw new EntityDoesNotExistsException(DDPaymentMethod.class, id);
-	}
-	paymentMethodService.remove(paymentMethod);
+        if (id == null) {
+            missingParameters.add("id");
+        }
+        handleMissingParameters();
+        PaymentMethod paymentMethod = null;
+        if (id != null) {
+            paymentMethod = (PaymentMethod) paymentMethodService.findById(id);
+        }
+        if (paymentMethod == null) {
+            throw new EntityDoesNotExistsException(DDPaymentMethod.class, id);
+        }
+        paymentMethodService.remove(paymentMethod);
     }
 
     /**
      * List the PaymentMethods for given criteria.
      *
-     * @param customerAccountId
-     *            the customer account id
-     * @param customerAccountCode
-     *            the customer account code
+     * @param customerAccountId the customer account id
+     * @param customerAccountCode the customer account code
      * @return the payment method tokens dto
-     * @throws InvalidParameterException
-     *             the invalid parameter exception
+     * @throws InvalidParameterException the invalid parameter exception
      */
     @Deprecated // used only for listCardPaymentMethods for the moment, please use list(PagingAndFiltering pagingAndFiltering) instead.
     public PaymentMethodTokensDto list(Long customerAccountId, String customerAccountCode) throws InvalidParameterException {
-	PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
-	Map<String, Object> filters = new HashedMap<String, Object>();
-	filters.put("paymentType", PaymentMethodEnum.CARD);
-	if (!StringUtils.isBlank(customerAccountCode)) {
-	    filters.put("customerAccount.code", customerAccountCode);
-	}
-	if (customerAccountId != null) {
-	    filters.put("customerAccount.id", customerAccountId);
-	}
-	pagingAndFiltering.setFilters(filters);
-	return list(pagingAndFiltering);
+        PagingAndFiltering pagingAndFiltering = new PagingAndFiltering();
+        Map<String, Object> filters = new HashedMap<String, Object>();
+        filters.put("paymentType", PaymentMethodEnum.CARD);
+        if (!StringUtils.isBlank(customerAccountCode)) {
+            filters.put("customerAccount.code", customerAccountCode);
+        }
+        if (customerAccountId != null) {
+            filters.put("customerAccount.id", customerAccountId);
+        }
+        pagingAndFiltering.setFilters(filters);
+        return list(pagingAndFiltering);
     }
 
     /**
      * List the PaymentMethods for given criteria.
      *
-     * @param pagingAndFiltering
-     *            the paging and filtering
+     * @param pagingAndFiltering the paging and filtering
      * @return the payment method tokens dto
-     * @throws InvalidParameterException
-     *             the invalid parameter exception
+     * @throws InvalidParameterException the invalid parameter exception
      */
     public PaymentMethodTokensDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-	PaymentMethodTokensDto result = new PaymentMethodTokensDto();
-	PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.DESCENDING, null, pagingAndFiltering, PaymentMethod.class);
-	Long totalCount = paymentMethodService.count(paginationConfig);
-	result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
-	result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
-	if (totalCount > 0) {
-	    List<PaymentMethod> PaymentMethods = paymentMethodService.list(paginationConfig);
-	    for (PaymentMethod paymentMethod : PaymentMethods) {
-		result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
-	    }
-	}
-	return result;
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.DESCENDING, null, pagingAndFiltering, PaymentMethod.class);
+        Long totalCount = paymentMethodService.count(paginationConfig);
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+        if (totalCount > 0) {
+            List<PaymentMethod> PaymentMethods = paymentMethodService.list(paginationConfig);
+            for (PaymentMethod paymentMethod : PaymentMethods) {
+                result.getPaymentMethods().add(new PaymentMethodDto(paymentMethod));
+            }
+        }
+        return result;
     }
 
     /**
      * Find the paymentMethod.
      *
-     * @param id
-     *            the id
+     * @param id the id
      * @return the payment method dto
-     * @throws InvalidParameterException
-     *             the invalid parameter exception
-     * @throws MissingParameterException
-     *             the missing parameter exception
-     * @throws EntityDoesNotExistsException
-     *             the entity does not exists exception
-     * @throws BusinessException
-     *             the business exception
+     * @throws InvalidParameterException the invalid parameter exception
+     * @throws MissingParameterException the missing parameter exception
+     * @throws EntityDoesNotExistsException the entity does not exists exception
+     * @throws BusinessException the business exception
      */
     public PaymentMethodDto find(Long id) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-	if (id == null) {
-	    missingParameters.add("id");
-	}
-	handleMissingParameters();
-	PaymentMethod paymentMethod = paymentMethodService.findById(id);
-	if (paymentMethod == null) {
-	    throw new EntityDoesNotExistsException(PaymentMethod.class, id);
-	}
-	return new PaymentMethodDto(paymentMethod);
+        if (id == null) {
+            missingParameters.add("id");
+        }
+        handleMissingParameters();
+        PaymentMethod paymentMethod = paymentMethodService.findById(id);
+        if (paymentMethod == null) {
+            throw new EntityDoesNotExistsException(PaymentMethod.class, id);
+        }
+        return new PaymentMethodDto(paymentMethod);
 
     }
 }
