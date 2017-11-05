@@ -198,4 +198,18 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("recurringChargeInstances");
     }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        boolean quantityChanged = entity.isQuantityChanged();
+
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (entity.getStatus() != InstanceStatusEnum.INACTIVE && quantityChanged) {
+            messages.warn(new BundleKey("messages", "serviceInstance.quantityChanged"));
+        }
+
+        return outcome;
+    }
 }
