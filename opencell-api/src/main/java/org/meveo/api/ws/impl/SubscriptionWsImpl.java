@@ -23,6 +23,7 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
@@ -128,9 +129,9 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            
-            postData.setOrderNumber(ChargeInstance.NO_ORDER_NUMBER);            
-            subscriptionApi.terminateServices(postData );
+
+            postData.setOrderNumber(ChargeInstance.NO_ORDER_NUMBER);
+            subscriptionApi.terminateServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -180,6 +181,17 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
             subscriptionApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateSubscriptionPartial(SubscriptionDto subscriptionDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -267,6 +279,19 @@ public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {
 
         try {
             result.setDueDateDelay(subscriptionApi.getDueDateDelay(subscriptionCode, invoiceNumber, invoiceTypeCode, orderCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetListServiceInstanceResponseDto listServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+        GetListServiceInstanceResponseDto result = new GetListServiceInstanceResponseDto();
+
+        try {
+            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, serviceInstanceCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

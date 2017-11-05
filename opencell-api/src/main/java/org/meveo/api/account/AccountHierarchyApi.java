@@ -1584,6 +1584,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setDescription(account.getDescription());
 		dto.setExternalRef1(account.getExternalRef1());
 		dto.setExternalRef2(account.getExternalRef2());
+		dto.setJobTitle(account.getJobTitle());
 		if (account.getName() != null) {
 			dto.setName(new NameDto(account.getName()));
 		}
@@ -1604,6 +1605,9 @@ public class AccountHierarchyApi extends BaseApi {
 	public CustomerDto customerToDto(Customer customer) {
 		CustomerDto dto = new CustomerDto();
 		accountEntityToDto(dto, customer);
+		
+		dto.setVatNo(customer.getVatNo());
+		dto.setRegistrationNo(customer.getRegistrationNo());
 
 		if (customer.getCustomerCategory() != null) {
 			dto.setCustomerCategory(customer.getCustomerCategory().getCode());
@@ -1712,6 +1716,7 @@ public class AccountHierarchyApi extends BaseApi {
 		dto.setElectronicBilling(ba.getElectronicBilling());
 		dto.setStatus(ba.getStatus());
 		dto.setStatusDate(ba.getStatusDate());
+		dto.setPhone(ba.getPhone());
 		if (ba.getTerminationReason() != null) {
 			dto.setTerminationReason(ba.getTerminationReason().getCode());
 		}

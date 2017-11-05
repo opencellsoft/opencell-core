@@ -26,6 +26,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -170,14 +171,26 @@ public interface SubscriptionRs extends IBaseRs {
     GetOneShotChargesResponseDto getOneShotChargeOthers();
 
     /**
-     * Create new or update an existing subscription
+     * Create or update subscription information ONLY. Does not include access, services nor products
      * 
-     * @param postData The subscription's data
+     * @param subscriptionDto Subscription information
      * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")
-    ActionStatus createOrUpdate(SubscriptionDto postData);
+    ActionStatus createOrUpdate(SubscriptionDto subscriptionDto);
+
+    /**
+     * Create or update subscription information WITH access, services and products. Terminates subscription if termination date is provided on subscription. Terminates service if
+     * termination date is provided on service. Activates inactive service if service subscription date is provided. Instantiates service if no matching service found. Updates
+     * service if matching service found. Only those services, access and products passed will be afected. 
+     * 
+     * @param subscriptionDto Subscription information
+     * @return Request processing status
+     */
+    @POST
+    @Path("/createOrUpdatePartial")
+    ActionStatus createOrUpdateSubscriptionPartial(SubscriptionDto subscriptionDto);
 
     /**
      * Apply a product on a subscription.
@@ -230,9 +243,9 @@ public interface SubscriptionRs extends IBaseRs {
     ActionStatus resumeServices(OperationServicesRequestDto postData);
 
     /**
-     * Update an existing services
+     * Update existing services
      * 
-     * @param postData Operation services request's data (contains serviceToUpdate and subscriptionCode)
+     * @param postData Service information data
      * @return Request processing status
      */
     @PUT
@@ -250,6 +263,17 @@ public interface SubscriptionRs extends IBaseRs {
     @Path("serviceInstance")
     GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceId") Long serviceInstanceId,
             @QueryParam("serviceInstanceCode") String serviceInstanceCode);
+
+    /**
+     * Returns a list of service instances
+     * 
+     * @param subscriptionCode
+     * @param serviceInstanceCode
+     * @return
+     */
+    @GET
+    @Path("serviceInstances")
+    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode, @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.

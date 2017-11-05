@@ -34,6 +34,8 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MapKey;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -51,6 +53,8 @@ import org.meveo.model.ICustomFieldEntity;
 @ExportIdentifier({ "code" })
 @DiscriminatorValue(value = "ACCT_UA")
 @Table(name = "billing_user_account")
+@NamedQueries({
+    @NamedQuery(name = "UserAccount.findByCode", query = "select u from  UserAccount u where u.code = :code and lower(u.accountType) = 'acct_ua'")})
 public class UserAccount extends AccountEntity {
 
     public static final String ACCOUNT_TYPE = ((DiscriminatorValue) UserAccount.class.getAnnotation(DiscriminatorValue.class)).value();

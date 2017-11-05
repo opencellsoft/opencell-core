@@ -131,7 +131,6 @@ public class OrderApi extends BaseApi {
         }
 
         handleMissingParameters();
-
         Order order = new Order();
         if (quoteId != null) {
             order.setQuote(orderService.getEntityManager().getReference(Quote.class, quoteId));
@@ -168,18 +167,20 @@ public class OrderApi extends BaseApi {
                 missingParameters.add("orderItem.action");
                 handleMissingParameters();
             }
-
             // Validate billing account
-            if (productOrderItem.getBillingAccount() == null || productOrderItem.getBillingAccount().isEmpty()) {
+            List<org.tmf.dsmapi.catalog.resource.order.BillingAccount> billingAccount = productOrderItem.getBillingAccount();
+            if (billingAccount == null || billingAccount.isEmpty()) {
                 throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
             }
 
-            String billingAccountId = productOrderItem.getBillingAccount().get(0).getId();
+            String billingAccountId = billingAccount.get(0).getId();
             if (StringUtils.isEmpty(billingAccountId)) {
                 throw new MissingParameterException("billingAccount for order item " + productOrderItem.getId());
             }
 
-            UserAccount userAccount = userAccountService.findByCode(billingAccountId);
+            UserAccount userAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
+                .getSingleResult();
+
             if (userAccount == null) {
                 throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
             }
@@ -313,7 +314,8 @@ public class OrderApi extends BaseApi {
 
         order = initiateWorkflow(order);
 
-        return orderToDto(order);
+        ProductOrder orderToDto = orderToDto(order);
+        return orderToDto;
     }
 
     /**
@@ -355,7 +357,6 @@ public class OrderApi extends BaseApi {
      * @throws MeveoApiException
      */
     public Order processOrder(Order order) throws BusinessException, MeveoApiException {
-
         // Nothing to process in final state
         if (order.getStatus() == OrderStatusEnum.COMPLETED) {
             return order;
@@ -370,14 +371,13 @@ public class OrderApi extends BaseApi {
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
             processOrderItem(order, orderItem);
         }
-
         order.setCompletionDate(new Date());
         order.setStatus(OrderStatusEnum.COMPLETED);
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
             orderItem.setStatus(OrderStatusEnum.COMPLETED);
         }
-        order = orderService.update(order);
 
+        order = orderService.update(order);
         log.trace("Finished processing order {}", order.getCode());
 
         return order;
@@ -402,7 +402,6 @@ public class OrderApi extends BaseApi {
 
         // Ordering a new product
         if (orderItem.getAction() == OrderItemActionEnum.ADD) {
-
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
@@ -421,7 +420,6 @@ public class OrderApi extends BaseApi {
                 instantiateSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
 
             }
-
             // Serialize back the productOrderItem with updated product ids
             orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
 
@@ -433,7 +431,6 @@ public class OrderApi extends BaseApi {
 
             // Modifying an existing product
             if (primaryOffering instanceof ProductTemplate) {
-
                 // TODO For now modify product does nothing
 
                 ProductInstance productInstance = productInstanceService.findByCode(productOrderItem.getProduct().getId());
@@ -443,10 +440,8 @@ public class OrderApi extends BaseApi {
                 log.debug("will modify product instance {}", productInstance);
 
                 orderItem.addProductInstance(productInstance);
-
                 // Modifying an existing subscription
             } else if (primaryOffering instanceof OfferTemplate) {
-
                 updateSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
 
             }
@@ -456,7 +451,6 @@ public class OrderApi extends BaseApi {
             if (productOrderItem.getProduct().getId() == null) {
                 throw new MissingParameterException("product.id");
             }
-
             // Terminating an existing product
             if (primaryOffering instanceof ProductTemplate) {
                 // modify product
@@ -496,11 +490,9 @@ public class OrderApi extends BaseApi {
         }
 
         // Instantiate a subscription with services
-
         Product subscriptionProduct = productOrderItem.getProduct();
         String subscriptionCode = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
             UUID.randomUUID().toString());
-
         if (subscriptionService.findByCode(subscriptionCode) != null) {
             throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
         }
@@ -515,7 +507,6 @@ public class OrderApi extends BaseApi {
         subscriptionDto.setEndAgreementDate(
             (Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
         subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
-
         subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
 
         // instantiate and activate services
@@ -546,7 +537,6 @@ public class OrderApi extends BaseApi {
 
     private Subscription updateSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)
             throws BusinessException, MeveoApiException {
-
         String subscriptionCode = productOrderItem.getProduct().getId();
 
         log.debug("Updating subscription {} from offer template {} for order {} line {}", subscriptionCode, offerTemplate.getCode(), orderItem.getOrder().getCode(),
@@ -561,7 +551,6 @@ public class OrderApi extends BaseApi {
         if (!subscription.getUserAccount().equals(orderItem.getUserAccount())) {
             throw new MeveoApiException("Subscription's userAccount doesn't match with orderitem's billingAccount");
         }
-
         Product subscriptionProduct = productOrderItem.getProduct();
 
         SubscriptionDto subscriptionDto = new SubscriptionDto();
@@ -589,7 +578,6 @@ public class OrderApi extends BaseApi {
 
         return subscription;
     }
-
     private void deleteSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)
             throws BusinessException, MeveoApiException {
 
@@ -597,7 +585,6 @@ public class OrderApi extends BaseApi {
 
         log.debug("Deleting subscription {} from offer template {} for order {} line {}", subscriptionCode, offerTemplate.getCode(), orderItem.getOrder().getCode(),
             orderItem.getItemId());
-
         Subscription subscription = subscriptionService.findByCode(subscriptionCode);
         if (subscription == null) {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
@@ -605,12 +592,10 @@ public class OrderApi extends BaseApi {
 
         SubscriptionDto subscriptionDto = new SubscriptionDto();
         subscriptionDto.setCode(subscriptionCode);
-
         subscriptionDto.setTerminationDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(),
             Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
         subscriptionDto.setTerminationReason(
             (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
-
         subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
     }
 
@@ -727,7 +712,11 @@ public class OrderApi extends BaseApi {
                     value = new Long((String) value);
 
                 } else if (valueClass == Date.class) {
-                    value = DateUtils.parseDateWithPattern((String) value, DateUtils.DATE_PATTERN);
+                    String originalValue = (String) value;
+                    value = DateUtils.parseDateWithPattern(originalValue, DateUtils.DATE_TIME_PATTERN);
+                    if (value == null) {
+                        value = DateUtils.parseDateWithPattern(originalValue, DateUtils.DATE_PATTERN);
+                    }
 
                 } else if (valueClass == Boolean.class) {
                     value = new Boolean((String) value);
@@ -785,12 +774,10 @@ public class OrderApi extends BaseApi {
 
                 serviceInstanceDto.setEndAgreementDate(
                     (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
-
                 serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
 
                 // Service will be updated
             } else if (serviceId != null) {
-
                 serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
 
                 serviceInstanceDto.setEndAgreementDate(
@@ -841,7 +828,6 @@ public class OrderApi extends BaseApi {
         }
 
         // TODO Need to initiate workflow if there is one
-
         order = orderService.refreshOrRetrieve(order);
 
         return orderToDto(order);

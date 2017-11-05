@@ -21,7 +21,9 @@ package org.meveo.service.billing.impl;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -84,13 +86,17 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
     }
 
     @SuppressWarnings("unchecked")
-    public P findByCodeAndSubscription(String code, Subscription subscription) {
+    public P findByCodeAndSubscription(String code, Subscription subscription) throws BusinessException {
         QueryBuilder qb = new QueryBuilder(ChargeInstance.class, "c");
         qb.addCriterion("code", "=", code, true);
         qb.addCriterionEntity("subscription", subscription);
 
         try {
             return (P) qb.getQuery(getEntityManager()).getSingleResult();
+
+        } catch (NonUniqueResultException e) {
+            throw new BusinessException("More than one charge with code " + code + " found in subscription " + subscription.getId());
+
         } catch (NoResultException e) {
             log.warn("failed to find By code and subscription", e);
             return null;

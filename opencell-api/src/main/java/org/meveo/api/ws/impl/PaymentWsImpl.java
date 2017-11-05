@@ -4,7 +4,6 @@ import java.util.Date;
 
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
@@ -21,6 +20,7 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.CustomerPaymentsResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.CreditCategoriesResponseDto;
 import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
@@ -31,7 +31,6 @@ import org.meveo.api.payment.PaymentApi;
 import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
-import org.meveo.model.payments.PaymentMethodEnum;
 
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -51,67 +50,67 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
 
     @Override
     public ActionStatus create(PaymentDto postData) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    result.setMessage("" + paymentApi.createPayment(postData));
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            result.setMessage("" + paymentApi.createPayment(postData));
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public CustomerPaymentsResponse list(String customerAccountCode) {
-	CustomerPaymentsResponse result = new CustomerPaymentsResponse();
-	result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        CustomerPaymentsResponse result = new CustomerPaymentsResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-	try {
-	    result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
-	    result.setBalance(paymentApi.getBalance(customerAccountCode));
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
+        try {
+            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result.setBalance(paymentApi.getBalance(customerAccountCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus createDDRequestLotOp(DDRequestLotOpDto ddrequestLotOp) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    ddrequestLotOpApi.create(ddrequestLotOp);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
-	return result;
+        try {
+            ddrequestLotOpApi.create(ddrequestLotOp);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
     }
 
     @Override
     public DDRequestLotOpsResponseDto listDDRequestLotops(Date fromDueDate, Date toDueDate, DDRequestOpStatusEnum status) {
-	DDRequestLotOpsResponseDto result = new DDRequestLotOpsResponseDto();
+        DDRequestLotOpsResponseDto result = new DDRequestLotOpsResponseDto();
 
-	try {
-	    result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate, toDueDate, status));
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
-	return result;
+        try {
+            result.setDdrequestLotOps(ddrequestLotOpApi.listDDRequestLotOps(fromDueDate, toDueDate, status));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
     }
 
     @Override
     public PayByCardResponseDto payByCard(PayByCardDto doPaymentRequestDto) {
-	PayByCardResponseDto response = new PayByCardResponseDto();
-	response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
-	try {
-	    response = paymentApi.payByCard(doPaymentRequestDto);
-	    response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
-	return response;
+        PayByCardResponseDto response = new PayByCardResponseDto();
+        response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
+        try {
+            response = paymentApi.payByCard(doPaymentRequestDto);
+            response.setActionStatus(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
+        return response;
     }
 
     /************************************************************************************************/
@@ -120,74 +119,74 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     @Override
     @Deprecated // Use addPaymentMthod operation
     public CardPaymentMethodTokenDto addCardPaymentMethod(CardPaymentMethodDto cardPaymentMethodDto) {
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
-	try {
-	    Long pmId = paymentMethodApi.create(new PaymentMethodDto(cardPaymentMethodDto));
-	    response.setPaymentMethod(paymentMethodApi.find(pmId));
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        try {
+            Long pmId = paymentMethodApi.create(new PaymentMethodDto(cardPaymentMethodDto));
+            response.setPaymentMethod(paymentMethodApi.find(pmId));
 
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return new CardPaymentMethodTokenDto(response);
+        return new CardPaymentMethodTokenDto(response);
     }
 
     @Override
     @Deprecated // Use updatePaymentMthod operation
     public ActionStatus updateCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.update(new PaymentMethodDto(cardPaymentMethod));
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.update(new PaymentMethodDto(cardPaymentMethod));
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     @Deprecated // Use removePaymentMthod operation
     public ActionStatus removeCardPaymentMethod(Long id) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.remove(id);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.remove(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     @Deprecated // Use listPaymentMthod operation
     public CardPaymentMethodTokensDto listCardPaymentMethods(Long customerAccountId, String customerAccountCode) {
 
-	PaymentMethodTokensDto response = new PaymentMethodTokensDto();
+        PaymentMethodTokensDto response = new PaymentMethodTokensDto();
 
-	try {
-	    response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode, PaymentMethodEnum.CARD,null,null,null,null,null,null));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        try {
+            response = paymentMethodApi.list(customerAccountId, customerAccountCode);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return new CardPaymentMethodTokensDto(response);
+        return new CardPaymentMethodTokensDto(response);
     }
 
     @Override
     @Deprecated // Use findPaymentMthod operation
     public CardPaymentMethodTokenDto findCardPaymentMethod(Long id) {
 
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
 
-	try {
-	    response.setPaymentMethod(paymentMethodApi.find(id));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        try {
+            response.setPaymentMethod(paymentMethodApi.find(id));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return new CardPaymentMethodTokenDto(response);
+        return new CardPaymentMethodTokenDto(response);
     }
 
     /************************************************************************************************/
@@ -195,148 +194,147 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     /************************************************************************************************/
     @Override
     public PaymentMethodTokenDto addPaymentMethod(PaymentMethodDto paymentMethodDto) {
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
-	try {
-	    Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
-	    response.setPaymentMethod(paymentMethodApi.find(paymentMethodId));
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        try {
+            Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
+            response.setPaymentMethod(paymentMethodApi.find(paymentMethodId));
 
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return response;
+        return response;
     }
 
     @Override
     public ActionStatus updatePaymentMethod(PaymentMethodDto paymentMethod) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.update(paymentMethod);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.update(paymentMethod);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus removePaymentMethod(Long id) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.remove(id);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.remove(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
-    public PaymentMethodTokensDto listPaymentMethods(Long customerAccountId, String customerAccountCode, PaymentMethodEnum type, Boolean isPreferred, String info1, String info2,
-	    String info3, String info4, String info5) {
+    public PaymentMethodTokensDto listPaymentMethods(PagingAndFiltering pagingAndFiltering) {
 
-	PaymentMethodTokensDto response = new PaymentMethodTokensDto();
+        PaymentMethodTokensDto response = new PaymentMethodTokensDto();
 
-	try {
-	    response.setPaymentMethods(paymentMethodApi.list(customerAccountId, customerAccountCode, type, isPreferred, info1, info2, info3, info4, info5));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        try {
+            response = paymentMethodApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return response;
+        return response;
     }
 
     @Override
     public PaymentMethodTokenDto findPaymentMethod(Long id) {
 
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
 
-	try {
-	    response.setPaymentMethod(paymentMethodApi.find(id));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        try {
+            response.setPaymentMethod(paymentMethodApi.find(id));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return response;
+        return response;
     }
 
     @Override
     public ActionStatus createCreditCategory(CreditCategoryDto postData) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    creditCategoryApi.create(postData);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            creditCategoryApi.create(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus updateCreditCategory(CreditCategoryDto postData) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    creditCategoryApi.update(postData);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            creditCategoryApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus createOrUpdateCreditCategory(CreditCategoryDto postData) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    creditCategoryApi.createOrUpdate(postData);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            creditCategoryApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public CreditCategoryResponseDto findCreditCategory(String creditCategoryCode) {
-	CreditCategoryResponseDto result = new CreditCategoryResponseDto();
+        CreditCategoryResponseDto result = new CreditCategoryResponseDto();
 
-	try {
-	    result.setCreditCategory(creditCategoryApi.find(creditCategoryCode));
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
+        try {
+            result.setCreditCategory(creditCategoryApi.find(creditCategoryCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public CreditCategoriesResponseDto listCreditCategory() {
-	CreditCategoriesResponseDto result = new CreditCategoriesResponseDto();
+        CreditCategoriesResponseDto result = new CreditCategoriesResponseDto();
 
-	try {
-	    result.setCreditCategories(creditCategoryApi.list());
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
+        try {
+            result.setCreditCategories(creditCategoryApi.list());
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus removeCreditCategory(String creditCategoryCode) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    creditCategoryApi.remove(creditCategoryCode);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            creditCategoryApi.remove(creditCategoryCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 }

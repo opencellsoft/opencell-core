@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -39,6 +40,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
@@ -76,6 +78,7 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.CellEditEvent;
 import org.slf4j.Logger;
 
 /**
@@ -87,9 +90,6 @@ import org.slf4j.Logger;
 public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     private static final long serialVersionUID = 1L;
-
-    @Inject
-    private Logger log;
 
     @Inject
     private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
@@ -244,6 +244,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             if (!alreadyInstanciated) {
+                serviceTemplate.setDescriptionOverride(serviceTemplate.getDescription());
                 serviceTemplates.add(serviceTemplate);
             }
         }
@@ -473,6 +474,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 
+                String descriptionOverride = serviceTemplate.getDescriptionOverride();              
                 serviceTemplate = serviceTemplateService.findById(serviceTemplate.getId());
 
                 isChecked = true;
@@ -480,7 +482,11 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
                 ServiceInstance serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
-                serviceInstance.setDescription(serviceTemplate.getDescription());
+                if (!StringUtils.isBlank(descriptionOverride)) {
+                    serviceInstance.setDescription(descriptionOverride);
+                } else {
+                    serviceInstance.setDescription(descriptionOverride);
+                }
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription((Subscription) entity);
                 if (entity.getSubscriptionDate() != null) {
@@ -495,7 +501,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 }
                 serviceInstance.setQuantity(quantity);
-                serviceInstanceService.serviceInstanciation(serviceInstance);
+                serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
                 serviceTemplates.remove(serviceTemplate);
             }

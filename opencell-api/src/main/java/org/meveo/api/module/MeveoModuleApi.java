@@ -65,6 +65,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.module.ModuleScriptService;
+import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -103,6 +104,16 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     @Inject
     private ModuleScriptService moduleScriptService;
 
+    private static JAXBContext jaxbCxt;
+	static {
+		try {
+			jaxbCxt = JAXBContext.newInstance(MeveoModuleDto.class);
+		} catch (JAXBException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
     public MeveoModule create(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
@@ -456,7 +467,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         // Store module DTO into DB to be used later for installation
         try {
-            Marshaller m = JAXBContext.newInstance(MeveoModuleDto.class).createMarshaller();
+            Marshaller m = jaxbCxt.createMarshaller();
             m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             StringWriter w = new StringWriter();
             m.marshal(moduleDto, w);

@@ -5,13 +5,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.response.SearchResponse;
+import org.meveo.model.crm.Customer;
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "CustomersResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
+@FilterResults(property = "customers.customer", entityClass = Customer.class)
 public class CustomersResponseDto extends SearchResponse {
 
 	private static final long serialVersionUID = -7212880976584184812L;

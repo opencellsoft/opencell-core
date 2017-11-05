@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -312,8 +313,6 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, activateServicesDto.getSubscription());
         }
 
-        subscription.getOffer().getOfferServiceTemplates().size();
-
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
@@ -321,6 +320,7 @@ public class SubscriptionApi extends BaseApi {
         // check if exists
         List<ServiceToActivateDto> serviceToActivateDtos = new ArrayList<>();
         for (ServiceToActivateDto serviceToActivateDto : activateServicesDto.getServicesToActivateDto().getService()) {
+
             if (StringUtils.isBlank(serviceToActivateDto.getSubscriptionDate())) {
                 missingParameters.add("SubscriptionDate");
                 handleMissingParameters();
@@ -329,7 +329,6 @@ public class SubscriptionApi extends BaseApi {
             if (serviceTemplate == null) {
                 throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceToActivateDto.getCode());
             }
-
             serviceToActivateDto.setServiceTemplate(serviceTemplate);
             serviceToActivateDtos.add(serviceToActivateDto);
         }
@@ -337,6 +336,7 @@ public class SubscriptionApi extends BaseApi {
         // Find instantiated or instantiate if not instantiated yet
         List<ServiceInstance> serviceInstances = new ArrayList<ServiceInstance>();
         for (ServiceToActivateDto serviceToActivateDto : serviceToActivateDtos) {
+
             ServiceTemplate serviceTemplate = serviceToActivateDto.getServiceTemplate();
 
             ServiceInstance serviceInstance = null;
@@ -368,6 +368,9 @@ public class SubscriptionApi extends BaseApi {
                 if (activateServicesDto.getOrderNumber() != null) {
                     serviceInstance.setOrderNumber(activateServicesDto.getOrderNumber());
                 }
+                if (!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
+                    serviceInstance.setDescription(serviceToActivateDto.getDescription());
+                }
                 serviceInstances.add(serviceInstance);
 
                 // Instantiate if it was not instantiated earlier
@@ -378,7 +381,11 @@ public class SubscriptionApi extends BaseApi {
 
                 serviceInstance = new ServiceInstance();
                 serviceInstance.setCode(serviceTemplate.getCode());
-                serviceInstance.setDescription(serviceTemplate.getDescription());
+                if (!StringUtils.isBlank(serviceToActivateDto.getDescription())) {
+                    serviceInstance.setDescription(serviceToActivateDto.getDescription());
+                } else {
+                    serviceInstance.setDescription(serviceTemplate.getDescription());
+                }
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
@@ -409,7 +416,8 @@ public class SubscriptionApi extends BaseApi {
                 }
 
                 try {
-                    serviceInstanceService.serviceInstanciation(serviceInstance);
+                    String descriptionOverride = !StringUtils.isBlank(serviceToActivateDto.getDescription()) ? serviceToActivateDto.getDescription() : null;
+                    serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                     serviceInstances.add(serviceInstance);
 
                 } catch (BusinessException e) {
@@ -460,7 +468,6 @@ public class SubscriptionApi extends BaseApi {
                 throw e;
             }
         }
-
     }
 
     public void instantiateServices(InstantiateServicesRequestDto instantiateServicesDto) throws MeveoApiException, BusinessException {
@@ -482,7 +489,6 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
             throw new MeveoApiException("Subscription is already RESILIATED or CANCELLED.");
         }
-
         // check if exists
         List<ServiceToInstantiateDto> serviceToInstantiateDtos = new ArrayList<>();
         for (ServiceToInstantiateDto serviceToInstantiateDto : instantiateServicesDto.getServicesToInstantiate().getService()) {
@@ -531,7 +537,6 @@ public class SubscriptionApi extends BaseApi {
             } else {
                 serviceInstance.setSubscriptionDate(serviceToInstantiateDto.getSubscriptionDate());
             }
-
             // populate customFields
             try {
                 populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true);
@@ -544,7 +549,8 @@ public class SubscriptionApi extends BaseApi {
             }
 
             try {
-                serviceInstanceService.serviceInstanciation(serviceInstance);
+                String descriptionOverride = !StringUtils.isBlank(serviceToInstantiateDto.getDescription()) ? serviceToInstantiateDto.getDescription() : null;
+                serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
 
             } catch (BusinessException e) {
                 log.error("Failed to instantiate a service {} on subscription {}", serviceToInstantiateDto.getCode(), subscription.getCode(), e);
@@ -1239,10 +1245,19 @@ public class SubscriptionApi extends BaseApi {
 
         for (ServiceToUpdateDto serviceToUpdateDto : postData.getServicesToUpdate()) {
 
-            ServiceInstance serviceToUpdate = getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription, InstanceStatusEnum.ACTIVE);
+            ServiceInstance serviceToUpdate = getSingleServiceInstance(serviceToUpdateDto.getId(), serviceToUpdateDto.getCode(), subscription, InstanceStatusEnum.ACTIVE,
+                InstanceStatusEnum.INACTIVE);
 
             if (serviceToUpdateDto.getEndAgreementDate() != null) {
                 serviceToUpdate.setEndAgreementDate(serviceToUpdateDto.getEndAgreementDate());
+            }
+
+            if (!StringUtils.isBlank(serviceToUpdateDto.getDescription())) {
+                serviceToUpdate.setDescription(serviceToUpdateDto.getDescription());
+            }
+
+            if (serviceToUpdateDto.getQuantity() != null) {
+                serviceToUpdate.setQuantity(serviceToUpdateDto.getQuantity());
             }
 
             // populate customFields
@@ -1486,4 +1501,24 @@ public class SubscriptionApi extends BaseApi {
         return serviceInstance;
     }
 
+    public List<ServiceInstanceDto> listServiceInstance(String subscriptionCode, String serviceInstanceCode) throws MissingParameterException {
+        List<ServiceInstanceDto> result = new ArrayList<>();
+
+        if (StringUtils.isBlank(subscriptionCode)) {
+            missingParameters.add("subscriptionCode");
+        }
+
+        if (StringUtils.isBlank(serviceInstanceCode)) {
+            missingParameters.add("serviceInstanceCode");
+        }
+
+        handleMissingParameters();
+
+        List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
+        if (serviceInstances != null && !serviceInstances.isEmpty()) {
+            result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsWithInheritedDTO(p, true))).collect(Collectors.toList());
+        }
+
+        return result;
+    }
 }
