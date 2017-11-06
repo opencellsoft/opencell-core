@@ -464,7 +464,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return super.update(entity);
     }
     
-    public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
+    @SuppressWarnings("unchecked")
+	public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
 		long startDate = System.currentTimeMillis();
 		Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
 		query.setParameter("id", billingAccount.getId());
