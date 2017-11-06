@@ -1349,6 +1349,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                         if (ratedTransaction.getParameter3() != null) {
                             line.setAttribute("param3", ratedTransaction.getParameter3());
                         }
+                        if (ratedTransaction.getParameterExtra() != null) {
+                            Element paramExtra = doc.createElement("paramExtra");
+                            paramExtra.appendChild(doc.createTextNode(ratedTransaction.getParameterExtra()));
+                            line.appendChild(paramExtra);                            
+                        }
 
                         if (ratedTransaction.getPriceplan() != null) {
                             Element pricePlan = doc.createElement("pricePlan");

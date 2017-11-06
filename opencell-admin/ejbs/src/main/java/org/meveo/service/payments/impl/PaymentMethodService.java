@@ -19,7 +19,6 @@
 package org.meveo.service.payments.impl;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -32,7 +31,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -60,7 +58,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-            .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
     }
 
@@ -78,7 +76,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         // Mark other payment methods as not preferred
         if (paymentMethod.isPreferred()) {
             getEntityManager().createNamedQuery("PaymentMethod.updatePreferredPaymentMethod").setParameter("id", paymentMethod.getId())
-            .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
+                .setParameter("ca", paymentMethod.getCustomerAccount()).executeUpdate();
         }
 
         return paymentMethod;
@@ -129,8 +127,8 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         if (gatewayPaymentInterface != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
-                    StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-                    cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
+                StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
+                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
 
             cardPaymentMethod.setTokenId(tockenID);
         } else {

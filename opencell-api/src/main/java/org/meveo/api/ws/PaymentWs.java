@@ -53,13 +53,12 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name = "fromDueDate") Date fromDueDate, @WebParam(name = "toDueDate") Date toDueDate,
-	    @WebParam(name = "status") DDRequestOpStatusEnum status);
+            @WebParam(name = "status") DDRequestOpStatusEnum status);
 
     /**
      * Make a payment by card. Either with a provided card information, or an existing and preferred card payment method
      * 
-     * @param payByCardDto
-     *            Payment by card information
+     * @param payByCardDto Payment by card information
      * @return Payment by card information
      */
     @WebMethod
@@ -72,8 +71,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Add a new card payment method. It will be marked as preferred.
      * 
-     * @param cardPaymentMethod
-     *            Card payment method DTO
+     * @param cardPaymentMethod Card payment method DTO
      * @return Card payment DTO with Token id from payment gateway
      */
     @WebMethod
@@ -83,8 +81,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Update existing card payment method.
      * 
-     * @param cardPaymentMethod
-     *            Card payment method DTO
+     * @param cardPaymentMethod Card payment method DTO
      * @return Action status
      */
     @Deprecated // Use updatePaymentMthod operation
@@ -93,8 +90,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Remove card payment method. If it was marked as preferred, some other payment method will be marked as preferred
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return Action status
      */
     @WebMethod
@@ -104,22 +100,19 @@ public interface PaymentWs extends IBaseWs {
     /**
      * List available card payment methods for a given customer account identified either by id or by code
      * 
-     * @param customerAccountId
-     *            Customer account id
-     * @param customerAccountCode
-     *            Customer account code
+     * @param customerAccountId Customer account id
+     * @param customerAccountCode Customer account code
      * @return A list of card payment methods
      */
     @WebMethod
     @Deprecated // Use listPaymentMthod operation
     public CardPaymentMethodTokensDto listCardPaymentMethods(@WebParam(name = "customerAccountId") Long customerAccountId,
-	    @WebParam(name = "customerAccountCode") String customerAccountCode);
+            @WebParam(name = "customerAccountCode") String customerAccountCode);
 
     /**
      * Retrieve card payment method by its id
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return Card payment DTO
      */
     @WebMethod
@@ -133,8 +126,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Add a new payment method. It will be marked as preferred.
      * 
-     * @param ddPaymentMethod
-     *            DD payment method DTO
+     * @param ddPaymentMethod DD payment method DTO
      * @return DD payment DTO with Token id from payment gateway
      */
     @WebMethod
@@ -143,8 +135,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Update existing payment method.
      * 
-     * @param ddPaymentMethod
-     *            DD payment method DTO
+     * @param ddPaymentMethod DD payment method DTO
      * @return Action status
      */
     public ActionStatus updatePaymentMethod(@WebParam(name = "paymentMethod") PaymentMethodDto paymentMethod);
@@ -152,8 +143,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return Action status
      */
     @WebMethod
@@ -171,8 +161,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Retrieve payment method by its id
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return DD payment DTO
      */
     @WebMethod

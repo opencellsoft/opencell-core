@@ -30,7 +30,7 @@
             </h:form>
 
             <h:panelGroup id="applyProductPanel">
-                <hftl:formPanel edit="#{parentEntityIsEditable}" backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" styleClass="formPanel" formId="applyProductForm"
+                <hftl:formPanel edit="#{parentEntityIsEditable and parentBackingBean.productInstance.transient}" backingBean="#{parentBackingBean}" entity="#{parentBackingBean.productInstance}" styleClass="formPanel" formId="applyProductForm"
                     showFormButtons="false" rendered="#{parentBackingBean.productInstance!=null}">
                     <hftl:formField label="#{messages['commons.quantity']}" field="quantity" required="true" width="10" allowEdit="false" />
                     <hftl:formField label="#{messages['chargeApplication.applicationDate']}" field="applicationDate" required="true" listenerUpdate="productTemplatePopup" allowEdit="false" />
@@ -43,7 +43,7 @@
 
                     <h:panelGroup layout="block" styleClass="form-panel-actions">
                         <p:commandButton value="#{messages['action.save']}" action="#{parentBackingBean.saveProductInstance()}" update="#{parentIdPath}:productInstances"
-                            disabled="#{!parentEntityIsEditable}" />
+                            rendered="#{parentEntityIsEditable and parentBackingBean.productInstance.transient}" />
                         <p:commandButton value="#{messages['button.closeButton']}" update="#{parentIdPath}:applyProductPanel" action="#{parentBackingBean.cancelProductInstanceEdit()}" immediate="true">
                             <!--                             <f:setPropertyActionListener value="#{null}" target="#{parentBackingBean.productInstance}" /> -->
                         </p:commandButton>

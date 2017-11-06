@@ -31,6 +31,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -218,6 +219,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     public void serviceInstanciation(ServiceInstance serviceInstance) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 	serviceInstanciation(serviceInstance, null, null, false);
     }
+    
+    public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+        serviceInstanciation(serviceInstance, descriptionOverride, null, null, false);
+    }
 
     // validate service is in offer service list
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException {
@@ -228,9 +233,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
 	return true;
     }
-
+    
     public void serviceInstanciation(ServiceInstance serviceInstance, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
-	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws BusinessException {
+        serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
+    }
+
+    public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
+	    throws BusinessException {
 	log.debug("serviceInstanciation subscriptionId={}, code={}", serviceInstance.getSubscription().getId(), serviceInstance.getCode());
 
 	ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
@@ -259,9 +269,11 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	}
 	serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
 	serviceInstance.setCode(serviceTemplate.getCode());
-	if (serviceInstance.getDescription() != null) {
-	    serviceInstance.setDescription(serviceTemplate.getDescription());
-	}
+    if (!StringUtils.isBlank(descriptionOverride)) {
+        serviceInstance.setDescription(descriptionOverride);
+    } else {
+        serviceInstance.setDescription(serviceTemplate.getDescription());
+    }
 	serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 
 	if (!isVirtual) {
@@ -679,6 +691,24 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	}
 
 	return serviceInstance;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> listServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+        List<ServiceInstance> serviceInstances = null;
+        try {
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            qb.addCriterion("c.code", "=", serviceInstanceCode, true);
+            qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by code (code={}). Result found={}.", new Object[] { "ServiceInstance", serviceInstanceCode, serviceInstances != null });
+        } catch (NoResultException nre) {
+            log.debug("listServiceInstance : no service has been found");
+        } catch (Exception e) {
+            log.error("listServiceInstance error={} ", e.getMessage());
+        }
+
+        return serviceInstances;
     }
 
 }
