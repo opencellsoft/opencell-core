@@ -55,8 +55,23 @@ public class CustomerAccountDto extends AccountDto {
     @Deprecated
     private Date mandateDate;
 
+    /**
+     * Balance due. status=O, P, I; isDue=false, dunning=false
+     */
     private BigDecimal balance = BigDecimal.ZERO;
+    /**
+     * exigibleWithoutLitigation; status=O, P, isDue=true, dunning=true
+     */
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
+    /**
+     * exigible; status=O, P, isDue=true, dunning=true
+     */
+    private BigDecimal accountBalance = BigDecimal.ZERO;
+    /**
+     * Blance. status=O, P, I; isDue=false, dunning=false, category=CREDIT.
+     */
+    private BigDecimal creditBalance = BigDecimal.ZERO;
+    
     // currently not use
     private Date terminationDate;
     private String dueDateDelayEL;
@@ -355,4 +370,20 @@ public class CustomerAccountDto extends AccountDto {
     public void setBillingAccounts(BillingAccountsDto billingAccounts) {
         this.billingAccounts = billingAccounts;
     }
+
+	public BigDecimal getAccountBalance() {
+		return accountBalance;
+	}
+
+	public void setAccountBalance(BigDecimal accountBalance) {
+		this.accountBalance = accountBalance;
+	}
+
+	public BigDecimal getCreditBalance() {
+		return creditBalance;
+	}
+
+	public void setCreditBalance(BigDecimal creditBalance) {
+		this.creditBalance = creditBalance;
+	}
 }

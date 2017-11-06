@@ -390,9 +390,10 @@ public class CustomerAccountApi extends AccountEntityApi {
         CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
         if (calculateBalances) {
-            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
-            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, new Date());
-
+        	Date now = new Date();
+            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, now);
+            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, now);
+            
             if (balanceDue == null) {
                 throw new BusinessException("Balance due calculation failed.");
             }
@@ -402,6 +403,9 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
             customerAccountDto.setBalance(balanceDue);
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
+            
+            customerAccountDto.setCreditBalance(customerAccountService.computeCreditBalance(customerAccount, false, now, false));
+            customerAccountDto.setAccountBalance(customerAccountService.customerAccountBalanceExigible(customerAccount, now));
         }
 
         return customerAccountDto;
