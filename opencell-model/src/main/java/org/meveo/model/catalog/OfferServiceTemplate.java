@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,7 +34,12 @@ import org.meveo.model.IEntity;
 @Table(name = "cat_offer_serv_templates")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_serv_templt_seq"), })
-public class OfferServiceTemplate implements IEntity {
+public class OfferServiceTemplate implements IEntity,Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3932032300922665293L;
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
