@@ -1279,6 +1279,7 @@
             <column name="parameter_extra" type="text"/>
         </addColumn>
     </changeSet>
+<<<<<<< HEAD
 
 	<changeSet
 		id="#3043_20171107 - Add cascade delete on invoiceSubCategory + taxes"
@@ -1290,4 +1291,15 @@
 			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
 	</changeSet>
 
+=======
+    
+    <changeSet id="#3016_20171106" author="anasseh">
+	    	<addColumn tableName="cat_offer_template">
+	    		<column name="script_instance_id" type="bigint" />
+	    	</addColumn>
+	    	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_offer_template" constraintName="fk_offer_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+                 
+>>>>>>> e4b10dfe3... re #3016 - Global rating script
 </databaseChangeLog> 
