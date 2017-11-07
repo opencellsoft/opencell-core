@@ -1279,6 +1279,15 @@
             <column name="parameter_extra" type="text"/>
         </addColumn>
     </changeSet>
-    
-                 
+
+	<changeSet
+		id="#3043_20171107 - Add cascade delete on invoiceSubCategory + taxes"
+		author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_inv_sub_cat_country" constraintName="fk_95fqtc0o1qhxbvecs7rju1jhp" />
+		<addForeignKeyConstraint baseColumnNames="invoice_sub_category_id"
+			baseTableName="billing_inv_sub_cat_country" constraintName="fk_95fqtc0o1qhxbvecs7rju1jhp"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+
 </databaseChangeLog> 
