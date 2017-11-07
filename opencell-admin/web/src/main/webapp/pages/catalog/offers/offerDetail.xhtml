@@ -104,14 +104,21 @@
 								valueLabelField="code" listBean="#{businessOfferModelBean}" />
 						</c:if>
 						<c:if test="#{offerTemplateBean.businessOfferModel != null}">
-							<hftl:decorateFormField fieldId="transientCode"
-								label="#{messages['offerTemplate.code']}">
-								<p:inputText id="transientCode"
-									value="#{offerTemplateBean.entity.transientCode}"
-									styleClass="field-value" required="true">
-									<o:validator validatorId="codeValidator" />
-								</p:inputText>
-							</hftl:decorateFormField>
+							<c:if test="#{offerTemplateBean.newVersionFlag}">
+								<hftl:formField id="code"
+									label="#{messages['offerTemplate.code']}" field="code"
+									required="true" />
+							</c:if>
+							<c:if test="#{!offerTemplateBean.newVersionFlag}">
+								<hftl:decorateFormField fieldId="transientCode"
+									label="#{messages['offerTemplate.code']}">
+									<p:inputText id="transientCode"
+										value="#{offerTemplateBean.entity.transientCode}"
+										styleClass="field-value" required="true">
+										<o:validator validatorId="codeValidator" />
+									</p:inputText>
+								</hftl:decorateFormField>
+							</c:if>
 							<hftl:decorateFormField fieldId="family"
 								label="#{messages['marketingManager.catalog.family']}">
 								<h:outputText id="family"

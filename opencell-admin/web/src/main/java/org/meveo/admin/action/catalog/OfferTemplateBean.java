@@ -311,7 +311,6 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 				sortedOfferServiceTemplates = new ArrayList<>();
 				
 				// add all offer service templates
-				log.debug("IPIEL: adding entity ost " + entity.getOfferServiceTemplates());
 				sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
 
 				// duplication, new version
@@ -320,18 +319,22 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 						ostOffer.getServiceTemplate().setSelected(true);
 					}
 
-					log.debug("IPIEL: adding services from entity's bom's offer " + entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates());
-					for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates()) {
-						boolean found = false;
-						for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
-							if (ostOffer.getServiceTemplate().equals(ostBom.getServiceTemplate())) {
-								found = true;
-								break;
+					// add services from BOM offer
+					// this is not used anymore?
+					if (!newVersionFlag) {
+						for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate()
+								.getOfferServiceTemplates()) {
+							boolean found = false;
+							for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
+								if (ostOffer.getServiceTemplate().equals(ostBom.getServiceTemplate())) {
+									found = true;
+									break;
+								}
 							}
-						}
 
-						if (!found) {
-							sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
+							if (!found) {
+								sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
+							}
 						}
 					}
 				}
