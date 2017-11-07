@@ -1758,6 +1758,18 @@ public class AccountHierarchyApi extends BaseApi {
 
 		if (ua.getBillingAccount() != null) {
 			dto.setBillingAccount(ua.getBillingAccount().getCode());
+			dto.setBillingAccountDescription(ua.getBillingAccount().getDescription());
+
+			if (ua.getBillingAccount().getCustomerAccount() != null) {
+				dto.setCustomerAccount(ua.getBillingAccount().getCustomerAccount().getCode());
+				dto.setCustomerAccountDescription(ua.getBillingAccount().getCustomerAccount().getDescription());
+
+				if (ua.getBillingAccount().getCustomerAccount().getCustomer() != null) {
+					dto.setCustomer(ua.getBillingAccount().getCustomerAccount().getCustomer().getCode());
+					dto.setCustomerDescription(
+							ua.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
+				}
+			}
 		}
 
 		dto.setSubscriptionDate(ua.getSubscriptionDate());
