@@ -106,7 +106,7 @@
 								<p:button id="buttonBack5" value="#{messages['action.back']}"
 									outcome="#{productTemplateBean.back()}"
 									includeViewParams="true">
-									<f:param name="cid" value="#{conversation.id}" />
+									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
 								</p:button>
 							</ui:define>
 						</hftl:formPanel>
