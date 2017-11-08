@@ -1,6 +1,8 @@
 package org.meveo.api.security.filter;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -24,14 +26,14 @@ public class ListFilter extends SecureMethodResultFilter {
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Object filterResult(Object result, MeveoUser currentUser, User user) throws MeveoApiException {
+    public Object filterResult(Method methodContext, Object result, MeveoUser currentUser, User user) throws MeveoApiException {
         if (result == null) {
             // result is empty. no need to filter.
             log.warn("Result is empty. Skipping filter...");
             return result;
         }
 
-        FilterResults filterResults = result.getClass().getAnnotation(FilterResults.class);
+        FilterResults filterResults = methodContext.getAnnotation(FilterResults.class);
 
         // Result is not annotated for filtering,
         if (filterResults == null) {
@@ -54,21 +56,42 @@ public class ListFilter extends SecureMethodResultFilter {
 
         for (Object itemToFilter : itemsToFilter) {
             // Various property filters are connected by OR - any filter match will consider item as a valid one
-            for (FilterProperty filterProperty : filterResults.itemPropertiesToFilter()) {
+            filterLoop: for (FilterProperty filterProperty : filterResults.itemPropertiesToFilter()) {
                 try {
 
-                    String resolvedValue = (String) ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
+                    Collection resolvedValues = new ArrayList<>();
+                    Object resolvedValue = ReflectionUtils.getPropertyValue(itemToFilter, filterProperty.property());
                     if (resolvedValue == null) {
-                        log.debug("Property " + filterProperty.property() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
+                        if (filterProperty.allowAccessIfNull()) {
+                            log.debug("Adding item {} to filtered list.", itemToFilter);
+                            filteredList.add(itemToFilter);
+                        } else {
+                            log.debug("Property " + filterProperty.property() + " on item to filter " + itemToFilter + " was resolved to null. Entity will be filtered out");
+                        }
+                        continue;
+
+                    } else if (resolvedValue instanceof Collection) {
+                        resolvedValues = (Collection) resolvedValue;
+
+                    } else {
+                        resolvedValues = new ArrayList<>();
+                        resolvedValues.add(resolvedValue);
                     }
 
-                    BusinessEntity entity = filterProperty.entityClass().newInstance();
-                    entity.setCode(resolvedValue);// FilterProperty could be expanded to include a target property to set instead of using "code"
+                    for (Object value : resolvedValues) {
 
-                    if (securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
-                        log.debug("Adding item {} to filtered list.", entity);
-                        filteredList.add(itemToFilter);
-                        break;
+                        if (value == null) {
+                            continue;
+                        }
+
+                        BusinessEntity entity = filterProperty.entityClass().newInstance();
+                        entity.setCode((String) value);// FilterProperty could be expanded to include a target property to set instead of using "code"
+
+                        if (securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
+                            log.debug("Adding item {} to filtered list.", entity);
+                            filteredList.add(itemToFilter);
+                            break filterLoop;
+                        }
                     }
                 } catch (InstantiationException | IllegalAccessException e) {
                     throw new InvalidParameterException("Failed to create new instance of: " + filterProperty.entityClass());
@@ -78,7 +101,6 @@ public class ListFilter extends SecureMethodResultFilter {
 
         itemsToFilter.clear();
         itemsToFilter.addAll(filteredList);
-        log.debug("New account DTO: {}", result);
 
         return result;
     }

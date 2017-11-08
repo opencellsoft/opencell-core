@@ -571,6 +571,8 @@ public class AccountHierarchyApi extends BaseApi {
      * @return
      * @throws MeveoApiException
      */
+    // @SecuredBusinessEntityMethod(resultFilter=ListFilter.class)
+    // @FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
     public CustomersDto find(AccountHierarchyDto postData) throws MeveoApiException {
 
         CustomersDto result = new CustomersDto();

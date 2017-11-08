@@ -8,19 +8,28 @@ import java.lang.annotation.Target;
 import org.meveo.model.BusinessEntity;
 
 /**
- * Specified what properties of an object to apply filtering. Used in conjunction with {@link FilterResults}
+ * Identifies the filtering rule to apply to items selected for filtering
+ * 
+ * Specifies how to reconstruct an object used to compare what user has access to. Used in conjunction with {@link FilterResults}
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })
 public @interface FilterProperty {
 
+    /**
+     * Name of a property of item selected for filtering. The value will be used to reconstruct an object of a given entity class
+     */
     String property();
 
     /**
-     * Identifies the entity type that property value corresponds to. e.g. if CustomerAccount.class is passed into this attribute, then property value will correspond to code field
-     * of a CustomerAccount object.
-     * 
-     * @return
+     * Identifies the entity type that property value corresponds to. e.g. if CustomerAccount.class is passed into this attribute, then property value resolved from a "property"
+     * will correspond to code field of a CustomerAccount object.
      */
     Class<? extends BusinessEntity> entityClass();
+
+    /**
+     * Shall access to an entity be granted in cases when property is resolved to a null value. If set to True, user will have access to entities that match his security settings
+     * and those that have no property value set.
+     */
+    boolean allowAccessIfNull() default false;
 }

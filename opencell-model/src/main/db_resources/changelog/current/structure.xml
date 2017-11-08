@@ -1285,6 +1285,23 @@
             <column name="parameter_extra" type="text"/>
         </addColumn>
     </changeSet>
-    
+
+    <changeSet id="#2979_20171106" author="AndriusKarpavicius">
+        <createTable tableName="cat_product_offer_seller">
+            <column name="product_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_id, seller_id" constraintName="cat_product_offer_seller_pkey" tableName="cat_product_offer_seller" />
+        
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cat_product_offer_seller" constraintName="fk_pos_seller" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+            
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_product_offer_seller" constraintName="fk_pos_product" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />            
+    </changeSet>    
                  
 </databaseChangeLog> 

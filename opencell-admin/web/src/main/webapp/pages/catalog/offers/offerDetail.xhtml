@@ -96,6 +96,8 @@
                         listBean="#{channelListBean}" newLine="true" componentWidth="100" />
                     <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
                         valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" newLine="true" componentWidth="100" />
+                    <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
+                        valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />                        
                 </h:panelGrid>
                 
             </p:panelGrid>

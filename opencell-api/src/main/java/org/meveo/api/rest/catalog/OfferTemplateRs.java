@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -15,6 +16,8 @@ import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.OfferTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -65,17 +68,38 @@ public interface OfferTemplateRs extends IBaseRs {
             @QueryParam("validTo") @RestDateParam Date validTo);
 
     /**
-     * List all offer templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is provided,
-     * a search will return offers valid on a given date. If only validTo date is provided, a search will return offers valid from today to a given date.
+     * List Offer templates matching filtering and query criteria or code and validity dates.
+     * 
+     * If neither date is provided, validity dates will not be considered. If only validFrom is provided, a search will return offers valid on a given date. If only validTo date is
+     * provided, a search will return offers valid from today to a given date.
      *
-     * @param code Offer template code for optional filtering
-     * @param validFrom Validity range from date.
-     * @param validTo Validity range to date.
+     * @param code Offer template code for optional filtering. Deprecated in v. 4.8. Use query instead.
+     * @param validFrom Validity range from date. Deprecated in v. 4.8. Use query instead.
+     * @param validTo Validity range to date. Deprecated in v. 4.8. Use query instead.
+     * @param query Search criteria
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
      * @return A list of offer templates
      */
     @GET
     @Path("/list")
-    public GetListOfferTemplateResponseDto list(@QueryParam("offerTemplateCode") String code, @QueryParam("validFrom") @RestDateParam Date validFrom, @QueryParam("validTo") @RestDateParam Date validTo);
+    public GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
+            @Deprecated @QueryParam("validTo") @RestDateParam Date validTo, @QueryParam("query") String query, @QueryParam("fields") String fields,
+            @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
+            @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List offerTemplates matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return List of offer templates
+     */
+    @POST
+    @Path("/list")
+    public GetListOfferTemplateResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
      * Remove offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be deleted.

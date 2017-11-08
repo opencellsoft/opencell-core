@@ -1086,6 +1086,8 @@ public abstract class BaseApi {
             if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)) {
                 filters.put(key, value);
 
+                // Filter already contains a special
+
                 // Determine what the target field type is and convert to that data type
             } else {
 
@@ -1100,7 +1102,7 @@ public abstract class BaseApi {
                     fieldClassType = ReflectionUtils.getFieldGenericsType(field);
                 }
 
-                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition));
+                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition) || "overlapOptionalRange".equals(condition));
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1125,7 +1127,7 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
 
-        log.error("Casting {} of class {} ", value, value != null ? value.getClass() : null);
+        log.error("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList, value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass())) {
             return value;
@@ -1133,7 +1135,7 @@ public abstract class BaseApi {
 
         // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
         if (expectedList) {
-            if (value instanceof List || value instanceof Set) {
+            if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
                 return value;
 
             } else if (value instanceof String) {

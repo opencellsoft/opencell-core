@@ -804,7 +804,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 + ") or (a." + fieldName2 + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2
                                 + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a."
                                 + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
-                        queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
+
+                        if (filterValue.getClass().isArray()) {
+                            queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
+                        } else if (filterValue instanceof List) {
+                            queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((List) filterValue).get(0), paramNameTo, ((List) filterValue).get(1));
+                        }
 
                         // Any of the multiple field values wildcard or not wildcard match the value (OR criteria)
                     } else if ("likeCriterias".equals(condition)) {

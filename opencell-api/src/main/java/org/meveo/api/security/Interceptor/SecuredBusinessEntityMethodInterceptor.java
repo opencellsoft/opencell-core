@@ -100,8 +100,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         for (SecureMethodParameter parameter : parametersForValidation) {
             BusinessEntity entity = parameterHandler.getParameterValue(parameter, values, BusinessEntity.class);
             if (entity == null) {
-                // TODO what to do if entity was not resolved because parameter value was null
-                
+                // TODO what to do if entity was not resolved because parameter value was null e.g. doing a search by a restricted field and dont provide any field value - that
+                // means that instead of filtering search criteria, results should be filtered instead
+
             } else {
                 if (!securedBusinessEntityService.isEntityAllowed(entity, user, false)) {
                     throw new AccessDeniedException("Access to entity details is not allowed.");
@@ -114,7 +115,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
 
         SecureMethodResultFilter filter = filterFactory.getFilter(annotation.resultFilter());
         log.debug("Method {}.{} results will be filtered using {} filter.", objectName, methodName, filter);
-        result = filter.filterResult(result, currentUser, user);
+        result = filter.filterResult(context.getMethod(), result, currentUser, user);
         return result;
 
     }

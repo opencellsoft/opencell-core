@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
@@ -24,7 +23,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(propertyToFilter = "billingAccounts.billingAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = BillingAccount.class) })
+// @FilterResults(propertyToFilter = "billingAccounts.billingAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = BillingAccount.class) })
 public class CustomerAccountDto extends AccountDto {
 
     private static final long serialVersionUID = -137632696663739285L;
@@ -73,7 +72,7 @@ public class CustomerAccountDto extends AccountDto {
      * Blance. status=O, P, I; isDue=false, dunning=false, category=CREDIT.
      */
     private BigDecimal creditBalance = BigDecimal.ZERO;
-    
+
     // currently not use
     private Date terminationDate;
     private String dueDateDelayEL;
@@ -372,19 +371,19 @@ public class CustomerAccountDto extends AccountDto {
         this.billingAccounts = billingAccounts;
     }
 
-	public BigDecimal getAccountBalance() {
-		return accountBalance;
-	}
+    public BigDecimal getAccountBalance() {
+        return accountBalance;
+    }
 
-	public void setAccountBalance(BigDecimal accountBalance) {
-		this.accountBalance = accountBalance;
-	}
+    public void setAccountBalance(BigDecimal accountBalance) {
+        this.accountBalance = accountBalance;
+    }
 
-	public BigDecimal getCreditBalance() {
-		return creditBalance;
-	}
+    public BigDecimal getCreditBalance() {
+        return creditBalance;
+    }
 
-	public void setCreditBalance(BigDecimal creditBalance) {
-		this.creditBalance = creditBalance;
-	}
+    public void setCreditBalance(BigDecimal creditBalance) {
+        this.creditBalance = creditBalance;
+    }
 }

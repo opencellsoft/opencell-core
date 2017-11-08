@@ -7,14 +7,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.model.payments.CustomerAccount;
-
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "Customer")
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(propertyToFilter = "customerAccounts.customerAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = CustomerAccount.class) })
+//@FilterResults(propertyToFilter = "customerAccounts.customerAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = CustomerAccount.class) })
 public class CustomerDto extends AccountDto {
 
     private static final long serialVersionUID = 3243716253817571391L;

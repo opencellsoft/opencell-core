@@ -35,6 +35,7 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.VersionedEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.crm.BusinessAccountModel;
 
@@ -106,6 +107,10 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @Type(type = "json")
     @Column(name = "long_description_i18n", columnDefinition = "text")
     private Map<String, String> longDescriptionI18n;
+
+    @ManyToMany
+    @JoinTable(name = "cat_product_offer_seller", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
+    private List<Seller> sellers = new ArrayList<>();
 
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {
@@ -296,5 +301,22 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
             longDescriptionI18n = new HashMap<>();
         }
         return longDescriptionI18n;
+    }
+    
+    public List<Seller> getSellers() {
+        return sellers;
+    }
+    
+    public void setSellers(List<Seller> sellers) {
+        this.sellers = sellers;
+    }
+    
+    public void addSeller(Seller seller) {
+        if (sellers == null) {
+            sellers = new ArrayList<>();
+        }
+        if (!sellers.contains(seller)) {
+            sellers.add(seller);
+        }
     }
 }

@@ -10,6 +10,8 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.FilterProperty;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -22,6 +24,8 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.parameter.ObjectPropertyParser;
+import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.hierarchy.HierarchyLevel;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
@@ -41,6 +45,7 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws org.meveo.admin.exception.BusinessException
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "parentLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void create(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
 
         String hierarchyLevelCode = postData.getCode();
@@ -65,15 +70,7 @@ public class UserHierarchyLevelApi extends BaseApi {
         UserHierarchyLevel userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getCode());
         boolean create = userHierarchyLevel == null;
 
-        UserHierarchyLevel parentLevel = null;
-        if (!StringUtils.isBlank(postData.getParentLevel())) {
-            parentLevel = userHierarchyLevelService.findByCode(postData.getParentLevel());
-            if (parentLevel == null) {
-                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, postData.getParentLevel());
-            }
-        }
-
-        userHierarchyLevel = fromDto(postData, parentLevel, userHierarchyLevel);
+        userHierarchyLevel = fromDto(postData, userHierarchyLevel);
         if (create) {
             userHierarchyLevelService.create(userHierarchyLevel);
         } else {
@@ -96,6 +93,8 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws org.meveo.admin.exception.BusinessException
      */
+    @SecuredBusinessEntityMethod(validate = { @SecureMethodParameter(property = "code", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class),
+            @SecureMethodParameter(property = "parentLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class) })
     public void update(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
         String hierarchyLevelCode = postData.getCode();
 
@@ -120,6 +119,7 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @return
      * @throws org.meveo.api.exception.MeveoApiException
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserHierarchyLevel.class))
     public UserHierarchyLevelDto find(String hierarchyLevelCode) throws MeveoApiException {
         if (StringUtils.isBlank(hierarchyLevelCode)) {
             missingParameters.add("hierarchyLevelCode");
@@ -143,6 +143,7 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws BusinessException
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserHierarchyLevel.class))
     public void remove(String hierarchyLevelCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(hierarchyLevelCode)) {
@@ -171,6 +172,7 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws org.meveo.api.exception.MeveoApiException
      * @throws org.meveo.admin.exception.BusinessException
      */
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "parentLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void createOrUpdate(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
         String hierarchyLevelCode = postData.getCode();
         if (StringUtils.isBlank(hierarchyLevelCode)) {
@@ -199,15 +201,32 @@ public class UserHierarchyLevelApi extends BaseApi {
         return userHierarchyLevelDto;
     }
 
-    protected UserHierarchyLevel fromDto(UserHierarchyLevelDto userHierarchyLevelDto, UserHierarchyLevel parentLevel, UserHierarchyLevel hierarchyLevelUpdate) {
-        UserHierarchyLevel userHierarchyLevel = new UserHierarchyLevel();
-        if (hierarchyLevelUpdate != null) {
-            userHierarchyLevel = hierarchyLevelUpdate;
+    protected UserHierarchyLevel fromDto(UserHierarchyLevelDto userHierarchyLevelDto, UserHierarchyLevel hierarchyLevelUpdate) throws EntityDoesNotExistsException {
+        UserHierarchyLevel userHierarchyLevel = hierarchyLevelUpdate;
+        if (hierarchyLevelUpdate == null) {
+            userHierarchyLevel = new UserHierarchyLevel();
+            userHierarchyLevel.setCode(userHierarchyLevelDto.getCode());
         }
-        userHierarchyLevel.setCode(userHierarchyLevelDto.getCode());
-        userHierarchyLevel.setDescription(userHierarchyLevelDto.getDescription());
-        userHierarchyLevel.setOrderLevel(userHierarchyLevelDto.getOrderLevel());
-        userHierarchyLevel.setParentLevel(parentLevel);
+
+        if (userHierarchyLevelDto.getParentLevel() != null) {
+            if (StringUtils.isBlank(userHierarchyLevelDto.getParentLevel())) {
+                userHierarchyLevel.setParentLevel(null);
+            } else {
+                UserHierarchyLevel parentLevel = userHierarchyLevelService.findByCode(userHierarchyLevelDto.getParentLevel());
+                if (parentLevel == null) {
+                    throw new EntityDoesNotExistsException(UserHierarchyLevel.class, userHierarchyLevelDto.getParentLevel());
+                }
+                userHierarchyLevel.setParentLevel(parentLevel);
+            }
+        }
+
+        if (userHierarchyLevelDto.getDescription() != null) {
+            userHierarchyLevel.setDescription(userHierarchyLevelDto.getDescription());
+        }
+        if (userHierarchyLevelDto.getOrderLevel() != null) {
+            userHierarchyLevel.setOrderLevel(userHierarchyLevelDto.getOrderLevel());
+        }
+
         return userHierarchyLevel;
     }
 
@@ -220,6 +239,7 @@ public class UserHierarchyLevelApi extends BaseApi {
      * @throws InvalidParameterException
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "userHierarchyLevels", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserHierarchyLevel.class) })
     public UserHierarchyLevelsDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException {
 
         PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, UserHierarchyLevel.class);

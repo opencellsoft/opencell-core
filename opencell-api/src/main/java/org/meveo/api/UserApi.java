@@ -15,6 +15,8 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.SecuredEntityDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.dto.UsersDto;
+import org.meveo.api.dto.account.FilterProperty;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -24,6 +26,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
@@ -266,6 +269,8 @@ public class UserApi extends BaseApi {
         userService.remove(user);
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
     public UserDto find(String username) throws MeveoApiException {
 
         if (StringUtils.isBlank(username)) {
@@ -317,6 +322,7 @@ public class UserApi extends BaseApi {
      * @throws InvalidParameterException
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
     public UsersDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException {
 
         boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
@@ -326,7 +332,6 @@ public class UserApi extends BaseApi {
             throw new ActionForbiddenException(USER_HAS_NO_PERMISSION_TO_VIEW_USERS);
         }
 
-        log.error("AKK user list {} {} {}", isViewerSelf, isAccessOthers, currentUser.getUserName());
         if (isViewerSelf && !isAccessOthers) {
             if (pagingAndFiltering == null) {
                 pagingAndFiltering = new PagingAndFiltering("userName:" + currentUser.getUserName(), null, null, null, null, null);
