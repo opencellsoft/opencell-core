@@ -37,7 +37,7 @@
 			</p:breadCrumb>
 		</h:form>
 
-		<p:panel>
+		<p:panel id="tabPanel">
 			<p:tabView id="tabView"
 				activeIndex="#{productTemplateBean.activeTab}">
 				<p:tab tab="information" title="#{messages['commons.information']}">
@@ -99,7 +99,7 @@
 									rendered="#{productTemplateBean.canUserUpdateEntity()}"
 									action="#{productTemplateBean.saveProductChargeTemplate()}"
 									value="#{messages['action.addSave']}"
-									update=":tabView:productChargediv :tabView:productCharges_MSG_panel" />
+									update=":tabPanel" />
 								<p:commandButton value="#{messages['action.cancel']}"
 									action="#{productTemplateBean.newProductChargeTemplate()}"
 									update=":tabView:productChargediv" />
