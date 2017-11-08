@@ -698,7 +698,6 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
     </changeSet>
     <!-- https://mariadb.com/kb/en/the-mariadb-library/drop-index/ -->
-    
 	<changeSet id="performance_20170830" author="TienLanPHUNG" dbms="postgresql">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
@@ -775,7 +774,7 @@
 		<sql>DROP INDEX IF EXISTS rated_transaction_number</sql>
 		<sql>CREATE INDEX rated_transaction_number ON billing_rated_transaction(order_number)</sql>
 	</changeSet>
-	
+
 	<changeSet id="performance_20171006" author="TienLanPHUNG" dbms="mysql">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index ON billing_invoice_agregate</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
@@ -846,7 +845,7 @@
 		<sql>DROP INDEX IF EXISTS rated_transaction_number_index ON billing_rated_transaction</sql>
 		<sql>CREATE INDEX rated_transaction_number_index ON billing_rated_transaction(order_number)</sql>
 	</changeSet>
- 
+    
     <changeSet id="#2761_20170831" author="AndriusKarpavicius">    
         <addColumn tableName="cat_offer_template">
             <column name="auto_renew" type="${type.boolean}" defaultValueNumeric="0">
@@ -1102,7 +1101,7 @@
 		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ;</sql>
 		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ;</sql>
-		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template((lower(code)));</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(lower(code));</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index;</sql>
 		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_title_id_index;</sql>
@@ -1207,7 +1206,7 @@
 		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ON cat_offer_product_template;</sql>
 		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ON cat_service_template;</sql>
-		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code));</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index ON account_entity;</sql>
 		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_title_id_index ON account_entity;</sql>
@@ -1260,5 +1259,43 @@
 		<sql>CREATE INDEX  cat_chrg_edr_chtmpl_index ON cat_chrg_edr(charge_tmpl_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
 		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
-    </changeSet>         
+    </changeSet>    
+    
+    <changeSet id="#2837_20171016 - Add fields vat, reg no and job title" author="EdwardPLegaspi">
+     	<addColumn tableName="crm_customer">
+            <column name="vat_no" type="varchar(100)"  />
+            <column name="registration_no" type="varchar(100)"  />           
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="job_title" type="varchar(255)"  />           
+        </addColumn>
+    </changeSet>              
+    
+    <changeSet id="#2994_20171026" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+    </changeSet>
+
+	<changeSet
+		id="#3043_20171107 - Add cascade delete on invoiceSubCategory + taxes"
+		author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_inv_sub_cat_country" constraintName="fk_95fqtc0o1qhxbvecs7rju1jhp" />
+		<addForeignKeyConstraint baseColumnNames="invoice_sub_category_id"
+			baseTableName="billing_inv_sub_cat_country" constraintName="fk_95fqtc0o1qhxbvecs7rju1jhp"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+    
+    <changeSet id="#3016_20171106" author="anasseh">
+	    	<addColumn tableName="cat_offer_template">
+	    		<column name="script_instance_id" type="bigint" />
+	    	</addColumn>
+	    	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_offer_template" constraintName="fk_offer_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+
 </databaseChangeLog> 

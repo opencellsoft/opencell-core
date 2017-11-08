@@ -55,15 +55,15 @@ public class PaymentMethodApi extends BaseApi {
      *             the business exception
      */
     public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-    	paymentMethodDto.validate(true);
-    	CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
-    	if (customerAccount == null) {
-    		throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
-    	}
+	paymentMethodDto.validate(true);
+	CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
+	if (customerAccount == null) {
+	    throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
+	}
 
-    	PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
-    	paymentMethodService.create(paymentMethod);
-    	return paymentMethod.getId();
+	PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
+	paymentMethodService.create(paymentMethod);
+	return paymentMethod.getId();
     }
 
     /**

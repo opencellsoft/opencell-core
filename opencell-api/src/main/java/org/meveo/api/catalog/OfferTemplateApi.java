@@ -34,12 +34,14 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
@@ -64,6 +66,9 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
 
     @Inject
     private SubscriptionApi subscriptionApi;
+    
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
     
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -179,6 +184,13 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
             }
         }
 
+        if(!StringUtils.isBlank(postData.getGlobalRatingScriptInstance())){
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getGlobalRatingScriptInstance());
+            if(scriptInstance==null){
+        		throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getGlobalRatingScriptInstance());
+            }
+            offerTemplate.setGlobalRatingScriptInstance(scriptInstance);
+        }
         offerTemplate.setBusinessOfferModel(businessOffer);
         offerTemplate.setCode(postData.getCode());
         offerTemplate.setDescription(postData.getDescription());

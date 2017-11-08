@@ -26,6 +26,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -242,10 +243,31 @@ public interface SubscriptionRs extends IBaseRs {
 	@Path("updateServices")
 	ActionStatus updateServices(UpdateServicesRequestDto postData);
     
+    /**
+     * Replaced by serviceInstances api that returns a list of service instances. 
+     * It's possible to have several service instances with the same code but different status.
+     * 
+     * @param subscriptionCode
+     * @param serviceInstanceCode
+     * @return
+     */
+    @Deprecated
 	@GET
 	@Path("serviceInstance")
 	GetServiceInstanceResponseDto findServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode,
 			@QueryParam("serviceInstanceCode") String serviceInstanceCode);
+    
+    /**
+     * Returns a list of service instances.
+     * It's possible to have several service instances with the same code but different status.
+     * @param subscriptionCode
+     * @param serviceInstanceCode
+     * @return
+     */
+    @GET
+    @Path("serviceInstances")
+    GetListServiceInstanceResponseDto listServiceInstance(@QueryParam("subscriptionCode") String subscriptionCode,
+            @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
      * Returns the due date delay information.

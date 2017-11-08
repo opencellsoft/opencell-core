@@ -13,6 +13,19 @@
         <o:importFunctions type="org.meveo.admin.action.admin.custom.CustomFieldDataEntryBean" var="cfde" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$EndOfTermActionEnum" var="EndOfTermActionEnum" />
         <p:importEnum type="org.meveo.model.billing.SubscriptionRenewal$RenewalPeriodUnitEnum" var="RenewalPeriodUnitEnum" />
+        
+        	<hftl:entityPopup id="offerTemplateScriptPopup"
+			header="#{messages['scriptInstance.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{offerTemplateBean.entity.globalRatingScriptInstance}"
+			searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{offerTemplateBean}"
+			updateField=":offerForm:tabView:offerInfo:scriptSelectId :offerForm:tabView:offerInfo:scriptSelectId_text">
+		</hftl:entityPopup>
+        
+        
 
         <hftl:entityPopup id="searchServiceTemplatePopup" header="#{messages['offerServiceTemplate.serviceTemplate']}"
             updateField=":offerForm:tabView:serviceTemplateCode :offerForm:tabView:serviceTemplateCode_text" selection="#{offerTemplateBean.offerServiceTemplate.serviceTemplate}"
@@ -98,6 +111,8 @@
                         </p:fieldset>
 
                         <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
+                        <hftl:formField id="scriptSelectId" label="#{messages['offerTemplate.globalRatingScript']}" field="globalRatingScriptInstance" valueLabelField="code" required="false"
+    							popup="true" popupId="offerTemplateScriptPopup" showResetButton="true" /> 
 
                     </hf:namingContainer>
                 </p:tab>

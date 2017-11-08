@@ -21,6 +21,10 @@ public class ServiceToUpdateDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
+    
+    @XmlAttribute(required = true)
+    private String description;
+    
     private Date actionDate;    
     private Date endAgreementDate;
     private CustomFieldsDto customFields;
@@ -61,5 +65,13 @@ public class ServiceToUpdateDto implements Serializable {
 	public void setCustomFields(CustomFieldsDto customFields) {
 		this.customFields = customFields;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
     
     }

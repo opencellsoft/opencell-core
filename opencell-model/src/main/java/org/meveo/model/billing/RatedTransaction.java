@@ -63,8 +63,7 @@ import org.meveo.model.rating.EDR;
                 + " AND r.billingAccount.billingCycle=:billingCycle" + " AND (r.billingAccount.nextInvoiceDate >= :startDate)"
                 + " AND (r.billingAccount.nextInvoiceDate < :endDate) "),
         @NamedQuery(name = "RatedTransaction.sumBillingByWallet", query = "SELECT r.invoiceSubCategory.id, sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax), sum(r.quantity) FROM RatedTransaction r"
-                + " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate "
-                + " AND r.wallet=:wallet"
+                + " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate " + " AND r.wallet=:wallet"
                 + " GROUP BY r.invoiceSubCategory"),
         @NamedQuery(name = "RatedTransaction.sumbillingRunByCycleNoDate", query = "SELECT sum(r.amountWithoutTax),sum(r.amountWithTax),sum(r.amountTax) FROM RatedTransaction r"
                 + " WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate "
@@ -73,8 +72,8 @@ import org.meveo.model.rating.EDR;
                 + "WHERE r.status=:status AND r.doNotTriggerInvoicing=false AND r.amountWithoutTax<>0 AND r.invoice is null" + " AND r.usageDate<:lastTransactionDate "
                 + " AND r.billingAccount IN :billingAccountList"),
         @NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
-                + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate " + " AND r.doNotTriggerInvoicing=false "
-                + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
+                + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
                 + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " and r.doNotTriggerInvoicing=false" + " AND r.usageDate<:lastTransactionDate "
@@ -191,6 +190,9 @@ public class RatedTransaction extends BaseEntity {
     @Size(max = 255)
     private String parameter3;
 
+    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    private String parameterExtra;
+
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
@@ -243,6 +245,7 @@ public class RatedTransaction extends BaseEntity {
         this.setParameter1(ratedTransaction.getParameter1());
         this.setParameter2(ratedTransaction.getParameter2());
         this.setParameter3(ratedTransaction.getParameter3());
+        this.setParameterExtra(ratedTransaction.getParameterExtra());
         this.setOrderNumber(ratedTransaction.getOrderNumber());
         this.setPriceplan(ratedTransaction.getPriceplan());
         this.setOfferCode(ratedTransaction.getOfferCode());
@@ -253,7 +256,7 @@ public class RatedTransaction extends BaseEntity {
 
     public RatedTransaction(WalletOperation walletOperation, Date usageDate, BigDecimal unitAmountWithoutTax, BigDecimal unitAmountWithTax, BigDecimal unitAmountTax,
             BigDecimal quantity, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal amountTax, RatedTransactionStatusEnum status, WalletInstance wallet,
-            BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String orderNumber,
+            BillingAccount billingAccount, InvoiceSubCategory invoiceSubCategory, String parameter1, String parameter2, String parameter3, String parameterExtra, String orderNumber,
             String unityDescription, String ratingUnitDescription, PricePlanMatrix priceplan, String offerCode, EDR edr, String code, String description) {
 
         super();
@@ -286,6 +289,7 @@ public class RatedTransaction extends BaseEntity {
         this.parameter1 = parameter1;
         this.parameter2 = parameter2;
         this.parameter3 = parameter3;
+        this.parameterExtra = parameterExtra;
         this.orderNumber = orderNumber;
         this.priceplan = priceplan;
         this.offerCode = offerCode;
@@ -501,6 +505,14 @@ public class RatedTransaction extends BaseEntity {
 
     public void setParameter3(String parameter3) {
         this.parameter3 = parameter3;
+    }
+    
+    public void setParameterExtra(String parameterExtra) {
+        this.parameterExtra = parameterExtra;
+    }
+    
+    public String getParameterExtra() {
+        return parameterExtra;
     }
 
     public String getOrderNumber() {

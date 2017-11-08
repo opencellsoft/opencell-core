@@ -20837,7 +20837,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request>{
    "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Order",
-   "orderDate":"2015-10-25T15:50:48+08",
+   "orderDate":"2015-10-25T15:50:48+08:00",
    "dueDateDelayEL" : "#{order.orderDate.date}",
    "orderItem":[
       {      	
@@ -20859,7 +20859,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"2016-02-27"
+                  "value":"2016-02-27T15:10:18Z"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -20881,7 +20881,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         },
                         {
                            "name":"subscriptionDate",
-                           "value":"2016-01-27"
+                           "value":"2016-01-27T15:36:18+08:00"
                         },
                         {
                            "name":"${#Project#baseEntityPrefix}_SERVICE_CF_STRING",
@@ -21200,11 +21200,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}</subscriptionDate>
-               <status>ACTIVE</status>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21317,8 +21315,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="703fdac6-6e44-4163-8caa-71c4066a55d1" name="XPath Match 5">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
-                <content>2016-01-27T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-01-27T*:36:18*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -21327,6 +21325,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
                 <content>2.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="59cb6d29-e352-4ea3-b509-bc15baa2512b" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
+                <content>2016-02-27T*:10:18*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e18b360e-0f89-4019-8af6-4cd0b00bc006" name="XPath Match 8">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -21535,10 +21551,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21650,8 +21665,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="b2e7cb8f-a6ac-48cf-a60a-d69c88b776a4" name="XPath Match 5">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
-                <content>2016-01-27T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-01-27T*:36:18*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -21741,6 +21756,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </entry>
   </mapValue>
 </customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="68c5e97b-bdb8-468f-9346-0d9ce7ad7738" name="XPath Match 11">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
+                <content>2016-02-27T*:10:18*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="8ae52018-4114-43b7-9bcc-fc8ed079abfb" name="XPath Match 12">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -21860,10 +21893,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21975,8 +22007,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="b2e7cb8f-a6ac-48cf-a60a-d69c88b776a4" name="XPath Match 5">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
-                <content>2016-01-27T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-01-27T*:36:18*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -22084,6 +22116,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationReason</path>
                 <content>TERM_REASON_1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5ff985a3-c728-449c-8548-20347d6f6a3d" name="XPath Match 13">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
+                <content>2016-02-27T*:10:18*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ba003fc5-2547-40af-bd2c-7daef3a70b7a" name="XPath Match 14">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -22177,7 +22227,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
            "productCharacteristic":[
               {
                  "name":"terminationDate",
-                 "value":"2016-02-29"
+                 "value":"2016-02-29T13:05:56+03:00"
               },
               {
                  "name":"terminationReason",
@@ -22237,12 +22287,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}</subscriptionDate>
-               <terminationDate>2016-02-29T00:00:00${#Project#timezone}</terminationDate>
-               <status>RESILIATED</status>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
+               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -22354,8 +22401,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="b2e7cb8f-a6ac-48cf-a60a-d69c88b776a4" name="XPath Match 5">
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/subscriptionDate</path>
-                <content>2016-01-27T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2016-01-27T*:36:18*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -22463,6 +22510,33 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE3']/terminationReason</path>
                 <content>TERM_REASON_1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="53fb5ea6-7169-4350-b705-79ac21e31f53" name="XPath Match 13">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
+                <content>2016-02-27T*:10:18*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="32ad4487-c5e7-4885-9969-b3283cd09290" name="XPath Match 14">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/terminationDate</path>
+                <content>2016-02-29T*:05:56*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d6037c05-371d-475a-970e-a504c9361ad6" name="XPath Match 15">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
+                <content>RESILIATED</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -24328,7 +24402,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"2016-02-27"
+                  "value":"2016-02-27T14:15:16Z"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -24664,7 +24738,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                },
                {
                   "name":"subscriptionDate",
-                  "value":"2016-02-27"
+                  "value":"2016-02-27T14:15:16Z"
                },
                {
                   "name":"${#Project#baseEntityPrefix}_SUB_CF_STRING",
@@ -24961,10 +25035,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             </con:assertion>
             <con:assertion type="Simple Contains" id="394ec2e8-6962-4c11-8738-bbec41a3300a" name="Contains 1">
               <con:configuration>
-                <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1">
-               <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
-               <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
-               <subscriptionDate>2016-02-27T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+                <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1">
+               &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
+               &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25088,6 +25161,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE1']/quantity</path>
                 <content>2.000000000000</content>
                 <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="82e0d2b0-8a86-4461-ab61-55bb67b6bc27" name="XPath Match 7">
+              <con:configuration>
+                <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1"]/subscriptionDate</path>
+                <content>2016-02-27T*:15:16*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -31758,7 +31840,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Invoice Date - PUT" id="ad90a17a-ad7e-4cd9-8595-526b98beda13">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" methodName="Method 1" resourcePath="/api/rest/orderManagement/productOrder/{orderId}/simpleDueDateDelay" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Invoice Date" id="e812287c-1f82-4f4a-81ca-672ad48adefa" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Invoice Date - PUT" id="e812287c-1f82-4f4a-81ca-672ad48adefa" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -31838,7 +31920,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains"/>
+            <con:assertion type="Simple Contains" id="ef882cbf-964b-4c38-a110-6e23e236c495">
+              <con:configuration/>
+            </con:assertion>
             <con:assertion type="Simple Contains" id="66947aa4-6ddb-4b22-81c5-176c6ea35198" name="Contains 1">
               <con:configuration>
                 <token>45</token>
@@ -31905,7 +31989,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
         <con:name>orderId2</con:name>
         <con:value>d66c6bef-b978-4fc2-b007-a11a74c24a43</con:value>
       </con:property>
+      <con:property>
+        <con:name>index</con:name>
+        <con:value>3</con:value>
+      </con:property>
     </con:properties>
+    <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
   </con:testSuite>
   <con:testSuite id="6809dbe0-41aa-461c-99a7-cd21e1c5ef56" name="Cleanup" disabled="true">
     <con:settings/>

@@ -106,6 +106,9 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	 */
 	@Transient
 	private boolean instantiatedFromBSM;
+	
+	@Transient
+	private String descriptionOverride;
 
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -250,5 +253,13 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
 		this.instantiatedFromBSM = instantiatedFromBSM;
 	}
+    public String getDescriptionOverride() {
+        return descriptionOverride;
+    }
+
+    public void setDescriptionOverride(String descriptionOverride) {
+        this.descriptionOverride = descriptionOverride;
+    }
+
 
 }

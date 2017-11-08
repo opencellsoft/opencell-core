@@ -87,120 +87,120 @@ public class AccountOperationApi extends BaseApi {
      */
     public Long create(AccountOperationDto postData) throws MeveoApiException, BusinessException {
 
-	if (StringUtils.isBlank(postData.getType())) {
-	    missingParameters.add("Type");
-	    handleMissingParameters();
-	}
-	AccountOperation accountOperation = null;
-	CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
-	if (customerAccount == null) {
-	    throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
-	}
+        if (StringUtils.isBlank(postData.getType())) {
+            missingParameters.add("Type");
+            handleMissingParameters();
+        }
+        AccountOperation accountOperation = null;
+        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccount());
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccount());
+        }
 
-	if ("OCC".equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
-	    // otherCreditAndCharge
-	    OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
-	    otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
-	    accountOperation = otherCreditAndCharge;
-	} else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
-	    // rejectedPayment
-	    RejectedPayment rejectedPayment = new RejectedPayment();
+        if ("OCC".equals(postData.getType()) && postData.getOtherCreditAndCharge() != null) {
+            // otherCreditAndCharge
+            OtherCreditAndCharge otherCreditAndCharge = new OtherCreditAndCharge();
+            otherCreditAndCharge.setOperationDate(postData.getOtherCreditAndCharge().getOperationDate());
+            accountOperation = otherCreditAndCharge;
+        } else if ("R".equals(postData.getType()) && postData.getRejectedPayment() != null) {
+            // rejectedPayment
+            RejectedPayment rejectedPayment = new RejectedPayment();
 
-	    rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
+            rejectedPayment.setRejectedType(postData.getRejectedPayment().getRejectedType());
 
-	    rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
-	    rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
-	    rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
-	    rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
-	    rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
+            rejectedPayment.setBankLot(postData.getRejectedPayment().getBankLot());
+            rejectedPayment.setBankReference(postData.getRejectedPayment().getBankReference());
+            rejectedPayment.setRejectedDate(postData.getRejectedPayment().getRejectedDate());
+            rejectedPayment.setRejectedDescription(postData.getRejectedPayment().getRejectedDescription());
+            rejectedPayment.setRejectedCode(postData.getRejectedPayment().getRejectedCode());
 
-	    accountOperation = rejectedPayment;
-	}
+            accountOperation = rejectedPayment;
+        }
 
-	if (accountOperation == null) {
-	    throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment.");
-	}
+        if (accountOperation == null) {
+            throw new MeveoApiException("Type and data mismatch OCC=otherCreditAndCharge, R=rejectedPayment.");
+        }
 
-	accountOperation.setDueDate(postData.getDueDate());
-	accountOperation.setType(postData.getType());
-	accountOperation.setTransactionDate(postData.getTransactionDate());
-	accountOperation.setTransactionCategory(postData.getTransactionCategory());
-	accountOperation.setReference(postData.getReference());
-	accountOperation.setAccountCode(postData.getAccountCode());
-	accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
-	accountOperation.setAmount(postData.getAmount());
-	accountOperation.setMatchingAmount(postData.getMatchingAmount());
-	accountOperation.setUnMatchingAmount(postData.getUnMatchingAmount());
-	accountOperation.setCustomerAccount(customerAccount);
+        accountOperation.setDueDate(postData.getDueDate());
+        accountOperation.setType(postData.getType());
+        accountOperation.setTransactionDate(postData.getTransactionDate());
+        accountOperation.setTransactionCategory(postData.getTransactionCategory());
+        accountOperation.setReference(postData.getReference());
+        accountOperation.setAccountCode(postData.getAccountCode());
+        accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
+        accountOperation.setAmount(postData.getAmount());
+        accountOperation.setMatchingAmount(postData.getMatchingAmount());
+        accountOperation.setUnMatchingAmount(postData.getUnMatchingAmount());
+        accountOperation.setCustomerAccount(customerAccount);
 
-	accountOperation.setBankLot(postData.getBankLot());
-	accountOperation.setBankReference(postData.getBankReference());
-	accountOperation.setDepositDate(postData.getDepositDate());
-	accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
+        accountOperation.setBankLot(postData.getBankLot());
+        accountOperation.setBankReference(postData.getBankReference());
+        accountOperation.setDepositDate(postData.getDepositDate());
+        accountOperation.setBankCollectionDate(postData.getBankCollectionDate());
 
-	accountOperation.setMatchingStatus(postData.getMatchingStatus());
+        accountOperation.setMatchingStatus(postData.getMatchingStatus());
 
-	accountOperation.setOccCode(postData.getOccCode());
-	accountOperation.setOccDescription(postData.getOccDescription());
-	if (!StringUtils.isBlank(postData.getExcludedFromDunning())) {
-	    accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
-	} else {
-	    accountOperation.setExcludedFromDunning(false);
-	}
+        accountOperation.setOccCode(postData.getOccCode());
+        accountOperation.setOccDescription(postData.getOccDescription());
+        if (!StringUtils.isBlank(postData.getExcludedFromDunning())) {
+            accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
+        } else {
+            accountOperation.setExcludedFromDunning(false);
+        }
 
-	// populate customFields
-	try {
-	    populateCustomFields(postData.getCustomFields(), accountOperation, true, true);
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), accountOperation, true, true);
 
-	} catch (MissingParameterException e) {
-	    log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-	    throw e;
-	} catch (Exception e) {
-	    log.error("Failed to associate custom field instance to an entity", e);
-	    throw e;
-	}
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
 
-	accountOperationService.create(accountOperation);
+        accountOperationService.create(accountOperation);
 
-	if (postData.getMatchingAmounts() != null && postData.getMatchingAmounts().getMatchingAmount() != null) {
-	    for (MatchingAmountDto matchingAmountDto : postData.getMatchingAmounts().getMatchingAmount()) {
-		MatchingAmount matchingAmount = new MatchingAmount();
-		matchingAmount.setMatchingAmount(matchingAmountDto.getMatchingAmount());
-		matchingAmount.setAccountOperation(accountOperation);
-		if (matchingAmountDto.getMatchingCodes() != null) {
-		    for (MatchingCodeDto matchingCodeDto : matchingAmountDto.getMatchingCodes().getMatchingCode()) {
-			MatchingCode matchingCode = matchingCodeService.findByCode(matchingCodeDto.getCode());
-			if (matchingCode == null) {
-			    matchingCode = new MatchingCode();
-			    matchingCode.setCode(matchingCodeDto.getCode());
-			}
+        if (postData.getMatchingAmounts() != null && postData.getMatchingAmounts().getMatchingAmount() != null) {
+            for (MatchingAmountDto matchingAmountDto : postData.getMatchingAmounts().getMatchingAmount()) {
+                MatchingAmount matchingAmount = new MatchingAmount();
+                matchingAmount.setMatchingAmount(matchingAmountDto.getMatchingAmount());
+                matchingAmount.setAccountOperation(accountOperation);
+                if (matchingAmountDto.getMatchingCodes() != null) {
+                    for (MatchingCodeDto matchingCodeDto : matchingAmountDto.getMatchingCodes().getMatchingCode()) {
+                        MatchingCode matchingCode = matchingCodeService.findByCode(matchingCodeDto.getCode());
+                        if (matchingCode == null) {
+                            matchingCode = new MatchingCode();
+                            matchingCode.setCode(matchingCodeDto.getCode());
+                        }
 
-			matchingCode.setMatchingType(matchingCodeDto.getMatchingType());
+                        matchingCode.setMatchingType(matchingCodeDto.getMatchingType());
 
-			matchingCode.setMatchingDate(matchingCodeDto.getMatchingDate());
-			matchingCode.setMatchingAmountCredit(matchingCodeDto.getMatchingAmountCredit());
-			matchingCode.setMatchingAmountDebit(matchingCodeDto.getMatchingAmountDebit());
+                        matchingCode.setMatchingDate(matchingCodeDto.getMatchingDate());
+                        matchingCode.setMatchingAmountCredit(matchingCodeDto.getMatchingAmountCredit());
+                        matchingCode.setMatchingAmountDebit(matchingCodeDto.getMatchingAmountDebit());
 
-			if (matchingCode.isTransient()) {
-			    matchingCodeService.create(matchingCode);
-			} else {
-			    matchingCodeService.update(matchingCode);
-			}
+                        if (matchingCode.isTransient()) {
+                            matchingCodeService.create(matchingCode);
+                        } else {
+                            matchingCodeService.update(matchingCode);
+                        }
 
-			matchingAmount.setMatchingCode(matchingCode);
-		    }
-		}
+                        matchingAmount.setMatchingCode(matchingCode);
+                    }
+                }
 
-		if (matchingAmount.isTransient()) {
-		    matchingAmountService.create(matchingAmount);
-		} else {
-		    matchingAmountService.update(matchingAmount);
-		}
+                if (matchingAmount.isTransient()) {
+                    matchingAmountService.create(matchingAmount);
+                } else {
+                    matchingAmountService.update(matchingAmount);
+                }
 
-		accountOperation.getMatchingAmounts().add(matchingAmount);
-	    }
-	}
-	return accountOperation.getId();
+                accountOperation.getMatchingAmounts().add(matchingAmount);
+            }
+        }
+        return accountOperation.getId();
     }
 
     /**
@@ -222,21 +222,21 @@ public class AccountOperationApi extends BaseApi {
         Long totalCount = accountOperationService.count(paginationConfiguration);
 
         AccountOperationsResponseDto result = new AccountOperationsResponseDto();
-		
-        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
-		result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-		if (totalCount > 0) {
-			List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<AccountOperation> accountOperations = accountOperationService.list(paginationConfiguration);
             if (accountOperations != null) {
                 for (AccountOperation accountOperation : accountOperations) {
                     AccountOperationDto accountOperationDto = accountOperationToDto(accountOperation);
-				result.getAccountOperations().getAccountOperation().add(accountOperationDto);
-			}
-		}
+                    result.getAccountOperations().getAccountOperation().add(accountOperationDto);
+                }
+            }
         }
-		return result;
-	}
+        return result;
+    }
 
     /**
      * Match operations.
@@ -248,33 +248,33 @@ public class AccountOperationApi extends BaseApi {
      * @throws Exception the exception
      */
     public void matchOperations(MatchOperationRequestDto postData) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
-	if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
-	    missingParameters.add("customerAccountCode");
-	    handleMissingParameters();
-	}
-	if (postData.getAccountOperations() == null || postData.getAccountOperations().getAccountOperation() == null
-		|| postData.getAccountOperations().getAccountOperation().isEmpty()) {
-	    throw new BusinessException("no account operations");
-	}
-	List<Long> operationsId = new ArrayList<Long>();
-	CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
-	if (customerAccount == null) {
-	    throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
-	}
-	if (postData.getAccountOperations() != null) {
-	    for (AccountOperationDto accountOperation : postData.getAccountOperations().getAccountOperation()) {
-		AccountOperation accountOp = null;
-		try {
-		    accountOp = accountOperationService.findById(accountOperation.getId());
-		} catch (Exception e) {
-		}
-		if (accountOp == null) {
-		    throw new EntityDoesNotExistsException(AccountOperation.class, accountOperation.getId());
-		}
-		operationsId.add(accountOp.getId());
-	    }
-	    matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), operationsId, null);
-	}
+        if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
+            missingParameters.add("customerAccountCode");
+            handleMissingParameters();
+        }
+        if (postData.getAccountOperations() == null || postData.getAccountOperations().getAccountOperation() == null
+                || postData.getAccountOperations().getAccountOperation().isEmpty()) {
+            throw new BusinessException("no account operations");
+        }
+        List<Long> operationsId = new ArrayList<Long>();
+        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
+        }
+        if (postData.getAccountOperations() != null) {
+            for (AccountOperationDto accountOperation : postData.getAccountOperations().getAccountOperation()) {
+                AccountOperation accountOp = null;
+                try {
+                    accountOp = accountOperationService.findById(accountOperation.getId());
+                } catch (Exception e) {
+                }
+                if (accountOp == null) {
+                    throw new EntityDoesNotExistsException(AccountOperation.class, accountOperation.getId());
+                }
+                operationsId.add(accountOp.getId());
+            }
+            matchingCodeService.matchOperations(customerAccount.getId(), customerAccount.getCode(), operationsId, null);
+        }
 
     }
 
@@ -286,42 +286,42 @@ public class AccountOperationApi extends BaseApi {
      * @throws Exception the exception
      */
     public void unMatchingOperations(UnMatchingOperationRequestDto postData) throws BusinessException, Exception {
-	if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
-	    missingParameters.add("customerAccountCode");
-	}
-	if (StringUtils.isBlank(postData.getAccountOperationId())) {
-	    missingParameters.add("accountOperationId");
-	}
+        if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
+            missingParameters.add("customerAccountCode");
+        }
+        if (StringUtils.isBlank(postData.getAccountOperationId())) {
+            missingParameters.add("accountOperationId");
+        }
 
-	handleMissingParameters();
+        handleMissingParameters();
 
-	CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
-	if (customerAccount == null) {
-	    throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
-	}
-	AccountOperation accountOperation = null;
-	try {
-	    accountOperation = accountOperationService.findById(postData.getAccountOperationId());
-	} catch (Exception e) {
-	}
-	if (accountOperation == null) {
-	    throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
-	}
-	if (!customerAccount.getAccountOperations().contains(accountOperation)) {
-	    throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
-	}
-	List<Long> matchingCodesToUnmatch = new ArrayList<Long>();
-	Iterator<MatchingAmount> iterator = accountOperation.getMatchingAmounts().iterator();
-	while (iterator.hasNext()) {
-	    MatchingAmount matchingAmount = iterator.next();
-	    MatchingCode matchingCode = matchingAmount.getMatchingCode();
-	    if (matchingCode != null) {
-		matchingCodesToUnmatch.add(matchingCode.getId());
-	    }
-	}
-	for (Long matchingCodeId : matchingCodesToUnmatch) {
-	    matchingCodeService.unmatching(matchingCodeId);
-	}
+        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
+        }
+        AccountOperation accountOperation = null;
+        try {
+            accountOperation = accountOperationService.findById(postData.getAccountOperationId());
+        } catch (Exception e) {
+        }
+        if (accountOperation == null) {
+            throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
+        }
+        if (!customerAccount.getAccountOperations().contains(accountOperation)) {
+            throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
+        }
+        List<Long> matchingCodesToUnmatch = new ArrayList<Long>();
+        Iterator<MatchingAmount> iterator = accountOperation.getMatchingAmounts().iterator();
+        while (iterator.hasNext()) {
+            MatchingAmount matchingAmount = iterator.next();
+            MatchingCode matchingCode = matchingAmount.getMatchingCode();
+            if (matchingCode != null) {
+                matchingCodesToUnmatch.add(matchingCode.getId());
+            }
+        }
+        for (Long matchingCodeId : matchingCodesToUnmatch) {
+            matchingCodeService.unmatching(matchingCodeId);
+        }
     }
 
     /**
@@ -332,34 +332,34 @@ public class AccountOperationApi extends BaseApi {
      * @throws Exception the exception
      */
     private void checkingLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
-	if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
-	    missingParameters.add("customerAccountCode");
-	}
-	if (StringUtils.isBlank(postData.getAccountOperationId())) {
-	    missingParameters.add("accountOperationId");
-	}
+        if (StringUtils.isBlank(postData.getCustomerAccountCode())) {
+            missingParameters.add("customerAccountCode");
+        }
+        if (StringUtils.isBlank(postData.getAccountOperationId())) {
+            missingParameters.add("accountOperationId");
+        }
 
-	handleMissingParameters();
+        handleMissingParameters();
 
-	CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
-	if (customerAccount == null) {
-	    throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
-	}
-	AccountOperation accountOperation = null;
-	try {
-	    accountOperation = accountOperationService.findById(postData.getAccountOperationId());
-	} catch (Exception e) {
-	}
-	if (accountOperation == null) {
-	    throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
-	}
-	if (!customerAccount.getAccountOperations().contains(accountOperation)) {
-	    throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
-	}
+        CustomerAccount customerAccount = customerAccountService.findByCode(postData.getCustomerAccountCode());
+        if (customerAccount == null) {
+            throw new EntityDoesNotExistsException(CustomerAccount.class, postData.getCustomerAccountCode());
+        }
+        AccountOperation accountOperation = null;
+        try {
+            accountOperation = accountOperationService.findById(postData.getAccountOperationId());
+        } catch (Exception e) {
+        }
+        if (accountOperation == null) {
+            throw new EntityDoesNotExistsException(AccountOperation.class, postData.getAccountOperationId());
+        }
+        if (!customerAccount.getAccountOperations().contains(accountOperation)) {
+            throw new BusinessException("The operationId " + postData.getAccountOperationId() + " is not for the customerAccount " + customerAccount.getCode());
+        }
 
-	if (!(accountOperation instanceof RecordedInvoice)) {
-	    throw new BusinessException("The operationId " + postData.getAccountOperationId() + " should be invoice");
-	}
+        if (!(accountOperation instanceof RecordedInvoice)) {
+            throw new BusinessException("The operationId " + postData.getAccountOperationId() + " should be invoice");
+        }
     }
 
     /**
@@ -370,8 +370,8 @@ public class AccountOperationApi extends BaseApi {
      * @throws Exception the exception
      */
     public void addLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
-	checkingLitigation(postData);
-	recordedInvoiceService.addLitigation(postData.getAccountOperationId());
+        checkingLitigation(postData);
+        recordedInvoiceService.addLitigation(postData.getAccountOperationId());
     }
 
     /**
@@ -382,8 +382,8 @@ public class AccountOperationApi extends BaseApi {
      * @throws Exception the exception
      */
     public void cancelLitigation(LitigationRequestDto postData) throws BusinessException, Exception {
-	checkingLitigation(postData);
-	recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
+        checkingLitigation(postData);
+        recordedInvoiceService.cancelLitigation(postData.getAccountOperationId());
     }
 
     /**
@@ -394,15 +394,15 @@ public class AccountOperationApi extends BaseApi {
      * @throws MeveoApiException the meveo api exception
      */
     public AccountOperationDto find(Long id) throws MeveoApiException {
-	AccountOperationDto result = new AccountOperationDto();
-	AccountOperation ao = accountOperationService.findById(id);
-	if (ao != null) {
-	    result = accountOperationToDto(ao);
-	} else {
-	    throw new EntityDoesNotExistsException(AccountOperation.class, id);
-	}
+        AccountOperationDto result = new AccountOperationDto();
+        AccountOperation ao = accountOperationService.findById(id);
+        if (ao != null) {
+            result = accountOperationToDto(ao);
+        } else {
+            throw new EntityDoesNotExistsException(AccountOperation.class, id);
+        }
 
-	return result;
+        return result;
     }
 
     /**
@@ -416,30 +416,30 @@ public class AccountOperationApi extends BaseApi {
      * @throws BusinessException the business exception
      */
     public void updatePaymentMethod(String customerAccountCode, Long aoId, PaymentMethodEnum paymentMethod)
-	    throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
-	if (StringUtils.isBlank(customerAccountCode) && StringUtils.isBlank(aoId)) {
-	    missingParameters.add("customerAccountCode or aoId");
-	}
-	if (StringUtils.isBlank(paymentMethod)) {
-	    missingParameters.add("paymentMethod");
-	}
-	handleMissingParameters();
+            throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
+        if (StringUtils.isBlank(customerAccountCode) && StringUtils.isBlank(aoId)) {
+            missingParameters.add("customerAccountCode or aoId");
+        }
+        if (StringUtils.isBlank(paymentMethod)) {
+            missingParameters.add("paymentMethod");
+        }
+        handleMissingParameters();
 
-	if (!StringUtils.isBlank(customerAccountCode)) {
-	    CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-	    if (customerAccount == null) {
-		throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
-	    }
-	    for (AccountOperation ao : customerAccount.getAccountOperations()) {
-		updatePaymentMethod(ao, paymentMethod);
-	    }
-	} else {
-	    AccountOperation ao = accountOperationService.findById(aoId);
-	    if (ao == null) {
-		throw new EntityDoesNotExistsException(AccountOperation.class, aoId);
-	    }
-	    updatePaymentMethod(ao, paymentMethod);
-	}
+        if (!StringUtils.isBlank(customerAccountCode)) {
+            CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
+            if (customerAccount == null) {
+                throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
+            }
+            for (AccountOperation ao : customerAccount.getAccountOperations()) {
+                updatePaymentMethod(ao, paymentMethod);
+            }
+        } else {
+            AccountOperation ao = accountOperationService.findById(aoId);
+            if (ao == null) {
+                throw new EntityDoesNotExistsException(AccountOperation.class, aoId);
+            }
+            updatePaymentMethod(ao, paymentMethod);
+        }
 
     }
 
@@ -451,18 +451,18 @@ public class AccountOperationApi extends BaseApi {
      * @throws BusinessException the business exception
      */
     private void updatePaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethod) throws BusinessException {
-	if (MatchingStatusEnum.O == ao.getMatchingStatus()) {
-	    if (ao instanceof RecordedInvoice) {
-		RecordedInvoice recordedInvoice = (RecordedInvoice) ao;
-		recordedInvoice.setPaymentMethod(paymentMethod);
-		recordedInvoiceService.update(recordedInvoice);
-	    }
-	    if (ao instanceof Payment) {
-		Payment payment = (Payment) ao;
-		payment.setPaymentMethod(paymentMethod);
-		paymentService.update(payment);
-	    }
-	}
+        if (MatchingStatusEnum.O == ao.getMatchingStatus()) {
+            if (ao instanceof RecordedInvoice) {
+                RecordedInvoice recordedInvoice = (RecordedInvoice) ao;
+                recordedInvoice.setPaymentMethod(paymentMethod);
+                recordedInvoiceService.update(recordedInvoice);
+            }
+            if (ao instanceof Payment) {
+                Payment payment = (Payment) ao;
+                payment.setPaymentMethod(paymentMethod);
+                paymentService.update(payment);
+            }
+        }
     }
 
     /**
@@ -472,42 +472,42 @@ public class AccountOperationApi extends BaseApi {
      * @return the account operation dto
      */
     private AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
-	AccountOperationDto accountOperationDto = new AccountOperationDto();
-	accountOperationDto.setId(accountOp.getId());
-	accountOperationDto.setDueDate(accountOp.getDueDate());
-	accountOperationDto.setType(accountOp.getType());
-	accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
-	accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
-	accountOperationDto.setReference(accountOp.getReference());
-	accountOperationDto.setAccountCode(accountOp.getAccountCode());
-	accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
-	accountOperationDto.setAmount(accountOp.getAmount());
-	accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
-	accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
-	accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
-	accountOperationDto.setOccCode(accountOp.getOccCode());
-	accountOperationDto.setOccDescription(accountOp.getOccDescription());
-	accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
-	accountOperationDto.setBankLot(accountOp.getBankLot());
-	accountOperationDto.setBankReference(accountOp.getBankReference());
-	accountOperationDto.setDepositDate(accountOp.getDepositDate());
-	accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
-	List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
-	if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
-	    MatchingAmountDto matchingAmountDto = null;
-	    MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
-	    matchingAmountsDto.setMatchingAmount(new ArrayList<>());
-	    for (MatchingAmount matchingAmount : matchingAmounts) {
-		matchingAmountDto = new MatchingAmountDto();
-		if (matchingAmount.getMatchingCode() != null) {
-		    matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
-		}
-		matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
-		matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
-	    }
-	    accountOperationDto.setMatchingAmounts(matchingAmountsDto);
-	}
-	return accountOperationDto;
+        AccountOperationDto accountOperationDto = new AccountOperationDto();
+        accountOperationDto.setId(accountOp.getId());
+        accountOperationDto.setDueDate(accountOp.getDueDate());
+        accountOperationDto.setType(accountOp.getType());
+        accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
+        accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
+        accountOperationDto.setReference(accountOp.getReference());
+        accountOperationDto.setAccountCode(accountOp.getAccountCode());
+        accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
+        accountOperationDto.setAmount(accountOp.getAmount());
+        accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
+        accountOperationDto.setUnMatchingAmount(accountOp.getUnMatchingAmount());
+        accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
+        accountOperationDto.setOccCode(accountOp.getOccCode());
+        accountOperationDto.setOccDescription(accountOp.getOccDescription());
+        accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
+        accountOperationDto.setBankLot(accountOp.getBankLot());
+        accountOperationDto.setBankReference(accountOp.getBankReference());
+        accountOperationDto.setDepositDate(accountOp.getDepositDate());
+        accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
+        List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
+        if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
+            MatchingAmountDto matchingAmountDto = null;
+            MatchingAmountsDto matchingAmountsDto = new MatchingAmountsDto();
+            matchingAmountsDto.setMatchingAmount(new ArrayList<>());
+            for (MatchingAmount matchingAmount : matchingAmounts) {
+                matchingAmountDto = new MatchingAmountDto();
+                if (matchingAmount.getMatchingCode() != null) {
+                    matchingAmountDto.setMatchingCode(matchingAmount.getMatchingCode().getCode());
+                }
+                matchingAmountDto.setMatchingAmount(matchingAmount.getMatchingAmount());
+                matchingAmountsDto.getMatchingAmount().add(matchingAmountDto);
+            }
+            accountOperationDto.setMatchingAmounts(matchingAmountsDto);
+        }
+        return accountOperationDto;
     }
 
     /**
@@ -520,26 +520,26 @@ public class AccountOperationApi extends BaseApi {
      */
     public List<MatchedOperationDto> listMatchedOperations(Long accountOperationId) throws EntityDoesNotExistsException, MissingParameterException {
 
-	List<MatchedOperationDto> matchedOperationsDtos = new ArrayList<>();
+        List<MatchedOperationDto> matchedOperationsDtos = new ArrayList<>();
 
-	if (accountOperationId == null) {
-	    missingParameters.add("accountOperationId");
-	}
-	handleMissingParameters();
+        if (accountOperationId == null) {
+            missingParameters.add("accountOperationId");
+        }
+        handleMissingParameters();
 
-	AccountOperation accountOperation = accountOperationService.findById(accountOperationId);
+        AccountOperation accountOperation = accountOperationService.findById(accountOperationId);
 
-	if (accountOperation == null) {
-	    throw new EntityDoesNotExistsException(AccountOperation.class, accountOperationId);
-	}
+        if (accountOperation == null) {
+            throw new EntityDoesNotExistsException(AccountOperation.class, accountOperationId);
+        }
 
-	for (MatchingAmount matchingAmountPrimary : accountOperation.getMatchingAmounts()) {
-	    MatchingCode matchingCode = matchingAmountPrimary.getMatchingCode();
-	    for (MatchingAmount matchingAmount : matchingCode.getMatchingAmounts()) {
-		matchedOperationsDtos.add(new MatchedOperationDto(matchingCode, matchingAmount));
-	    }
-	}
+        for (MatchingAmount matchingAmountPrimary : accountOperation.getMatchingAmounts()) {
+            MatchingCode matchingCode = matchingAmountPrimary.getMatchingCode();
+            for (MatchingAmount matchingAmount : matchingCode.getMatchingAmounts()) {
+                matchedOperationsDtos.add(new MatchedOperationDto(matchingCode, matchingAmount));
+            }
+        }
 
-	return matchedOperationsDtos;
+        return matchedOperationsDtos;
     }
 }

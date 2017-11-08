@@ -149,7 +149,7 @@
 											outcome="#{invoiceSubCategoryBean.back()}"
 											includeViewParams="true">
 											</p:button> -->
-                                <p:commandButton id="buttonBack" value="#{messages['action.back']}" action="#{invoiceSubCategoryBean.setIndex()}" update=":tabView" immediate="true"></p:commandButton>
+                                <p:commandButton id="buttonBack" value="#{messages['action.back']}" action="#{invoiceSubCategoryBean.setActiveTab(0)}" update=":tabView" immediate="true"></p:commandButton>
                             </ui:define>
                         </hftl:formPanel>
                     </p:panel>
