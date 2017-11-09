@@ -356,6 +356,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 	if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
 	    throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
 	}
+	
+	if( subscription.getTerminationDate() != null ) {
+	    if(serviceInstance.getSubscriptionDate().after(subscription.getTerminationDate())) {
+		 throw new IncorrectServiceInstanceException("ServiceInstance activation date after the subscription termination date");
+	    }
+	}
 
 	checkServiceAssociatedWithOffer(serviceInstance);
 
