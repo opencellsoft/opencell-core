@@ -670,7 +670,9 @@ public class PaymentMethodDto extends BaseDto {
 	    throw new InvalidDTOException("Missing customerAccountCode");
 	}
 	if (getPaymentMethodType() == PaymentMethodEnum.CARD) {
-	    if (StringUtils.isBlank(getCardNumber()) || getCardNumber().length() != 16) {
+	    if (StringUtils.isBlank(getCardNumber()) 
+		    || ( getCardNumber().length() != 16 && getCardType()  != CreditCardTypeEnum.AMERICAN_EXPRESS )
+		    || ( getCardNumber().length() != 15 && getCardType()  == CreditCardTypeEnum.AMERICAN_EXPRESS ) ) {
 		throw new InvalidDTOException("Invalid cardNumber");
 	    }
 	    if (StringUtils.isBlank(getOwner())) {

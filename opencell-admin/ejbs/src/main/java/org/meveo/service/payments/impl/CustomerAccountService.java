@@ -464,7 +464,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return super.update(entity);
     }
     
-    public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
+    @SuppressWarnings("unchecked")
+	public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
 		long startDate = System.currentTimeMillis();
 		Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
 		query.setParameter("id", billingAccount.getId());
@@ -477,9 +478,16 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 			log.warn("error while getting user account list by billing account",e);
 			return null;
 		}
-		
-		
-		
 	
+	}
+    
+	public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to,
+			boolean dunningExclusion) throws BusinessException {
+		try {
+			return computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion,
+					MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+		} catch (Exception e) {
+			throw new BusinessException("Internal error");
+		}
 	}
 }

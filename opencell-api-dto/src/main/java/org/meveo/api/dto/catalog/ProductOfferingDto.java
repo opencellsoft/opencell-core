@@ -65,6 +65,8 @@ public class ProductOfferingDto extends BusinessDto {
     protected String longDescription;
 
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+    
+    private String globalRatingScriptInstance;
 
     public ProductOfferingDto() {
     }
@@ -118,7 +120,9 @@ public class ProductOfferingDto extends BusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getDescriptionI18n()));
         setLongDescription(productOffering.getLongDescription());
         setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
-
+        if(productOffering.getGlobalRatingScriptInstance() != null) {
+            setGlobalRatingScriptInstance(productOffering.getGlobalRatingScriptInstance().getCode());
+        }        
         this.customFields = customFieldsDto;
     }
 
@@ -241,4 +245,19 @@ public class ProductOfferingDto extends BusinessDto {
     public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
         this.longDescriptionsTranslated = longDescriptionsTranslated;
     }
+
+    /**
+     * @return the globalRatingScriptInstance
+     */
+    public String getGlobalRatingScriptInstance() {
+        return globalRatingScriptInstance;
+    }
+
+    /**
+     * @param globalRatingScriptInstance the globalRatingScriptInstance to set
+     */
+    public void setGlobalRatingScriptInstance(String globalRatingScriptInstance) {
+        this.globalRatingScriptInstance = globalRatingScriptInstance;
+    }
+    
 }

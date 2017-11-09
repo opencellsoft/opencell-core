@@ -21,6 +21,11 @@ public class UserAccountDto extends AccountDto {
 
 	@XmlElement(required = true)
 	private String billingAccount;
+	private String billingAccountDescription;
+	private String customerAccount;
+	private String customerAccountDescription;
+	private String customer;
+	private String customerDescription;
 
 	private Date subscriptionDate;
 	private Date terminationDate;
@@ -97,6 +102,46 @@ public class UserAccountDto extends AccountDto {
 
 	public void setSubscriptions(SubscriptionsDto subscriptions) {
 		this.subscriptions = subscriptions;
+	}
+
+	public String getBillingAccountDescription() {
+		return billingAccountDescription;
+	}
+
+	public void setBillingAccountDescription(String billingAccountDescription) {
+		this.billingAccountDescription = billingAccountDescription;
+	}
+
+	public String getCustomerAccount() {
+		return customerAccount;
+	}
+
+	public void setCustomerAccount(String customerAccount) {
+		this.customerAccount = customerAccount;
+	}
+
+	public String getCustomerAccountDescription() {
+		return customerAccountDescription;
+	}
+
+	public void setCustomerAccountDescription(String customerAccountDescription) {
+		this.customerAccountDescription = customerAccountDescription;
+	}
+
+	public String getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(String customer) {
+		this.customer = customer;
+	}
+
+	public String getCustomerDescription() {
+		return customerDescription;
+	}
+
+	public void setCustomerDescription(String customerDescription) {
+		this.customerDescription = customerDescription;
 	}
 
 }

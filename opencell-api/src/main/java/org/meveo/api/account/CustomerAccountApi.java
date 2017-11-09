@@ -28,6 +28,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
+import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.TradingCurrency;
@@ -390,9 +391,12 @@ public class CustomerAccountApi extends AccountEntityApi {
         CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
         if (calculateBalances) {
-            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
-            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, new Date());
-
+        	Date now = new Date();
+        	BigDecimal creditBalance = customerAccountService.computeCreditBalance(customerAccount, false, now, false);
+			BigDecimal balanceDue = NumberUtils.subtract(
+					customerAccountService.customerAccountBalanceExigible(customerAccount, now), creditBalance);
+            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, now);
+            
             if (balanceDue == null) {
                 throw new BusinessException("Balance due calculation failed.");
             }
@@ -402,6 +406,9 @@ public class CustomerAccountApi extends AccountEntityApi {
             }
             customerAccountDto.setBalance(balanceDue);
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
+            
+            customerAccountDto.setCreditBalance(creditBalance);
+			customerAccountDto.setAccountBalance(NumberUtils.subtract(totalInvoiceBalance, creditBalance));
         }
 
         return customerAccountDto;
