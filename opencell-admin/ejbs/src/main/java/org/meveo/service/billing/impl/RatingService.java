@@ -2,6 +2,7 @@ package org.meveo.service.billing.impl;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
+import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.crm.Customer;
@@ -65,11 +67,14 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
 import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
+
+import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
 
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
@@ -105,6 +110,9 @@ public class RatingService extends BusinessService<WalletOperation> {
 
     @Inject
     private InvoiceSubCategoryService invoiceSubCategoryService;
+    
+    @Inject
+    private ProductOfferingService productOfferingService;
 
     /**
      * @param level level enum
@@ -517,20 +525,21 @@ public class RatingService extends BusinessService<WalletOperation> {
         bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
         bareWalletOperation.setAmountWithTax(priceWithTax);
         bareWalletOperation.setAmountTax(amountTax);
-
         if (ratePrice != null && ratePrice.getScriptInstance() != null) {
             log.debug("start to execute script instance for ratePrice {}", ratePrice);
-            try {
-                log.debug("execute priceplan script " + ratePrice.getScriptInstance().getCode());
-                ScriptInterface script = scriptInstanceService.getCachedScriptInstance(ratePrice.getScriptInstance().getCode());
-                HashMap<String, Object> context = new HashMap<String, Object>();
-                context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
-                script.execute(context);
-            } catch (Exception e) {
-                log.error("Error when run script {}", ratePrice.getScriptInstance().getCode(), e);
-                throw new BusinessException("failed when run script " + ratePrice.getScriptInstance().getCode() + ", info " + e.getMessage());
-            }
+            executeRatingScript(bareWalletOperation, ratePrice.getScriptInstance().getCode());           
+        }        
+        ProductOffering productOffering = null;
+        if(ratePrice != null && ratePrice.getOfferTemplate() != null) {
+            productOffering = ratePrice.getOfferTemplate();
+        }else {
+            productOffering =  productOfferingService.findByCode(bareWalletOperation.getOfferCode(),Arrays.asList("globalRatingScriptInstance"));              
         }
+        productOffering =  productOfferingService.refreshOrRetrieve(productOffering);
+        if(productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
+            log.debug("start to execute script instance for productOffering {}", productOffering);
+            executeRatingScript(bareWalletOperation, productOffering.getGlobalRatingScriptInstance().getCode());
+        }       
 
         log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
     }
@@ -1147,5 +1156,17 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
         return result;
     }
-
+    
+private void executeRatingScript(WalletOperation bareWalletOperation,String scriptInstanceCode)throws BusinessException {
+    try {
+        log.debug("execute priceplan script " + scriptInstanceCode);
+        ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
+        HashMap<String, Object> context = new HashMap<String, Object>();
+        context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
+        script.execute(context);
+    } catch (Exception e) {
+        log.error("Error when run script {}", scriptInstanceCode, e);
+        throw new BusinessException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
+    }
+}
 }
