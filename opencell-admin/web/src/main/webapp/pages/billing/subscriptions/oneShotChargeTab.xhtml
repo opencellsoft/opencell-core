@@ -19,7 +19,7 @@
                     <hftl:column label="#{messages['chargeApplication.status']}" field="status" />
                     <hftl:column label="#{messages['oneShotChargeInstance.chargeDate']}" field="chargeDate" isDate="true" />
                     <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity" />
-                    <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false" />
+                    <hftl:column label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}"/>
                     <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}">
                         <h:outputText value="#{entity.amountWithTax}" converter="#{getConverter.forType(entity.amountWithTax,'4digits')}" />
                     </p:column>
@@ -88,7 +88,7 @@
                     </h:panelGroup>
                 </h:panelGroup>
                 <hftl:formField label="#{messages['oneShotChargeInstance.amountWithoutTax']}" field="amountWithoutTax"
-                    rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable}" converter="bigDecimalConverter" />
+                    rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and appProvider.enterprise}" converter="bigDecimalConverter" />
 
                 <hftl:decorateFormField fieldId="amountWithTax" label="#{messages['oneShotChargeInstance.amountWithTax']}"
                     rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and !appProvider.entreprise}">
@@ -116,7 +116,7 @@
                         <hftl:decorateFormField label="#{messages['chargeApplication.description']}">
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].description}" styleClass="field-value" />
                         </hftl:decorateFormField>
-                        <hftl:decorateFormField label="#{messages['invoice.summary.totalAmountWithoutTax']}">
+                        <hftl:decorateFormField label="#{messages['invoice.summary.totalAmountWithoutTax']}" rendered="#{appProvider.entreprise}">
                             <h:outputText value="#{subscriptionBean.oneShotWalletOperations[0].amountWithoutTax}" styleClass="field-value" />
                         </hftl:decorateFormField>
                         <hftl:decorateFormField rendered="#{!appProvider.entreprise}" label="#{messages['walletOperation.amountWithTax']}">

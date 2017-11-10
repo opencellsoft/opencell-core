@@ -477,7 +477,7 @@
                                                             <hftl:column label="#{messages['serviceInstance.quantity']}" field="quantity"  />
 															<hftl:column
 																label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-																field="amountWithoutTax" isMessage="false" />
+																field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}"/>
 															<p:column
 																headerText="#{messages['pricePlanMatrix.amountWithTax']}"
 																rendered="#{!appProvider.entreprise}">
@@ -542,7 +542,7 @@
 															field="chargeDate" isDate="true" />
 														<hftl:column
 															label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-															field="amountWithoutTax" isMessage="false" />
+															field="amountWithoutTax" isMessage="false" rendered="#{appProvider.entreprise}"/>
 														<p:column
 															headerText="#{messages['pricePlanMatrix.amountWithTax']}"
 															rendered="#{!appProvider.entreprise}">
@@ -691,7 +691,7 @@
                     <hftl:formField label="#{messages['chargeInstance.chargeDate']}" field="chargeDate" edit="false" newLine="true" />
                     <hftl:formField label="#{messages['counterTemplate.title']}" field="counter" valueLabelField="descriptionOrCode" edit="false" />
                     <hftl:formField rendered="#{!appProvider.entreprise}" label="#{messages['chargeInstance.amountWithTax']}" field="amountWithTax" newLine="true" />
-                    <hftl:formField label="#{messages['chargeInstance.amountWithoutTax']}" field="amountWithoutTax" newLine="#{appProvider.entreprise}" />
+                    <hftl:formField label="#{messages['chargeInstance.amountWithoutTax']}" field="amountWithoutTax" newLine="true" rendered="#{appProvider.entreprise}" />
 
 
                     <ui:param name="buttons" value="true" />
@@ -719,7 +719,7 @@
                         <hftl:formField label="#{messages['businessEntity.description']}" field="description" size="50" disabled="true" componentWidth="40" />
                         <hftl:formField label="#{messages['recurringChargeInstance.subscriptionDate']}" field="subscriptionDate" edit="false" componentWidth="15" />
                         <hftl:formField label="#{messages['serviceInstance.quantity']}" field="quantity" edit="false" />
-                        <hftl:formField label="#{messages['recurringChargeInstance.amountWithoutTax']}" field="amountWithoutTax" disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}"  />
+                        <hftl:formField label="#{messages['recurringChargeInstance.amountWithoutTax']}" field="amountWithoutTax" rendered="#{appProvider.entreprise}" disabled="#{subscriptionBean.recurringChargeInstance.id!=null and !subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}"  />
                         <hftl:formField label="#{messages['recurringChargeInstance.amountWithTax']}" field="amountWithTax" rendered="#{!appProvider.entreprise}" disabled="#{!subscriptionBean.recurringChargeInstance.chargeTemplate.amountEditable}"  />
                         
                         

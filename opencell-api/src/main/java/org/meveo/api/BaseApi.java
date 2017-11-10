@@ -1125,7 +1125,7 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
 
-        log.error("Casting {} of class {} ", value, value != null ? value.getClass() : null);
+        log.error("Casting {} of class {} ", value, value != null ? value.getClass().getSimpleName() : null);
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass())) {
             return value;

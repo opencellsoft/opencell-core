@@ -100,7 +100,7 @@ public class RealtimeChargingService {
         ci.setCountry(tradingCountry);
         ci.setCurrency(currency);
         op.setChargeInstance(ci);
-        // we do not need charging of this opetation so we set its wallet to null
+		//we do not need charging of this operation so we set its wallet to null
         op.setWallet(null);
         op.setCode(chargeTemplate.getCode());
 

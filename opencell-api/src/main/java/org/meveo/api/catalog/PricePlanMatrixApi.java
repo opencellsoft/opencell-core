@@ -72,8 +72,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (postData.getAmountWithoutTax() == null) {
-            missingParameters.add("amountWithoutTax");
+        if (postData.getAmountWithoutTax() == null && appProvider.isEntreprise()) {
+            missingParameters.add("amountWithoutTax");        
+        }
+        if (postData.getAmountWithTax() == null && !appProvider.isEntreprise()) {
+            missingParameters.add("amountWithTax");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -193,8 +196,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (postData.getAmountWithoutTax() == null) {
-            missingParameters.add("amountWithoutTax");
+        if (postData.getAmountWithoutTax() == null && appProvider.isEntreprise()) {
+            missingParameters.add("amountWithoutTax");        
+        }
+        if (postData.getAmountWithTax() == null && !appProvider.isEntreprise()) {
+            missingParameters.add("amountWithTax");
         }
 
         handleMissingParametersAndValidate(postData);

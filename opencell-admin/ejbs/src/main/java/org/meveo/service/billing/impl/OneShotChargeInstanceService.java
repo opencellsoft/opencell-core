@@ -136,7 +136,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargeTemplate, String walletCode, Date effetDate,
-            BigDecimal amoutWithoutTax, BigDecimal amoutWithoutTx2, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description,
+            BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description,
             String orderNumber, boolean applyCharge) throws BusinessException {
 
         if (quantity == null) {
@@ -145,10 +145,10 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
         if (!chargeTemplate.getAmountEditable()) {
             amoutWithoutTax = null;
-            amoutWithoutTx2 = null;
+            amoutWithTax = null;
         }
 
-        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(description, effetDate, amoutWithoutTax, amoutWithoutTx2, quantity, orderNumber, subscription,
+        OneShotChargeInstance oneShotChargeInstance = new OneShotChargeInstance(description, effetDate, amoutWithoutTax, amoutWithTax, quantity, orderNumber, subscription,
             chargeTemplate);
         oneShotChargeInstance.setCriteria1(criteria1);
         oneShotChargeInstance.setCriteria2(criteria2);

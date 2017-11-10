@@ -104,7 +104,12 @@ public class ParamBean {
     }
 
     public static ParamBean getInstance() {
-        return getInstance("meveo-admin.properties");
+        try {
+            return getInstance("meveo-admin.properties");
+        } catch (Exception e) {
+            log.error("Failed to initialize meveo-admin.properties file.", e);
+            return null;
+        }
     }
 
     /*

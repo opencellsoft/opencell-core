@@ -74,8 +74,6 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
-import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
-
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
 
@@ -293,11 +291,8 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
 
         BigDecimal unitPriceWithoutTax = amountWithoutTax;
-        BigDecimal unitPriceWithTax = null;
+        BigDecimal unitPriceWithTax = amountWithTax;
 
-        if (unitPriceWithoutTax != null) {
-            unitPriceWithTax = amountWithTax;
-        }
         log.debug("Before  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
         rateBareWalletOperation(walletOperation, unitPriceWithoutTax, unitPriceWithTax, countryId, tCurrency);
         log.debug("After  rateBareWalletOperation:" + (System.currentTimeMillis() - startDate));
@@ -438,39 +433,44 @@ public class RatingService extends BusinessService<WalletOperation> {
      */
     public void rateBareWalletOperation(WalletOperation bareWalletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax, Long countryId, TradingCurrency tcurrency)
             throws BusinessException {
+
         long startDate = System.currentTimeMillis();
         PricePlanMatrix ratePrice = null;
 
-        if (unitPriceWithoutTax == null) {
+        if ((unitPriceWithoutTax == null && appProvider.isEntreprise()) || (unitPriceWithTax == null && !appProvider.isEntreprise())) {
             List<PricePlanMatrix> chargePricePlans = ratingCacheContainerProvider.getPricePlansByChargeCode(bareWalletOperation.getCode());
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                 throw new BusinessException("No price plan for charge code " + bareWalletOperation.getCode());
             }
             ratePrice = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency,
                 bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
-            if (ratePrice == null || ratePrice.getAmountWithoutTax() == null) {
-                throw new BusinessException("Invalid price plan for charge code " + bareWalletOperation.getCode());
+            if (ratePrice == null || (ratePrice.getAmountWithoutTax() == null && appProvider.isEntreprise())
+                    || (ratePrice.getAmountWithTax() == null && !appProvider.isEntreprise())) {
+                throw new BusinessException("No price plan matched (" + (ratePrice == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
             }
-            log.debug("found ratePrice {} for {}",ratePrice.getId(), bareWalletOperation.getCode());
-            unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
-            unitPriceWithTax = ratePrice.getAmountWithTax();
-            WalletInstance wallet = bareWalletOperation.getWallet();
-            UserAccount userAccount = wallet.getUserAccount();
-            if (ratePrice.getAmountWithoutTaxEL() != null) {
-                unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(), ratePrice, bareWalletOperation, userAccount, unitPriceWithoutTax);
-                if (unitPriceWithoutTax == null) {
-                    throw new BusinessException("Cant get price from EL:" + ratePrice.getAmountWithoutTaxEL());
+            log.debug("found ratePrice {} for {}", ratePrice.getId(), bareWalletOperation.getCode());
+            if (appProvider.isEntreprise()) {
+                unitPriceWithoutTax = ratePrice.getAmountWithoutTax();
+                if (ratePrice.getAmountWithoutTaxEL() != null) {
+                    unitPriceWithoutTax = getExpressionValue(ratePrice.getAmountWithoutTaxEL(), ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
+                        unitPriceWithoutTax);
+                    if (unitPriceWithoutTax == null) {
+                        throw new BusinessException("Cant get price from EL:" + ratePrice.getAmountWithoutTaxEL());
+                    }
                 }
-            }
-            if (ratePrice.getAmountWithTaxEL() != null) {
-                unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(), ratePrice, bareWalletOperation, userAccount, unitPriceWithoutTax);
-                if (unitPriceWithTax == null) {
-                    throw new BusinessException("Cant get price from EL:" + ratePrice.getAmountWithTaxEL());
+
+            } else {
+                unitPriceWithTax = ratePrice.getAmountWithTax();
+                if (ratePrice.getAmountWithTaxEL() != null) {
+                    unitPriceWithTax = getExpressionValue(ratePrice.getAmountWithTaxEL(), ratePrice, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
+                        unitPriceWithoutTax);
+                    if (unitPriceWithTax == null) {
+                        throw new BusinessException("Cant get price from EL:" + ratePrice.getAmountWithTaxEL());
+                    }
                 }
             }
         }
 
-        
         log.debug("After unitPriceWithoutTax:" + (System.currentTimeMillis() - startDate));
 
         // if the wallet operation correspond to a recurring charge that is
@@ -483,8 +483,9 @@ public class RatingService extends BusinessService<WalletOperation> {
                 RecurringChargeInstance recChargeInstance = (RecurringChargeInstance) chargeInstance;
                 int sharedQuantity = getSharedQuantity(recChargeTemplate.getShareLevel(), recChargeInstance.getCode(), bareWalletOperation.getOperationDate(), recChargeInstance);
                 if (sharedQuantity > 0) {
-                    unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
-                    if (unitPriceWithTax != null) {
+                    if (appProvider.isEntreprise()) {
+                        unitPriceWithoutTax = unitPriceWithoutTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
+                    } else {
                         unitPriceWithTax = unitPriceWithTax.divide(new BigDecimal(sharedQuantity), BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP);
                     }
                     log.info("charge is shared " + sharedQuantity + " times, so unit price is " + unitPriceWithoutTax);
@@ -494,57 +495,99 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         log.debug("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
-        BigDecimal priceWithoutTax = bareWalletOperation.getQuantity().multiply(unitPriceWithoutTax);
-        BigDecimal priceWithTax = null;
-        BigDecimal unitPriceAmountTax = null;
-        BigDecimal amountTax = BigDecimal.ZERO;
+        calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
-        if (bareWalletOperation.getTaxPercent() != null) {
-            unitPriceAmountTax = unitPriceWithoutTax.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
-            amountTax = priceWithoutTax.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
-        }
-
-        if (unitPriceWithTax == null || unitPriceWithTax.intValue() == 0) {
-            if (unitPriceAmountTax != null) {
-                unitPriceWithTax = unitPriceWithoutTax.add(unitPriceAmountTax);
-                priceWithTax = priceWithoutTax.add(amountTax);
-            }
-        } else {
-            unitPriceAmountTax = unitPriceWithTax.subtract(unitPriceWithoutTax);
-            priceWithTax = bareWalletOperation.getQuantity().multiply(unitPriceWithTax);
-            amountTax = priceWithTax.subtract(priceWithoutTax);
-        }
-
-        Integer rounding = appProvider.getRounding();
-        if (rounding != null && rounding > 0) {
-            priceWithoutTax = NumberUtils.round(priceWithoutTax, rounding);
-            priceWithTax = NumberUtils.round(priceWithTax, rounding);
-        }
-        
-        bareWalletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
-        bareWalletOperation.setUnitAmountWithTax(unitPriceWithTax);
-        bareWalletOperation.setUnitAmountTax(unitPriceAmountTax);
-        bareWalletOperation.setTaxPercent(bareWalletOperation.getTaxPercent());
-        bareWalletOperation.setAmountWithoutTax(priceWithoutTax);
-        bareWalletOperation.setAmountWithTax(priceWithTax);
-        bareWalletOperation.setAmountTax(amountTax);
         if (ratePrice != null && ratePrice.getScriptInstance() != null) {
             log.debug("start to execute script instance for ratePrice {}", ratePrice);
-            executeRatingScript(bareWalletOperation, ratePrice.getScriptInstance().getCode());           
-            }
-        ProductOffering productOffering = null;
-        if(ratePrice != null && ratePrice.getOfferTemplate() != null) {
-            productOffering = ratePrice.getOfferTemplate();
-        }else {
-            productOffering =  productOfferingService.findByCode(bareWalletOperation.getOfferCode(),Arrays.asList("globalRatingScriptInstance"));              
+            executeRatingScript(bareWalletOperation, ratePrice.getScriptInstance().getCode());
         }
-        productOffering =  productOfferingService.refreshOrRetrieve(productOffering);
-        if(productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
+        ProductOffering productOffering = null;
+        if (ratePrice != null && ratePrice.getOfferTemplate() != null) {
+            productOffering = ratePrice.getOfferTemplate();
+        } else {
+            productOffering = productOfferingService.findByCode(bareWalletOperation.getOfferCode(), Arrays.asList("globalRatingScriptInstance"));
+        }
+        productOffering = productOfferingService.refreshOrRetrieve(productOffering);
+        if (productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
             log.debug("start to execute script instance for productOffering {}", productOffering);
             executeRatingScript(bareWalletOperation, productOffering.getGlobalRatingScriptInstance().getCode());
-        }       
+        }
 
         log.debug("After bareWalletOperation:" + (System.currentTimeMillis() - startDate));
+    }
+
+    /**
+     * Calculate, round (if needed) and set total amounts and taxes:<br/>
+     * [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax)<br/>
+     * [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax) <br/>
+     * 
+     * Unit prices and taxes are not rounded
+     * 
+     * @param walletOperation Wallet operation
+     * @param unitPriceWithoutTax Unit price without tax. Used in B2B (provider.isEnterise=true) as base to calculate taxes and price/amount with tax.
+     * @param unitPriceWithTax Unit price with tax. Used in B2C (provider.isEnterise=false) as base to calculate taxes and price/amount without tax.
+     */
+    private void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) {
+
+        BigDecimal unitAmountTax = BigDecimal.ZERO;
+        BigDecimal amountTax = BigDecimal.ZERO;
+        BigDecimal priceWithoutTax = null;
+        BigDecimal priceWithTax = null;
+
+        Integer rounding = appProvider.getRounding();
+
+        // Calculate and round total prices and taxes:
+        // [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax)
+        // [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax)
+        // Unit prices and taxes are not rounded
+        if (appProvider.isEntreprise()) {
+
+            priceWithoutTax = walletOperation.getQuantity().multiply(unitPriceWithoutTax);
+            if (rounding != null && rounding > 0) {
+                priceWithoutTax = NumberUtils.round(priceWithoutTax, rounding);
+            }
+
+            if (walletOperation.getTaxPercent() != null) {
+                unitAmountTax = unitPriceWithoutTax.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
+
+                amountTax = priceWithoutTax.multiply(walletOperation.getTaxPercent().divide(HUNDRED));
+                if (rounding != null && rounding > 0) {
+                    amountTax = NumberUtils.round(amountTax, rounding);
+                }
+            }
+
+            unitPriceWithTax = unitPriceWithoutTax.add(unitAmountTax);
+            priceWithTax = priceWithoutTax.add(amountTax);
+
+        } else {
+
+            priceWithTax = walletOperation.getQuantity().multiply(unitPriceWithTax);
+            if (rounding != null && rounding > 0) {
+                priceWithTax = NumberUtils.round(priceWithTax, rounding);
+            }
+
+            if (walletOperation.getTaxPercent() != null) {
+                BigDecimal percentPlusOne = BigDecimal.ONE.add(walletOperation.getTaxPercent().divide(HUNDRED, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+
+                unitAmountTax = unitPriceWithTax.subtract(unitPriceWithTax.divide(percentPlusOne, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                amountTax = priceWithTax.subtract(priceWithTax.divide(percentPlusOne, BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP));
+                if (rounding != null && rounding > 0) {
+                    amountTax = NumberUtils.round(amountTax, rounding);
+                }
+            }
+
+            unitPriceWithoutTax = unitPriceWithTax.subtract(unitAmountTax);
+            priceWithoutTax = priceWithTax.subtract(amountTax);
+
+        }
+
+        walletOperation.setUnitAmountWithoutTax(unitPriceWithoutTax);
+        walletOperation.setUnitAmountWithTax(unitPriceWithTax);
+        walletOperation.setUnitAmountTax(unitAmountTax);
+        walletOperation.setTaxPercent(walletOperation.getTaxPercent());
+        walletOperation.setAmountWithoutTax(priceWithoutTax);
+        walletOperation.setAmountWithTax(priceWithTax);
+        walletOperation.setAmountTax(amountTax);
     }
 
     /**
@@ -719,43 +762,35 @@ public class RatingService extends BusinessService<WalletOperation> {
             PricePlanMatrix priceplan = operation.getPriceplan();
             WalletInstance wallet = operation.getWallet();
             UserAccount userAccount = wallet.getUserAccount();
+
             if (useSamePricePlan) {
                 BigDecimal unitAmountWithTax = operation.getUnitAmountWithTax();
                 BigDecimal unitAmountWithoutTax = operation.getUnitAmountWithoutTax();
+
                 if (priceplan != null) {
-                    operation.setUnitAmountWithoutTax(priceplan.getAmountWithoutTax());
-                    operation.setUnitAmountWithTax(priceplan.getAmountWithTax());
-                    if (priceplan.getAmountWithoutTaxEL() != null) {
-                        BigDecimal priceFromEL = getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
-                        if (priceFromEL == null) {
-                            throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithoutTaxEL());
-                        }
-                        operation.setUnitAmountWithoutTax(priceFromEL);
 
-                    }
-                    if (priceplan.getAmountWithTaxEL() != null) {
-                        BigDecimal priceFromEL = getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
-                        if (priceFromEL == null) {
-                            throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithTaxEL());
+                    if (appProvider.isEntreprise()) {
+                        unitAmountWithoutTax = priceplan.getAmountWithoutTax();
+                        if (priceplan.getAmountWithoutTaxEL() != null) {
+                            unitAmountWithoutTax = getExpressionValue(priceplan.getAmountWithoutTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
+                            if (unitAmountWithoutTax == null) {
+                                throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithoutTaxEL());
+                            }
                         }
-                        operation.setUnitAmountWithTax(priceFromEL);
 
+                    } else {
+                        unitAmountWithTax = priceplan.getAmountWithTax();
+                        if (priceplan.getAmountWithTaxEL() != null) {
+                            unitAmountWithTax = getExpressionValue(priceplan.getAmountWithTaxEL(), priceplan, operation, userAccount, unitAmountWithoutTax);
+                            if (unitAmountWithTax == null) {
+                                throw new BusinessException("Cant get price from EL:" + priceplan.getAmountWithTaxEL());
+                            }
+                        }
                     }
-                    if (operation.getUnitAmountTax() != null && unitAmountWithTax != null) {
-                        operation.setUnitAmountTax(unitAmountWithTax.subtract(unitAmountWithoutTax));
-                    }
                 }
-                BigDecimal quantity = operation.getQuantity();
-                operation.setAmountWithoutTax(unitAmountWithoutTax.multiply(quantity));
-                if (unitAmountWithTax != null) {
-                    operation.setAmountWithTax(unitAmountWithTax.multiply(quantity));
-                }
-                Integer rounding = appProvider.getRounding();
-                if (rounding != null && rounding > 0) {
-                    operation.setAmountWithoutTax(NumberUtils.round(operation.getAmountWithoutTax(), rounding));
-                    operation.setAmountWithTax(NumberUtils.round(operation.getAmountWithTax(), rounding));
-                }
-                operation.setAmountTax(operation.getAmountWithTax().subtract(operation.getAmountWithoutTax()));
+
+                calculateAmounts(operation, unitAmountWithoutTax, unitAmountWithTax);
+
             } else {
                 operation.setUnitAmountWithoutTax(null);
                 operation.setUnitAmountWithTax(null);
@@ -781,6 +816,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                 }
 
                 operation.setTaxPercent(tax.getPercent());
+
                 rateBareWalletOperation(operation, null, null, priceplan.getTradingCountry() == null ? null : priceplan.getTradingCountry().getId(),
                     priceplan.getTradingCurrency());
             }
@@ -982,16 +1018,17 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         return userMap;
     }
-private void executeRatingScript(WalletOperation bareWalletOperation,String scriptInstanceCode)throws BusinessException {
-    try {
-        log.debug("execute priceplan script " + scriptInstanceCode);
-        ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
-        HashMap<String, Object> context = new HashMap<String, Object>();
-        context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
-        script.execute(context);
-    } catch (Exception e) {
-        log.error("Error when run script {}", scriptInstanceCode, e);
-        throw new BusinessException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
+
+    private void executeRatingScript(WalletOperation bareWalletOperation, String scriptInstanceCode) throws BusinessException {
+        try {
+            log.debug("execute priceplan script " + scriptInstanceCode);
+            ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
+            HashMap<String, Object> context = new HashMap<String, Object>();
+            context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
+            script.execute(context);
+        } catch (Exception e) {
+            log.error("Error when run script {}", scriptInstanceCode, e);
+            throw new BusinessException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
+        }
     }
-}
 }
