@@ -58,7 +58,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            int productPaymentId, String countryCode) throws BusinessException {
+            CreditCardTypeEnum cardType, String countryCode) throws BusinessException {
         try {
             CompanyInformation companyInformation = new CompanyInformation();
             companyInformation.setName(customerAccount.getCode());
@@ -95,7 +95,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
             CreateTokenRequest body = new CreateTokenRequest();
             body.setCard(tokenCard);
-            body.setPaymentProductId(productPaymentId);
+            body.setPaymentProductId(cardType.getId());
 
             CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);
             if (!response.getIsNewToken()) {
