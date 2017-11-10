@@ -115,6 +115,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 	private boolean visibleServiceCF;
 	private boolean instantiatedFromBom;
 	private boolean newVersionFlag;
+	private boolean duplicateOfferFlag;
 
 	private DualListModel<ServiceTemplate> incompatibleServices;
 	private OfferServiceTemplate offerServiceTemplate;
@@ -166,6 +167,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			// duplicate the offer, detach and set id to null
 			duplicateWOutSave();
 			duplicateOffer = false;
+			duplicateOfferFlag = true;
 
 		} else {
 			// creates new entity
@@ -321,7 +323,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 					// add services from BOM offer
 					// this is not used anymore?
-					if (!newVersionFlag) {
+					if (!newVersionFlag && !duplicateOfferFlag) {
 						for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate()
 								.getOfferServiceTemplates()) {
 							boolean found = false;
@@ -837,6 +839,14 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	public void setSelectedBsms(List<BusinessServiceModel> selectedBsms) {
 		this.selectedBsms = selectedBsms;
+	}
+
+	public boolean isDuplicateOfferFlag() {
+		return duplicateOfferFlag;
+	}
+
+	public void setDuplicateOfferFlag(boolean duplicateOfferFlag) {
+		this.duplicateOfferFlag = duplicateOfferFlag;
 	}
 
 }
