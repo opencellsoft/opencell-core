@@ -44,7 +44,9 @@ public class UserDto extends BaseDto {
     @XmlElement(required = true)
     private String username;
 
-    @Deprecated
+    /**
+     * Used when creating keycloak user.
+     */
     @XmlElement()
     private String password;
 
@@ -176,5 +178,13 @@ public class UserDto extends BaseDto {
         return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel="
                 + userLevel + ", securedEntities=" + securedEntities + " ]";
     }
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
 }

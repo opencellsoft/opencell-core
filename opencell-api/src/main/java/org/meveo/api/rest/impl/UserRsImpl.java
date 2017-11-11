@@ -87,4 +87,17 @@ public class UserRsImpl extends BaseRs implements UserRs {
 
         return result;
     }
+
+	@Override
+	public ActionStatus createKeycloakUser(UserDto postData) {
+		ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.createKeycloakUser(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+	}
 }

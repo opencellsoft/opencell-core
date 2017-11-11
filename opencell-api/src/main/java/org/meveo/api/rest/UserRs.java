@@ -76,5 +76,9 @@ public interface UserRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(UserDto postData);
+    
+    @POST
+    @Path("/keycloak")
+    public ActionStatus createKeycloakUser(UserDto postData);
 
 }

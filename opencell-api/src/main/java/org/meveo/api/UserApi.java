@@ -17,6 +17,8 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.keycloak.client.KeycloakAdminClientService;
+import org.meveo.keycloak.client.KeycloakUserAccount;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -53,6 +55,9 @@ public class UserApi extends BaseApi {
 
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
+    
+    @Inject
+    private KeycloakAdminClientService keycloakAdminClientService;
 
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
 
@@ -306,4 +311,15 @@ public class UserApi extends BaseApi {
             update(postData);
         }
     }
+
+	public void createKeycloakUser(UserDto postData) throws BusinessException {
+		KeycloakUserAccount keycloakUserAccount = new KeycloakUserAccount();
+		keycloakUserAccount.setEmail(postData.getEmail());
+		keycloakUserAccount.setFirstName(postData.getFirstName());
+		keycloakUserAccount.setLastName(postData.getLastName());
+		keycloakUserAccount.setPassword(postData.getPassword());
+		keycloakUserAccount.setUsername(postData.getUsername());
+
+		keycloakAdminClientService.createUser(keycloakUserAccount);
+	}
 }

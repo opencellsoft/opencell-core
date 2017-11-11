@@ -39149,7 +39149,7 @@ tirh0OKtnFVvbFV3cYq5+2KuXpiru+Kv/9k=
     <con:properties/>
     <con:setupScript/>
   </con:testSuite>
-  <con:testSuite id="7b7e8d8d-fd45-47d4-aeb9-733dafc2665d" name="Self Care">
+  <con:testSuite id="7b7e8d8d-fd45-47d4-aeb9-733dafc2665d" name="Self Care" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="49cc3d69-67fd-48be-b79d-e78f2951687e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Selfcare User" searchProperties="true">
@@ -39906,7 +39906,7 @@ public class CreateAccess extends OfferScript {
     </con:testCase>
     <con:properties/>
   </con:testSuite>
-  <con:testSuite id="9b232d69-e254-4bf6-9b87-c80b0fad0da6" name="Customer Care">
+  <con:testSuite id="9b232d69-e254-4bf6-9b87-c80b0fad0da6" name="Customer Care" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="1de434da-9c25-436a-bc59-b8d075daf8b8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create CustomerCare User" searchProperties="true">
@@ -40226,7 +40226,7 @@ public class ForgotPassword extends ModuleScript{
     </con:testCase>
     <con:properties/>
   </con:testSuite>
-  <con:testSuite id="e253e561-e704-4d69-b655-f4a43fd709a5" name="Commission Partner">
+  <con:testSuite id="e253e561-e704-4d69-b655-f4a43fd709a5" name="Commission Partner" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="8ee1d22e-dfc3-4026-bf2a-d12c92e3f3f2">
@@ -40629,7 +40629,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="a2a3caf9-1b4e-4302-9c29-f64d5c6d3d1e" name="Customer SUPER">
+  <con:testSuite id="a2a3caf9-1b4e-4302-9c29-f64d5c6d3d1e" name="Customer SUPER" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="09231696-2a2c-4b0d-856b-682003af0b1a">
@@ -41138,7 +41138,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="634745d7-3902-4e88-944a-fb38a40e91b9" name="Customer John Doe">
+  <con:testSuite id="634745d7-3902-4e88-944a-fb38a40e91b9" name="Customer John Doe" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="8a6cd699-839b-4c8c-a22e-f319c1338158">
@@ -41833,7 +41833,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="dcc7f623-2f2a-4438-8d86-2c4cf3b9a597" name="Customer Ben Ohara">
+  <con:testSuite id="dcc7f623-2f2a-4438-8d86-2c4cf3b9a597" name="Customer Ben Ohara" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="2202d257-e5d9-4c67-9aa6-9b19f6b97802">
@@ -43230,7 +43230,7 @@ public class ForgotPassword extends ModuleScript{
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="6091610d-8538-494f-a4a7-d44004b1b57f" name="Customer Job Bonvi">
+  <con:testSuite id="6091610d-8538-494f-a4a7-d44004b1b57f" name="Customer Job Bonvi" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="3bba98de-d4bd-404d-8381-4b1929e3d60f">
@@ -45019,7 +45019,7 @@ MFBG0AAAAABJRU5ErkJggg==
     </con:testCase>
     <con:properties/>
   </con:testSuite>
-  <con:testSuite id="b295e7e5-4a9e-40c2-a94d-b48da3066310" name="Customer Bob Churn">
+  <con:testSuite id="b295e7e5-4a9e-40c2-a94d-b48da3066310" name="Customer Bob Churn" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="cde50011-27a4-4ac1-9dbb-b038d39f2775">
@@ -48770,7 +48770,7 @@ MFBG0AAAAABJRU5ErkJggg==
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="259e9f9d-ddae-4642-9dea-611883092228" name="Customer CLASSIC">
+  <con:testSuite id="259e9f9d-ddae-4642-9dea-611883092228" name="Customer CLASSIC" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customer" searchProperties="true" id="093fda00-b151-425b-b847-350519c1937b">
@@ -51568,7 +51568,7 @@ MFBG0AAAAABJRU5ErkJggg==
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="0b7adc2d-8d68-4347-8e61-b068fd6697c6" name="Measurable Quantities">
+  <con:testSuite id="0b7adc2d-8d68-4347-8e61-b068fd6697c6" name="Measurable Quantities" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="98a4ae71-3443-4535-83f4-bdda41cbfad8" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Measurable Quantities" searchProperties="true">
@@ -52939,7 +52939,7 @@ select
       </con:property>
     </con:properties>
   </con:testSuite>
-  <con:testSuite id="f4d34738-25cc-4831-b4e2-6e590a7d72c5" name="Ticketing">
+  <con:testSuite id="f4d34738-25cc-4831-b4e2-6e590a7d72c5" name="Ticketing" disabled="true">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
     <con:testCase id="07e52072-4b00-4629-9420-597a93d26740" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create Custom Entities" searchProperties="true">
@@ -55955,7 +55955,7 @@ rkJggg==
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
+      <con:value>http://localhost:8080/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>provider</con:name>
