@@ -104,21 +104,9 @@
 								valueLabelField="code" listBean="#{businessOfferModelBean}" />
 						</c:if>
 						<c:if test="#{offerTemplateBean.businessOfferModel != null}">
-							<c:if test="#{offerTemplateBean.newVersionFlag}">
-								<hftl:formField id="code"
-									label="#{messages['offerTemplate.code']}" field="code"
-									required="true" />
-							</c:if>
-							<c:if test="#{!offerTemplateBean.newVersionFlag}">
-								<hftl:decorateFormField fieldId="transientCode"
-									label="#{messages['offerTemplate.code']}">
-									<p:inputText id="transientCode"
-										value="#{offerTemplateBean.entity.transientCode}"
-										styleClass="field-value" required="true">
-										<o:validator validatorId="codeValidator" />
-									</p:inputText>
-								</hftl:decorateFormField>
-							</c:if>
+							<hftl:formField id="code"
+								label="#{messages['offerTemplate.code']}" field="code"
+								required="true" />
 							<hftl:decorateFormField fieldId="family"
 								label="#{messages['marketingManager.catalog.family']}">
 								<h:outputText id="family"
@@ -343,7 +331,7 @@
 			</p:panel>
 
 			<p:panel
-				rendered="#{(offerTemplateBean.businessOfferModel != null or offerTemplateBean.newVersionFlag) and offerTemplateBean.businessServiceModels != null and !offerTemplateBean.businessServiceModels.isEmpty()}">
+				rendered="#{offerTemplateBean.businessServiceModels != null and !offerTemplateBean.businessServiceModels.isEmpty()}">
 				<div class="CenterDiv">
 					<f:facet name="header">#{messages['marketingManager.catalog.businessServiceModels']}</f:facet>
 

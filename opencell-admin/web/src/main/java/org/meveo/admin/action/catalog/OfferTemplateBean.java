@@ -727,9 +727,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		if (getObjectId() != null) {
 			OfferTemplate offer = offerTemplateService.findById(getObjectId());
 			if (offer != null) {
-
 				try {
 					entity = offerTemplateService.duplicate(offer, false);
+					businessOfferModel = entity.getBusinessOfferModel();					
 					setObjectId(null);
 
 					messages.info(new BundleKey("messages", "message.duplicate.ok"));
