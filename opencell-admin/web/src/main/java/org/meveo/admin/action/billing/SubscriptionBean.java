@@ -610,10 +610,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
 
             try {
-                productInstanceService.create(productInstance);
+                // productInstanceService.create(productInstance);
                 // save custom field before product application so we can use in el
                 customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
-                productInstanceService.applyProductInstance(productInstance, null, null, null, true);
+                productInstanceService.saveAndApplyProductInstance(productInstance, null, null, null, true);
                 productChargeInstances = null;
                 productInstances = null;
                 productInstance = null;

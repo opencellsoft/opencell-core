@@ -516,9 +516,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
 
             try {
-                productInstanceService.create(productInstance);
+                //productInstanceService.create(productInstance);
                 customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
-                List<WalletOperation> walletOps = productInstanceService.applyProductInstance(productInstance, null, null, null, true);
+                List<WalletOperation> walletOps = productInstanceService.saveAndApplyProductInstance(productInstance, null, null, null, true);
 
                 if (walletOps == null || walletOps.size() == 0) {
                     messages.error(new BundleKey("messages", "message.userAccount.applyProduct.noProductCharge"));

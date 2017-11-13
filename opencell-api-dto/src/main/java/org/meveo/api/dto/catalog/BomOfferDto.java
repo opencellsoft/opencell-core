@@ -48,6 +48,10 @@ public class BomOfferDto extends BaseDto {
 	@XmlElementWrapper(name = "productsToActivate")
 	@XmlElement(name = "productToActivate")
 	private List<ServiceConfigurationDto> productsToActivate;
+	
+	@XmlElementWrapper(name = "businessServiceModels")
+	@XmlElement(name = "businessServiceModel")
+	private List<BSMConfigurationDto> businessServiceModels;
 
 	public String getBomCode() {
 		return bomCode;
@@ -118,6 +122,14 @@ public class BomOfferDto extends BaseDto {
 
 	public void setProductsToActivate(List<ServiceConfigurationDto> productsToActivate) {
 		this.productsToActivate = productsToActivate;
+	}
+
+	public List<BSMConfigurationDto> getBusinessServiceModels() {
+		return businessServiceModels;
+	}
+
+	public void setBusinessServiceModels(List<BSMConfigurationDto> businessServiceModels) {
+		this.businessServiceModels = businessServiceModels;
 	}
 
 }

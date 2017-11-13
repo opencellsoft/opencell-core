@@ -9,7 +9,6 @@
 
     <p:tab id="productInstancesTab" title="#{messages['userAccount.tab.productInstances']}" rendered="#{not parentBackingBean.entity.transient}">
         <h:panelGroup id="productInstances">
-            <p:messages id="applyProductMessages" />
             <h:form id="productInstanceResultsForm">
                 <p:dataTable resizableColumns="true" value="#{parentBackingBean.getProductInstances()}" var="entity" paginator="true" rows="10" lazy="true"
                     paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" rowsPerPageTemplate="10,20,30,50"

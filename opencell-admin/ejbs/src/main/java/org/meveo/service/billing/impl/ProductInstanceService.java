@@ -117,6 +117,12 @@ public class ProductInstanceService extends BusinessService<ProductInstance> {
         }
     }
 
+	public List<WalletOperation> saveAndApplyProductInstance(ProductInstance productInstance, String criteria1,
+			String criteria2, String criteria3, boolean persist) throws BusinessException {
+		create(productInstance);
+		return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist);
+	}
+
     public List<WalletOperation> applyProductInstance(ProductInstance productInstance, String criteria1, String criteria2, String criteria3, boolean persist)
             throws BusinessException {
         return applyProductInstance(productInstance, criteria1, criteria2, criteria3, persist, true);

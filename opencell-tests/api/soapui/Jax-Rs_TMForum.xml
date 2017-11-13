@@ -31411,7 +31411,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Create Product order - 1" id="2b5d0d75-eccf-4b20-9487-34112b4710f8">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Create Product order - CA" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create Product order - 1" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -31920,7 +31920,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains"/>
+            <con:assertion type="Simple Contains" id="068a492c-875a-4fb9-ae53-20d06a92cb4b">
+              <con:configuration/>
+            </con:assertion>
             <con:assertion type="Simple Contains" id="66947aa4-6ddb-4b22-81c5-176c6ea35198" name="Contains 1">
               <con:configuration>
                 <token>45</token>
