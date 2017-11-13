@@ -125,8 +125,26 @@
         </p:panel>
     </c:if>
 
-<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank">
- </p:panel>
+<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank" rendered="false">
+
+        <f:facet name="header">
+            <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
+            <p:commandLink action="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
+                oncomplete="PF('entityCustomizationDialog').show()" update="entityCustomizationDialogPanel" styleClass="fa fa-edit no-text-decoration" style="margin-left: 10px;"
+                rendered="#{mainBackingBean.edit}" />
+        </f:facet>
+
+        <!-- custom fields -->
+        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() == 1}">
+            <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+        </c:if>
+        <c:if test="#{customFieldDataEntryBean.getGroupedFieldTemplates(mainBackingBean.entity).children.size() > 1}">
+            <p:tabView>
+                <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
+            </p:tabView>
+        </c:if>
+        
+    </p:panel>
 </ui:composition>
 
 </html>
