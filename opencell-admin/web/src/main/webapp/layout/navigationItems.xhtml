@@ -109,20 +109,20 @@
 		<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" rendered="#{currentUser.hasRole('billingManagement')}" />
 	</p:submenu>
 	
-	<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement') }">
+	<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement')  or currentUser.hasRole('createInvoice')}">
 		<p:submenu id="rating" label="#{messages['menu.rating']}" rendered="#{currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="walletOperations" outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
 		</p:submenu>
-		<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
+		<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
 		<p:submenu id="billingRun" label="#{messages['menu.billingRun']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="billingRuns" outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
 			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing" rendered="#{currentUser.hasRole('billingManagement')}" value="#{messages['menu.globalExecution']}" />
 			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing" value="#{messages['menu.exceptionalInvoicing']}" />
 		</p:submenu>
-		<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
-			<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" />
-			<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" />
-			<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" />
+		<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization') or currentUser.hasRole('createInvoice')}">
+			<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
+			<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" rendered="#{currentUser.hasRole('createInvoice') }" />
+			<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" rendered="#{currentUser.hasRole('createInvoice') }" />
 		</p:submenu>
 	</p:submenu>
 	

@@ -31,5 +31,16 @@
 		</insert>
 
 	</changeSet>
-
+	
+	<changeSet author="anasseh" id="#1732_13112017_Manual_Invoice_permissions">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-27" />
+            <column name="name" value="Create invoice" />
+            <column name="permission" value="createInvoice" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-27" />
+        </insert>      
+     </changeSet>
 </databaseChangeLog>
