@@ -128,6 +128,9 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
+    
+    @WebMethod
+    ActionStatus createKeycloakUser(@WebParam(name = "user") UserDto postData);
 
     // seller
 
