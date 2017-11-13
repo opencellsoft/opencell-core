@@ -82,7 +82,7 @@ public class KeycloakAdminClientService {
         // Define user
         UserRepresentation user = new UserRepresentation();
         user.setEnabled(true);
-        user.setUsername(keycloakUserAccount.getUsername());
+        user.setUsername(keycloakUserAccount.getEmail());
         user.setFirstName(keycloakUserAccount.getFirstName());
         user.setLastName(keycloakUserAccount.getLastName());
         user.setEmail(keycloakUserAccount.getEmail());

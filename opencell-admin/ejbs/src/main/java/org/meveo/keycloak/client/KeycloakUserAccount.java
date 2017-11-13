@@ -1,14 +1,28 @@
 package org.meveo.keycloak.client;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * @author Edward P. Legaspi
  * @created 10 Nov 2017
+ * 
+ * All are required.
  **/
 public class KeycloakUserAccount {
+    
+    @NotNull
     private String username;
+    
+    @NotNull
     private String firstName;
+    
+    @NotNull
     private String lastName;
+    
+    @NotNull
     private String email;
+    
+    @NotNull
     private String password;
 
     public String getFirstName() {
