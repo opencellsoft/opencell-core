@@ -527,7 +527,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param unitPriceWithoutTax Unit price without tax. Used in B2B (provider.isEnterise=true) as base to calculate taxes and price/amount with tax.
      * @param unitPriceWithTax Unit price with tax. Used in B2C (provider.isEnterise=false) as base to calculate taxes and price/amount without tax.
      */
-    private void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) {
+    public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) {
 
         BigDecimal unitAmountTax = BigDecimal.ZERO;
         BigDecimal amountTax = BigDecimal.ZERO;
