@@ -93,11 +93,37 @@ public class UserRsImpl extends BaseRs implements UserRs {
 		ActionStatus result = new ActionStatus();
 
         try {
-            userApi.createKeycloakUser(postData);
+            result.setMessage(userApi.createKeycloakUser(postData));
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
 	}
+
+    @Override
+    public ActionStatus updateKeycloakUser(String userId, UserDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.updateKeycloakUser(userId, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus deleteKeycloakUser(String userId) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.deleteKeycloakUser(userId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

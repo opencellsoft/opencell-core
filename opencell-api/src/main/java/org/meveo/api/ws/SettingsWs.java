@@ -131,6 +131,12 @@ public interface SettingsWs extends IBaseWs {
     
     @WebMethod
     ActionStatus createKeycloakUser(@WebParam(name = "user") UserDto postData);
+    
+    @WebMethod
+    ActionStatus updateKeycloakUser(@WebParam(name = "userId") String userId, @WebParam(name = "user") UserDto postData);
+    
+    @WebMethod
+    ActionStatus deleteKeycloakUser(@WebParam(name = "userId") String userId);
 
     // seller
 

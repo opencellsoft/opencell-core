@@ -12,6 +12,7 @@ import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.ClientRepresentation;
 import org.keycloak.representations.idm.CredentialRepresentation;
@@ -66,7 +67,7 @@ public class KeycloakAdminClientService {
         return keycloakAdminClientConfig;
     }
 
-    public void createUser(KeycloakUserAccount keycloakUserAccount) throws BusinessException {
+    public String createUser(KeycloakUserAccount keycloakUserAccount) throws BusinessException {
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
 
         Keycloak keycloak = KeycloakBuilder.builder() //
@@ -138,6 +139,62 @@ public class KeycloakAdminClientService {
 
         // Set password credential
         userResource.get(userId).resetPassword(credential);
+
+        return userId;
+    }
+
+    public void updateUser(String userId, KeycloakUserAccount keycloakUserAccount) throws BusinessException {
+        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+
+        Keycloak keycloak = KeycloakBuilder.builder() //
+            .serverUrl(keycloakAdminClientConfig.getServerUrl()) //
+            .realm(keycloakAdminClientConfig.getRealm()) //
+            .grantType(OAuth2Constants.PASSWORD) //
+            .clientId(keycloakAdminClientConfig.getClientId()) //
+            .clientSecret(keycloakAdminClientConfig.getClientSecret()) //
+            .username(keycloakAdminClientConfig.getAdminUsername()) //
+            .password(keycloakAdminClientConfig.getAdminPassword()) //
+            .build();
+
+        // Define user
+        UserRepresentation user = new UserRepresentation();
+        user.setEnabled(true);
+        user.setUsername(keycloakUserAccount.getEmail());
+        user.setFirstName(keycloakUserAccount.getFirstName());
+        user.setLastName(keycloakUserAccount.getLastName());
+        user.setEmail(keycloakUserAccount.getEmail());
+
+        // Get realm
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+        UserResource userResource = realmResource.users().get(userId);
+
+        userResource.update(user);
+    }
+
+    public void deleteUser(String userId) throws BusinessException {
+        KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
+
+        Keycloak keycloak = KeycloakBuilder.builder() //
+            .serverUrl(keycloakAdminClientConfig.getServerUrl()) //
+            .realm(keycloakAdminClientConfig.getRealm()) //
+            .grantType(OAuth2Constants.PASSWORD) //
+            .clientId(keycloakAdminClientConfig.getClientId()) //
+            .clientSecret(keycloakAdminClientConfig.getClientSecret()) //
+            .username(keycloakAdminClientConfig.getAdminUsername()) //
+            .password(keycloakAdminClientConfig.getAdminPassword()) //
+            .build();
+
+        // Get realm
+        RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
+        UsersResource userResource = realmResource.users();
+
+        // Create user (requires manage-users role)
+        Response response = userResource.delete(userId);
+
+        if (response.getStatus() != Status.NO_CONTENT.getStatusCode()) {
+            log.error("Keycloak user deletion with httpStatusCode={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
+            throw new BusinessException("Unable to delete user with httpStatusCode=" + response.getStatus());
+        }
     }
 
 }

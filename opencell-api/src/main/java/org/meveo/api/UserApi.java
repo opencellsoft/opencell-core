@@ -312,14 +312,29 @@ public class UserApi extends BaseApi {
         }
     }
 
-	public void createKeycloakUser(UserDto postData) throws BusinessException {
-		KeycloakUserAccount keycloakUserAccount = new KeycloakUserAccount();
-		keycloakUserAccount.setEmail(postData.getEmail());
-		keycloakUserAccount.setFirstName(postData.getFirstName());
-		keycloakUserAccount.setLastName(postData.getLastName());
-		keycloakUserAccount.setPassword(postData.getPassword());
-		keycloakUserAccount.setUsername(postData.getUsername());
+    public String createKeycloakUser(UserDto postData) throws BusinessException {
+        KeycloakUserAccount keycloakUserAccount = new KeycloakUserAccount();
+        keycloakUserAccount.setEmail(postData.getEmail());
+        keycloakUserAccount.setFirstName(postData.getFirstName());
+        keycloakUserAccount.setLastName(postData.getLastName());
+        keycloakUserAccount.setPassword(postData.getPassword());
+        keycloakUserAccount.setUsername(postData.getUsername());
 
-		keycloakAdminClientService.createUser(keycloakUserAccount);
-	}
+        return keycloakAdminClientService.createUser(keycloakUserAccount);
+    }
+
+    public void updateKeycloakUser(String userId, UserDto postData) throws BusinessException {
+        KeycloakUserAccount keycloakUserAccount = new KeycloakUserAccount();
+        keycloakUserAccount.setEmail(postData.getEmail());
+        keycloakUserAccount.setFirstName(postData.getFirstName());
+        keycloakUserAccount.setLastName(postData.getLastName());
+        keycloakUserAccount.setPassword(postData.getPassword());
+        keycloakUserAccount.setUsername(postData.getUsername());
+
+        keycloakAdminClientService.updateUser(userId, keycloakUserAccount);
+    }
+
+    public void deleteKeycloakUser(String userId) throws BusinessException {
+        keycloakAdminClientService.deleteUser(userId);
+    }
 }

@@ -744,6 +744,32 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         return result;
     }
+    
+    @Override
+    public ActionStatus updateKeycloakUser(String userId, UserDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.updateKeycloakUser(userId, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus deleteKeycloakUser(String userId) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.deleteKeycloakUser(userId);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus createBillingCycle(BillingCycleDto postData) {

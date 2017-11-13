@@ -81,4 +81,12 @@ public interface UserRs extends IBaseRs {
     @Path("/keycloak")
     public ActionStatus createKeycloakUser(UserDto postData);
 
+    @PUT
+    @Path("/keycloak/{userId}")
+    public ActionStatus updateKeycloakUser(@PathParam("userId") String userId, UserDto postData);
+
+    @DELETE
+    @Path("/keycloak/{userId}")
+    public ActionStatus deleteKeycloakUser(@PathParam("userId") String userId);
+
 }
