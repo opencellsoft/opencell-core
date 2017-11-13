@@ -183,7 +183,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         }
         newOfferTemplate.setActive(true);
         newOfferTemplate.setLifeCycleStatus(lifeCycleStatusEnum);
-
+        newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
+        
         offerTemplateService.create(newOfferTemplate);
         newOfferTemplate.setCfValues(bomOffer.getCfValues());
         
