@@ -52,7 +52,7 @@ public class OfferServiceTemplate implements IEntity,Serializable {
     @NotNull
     private OfferTemplate offerTemplate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE }, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REFRESH }, optional = false)
     @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
