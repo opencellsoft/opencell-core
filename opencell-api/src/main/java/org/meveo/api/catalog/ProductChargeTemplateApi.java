@@ -222,7 +222,7 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
             throw new EntityDoesNotExistsException(UsageChargeTemplateDto.class, code);
         }
 
-        ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+        ProductChargeTemplateDto result = new ProductChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
 
         return result;
     }

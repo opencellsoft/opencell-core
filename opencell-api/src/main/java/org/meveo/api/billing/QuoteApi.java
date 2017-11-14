@@ -907,7 +907,7 @@ public class QuoteApi extends BaseApi {
             productQuoteItems.add(quoteItemToDto(quoteItem));
         }
 
-        productQuote.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(quote, true));
+        productQuote.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(quote, true));
 
         if (quote.getInvoices() != null && !quote.getInvoices().isEmpty()) {
             productQuote.setInvoices(new ArrayList<GenerateInvoiceResultDto>());

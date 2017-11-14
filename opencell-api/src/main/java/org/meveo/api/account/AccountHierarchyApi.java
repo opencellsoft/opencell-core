@@ -1565,7 +1565,7 @@ public class AccountHierarchyApi extends BaseApi {
 			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
 				if (customerDto.getCode().equals(customer.getCode())) {
 					if (!customerDto.isLoaded()) {
-						customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsWithInheritedDTO(customer, true));
+						customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer, true));
 					}
 
 					found = true;
@@ -1599,7 +1599,7 @@ public class AccountHierarchyApi extends BaseApi {
 			dto.setBusinessAccountModel(new BusinessEntityDto(businessAccountModel));
 		}
 
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(account, true));
+		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account, true));
 	}
 
 	public CustomerDto customerToDto(Customer customer) {
