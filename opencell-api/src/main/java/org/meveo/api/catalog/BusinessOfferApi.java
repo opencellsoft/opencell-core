@@ -27,6 +27,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
+import org.meveo.service.catalog.impl.OfferTemplateService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
@@ -36,6 +37,9 @@ public class BusinessOfferApi extends BaseApi {
 
 	@Inject
 	private BusinessServiceModelService businessServiceModelService;
+	
+	@Inject
+	private OfferTemplateService offerTemplateService;
 
 	public Long createOfferFromBOM(BomOfferDto postData) throws MeveoApiException {
 
@@ -148,6 +152,8 @@ public class BusinessOfferApi extends BaseApi {
 				}
 			}
 		}
+		
+        bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
 
 		// populate offer custom fields
 		if (newOfferTemplate != null && postData.getCustomFields() != null) {
