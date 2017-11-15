@@ -114,7 +114,16 @@
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
+	<page view-id=".+\/billing\/invoices\/createInvoiceDetail">
+		<constraint>currentUser.hasRole('creditNoteManagement')</constraint>
+		<constraint>currentUser.hasRole('accountManagement')</constraint>
+		<constraint>currentUser.hasRole('billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('creditNoteVisualization')</constraint>
+		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
+	</page>
+
 	<page view-id=".+\/billing\/invoices\/.*">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
