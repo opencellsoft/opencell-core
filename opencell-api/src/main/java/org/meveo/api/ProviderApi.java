@@ -164,7 +164,7 @@ public class ProviderApi extends BaseApi {
     public ProviderDto find() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-        if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
+        if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
             return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true));
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
@@ -205,7 +205,7 @@ public class ProviderApi extends BaseApi {
      */
     public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
 
-        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
+        if (!(currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
 
@@ -243,7 +243,7 @@ public class ProviderApi extends BaseApi {
      */
     public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() throws MeveoApiException {
 
-        if (!(currentUser.hasRole("superAdminManagement")
+        if (!(currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement")
                 || ((currentUser.hasRole("administrationVisualization") || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -370,7 +370,7 @@ public class ProviderApi extends BaseApi {
     public ProviderDto findProviderCF() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId());
-        if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
+        if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
             return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true), false);
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
