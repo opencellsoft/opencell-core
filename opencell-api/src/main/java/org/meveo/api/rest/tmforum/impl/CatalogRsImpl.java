@@ -244,8 +244,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            businessOfferApi.createOfferFromBOM(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(businessOfferApi.createOfferFromBOM(postData));
 
         } catch (Exception e) {
             processException(e, result);
