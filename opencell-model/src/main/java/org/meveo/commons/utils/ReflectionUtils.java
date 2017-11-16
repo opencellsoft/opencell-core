@@ -341,6 +341,10 @@ public class ReflectionUtils {
      */
     public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
 
+        if (c == null) {
+            throw new NoSuchFieldException("No field with name '" + fieldName + "' was found - EntityClass was not resolved");
+        }
+
         Field field = getField(c, fieldName);
         if (field == null) {
             throw new NoSuchFieldException("No field with name '" + fieldName + "' was found. EntityClass " + c);
@@ -350,6 +354,10 @@ public class ReflectionUtils {
 
     @SuppressWarnings("rawtypes")
     public static Field getField(Class<?> c, String fieldName) {
+
+        if (c == null || fieldName == null) {
+            return null;
+        }
 
         Field field = null;
 

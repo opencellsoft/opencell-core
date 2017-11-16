@@ -59,13 +59,20 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
     private static final long serialVersionUID = -1403961759495272885L;
 
-    public static String POSITION_TAB = "tab";
-    public static String POSITION_FIELD_GROUP = "fieldGroup";
-    public static String POSITION_FIELD = "field";
-
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+
+    public enum GroupedCustomFieldTreeItemType {
+
+        root(null), tab("tab"), fieldGroup("fieldGroup"), field("field"), action("action");
+
+        public String positionTag;
+
+        private GroupedCustomFieldTreeItemType(String tag) {
+            this.positionTag = tag;
+        }
+    }
 
     @Column(name = "field_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -135,8 +142,18 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Column(name = "trigger_end_period_event", nullable = false)
     private boolean triggerEndPeriodEvent;
 
-    @Column(name = "gui_position", length = 100)
-    @Size(max = 100)
+    /**
+     * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
+     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;<br/>
+     * <br/>
+     * 
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * 
+     * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
+     * english:0;field:0 OR tab:Second tab:1;field:1
+     */
+    @Column(name = "gui_position", length = 2000)
+    @Size(max = 2000)
     private String guiPosition;
 
     @Type(type = "numeric_boolean")
@@ -188,6 +205,10 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Column(name = "tags", length = 2000)
     @Size(max = 2000)
     private String tags;
+
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -430,12 +451,12 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
         for (String position : positions) {
             String[] positionDetails = position.split(":");
-            if (!positionDetails[0].equals(POSITION_FIELD)) {
+            if (!positionDetails[0].equals(GroupedCustomFieldTreeItemType.field.positionTag)) {
                 parsedInfo.put(positionDetails[0] + "_name", positionDetails[1]);
                 if (positionDetails.length == 3) {
                     parsedInfo.put(positionDetails[0] + "_pos", positionDetails[2]);
                 }
-            } else if (positionDetails[0].equals(POSITION_FIELD) && positionDetails.length == 2) {
+            } else if (positionDetails[0].equals(GroupedCustomFieldTreeItemType.field.positionTag) && positionDetails.length == 2) {
                 parsedInfo.put(positionDetails[0] + "_pos", positionDetails[1]);
             }
         }
@@ -600,5 +621,40 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
             return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
         }
         return null;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
+
+    public String getDescription(String language) {
+
+        if (language == null || descriptionI18n == null || descriptionI18n.isEmpty()) {
+            return description;
+        }
+
+        language = language.toUpperCase();
+        if (!descriptionI18n.containsKey(language)) {
+            return description;
+        } else {
+            return descriptionI18n.get(language);
+        }
     }
 }

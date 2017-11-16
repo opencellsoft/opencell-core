@@ -237,6 +237,9 @@
             <template ref="Language" />
             <template ref="Currency" />
             <template ref="Country" />
+            <template ref="TradingLanguage" />
+            <template ref="TradingCurrency" />
+            <template ref="TradingCountry" />
             <template ref="Provider" />
             <template ref="ProviderContact" />
             <template ref="OCCTemplate" />
