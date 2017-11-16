@@ -528,7 +528,7 @@ public class QueryBuilder {
      * @param ascending
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
-        q.append(" ORDER BY UPPER(" + orderColumn + ")");
+        q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
         if (ascending) {
             q.append(" ASC ");
         } else {
