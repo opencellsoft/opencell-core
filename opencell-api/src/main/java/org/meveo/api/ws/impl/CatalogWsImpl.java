@@ -28,6 +28,7 @@ import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
@@ -823,6 +824,19 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
 
         return result;
     }
+    
+    @Override
+    public ActionStatus createServiceFromBSM(BsmServiceDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            result.setMessage("" + businessOfferApi.createServiceFromBSM(postData));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 
     @Override
     public ActionStatus createDiscountPlan(DiscountPlanDto postData) {
@@ -1508,4 +1522,5 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         }
         return result;
     }
+   
 }

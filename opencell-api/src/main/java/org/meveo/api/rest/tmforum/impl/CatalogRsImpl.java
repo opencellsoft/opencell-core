@@ -19,6 +19,7 @@ import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
@@ -466,6 +467,24 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         }
          catch (Exception e) {
+            processException(e, result);
+            responseBuilder.entity(result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+	
+    @Override
+    public Response createServiceFromBSM(BsmServiceDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            responseBuilder = Response.ok().entity(businessOfferApi.createServiceFromBSM(postData));
+
+        } catch (Exception e) {
             processException(e, result);
             responseBuilder.entity(result);
         }

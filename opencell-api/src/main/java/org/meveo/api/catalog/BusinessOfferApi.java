@@ -12,6 +12,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BSMConfigurationDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -41,7 +42,7 @@ public class BusinessOfferApi extends BaseApi {
 	@Inject
 	private OfferTemplateService offerTemplateService;
 
-	public Long createOfferFromBOM(BomOfferDto postData) throws MeveoApiException {
+    public Long createOfferFromBOM(BomOfferDto postData) throws MeveoApiException {
 
 		if (StringUtils.isBlank(postData.getBomCode())) {
 			missingParameters.add("bomCode");
@@ -67,8 +68,7 @@ public class BusinessOfferApi extends BaseApi {
 		}
 
 		// process bsm
-		List<ServiceConfigurationDto> serviceConfigurationDtoFromBSM = getServiceConfiguration(
-				postData.getBusinessServiceModels());
+		List<ServiceConfigurationDto> serviceConfigurationDtoFromBSM = getServiceConfiguration(postData.getBusinessServiceModels());
 		if (!serviceConfigurationDtoFromBSM.isEmpty()) {
 			postData.getServicesToActivate().addAll(serviceConfigurationDtoFromBSM);
 		}
@@ -197,5 +197,40 @@ public class BusinessOfferApi extends BaseApi {
 
 		return result;
 	}
+
+    /**
+     * @param postData
+     * @return
+     * @throws MeveoApiException 
+     * @throws BusinessException 
+     */
+    public Long createServiceFromBSM(BsmServiceDto postData) throws MeveoApiException, BusinessException {
+        if (StringUtils.isBlank(postData.getBsmCode())) {
+            missingParameters.add("bsmCode");
+        }
+        if (StringUtils.isBlank(postData.getPrefix())) {
+            missingParameters.add("prefix");
+        }
+
+        handleMissingParametersAndValidate(postData);
+        
+        BusinessServiceModel bsm = businessServiceModelService.findByCode(postData.getBsmCode());
+        if(bsm == null) {
+           throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getBsmCode());
+        }        
+        ServiceTemplate newServiceTemplateCreated = businessServiceModelService.createServiceFromBSM(bsm,postData.getPrefix(),postData.getCustomFields()); 
+        try {
+            CustomFieldsDto cfsDto = new CustomFieldsDto();
+            cfsDto.setCustomField(postData.getCustomFields());
+            populateCustomFields(cfsDto, newServiceTemplateCreated, true);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        return newServiceTemplateCreated.getId();
+    }
 
 }
