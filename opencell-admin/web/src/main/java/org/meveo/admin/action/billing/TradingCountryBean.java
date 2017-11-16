@@ -71,7 +71,7 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 					country != null ? country.getCountryCode() : null);
 			if (country != null) {
 				entity.setCountry(country);
-				entity.setPrDescription(country.getDescriptionEn());
+				entity.setPrDescription(country.getDescription());
 			}
 		}
 

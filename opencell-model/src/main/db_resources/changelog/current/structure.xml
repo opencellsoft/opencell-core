@@ -1302,5 +1302,13 @@
 	    	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_offer_template" constraintName="fk_offer_script" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
-                 
+     
+    <changeSet id="#3068_20171116_Add DE and IT description to Country" author="anasseh">            
+         <addColumn tableName="adm_country">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+         <dropColumn tableName="adm_country" columnName="description_fr" /> 
+         <renameColumn newColumnName="description"  oldColumnName="description_en" tableName="adm_country"/>
+         
+     </changeSet>
 </databaseChangeLog> 

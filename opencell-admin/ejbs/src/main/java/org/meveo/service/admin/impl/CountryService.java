@@ -56,8 +56,7 @@ public class CountryService extends PersistenceService<Country> {
 	public Country findByName(String countryName) {				
 		QueryBuilder qb = new QueryBuilder(Country.class, "c");
 		qb.startOrClause();
-		qb.addCriterion("descriptionEn", "=", countryName, false);		
-		qb.addCriterion("descriptionFr", "=", countryName, false);
+		qb.addCriterion("description", "=", countryName, false);		
 		qb.endOrClause();
 		try {
 			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
@@ -69,7 +68,7 @@ public class CountryService extends PersistenceService<Country> {
 	@SuppressWarnings("unchecked")
 	public List<Country> list() {
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-		queryBuilder.addOrderCriterion("a.descriptionEn", true);
+		queryBuilder.addOrderCriterion("a.description", true);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
