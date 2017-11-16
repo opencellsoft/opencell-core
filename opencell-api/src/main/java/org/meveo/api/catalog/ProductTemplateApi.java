@@ -64,7 +64,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
     private ProductTemplateDto convertProductTemplateToDto(ProductTemplate productTemplate) {
 
-        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false);
+        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false);
         processProductChargeTemplateToDto(productTemplate, productTemplateDto);
         return productTemplateDto;
     }

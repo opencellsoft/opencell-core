@@ -137,7 +137,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Access.class, accessCode);
         }
 
-        return new AccessDto(access, entityToDtoConverter.getCustomFieldsWithInheritedDTO(access, true));
+        return new AccessDto(access, entityToDtoConverter.getCustomFieldsDTO(access, true));
     }
 
     public void remove(String accessCode, String subscriptionCode) throws MeveoApiException, BusinessException {
@@ -180,7 +180,7 @@ public class AccessApi extends BaseApi {
         List<Access> accesses = accessService.listBySubscription(subscription);
         if (accesses != null) {
             for (Access ac : accesses) {
-                result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsWithInheritedDTO(ac, true)));
+                result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac, true)));
             }
         }
 

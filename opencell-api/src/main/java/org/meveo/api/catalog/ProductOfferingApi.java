@@ -46,7 +46,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 			for(ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
 				if (productChargeTemplate != null) {
 					productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
-					productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productChargeTemplate, true));
+					productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, true));
 					chargeDtos.add(productChargeTemplateDto);
 				}
 			}
