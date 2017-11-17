@@ -4,10 +4,12 @@ import java.io.IOException;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class JacksonUtil {
 
@@ -16,6 +18,8 @@ public class JacksonUtil {
         om.setVisibility(om.getVisibilityChecker().withFieldVisibility(JsonAutoDetect.Visibility.ANY));
         om.setVisibility(om.getVisibilityChecker().withGetterVisibility(JsonAutoDetect.Visibility.NONE));
         om.setVisibility(om.getVisibilityChecker().withIsGetterVisibility(Visibility.NONE));
+        om.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+        om.setSerializationInclusion(Include.NON_NULL);
         OBJECT_MAPPER = om;
     }
 
@@ -28,7 +32,7 @@ public class JacksonUtil {
             throw new IllegalArgumentException("The given string value: " + string + " cannot be transformed to Json object", e);
         }
     }
-    
+
     public static <T> T fromString(String string, TypeReference<T> typeReference) {
         try {
             return OBJECT_MAPPER.readValue(string, typeReference);
