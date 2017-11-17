@@ -80,7 +80,7 @@
 	</p:submenu>
 	
 	<p:submenu styleClass="mmProductsSM" label="#{messages['menu.marketingManager.products']}"  rendered="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }" >
-		<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates" value="#{messages['menu.marketingManager.productList']}" />
+		<p:menuitem id="mm_products" outcome="mm_products" value="#{messages['menu.marketingManager.productList']}" />
 	</p:submenu>
 	
 	<p:submenu id="crm" label="#{messages['menu.crm']}" rendered="#{currentUser.hasRole('accountVisualization') or currentUser.hasRole('customerSummaryVisualization')}">
