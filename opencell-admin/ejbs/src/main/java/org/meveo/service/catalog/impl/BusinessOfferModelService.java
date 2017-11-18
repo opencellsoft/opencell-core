@@ -151,6 +151,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 		if (bomParams.getOfferTemplateCategories() != null) {
 			newOfferTemplate.getOfferTemplateCategories().addAll(bomParams.getOfferTemplateCategories());
+		} else if (bomOffer.getOfferTemplateCategories() != null){
+		    newOfferTemplate.getOfferTemplateCategories().addAll(bomOffer.getOfferTemplateCategories());
 		}
 		if (bomParams.getChannels() != null) {
 			newOfferTemplate.getChannels().addAll(bomParams.getChannels());
@@ -159,7 +161,12 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			newOfferTemplate.getBusinessAccountModels().addAll(bomParams.getBams());
 		}
 		newOfferTemplate.setActive(true);
-		newOfferTemplate.setLifeCycleStatus(bomParams.getLifeCycleStatusEnum());		
+		if (bomParams.getLifeCycleStatusEnum() != null) {
+		    newOfferTemplate.setLifeCycleStatus(bomParams.getLifeCycleStatusEnum());	
+		}else {
+		    newOfferTemplate.setLifeCycleStatus(bomOffer.getLifeCycleStatus());  
+		}
+		
         newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
         
 		if (bomParams.getOfferCfValue() != null) {
