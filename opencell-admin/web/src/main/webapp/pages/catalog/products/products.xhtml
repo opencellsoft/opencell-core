@@ -21,7 +21,7 @@
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true"
 					styleClass="no-text-decoration" />
 				<p:menuitem value="#{messages['menu.productTemplates']}"
-					outcome="mm_productTemplates" />
+					outcome="mm_products" />
 			</p:breadCrumb>
 		</h:form>
 
@@ -39,7 +39,7 @@
 											<p:link styleClass="no-text-decoration"
                                                     outcome="mm_productTemplates"
                                                     value=" #{messages['productTemplate.newProduct']}">
-                                                <f:param name="backView" value="mm_offers"/>
+                                                <f:param name="backView" value="mm_products"/>
                                             </p:link>
 										</div> <!-- / btn-wrapper -->
 									</li>
@@ -53,7 +53,7 @@
 													value="#{javax.enterprise.context.conversation.id}" />
 												<f:param name="edit" value="true" />
 												<f:param name="editMode" value="edit" />
-												<f:param name="backView" value="mm_productTemplates" />
+												<f:param name="backView" value="mm_products" />
 											</p:link>
 										</div> <!-- / btn-wrapper -->
 									</li>
@@ -205,7 +205,7 @@
 																value="#{javax.enterprise.context.conversation.id}" />
 															<f:param name="objectId" value="#{prod.id}"></f:param>
 															<f:param name="edit" value="false"></f:param>
-															<f:param name="backView" value="mm_productTemplates"></f:param>
+															<f:param name="backView" value="mm_products"></f:param>
 															<f:param name="tab" value="0"></f:param>
 														</p:link></li>
 													<li><p:link id="editLink"
@@ -216,7 +216,7 @@
 																value="#{javax.enterprise.context.conversation.id}" />
 															<f:param name="edit" value="true" />
 															<f:param name="editMode" value="edit" />
-															<f:param name="backView" value="mm_productTemplates"></f:param>
+															<f:param name="backView" value="mm_products"></f:param>
 														</p:link></li>
                                                     <li><p:link id="newVersionLinkProd" title="#{messages['commons.newVersion']}"
                                                                 styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
@@ -224,7 +224,7 @@
                                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                                         <f:param name="objectId" value="#{prod.id}"/>
                                                         <f:param name="edit" value="true"/>
-                                                        <f:param name="backView" value="mm_productTemplates"/>
+                                                        <f:param name="backView" value="mm_products"/>
                                                         <f:param name="tab" value="0"/>                                                        
                                                         <f:param name="newVersion" value="true" />
                                                         </p:link>
@@ -234,7 +234,7 @@
                                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                                         <f:param name="objectId" value="#{prod.id}"/>
                                                         <f:param name="edit" value="true"/>
-                                                        <f:param name="backView" value="mm_productTemplates"/>
+                                                        <f:param name="backView" value="mm_products"/>
                                                         <f:param name="tab" value="0"/>                                                        
                                                         <f:param name="newVersion" value="true" />
                                                         </p:link>
@@ -326,7 +326,7 @@
 												value="#{javax.enterprise.context.conversation.id}" />
 											<f:param name="objectId" value="#{entity.id}"></f:param>
 											<f:param name="edit" value="false"></f:param>
-											<f:param name="backView" value="mm_productTemplates"></f:param>
+											<f:param name="backView" value="mm_products"></f:param>
 											<f:param name="tab" value="1"></f:param>
 										</p:link></li>
 									<li
@@ -340,7 +340,7 @@
 												value="#{javax.enterprise.context.conversation.id}" />
 											<f:param name="edit" value="true" />
 											<f:param name="editMode" value="edit" />
-											<f:param name="backView" value="mm_productTemplates"></f:param>
+											<f:param name="backView" value="mm_products"></f:param>
 										</p:link></li>
 									<li
 										class="#{productTemplateBean.isBundleTemplate(entity) ? '' : 'hidden'}"><p:link
@@ -352,7 +352,7 @@
 												value="#{javax.enterprise.context.conversation.id}" />
 											<f:param name="edit" value="true" />
 											<f:param name="editMode" value="edit" />
-											<f:param name="backView" value="mm_productTemplates"></f:param>
+											<f:param name="backView" value="mm_products"></f:param>
 										</p:link></li>
 									<li><p:commandLink
 											rendered="#{not productTemplateBean.isBundleTemplate(entity)}"

@@ -104,7 +104,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
      * @return A copy of Product template
      * @throws BusinessException
      */
-    private synchronized ProductTemplate duplicate(ProductTemplate product, boolean persist) throws BusinessException {
+    public synchronized ProductTemplate duplicate(ProductTemplate product, boolean persist) throws BusinessException {
 
         product = refreshOrRetrieve(product);
 

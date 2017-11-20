@@ -1,5 +1,6 @@
 package org.meveo.admin.action.catalog;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -16,11 +17,13 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
+import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -33,6 +36,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.WalletTemplateService;
+import org.meveo.service.catalog.impl.BusinessProductModelService;
 import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
@@ -72,19 +76,24 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
 
+    @Produces
+    @Named
+    private ProductChargeTemplate productChargeTemplate = new ProductChargeTemplate();
+
+    @Inject
+    protected BusinessProductModelService businessProductModelService;
+
     private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
     private DualListModel<DigitalResource> attachmentsDM;
     private DualListModel<WalletTemplate> walletTemplatesDM;
     private DualListModel<BusinessAccountModel> bamDM;
     private DualListModel<Channel> channelDM;
 
+    private BusinessProductModel businessProductModel;
+
     private String editMode;
-
     private boolean newVersion;
-
-    @Produces
-    @Named
-    private ProductChargeTemplate productChargeTemplate = new ProductChargeTemplate();
+    private Long bpmId;
 
     public ProductTemplateBean() {
         super(ProductTemplate.class);
@@ -92,19 +101,47 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     @Override
     public ProductTemplate initEntity() {
-        super.initEntity();
-
-        if (newVersion) {
-            instantiateNewVersion();
-            setObjectId(entity.getId());
-            newVersion = false;
-        }
-
-        if (entity.getValidity() == null) {
+        if (bpmId != null) {
+            duplicateFromBPM();
             entity.setValidity(new DatePeriod());
+            entity.getProductChargeTemplates().size();
+            bpmId = null;
+        } else {
+            super.initEntity();
+
+            if (newVersion) {
+                instantiateNewVersion();
+                setObjectId(entity.getId());
+                newVersion = false;
+            }
+
+            if (entity.getValidity() == null) {
+                entity.setValidity(new DatePeriod());
+            }
         }
 
         return entity;
+    }
+
+    private void duplicateFromBPM() {
+        try {
+
+            businessProductModel = businessProductModelService.findById(bpmId);
+            ProductTemplate product = businessProductModel.getProductTemplate();
+
+            businessProductModelService.detach(businessProductModel);
+
+            String code = product.getCode();
+
+            entity = productTemplateService.duplicate(product, false);
+            // Preserve the offer template original code
+            entity.setCode(code);
+
+            setObjectId(null);
+
+        } catch (BusinessException e) {
+            log.error("Error encountered while duplicating product template from BPM: {}", bpmId, e);
+        }
     }
 
     @Override
@@ -167,41 +204,57 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        if (!entity.isTransient()) {
-            productTemplateService.refreshOrRetrieve(entity);
-        }
-        if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
-            entity.getOfferTemplateCategories().clear();
-            entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
-        }
+        if (businessProductModel != null) {
 
-        if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
-            entity.getAttachments().clear();
-            entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
+            businessProductModelService.instantiateFromBPM(entity, businessProductModel);
+
+            if (entity.getImagePath() != null) {
+                try {
+                    ImageUploadEventHandler<ProductTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file", e);
+                }
+            }
+
+            return back();
+        } else {
+            if (!entity.isTransient()) {
+                productTemplateService.refreshOrRetrieve(entity);
+            }
+            if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
+                entity.getOfferTemplateCategories().clear();
+                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+            }
+
+            if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
+                entity.getAttachments().clear();
+                entity.getAttachments().addAll(digitalResourceService.refreshOrRetrieve(attachmentsDM.getTarget()));
+            }
+
+            if (walletTemplatesDM != null && (walletTemplatesDM.getSource() != null || walletTemplatesDM.getTarget() != null)) {
+                entity.getWalletTemplates().clear();
+                entity.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(walletTemplatesDM.getTarget()));
+            }
+
+            if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
+                entity.getBusinessAccountModels().clear();
+                entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
+            }
+
+            if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
+                entity.getChannels().clear();
+                entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
+            }
+
+            String outcome = super.saveOrUpdate(killConversation);
+
+            if (editMode != null && editMode.length() > 0) {
+                outcome = "mm_productTemplates";
+            }
+
+            return outcome;
         }
-
-        if (walletTemplatesDM != null && (walletTemplatesDM.getSource() != null || walletTemplatesDM.getTarget() != null)) {
-            entity.getWalletTemplates().clear();
-            entity.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(walletTemplatesDM.getTarget()));
-        }
-
-        if (bamDM != null && (bamDM.getSource() != null || bamDM.getTarget() != null)) {
-            entity.getBusinessAccountModels().clear();
-            entity.getBusinessAccountModels().addAll(businessAccountModelService.refreshOrRetrieve(bamDM.getTarget()));
-        }
-
-        if (channelDM != null && (channelDM.getSource() != null || channelDM.getTarget() != null)) {
-            entity.getChannels().clear();
-            entity.getChannels().addAll(channelService.refreshOrRetrieve(channelDM.getTarget()));
-        }
-
-        String outcome = super.saveOrUpdate(killConversation);
-
-        if (editMode != null && editMode.length() > 0) {
-            outcome = "mm_productTemplates";
-        }
-
-        return outcome;
     }
 
     public DualListModel<OfferTemplateCategory> getOfferTemplateCategoriesDM() {
@@ -371,9 +424,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             messages.info(new BundleKey("messages", "save.successful"));
             newProductChargeTemplate();
             setActiveTab(1);
-			if (entity.getValidity() == null) {
-				entity.setValidity(new DatePeriod());
-			}
+            if (entity.getValidity() == null) {
+                entity.setValidity(new DatePeriod());
+            }
         } catch (Exception e) {
             log.error("error when saving productCharge", e);
             messages.error("error when creating product charge:" + e.getMessage());
@@ -440,5 +493,13 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, types);
 
         return getLazyDataModel();
+    }
+
+    public Long getBpmId() {
+        return bpmId;
+    }
+
+    public void setBpmId(Long bpmId) {
+        this.bpmId = bpmId;
     }
 }

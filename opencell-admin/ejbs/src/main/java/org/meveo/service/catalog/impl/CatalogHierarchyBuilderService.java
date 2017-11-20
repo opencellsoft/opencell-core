@@ -219,7 +219,7 @@ public class CatalogHierarchyBuilderService {
         }
     }
 
-    private void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory)
+    public void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory)
             throws BusinessException, IllegalAccessException, InvocationTargetException {
         if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
@@ -235,7 +235,9 @@ public class CatalogHierarchyBuilderService {
                 }
 
                 productChargeTemplateService.create(newChargeTemplate);
-
+                
+                productCharge = productChargeTemplateService.refreshOrRetrieve(productCharge);
+                
                 copyEdrTemplates((ChargeTemplate) productCharge, newChargeTemplate);
 
                 newProductTemplate.addProductChargeTemplate(newChargeTemplate);
@@ -274,10 +276,10 @@ public class CatalogHierarchyBuilderService {
         }
     }
 
-    private void duplicateProductPrices(ProductTemplate productTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory)
+    public void duplicateProductPrices(ProductTemplate productTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory)
             throws BusinessException {
         // create price plans
-        if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
+        if (productTemplate.getProductChargeTemplates() != null && !productTemplate.getProductChargeTemplates().isEmpty()) {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
                 // create price plan
                 String chargeTemplateCode = productCharge.getCode();
@@ -710,7 +712,7 @@ public class CatalogHierarchyBuilderService {
     }
 
     private void copyEdrTemplates(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetChargeTemplate) {
-        if (sourceChargeTemplate.getEdrTemplates() != null && sourceChargeTemplate.getEdrTemplates().size() > 0) {
+        if (sourceChargeTemplate.getEdrTemplates() != null && !sourceChargeTemplate.getEdrTemplates().isEmpty()) {
             for (TriggeredEDRTemplate triggeredEDRTemplate : sourceChargeTemplate.getEdrTemplates()) {
                 targetChargeTemplate.getEdrTemplates().add(triggeredEDRTemplate);
             }

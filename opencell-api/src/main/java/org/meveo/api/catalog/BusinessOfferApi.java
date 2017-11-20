@@ -83,7 +83,7 @@ public class BusinessOfferApi extends BaseApi {
 			bomParams.setOfferDescription(postData.getDescription());
 			bomParams.setServiceCodes(postData.getServicesToActivate());
 			bomParams.setProductCodes(postData.getProductsToActivate());
-			newOfferTemplate = businessOfferModelService.createOfferFromBOM(bomParams);
+			newOfferTemplate = businessOfferModelService.instantiateFromBOM(bomParams);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());
 		}
