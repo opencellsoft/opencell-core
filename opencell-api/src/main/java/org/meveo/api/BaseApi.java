@@ -60,6 +60,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -104,6 +105,9 @@ public abstract class BaseApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+
+    @Inject
+    protected BusinessEntityService businessEntityService;
 
     protected List<String> missingParameters = new ArrayList<String>();
 
@@ -1127,7 +1131,8 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
 
-        log.error("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList, value != null ? value.getClass().isArray() : null);
+        log.error("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
+            value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass())) {
             return value;
@@ -1271,7 +1276,21 @@ public abstract class BaseApi {
                 } else if (stringVal != null) {
                     return new BigDecimal(stringVal);
                 }
+
+            } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
+
+                businessEntityService.setEntityClass(targetClass);
+
+                if (stringVal != null) {
+                    BusinessEntity businessEntity = businessEntityService.findByCode(stringVal);
+                    if (businessEntity == null) {
+                        // Did not find a way how to pass nonexistant entity to search sql
+                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
+                    }
+                    return businessEntity;
+                }
             }
+
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
         }
