@@ -122,7 +122,7 @@ public class UserApi extends BaseApi {
             if (!StringUtils.isBlank(postData.getUserLevel())) {
                 userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getUserLevel());
                 if (userHierarchyLevel == null) {
-                    throw new EntityDoesNotExistsException(UserHierarchyLevel.class, "userLevel");
+                    throw new EntityDoesNotExistsException(UserHierarchyLevel.class, postData.getUserLevel());
                 }
             }
 
@@ -196,7 +196,7 @@ public class UserApi extends BaseApi {
         if (!StringUtils.isBlank(postData.getUserLevel())) {
             userHierarchyLevel = userHierarchyLevelService.findByCode(postData.getUserLevel());
             if (userHierarchyLevel == null) {
-                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, "userLevel");
+                throw new EntityDoesNotExistsException(UserHierarchyLevel.class, postData.getUserLevel());
             }
         }
 
