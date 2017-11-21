@@ -58,6 +58,17 @@ public class PagingAndFiltering implements Serializable {
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
      * 
+     * 
+     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
+     * same in case when quering a customer account: customer.code=aaa OR customer=aaa<br/>
+     * 
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
+     * sellers=code1,code2<br/><br/>
+     * 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists <br/>
+     * <br/>
+     * 
+     * 
      * Examples:<br/>
      * <ul>
      * <li>invoice number equals "1578AU":<br/>

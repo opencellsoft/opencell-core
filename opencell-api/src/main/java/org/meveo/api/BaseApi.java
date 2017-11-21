@@ -1135,7 +1135,7 @@ public abstract class BaseApi {
             value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
         if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
-             return value;
+            return value;
 
             // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
         } else if (expectedList) {
@@ -1277,6 +1277,10 @@ public abstract class BaseApi {
                 }
 
             } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
+
+                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                    return stringVal;
+                }
 
                 businessEntityService.setEntityClass(targetClass);
 

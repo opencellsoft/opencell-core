@@ -627,6 +627,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
      * 
+     * 
+     * 
+     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
+     * same in case when quering a customer account: customer.code=aaa OR customer=aaa<br/>
+     * 
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
+     * sellers=code1,code2<br/>
+     * <br/>
+     * 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists <br/>
+     * <br/>
+     * 
      * Examples:<br/>
      * <ul>
      * <li>invoice number equals "1578AU":<br/>
@@ -864,10 +876,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                     } else {
                         if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
-                            queryBuilder.addSql("a." + fieldName + " is null ");
+                            Field field = ReflectionUtils.getField(entityClass, fieldName);
+                            Class<?> fieldClassType = field.getType();
+
+                            if (Collection.class.isAssignableFrom(fieldClassType)) {
+                                queryBuilder.addSql("a." + fieldName + " is empty ");
+                            } else {
+                                queryBuilder.addSql("a." + fieldName + " is null ");
+                            }
 
                         } else if (filterValue instanceof String && SEARCH_IS_NOT_NULL.equals(filterValue)) {
-                            queryBuilder.addSql("a." + fieldName + " is not null ");
+                            Field field = ReflectionUtils.getField(entityClass, fieldName);
+                            Class<?> fieldClassType = field.getType();
+
+                            if (Collection.class.isAssignableFrom(fieldClassType)) {
+
+                                queryBuilder.addSql("a." + fieldName + " is not empty ");
+                            } else {
+                                queryBuilder.addSql("a." + fieldName + " is not null ");
+                            }
 
                         } else if (filterValue instanceof String) {
 
