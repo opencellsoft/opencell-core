@@ -25,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -81,7 +83,7 @@ public class QueryBuilder {
      */
     public QueryBuilder(String sql, String alias) {
         q = new StringBuffer(sql);
-        this.alias = null;
+        this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
         inOrClause = false;
@@ -275,7 +277,7 @@ public class QueryBuilder {
      * @return
      */
     public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
-        if (StringUtils.isBlank(value)){
+        if (StringUtils.isBlank(value)) {
             return this;
         }
 
@@ -298,7 +300,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder addCriterionEntityInList(String field, Object entity) {
-        if (entity == null){
+        if (entity == null) {
             return this;
         }
 
@@ -642,11 +644,30 @@ public class QueryBuilder {
      */
     public Query getCountQuery(EntityManager em) {
         String from = "from ";
-        String s = "select count(*) " + q.toString().substring(q.indexOf(from));
 
-        Query result = em.createQuery(s);
-        for (Map.Entry<String, Object> e : params.entrySet())
+        String sql = q.toString().toLowerCase();
+
+        String countSql = null;
+
+        if (sql.contains(" distinct")) {
+
+            String regex = "from[ \\t]+[\\w\\.]+[ \\t]+(\\w+)";
+            Pattern pattern = Pattern.compile(regex);
+            Matcher matcher = pattern.matcher(sql);
+            if (!matcher.find()) {
+                throw new RuntimeException("Can not determine alias name");
+            }
+            String aliasName = matcher.group(1);
+
+            countSql = "select count(distinct " + aliasName + ") " + q.toString().substring(q.indexOf(from));
+        } else {
+            countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
+        }
+
+        Query result = em.createQuery(countSql);
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
+        }
         return result;
     }
 
@@ -670,15 +691,25 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
+     * @param fieldname
      * @return
      */
-    public String convertFieldToParam(String field) {
-        field = field.replace(".", "_").replace("(", "_").replace(")", "_");
-        StringBuilder newField = new StringBuilder(field);
+    public String convertFieldToParam(String fieldname) {
+        fieldname = fieldname.replace(".", "_").replace("(", "_").replace(")", "_");
+        StringBuilder newField = new StringBuilder(fieldname);
         while (params.containsKey(newField.toString()))
-            newField = new StringBuilder(field).append("_" + String.valueOf(new Random().nextInt(100)));
+            newField = new StringBuilder(fieldname).append("_" + String.valueOf(new Random().nextInt(100)));
         return newField.toString();
+    }
+
+    /**
+     * Convert fieldname to a collection member item name
+     * 
+     * @param fieldname Fieldname
+     * @return Fieldname converted to parameter name with suffix "Item". e.g. for "sellers" it will return sellersItem
+     */
+    public String convertFieldToCollectionMemberItem(String fieldname) {
+        return convertFieldToParam(fieldname) + "Item";
     }
 
     /**
@@ -737,5 +768,32 @@ public class QueryBuilder {
             result = result + " Param name:" + e.getKey() + " value:" + e.getValue().toString();
         }
         return result;
+    }
+
+    /**
+     * Add a collection member join e.g " IN (a.sellers) s " right after a from clause
+     * 
+     * @param fieldName
+     */
+    public void addCollectionMember(String fieldName) {
+
+        String sql = q.toString().toLowerCase();
+
+        String regex = "(from[ \\t]+[\\w\\.]+[ \\t]+(\\w+))";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(sql);
+        if (!matcher.find()) {
+            throw new RuntimeException("Can not determine where to add collection member clause");
+        }
+        String fromClause = matcher.group(1);
+        String aliasName = matcher.group(2);
+
+        q.insert(sql.indexOf(fromClause) + fromClause.length(),
+            ", IN (" + (aliasName != null ? aliasName + "." : "") + fieldName + ") as " + convertFieldToCollectionMemberItem(fieldName));
+
+        // Append select clause to select only a main entity
+        if (!sql.startsWith("select") && aliasName != null) {
+            q.insert(0, "select distinct " + aliasName + " ");
+        }
     }
 }

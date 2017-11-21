@@ -1134,12 +1134,11 @@ public abstract class BaseApi {
         log.error("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
             value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
-        if (targetClass.isAssignableFrom(value.getClass())) {
-            return value;
-        }
+        if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
+             return value;
 
-        // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
-        if (expectedList) {
+            // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
+        } else if (expectedList) {
             if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
                 return value;
 

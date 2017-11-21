@@ -19,6 +19,7 @@
 package org.meveo.service.base;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
@@ -42,9 +43,11 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
@@ -718,7 +721,28 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         // Field value is in value (list)
                     } else if ("inList".equals(condition)) {
-                        queryBuilder.addSql("a." + fieldName + " in (" + filterValue + ")");
+
+                        Field field = ReflectionUtils.getField(entityClass, fieldName);
+                        Class<?> fieldClassType = field.getType();
+
+                        // Searching for a list inside a list field requires to join it first as collection member e.g. "IN (a.sellers) seller"
+                        if (Collection.class.isAssignableFrom(fieldClassType)) {
+
+                            String paramName = queryBuilder.convertFieldToParam(fieldName);
+                            String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
+
+                            queryBuilder.addCollectionMember(fieldName);
+
+                            queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
+
+                        } else {
+                            if (filterValue instanceof String) {
+                                queryBuilder.addSql("a." + fieldName + " IN (" + filterValue + ")");
+                            } else if (filterValue instanceof Collection) {
+                                String paramName = queryBuilder.convertFieldToParam(fieldName);
+                                queryBuilder.addSqlCriterion("a." + fieldName + " in (:" + paramName + ")", paramName, filterValue);
+                            }
+                        }
 
                         // Search by an entity type
                     } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
