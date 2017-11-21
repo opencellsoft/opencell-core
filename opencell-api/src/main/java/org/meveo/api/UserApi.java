@@ -8,6 +8,7 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.SecuredEntityDto;
@@ -55,11 +56,15 @@ public class UserApi extends BaseApi {
 
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
-    
+
     @Inject
     private KeycloakAdminClientService keycloakAdminClientService;
 
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
+        create(postData, true);
+    }
+
+    public void create(UserDto postData, boolean isRequiredRoles) throws MeveoApiException, BusinessException {
 
         boolean isSameUser = currentUser.getUserName().equals(postData.getUsername());
 
@@ -74,7 +79,7 @@ public class UserApi extends BaseApi {
                 missingParameters.add("email");
             }
 
-            if ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole())) {
+            if (isRequiredRoles && ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole()))) {
                 missingParameters.add("roles");
             }
 
@@ -141,7 +146,7 @@ public class UserApi extends BaseApi {
         }
         handleMissingParameters();
 
-        //we support old dto that containt only one role
+        // we support old dto that containt only one role
         if (!StringUtils.isBlank(postData.getRole())) {
             if (postData.getRoles() == null) {
                 postData.setRoles(new ArrayList<String>());
@@ -312,7 +317,7 @@ public class UserApi extends BaseApi {
         }
     }
 
-    public String createKeycloakUser(UserDto postData) throws BusinessException {
+    public String createKeycloakUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
         KeycloakUserAccount keycloakUserAccount = new KeycloakUserAccount();
         keycloakUserAccount.setEmail(postData.getEmail());
         keycloakUserAccount.setFirstName(postData.getFirstName());
@@ -320,10 +325,15 @@ public class UserApi extends BaseApi {
         keycloakUserAccount.setPassword(postData.getPassword());
         keycloakUserAccount.setUsername(postData.getUsername());
 
-        return keycloakAdminClientService.createUser(keycloakUserAccount);
+        // create the user in core
+        create(postData, false);
+
+        String userId = keycloakAdminClientService.createUser(httpServletRequest, keycloakUserAccount);
+
+        return userId;
     }
 
-    public void updateKeycloakUser(String userId, UserDto postData) throws BusinessException {
+    public void updateKeycloakUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
         KeycloakUserAccount keycloakUserAccount = new KeycloakUserAccount();
         keycloakUserAccount.setEmail(postData.getEmail());
         keycloakUserAccount.setFirstName(postData.getFirstName());
@@ -331,10 +341,16 @@ public class UserApi extends BaseApi {
         keycloakUserAccount.setPassword(postData.getPassword());
         keycloakUserAccount.setUsername(postData.getUsername());
 
-        keycloakAdminClientService.updateUser(userId, keycloakUserAccount);
+        // update user in core
+        update(postData);
+
+        keycloakAdminClientService.updateUser(httpServletRequest, keycloakUserAccount);
     }
 
-    public void deleteKeycloakUser(String userId) throws BusinessException {
-        keycloakAdminClientService.deleteUser(userId);
+    public void deleteKeycloakUser(HttpServletRequest httpServletRequest, String username) throws BusinessException, MeveoApiException {
+        // delete in core
+        remove(username);
+        
+        keycloakAdminClientService.deleteUser(httpServletRequest, username);
     }
 }

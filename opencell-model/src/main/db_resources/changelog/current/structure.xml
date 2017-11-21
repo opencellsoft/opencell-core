@@ -1293,5 +1293,11 @@
 	    	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_offer_template" constraintName="fk_offer_script" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
     </changeSet>
+    
+    <changeSet id="20171121-2816 Add last login date" author="EdwardPLegaspi">
+    	<addColumn tableName="adm_user">
+    		<column name="last_login_date" type="datetime" />
+    	</addColumn>
+    </changeSet>
                  
 </databaseChangeLog> 

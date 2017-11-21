@@ -77,16 +77,31 @@ public interface UserRs extends IBaseRs {
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(UserDto postData);
     
+    /**
+     * Creates a user in keycloak and core.
+     * @param postData
+     * @return
+     */
     @POST
     @Path("/keycloak")
     public ActionStatus createKeycloakUser(UserDto postData);
 
+    /**
+     * Updates a user in keycloak and core given a username.
+     * @param postData
+     * @return
+     */
     @PUT
-    @Path("/keycloak/{userId}")
-    public ActionStatus updateKeycloakUser(@PathParam("userId") String userId, UserDto postData);
+    @Path("/keycloak/")
+    public ActionStatus updateKeycloakUser(UserDto postData);
 
+    /**
+     * Deletes a user in keycloak and core given a username.
+     * @param username the username of the user to be deleted.
+     * @return
+     */
     @DELETE
-    @Path("/keycloak/{userId}")
-    public ActionStatus deleteKeycloakUser(@PathParam("userId") String userId);
+    @Path("/keycloak/{username}")
+    public ActionStatus deleteKeycloakUser(@PathParam("username") String username);
 
 }

@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
@@ -128,7 +129,7 @@ public class UserDto extends BaseDto {
     }
 
     public String getUsername() {
-        return username;
+        return StringUtils.isBlank(username) ? email : username;
     }
 
     public void setUsername(String username) {

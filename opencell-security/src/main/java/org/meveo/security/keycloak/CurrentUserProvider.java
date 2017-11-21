@@ -1,5 +1,6 @@
 package org.meveo.security.keycloak;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -97,7 +98,7 @@ public class CurrentUserProvider {
             User user = null;
             try {
                 user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
-
+                user.setLastLoginDate(new Date());
             } catch (NoResultException e) {
 
                 user = new User();
@@ -114,6 +115,7 @@ public class CurrentUserProvider {
                         user.getName().setFirstName(currentUser.getFullName());
                     }
                 }
+                user.setLastLoginDate(new Date());
                 user.updateAudit(currentUser);
                 em.persist(user);
                 em.flush();

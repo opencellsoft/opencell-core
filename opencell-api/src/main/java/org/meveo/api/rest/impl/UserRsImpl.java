@@ -88,25 +88,12 @@ public class UserRsImpl extends BaseRs implements UserRs {
         return result;
     }
 
-	@Override
-	public ActionStatus createKeycloakUser(UserDto postData) {
-		ActionStatus result = new ActionStatus();
-
-        try {
-            result.setMessage(userApi.createKeycloakUser(postData));
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-	}
-
     @Override
-    public ActionStatus updateKeycloakUser(String userId, UserDto postData) {
+    public ActionStatus createKeycloakUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.updateKeycloakUser(userId, postData);
+            result.setMessage(userApi.createKeycloakUser(httpServletRequest, postData));
         } catch (Exception e) {
             processException(e, result);
         }
@@ -115,11 +102,24 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
 
     @Override
-    public ActionStatus deleteKeycloakUser(String userId) {
+    public ActionStatus updateKeycloakUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.deleteKeycloakUser(userId);
+            userApi.updateKeycloakUser(httpServletRequest, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus deleteKeycloakUser(String username) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.deleteKeycloakUser(httpServletRequest, username);
         } catch (Exception e) {
             processException(e, result);
         }

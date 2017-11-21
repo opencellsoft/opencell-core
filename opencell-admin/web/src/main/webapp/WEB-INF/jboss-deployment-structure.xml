@@ -28,7 +28,6 @@
           <module name="javax.validation.api"/>
           <module name="org.jboss.ejb3"/>
           <module name="org.yaml.snakeyaml"/>
-          <module name="org.keycloak.keycloak-core"/>
           <module name="org.keycloak.keycloak-adapter-core" />
           
         </dependencies>          
