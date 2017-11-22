@@ -21,6 +21,7 @@ package org.meveo.api.dto;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -72,14 +73,9 @@ public class UserDto extends BaseDto {
 
     @XmlElement()
     private String userLevel;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    
+    private Date createdAt;
+    private Date lastLoginDate;   
 
     public UserDto() {
     }
@@ -91,6 +87,10 @@ public class UserDto extends BaseDto {
         }
         username = user.getUserName();
         email = user.getEmail();
+        if (user.getAuditable() != null) {
+            createdAt = user.getAuditable().getCreated();
+        }
+        lastLoginDate = user.getLastLoginDate();
 
         if (user.getRoles() != null) {
             roles = new ArrayList<String>();
@@ -190,5 +190,29 @@ public class UserDto extends BaseDto {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(Date lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
 
 }

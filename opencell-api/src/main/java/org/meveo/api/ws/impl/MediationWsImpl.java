@@ -1,12 +1,9 @@
 package org.meveo.api.ws.impl;
 
-import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.ws.WebServiceContext;
-import javax.xml.ws.handler.MessageContext;
 
 import org.meveo.api.billing.MediationApi;
 import org.meveo.api.dto.ActionStatus;
@@ -28,16 +25,12 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
     @Inject
     private MediationApi mediationApi;
 
-    @Resource
-    private WebServiceContext wsContext;
-
     @Override
     public ActionStatus registerCdrList(CdrListDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            MessageContext mc = wsContext.getMessageContext();
-            HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
+            HttpServletRequest req = getHttpServletRequest();
 
             String ip = StringUtils.isBlank(req.getHeader("x-forwarded-for")) ? req.getRemoteAddr() : req.getHeader("x-forwarded-for");
             postData.setIpAddress(ip);
@@ -54,9 +47,7 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            MessageContext mc = wsContext.getMessageContext();
-            HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
-            mediationApi.chargeCdr(cdr, req.getRemoteAddr());
+            mediationApi.chargeCdr(cdr, getHttpServletRequest().getRemoteAddr());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -69,9 +60,7 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
         CdrReservationResponseDto result = new CdrReservationResponseDto();
         result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
         try {
-            MessageContext mc = wsContext.getMessageContext();
-            HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
-            CdrReservationResponseDto response = mediationApi.reserveCdr(cdr, req.getRemoteAddr());
+            CdrReservationResponseDto response = mediationApi.reserveCdr(cdr, getHttpServletRequest().getRemoteAddr());
             double availableQuantity = response.getAvailableQuantity();
             if (availableQuantity == 0) {
                 result.getActionStatus().setStatus(ActionStatusEnum.FAIL);
@@ -95,9 +84,7 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            MessageContext mc = wsContext.getMessageContext();
-            HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
-            mediationApi.confirmReservation(reservation, req.getRemoteAddr());
+            mediationApi.confirmReservation(reservation, getHttpServletRequest().getRemoteAddr());
         } catch (Exception e) {
             processException(e, result);
         }
@@ -110,9 +97,7 @@ public class MediationWsImpl extends BaseWs implements MediationWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            MessageContext mc = wsContext.getMessageContext();
-            HttpServletRequest req = (HttpServletRequest) mc.get(MessageContext.SERVLET_REQUEST);
-            mediationApi.cancelReservation(reservation, req.getRemoteAddr());
+            mediationApi.cancelReservation(reservation, getHttpServletRequest().getRemoteAddr());
         } catch (Exception e) {
             processException(e, result);
         }

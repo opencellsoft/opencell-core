@@ -744,8 +744,8 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     public ActionStatus createKeycloakUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
-        try {
-            userApi.createKeycloakUser(postData);
+        try {            
+            userApi.createKeycloakUser(getHttpServletRequest(), postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -754,11 +754,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
     
     @Override
-    public ActionStatus updateKeycloakUser(String userId, UserDto postData) {
+    public ActionStatus updateKeycloakUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
-        try {
-            userApi.updateKeycloakUser(userId, postData);
+        try {            
+            userApi.updateKeycloakUser(getHttpServletRequest(), postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -767,11 +767,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
     
     @Override
-    public ActionStatus deleteKeycloakUser(String userId) {
+    public ActionStatus deleteKeycloakUser(String username) {
         ActionStatus result = new ActionStatus();
 
-        try {
-            userApi.deleteKeycloakUser(userId);
+        try {            
+            userApi.deleteKeycloakUser(getHttpServletRequest(), username);
         } catch (Exception e) {
             processException(e, result);
         }
