@@ -24,8 +24,7 @@
 
 		<hftl:dataList label="#{messages['country.title']}"		backingBean="#{countryListBean}">
 			<hftl:column label="#{messages['country.code']}" 	field="countryCode" width="10%" entityView="countryDetail" valueIdField="id"/>
-			<hftl:column label="#{messages['country.nameEn']}"	field="descriptionEn" />
-			<hftl:column label="#{messages['country.nameFr']}"	field="descriptionFr" />
+			<hftl:column label="#{messages['country.name']}"	field="description" />
 			<hftl:column label="#{messages['currency.currencyCode']}" field="currency.currencyCode" />
 			<hftl:column label="#{messages['language.languageCode']}" field="language.languageCode" />
 			<hftl:actionsColumn	permission="#{currentUser.hasRole('superAdminManagement')}" />

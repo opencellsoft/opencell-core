@@ -274,7 +274,7 @@ public class SellerApi extends BaseApi {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
 
-        result = new SellerDto(seller, entityToDtoConverter.getCustomFieldsWithInheritedDTO(seller, true));
+        result = new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, true));
 
         return result;
     }
@@ -307,7 +307,7 @@ public class SellerApi extends BaseApi {
         List<Seller> sellers = sellerService.list();
         if (sellers != null) {
             for (Seller seller : sellers) {
-                result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsWithInheritedDTO(seller, true)));
+                result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, true)));
             }
         }
 

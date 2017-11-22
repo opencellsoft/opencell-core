@@ -162,7 +162,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        return CustomEntityInstanceDto.toDTO(cei, entityToDtoConverter.getCustomFieldsWithInheritedDTO(cei, true));
+        return CustomEntityInstanceDto.toDTO(cei, entityToDtoConverter.getCustomFieldsDTO(cei, true));
     }
 
     public List<CustomEntityInstanceDto> list(String cetCode) throws MeveoApiException {
@@ -184,7 +184,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
 
         for (CustomEntityInstance instance : customEntityInstances) {
-            customEntityInstanceDtos.add(CustomEntityInstanceDto.toDTO(instance, entityToDtoConverter.getCustomFieldsWithInheritedDTO(instance, true)));
+            customEntityInstanceDtos.add(CustomEntityInstanceDto.toDTO(instance, entityToDtoConverter.getCustomFieldsDTO(instance, true)));
         }
 
         return customEntityInstanceDtos;

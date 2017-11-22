@@ -70,7 +70,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
     }
 
     private BundleTemplateDto convertBundleTemplateToDto(BundleTemplate bundleTemplate) {
-        BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(bundleTemplate, true), false);
+        BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsDTO(bundleTemplate, true), false);
 
         processProductChargeTemplateToDto(bundleTemplate, bundleTemplateDto);
 
@@ -87,7 +87,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
                     bundleProductTemplateDto
-                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
+                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }

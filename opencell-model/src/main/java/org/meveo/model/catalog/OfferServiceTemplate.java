@@ -52,7 +52,7 @@ public class OfferServiceTemplate implements IEntity,Serializable {
     @NotNull
     private OfferTemplate offerTemplate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE }, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REFRESH }, optional = false)
     @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
@@ -187,4 +187,23 @@ public class OfferServiceTemplate implements IEntity,Serializable {
         setValidity(otherOst.getValidity());
         setIncompatibleServices(otherOst.getIncompatibleServices());
     }
+    
+	public OfferServiceTemplate duplicate(OfferTemplate newOfferTemplate) {
+		OfferServiceTemplate newOst = new OfferServiceTemplate();
+		newOst.setIncompatibleServices(incompatibleServices);
+		newOst.setMandatory(mandatory);
+		newOst.setServiceTemplate(serviceTemplate);
+		newOst.setValidity(validity);
+		if (newOfferTemplate != null) {
+			newOst.setOfferTemplate(newOfferTemplate);
+		}
+		return newOst;
+	}
+
+	@Override
+	public String toString() {
+		return "OfferServiceTemplate [id=" + id + ", offerTemplate=" + offerTemplate + ", serviceTemplate="
+				+ serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices
+				+ ", validity=" + validity + "]";
+	}
 }

@@ -8,6 +8,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
@@ -256,6 +257,11 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
+    
+    //bsm service
+    
+    @WebMethod
+    ActionStatus createServiceFromBSM(@WebParam(name = "bsmService") BsmServiceDto postData);
 
     // discount Plan
     @WebMethod
@@ -309,6 +315,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     DiscountPlanItemsResponseDto listDiscountPlanItem();
+    
     @WebMethod
     ActionStatus createProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
 

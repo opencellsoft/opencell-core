@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -46,7 +47,7 @@ public class OfferProductTemplate implements IEntity, Serializable {
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade = { CascadeType.REFRESH })
     @JoinColumn(name = "product_template_id")
     private ProductTemplate productTemplate;
 

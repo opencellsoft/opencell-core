@@ -32,6 +32,6 @@ public class ChargeTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(ChargeTemplate.class, chargeTemplateCode);
         }
 
-        return new ChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+        return new ChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
     }
 }

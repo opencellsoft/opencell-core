@@ -11,9 +11,7 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.admin.module.GenericModuleBean;
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
@@ -80,18 +78,6 @@ public class BusinessOfferModelBean extends GenericModuleBean<BusinessOfferModel
         params.put("objectId", values);
 
         RequestContext.getCurrentInstance().openDialog("createOfferFromBOM", options, params);
-    }
-
-    public void createOfferFromBOM() throws BusinessException {
-        List<ServiceConfigurationDto> serviceCodeDtos = new ArrayList<>();
-        for (ServiceTemplate st : serviceDualListModel.getTarget()) {
-            ServiceConfigurationDto serviceCodeDto = new ServiceConfigurationDto();
-            serviceCodeDto.setCode(st.getCode());
-            serviceCodeDtos.add(serviceCodeDto);
-        }
-
-        businessOfferModelService.createOfferFromBOM(getEntity(), null, bomOfferInstancePrefix, null, "", serviceCodeDtos, null);
-        RequestContext.getCurrentInstance().closeDialog(getEntity());
     }
 
     public void onBOMOfferCreation(SelectEvent event) {

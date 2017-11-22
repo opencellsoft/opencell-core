@@ -19,12 +19,12 @@ public interface GatewayPaymentInterface {
      * @param cardHolderName Card holder's name on the card
      * @param expirayDate Expiry date of the card Format: MMYY ,Required for Create and Update token.
      * @param issueNumber Issue number on the card (if applicable)
-     * @param productPaymentId Payment product identifier (1 Visa | 2 American Express | 3 MasterCard)
+     * @param cardType ( Visa |  American Express | MasterCard)
      * @return
      * @throws BusinessException
      */
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            int productPaymentId, String countryCode) throws BusinessException;
+            CreditCardTypeEnum cardType, String countryCode) throws BusinessException;
 
     /**
      * 
