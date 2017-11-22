@@ -14,6 +14,8 @@ import org.meveo.api.dto.account.CustomerBrandDto;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.account.CustomerDto;
 import org.meveo.api.dto.account.CustomersDto;
+import org.meveo.api.dto.account.FilterProperty;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
@@ -23,8 +25,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
-import org.meveo.api.security.filter.AccountDtoListFilter;
-import org.meveo.api.security.parameter.NullParser;
+import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -260,7 +261,7 @@ public class CustomerApi extends AccountEntityApi {
         return customer;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = Customer.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
@@ -275,6 +276,7 @@ public class CustomerApi extends AccountEntityApi {
         return accountHierarchyApi.customerToDto(customer);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public void remove(String customerCode) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
@@ -295,7 +297,8 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
-    @SecuredBusinessEntityMethod(resultFilter = AccountDtoListFilter.class, validate = @SecureMethodParameter(parser = NullParser.class))
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
         if (pagingAndFiltering == null) {

@@ -331,7 +331,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = BillingAccount.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
@@ -345,6 +345,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return accountHierarchyApi.billingAccountToDto(billingAccount);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public void remove(String billingAccountCode) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");

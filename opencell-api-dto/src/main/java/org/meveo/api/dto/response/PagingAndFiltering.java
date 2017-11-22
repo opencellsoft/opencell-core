@@ -58,6 +58,17 @@ public class PagingAndFiltering implements Serializable {
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
      * 
+     * 
+     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
+     * same in case when quering a customer account: customer.code=aaa OR customer=aaa<br/>
+     * 
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
+     * sellers=code1,code2<br/><br/>
+     * 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists <br/>
+     * <br/>
+     * 
+     * 
      * Examples:<br/>
      * <ul>
      * <li>invoice number equals "1578AU":<br/>
@@ -126,6 +137,16 @@ public class PagingAndFiltering implements Serializable {
 
     }
 
+    /**
+     * Paging and filtering criteria
+     * 
+     * @param encodedQuery Encoded query in format: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Fields to retrieve
+     * @param offset Retrieve from record number
+     * @param limit How many records to retrieve
+     * @param sortBy Sort by field name
+     * @param sortOrder Sort order
+     */
     public PagingAndFiltering(String encodedQuery, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
         this.filters = decodeQuery(encodedQuery);
@@ -136,6 +157,17 @@ public class PagingAndFiltering implements Serializable {
         this.sortOrder = sortOrder;
     }
 
+    /**
+     * Paging and filtering criteria
+     * 
+     * @param fullTextFilter Full text filter query
+     * @param filters Filtering criteria - a map of field names and values. See PersistenceService.getQuery for more details.
+     * @param fields Fields to retrieve
+     * @param offset Retrieve from record number
+     * @param limit How many records to retrieve
+     * @param sortBy Sort by field name
+     * @param sortOrder Sort order
+     */
     public PagingAndFiltering(String fullTextFilter, Map<String, Object> filters, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
         this.fullTextFilter = fullTextFilter;

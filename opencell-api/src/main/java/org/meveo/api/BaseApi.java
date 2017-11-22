@@ -60,6 +60,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -104,6 +105,9 @@ public abstract class BaseApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+
+    @Inject
+    protected BusinessEntityService businessEntityService;
 
     protected List<String> missingParameters = new ArrayList<String>();
 
@@ -1086,6 +1090,8 @@ public abstract class BaseApi {
             if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)) {
                 filters.put(key, value);
 
+                // Filter already contains a special
+
                 // Determine what the target field type is and convert to that data type
             } else {
 
@@ -1100,7 +1106,7 @@ public abstract class BaseApi {
                     fieldClassType = ReflectionUtils.getFieldGenericsType(field);
                 }
 
-                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition));
+                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition) || "overlapOptionalRange".equals(condition));
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1125,15 +1131,15 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
 
-        log.error("Casting {} of class {} ", value, value != null ? value.getClass() : null);
+        log.error("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
+            value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
-        if (targetClass.isAssignableFrom(value.getClass())) {
+        if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
             return value;
-        }
 
-        // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
-        if (expectedList) {
-            if (value instanceof List || value instanceof Set) {
+            // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
+        } else if (expectedList) {
+            if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
                 return value;
 
             } else if (value instanceof String) {
@@ -1269,7 +1275,25 @@ public abstract class BaseApi {
                 } else if (stringVal != null) {
                     return new BigDecimal(stringVal);
                 }
+
+            } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
+
+                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                    return stringVal;
+                }
+
+                businessEntityService.setEntityClass(targetClass);
+
+                if (stringVal != null) {
+                    BusinessEntity businessEntity = businessEntityService.findByCode(stringVal);
+                    if (businessEntity == null) {
+                        // Did not find a way how to pass nonexistant entity to search sql
+                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
+                    }
+                    return businessEntity;
+                }
             }
+
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
         }

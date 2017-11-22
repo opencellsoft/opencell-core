@@ -32,12 +32,12 @@ public class ScriptInstanceDto extends CustomScriptDto {
 
         if (e.getExecutionRoles() != null) {
             for (Role role : e.getExecutionRoles()) {
-                executionRoles.add(new RoleDto(role));
+                executionRoles.add(new RoleDto(role, true, true));
             }
         }
         if (e.getSourcingRoles() != null) {
             for (Role role : e.getSourcingRoles()) {
-                sourcingRoles.add(new RoleDto(role));
+                sourcingRoles.add(new RoleDto(role, true, true));
             }
         }
     }

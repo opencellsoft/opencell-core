@@ -184,7 +184,7 @@ public interface InvoiceRs extends IBaseRs {
      * List invoices matching a given criteria
      * 
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
-     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @param offset Pagination - from record number
      * @param limit Pagination - number of records to retrieve
      * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
@@ -199,7 +199,7 @@ public interface InvoiceRs extends IBaseRs {
     /**
      * List invoices matching a given criteria
      * 
-     * @param pagingAndFiltering Pagination and filtering criteria
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return An invoice list
      */
     @POST

@@ -19,6 +19,8 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -82,7 +84,7 @@ public class UserDto extends BaseDto {
     public UserDto() {
     }
 
-    public UserDto(User user) {
+    public UserDto(User user, boolean includeSecuredEntities) {
         if (user.getName() != null) {
             firstName = user.getName().getFirstName();
             lastName = user.getName().getLastName();
@@ -102,13 +104,14 @@ public class UserDto extends BaseDto {
             userLevel = user.getUserLevel().getCode();
         }
 
-        if (user.getSecuredEntities() != null) {
+        if (includeSecuredEntities && user.getSecuredEntities() != null) {
             this.securedEntities = new ArrayList<>();
             SecuredEntityDto securedEntityDto = null;
             for (SecuredEntity securedEntity : user.getSecuredEntities()) {
                 securedEntityDto = new SecuredEntityDto(securedEntity);
                 this.securedEntities.add(securedEntityDto);
             }
+            Collections.sort(this.securedEntities, Comparator.comparing(SecuredEntityDto::getCode));
         }
     }
 

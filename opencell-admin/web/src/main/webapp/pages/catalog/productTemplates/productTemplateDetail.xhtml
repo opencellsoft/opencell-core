@@ -1,118 +1,79 @@
-<ui:composition xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-	xmlns:f="http://xmlns.jcp.org/jsf/core"
-	xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-	xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags"
-	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
-	<ui:define name="metadata">
-		<f:metadata>
-			<f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
-			<f:viewParam name="newVersion" value="#{productTemplateBean.newVersion}" />
-		</f:metadata>
-	</ui:define>
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
+            <f:viewParam name="newVersion" value="#{productTemplateBean.newVersion}" />
+        </f:metadata>
+    </ui:define>
 
-	<ui:define name="body">
-	   <hftl:entityPopup id="searchProductChargeTemplatePopup"
-			header="#{messages['productTemplate.productCharges']}"
-			updateField=":tabView:formProductCharge:productChargeTemplateSelectedId :tabView:formProductCharge:productChargeTemplateSelectedId_text"
-			selection="#{productTemplateBean.productChargeTemplate}"
-			backingBean="#{productChargeTemplateBean}"
-			searchField1Label="#{messages['businessEntity.code']}"
-			searchField1="code" column1Label="#{messages['businessEntity.code']}"
-			column1="code"
-			column2Label="#{messages['businessEntity.description']}"
-			column2="description">
-		</hftl:entityPopup>
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
-				<p:menuitem outcome="productTemplates"
-					value="#{messages['menu.productTemplates']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['productTemplate']}"
-					disabled="true" rendered="#{productTemplateBean.entity.transient}" />
-				<p:menuitem
-					value="#{messages['productTemplate']} #{messages['commons.configuration']} - #{productTemplateBean.entity.code}"
-					disabled="true" rendered="#{!productTemplateBean.entity.transient}" />
-			</p:breadCrumb>
-		</h:form>
+    <ui:define name="body">
+        <hftl:entityPopup id="searchProductChargeTemplatePopup" header="#{messages['productTemplate.productCharges']}"
+            updateField=":tabView:formProductCharge:productChargeTemplateSelectedId :tabView:formProductCharge:productChargeTemplateSelectedId_text"
+            selection="#{productTemplateBean.productChargeTemplate}" backingBean="#{productChargeTemplateBean}" searchField1Label="#{messages['businessEntity.code']}" searchField1="code"
+            column1Label="#{messages['businessEntity.code']}" column1="code" column2Label="#{messages['businessEntity.description']}" column2="description">
+        </hftl:entityPopup>
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
+                <p:menuitem outcome="productTemplates" value="#{messages['menu.productTemplates']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['productTemplate']}" disabled="true" rendered="#{productTemplateBean.entity.transient}" />
+                <p:menuitem value="#{messages['productTemplate']} #{messages['commons.configuration']} - #{productTemplateBean.entity.code}" disabled="true"
+                    rendered="#{!productTemplateBean.entity.transient}" />
+            </p:breadCrumb>
+        </h:form>
 
-		<p:panel id="tabPanel">
-			<p:tabView id="tabView"
-				activeIndex="#{productTemplateBean.activeTab}">
-				<p:tab tab="information" title="#{messages['commons.information']}">
-				<hftl:formPanel label="#{messages['menu.productTemplates']}"
-					backingBean="#{productTemplateBean}" showEnableDisableButton="true">
-						<ui:include src="productTemplateDetailCommon.xhtml">
-							<ui:param name="backingBean" value="#{productTemplateBean}" />
-							<ui:param name="mode" value="PRODUCT" />
-							<ui:param name="idPath" value=":tabView:formId" />
-						</ui:include>
-				</hftl:formPanel>
-				</p:tab>
-				<p:tab tab="productCharges"
-					title="#{messages['productTemplate.productCharges']}" rendered="#{!productTemplateBean.entity.transient}">
-					<p:outputPanel id="productCharges_MSG_panel">
-						<h:graphicImage value="/img/msgerror.png" style="border:0"
-							rendered="#{validation.failed}" />
-						<h:outputText value="#{messages['validation.validationFailure']}"
-							rendered="#{validation.failed}" styleClass="errorMessage" />
-					</p:outputPanel>
-					<h:panelGroup id="productChargeTemplate_panel">
-						<p:outputPanel autoUpdate="true">
-							<hftl:dataList backingBean="#{productTemplateBean}"
-								dataModel="#{productTemplateBean.entity.productChargeTemplates}">
-								<hftl:column label="#{messages['BusinessEntity.code']}"
-									field="code" editView="productChargeTemplateDetail"
-									valueIdField="id" backView="productTemplates" />
-								<hftl:column field="description"
-									label="#{messages['BusinessEntity.description']}" />
-								<p:column styleClass="actions-column">
-									<f:facet name="header">
-										<h:outputText value="#{messages['commons.actions']}" />
-									</f:facet>
-									<p:commandButton update=":#{p:component('formProductCharge')}"
-										action="#{productTemplateBean.editProductChargeTemplate(entity)}"
-										icon="ui-icon-document" />
-									<p:commandButton
-										action="#{productTemplateBean.deleteProductChargeTemplate(entity.getId())}"
-										icon="ui-icon-trash"
-										update=":#{p:component('productChargeTemplate_panel')} :#{p:component('formProductCharge')}" />
-								</p:column>
-							</hftl:dataList>
-						</p:outputPanel>
-					</h:panelGroup>
-					<p:panel id="productChargediv">
-						<hftl:formPanel formId="formProductCharge"
-							edit="#{productTemplateBean.edit}"
-							backingBean="#{productTemplateBean}"
-							showFormButtons="false" ajaxSubmit="true">
-							<hftl:formField id="productChargeTemplateSelectedId"
-							    entity="#{productTemplateBean.productChargeTemplate}"
-								label="#{messages['pricePlanMatrix.eventCode']}"
-								field="code" popup="true"
-								popupId="searchProductChargeTemplatePopup"
-								required="true"/>
-							<ui:param name="buttons" value="true" />
-							<ui:define name="buttons">
-								<p:commandButton
-									rendered="#{productTemplateBean.canUserUpdateEntity()}"
-									action="#{productTemplateBean.saveProductChargeTemplate()}"
-									value="#{messages['action.addSave']}"
-									update=":tabPanel" />
-								<p:commandButton value="#{messages['action.cancel']}"
-									action="#{productTemplateBean.newProductChargeTemplate()}"
-									update=":tabView:productChargediv" />
-								<p:button id="buttonBack5" value="#{messages['action.back']}"
-									outcome="#{productTemplateBean.back()}"
-									includeViewParams="true">
-									<f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
-								</p:button>
-							</ui:define>
-						</hftl:formPanel>
-					</p:panel>
-				</p:tab>
-			</p:tabView>
-		</p:panel>
-	</ui:define>
+        <p:panel>
+            <p:tabView id="tabView" activeIndex="#{productTemplateBean.activeTab}">
+                <p:tab tab="information" title="#{messages['commons.information']}">
+                    <hftl:formPanel label="#{messages['menu.productTemplates']}" backingBean="#{productTemplateBean}" showEnableDisableButton="true">
+                        <ui:include src="productTemplateDetailCommon.xhtml">
+                            <ui:param name="backingBean" value="#{productTemplateBean}" />
+                            <ui:param name="mode" value="PRODUCT" />
+                            <ui:param name="idPath" value=":tabView:formId" />
+                        </ui:include>
+                    </hftl:formPanel>
+                </p:tab>
+                <p:tab tab="productCharges" title="#{messages['productTemplate.productCharges']}" rendered="#{!productTemplateBean.entity.transient}">
+                    <p:outputPanel id="productCharges_MSG_panel">
+                        <h:graphicImage value="/img/msgerror.png" style="border:0" rendered="#{validation.failed}" />
+                        <h:outputText value="#{messages['validation.validationFailure']}" rendered="#{validation.failed}" styleClass="errorMessage" />
+                    </p:outputPanel>
+                    <h:panelGroup id="productChargeTemplate_panel">
+                        <p:outputPanel autoUpdate="true">
+                            <hftl:dataList backingBean="#{productTemplateBean}" dataModel="#{productTemplateBean.entity.productChargeTemplates}">
+                                <hftl:column label="#{messages['BusinessEntity.code']}" field="code" editView="productChargeTemplateDetail" valueIdField="id" backView="productTemplates" />
+                                <hftl:column field="description" label="#{messages['BusinessEntity.description']}" />
+                                <p:column styleClass="actions-column">
+                                    <f:facet name="header">
+                                        <h:outputText value="#{messages['commons.actions']}" />
+                                    </f:facet>
+                                    <p:commandButton update=":#{p:component('formProductCharge')}" action="#{productTemplateBean.editProductChargeTemplate(entity)}" icon="ui-icon-document" />
+                                    <p:commandButton action="#{productTemplateBean.deleteProductChargeTemplate(entity.getId())}" icon="ui-icon-trash"
+                                        update=":#{p:component('productChargeTemplate_panel')} :#{p:component('formProductCharge')}" />
+                                </p:column>
+                            </hftl:dataList>
+                        </p:outputPanel>
+                    </h:panelGroup>
+                    <p:panel id="productChargediv">
+                        <hftl:formPanel formId="formProductCharge" edit="#{productTemplateBean.edit}" backingBean="#{productTemplateBean}" showFormButtons="false" ajaxSubmit="true">
+                            <hftl:formField id="productChargeTemplateSelectedId" entity="#{productTemplateBean.productChargeTemplate}" label="#{messages['pricePlanMatrix.eventCode']}" field="code"
+                                popup="true" popupId="searchProductChargeTemplatePopup" required="true" />
+                            <ui:param name="buttons" value="true" />
+                            <ui:define name="buttons">
+                                <p:commandButton rendered="#{productTemplateBean.canUserUpdateEntity()}" action="#{productTemplateBean.saveProductChargeTemplate()}"
+                                    value="#{messages['action.addSave']}" update=":tabView:productChargediv :tabView:productCharges_MSG_panel" />
+                                <p:commandButton value="#{messages['action.cancel']}" action="#{productTemplateBean.newProductChargeTemplate()}" update=":tabView:productChargediv" />
+                                <p:button id="buttonBack5" value="#{messages['action.back']}" outcome="#{productTemplateBean.back()}" includeViewParams="true">
+                                    <f:param name="cid" value="#{conversation.id}" />
+                                </p:button>
+                            </ui:define>
+                        </hftl:formPanel>
+                    </p:panel>
+                </p:tab>
+            </p:tabView>
+        </p:panel>
+    </ui:define>
+
 </ui:composition>
