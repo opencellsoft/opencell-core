@@ -104,7 +104,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         if (bpmId != null) {
             duplicateFromBPM();
             entity.setValidity(new DatePeriod());
-            entity.getProductChargeTemplates().size();
+            entity.getProductChargeTemplates().clear();
             bpmId = null;
         } else {
             super.initEntity();
