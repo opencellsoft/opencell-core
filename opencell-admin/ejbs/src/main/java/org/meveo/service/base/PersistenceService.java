@@ -893,9 +893,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             queryBuilder.addPaginationConfiguration(config, "a");
         }
 
-         log.trace("Filters is {}", filters);
-         log.trace("Query is {}", queryBuilder.getSqlString());
-         log.trace("Query params are {}", queryBuilder.getParams());
+        // log.trace("Filters is {}", filters);
+        // log.trace("Query is {}", queryBuilder.getSqlString());
+        // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
     }
 
