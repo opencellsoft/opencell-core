@@ -40,6 +40,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -237,7 +238,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             boolean alreadyInstanciated = false;
 
             for (ServiceInstance serviceInstance : serviceInstances) {
-                if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE && serviceTemplate.getCode().equals(serviceInstance.getCode())) {
+                if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
+                        || (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
                     alreadyInstanciated = true;
                     break;
                 }
@@ -474,7 +476,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             for (ServiceTemplate serviceTemplate : serviceTemplates.getSelectedItemsAsList()) {
 
-                String descriptionOverride = serviceTemplate.getDescriptionOverride();              
+                String descriptionOverride = serviceTemplate.getDescriptionOverride();
                 serviceTemplate = serviceTemplateService.findById(serviceTemplate.getId());
 
                 isChecked = true;
@@ -714,7 +716,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             initServiceInstances(entity.getServiceInstances());
             initServiceTemplates();
             resetChargesDataModels();
-            
+
             selectedServiceInstance = null;
             messages.info(new BundleKey("messages", "suspension.suspendSuccessful"));
 

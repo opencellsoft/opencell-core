@@ -341,11 +341,27 @@ public class SubscriptionApi extends BaseApi {
 
             ServiceInstance serviceInstance = null;
 
-            List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
-                InstanceStatusEnum.INACTIVE);
+            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
+                    InstanceStatusEnum.INACTIVE);
+                if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
+                    serviceInstance = alreadyInstantiatedServices.get(0);
+                }
 
-            if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
-                serviceInstance = alreadyInstantiatedServices.get(0);
+            } else {
+                List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
+                    InstanceStatusEnum.INACTIVE, InstanceStatusEnum.ACTIVE);
+
+                if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
+                    for (ServiceInstance alreadyInstantiatedService : alreadyInstantiatedServices) {
+                        if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.ACTIVE) {
+                            throw new MeveoApiException("ServiceInstance with code=" + alreadyInstantiatedService.getCode() + " is already activated.");
+                        } else if (alreadyInstantiatedService.getStatus() == InstanceStatusEnum.INACTIVE) {
+                            serviceInstance = alreadyInstantiatedService;
+                            break;
+                        }
+                    }
+                }
             }
 
             // Require a quantity if service was not instantiated before
@@ -509,12 +525,21 @@ public class SubscriptionApi extends BaseApi {
             ServiceTemplate serviceTemplate = serviceToInstantiateDto.getServiceTemplate();
 
             ServiceInstance serviceInstance = null;
-            List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
-                InstanceStatusEnum.INACTIVE);
-            if (!subscriptionServiceInstances.isEmpty()) {
-                throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instanciated.");
-            }
 
+            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+                List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
+                    InstanceStatusEnum.INACTIVE);
+                if (!subscriptionServiceInstances.isEmpty()) {
+                    throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instanciated.");
+                }
+
+            } else {
+                List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
+                    InstanceStatusEnum.INACTIVE, InstanceStatusEnum.ACTIVE);
+                if (!subscriptionServiceInstances.isEmpty()) {
+                    throw new MeveoApiException("ServiceInstance with code=" + serviceToInstantiateDto.getCode() + " is already instanciated or activated.");
+                }
+            }
             log.debug("Will instantiate service {} for subscription {} quantity {}", serviceTemplate.getCode(), subscription.getCode(), serviceToInstantiateDto.getQuantity());
 
             serviceInstance = new ServiceInstance();

@@ -29,6 +29,7 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.IncorrectServiceInstanceException;
 import org.meveo.admin.exception.IncorrectSusbcriptionException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -176,10 +177,19 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("Subscription is not active");
         }
         if (!isVirtual) {
-            List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
-            if (serviceInstances != null && !serviceInstances.isEmpty()) {
-                throw new IncorrectServiceInstanceException(
-                    "Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode() + " and status is [INACTIVE] is already created.");
+            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
+                if (serviceInstances != null && !serviceInstances.isEmpty()) {
+                    throw new IncorrectServiceInstanceException(
+                        "Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode() + " is already instantiated.");
+                }
+            } else {
+                List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE,
+                    InstanceStatusEnum.ACTIVE);
+                if (serviceInstances != null && !serviceInstances.isEmpty()) {
+                    throw new IncorrectServiceInstanceException(
+                        "Service instance with code=" + serviceInstance.getCode() + " and subscription code=" + subscription.getCode() + " is already instantiated or activated.");
+                }
             }
         }
         checkServiceAssociatedWithOffer(serviceInstance);
@@ -277,6 +287,14 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
             throw new IncorrectServiceInstanceException("Can not activate a ServiceInstance that is " + serviceInstance.getStatus());
+        }
+
+        if (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceInstance.getCode(), subscription, InstanceStatusEnum.ACTIVE);
+            if (serviceInstances != null && !serviceInstances.isEmpty()) {
+                throw new IncorrectServiceInstanceException(
+                    "Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode() + " is already activated.");
+            }
         }
 
         checkServiceAssociatedWithOffer(serviceInstance);
