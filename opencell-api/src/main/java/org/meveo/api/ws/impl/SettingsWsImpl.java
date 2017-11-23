@@ -732,7 +732,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find(getHttpServletRequest(), username));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -741,11 +741,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
     
     @Override
-    public ActionStatus createKeycloakUser(UserDto postData) {
+    public ActionStatus createExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {            
-            userApi.createKeycloakUser(getHttpServletRequest(), postData);
+            userApi.createExternalUser(getHttpServletRequest(), postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -754,11 +754,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
     
     @Override
-    public ActionStatus updateKeycloakUser(UserDto postData) {
+    public ActionStatus updateExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {            
-            userApi.updateKeycloakUser(getHttpServletRequest(), postData);
+            userApi.updateExternalUser(getHttpServletRequest(), postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -767,11 +767,11 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
     
     @Override
-    public ActionStatus deleteKeycloakUser(String username) {
+    public ActionStatus deleteExternalUser(String username) {
         ActionStatus result = new ActionStatus();
 
         try {            
-            userApi.deleteKeycloakUser(getHttpServletRequest(), username);
+            userApi.deleteExternalUser(getHttpServletRequest(), username);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1320,6 +1320,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result = roleApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public RolesDto listExternalRoles() {
+        RolesDto result = new RolesDto();
+
+        try {
+            result.setRoles(roleApi.listExternalRoles(getHttpServletRequest()));
+
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1929,4 +1943,5 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
+   
 }

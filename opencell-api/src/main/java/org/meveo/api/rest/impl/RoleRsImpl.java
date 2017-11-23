@@ -109,4 +109,18 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
 
         return result;
     }
+
+    @Override
+    public RolesDto listExternalRoles() {
+        RolesDto result = new RolesDto();
+
+        try {
+            result.setRoles(roleApi.listExternalRoles(httpServletRequest));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
 }

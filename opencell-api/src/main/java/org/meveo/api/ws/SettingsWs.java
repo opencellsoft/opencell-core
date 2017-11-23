@@ -134,13 +134,13 @@ public interface SettingsWs extends IBaseWs {
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
     
     @WebMethod
-    ActionStatus createKeycloakUser(@WebParam(name = "user") UserDto postData);
+    ActionStatus createExternalUser(@WebParam(name = "user") UserDto postData);
     
     @WebMethod
-    ActionStatus updateKeycloakUser(@WebParam(name = "user") UserDto postData);
+    ActionStatus updateExternalUser(@WebParam(name = "user") UserDto postData);
     
     @WebMethod
-    ActionStatus deleteKeycloakUser(@WebParam(name = "username") String username);
+    ActionStatus deleteExternalUser(@WebParam(name = "username") String username);
 
     /**
      * List users matching a given criteria
@@ -412,6 +412,13 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     public RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List external source such as from keycloak.
+     * @return
+     */
+    @WebMethod
+    public RolesDto listExternalRoles();
 
     // Multi Language field value translations
 

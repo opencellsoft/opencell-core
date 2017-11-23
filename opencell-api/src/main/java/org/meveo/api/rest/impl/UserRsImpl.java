@@ -70,7 +70,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find(httpServletRequest, username));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -119,11 +119,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
     
     @Override
-    public ActionStatus createKeycloakUser(UserDto postData) {
+    public ActionStatus createExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            result.setMessage(userApi.createKeycloakUser(httpServletRequest, postData));
+            result.setMessage(userApi.createExternalUser(httpServletRequest, postData));
         } catch (Exception e) {
             processException(e, result);
         }
@@ -132,11 +132,11 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
 
     @Override
-    public ActionStatus updateKeycloakUser(UserDto postData) {
+    public ActionStatus updateExternalUser(UserDto postData) {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.updateKeycloakUser(httpServletRequest, postData);
+            userApi.updateExternalUser(httpServletRequest, postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -145,15 +145,16 @@ public class UserRsImpl extends BaseRs implements UserRs {
     }
 
     @Override
-    public ActionStatus deleteKeycloakUser(String username) {
+    public ActionStatus deleteExternalUser(String username) {
         ActionStatus result = new ActionStatus();
 
         try {
-            userApi.deleteKeycloakUser(httpServletRequest, username);
+            userApi.deleteExternalUser(httpServletRequest, username);
         } catch (Exception e) {
             processException(e, result);
         }
 
         return result;
     }
+    
 }

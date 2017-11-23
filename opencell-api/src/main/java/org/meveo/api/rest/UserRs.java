@@ -86,8 +86,8 @@ public interface UserRs extends IBaseRs {
      * @return
      */
     @POST
-    @Path("/keycloak")
-    public ActionStatus createKeycloakUser(UserDto postData);
+    @Path("/external")
+    public ActionStatus createExternalUser(UserDto postData);
 
     /**
      * Updates a user in keycloak and core given a username.
@@ -95,8 +95,8 @@ public interface UserRs extends IBaseRs {
      * @return
      */
     @PUT
-    @Path("/keycloak/")
-    public ActionStatus updateKeycloakUser(UserDto postData);
+    @Path("/external/")
+    public ActionStatus updateExternalUser(UserDto postData);
 
     /**
      * Deletes a user in keycloak and core given a username.
@@ -104,8 +104,8 @@ public interface UserRs extends IBaseRs {
      * @return
      */
     @DELETE
-    @Path("/keycloak/{username}")
-    public ActionStatus deleteKeycloakUser(@PathParam("username") String username);
+    @Path("/external/{username}")
+    public ActionStatus deleteExternalUser(@PathParam("username") String username);
 
     /**
      * List users matching a given criteria

@@ -39,6 +39,10 @@ public class RoleDto extends BaseDto {
     public RoleDto() {
 
     }
+    
+    public RoleDto(String name) {
+        this.name = name;
+    }
 
     public RoleDto(Role role, boolean includeRoles, boolean includePermissions) {
         this.setName(role.getName());

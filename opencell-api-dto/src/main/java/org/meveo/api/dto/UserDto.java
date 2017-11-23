@@ -63,6 +63,10 @@ public class UserDto extends BaseDto {
     @XmlElementWrapper(name = "userRoles")
     @XmlElement(name = "userRole")
     private List<String> roles;
+    
+    @XmlElementWrapper(name = "externalRoles")
+    @XmlElement(name = "externalRole")
+    private List<RoleDto> externalRoles;
 
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
@@ -213,6 +217,14 @@ public class UserDto extends BaseDto {
 
     public void setLastLoginDate(Date lastLoginDate) {
         this.lastLoginDate = lastLoginDate;
+    }
+
+    public List<RoleDto> getExternalRoles() {
+        return externalRoles;
+    }
+
+    public void setExternalRoles(List<RoleDto> externalRoles) {
+        this.externalRoles = externalRoles;
     }
 
 }

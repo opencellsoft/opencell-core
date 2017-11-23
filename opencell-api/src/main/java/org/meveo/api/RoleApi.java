@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -19,6 +20,7 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
@@ -33,6 +35,9 @@ public class RoleApi extends BaseApi {
 
     @Inject
     private PermissionService permissionService;
+
+    @Inject
+    private KeycloakAdminClientService keycloakAdminClientService;
 
     /**
      * 
@@ -269,4 +274,9 @@ public class RoleApi extends BaseApi {
 
         return result;
     }
+
+    public List<RoleDto> listExternalRoles(HttpServletRequest httpServletRequest) throws BusinessException {
+        return keycloakAdminClientService.listRoles(httpServletRequest);
+    }
+
 }
