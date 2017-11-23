@@ -60,7 +60,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
     @Inject
     private CalendarService calendarService;
-    
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
@@ -73,7 +73,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             missingParameters.add("code");
         }
         if (postData.getAmountWithoutTax() == null && appProvider.isEntreprise()) {
-            missingParameters.add("amountWithoutTax");        
+            missingParameters.add("amountWithoutTax");
         }
         if (postData.getAmountWithTax() == null && !appProvider.isEntreprise()) {
             missingParameters.add("amountWithTax");
@@ -116,8 +116,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                 throw new EntityDoesNotExistsException(TradingCurrency.class, postData.getCurrency());
             }
             pricePlanMatrix.setTradingCurrency(tradingCurrency);
-        }       
-        
+        }
+
         if (postData.getOfferTemplateVersion() != null && !StringUtils.isBlank(postData.getOfferTemplateVersion().getCode())) {
             OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(),
                 postData.getOfferTemplateVersion().getValidFrom(), postData.getOfferTemplateVersion().getValidTo());
@@ -128,8 +128,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
                             + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidTo(), dateFormat));
             }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
-        
-        } else if (!StringUtils.isBlank(postData.getOfferTemplate())){
+
+        } else if (!StringUtils.isBlank(postData.getOfferTemplate())) {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate());
             if (offerTemplate == null) {
                 throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplateVersion().getCode() + " / Current date");
@@ -144,13 +144,13 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             }
             pricePlanMatrix.setValidityCalendar(calendar);
         }
-        
-        if(postData.getScriptInstance()!=null){
-        	ScriptInstance scriptInstance=scriptInstanceService.findByCode(postData.getScriptInstance());
-        	if(scriptInstance==null){
-        		throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstance());
-        	}
-        	pricePlanMatrix.setScriptInstance(scriptInstance);
+
+        if (postData.getScriptInstance() != null) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstance());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstance());
+            }
+            pricePlanMatrix.setScriptInstance(scriptInstance);
         }
 
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
@@ -172,7 +172,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
-        
+        pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
         } catch (MissingParameterException e) {
@@ -184,7 +185,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         pricePlanMatrixService.create(pricePlanMatrix);
-        
+
         return pricePlanMatrix;
     }
 
@@ -197,7 +198,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             missingParameters.add("code");
         }
         if (postData.getAmountWithoutTax() == null && appProvider.isEntreprise()) {
-            missingParameters.add("amountWithoutTax");        
+            missingParameters.add("amountWithoutTax");
         }
         if (postData.getAmountWithTax() == null && !appProvider.isEntreprise()) {
             missingParameters.add("amountWithTax");
@@ -242,14 +243,14 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         }
 
         if (postData.getOfferTemplateVersion() != null && !StringUtils.isBlank(postData.getOfferTemplateVersion().getCode())) {
-            OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(), postData.getOfferTemplateVersion().getValidFrom(),
-                postData.getOfferTemplateVersion().getValidTo());
+            OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(postData.getOfferTemplateVersion().getCode(),
+                postData.getOfferTemplateVersion().getValidFrom(), postData.getOfferTemplateVersion().getValidTo());
             if (offerTemplate == null) {
                 String dateFormat = ParamBean.getInstance().getDateTimeFormat();
                 throw new EntityDoesNotExistsException(OfferTemplate.class,
                     postData.getOfferTemplateVersion().getCode() + " / " + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidFrom(), dateFormat) + " / "
                             + DateUtils.formatDateWithPattern(postData.getOfferTemplateVersion().getValidTo(), dateFormat));
-            }            
+            }
             pricePlanMatrix.setOfferTemplate(offerTemplate);
 
         } else if (!StringUtils.isBlank(postData.getOfferTemplate())) {
@@ -269,15 +270,15 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         } else {
             pricePlanMatrix.setValidityCalendar(null);
         }
-        
-        if(postData.getScriptInstance()!=null){
-        	ScriptInstance scriptInstance=scriptInstanceService.findByCode(postData.getScriptInstance());
-        	if(scriptInstance==null){
-        		throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstance());
-        	}
-        	pricePlanMatrix.setScriptInstance(scriptInstance);
+
+        if (postData.getScriptInstance() != null) {
+            ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getScriptInstance());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getScriptInstance());
+            }
+            pricePlanMatrix.setScriptInstance(scriptInstance);
         }
-        pricePlanMatrix.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        pricePlanMatrix.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         pricePlanMatrix.setMinQuantity(postData.getMinQuantity());
         pricePlanMatrix.setMaxQuantity(postData.getMaxQuantity());
         pricePlanMatrix.setStartSubscriptionDate(postData.getStartSubscriptionDate());
@@ -296,11 +297,12 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteria3Value(postData.getCriteria3());
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
-        
+        pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+
         if (postData.getLanguageDescriptions() != null) {
             pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));
         }
-        
+
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false);
         } catch (MissingParameterException e) {
@@ -310,13 +312,15 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         pricePlanMatrix = pricePlanMatrixService.update(pricePlanMatrix);
-        
+
         return pricePlanMatrix;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -368,7 +372,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         return pricePlanDtos;
     }
 
-    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {    	
+    public PricePlanMatrix createOrUpdate(PricePlanMatrixDto postData) throws MeveoApiException, BusinessException {
         if (pricePlanMatrixService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {

@@ -165,6 +165,10 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
 
+    @Column(name = "wo_description_el", length = 2000)
+    @Size(max = 2000)
+    private String woDescriptionEL;
+
     public String getEventCode() {
         return eventCode;
     }
@@ -511,5 +515,13 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
             descriptionI18n = new HashMap<>();
         }
         return descriptionI18n;
+    }
+
+    public String getWoDescriptionEL() {
+        return woDescriptionEL;
+    }
+
+    public void setWoDescriptionEL(String woDescriptionEL) {
+        this.woDescriptionEL = woDescriptionEL;
     }
 }

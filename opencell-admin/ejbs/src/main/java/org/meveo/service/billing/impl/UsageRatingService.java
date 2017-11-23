@@ -235,7 +235,7 @@ public class UsageRatingService {
         String descTranslated = descriptionMap.get(translationKey);
         if (descTranslated == null) {
             descTranslated = (cachedChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : cachedChargeInstance.getDescription();
-            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(languageCode)) {
+            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
                 descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
             }
             descriptionMap.put(translationKey, descTranslated);

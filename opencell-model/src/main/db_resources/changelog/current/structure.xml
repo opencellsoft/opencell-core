@@ -1362,4 +1362,11 @@
         
     </changeSet>
     
+    
+    <changeSet id="#2231_20171123" author="AndriusKarpavicius">    
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="wo_description_el" type="varchar(2000)"  />           
+        </addColumn>        
+    </changeSet>
+    
 </databaseChangeLog> 

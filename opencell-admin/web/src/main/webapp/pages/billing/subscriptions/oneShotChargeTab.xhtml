@@ -88,7 +88,7 @@
                     </h:panelGroup>
                 </h:panelGroup>
                 <hftl:formField label="#{messages['oneShotChargeInstance.amountWithoutTax']}" field="amountWithoutTax"
-                    rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and appProvider.enterprise}" converter="bigDecimalConverter" />
+                    rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and appProvider.entreprise}" converter="bigDecimalConverter" />
 
                 <hftl:decorateFormField fieldId="amountWithTax" label="#{messages['oneShotChargeInstance.amountWithTax']}"
                     rendered="#{subscriptionBean.oneShotChargeInstance.chargeTemplate.amountEditable and !appProvider.entreprise}">
