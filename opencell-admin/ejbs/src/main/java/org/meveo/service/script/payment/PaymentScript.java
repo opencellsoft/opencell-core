@@ -28,6 +28,20 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
 	public void createCardToken(Map<String, Object> methodContext) throws BusinessException {		
 	}
 	
-	
-  
+    @Override
+    public void cancelPayment(Map<String, Object> methodContext) throws BusinessException {        
+    }
+
+    @Override
+    public void doRefundToken(Map<String, Object> methodContext) throws BusinessException {
+    }
+
+    @Override
+    public void doRefundCard(Map<String, Object> methodContext) throws BusinessException {
+    }
+
+    @Override
+    public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {
+    }
+
 }

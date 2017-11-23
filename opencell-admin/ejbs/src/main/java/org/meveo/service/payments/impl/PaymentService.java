@@ -70,7 +70,7 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Pay by card. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
+     * Pay by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
      * used (and marked as preferred)
      * 
      * @param customerAccount Customer account
@@ -83,7 +83,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws NoAllOperationUnmatchedException
      * @throws UnbalanceAmountException
      */
-    public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
+    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
@@ -217,6 +217,87 @@ public class PaymentService extends PersistenceService<Payment> {
                 }
             }
         }
+        return doPaymentResponseDto;
+    }
+    
+    
+    /**
+     * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
+     * used (and marked as preferred)
+     * 
+     * @param customerAccount Customer account
+     * @param ctsAmount Amount to mpau
+     * @param aoIdsToPay
+     * @param createAO
+     * @param matchingAO
+     * @return
+     * @throws BusinessException
+     * @throws NoAllOperationUnmatchedException
+     * @throws UnbalanceAmountException
+     */
+    public PayByCardResponseDto refundByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+
+        if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
+            throw new BusinessException("There no payment token for customerAccount:" + customerAccount.getCode());
+        }
+
+        PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
+        if (preferredMethod == null) {
+            throw new BusinessException("There is no payment method for customerAccount:" + customerAccount.getCode());
+
+        } else if (!(preferredMethod instanceof CardPaymentMethod)) {
+            throw new BusinessException("Can not process payment as prefered payment method is " + preferredMethod.getPaymentType());
+        }
+
+        // If card payment method is currently not valid, find a valid one and mark it as preferred or throw an exception
+        if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
+            preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
+            if (preferredMethod != null) {
+                customerAccount = customerAccountService.update(customerAccount);
+            } else {
+                throw new BusinessException("There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
+            }
+        }
+
+        CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
+        GatewayPaymentInterface gatewayPaymentInterface = null;
+        try{
+             gatewayPaymentInterface = gatewayPaymentFactory
+                .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        }catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+
+        PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
+
+        if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
+            // log.error("AKK updating card payment with user id {} {}", cardPaymentMethod.getAlias(), doPaymentResponseDto.getCodeClientSide());
+            cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
+            cardPaymentMethod = (CardPaymentMethod) paymentMethodService.update(cardPaymentMethod);
+            Long aoPaymentId = null;
+            if (createAO) {
+                try {
+                    aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
+                    doPaymentResponseDto.setAoCreated(true);
+                } catch (Exception e) {
+                    log.warn("Cant create Account operation payment :", e);
+                }
+                if (matchingAO) {
+                    try {
+                        List<Long> aoIdsToMatch = aoIdsToPay;
+                        aoIdsToMatch.add(aoPaymentId);
+                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
+                        doPaymentResponseDto.setMatchingCreated(true);
+                    } catch (Exception e) {
+                        log.warn("Cant create matching :", e);
+                    }
+                }
+            }
+        } else {
+            log.warn("Payment by card {} was not successfull. Status: {}", cardPaymentMethod.getTokenId(), doPaymentResponseDto.getPaymentStatus());
+        }
+
         return doPaymentResponseDto;
     }
 
