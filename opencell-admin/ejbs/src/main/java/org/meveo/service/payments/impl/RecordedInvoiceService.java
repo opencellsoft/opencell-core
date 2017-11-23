@@ -29,7 +29,6 @@ import javax.persistence.NoResultException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ImportInvoiceException;
 import org.meveo.admin.exception.InvoiceExistException;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
@@ -271,13 +270,5 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
 		recordedInvoice.setMatchingStatus(MatchingStatusEnum.O);
 		create(recordedInvoice);
 		invoice.setRecordedInvoice(recordedInvoice);
-	}
-
-	public List<Long> getAOidsToPay(PaymentMethodEnum paymentMethodEnum) {
-		try {
-			return (List<Long>)getEntityManager().createNamedQuery("RecordedInvoice.listRecordedInvoiceIdsToPay").setParameter("payMethod", paymentMethodEnum).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+	}	
 }

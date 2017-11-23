@@ -16,6 +16,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
+import org.meveo.service.payments.impl.RefundService;
 import org.slf4j.Logger;
 
 /**
@@ -34,6 +35,9 @@ public class UnitPaymentCardJobBean {
 
     @Inject
     private PaymentService paymentService;
+    
+    @Inject
+    private RefundService refundService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO,OperationCategoryEnum operationCategory) {
@@ -52,7 +56,7 @@ public class UnitPaymentCardJobBean {
                 doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
             }else {
-                doPaymentResponseDto = paymentService.refundByCardToken(accountOperation.getCustomerAccount(),
+                doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
             }
            

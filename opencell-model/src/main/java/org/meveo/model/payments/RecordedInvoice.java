@@ -40,11 +40,9 @@ import javax.validation.constraints.Size;
 
 @Entity
 @DiscriminatorValue(value = "I")
-@NamedQueries({
-	@NamedQuery(name = "RecordedInvoice.listRecordedInvoiceIdsToPay", query = "Select ri.id from RecordedInvoice as ri,PaymentMethod as pm  where ri.matchingStatus ='O' and "
-		+ " ri.customerAccount.excludedFromPayment = false and ri.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ri.unMatchingAmount <> 0"),
-	@NamedQuery(name = "RecordedInvoice.listRecordedInvoiceToPayByDate", query = "Select ri.id from RecordedInvoice as ri,PaymentMethod as pm  where ri.matchingStatus ='O' "
-		+ "and  ri.customerAccount.excludedFromPayment = false and ri.dueDate >=:fromDueDate and ri.dueDate<=:toDueDate and ri.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ri.unMatchingAmount <> 0") })
+@NamedQueries({        
+        @NamedQuery(name = "RecordedInvoice.listRecordedInvoiceToPayByDate", query = "Select ri.id from RecordedInvoice as ri,PaymentMethod as pm  where ri.matchingStatus ='O' "
+                + "and  ri.customerAccount.excludedFromPayment = false and ri.dueDate >=:fromDueDate and ri.dueDate<=:toDueDate and ri.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ri.unMatchingAmount <> 0") })
 public class RecordedInvoice extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
