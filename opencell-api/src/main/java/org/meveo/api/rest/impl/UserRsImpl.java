@@ -96,7 +96,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         UsersDto result = new UsersDto();
 
         try {
-            result = userApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+            result = userApi.list(httpServletRequest, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -110,7 +110,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         UsersDto result = new UsersDto();
 
         try {
-            result = userApi.list(pagingAndFiltering);
+            result = userApi.list(httpServletRequest, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

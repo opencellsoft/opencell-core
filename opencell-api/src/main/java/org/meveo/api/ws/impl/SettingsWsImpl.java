@@ -785,7 +785,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         UsersDto result = new UsersDto();
 
         try {
-            result = userApi.list(pagingAndFiltering);
+            result = userApi.list(getHttpServletRequest(), pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

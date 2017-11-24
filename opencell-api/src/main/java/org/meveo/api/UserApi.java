@@ -332,10 +332,11 @@ public class UserApi extends BaseApi {
      * @return A list of users
      * @throws ActionForbiddenException
      * @throws InvalidParameterException
+     * @throws BusinessException 
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
-    public UsersDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException {
+    public UsersDto list(HttpServletRequest httpServletRequest, PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
 
         boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
         boolean isAccessOthers = currentUser.hasRole(USER_MANAGEMENT) || currentUser.hasRole(USER_VISUALIZATION);
@@ -363,7 +364,9 @@ public class UserApi extends BaseApi {
         if (totalCount > 0) {
             List<User> users = userService.list(paginationConfig);
             for (User user : users) {
-                result.getUsers().add(new UserDto(user, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities")));
+                UserDto userDto = new UserDto(user, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities"));
+                userDto.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, user.getUserName()));
+                result.getUsers().add(userDto);
             }
         }
 
