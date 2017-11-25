@@ -226,103 +226,131 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     // validate service is in offer service list
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException {
-	OfferTemplate offer = serviceInstance.getSubscription().getOffer();
-	if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
-	    throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
-	}
-	log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
-	return true;
+        OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+        if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
+            throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
+        }
+        log.debug("check service {} is associated with offer {}", serviceInstance.getCode(), offer.getCode());
+        return true;
     }
     
+    /**
+     * @param serviceInstance service instance
+     * @param subscriptionAmount subscription amount
+     * @param terminationAmount termination amount
+     * @param isVirtual true/false
+     * @throws BusinessException business exception
+     */
     public void serviceInstanciation(ServiceInstance serviceInstance, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
         serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param descriptionOverride overridden description
+     * @param subscriptionAmount subscription amount
+     * @param terminationAmount termination amount
+     * @param isVirtual true/false
+     * @throws BusinessException
+     */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
-	    throws BusinessException {
-	log.debug("serviceInstanciation subscriptionId={}, code={}", serviceInstance.getSubscription().getId(), serviceInstance.getCode());
+            throws BusinessException {
+        log.debug("serviceInstanciation subscriptionId={}, code={}", serviceInstance.getSubscription().getId(),
+                serviceInstance.getCode());
 
-	ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-	serviceTemplate = serviceTemplateService.attach(serviceTemplate);
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+        serviceTemplate = serviceTemplateService.attach(serviceTemplate);
 
-	Subscription subscription = serviceInstance.getSubscription();
+        Subscription subscription = serviceInstance.getSubscription();
 
-	if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
-	    throw new IncorrectSusbcriptionException("subscription is not active");
-	}
-	if (!isVirtual) {
-	    List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.ACTIVE,
-		    InstanceStatusEnum.INACTIVE, InstanceStatusEnum.SUSPENDED);
-	    if (serviceInstances != null && serviceInstances.size() > 0) {
-		throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode() + ", subscription code=" + subscription.getCode()
-			+ " and status is [ACTIVE or INACTIVE or SUSPENDED] is already created.");
-	    }
-	}
-	checkServiceAssociatedWithOffer(serviceInstance);
+        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED
+                || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+            throw new IncorrectSusbcriptionException("subscription is not active");
+        }
+        if (!isVirtual) {
+            List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(),
+                    subscription, InstanceStatusEnum.ACTIVE, InstanceStatusEnum.INACTIVE, InstanceStatusEnum.SUSPENDED);
+            if (serviceInstances != null && serviceInstances.size() > 0) {
+                throw new IncorrectServiceInstanceException("Service instance with code=" + serviceInstance.getCode()
+                        + ", subscription code=" + subscription.getCode()
+                        + " and status is [ACTIVE or INACTIVE or SUSPENDED] is already created.");
+            }
+        }
+        checkServiceAssociatedWithOffer(serviceInstance);
 
-	UserAccount userAccount = subscription.getUserAccount();
+        UserAccount userAccount = subscription.getUserAccount();
 
-	Seller seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
-	if (serviceInstance.getSubscriptionDate() == null) {
-	    serviceInstance.setSubscriptionDate(subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date());
-	}
-	serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
-	serviceInstance.setCode(serviceTemplate.getCode());
-    if (!StringUtils.isBlank(descriptionOverride)) {
-        serviceInstance.setDescription(descriptionOverride);
-    } else {
-        serviceInstance.setDescription(serviceTemplate.getDescription());
-    }
-	serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
+        Seller seller = userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        if (serviceInstance.getSubscriptionDate() == null) {
+            serviceInstance.setSubscriptionDate(
+                    subscription.getSubscriptionDate() != null ? subscription.getSubscriptionDate() : new Date());
+        }
+        serviceInstance.setStatus(InstanceStatusEnum.INACTIVE);
+        serviceInstance.setCode(serviceTemplate.getCode());
+        if (!StringUtils.isBlank(descriptionOverride)) {
+            serviceInstance.setDescription(descriptionOverride);
+        } else {
+            serviceInstance.setDescription(serviceTemplate.getDescription());
+        }
+        serviceInstance.setInvoicingCalendar(serviceInstance.getServiceTemplate().getInvoicingCalendar());
 
-	if (!isVirtual) {
-	    create(serviceInstance);
-	}
+        if (!isVirtual) {
+            create(serviceInstance);
+        }
 
-	subscription.getServiceInstances().add(serviceInstance);
+        subscription.getServiceInstances().add(serviceInstance);
 
-	for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceRecurringCharges()) {
-	    RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(serviceInstance, serviceChargeTemplate.getChargeTemplate(),
-		    serviceInstance.getSubscriptionDate(), seller, isVirtual);
-	    serviceInstance.getRecurringChargeInstances().add(chargeInstance);
-	}
+        for (ServiceChargeTemplate<RecurringChargeTemplate> serviceChargeTemplate : serviceTemplate
+                .getServiceRecurringCharges()) {
+            RecurringChargeInstance chargeInstance = recurringChargeInstanceService.recurringChargeInstanciation(
+                    serviceInstance, serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(),
+                    seller, isVirtual);
+            serviceInstance.getRecurringChargeInstances().add(chargeInstance);
+        }
 
-	for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceSubscriptionCharges()) {
-	    OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-		    serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, true, isVirtual);
-	    serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
-	}
+        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
+                .getServiceSubscriptionCharges()) {
+            OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(
+                    serviceInstance.getSubscription(), serviceInstance, serviceChargeTemplate.getChargeTemplate(),
+                    serviceInstance.getSubscriptionDate(), subscriptionAmount, null, 1, true, isVirtual);
+            serviceInstance.getSubscriptionChargeInstances().add(chargeInstance);
+        }
 
-	for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate.getServiceTerminationCharges()) {
-	    OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(serviceInstance.getSubscription(), serviceInstance,
-		    serviceChargeTemplate.getChargeTemplate(), serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, false, isVirtual);
-	    serviceInstance.getTerminationChargeInstances().add(chargeInstance);
-	}
+        for (ServiceChargeTemplate<OneShotChargeTemplate> serviceChargeTemplate : serviceTemplate
+                .getServiceTerminationCharges()) {
+            OneShotChargeInstance chargeInstance = oneShotChargeInstanceService.oneShotChargeInstanciation(
+                    serviceInstance.getSubscription(), serviceInstance, serviceChargeTemplate.getChargeTemplate(),
+                    serviceInstance.getSubscriptionDate(), terminationAmount, null, 1, false, isVirtual);
+            serviceInstance.getTerminationChargeInstances().add(chargeInstance);
+        }
 
-	for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
-	    UsageChargeInstance chargeInstance = usageChargeInstanceService.usageChargeInstanciation(serviceInstance.getSubscription(), serviceInstance, serviceUsageChargeTemplate,
-		    serviceInstance.getSubscriptionDate(), seller, isVirtual);
-	    serviceInstance.getUsageChargeInstances().add(chargeInstance);
-	}
+        for (ServiceChargeTemplateUsage serviceUsageChargeTemplate : serviceTemplate.getServiceUsageCharges()) {
+            UsageChargeInstance chargeInstance = usageChargeInstanceService.usageChargeInstanciation(
+                    serviceInstance.getSubscription(), serviceInstance, serviceUsageChargeTemplate,
+                    serviceInstance.getSubscriptionDate(), seller, isVirtual);
+            serviceInstance.getUsageChargeInstances().add(chargeInstance);
+        }
 
-	if (!isVirtual) {
-	    // execute instantiation script
-	    if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-		serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
-	    }
-	}
+        if (!isVirtual) {
+            // execute instantiation script
+            if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null
+                    && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+                serviceModelScriptService.instantiateServiceInstance(serviceInstance,
+                        serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
+            }
+        }
     }
 
     /**
      * Activate a service, the subscription charges are applied.
      *
-     * @param serviceInstance
-     * @param amountWithoutTax
-     * @param amountWithoutTax2
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param amountWithoutTax amount without tax
+     * @param amountWithoutTax2 amount without tax
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
 	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -332,107 +360,107 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Activate a service, the subscription charges can be applied or not.
      * 
-     * @param serviceInstance
-     * @param applySubscriptionCharges
-     * @param amountWithoutTax
-     * @param amountWithoutTax2
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param applySubscriptionCharges true/false
+     * @param amountWithoutTax amount without tax
+     * @param amountWithoutTax2 amount without tax
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
-	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-	Subscription subscription = serviceInstance.getSubscription();
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+        Subscription subscription = serviceInstance.getSubscription();
 
-	// String serviceCode = serviceInstance.getCode();
-	if (subscription == null) {
-	    throw new IncorrectSusbcriptionException("Subscription does not exist. code=" + serviceInstance.getSubscription().getCode());
-	}
+        // String serviceCode = serviceInstance.getCode();
+        if (subscription == null) {
+            throw new IncorrectSusbcriptionException("Subscription does not exist. code=" + serviceInstance.getSubscription().getCode());
+        }
 
-	if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
-	    throw new IncorrectServiceInstanceException("Subscription is " + subscription.getStatus());
-	}
+        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
+            throw new IncorrectServiceInstanceException("Subscription is " + subscription.getStatus());
+        }
 
-	if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-	    throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
-	}
-	
-	if( subscription.getTerminationDate() != null ) {
-	    if(serviceInstance.getSubscriptionDate().after(subscription.getTerminationDate())) {
-		 throw new IncorrectServiceInstanceException("ServiceInstance activation date after the subscription termination date");
-	    }
-	}
+        if (serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+            throw new IncorrectServiceInstanceException("ServiceInstance is " + serviceInstance.getStatus());
+        }
 
-	checkServiceAssociatedWithOffer(serviceInstance);
+        if( subscription.getTerminationDate() != null ) {
+            if(serviceInstance.getSubscriptionDate().after(subscription.getTerminationDate())) {
+                throw new IncorrectServiceInstanceException("ServiceInstance activation date after the subscription termination date");
+            }
+        }
 
-	subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
+        checkServiceAssociatedWithOffer(serviceInstance);
 
-	if (serviceInstance.getSubscriptionDate() == null) {
-	    serviceInstance.setSubscriptionDate(new Date());
-	}
+        subscription.setStatus(SubscriptionStatusEnum.ACTIVE);
 
-	int agreementMonthTerm = 0;
+        if (serviceInstance.getSubscriptionDate() == null) {
+            serviceInstance.setSubscriptionDate(new Date());
+        }
 
-	// set end Agreement Date
-	Date serviceEngAgreementDate = null;
-	if (agreementMonthTerm > 0) {
-	    serviceEngAgreementDate = DateUtils.addMonthsToDate(subscription.getSubscriptionDate(), agreementMonthTerm);
-	}
+        int agreementMonthTerm = 0;
 
-	if (serviceEngAgreementDate == null) {
-	    if (serviceInstance.getEndAgreementDate() == null) {
-		serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
-	    }
-	} else {
-	    serviceInstance.setEndAgreementDate(serviceEngAgreementDate);
-	}
+        // set end Agreement Date
+        Date serviceEngAgreementDate = null;
+        if (agreementMonthTerm > 0) {
+            serviceEngAgreementDate = DateUtils.addMonthsToDate(subscription.getSubscriptionDate(), agreementMonthTerm);
+        }
 
-	// apply subscription charges
-	if (applySubscriptionCharges) {
-	    log.debug("serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}", serviceInstance.getSubscriptionChargeInstances().size());
-	    for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
-		oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(),
-			serviceInstance.getOrderNumber());
-		oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-		oneShotChargeInstanceService.update(oneShotChargeInstance);
-	    }
-	} else {
-	    log.debug("ServiceActivation: subscription charges are not applied.");
-	}
+        if (serviceEngAgreementDate == null) {
+            if (serviceInstance.getEndAgreementDate() == null) {
+                serviceInstance.setEndAgreementDate(subscription.getEndAgreementDate());
+            }
+        } else {
+            serviceInstance.setEndAgreementDate(serviceEngAgreementDate);
+        }
 
-	// activate recurring charges
-	log.debug("serviceActivation:serviceInstance.getRecurrringChargeInstances.size={}", serviceInstance.getRecurringChargeInstances().size());
+        // apply subscription charges
+        if (applySubscriptionCharges) {
+            log.debug("serviceActivation:serviceInstance.getSubscriptionChargeInstances.size={}", serviceInstance.getSubscriptionChargeInstances().size());
+            for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getSubscriptionChargeInstances()) {
+                oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, serviceInstance.getSubscriptionDate(), serviceInstance.getQuantity(),
+                        serviceInstance.getOrderNumber());
+                oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+                oneShotChargeInstanceService.update(oneShotChargeInstance);
+            }
+        } else {
+            log.debug("ServiceActivation: subscription charges are not applied.");
+        }
 
-	for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+        // activate recurring charges
+        log.debug("serviceActivation:serviceInstance.getRecurrringChargeInstances.size={}", serviceInstance.getRecurringChargeInstances().size());
 
-	    // application of subscription prorata
-	    recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
-	    recurringChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
-	    recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-	    recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-	    recurringChargeInstanceService.update(recurringChargeInstance);
-	    walletOperationService.chargeSubscription(recurringChargeInstance);
+        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
 
-	    if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
-		if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
-		    agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
-		}
-	    }
-	    int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
-		    serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
-	    log.debug("rated " + nbRating + " missing periods during activation");
-	}
-	for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-	    usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
-	}
+            // application of subscription prorata
+            recurringChargeInstance.setSubscriptionDate(serviceInstance.getSubscriptionDate());
+            recurringChargeInstance.setChargeDate(serviceInstance.getSubscriptionDate());
+            recurringChargeInstance.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+            recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
+            recurringChargeInstanceService.update(recurringChargeInstance);
+            walletOperationService.chargeSubscription(recurringChargeInstance);
 
-	serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
-	update(serviceInstance);
+            if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() != null) {
+                if (recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth() > agreementMonthTerm) {
+                    agreementMonthTerm = recurringChargeInstance.getRecurringChargeTemplate().getDurationTermInMonth();
+                }
+            }
+            int nbRating = recurringChargeInstanceService.applyRecurringCharge(recurringChargeInstance.getId(),
+                    serviceInstance.getRateUntilDate() == null ? new Date() : serviceInstance.getRateUntilDate(), serviceInstance.getRateUntilDate() != null);
+            log.debug("rated " + nbRating + " missing periods during activation");
+        }
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
+            usageChargeInstanceService.activateUsageChargeInstance(usageChargeInstance);
+        }
 
-	// execute subscription script
-	if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-	    serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
-	}
+        serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
+        update(serviceInstance);
+
+        // execute subscription script
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+            serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
+        }
     }
 
     /**
@@ -447,237 +475,251 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
-	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
-	terminateService(serviceInstance, terminationDate, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-		terminationReason.isApplyTerminationCharges(), orderNumber, terminationReason);
-	serviceInstance.setSubscriptionTerminationReason(terminationReason);
-	update(serviceInstance);
+        terminateService(serviceInstance, terminationDate, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
+                terminationReason.isApplyTerminationCharges(), orderNumber, terminationReason);
+        serviceInstance.setSubscriptionTerminationReason(terminationReason);
+        update(serviceInstance);
     }
 
     /**
-     * Terminate a service
+     * Terminate a service.
      * 
-     * @param serviceInstance
-     * @param terminationDate
-     * @param applyAgreement
-     * @param applyReimbursment
-     * @param applyTerminationCharges
-     * @param orderNumber
-     * @param terminationReason
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param terminationDate termination date
+     * @param applyAgreement apply agreement
+     * @param applyReimbursment apply reimbursement
+     * @param applyTerminationCharges apply termination charges
+     * @param orderNumber order number
+     * @param terminationReason termination reason
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-	    String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
-	if (serviceInstance.getId() != null) {
-	    log.info("terminateService terminationDate={}, serviceInstanceId={}", terminationDate, serviceInstance.getId());
-	}
-	if (terminationDate == null) {
-	    terminationDate = new Date();
-	}
+        if (serviceInstance.getId() != null) {
+            log.info("terminateService terminationDate={}, serviceInstanceId={}", terminationDate, serviceInstance.getId());
+        }
+        if (terminationDate == null) {
+            terminationDate = new Date();
+        }
 
-	String serviceCode = serviceInstance.getCode();
-	Subscription subscription = serviceInstance.getSubscription();
-	if (subscription == null) {
-	    throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
-	}
-	if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
-	    throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
-	}
-	serviceInstance = refreshOrRetrieve(serviceInstance);
+        String serviceCode = serviceInstance.getCode();
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
+            throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
+        }
+        if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
+            throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
+        }
+        serviceInstance = refreshOrRetrieve(serviceInstance);
 
-	// execute termination script
-	if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-	    serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
-		    terminationDate, terminationReason);
-	}
+        // execute termination script
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+            serviceModelScriptService.terminateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
+                    terminationDate, terminationReason);
+        }
 
-	for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-	    Date chargeDate = recurringChargeInstance.getChargeDate();
-	    Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
-	    Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
+        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+            Date chargeDate = recurringChargeInstance.getChargeDate();
+            Date nextChargeDate = recurringChargeInstance.getNextChargeDate();
+            Date storedNextChargeDate = recurringChargeInstance.getNextChargeDate();
 
-	    if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null && !recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
-		nextChargeDate = recurringChargeInstance.getChargeDate();
-	    }
+            if (recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance() != null && !recurringChargeInstance.getRecurringChargeTemplate().getApplyInAdvance()) {
+                nextChargeDate = recurringChargeInstance.getChargeDate();
+            }
 
-	    Date endDate = terminationDate;
+            Date endDate = terminationDate;
 
-	    if (applyAgreement && serviceInstance.getEndAgreementDate() != null && terminationDate.before(serviceInstance.getEndAgreementDate())) {
-		endDate = serviceInstance.getEndAgreementDate();
-	    }
-	    log.debug("chargeDate={}, storedNextChargeDate={}, enDate {}", chargeDate, storedNextChargeDate, endDate);
-	    if (endDate.after(nextChargeDate)) {
-		walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate);
-	    } else if (applyReimbursment) {
-		Date endAgreementDate = recurringChargeInstance.getServiceInstance().getEndAgreementDate();
-		log.debug("terminationDate={}, endAgreementDate={}, nextChargeDate={}", terminationDate, endAgreementDate, nextChargeDate);
-		if (applyAgreement && endAgreementDate != null && terminationDate.before(endAgreementDate)) {
-		    if (endAgreementDate.before(nextChargeDate)) {
-			recurringChargeInstance.setTerminationDate(endAgreementDate);
-			walletOperationService.applyReimbursment(recurringChargeInstance);
-		    }
+            if (applyAgreement && serviceInstance.getEndAgreementDate() != null && terminationDate.before(serviceInstance.getEndAgreementDate())) {
+                endDate = serviceInstance.getEndAgreementDate();
+            }
+            log.debug("chargeDate={}, storedNextChargeDate={}, enDate {}", chargeDate, storedNextChargeDate, endDate);
+            if (endDate.after(nextChargeDate)) {
+                walletOperationService.applyChargeAgreement(recurringChargeInstance, recurringChargeInstance.getRecurringChargeTemplate(), endDate);
+            } else if (applyReimbursment) {
+                Date endAgreementDate = recurringChargeInstance.getServiceInstance().getEndAgreementDate();
+                log.debug("terminationDate={}, endAgreementDate={}, nextChargeDate={}", terminationDate, endAgreementDate, nextChargeDate);
+                if (applyAgreement && endAgreementDate != null && terminationDate.before(endAgreementDate)) {
+                    if (endAgreementDate.before(nextChargeDate)) {
+                        recurringChargeInstance.setTerminationDate(endAgreementDate);
+                        walletOperationService.applyReimbursment(recurringChargeInstance);
+                    }
 
-		} else if (terminationDate.before(storedNextChargeDate)) {
-		    recurringChargeInstance.setTerminationDate(terminationDate);
-		    walletOperationService.applyReimbursment(recurringChargeInstance);
-		}
+                } else if (terminationDate.before(storedNextChargeDate)) {
+                    recurringChargeInstance.setTerminationDate(terminationDate);
+                    walletOperationService.applyReimbursment(recurringChargeInstance);
+                }
 
-	    }
-	    recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-	    recurringChargeInstanceService.update(recurringChargeInstance);
-	}
+            }
+            recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
+            recurringChargeInstanceService.update(recurringChargeInstance);
+        }
 
-	if (applyTerminationCharges) {
-	    for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
-		if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
-		    log.debug("applying the termination charge {}", oneShotChargeInstance.getCode());
-		    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, serviceInstance.getQuantity(), orderNumber);
-		    oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
-		} else {
-		    log.debug("we do not apply the termination charge because of its status {}", oneShotChargeInstance.getCode(), oneShotChargeInstance.getStatus());
-		}
-	    }
-	}
+        if (applyTerminationCharges) {
+            for (OneShotChargeInstance oneShotChargeInstance : serviceInstance.getTerminationChargeInstances()) {
+                if (oneShotChargeInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
+                    log.debug("applying the termination charge {}", oneShotChargeInstance.getCode());
+                    oneShotChargeInstanceService.oneShotChargeApplication(subscription, oneShotChargeInstance, terminationDate, serviceInstance.getQuantity(), orderNumber);
+                    oneShotChargeInstance.setStatus(InstanceStatusEnum.CLOSED);
+                } else {
+                    log.debug("we do not apply the termination charge because of its status {}", oneShotChargeInstance.getCode(), oneShotChargeInstance.getStatus());
+                }
+            }
+        }
 
-	for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-	    usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
-	}
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
+            usageChargeInstanceService.terminateUsageChargeInstance(usageChargeInstance, terminationDate);
+        }
 
-	serviceInstance.setTerminationDate(terminationDate);
-	serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
-	update(serviceInstance);
+        serviceInstance.setTerminationDate(terminationDate);
+        serviceInstance.setStatus(InstanceStatusEnum.TERMINATED);
+        update(serviceInstance);
     }
    
+    /**
+     * @param serviceInstance service instance
+     * @param terminationDate termination date
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     */
     public void updateTerminationMode(ServiceInstance serviceInstance, Date terminationDate)
-	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-	log.info("updateTerminationMode terminationDate={},serviceInstanceId={}", terminationDate, serviceInstance.getId());
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+        log.info("updateTerminationMode terminationDate={},serviceInstanceId={}", terminationDate, serviceInstance.getId());
 
-	SubscriptionTerminationReason newReason = serviceInstance.getSubscriptionTerminationReason();
+        SubscriptionTerminationReason newReason = serviceInstance.getSubscriptionTerminationReason();
 
-	log.info("updateTerminationMode terminationDate={},serviceInstanceId={},newApplyReimbursment=#2,newApplyAgreement=#3,newApplyTerminationCharges=#4", terminationDate,
-		serviceInstance.getId(), newReason.isApplyReimbursment(), newReason.isApplyAgreement(), newReason.isApplyTerminationCharges());
+        log.info("updateTerminationMode terminationDate={},serviceInstanceId={},newApplyReimbursment=#2,newApplyAgreement=#3,newApplyTerminationCharges=#4", terminationDate,
+                serviceInstance.getId(), newReason.isApplyReimbursment(), newReason.isApplyAgreement(), newReason.isApplyTerminationCharges());
 
-	String serviceCode = serviceInstance.getCode();
-	Subscription subscription = serviceInstance.getSubscription();
-	if (subscription == null) {
-	    throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
-	}
+        String serviceCode = serviceInstance.getCode();
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
+            throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
+        }
 
-	if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
-	    throw new IncorrectServiceInstanceException("service instance is not terminated. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
-	}
+        if (serviceInstance.getStatus() != InstanceStatusEnum.TERMINATED) {
+            throw new IncorrectServiceInstanceException("service instance is not terminated. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
+        }
 
-	terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(), newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), null, newReason);
+        terminateService(serviceInstance, terminationDate, newReason.isApplyAgreement(), newReason.isApplyReimbursment(), newReason.isApplyTerminationCharges(), null, newReason);
 
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param suspensionDate suspension date
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     */
     public void serviceSuspension(ServiceInstance serviceInstance, Date suspensionDate)
-	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
-	String serviceCode = serviceInstance.getCode();
+        String serviceCode = serviceInstance.getCode();
 
-	Subscription subscription = serviceInstance.getSubscription();
-	if (subscription == null) {
-	    throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceCode);
-	}
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
+            throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceCode);
+        }
 
-	if (serviceInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
-	    throw new IncorrectServiceInstanceException("service instance is not active. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
-	}
+        if (serviceInstance.getStatus() != InstanceStatusEnum.ACTIVE) {
+            throw new IncorrectServiceInstanceException("service instance is not active. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
+        }
 
-	if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-	    serviceModelScriptService.suspendServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), suspensionDate);
-	}
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+            serviceModelScriptService.suspendServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(), suspensionDate);
+        }
 
-	for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-	    if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
-		recurringChargeInstanceService.recurringChargeSuspension(recurringChargeInstance.getId(), suspensionDate);
-	    }
+        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.ACTIVE) {
+                recurringChargeInstanceService.recurringChargeSuspension(recurringChargeInstance.getId(), suspensionDate);
+            }
 
-	}
+        }
 
-	for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-	    usageChargeInstanceService.suspendUsageChargeInstance(usageChargeInstance, suspensionDate);
-	}
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
+            usageChargeInstanceService.suspendUsageChargeInstance(usageChargeInstance, suspensionDate);
+        }
 
-	serviceInstance.setStatus(InstanceStatusEnum.SUSPENDED);
-	serviceInstance.setTerminationDate(suspensionDate);
-	update(serviceInstance);
+        serviceInstance.setStatus(InstanceStatusEnum.SUSPENDED);
+        serviceInstance.setTerminationDate(suspensionDate);
+        update(serviceInstance);
     }
 
     public void serviceReactivation(ServiceInstance serviceInstance, Date reactivationDate)
-	    throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
-	String serviceCode = serviceInstance.getCode();
-	if (reactivationDate == null) {
-	    reactivationDate = new Date();
-	}
+        String serviceCode = serviceInstance.getCode();
+        if (reactivationDate == null) {
+            reactivationDate = new Date();
+        }
 
-	Subscription subscription = serviceInstance.getSubscription();
-	if (subscription == null) {
-	    throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
-	}
-	ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
-	if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
-	    throw new IncorrectServiceInstanceException("service instance is not suspended. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
-	}
-	checkServiceAssociatedWithOffer(serviceInstance);
+        Subscription subscription = serviceInstance.getSubscription();
+        if (subscription == null) {
+            throw new IncorrectSusbcriptionException("service Instance does not have subscrption . serviceCode=" + serviceInstance.getCode());
+        }
+        ServiceTemplate serviceTemplate = serviceInstance.getServiceTemplate();
+        if (serviceInstance.getStatus() != InstanceStatusEnum.SUSPENDED) {
+            throw new IncorrectServiceInstanceException("service instance is not suspended. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
+        }
+        checkServiceAssociatedWithOffer(serviceInstance);
 
-	serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
-	serviceInstance.setSubscriptionDate(reactivationDate);
-	serviceInstance.setDescription(serviceTemplate.getDescription());
-	serviceInstance.setTerminationDate(null);
+        serviceInstance.setStatus(InstanceStatusEnum.ACTIVE);
+        serviceInstance.setSubscriptionDate(reactivationDate);
+        serviceInstance.setDescription(serviceTemplate.getDescription());
+        serviceInstance.setTerminationDate(null);
 
-	for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
-	    if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-		recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, reactivationDate);
-	    }
-	}
+        for (RecurringChargeInstance recurringChargeInstance : serviceInstance.getRecurringChargeInstances()) {
+            if (recurringChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+                recurringChargeInstanceService.recurringChargeReactivation(serviceInstance, subscription, reactivationDate);
+            }
+        }
 
-	for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
-	    if (usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
-		usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, reactivationDate);
-	    }
-	}
-	update(serviceInstance);
+        for (UsageChargeInstance usageChargeInstance : serviceInstance.getUsageChargeInstances()) {
+            if (usageChargeInstance.getStatus() == InstanceStatusEnum.SUSPENDED) {
+                usageChargeInstanceService.reactivateUsageChargeInstance(usageChargeInstance, reactivationDate);
+            }
+        }
+        update(serviceInstance);
 
-	if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
-	    serviceModelScriptService.reactivateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
-		    reactivationDate);
-	}
+        if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
+            serviceModelScriptService.reactivateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode(),
+                    reactivationDate);
+        }
     }
 
     @SuppressWarnings("unchecked")
     public List<ServiceInstance> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate, InstanceStatusEnum status) {
-	QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
+        QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
 
-	try {
-	    qb.addCriterionEntity("serviceTemplate", serviceTemplate);
+        try {
+            qb.addCriterionEntity("serviceTemplate", serviceTemplate);
 
-	    qb.addCriterionEnum("status", status);
+            qb.addCriterionEnum("status", status);
 
-	    return (List<ServiceInstance>) qb.getQuery(em).getResultList();
-	} catch (NoResultException e) {
-	    return null;
-	}
+            return (List<ServiceInstance>) qb.getQuery(em).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
     public List<ServiceInstance> findByServiceTemplate(ServiceTemplate serviceTemplate) {
 
-	QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
+        QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
 
-	try {
-	    qb.addCriterionEntity("serviceTemplate", serviceTemplate);
+        try {
+            qb.addCriterionEntity("serviceTemplate", serviceTemplate);
 
-	    return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
-	} catch (NoResultException e) {
-	    return null;
-	}
+            return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public ServiceInstance findActivatedByCodeAndSubscription(String code, Subscription subscription) {
