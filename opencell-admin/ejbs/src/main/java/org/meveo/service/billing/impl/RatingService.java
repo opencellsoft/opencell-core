@@ -74,8 +74,6 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
-import javassist.CodeConverter.ArrayAccessReplacementMethodNames;
-
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
 
@@ -1081,19 +1079,23 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @return evaluated expression
      * @throws BusinessException business exception
      */
-    private Double evaluateDoubleExpression(String expression, WalletOperation walletOperation, UserAccount ua) throws BusinessException {
+    private Double evaluateDoubleExpression(String expression, WalletOperation walletOperation, UserAccount ua)
+            throws BusinessException {
         Double result = null;
         if (StringUtils.isBlank(expression)) {
             return result;
         }
         ChargeInstance chargeInstance = walletOperation.getChargeInstance();
-		if((walletOperation.getChargeInstance() instanceof HibernateProxy)){
-			chargeInstance = (ChargeInstance)((HibernateProxy) walletOperation.getChargeInstance()).getHibernateLazyInitializer().getImplementation();	
-		}
+        if ((walletOperation.getChargeInstance() instanceof HibernateProxy)) {
+            chargeInstance = (ChargeInstance) ((HibernateProxy) walletOperation.getChargeInstance())
+                    .getHibernateLazyInitializer().getImplementation();
+        }
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("op", walletOperation);
-        if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null && walletOperation.getEdr().getAccessCode() != null) {
-            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(), chargeInstance.getSubscription());
+        if (expression.indexOf("access") >= 0 && walletOperation.getEdr() != null
+                && walletOperation.getEdr().getAccessCode() != null) {
+            Access access = accessService.findByUserIdAndSubscription(walletOperation.getEdr().getAccessCode(),
+                    chargeInstance.getSubscription());
             userMap.put("access", access);
         }
         if (expression.indexOf("charge") >= 0) {
@@ -1157,16 +1159,17 @@ public class RatingService extends BusinessService<WalletOperation> {
         return result;
     }
     
-private void executeRatingScript(WalletOperation bareWalletOperation,String scriptInstanceCode)throws BusinessException {
-    try {
-        log.debug("execute priceplan script " + scriptInstanceCode);
-        ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
-        HashMap<String, Object> context = new HashMap<String, Object>();
-        context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
-        script.execute(context);
-    } catch (Exception e) {
-        log.error("Error when run script {}", scriptInstanceCode, e);
-        throw new BusinessException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
+    private void executeRatingScript(WalletOperation bareWalletOperation, String scriptInstanceCode)
+            throws BusinessException {
+        try {
+            log.debug("execute priceplan script " + scriptInstanceCode);
+            ScriptInterface script = scriptInstanceService.getCachedScriptInstance(scriptInstanceCode);
+            HashMap<String, Object> context = new HashMap<String, Object>();
+            context.put(Script.CONTEXT_ENTITY, bareWalletOperation);
+            script.execute(context);
+        } catch (Exception e) {
+            log.error("Error when run script {}", scriptInstanceCode, e);
+            throw new BusinessException("failed when run script " + scriptInstanceCode + ", info " + e.getMessage());
+        }
     }
-}
 }
