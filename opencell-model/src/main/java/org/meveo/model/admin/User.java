@@ -76,7 +76,7 @@ import org.meveo.model.shared.Name;
         @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u LEFT JOIN u.roles WHERE lower(u.userName)=:username", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class User extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

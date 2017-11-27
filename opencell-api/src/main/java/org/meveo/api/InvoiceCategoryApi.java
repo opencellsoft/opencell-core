@@ -105,7 +105,7 @@ public class InvoiceCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
         }
 
-        result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true));
+        result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true));
 
         return result;
     }

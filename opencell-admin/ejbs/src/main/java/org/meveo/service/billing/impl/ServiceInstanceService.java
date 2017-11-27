@@ -135,14 +135,21 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * Instantiate a service
      * 
      * @param serviceInstance service instance to instantiate
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void serviceInstanciation(ServiceInstance serviceInstance) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         serviceInstanciation(serviceInstance, null, null, false);
     }
 
+    /**
+     * @param serviceInstance service instance to instantiate
+     * @param descriptionOverride overridden description
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         serviceInstanciation(serviceInstance, descriptionOverride, null, null, false);
@@ -150,7 +157,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     // validate service is in offer service list
     private boolean checkServiceAssociatedWithOffer(ServiceInstance serviceInstance) throws BusinessException {
-
         OfferTemplate offer = serviceInstance.getSubscription().getOffer();
         if (offer != null && !offer.containsServiceTemplate(serviceInstance.getServiceTemplate())) {
             throw new BusinessException("Service " + serviceInstance.getCode() + " is not associated with Offer");
@@ -159,10 +165,25 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         return true;
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param subscriptionAmount subscription amount
+     * @param terminationAmount termination amount
+     * @param isVirtual true/false
+     * @throws BusinessException business exception
+     */
     public void serviceInstanciation(ServiceInstance serviceInstance, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual) throws BusinessException {
         serviceInstanciation(serviceInstance, null, subscriptionAmount, terminationAmount, isVirtual);
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param descriptionOverride overridden description
+     * @param subscriptionAmount subscription amount
+     * @param terminationAmount termination amount
+     * @param isVirtual true/false
+     * @throws BusinessException
+     */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
 
@@ -246,12 +267,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Activate a service, the subscription charges are applied.
      *
-     * @param serviceInstance
-     * @param amountWithoutTax
-     * @param amountWithoutTax2
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param amountWithoutTax amount without tax
+     * @param amountWithoutTax2 amount without tax
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -261,13 +282,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Activate a service, the subscription charges can be applied or not.
      * 
-     * @param serviceInstance
-     * @param applySubscriptionCharges
-     * @param amountWithoutTax
-     * @param amountWithoutTax2
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param applySubscriptionCharges true/false
+     * @param amountWithoutTax amount without tax
+     * @param amountWithoutTax2 amount without tax
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -390,18 +411,18 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
-     * Terminate a service
+     * Terminate a service.
      * 
-     * @param serviceInstance
-     * @param terminationDate
-     * @param applyAgreement
-     * @param applyReimbursment
-     * @param applyTerminationCharges
-     * @param orderNumber
-     * @param terminationReason
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param terminationDate termination date
+     * @param applyAgreement apply agreement
+     * @param applyReimbursment apply reimbursement
+     * @param applyTerminationCharges apply termination charges
+     * @param orderNumber order number
+     * @param terminationReason termination reason
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
             String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -490,6 +511,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         update(serviceInstance);
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param terminationDate termination date
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     */
     public void updateTerminationMode(ServiceInstance serviceInstance, Date terminationDate)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
         log.info("updateTerminationMode terminationDate={},serviceInstanceId={}", terminationDate, serviceInstance.getId());
@@ -513,6 +541,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param suspensionDate suspension date
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     */
     public void serviceSuspension(ServiceInstance serviceInstance, Date suspensionDate)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 
@@ -547,6 +582,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         update(serviceInstance);
     }
 
+    /**
+     * @param serviceInstance service instance
+     * @param reactivationDate reactivation date
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     */
     public void serviceReactivation(ServiceInstance serviceInstance, Date reactivationDate)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
 

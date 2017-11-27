@@ -157,7 +157,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             sortBy, sortOrder);
 
         try {
-            return subscriptionApi.list(null, pagingAndFiltering);
+            return subscriptionApi.list(mergedCF, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

@@ -361,8 +361,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
             // TODO this line might cause an issue when after update of charge
             // template service template can not be saved
-            entity = productTemplateService.refreshOrRetrieve(entity);
-            productChargeTemplate = productChargeTemplateService.refreshOrRetrieve(productChargeTemplate);
+            entity = productTemplateService.findById(entity.getId());
+            productChargeTemplate = productChargeTemplateService.findById(productChargeTemplate.getId());
             if (!productChargeTemplate.getProductTemplates().contains(entity)) {
                 productChargeTemplate.getProductTemplates().add(entity);
                 entity.getProductChargeTemplates().add(productChargeTemplate);
@@ -370,6 +370,10 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
             messages.info(new BundleKey("messages", "save.successful"));
             newProductChargeTemplate();
+            setActiveTab(1);
+			if (entity.getValidity() == null) {
+				entity.setValidity(new DatePeriod());
+			}
         } catch (Exception e) {
             log.error("error when saving productCharge", e);
             messages.error("error when creating product charge:" + e.getMessage());

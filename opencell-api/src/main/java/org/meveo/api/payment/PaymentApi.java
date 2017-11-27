@@ -179,7 +179,7 @@ public class PaymentApi extends BaseApi {
                 paymentDto.setPaymentOrder(p.getOrderNumber());
                 paymentDto.setFees(p.getFees());
                 paymentDto.setComment(p.getComment());
-                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(op, true));
+                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
                 if (p instanceof AutomatedPayment) {
                     AutomatedPayment ap = (AutomatedPayment) p;
                     paymentDto.setBankCollectionDate(ap.getBankCollectionDate());

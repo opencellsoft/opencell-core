@@ -131,6 +131,7 @@ public class OrderApi extends BaseApi {
         }
 
         handleMissingParameters();
+
         Order order = new Order();
         if (quoteId != null) {
             order.setQuote(orderService.getEntityManager().getReference(Quote.class, quoteId));
@@ -167,6 +168,7 @@ public class OrderApi extends BaseApi {
                 missingParameters.add("orderItem.action");
                 handleMissingParameters();
             }
+
             // Validate billing account
             List<org.tmf.dsmapi.catalog.resource.order.BillingAccount> billingAccount = productOrderItem.getBillingAccount();
             if (billingAccount == null || billingAccount.isEmpty()) {
@@ -314,8 +316,7 @@ public class OrderApi extends BaseApi {
 
         order = initiateWorkflow(order);
 
-        ProductOrder orderToDto = orderToDto(order);
-        return orderToDto;
+        return orderToDto(order);
     }
 
     /**
@@ -357,6 +358,7 @@ public class OrderApi extends BaseApi {
      * @throws MeveoApiException
      */
     public Order processOrder(Order order) throws BusinessException, MeveoApiException {
+
         // Nothing to process in final state
         if (order.getStatus() == OrderStatusEnum.COMPLETED) {
             return order;
@@ -371,6 +373,7 @@ public class OrderApi extends BaseApi {
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
             processOrderItem(order, orderItem);
         }
+
         order.setCompletionDate(new Date());
         order.setStatus(OrderStatusEnum.COMPLETED);
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
@@ -378,6 +381,7 @@ public class OrderApi extends BaseApi {
         }
 
         order = orderService.update(order);
+
         log.trace("Finished processing order {}", order.getCode());
 
         return order;
@@ -402,6 +406,7 @@ public class OrderApi extends BaseApi {
 
         // Ordering a new product
         if (orderItem.getAction() == OrderItemActionEnum.ADD) {
+
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
 
@@ -420,6 +425,7 @@ public class OrderApi extends BaseApi {
                 instantiateSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
 
             }
+
             // Serialize back the productOrderItem with updated product ids
             orderItem.setSource(ProductOrderItem.serializeOrderItem(productOrderItem));
 
@@ -440,6 +446,7 @@ public class OrderApi extends BaseApi {
                 log.debug("will modify product instance {}", productInstance);
 
                 orderItem.addProductInstance(productInstance);
+
                 // Modifying an existing subscription
             } else if (primaryOffering instanceof OfferTemplate) {
                 updateSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
@@ -460,6 +467,7 @@ public class OrderApi extends BaseApi {
 
                 deleteSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
             }
+
         }
 
         orderItem.setStatus(OrderStatusEnum.COMPLETED);
@@ -578,6 +586,7 @@ public class OrderApi extends BaseApi {
 
         return subscription;
     }
+
     private void deleteSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)
             throws BusinessException, MeveoApiException {
 
@@ -757,7 +766,6 @@ public class OrderApi extends BaseApi {
                 serviceInstanceDto.setTerminationDate(terminationDate);
                 serviceInstanceDto.setTerminationReason(
                     (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
-
                 // Service will be activated
             } else if (serviceId == null) {
 
@@ -828,6 +836,7 @@ public class OrderApi extends BaseApi {
         }
 
         // TODO Need to initiate workflow if there is one
+
         order = orderService.refreshOrRetrieve(order);
 
         return orderToDto(order);
@@ -882,7 +891,7 @@ public class OrderApi extends BaseApi {
             productOrderItems.add(orderItemToDto(orderItem));
         }
 
-        productOrder.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(order, true));
+        productOrder.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(order, true));
 
         return productOrder;
     }

@@ -405,7 +405,7 @@ public class SubscriptionApi extends BaseApi {
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
                 serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
-
+                serviceInstance.setTerminationDate(subscription.getTerminationDate());
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -572,7 +572,7 @@ public class SubscriptionApi extends BaseApi {
                 log.error("Failed to associate custom field instance to an entity {}", serviceToInstantiateDto.getCode(), e);
                 throw new MeveoApiException("Failed to associate custom field instance to an entity " + serviceToInstantiateDto.getCode());
             }
-
+            serviceInstance.setTerminationDate(subscription.getTerminationDate());
             try {
                 String descriptionOverride = !StringUtils.isBlank(serviceToInstantiateDto.getDescription()) ? serviceToInstantiateDto.getDescription() : null;
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
@@ -935,18 +935,14 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
                 CustomFieldsDto customFieldsDTO = null;
-                if (mergedCF) {
-                    customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(ac, true);
-                } else {
-                    customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, true);
-                }
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, true, mergedCF);
 
                 AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
                 dto.getAccesses().getAccess().add(accessDto);
             }
         }
 
-        dto.setCustomFields(entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(subscription, true));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription, true, true));
         dto.setSubscribedTillDate(subscription.getSubscribedTillDate());
         dto.setRenewed(subscription.isRenewed());
         dto.setRenewalNotifiedDate(subscription.getRenewalNotifiedDate());
@@ -957,11 +953,8 @@ public class SubscriptionApi extends BaseApi {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                 ServiceInstanceDto serviceInstanceDto = null;
                 CustomFieldsDto customFieldsDTO = null;
-                if (mergedCF) {
-                    customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(serviceInstance, true);
-                } else {
-                    customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, true);
-                }
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, true, mergedCF);
+
                 serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
                 dto.getServices().addServiceInstance(serviceInstanceDto);
             }
@@ -970,11 +963,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getProductInstances() != null) {
             for (ProductInstance productInstance : subscription.getProductInstances()) {
                 CustomFieldsDto customFieldsDTO = null;
-                if (mergedCF) {
-                    customFieldsDTO = entityToDtoConverter.getMergedCustomFieldsWithInheritedDTO(productInstance, true);
-                } else {
-                    customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, true);
-                }
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, true, mergedCF);
 
                 dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
 
@@ -1316,7 +1305,7 @@ public class SubscriptionApi extends BaseApi {
 
         ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, serviceInstanceCode, subscription);
         if (serviceInstance != null) {
-            result = new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsWithInheritedDTO(serviceInstance, true));
+            result = new ServiceInstanceDto(serviceInstance, entityToDtoConverter.getCustomFieldsDTO(serviceInstance, true));
         }
 
         return result;
@@ -1392,8 +1381,7 @@ public class SubscriptionApi extends BaseApi {
         List<OneShotChargeTemplate> list = oneShotChargeTemplateService.list();
         for (OneShotChargeTemplate chargeTemplate : list) {
             if (chargeTemplate.getOneShotChargeTemplateType() == type) {
-                OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate,
-                    entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+                OneShotChargeTemplateDto oneshotChartTemplateDto = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
                 results.add(oneshotChartTemplateDto);
             }
         }
@@ -1541,7 +1529,7 @@ public class SubscriptionApi extends BaseApi {
 
         List<ServiceInstance> serviceInstances = serviceInstanceService.listServiceInstance(subscriptionCode, serviceInstanceCode);
         if (serviceInstances != null && !serviceInstances.isEmpty()) {
-            result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsWithInheritedDTO(p, true))).collect(Collectors.toList());
+            result = serviceInstances.stream().map(p -> new ServiceInstanceDto(p, entityToDtoConverter.getCustomFieldsDTO(p, true))).collect(Collectors.toList());
         }
 
         return result;

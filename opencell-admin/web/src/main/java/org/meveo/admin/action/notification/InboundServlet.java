@@ -46,7 +46,7 @@ public class InboundServlet extends HttpServlet {
             log.debug("received request for method {} , path={}", req.getMethod(), path);
 
             InboundRequest inReq = new InboundRequest();
-            inReq.setCode(req.getRemoteAddr() + ":" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
+            inReq.setCode(req.getRemoteAddr() + "_" + req.getRemotePort() + "_" + req.getMethod() + "_" + System.nanoTime());
 
             inReq.setContentLength(req.getContentLength());
             inReq.setContentType(req.getContentType());

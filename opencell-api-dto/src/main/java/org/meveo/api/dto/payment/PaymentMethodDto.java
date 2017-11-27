@@ -265,6 +265,12 @@ public class PaymentMethodDto extends BaseDto {
 	default:
 	    break;
 	}
+	pmEntity.setInfo1(getInfo1());
+	pmEntity.setInfo2(getInfo2());
+	pmEntity.setInfo3(getInfo3());
+	pmEntity.setInfo4(getInfo4());
+	pmEntity.setInfo5(getInfo5());
+	pmEntity.setUserId(getUserId());
 	return pmEntity;
     }
 
@@ -335,6 +341,24 @@ public class PaymentMethodDto extends BaseDto {
 	default:
 	    break;
 	}
+	if(!StringUtils.isBlank(getInfo1())) {
+	    paymentMethod.setInfo1(getInfo1());
+	}
+	if(!StringUtils.isBlank(getInfo3())) {
+	    paymentMethod.setInfo2(getInfo2());
+	}
+	if(!StringUtils.isBlank(getInfo3())) {
+	    paymentMethod.setInfo3(getInfo3());
+	}
+	if(!StringUtils.isBlank(getInfo4())) {
+	    paymentMethod.setInfo4(getInfo4());
+	}
+	if(!StringUtils.isBlank(getInfo5())) {
+	    paymentMethod.setInfo5(getInfo5());
+	}
+	if(!StringUtils.isBlank(getUserId())) {
+	    paymentMethod.setUserId(getUserId());
+	}	
 	return paymentMethod;
     }
    

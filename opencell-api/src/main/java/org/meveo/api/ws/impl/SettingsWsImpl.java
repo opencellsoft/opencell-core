@@ -10,6 +10,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.BillingCycleApi;
 import org.meveo.api.CalendarApi;
+import org.meveo.api.ConfigurationApi;
 import org.meveo.api.CountryApi;
 import org.meveo.api.CurrencyApi;
 import org.meveo.api.CustomFieldTemplateApi;
@@ -46,15 +47,18 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.RoleDto;
+import org.meveo.api.dto.RolesDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.account.ProviderContactDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
+import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -81,6 +85,7 @@ import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
@@ -171,6 +176,9 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
     @Inject
     private UserHierarchyLevelApi userHierarchyLevelApi;
+
+    @Inject
+    private ConfigurationApi configurationApi;
 
     @Deprecated
     @Override
@@ -733,6 +741,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
     }
 
     @Override
+    public UsersDto listUsers(PagingAndFiltering pagingAndFiltering) {
+
+        UsersDto result = new UsersDto();
+
+        try {
+            result = userApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
     public ActionStatus createBillingCycle(BillingCycleDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
@@ -1247,6 +1269,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
             roleApi.createOrUpdate(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public RolesDto listRoles(PagingAndFiltering pagingAndFiltering) {
+
+        RolesDto result = new RolesDto();
+
+        try {
+            result = roleApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;
@@ -1822,6 +1858,33 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             userHierarchyLevelApi.createOrUpdate(userHierarchyLevelDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+
+    @Override
+    public UserHierarchyLevelsDto listUserHierarchyLevels(PagingAndFiltering pagingAndFiltering) {
+
+        UserHierarchyLevelsDto result = new UserHierarchyLevelsDto();
+
+        try {
+            result = userHierarchyLevelApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+
+    }
+
+    @Override
+    public ActionStatus setConfigurationProperty(String property, String value) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            configurationApi.setProperty(property, value);
         } catch (Exception e) {
             processException(e, result);
         }

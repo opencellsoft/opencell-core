@@ -335,7 +335,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, pricePlanCode);
         }
 
-        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsWithInheritedDTO(pricePlanMatrix, true));
+        return new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true));
     }
 
     public void remove(String pricePlanCode) throws MeveoApiException, BusinessException {
@@ -366,7 +366,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         List<PricePlanMatrixDto> pricePlanDtos = new ArrayList<>();
         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
-            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsWithInheritedDTO(pricePlanMatrix, true)));
+            pricePlanDtos.add(new PricePlanMatrixDto(pricePlanMatrix, entityToDtoConverter.getCustomFieldsDTO(pricePlanMatrix, true)));
         }
 
         return pricePlanDtos;

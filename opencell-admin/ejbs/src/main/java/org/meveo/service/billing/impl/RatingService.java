@@ -262,10 +262,10 @@ public class RatingService extends BusinessService<WalletOperation> {
         }
 
         walletOperation.setCode(chargeTemplate.getCode());
-
         String descTranslated = (chargeInstance == null || chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
         Map<String, String> descriptionI18n = chargeTemplate.getDescriptionI18n();
-        if (descriptionI18n != null && descriptionI18n.get(languageCode) != null) {
+
+        if (descriptionI18n != null && !StringUtils.isBlank(descriptionI18n.get(languageCode))) {
             descTranslated = descriptionI18n.get(languageCode);
         }
 

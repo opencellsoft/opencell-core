@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -985,7 +984,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Text countryNameTxt;
             if (countrybyCode != null) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription(languageCode));
+                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18nNullSafe().get(languageCode));
             } else {
                 countryNameTxt = doc.createTextNode("");
             }

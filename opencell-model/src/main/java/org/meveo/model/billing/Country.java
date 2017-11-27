@@ -17,9 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.meveo.model.billing;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
@@ -32,6 +31,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.admin.Currency;
@@ -49,13 +49,11 @@ public class Country extends AuditableEntity {
     @Size(max = 10)
     private String countryCode;
 
-    @Column(name = "description_en", length = 100)
+    @Column(name = "description", length = 100)
     @Size(max = 100)
-    private String descriptionEn;
+    private String description;
 
-    @Column(name = "description_fr", length = 100)
-    @Size(max = 100)
-    private String descriptionFr;
+   
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currency_id")
@@ -64,6 +62,10 @@ public class Country extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "language_id")
     private Language language;
+    
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public String getCountryCode() {
         return countryCode;
@@ -73,43 +75,18 @@ public class Country extends AuditableEntity {
         this.countryCode = countryCode;
     }
 
-    public String getDescription_ENG() {
-        return getDescriptionEn();
+    /**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
     }
 
-    public String getDescriptionEn() {
-        return descriptionEn;
-    }
-
-    public void setDescriptionEn(String descriptionEn) {
-        this.descriptionEn = descriptionEn;
-    }
-
-    public String getDescription_FRA() {
-        return getDescriptionFr();
-    }
-
-    public String getDescriptionFr() {
-        return descriptionFr;
-    }
-
-    public void setDescriptionFr(String descriptionFr) {
-        this.descriptionFr = descriptionFr;
-    }
-
-    public String getDescription(String languageCode) {
-
-        Method method = null;
-        try {
-            method = this.getClass().getMethod("getDescription_" + languageCode);
-            String description = (String) method.invoke(this);
-            return description;
-        } catch (NoSuchMethodException | SecurityException e) {
-            return descriptionEn;
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            return descriptionEn;
-        }
-
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Currency getCurrency() {
@@ -146,4 +123,26 @@ public class Country extends AuditableEntity {
         Country o = (Country) obj;
         return (o.countryCode != null) && o.countryCode.equals(this.countryCode);
     }
+    
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
+    
 }

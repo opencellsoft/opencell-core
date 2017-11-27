@@ -1,6 +1,8 @@
 package org.meveo.api.dto;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ public class RoleDto extends BaseDto {
     @XmlAttribute(required = true)
     private String name;
 
+    @XmlAttribute
     private String description;
 
     @XmlElementWrapper(name = "permissions")
@@ -37,23 +40,28 @@ public class RoleDto extends BaseDto {
 
     }
 
-    public RoleDto(Role role) {
+    public RoleDto(Role role, boolean includeRoles, boolean includePermissions) {
         this.setName(role.getName());
         this.setDescription(role.getDescription());
 
         Set<Permission> permissions = role.getPermissions();
 
-        if (permissions != null && !permissions.isEmpty()) {
+        if (includePermissions && permissions != null && !permissions.isEmpty()) {
             List<PermissionDto> permissionDtos = new ArrayList<PermissionDto>();
             for (Permission p : permissions) {
                 PermissionDto pd = new PermissionDto(p);
                 permissionDtos.add(pd);
             }
             this.setPermission(permissionDtos);
+
+            Collections.sort(this.permission, Comparator.comparing(PermissionDto::getName));
         }
 
-        for (Role r : role.getRoles()) {
-            roles.add(new RoleDto(r));
+        if (includeRoles) {
+            for (Role r : role.getRoles()) {
+                roles.add(new RoleDto(r, includeRoles, includePermissions));
+            }
+            Collections.sort(this.roles, Comparator.comparing(RoleDto::getName));
         }
     }
 
@@ -76,7 +84,7 @@ public class RoleDto extends BaseDto {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String.format("RoleDto [name=%s, description=%s, permission=%s, roles=%s]", name, description, 
+        return String.format("RoleDto [name=%s, description=%s, permission=%s, roles=%s]", name, description,
             permission != null ? permission.subList(0, Math.min(permission.size(), maxLen)) : null, roles != null ? roles.subList(0, Math.min(roles.size(), maxLen)) : null);
     }
 
