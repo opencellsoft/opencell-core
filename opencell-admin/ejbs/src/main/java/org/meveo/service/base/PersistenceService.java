@@ -43,7 +43,6 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
@@ -743,9 +742,14 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             String paramName = queryBuilder.convertFieldToParam(fieldName);
                             String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
 
-                            queryBuilder.addCollectionMember(fieldName);
+                            // this worked at first, but now complains about distinct clause, so switched to EXISTS clause instead. 
+                            // queryBuilder.addCollectionMember(fieldName);
+                            // queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
 
-                            queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
+                            String inListAlias = collectionItem + "Alias";
+                            queryBuilder.addSqlCriterion(" exists (select " + inListAlias + " from " + entityClass.getName() + " " + inListAlias + ",IN (" + inListAlias + "."
+                                    + fieldName + ") as " + collectionItem + " where " + inListAlias + "=a and " + collectionItem + " IN (:" + paramName + "))",
+                                paramName, filterValue);
 
                         } else {
                             if (filterValue instanceof String) {

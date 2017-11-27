@@ -1559,16 +1559,16 @@ public class AccountHierarchyApi extends BaseApi {
         }
     }
 
-	private void addCustomer(GetAccountHierarchyResponseDto result, Customer customer) {
-		if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
-			result.getCustomers().getCustomer().add(customerToDto(customer));
-		} else {
-			boolean found = false;
-			for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
-				if (customerDto.getCode().equals(customer.getCode())) {
-					if (!customerDto.isLoaded()) {
-						customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer, true));
-					}
+    private void addCustomer(GetAccountHierarchyResponseDto result, Customer customer) {
+        if (result.getCustomers() == null || result.getCustomers().getCustomer().size() == 0) {
+            result.getCustomers().getCustomer().add(customerToDto(customer));
+        } else {
+            boolean found = false;
+            for (CustomerDto customerDto : result.getCustomers().getCustomer()) {
+                if (customerDto.getCode().equals(customer.getCode())) {
+                    if (!customerDto.isLoaded()) {
+                        customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer, true));
+                    }
                     found = true;
                     break;
                 }
@@ -1585,7 +1585,7 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setDescription(account.getDescription());
         dto.setExternalRef1(account.getExternalRef1());
         dto.setExternalRef2(account.getExternalRef2());
-		dto.setJobTitle(account.getJobTitle());
+        dto.setJobTitle(account.getJobTitle());
         if (account.getName() != null) {
             dto.setName(new NameDto(account.getName()));
         }
@@ -1600,15 +1600,15 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setBusinessAccountModel(new BusinessEntityDto(businessAccountModel));
         }
 
-		dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account, true));
-	}
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account, true));
+    }
 
     public CustomerDto customerToDto(Customer customer) {
         CustomerDto dto = new CustomerDto();
         accountEntityToDto(dto, customer);
 
-		dto.setVatNo(customer.getVatNo());
-		dto.setRegistrationNo(customer.getRegistrationNo());
+        dto.setVatNo(customer.getVatNo());
+        dto.setRegistrationNo(customer.getRegistrationNo());
 
         if (customer.getCustomerCategory() != null) {
             dto.setCustomerCategory(customer.getCustomerCategory().getCode());
@@ -1757,21 +1757,20 @@ public class AccountHierarchyApi extends BaseApi {
         UserAccountDto dto = new UserAccountDto();
         accountEntityToDto(dto, ua);
 
-		if (ua.getBillingAccount() != null) {
-			dto.setBillingAccount(ua.getBillingAccount().getCode());
-			dto.setBillingAccountDescription(ua.getBillingAccount().getDescription());
+        if (ua.getBillingAccount() != null) {
+            dto.setBillingAccount(ua.getBillingAccount().getCode());
+            dto.setBillingAccountDescription(ua.getBillingAccount().getDescription());
 
-			if (ua.getBillingAccount().getCustomerAccount() != null) {
-				dto.setCustomerAccount(ua.getBillingAccount().getCustomerAccount().getCode());
-				dto.setCustomerAccountDescription(ua.getBillingAccount().getCustomerAccount().getDescription());
+            if (ua.getBillingAccount().getCustomerAccount() != null) {
+                dto.setCustomerAccount(ua.getBillingAccount().getCustomerAccount().getCode());
+                dto.setCustomerAccountDescription(ua.getBillingAccount().getCustomerAccount().getDescription());
 
-				if (ua.getBillingAccount().getCustomerAccount().getCustomer() != null) {
-					dto.setCustomer(ua.getBillingAccount().getCustomerAccount().getCustomer().getCode());
-					dto.setCustomerDescription(
-							ua.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
-				}
-			}
-		}
+                if (ua.getBillingAccount().getCustomerAccount().getCustomer() != null) {
+                    dto.setCustomer(ua.getBillingAccount().getCustomerAccount().getCustomer().getCode());
+                    dto.setCustomerDescription(ua.getBillingAccount().getCustomerAccount().getCustomer().getDescription());
+                }
+            }
+        }
 
         dto.setSubscriptionDate(ua.getSubscriptionDate());
         dto.setTerminationDate(ua.getTerminationDate());

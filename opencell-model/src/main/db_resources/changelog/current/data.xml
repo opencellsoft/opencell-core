@@ -55,7 +55,7 @@
             <column name="permission_id" valueNumeric="-28" />
         </insert>  
         <!--  assign userVisualization permission to roles that currently have userManament role -->
-        <sql>insert into adm_role_permission (role_id, permission_id) (select role_id, -27 from adm_role_permission where role_id&lt;&gt;-1 and permission_id=-25)</sql>        
+        <sql>insert into adm_role_permission (role_id, permission_id) (select role_id, -28 from adm_role_permission where role_id&lt;&gt;-1 and permission_id=-25)</sql>        
     </changeSet>
-    
+
 </databaseChangeLog>

@@ -25,8 +25,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
@@ -645,24 +643,25 @@ public class QueryBuilder {
     public Query getCountQuery(EntityManager em) {
         String from = "from ";
 
-        String sql = q.toString().toLowerCase();
+        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
 
-        String countSql = null;
+        // Uncomment if plan to use addCollectionMember()
+        // String sql = q.toString().toLowerCase();
+        // if (sql.contains(" distinct")) {
+        //
+        // String regex = "from[ \\t]+[\\w\\.]+[ \\t]+(\\w+)";
+        // Pattern pattern = Pattern.compile(regex);
+        // Matcher matcher = pattern.matcher(sql);
+        // if (!matcher.find()) {
+        // throw new RuntimeException("Can not determine alias name");
+        // }
+        // String aliasName = matcher.group(1);
+        //
+        // countSql = "select count(distinct " + aliasName + ") " + q.toString().substring(q.indexOf(from));
+        // }
 
-        if (sql.contains(" distinct")) {
-
-            String regex = "from[ \\t]+[\\w\\.]+[ \\t]+(\\w+)";
-            Pattern pattern = Pattern.compile(regex);
-            Matcher matcher = pattern.matcher(sql);
-            if (!matcher.find()) {
-                throw new RuntimeException("Can not determine alias name");
-            }
-            String aliasName = matcher.group(1);
-
-            countSql = "select count(distinct " + aliasName + ") " + q.toString().substring(q.indexOf(from));
-        } else {
-            countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
-        }
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.trace("Count query is {}", countSql);
 
         Query result = em.createQuery(countSql);
         for (Map.Entry<String, Object> e : params.entrySet()) {
@@ -770,30 +769,31 @@ public class QueryBuilder {
         return result;
     }
 
-    /**
-     * Add a collection member join e.g " IN (a.sellers) s " right after a from clause
-     * 
-     * @param fieldName
-     */
-    public void addCollectionMember(String fieldName) {
-
-        String sql = q.toString().toLowerCase();
-
-        String regex = "(from[ \\t]+[\\w\\.]+[ \\t]+(\\w+))";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(sql);
-        if (!matcher.find()) {
-            throw new RuntimeException("Can not determine where to add collection member clause");
-        }
-        String fromClause = matcher.group(1);
-        String aliasName = matcher.group(2);
-
-        q.insert(sql.indexOf(fromClause) + fromClause.length(),
-            ", IN (" + (aliasName != null ? aliasName + "." : "") + fieldName + ") as " + convertFieldToCollectionMemberItem(fieldName));
-
-        // Append select clause to select only a main entity
-        if (!sql.startsWith("select") && aliasName != null) {
-            q.insert(0, "select distinct " + aliasName + " ");
-        }
-    }
+    // Was causing issues with distinct clause. Switched to EXISTS clause instead when using inList criteria for list type field
+    // /**
+    // * Add a collection member join e.g " IN (a.sellers) s " right after a from clause
+    // *
+    // * @param fieldName
+    // */
+    // public void addCollectionMember(String fieldName) {
+    //
+    // String sql = q.toString().toLowerCase();
+    //
+    // String regex = "(from[ \\t]+[\\w\\.]+[ \\t]+(\\w+))";
+    // Pattern pattern = Pattern.compile(regex);
+    // Matcher matcher = pattern.matcher(sql);
+    // if (!matcher.find()) {
+    // throw new RuntimeException("Can not determine where to add collection member clause");
+    // }
+    // String fromClause = matcher.group(1);
+    // String aliasName = matcher.group(2);
+    //
+    // q.insert(sql.indexOf(fromClause) + fromClause.length(),
+    // ", IN (" + (aliasName != null ? aliasName + "." : "") + fieldName + ") as " + convertFieldToCollectionMemberItem(fieldName));
+    //
+    // // Append select clause to select only a main entity
+    // if (!sql.startsWith("select") && aliasName != null) {
+    // q.insert(0, "select distinct " + aliasName + " ");
+    // }
+    // }
 }

@@ -326,7 +326,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     DiscountPlanItemsResponseDto listDiscountPlanItem();
-    
+
     @WebMethod
     ActionStatus createProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
 

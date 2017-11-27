@@ -123,6 +123,7 @@
 						<hftl:formField label="#{messages['commons.lastEditor']}"
 							entity="#{offerTemplateBean.entity.auditable}" field="creator"
 							valueLabelField="nameOrUsername" edit="false" />
+
                         <c:if test="#{offerTemplateBean.businessOfferModel == null}">
                             <o:validateMultiple components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
                                     validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />

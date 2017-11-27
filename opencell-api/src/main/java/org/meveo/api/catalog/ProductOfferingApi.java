@@ -43,21 +43,22 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
     @Inject
     private DigitalResourceApi digitalResourceApi;
 
-	protected void processProductChargeTemplateToDto(ProductTemplate productTemplate, ProductTemplateDto productTemplateDto) {
-		List<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
-		ProductChargeTemplateDto productChargeTemplateDto = null;
-		List<ProductChargeTemplateDto> chargeDtos = new ArrayList<>();
-		if(productChargeTemplates != null) {
-			for(ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
-				if (productChargeTemplate != null) {
-					productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
-					productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, true));
-					chargeDtos.add(productChargeTemplateDto);
-				}
-			}
-			productTemplateDto.setProductChargeTemplates(chargeDtos);
-		}
-	}
+    protected void processProductChargeTemplateToDto(ProductTemplate productTemplate, ProductTemplateDto productTemplateDto) {
+        List<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();
+        ProductChargeTemplateDto productChargeTemplateDto = null;
+        List<ProductChargeTemplateDto> chargeDtos = new ArrayList<>();
+        if (productChargeTemplates != null) {
+            for (ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
+                if (productChargeTemplate != null) {
+                    productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
+                    productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate,
+                        entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, true));
+                    chargeDtos.add(productChargeTemplateDto);
+                }
+            }
+            productTemplateDto.setProductChargeTemplates(chargeDtos);
+        }
+    }
 
     protected void processOfferTemplateCategories(ProductTemplateDto postData, ProductTemplate productTemplate) throws EntityDoesNotExistsException {
         List<OfferTemplateCategoryDto> offerTemplateCategories = postData.getOfferTemplateCategories();

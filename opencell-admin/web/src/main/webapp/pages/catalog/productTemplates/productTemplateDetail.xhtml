@@ -23,8 +23,8 @@
                     rendered="#{!productTemplateBean.entity.transient}" />
             </p:breadCrumb>
         </h:form>
-
-        <p:panel>
+        
+        <p:panel id="tabPanel">
             <p:tabView id="tabView" activeIndex="#{productTemplateBean.activeTab}">
                 <p:tab tab="information" title="#{messages['commons.information']}">
                     <hftl:formPanel label="#{messages['menu.productTemplates']}" backingBean="#{productTemplateBean}" showEnableDisableButton="true">
@@ -63,7 +63,7 @@
                             <ui:param name="buttons" value="true" />
                             <ui:define name="buttons">
                                 <p:commandButton rendered="#{productTemplateBean.canUserUpdateEntity()}" action="#{productTemplateBean.saveProductChargeTemplate()}"
-                                    value="#{messages['action.addSave']}" update=":tabView:productChargediv :tabView:productCharges_MSG_panel" />
+                                    value="#{messages['action.addSave']}" update=":tabPanel" />
                                 <p:commandButton value="#{messages['action.cancel']}" action="#{productTemplateBean.newProductChargeTemplate()}" update=":tabView:productChargediv" />
                                 <p:button id="buttonBack5" value="#{messages['action.back']}" outcome="#{productTemplateBean.back()}" includeViewParams="true">
                                     <f:param name="cid" value="#{conversation.id}" />
@@ -75,5 +75,4 @@
             </p:tabView>
         </p:panel>
     </ui:define>
-
 </ui:composition>
