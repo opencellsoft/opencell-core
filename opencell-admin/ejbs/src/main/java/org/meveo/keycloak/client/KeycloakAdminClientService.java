@@ -42,6 +42,9 @@ public class KeycloakAdminClientService {
     @Inject
     private Logger log;
 
+    /**
+     * Reads the configuration from system property. 
+     * */
     public KeycloakAdminClientConfig loadConfig() {
         KeycloakAdminClientConfig keycloakAdminClientConfig = new KeycloakAdminClientConfig();
         try {
@@ -84,6 +87,9 @@ public class KeycloakAdminClientService {
         return keycloak;
     }
 
+    /**
+     * Creates a user in keycloak. Also assigns the role. 
+     * */
     public String createUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, EntityDoesNotExistsException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -178,6 +184,9 @@ public class KeycloakAdminClientService {
         return userId;
     }
 
+    /**
+     * Updates a user in keycloak. Also assigns the role. 
+     * */
     public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -230,6 +239,12 @@ public class KeycloakAdminClientService {
         }
     }
 
+    /**
+     * Deletes a user in keycloak.
+     * @param httpServletRequest
+     * @param username
+     * @throws BusinessException
+     */
     public void deleteUser(HttpServletRequest httpServletRequest, String username) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -253,6 +268,13 @@ public class KeycloakAdminClientService {
         }
     }
 
+    /**
+     * Search for a user in keycloak via username.
+     * @param httpServletRequest
+     * @param username
+     * @return
+     * @throws BusinessException
+     */
     public List<RoleDto> findUserRoles(HttpServletRequest httpServletRequest, String username) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -272,6 +294,12 @@ public class KeycloakAdminClientService {
         }
     }
 
+    /**
+     * List all the realm roles in keycloak.
+     * @param httpServletRequest
+     * @return
+     * @throws BusinessException
+     */
     public List<RoleDto> listRoles(HttpServletRequest httpServletRequest) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
