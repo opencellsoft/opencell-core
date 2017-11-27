@@ -9,6 +9,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.Channel;
@@ -113,6 +114,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         bundle.getOfferTemplateCategories().size();
         bundle.getBundleProducts().size();
         bundle.getProductChargeTemplates().size();
+        bundle.getSellers().size();
 
         String code = findDuplicateCode(bundle);
 
@@ -141,6 +143,9 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
 
         List<ProductChargeTemplate> chargeTemplates = bundle.getProductChargeTemplates();
         bundle.setProductChargeTemplates(new ArrayList<>());
+        
+        List<Seller> sellers = bundle.getSellers();
+        bundle.setSellers(new ArrayList<>());
 
         bundle.setCode(code);
 
@@ -175,7 +180,6 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
         }
 
         if (bundleProductTemplates != null) {
-
             for (BundleProductTemplate bpt : bundleProductTemplates) {
                 bpt.setId(null);
                 bundle.addBundleProductTemplate(bpt);
@@ -188,6 +192,12 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
             }
         }
 
+        if (sellers != null) {
+            for (Seller seller : sellers) {
+                bundle.getSellers().add(seller);
+            }
+        }
+        
         if (persist) {
             create(bundle);
         }

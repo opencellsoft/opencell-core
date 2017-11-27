@@ -25,6 +25,7 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 
+import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 
 @Entity
@@ -74,7 +75,7 @@ public class UserHierarchyLevel extends HierarchyLevel<User> {
      * @return True if user belongs to a current or any of child levels
      */
     public boolean isUserBelongsHereOrHigher(User userToCheck) {
-           
+
         if (getUsers().contains(userToCheck)) {
             return true;
         }
@@ -84,5 +85,10 @@ public class UserHierarchyLevel extends HierarchyLevel<User> {
         // return ((UserHierarchyLevel) getParentLevel()).isUserBelongsHereOrHigher(userToCheck);
         // }
         return false;
+    }
+
+    @Override
+    public Class<? extends BusinessEntity> getParentEntityType() {
+        return UserHierarchyLevel.class;
     }
 }

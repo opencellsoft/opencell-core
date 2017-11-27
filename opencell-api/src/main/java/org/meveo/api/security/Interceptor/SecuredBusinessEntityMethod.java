@@ -18,19 +18,17 @@ import org.meveo.api.security.parameter.SecureMethodParameter;
 @Target({ ElementType.METHOD })
 public @interface SecuredBusinessEntityMethod {
 
-	/**
-	 * Contains an array of {@link SecureMethodParameter} annotations that
-	 * describe how the method parameters are going to be validated.
-	 * 
-	 * @return
-	 */
-	SecureMethodParameter[] validate();
+    /**
+     * Contains an array of {@link SecureMethodParameter} annotations that describe how the method parameters are going to be validated.
+     * 
+     * @return
+     */
+    SecureMethodParameter[] validate() default {};
 
-	/**
-	 * The result filter class that will be used to filter the results for
-	 * entities that should be accessible to the user.
-	 * 
-	 * @return
-	 */
-	Class<? extends SecureMethodResultFilter> resultFilter() default NullFilter.class;
+    /**
+     * The result filter class that will be used to filter the results for entities that should be accessible to the user.
+     * 
+     * @return
+     */
+    Class<? extends SecureMethodResultFilter> resultFilter() default NullFilter.class;
 }

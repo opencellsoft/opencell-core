@@ -124,31 +124,24 @@
 							entity="#{offerTemplateBean.entity.auditable}" field="creator"
 							valueLabelField="nameOrUsername" edit="false" />
 
-						<c:if test="#{offerTemplateBean.businessOfferModel == null}">
-							<o:validateMultiple
-								components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
-								validator="#{offerTemplateBean.validateUniqueVersion}"
-								message="#{messages['offerTemplate.version.exists.short']}" />
-						</c:if>
-					</h:panelGrid>
-				</p:panel>
-				<h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
-					<hftl:formField id="offerTemplateCategories"
-						label="#{messages['offerTemplate.category']}"
-						field="offerTemplateCategories" listType="selectCheckbox"
-						valueLabelField="descriptionOrCode"
-						listBean="#{offerTemplateCategoryListBean}" componentWidth="100" />
-					<hftl:formField id="channels" label="#{messages['channels.title']}"
-						field="channels" listType="selectCheckbox"
-						valueLabelField="descriptionOrCode" listBean="#{channelListBean}"
-						newLine="true" componentWidth="100" />
-					<hftl:formField id="businessAccountModels"
-						label="#{messages['marketingManager.catalog.targetSegment']}"
-						field="businessAccountModels" listType="selectCheckbox"
-						valueLabelField="descriptionOrCode"
-						listBean="#{businessAccountModelListBean}" newLine="true"
-						componentWidth="100" />
-				</h:panelGrid>
+                        <c:if test="#{offerTemplateBean.businessOfferModel == null}">
+                            <o:validateMultiple components=":offerForm:code :offerForm:validity_date :offerForm:validity_date_toRange"
+                                    validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
+                        </c:if>
+                    </h:panelGrid>
+                </p:panel>
+                <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
+                    <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox"
+                        valueLabelField="descriptionOrCode" listBean="#{offerTemplateCategoryListBean}" componentWidth="100" />
+                    <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="descriptionOrCode"
+                        listBean="#{channelListBean}" newLine="true" componentWidth="100" />
+                    <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
+                        valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" newLine="true" componentWidth="100" />
+                    <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
+                        valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />                        
+                </h:panelGrid>
+                
+            </p:panelGrid>
 
 			</p:panelGrid>
 

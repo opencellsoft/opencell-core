@@ -15,6 +15,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
@@ -184,10 +185,17 @@ public class CatalogHierarchyBuilderService {
 
             List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
             newProductTemplate.setWalletTemplates(new ArrayList<WalletTemplate>());
-
             if (walletTemplates != null) {
                 for (WalletTemplate wt : walletTemplates) {
                     newProductTemplate.addWalletTemplate(wt);
+                }
+            }
+
+            List<Seller> sellers = productTemplate.getSellers();
+            newProductTemplate.setSellers(new ArrayList<>());
+            if (sellers != null) {
+                for (Seller seller : sellers) {
+                    newProductTemplate.addSeller(seller);
                 }
             }
 

@@ -12,7 +12,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.invoice.InvoiceDto;
 import org.meveo.model.billing.AccountStatusEnum;
-import org.meveo.model.billing.UserAccount;
 import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
@@ -20,7 +19,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(property = "userAccounts.userAccount", entityClass = UserAccount.class)
+//@FilterResults(propertyToFilter = "userAccounts.userAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserAccount.class) })
 public class BillingAccountDto extends AccountDto {
 
     private static final long serialVersionUID = 8701417481481359155L;

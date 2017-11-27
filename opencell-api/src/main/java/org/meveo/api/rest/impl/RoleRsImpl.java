@@ -8,7 +8,10 @@ import org.meveo.api.RoleApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.RoleDto;
+import org.meveo.api.dto.RolesDto;
 import org.meveo.api.dto.response.GetRoleResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.RoleRs;
 
@@ -79,4 +82,31 @@ public class RoleRsImpl extends BaseRs implements RoleRs {
         return result;
     }
 
+    @Override
+    public RolesDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        RolesDto result = new RolesDto();
+
+        try {
+            result = roleApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public RolesDto listPost(PagingAndFiltering pagingAndFiltering) {
+
+        RolesDto result = new RolesDto();
+
+        try {
+            result = roleApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
 }
