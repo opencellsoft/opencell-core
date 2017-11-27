@@ -18,6 +18,7 @@
         editable and editMode - are values in datatable are inline editable and in what mode
         scrollable - is datatable scrolable
         checkMany - show multiple item checkboxes
+        deleteManyButton - show delete multiple items button
         exportButton - show "export to xls" button
         exportXlsxButton - show "export to xlsx" button
         exportToXml - show "export to xml" button. Defaults to True if any of the export buttons are enabled
@@ -157,7 +158,7 @@
 
             <h:panelGroup rendered="#{dataModel !=null and dataModel.size()>0}">
                 <p:commandButton id="#{formId}deleteEntitieslink" rendered="#{deleteManyButton}" value="#{messages['commons.deleteMultiple']}" action="#{backingBean.deleteMany()}" icon="ui-icon-trash"
-                    onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" ajax="false" />
+                    onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}" update="@form" />
 
                 <p:commandButton id="#{formId}buttonExport" icon="ui-icon-xls" value="#{messages['commons.exportExcel']}" ajax="false" rendered="#{exportButton}">
                     <p:dataExporter type="xls" target="datatable_#{resultsId}" fileName="data" pageOnly="false" />

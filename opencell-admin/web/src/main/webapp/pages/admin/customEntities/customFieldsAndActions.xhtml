@@ -124,8 +124,8 @@
 
 
 
-                        <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
-                            oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
+                        <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.delete}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
+                           update="@form" />
                         <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
                         <p:commandButton id="deletelink" icon="ui-icon-trash" oncomplete="fieldsDoDelete()">
                             <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
@@ -230,30 +230,9 @@
                 </p:panel>
             </p:confirmDialog>
 
-
-
             <!-- Action related widgets -->
-
-            <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityCustomActionBean.deleteInlist}" action="#{customEntityTemplateBean.refreshActions}" name="actionsDoDelete"
-                oncomplete="handleDeleteComplete(xhr,status,args)" update="@form" />
-
-            <script type="text/javascript">
-													//<![CDATA[
-													function handleDeleteComplete(
-															xhr, status, args) {
-														var result = args.result;
-														if (typeof (result) != "undefined"
-																&& !result) {
-															PF(
-																	'fieldsConfirmCanotDeleteWidget')
-																	.show();
-														}
-													}
-													//]]>
-												</script>
-
-
-
+            <p:remoteCommand id="remoteDeleteActionButton" actionListener="#{entityCustomActionBean.delete}" action="#{customEntityTemplateBean.refreshActions}" name="actionsDoDelete"
+                 update="@form" />
         </p:panel>
     </h:form>
 
