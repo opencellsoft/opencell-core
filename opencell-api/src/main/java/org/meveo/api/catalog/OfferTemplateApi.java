@@ -85,7 +85,7 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
 
     @Inject
     private SubscriptionApi subscriptionApi;
-
+    
     @Inject
     private ScriptInstanceService scriptInstanceService;
     
@@ -212,6 +212,7 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
             }
             offerTemplate.setGlobalRatingScriptInstance(scriptInstance);
         }
+
         if (postData.getSellers() != null) {
             offerTemplate.getSellers().clear();
             for (String sellerCode : postData.getSellers()) {

@@ -122,8 +122,7 @@
         </p:panel>
     </c:if>
 
-<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank" rendered="false">
-
+	<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank" rendered="false">
         <f:facet name="header">
             <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
             <p:commandLink action="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
@@ -140,8 +139,8 @@
                 <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
             </p:tabView>
         </c:if>
-        
     </p:panel>
+    
 </ui:composition>
 
 </html>

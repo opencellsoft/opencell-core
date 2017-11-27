@@ -132,6 +132,30 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
+    
+    /**
+     * Creates a user in keycloak and core.
+     * @param postData
+     * @return
+     */
+    @WebMethod
+    ActionStatus createExternalUser(@WebParam(name = "user") UserDto postData);
+    
+    /**
+     * Updates a user in keycloak and core given a username.
+     * @param postData
+     * @return
+     */
+    @WebMethod
+    ActionStatus updateExternalUser(@WebParam(name = "user") UserDto postData);
+    
+    /**
+     * Deletes a user in keycloak and core given a username.
+     * @param username the username of the user to be deleted.
+     * @return
+     */
+    @WebMethod
+    ActionStatus deleteExternalUser(@WebParam(name = "username") String username);
 
     /**
      * List users matching a given criteria
@@ -403,6 +427,13 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     public RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List external source such as from keycloak.
+     * @return
+     */
+    @WebMethod
+    public RolesDto listExternalRoles();
 
     // Multi Language field value translations
 

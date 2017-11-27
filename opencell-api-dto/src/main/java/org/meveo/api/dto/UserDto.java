@@ -21,6 +21,7 @@ package org.meveo.api.dto;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -29,6 +30,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
@@ -46,7 +48,9 @@ public class UserDto extends BaseDto {
     @XmlElement(required = true)
     private String username;
 
-    @Deprecated
+    /**
+     * Used when creating keycloak user.
+     */
     @XmlElement()
     private String password;
 
@@ -59,6 +63,10 @@ public class UserDto extends BaseDto {
     @XmlElementWrapper(name = "userRoles")
     @XmlElement(name = "userRole")
     private List<String> roles;
+    
+    @XmlElementWrapper(name = "externalRoles")
+    @XmlElement(name = "externalRole")
+    private List<RoleDto> externalRoles;
 
     @XmlElementWrapper(name = "accessibleEntities")
     @XmlElement(name = "accessibleEntity")
@@ -69,14 +77,9 @@ public class UserDto extends BaseDto {
 
     @XmlElement()
     private String userLevel;
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    
+    private Date createdAt;
+    private Date lastLoginDate;   
 
     public UserDto() {
     }
@@ -88,6 +91,10 @@ public class UserDto extends BaseDto {
         }
         username = user.getUserName();
         email = user.getEmail();
+        if (user.getAuditable() != null) {
+            createdAt = user.getAuditable().getCreated();
+        }
+        lastLoginDate = user.getLastLoginDate();
 
         if (user.getRoles() != null) {
             roles = new ArrayList<String>();
@@ -129,7 +136,7 @@ public class UserDto extends BaseDto {
     }
 
     public String getUsername() {
-        return username;
+        return StringUtils.isBlank(username) ? email : username;
     }
 
     public void setUsername(String username) {
@@ -178,6 +185,46 @@ public class UserDto extends BaseDto {
     public String toString() {
         return "UserDto [username=" + username + ", email=" + email + ", firstName=" + firstName + ", lastName=" + lastName + ", roles=" + roles + ", role=" + role + ", userLevel="
                 + userLevel + ", securedEntities=" + securedEntities + " ]";
+    }
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(Date lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
+    }
+
+    public List<RoleDto> getExternalRoles() {
+        return externalRoles;
+    }
+
+    public void setExternalRoles(List<RoleDto> externalRoles) {
+        this.externalRoles = externalRoles;
     }
 
 }

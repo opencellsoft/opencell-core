@@ -79,6 +79,33 @@ public interface UserRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     public ActionStatus createOrUpdate(UserDto postData);
+    
+    /**
+     * Creates a user in keycloak and core.
+     * @param postData
+     * @return
+     */
+    @POST
+    @Path("/external")
+    public ActionStatus createExternalUser(UserDto postData);
+
+    /**
+     * Updates a user in keycloak and core given a username.
+     * @param postData
+     * @return
+     */
+    @PUT
+    @Path("/external/")
+    public ActionStatus updateExternalUser(UserDto postData);
+
+    /**
+     * Deletes a user in keycloak and core given a username.
+     * @param username the username of the user to be deleted.
+     * @return
+     */
+    @DELETE
+    @Path("/external/{username}")
+    public ActionStatus deleteExternalUser(@PathParam("username") String username);
 
     /**
      * List users matching a given criteria

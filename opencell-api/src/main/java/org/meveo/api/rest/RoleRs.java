@@ -100,5 +100,13 @@ public interface RoleRs extends IBaseRs {
     @POST
     @Path("/list")
     public RolesDto listPost(PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List external roles.
+     * @return
+     */
+    @GET
+    @Path("/external")
+    public RolesDto listExternalRoles();
 
 }

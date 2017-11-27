@@ -732,9 +732,48 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find(getHttpServletRequest(), username));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createExternalUser(UserDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {            
+            userApi.createExternalUser(getHttpServletRequest(), postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus updateExternalUser(UserDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {            
+            userApi.updateExternalUser(getHttpServletRequest(), postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus deleteExternalUser(String username) {
+        ActionStatus result = new ActionStatus();
+
+        try {            
+            userApi.deleteExternalUser(getHttpServletRequest(), username);
+        } catch (Exception e) {
+            processException(e, result);
         }
 
         return result;
@@ -746,7 +785,7 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         UsersDto result = new UsersDto();
 
         try {
-            result = userApi.list(pagingAndFiltering);
+            result = userApi.list(getHttpServletRequest(), pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1281,6 +1320,20 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
 
         try {
             result = roleApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public RolesDto listExternalRoles() {
+        RolesDto result = new RolesDto();
+
+        try {
+            result.setRoles(roleApi.listExternalRoles(getHttpServletRequest()));
+
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -1890,4 +1943,5 @@ public class SettingsWsImpl extends BaseWs implements SettingsWs {
         }
         return result;
     }
+   
 }

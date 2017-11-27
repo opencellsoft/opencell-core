@@ -9,6 +9,7 @@ import java.util.Set;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.servlet.http.HttpServletRequest;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -30,6 +31,7 @@ import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.SecuredEntity;
 import org.meveo.model.admin.User;
@@ -68,8 +70,15 @@ public class UserApi extends BaseApi {
     @Inject
     private UserHierarchyLevelService userHierarchyLevelService;
 
+    @Inject
+    private KeycloakAdminClientService keycloakAdminClientService;
+
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "userLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void create(UserDto postData) throws MeveoApiException, BusinessException {
+        create(postData, true);
+    }
+
+    public void create(UserDto postData, boolean isRequiredRoles) throws MeveoApiException, BusinessException {
 
         boolean isSameUser = currentUser.getUserName().equals(postData.getUsername());
 
@@ -84,7 +93,7 @@ public class UserApi extends BaseApi {
                 missingParameters.add("email");
             }
 
-            if ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole())) {
+            if (isRequiredRoles && ((postData.getRoles() == null || postData.getRoles().isEmpty()) && StringUtils.isBlank(postData.getRole()))) {
                 missingParameters.add("roles");
             }
 
@@ -271,7 +280,7 @@ public class UserApi extends BaseApi {
 
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
-    public UserDto find(String username) throws MeveoApiException {
+    public UserDto find(HttpServletRequest httpServletRequest, String username) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(username)) {
             missingParameters.add("username");
@@ -296,9 +305,12 @@ public class UserApi extends BaseApi {
         User user = userService.findByUsernameWithFetch(username, Arrays.asList("roles", "userLevel"));
         if (user == null) {
             throw new EntityDoesNotExistsException(User.class, username, "username");
-        }
+        } 
 
         UserDto result = new UserDto(user, true);
+        
+        // get the external roles
+        result.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, username));
 
         return result;
     }
@@ -320,10 +332,11 @@ public class UserApi extends BaseApi {
      * @return A list of users
      * @throws ActionForbiddenException
      * @throws InvalidParameterException
+     * @throws BusinessException 
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
-    public UsersDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException {
+    public UsersDto list(HttpServletRequest httpServletRequest, PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
 
         boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
         boolean isAccessOthers = currentUser.hasRole(USER_MANAGEMENT) || currentUser.hasRole(USER_VISUALIZATION);
@@ -351,10 +364,36 @@ public class UserApi extends BaseApi {
         if (totalCount > 0) {
             List<User> users = userService.list(paginationConfig);
             for (User user : users) {
-                result.getUsers().add(new UserDto(user, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities")));
+                UserDto userDto = new UserDto(user, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("securedEntities"));
+                userDto.setExternalRoles(keycloakAdminClientService.findUserRoles(httpServletRequest, user.getUserName()));
+                result.getUsers().add(userDto);
             }
         }
 
         return result;
     }
+
+    public String createExternalUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
+        // create the user in core
+        create(postData, false);
+
+        String userId = keycloakAdminClientService.createUser(httpServletRequest, postData);
+
+        return userId;
+    }
+
+    public void updateExternalUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
+        // update user in core
+        update(postData);
+
+        keycloakAdminClientService.updateUser(httpServletRequest, postData);
+    }
+
+    public void deleteExternalUser(HttpServletRequest httpServletRequest, String username) throws BusinessException, MeveoApiException {
+        // delete in core
+        remove(username);
+
+        keycloakAdminClientService.deleteUser(httpServletRequest, username);
+    }
+    
 }

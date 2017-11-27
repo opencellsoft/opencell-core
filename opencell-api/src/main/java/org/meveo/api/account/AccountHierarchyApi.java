@@ -1569,7 +1569,6 @@ public class AccountHierarchyApi extends BaseApi {
                     if (!customerDto.isLoaded()) {
                         customerDto.initFromEntity(customer, entityToDtoConverter.getCustomFieldsDTO(customer, true));
                     }
-
                     found = true;
                     break;
                 }

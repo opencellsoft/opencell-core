@@ -212,6 +212,7 @@ public class PaymentMethodDto extends BaseDto {
      * Constructor with cardPaymentMethodDto.
      * @param cardPaymentMethodDto
      */
+    @SuppressWarnings("deprecation")
     public PaymentMethodDto(CardPaymentMethodDto cardPaymentMethodDto) {
 	this.setPaymentMethodType(PaymentMethodEnum.CARD);
 	this.id = cardPaymentMethodDto.getId();

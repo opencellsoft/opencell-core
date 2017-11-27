@@ -126,9 +126,11 @@ public class ProductOfferingDto extends BusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getDescriptionI18n()));
         setLongDescription(productOffering.getLongDescription());
         setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
+
         if(productOffering.getGlobalRatingScriptInstance() != null) {
             setGlobalRatingScriptInstance(productOffering.getGlobalRatingScriptInstance().getCode());
         }        
+
         if (productOffering.getSellers() != null && !productOffering.getSellers().isEmpty()) {
             this.sellers = new ArrayList<>();
             for (Seller seller : productOffering.getSellers()) {
@@ -274,7 +276,6 @@ public class ProductOfferingDto extends BusinessDto {
         this.globalRatingScriptInstance = globalRatingScriptInstance;
     }
     
-
     public List<String> getSellers() {
         return sellers;
     }
