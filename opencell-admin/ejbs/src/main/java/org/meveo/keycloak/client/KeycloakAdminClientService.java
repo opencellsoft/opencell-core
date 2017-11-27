@@ -43,8 +43,8 @@ public class KeycloakAdminClientService {
     private Logger log;
 
     /**
-     * Reads the configuration from system property. 
-     * */
+     * Reads the configuration from system property.
+     */
     public KeycloakAdminClientConfig loadConfig() {
         KeycloakAdminClientConfig keycloakAdminClientConfig = new KeycloakAdminClientConfig();
         try {
@@ -88,8 +88,8 @@ public class KeycloakAdminClientService {
     }
 
     /**
-     * Creates a user in keycloak. Also assigns the role. 
-     * */
+     * Creates a user in keycloak. Also assigns the role.
+     */
     public String createUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, EntityDoesNotExistsException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -185,8 +185,8 @@ public class KeycloakAdminClientService {
     }
 
     /**
-     * Updates a user in keycloak. Also assigns the role. 
-     * */
+     * Updates a user in keycloak. Also assigns the role.
+     */
     public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
@@ -241,6 +241,7 @@ public class KeycloakAdminClientService {
 
     /**
      * Deletes a user in keycloak.
+     * 
      * @param httpServletRequest
      * @param username
      * @throws BusinessException
@@ -270,6 +271,7 @@ public class KeycloakAdminClientService {
 
     /**
      * Search for a user in keycloak via username.
+     * 
      * @param httpServletRequest
      * @param username
      * @return
@@ -290,12 +292,13 @@ public class KeycloakAdminClientService {
                 return new RoleDto(p.getName());
             }).collect(Collectors.toList()) : new ArrayList<>();
         } catch (Exception e) {
-            throw new BusinessException("Cannot find role for user=" + username);
+            return new ArrayList<RoleDto>();
         }
     }
 
     /**
      * List all the realm roles in keycloak.
+     * 
      * @param httpServletRequest
      * @return
      * @throws BusinessException

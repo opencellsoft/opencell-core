@@ -63,6 +63,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             this.subject = accessToken.getSubject();
             this.userName = accessToken.getPreferredUsername();
             this.fullName = accessToken.getName();
+            this.authTime = accessToken.getAuthTime();
 
             if (accessToken.getOtherClaims() != null) {
                 this.providerCode = (String) accessToken.getOtherClaims().get(CLAIM_PROVIDER);
