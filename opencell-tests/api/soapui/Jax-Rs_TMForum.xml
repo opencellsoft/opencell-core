@@ -21207,22 +21207,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="b01c8735-4081-471b-8dd9-731ee1bbfc78" name="XPath Match">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
@@ -21330,7 +21314,34 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="59cb6d29-e352-4ea3-b509-bc15baa2512b" name="XPath Match 7">
+            <con:assertion type="XPath Match" id="ab93a74c-0827-4561-b277-3196c9de7fb2" name="XPath Match 7">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="4e609644-0781-4511-8809-8dcb7b782980" name="XPath Match 8">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="46272ecc-027d-433d-9d73-e508254957e4" name="XPath Match 9">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="59cb6d29-e352-4ea3-b509-bc15baa2512b" name="XPath Match 10">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
                 <content>2016-02-27T*:10:18*</content>
@@ -21339,7 +21350,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="e18b360e-0f89-4019-8af6-4cd0b00bc006" name="XPath Match 8">
+            <con:assertion type="XPath Match" id="e18b360e-0f89-4019-8af6-4cd0b00bc006" name="XPath Match 11">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
                 <content>ACTIVE</content>
@@ -21396,14 +21407,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/quantity</path>
@@ -21417,6 +21420,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
                 <content>3.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ee829194-e13f-4159-ad35-aec72fb92e9e" name="XPath Match 2">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -21554,30 +21566,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
                &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="eabba1c5-3b41-4dd4-96f3-f86774b4b059" name="Contains 4">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
-                     &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21761,7 +21749,43 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="68c5e97b-bdb8-468f-9346-0d9ce7ad7738" name="XPath Match 11">
+            <con:assertion type="XPath Match" id="1535de25-72df-4762-8651-40ba859cfc6b" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="277513b3-fed0-4a0f-9283-24b2f016b258" name="XPath Match 12">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e87c5c4b-f99b-4dc1-8e9e-06d269adca0a" name="XPath Match 13">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="2a421819-373a-4ae8-b0a6-bab1a6104afd" name="XPath Match 14">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="68c5e97b-bdb8-468f-9346-0d9ce7ad7738" name="XPath Match 15">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
                 <content>2016-02-27T*:10:18*</content>
@@ -21770,7 +21794,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="8ae52018-4114-43b7-9bcc-fc8ed079abfb" name="XPath Match 12">
+            <con:assertion type="XPath Match" id="8ae52018-4114-43b7-9bcc-fc8ed079abfb" name="XPath Match 16">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
                 <content>ACTIVE</content>
@@ -21896,30 +21920,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1">
                &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="eabba1c5-3b41-4dd4-96f3-f86774b4b059" name="Contains 4">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
-                     &lt;status>TERMINATED&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -22121,7 +22121,43 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="5ff985a3-c728-449c-8548-20347d6f6a3d" name="XPath Match 13">
+            <con:assertion type="XPath Match" id="9fae23a6-ff49-4eb9-8b2d-ed13ec38a74c" name="XPath Match 13">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="28baf907-f198-4434-a008-eb8685c4859a" name="XPath Match 14">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="218130d5-cc73-4ea3-8c2c-42bb4d24e4bb" name="XPath Match 15">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/status</path>
+                <content>TERMINATED</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="e12d4a49-35ae-446d-ad44-9cc9f5c5b1a2" name="XPath Match 16">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="5ff985a3-c728-449c-8548-20347d6f6a3d" name="XPath Match 17">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
                 <content>2016-02-27T*:10:18*</content>
@@ -22130,7 +22166,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="ba003fc5-2547-40af-bd2c-7daef3a70b7a" name="XPath Match 14">
+            <con:assertion type="XPath Match" id="ba003fc5-2547-40af-bd2c-7daef3a70b7a" name="XPath Match 18">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
                 <content>ACTIVE</content>
@@ -22294,30 +22330,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>TERMINATED&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>TERMINATED&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="eabba1c5-3b41-4dd4-96f3-f86774b4b059" name="Contains 4">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
-                     &lt;status>TERMINATED&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -22515,7 +22527,43 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="53fb5ea6-7169-4350-b705-79ac21e31f53" name="XPath Match 13">
+            <con:assertion type="XPath Match" id="f1e65989-9aea-4792-a58a-526fd5d870e7" name="XPath Match 13">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>TERMINATED</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d8fc4ab6-d86f-4188-8933-068e373984ec" name="XPath Match 14">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>TERMINATED</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="eb985702-d8f3-4544-9ea9-7e88e15e0e25" name="XPath Match 15">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/status</path>
+                <content>TERMINATED</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="a2a30164-cf16-49ec-9735-130eec7a0c4c" name="XPath Match 16">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>3</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="53fb5ea6-7169-4350-b705-79ac21e31f53" name="XPath Match 17">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/subscriptionDate</path>
                 <content>2016-02-27T*:10:18*</content>
@@ -22524,7 +22572,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="32ad4487-c5e7-4885-9969-b3283cd09290" name="XPath Match 14">
+            <con:assertion type="XPath Match" id="32ad4487-c5e7-4885-9969-b3283cd09290" name="XPath Match 18">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/terminationDate</path>
                 <content>2016-02-29T*:05:56*</content>
@@ -22533,7 +22581,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="d6037c05-371d-475a-970e-a504c9361ad6" name="XPath Match 15">
+            <con:assertion type="XPath Match" id="d6037c05-371d-475a-970e-a504c9361ad6" name="XPath Match 19">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_SUB1"]/status</path>
                 <content>RESILIATED</content>
@@ -23142,14 +23190,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -23207,6 +23247,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="85f8de4d-9184-4c5b-8cfa-44ab2d689dfc" name="XPath Match">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="34555306-c5e0-476b-9e63-95c14588cbec" name="XPath Match 7">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23255,14 +23313,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/quantity</path>
@@ -23285,6 +23335,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//productInstance[@description="Product 3 V3"]/quantity</path>
                 <content>5.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ad465fc0-7ea4-4094-8cbe-2b025c1fddf8" name="XPath Match 3">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -23427,22 +23486,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -23572,6 +23615,30 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="16bc488b-6947-45e1-8729-168503d4678a">
+              <con:configuration/>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="59d85d74-b7a7-4fff-9ed9-a8b0952e6f81" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="44633aa4-859a-4bb3-8d87-395c377ea168" name="XPath Match 13">
+              <con:configuration/>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="8608c6c0-78a5-4151-898d-b59a140fccec" name="XPath Match 14">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -23690,22 +23757,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
                <subscriptionDate>2017-02-12T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="eabba1c5-3b41-4dd4-96f3-f86774b4b059" name="Contains 4">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>TERMINATED&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -23852,6 +23903,33 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationReason</path>
                 <content>TERM_REASON_1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d00a4858-5525-4ade-a67f-a5144e2abb57" name="XPath Match 13">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d1cca242-c921-470f-aa3a-295a8e57d6fd" name="XPath Match 14">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>TERMINATED</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="86d7d09d-658b-4fb4-9e08-72e7985bfe8b" name="XPath Match 15">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>2</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -24015,22 +24093,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>TERMINATED&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>TERMINATED&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -24182,6 +24244,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//services/serviceInstance[@code='${#Project#baseEntityPrefix}_SERVICE2']/terminationDate</path>
                 <content>2017-11-29T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0a432c04-bf2d-4f7a-aa6c-5c5ba575b30b" name="XPath Match 13">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>TERMINATED</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="a751e57e-d409-4ae3-a4aa-b8b32072ebef" name="XPath Match 14">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>TERMINATED</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -25001,7 +25081,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="3f3b35fd-3b77-49ed-acb8-dd290ac6dd00" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="0bfeb06d-8c77-4aad-a085-e6f0b0c8d775" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -25038,22 +25118,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token>&lt;subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1">
                &lt;userAccount>${#Project#baseEntityPrefix}_UA&lt;/userAccount>
                &lt;offerTemplate>${#Project#baseEntityPrefix}_OFFER1&lt;/offerTemplate></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="86555bc2-6c09-4631-b066-d4ce53e4a577" name="Contains 3">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE2" description="Service 2">
-                     &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -25165,7 +25229,34 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="XPath Match" id="82e0d2b0-8a86-4461-ab61-55bb67b6bc27" name="XPath Match 7">
+            <con:assertion type="XPath Match" id="403b5873-80be-4efb-9d5a-ffbdb135be41" name="XPath Match 7">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="32004aaa-811c-4dd6-a221-b377e3abbf12" name="XPath Match 8">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="4eda05b0-bad4-42e7-8c20-65532c6be644" name="XPath Match 9">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>2</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="82e0d2b0-8a86-4461-ab61-55bb67b6bc27" name="XPath Match 10">
               <con:configuration>
                 <path>//subscription[@code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_SUB1"]/subscriptionDate</path>
                 <content>2016-02-27T*:15:16*</content>
@@ -25221,14 +25312,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/quantity</path>
@@ -25242,6 +25325,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE2"]/quantity</path>
                 <content>3.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="8eef9170-a9a3-477b-939b-84bff23fa90f" name="XPath Match 3">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -26162,14 +26254,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -26227,6 +26311,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="4fc4ba09-e088-4f8c-b192-2b27338b714e" name="XPath Match">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="17e4cdb6-4e40-4c6f-ac8a-ac347d31bf53" name="XPath Match 7">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -26275,14 +26377,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ddfa8078-607f-41c5-b6f2-a067f4500477" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE3" description="Service 3">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="09ea0bd8-3013-44d4-8311-35d75a5874fa" name="XPath Match">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/quantity</path>
@@ -26305,6 +26399,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//productInstance[@description="Product 3 V3"]/quantity</path>
                 <content>5.000000000000</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="9ed83ab1-20ea-4da0-ac2c-94bb95531af9" name="XPath Match 3">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE3"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -27191,14 +27294,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -27292,6 +27387,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="491c77b2-3b45-4b9e-b3f5-b254d61623ae" name="XPath Match 10">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="7e718541-6419-477c-b2ac-c33f46f049ee" name="XPath Match 11">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -27303,10 +27416,35 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Modify ordered product (renew rule - all will apply)" id="4271041a-4504-462c-9d92-6fe5ae6595b3">
+      <con:testStep type="transfer" name="SetSubscriptionInfo" id="d5e3b4ca-d43f-4075-9877-237010399274">
+        <con:settings/>
+        <con:config xsi:type="con:PropertyTransfersStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:transfers setNullOnMissingSource="true" transferTextContent="true" failOnError="true" ignoreEmpty="false" transferToAll="false" entitize="false" transferChildNodes="false">
+            <con:name>Set service id</con:name>
+            <con:sourceType>Response</con:sourceType>
+            <con:sourceStep>Find Subscription</con:sourceStep>
+            <con:sourcePath>// serviceInstance[1]/@id</con:sourcePath>
+            <con:targetType>serviceId1</con:targetType>
+            <con:targetStep>SubscriptionInfo</con:targetStep>
+            <con:upgraded>true</con:upgraded>
+          </con:transfers>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="properties" name="SubscriptionInfo" id="2681565c-aed6-4538-9aff-19ab5f9de15a">
+        <con:settings/>
+        <con:config xsi:type="con:PropertiesStep" saveFirst="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:properties>
+            <con:property>
+              <con:name>serviceId1</con:name>
+              <con:value>62</con:value>
+            </con:property>
+          </con:properties>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Modify ordered product (renew rule - all will apply as not renewed yet)" id="4271041a-4504-462c-9d92-6fe5ae6595b3">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Modify ordered product (renew rule - all will apply)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Modify ordered product (renew rule - all will apply as not renewed yet)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -27381,8 +27519,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         "name": "${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
                         "value": "matrix_String|MAT_1/MAT_2|{\"Fifth|Fourth\":\"150\",\"Fifth|Second\":\"100\"}"
                     }, {
-                        "name": "serviceCode",
-                        "value": "${#Project#baseEntityPrefix}_SERVICE1"
+                        "name": "serviceId",
+                        "value": "${SubscriptionInfo#serviceId1}"
                     }]
                 }
             }]
@@ -27443,14 +27581,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <endAgreementDate>2016-02-22T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27548,6 +27678,24 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="eb1f95c4-bbd5-4821-84ae-11dfd666284e" name="XPath Match 10">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f49e0922-29fd-4b9f-9585-0f0986bad0ef" name="XPath Match 11">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -27635,14 +27783,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -27748,7 +27888,19 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 10">
               <con:configuration>
                 <path>//subscription/subscriptionDate</path>
-                <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <content>2016-01-25T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="d4e01ca9-33ed-44b9-821e-d7a7066e45e4">
+              <con:configuration/>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="8c5d35e5-99ca-4b06-9483-f33aad5e72b8" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -27797,6 +27949,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay 2" id="c5d1bd38-85db-43ac-9637-54f05ea1cde4">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find Subscription after renewal 2" id="16e2ecca-7917-4f8e-a705-54a347863d22">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -27830,14 +27988,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27948,6 +28098,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//subscription/subscriptionDate</path>
                 <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="aaed97a1-93f6-477d-883f-fbff82e7e4af" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28120,14 +28279,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -28239,6 +28390,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="8c3fa9da-34ac-492d-a4f2-b930d68226ea" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -28250,10 +28410,10 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
-      <con:testStep type="restrequest" name="Modify ordered product (subscription CF values, renew rule - only some will apply)" id="563ca943-2542-4b60-a049-92d509b0d231">
+      <con:testStep type="restrequest" name="Modify ordered product (subscription CF values, renew rule - only some will apply as renewed already)" id="563ca943-2542-4b60-a049-92d509b0d231">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Modify ordered product (subscription CF values, renew rule - only some will apply)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Modify ordered product (subscription CF values, renew rule - only some will apply as renewed already)" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -28334,8 +28494,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                         "name": "${#Project#baseEntityPrefix}_SERVICE_CF_LONG_MATRIX",
                         "value": "matrix_String|MAT_1/MAT_2|{\"Fifth|Fourth\":\"150\",\"Fifth|Second\":\"100\"}"
                     }, {
-                        "name": "serviceCode",
-                        "value": "${#Project#baseEntityPrefix}_SERVICE1"
+                        "name": "serviceId",
+                        "value": "${SubscriptionInfo#serviceId1}"
                     }]
                 }
             }]
@@ -28399,14 +28559,6 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>ACTIVE&lt;/status></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
             <con:assertion type="XPath Match" id="fe07d4f5-51a6-4005-96e9-53a7f4e9fb2f" name="XPath Match 1">
               <con:configuration>
                 <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/customFields/customField[@code="${#Project#baseEntityPrefix}_SERVICE_CF_STRING"]/stringValue</path>
@@ -28503,8 +28655,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
               <con:configuration>
                 <path>//subscription/endAgreementDate</path>
-                <content>2016-08-25T00:00:00${#Project#timezone}</content>
-                <allowWildcards>false</allowWildcards>
+                <content>2018-05-25T00:00:00*</content>
+                <allowWildcards>true</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
@@ -28518,7 +28670,26 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="324a786a-0231-46c7-bde9-ebaeae2bad93" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>ACTIVE</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f3bedded-56a7-4402-b556-127f4fcf543b" name="XPath Match 12">
+              <con:configuration>
+                <path>count(//serviceInstance)</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
             </con:credentials>
@@ -28561,6 +28732,12 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="delay" name="Delay 1" id="245004f2-b773-4679-918b-e8acf53b1b3d">
+        <con:settings/>
+        <con:config>
+          <delay>1000</delay>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Find Subscription after suspension 5" id="12ede076-e72f-4842-8c7d-640527e2a340">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -28595,16 +28772,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
                <terminationDate>2016-10-25T00:00:00${#Project#timezone}</terminationDate>
-               <endAgreementDate>2016-08-25T00:00:00${#Project#timezone}</endAgreementDate>
+               <endAgreementDate>2018-05-25T00:00:00${#Project#timezone}</endAgreementDate>
                <status>SUSPENDED</status>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
-              </con:configuration>
-            </con:assertion>
-            <con:assertion type="Simple Contains" id="ab81d456-9f84-4c28-b48c-dace4a2e6856" name="Contains 2">
-              <con:configuration>
-                <token>&lt;serviceInstance code="${#Project#baseEntityPrefix}_SERVICE1" description="Service 1">
-                     &lt;status>SUSPENDED&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -28705,7 +28874,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
               <con:configuration>
                 <path>//subscription/endAgreementDate</path>
-                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <content>2018-05-25T00:00:00${#Project#timezone}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28715,6 +28884,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:configuration>
                 <path>//subscription/subscriptionDate</path>
                 <content>2016-01-25T00:00:00${#Project#timezone}</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="3ab38af4-89a8-4d07-8314-9ae1e7f6d7d6" name="XPath Match 11">
+              <con:configuration>
+                <path>//serviceInstance[@code="${#Project#baseEntityPrefix}_SERVICE1"]/status</path>
+                <content>SUSPENDED</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -31840,7 +32018,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Invoice Date - PUT" id="ad90a17a-ad7e-4cd9-8595-526b98beda13">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" methodName="Method 1" resourcePath="/api/rest/orderManagement/productOrder/{orderId}/simpleDueDateDelay" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Invoice Date" id="e812287c-1f82-4f4a-81ca-672ad48adefa" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Invoice Date - PUT" id="e812287c-1f82-4f4a-81ca-672ad48adefa" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -31920,7 +32098,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="068a492c-875a-4fb9-ae53-20d06a92cb4b">
+            <con:assertion type="Simple Contains" id="e156bd0d-5c37-4b62-ba43-f0ef50a3388a">
               <con:configuration/>
             </con:assertion>
             <con:assertion type="Simple Contains" id="66947aa4-6ddb-4b22-81c5-176c6ea35198" name="Contains 1">

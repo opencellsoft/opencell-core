@@ -1,5 +1,6 @@
 package org.meveo.api.dto.billing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -17,29 +18,35 @@ import org.meveo.api.dto.BaseDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UpdateServicesRequestDto extends BaseDto {
 
-	private static final long serialVersionUID = 8352154466061113933L;
+    private static final long serialVersionUID = 8352154466061113933L;
 
-	@XmlElement(required = true)
-	private String subscriptionCode;
+    @XmlElement(required = true)
+    private String subscriptionCode;
 
-	@XmlElement(name = "serviceToUpdate")
-	@XmlElementWrapper(name = "servicesToUpdate")
-	private List<ServiceToUpdateDto> servicesToUpdate;
+    @XmlElement(name = "serviceToUpdate")
+    @XmlElementWrapper(name = "servicesToUpdate")
+    private List<ServiceToUpdateDto> servicesToUpdate;
 
-	public String getSubscriptionCode() {
-		return subscriptionCode;
-	}
+    public String getSubscriptionCode() {
+        return subscriptionCode;
+    }
 
-	public void setSubscriptionCode(String subscriptionCode) {
-		this.subscriptionCode = subscriptionCode;
-	}
+    public void setSubscriptionCode(String subscriptionCode) {
+        this.subscriptionCode = subscriptionCode;
+    }
 
-	public List<ServiceToUpdateDto> getServicesToUpdate() {
-		return servicesToUpdate;
-	}
+    public List<ServiceToUpdateDto> getServicesToUpdate() {
+        return servicesToUpdate;
+    }
 
-	public void setServicesToUpdate(List<ServiceToUpdateDto> servicesToUpdate) {
-		this.servicesToUpdate = servicesToUpdate;
-	}
+    public void setServicesToUpdate(List<ServiceToUpdateDto> servicesToUpdate) {
+        this.servicesToUpdate = servicesToUpdate;
+    }
 
+    public void addService(ServiceToUpdateDto serviceToUpdate) {
+        if (servicesToUpdate == null) {
+            servicesToUpdate = new ArrayList<>();
+        }
+        servicesToUpdate.add(serviceToUpdate);
+    }
 }

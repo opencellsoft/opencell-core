@@ -13,145 +13,135 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferTemplateCategoryDto extends BusinessDto {
 
-	private static final long serialVersionUID = 1L;
-	
-	private String name;
-	
-	private String offerTemplateCategoryCode;
-	
-	private Long id;
-	
-	private String href;
-	
-	private int version;
-	
-	private Date lastModified; 
-	
-	private boolean active;
-	
-	private Long parentId;
-	
-	private String imagePath;
-	private String imageBase64;
-	
-	public OfferTemplateCategoryDto() {
-		
-	}
-	
+    private static final long serialVersionUID = 1L;
+
+    private String name;
+
+    private String offerTemplateCategoryCode;
+
+    private String href;
+
+    private int version;
+
+    private Date lastModified;
+
+    private boolean active;
+
+    private Long parentId;
+
+    private String imagePath;
+    private String imageBase64;
+
+    public OfferTemplateCategoryDto() {
+
+    }
+
     public OfferTemplateCategoryDto(String code) {
         this.code = code;
     }
 
-	public OfferTemplateCategoryDto (OfferTemplateCategory offerTemplateCategory) {
-		super(offerTemplateCategory);
-		
-		if (offerTemplateCategory != null) {
-			this.setId(offerTemplateCategory.getId());
-			this.setName(offerTemplateCategory.getName());
-			this.setVersion(offerTemplateCategory.getVersion());
-			this.setLastModified(offerTemplateCategory.getAuditable().getLastModified());
-			this.setActive(offerTemplateCategory.isActive());
-			this.imagePath = offerTemplateCategory.getImagePath();
-			
-			OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
-			
-			if (parent != null) {
-				this.setOfferTemplateCategoryCode(parent.getCode());
-				this.setParentId(parent.getId());
-			}
-		}
-		
-	}
-	
-	public OfferTemplateCategoryDto (OfferTemplateCategory offerTemplateCategory, String baseUri) {
-		this(offerTemplateCategory);
-		this.setHref(String.format("%scatalogManagement/category/%s", baseUri, this.getId()));
-	}
+    public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory) {
+        super(offerTemplateCategory);
 
-	public String getName() {
-		return name;
-	}
+        if (offerTemplateCategory != null) {
+            this.setId(offerTemplateCategory.getId());
+            this.setName(offerTemplateCategory.getName());
+            this.setVersion(offerTemplateCategory.getVersion());
+            this.setLastModified(offerTemplateCategory.getAuditable().getLastModified());
+            this.setActive(offerTemplateCategory.isActive());
+            this.imagePath = offerTemplateCategory.getImagePath();
 
-	public void setName(String name) {
-		this.name = name;
-	}
+            OfferTemplateCategory parent = offerTemplateCategory.getOfferTemplateCategory();
 
-	public String getOfferTemplateCategoryCode() {
-		return offerTemplateCategoryCode;
-	}
+            if (parent != null) {
+                this.setOfferTemplateCategoryCode(parent.getCode());
+                this.setParentId(parent.getId());
+            }
+        }
 
-	public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
-		this.offerTemplateCategoryCode = offerTemplateCategoryCode;
-	}
+    }
 
-	@Override
-	public String toString() {
-		return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", id="
-				+ id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath=" + imagePath
-				+ "]";
-	}
+    public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory, String baseUri) {
+        this(offerTemplateCategory);
+        this.setHref(String.format("%scatalogManagement/category/%s", baseUri, this.getId()));
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getHref() {
-		return href;
-	}
+    public String getOfferTemplateCategoryCode() {
+        return offerTemplateCategoryCode;
+    }
 
-	public void setHref(String href) {
-		this.href = href;
-	}
+    public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
+        this.offerTemplateCategoryCode = offerTemplateCategoryCode;
+    }
 
-	public int getVersion() {
-		return version;
-	}
+    @Override
+    public String toString() {
+        return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
+                + ", id=" + id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath="
+                + imagePath + "]";
+    }
 
-	public void setVersion(int version) {
-		this.version = version;
-	}
+    public String getHref() {
+        return href;
+    }
 
-	public Date getLastModified() {
-		return lastModified;
-	}
+    public void setHref(String href) {
+        this.href = href;
+    }
 
-	public void setLastModified(Date lastModified) {
-		this.lastModified = lastModified;
-	}
+    public int getVersion() {
+        return version;
+    }
 
-	public boolean isActive() {
-		return active;
-	}
+    public void setVersion(int version) {
+        this.version = version;
+    }
 
-	public void setActive(boolean active) {
-		this.active = active;
-	}
+    public Date getLastModified() {
+        return lastModified;
+    }
 
-	public Long getParentId() {
-		return parentId;
-	}
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
 
-	public void setParentId(Long parentId) {
-		this.parentId = parentId;
-	}
+    public boolean isActive() {
+        return active;
+    }
 
-	public String getImagePath() {
-		return imagePath;
-	}
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
+    public Long getParentId() {
+        return parentId;
+    }
 
-	public String getImageBase64() {
-		return imageBase64;
-	}
+    public void setParentId(Long parentId) {
+        this.parentId = parentId;
+    }
 
-	public void setImageBase64(String imageBase64) {
-		this.imageBase64 = imageBase64;
-	}
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
 }

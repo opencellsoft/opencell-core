@@ -15,50 +15,61 @@ import org.meveo.model.BusinessEntity;
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class BusinessDto extends AuditableDto {
 
-	private static final long serialVersionUID = 4451119256601996946L;
+    private static final long serialVersionUID = 4451119256601996946L;
 
-	// @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
-	@XmlAttribute(required = true)
-	protected String code;
+    @XmlAttribute()
+    protected Long id;
 
-	@XmlAttribute()
-	protected String description;
+    // @Pattern(regexp = "^[@A-Za-z0-9_\\.-]+$")
+    @XmlAttribute(required = true)
+    protected String code;
 
-	protected String updatedCode;
+    @XmlAttribute()
+    protected String description;
 
-	public BusinessDto() {
+    protected String updatedCode;
 
-	}
+    public BusinessDto() {
 
-	public BusinessDto(BusinessEntity e) {
-		if (e != null) {
-			code = e.getCode();
-			description = e.getDescription();
-		}
-	}
+    }
 
-	public String getUpdatedCode() {
-		return updatedCode;
-	}
+    public BusinessDto(BusinessEntity e) {
+        if (e != null) {
+            code = e.getCode();
+            description = e.getDescription();
+        }
+    }
 
-	public void setUpdatedCode(String updatedCode) {
-		this.updatedCode = updatedCode;
-	}
+    public String getUpdatedCode() {
+        return updatedCode;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public void setUpdatedCode(String updatedCode) {
+        this.updatedCode = updatedCode;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public Long getId(){
+        return id;
+    }
+    
+    public void setId(Long id) {
+        this.id = id;
+    }
+    
+    public String getCode() {
+        return code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
 }

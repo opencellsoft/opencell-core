@@ -13,25 +13,28 @@ import javax.xml.bind.annotation.XmlAccessorType;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstancesDto implements Serializable {
 
-	private static final long serialVersionUID = -6816362012819614661L;
+    private static final long serialVersionUID = -6816362012819614661L;
 
-	private List<ServiceInstanceDto> serviceInstance;
+    private List<ServiceInstanceDto> serviceInstance;
 
-	public List<ServiceInstanceDto> getServiceInstance() {
-		if (serviceInstance == null) {
-			serviceInstance = new ArrayList<ServiceInstanceDto>();
-		}
+    public List<ServiceInstanceDto> getServiceInstance() {
+        return serviceInstance;
+    }
 
-		return serviceInstance;
-	}
+    public void setServiceInstance(List<ServiceInstanceDto> serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-	public void setServiceInstance(List<ServiceInstanceDto> serviceInstance) {
-		this.serviceInstance = serviceInstance;
-	}
+    public void addServiceInstance(ServiceInstanceDto serviceToAdd) {
+        if (serviceInstance == null) {
+            serviceInstance = new ArrayList<ServiceInstanceDto>();
+        }
 
-	@Override
-	public String toString() {
-		return "ServiceInstancesDto [serviceInstance=" + serviceInstance + "]";
-	}
+        serviceInstance.add(serviceToAdd);
+    }
 
+    @Override
+    public String toString() {
+        return "ServiceInstancesDto [serviceInstance=" + serviceInstance + "]";
+    }
 }

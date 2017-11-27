@@ -21,191 +21,202 @@ import org.meveo.model.billing.UsageChargeInstance;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceInstanceDto extends BusinessDto {
 
-	private static final long serialVersionUID = -4084004747483067153L;
+    private static final long serialVersionUID = -4084004747483067153L;
 
-	private InstanceStatusEnum status;
+    private InstanceStatusEnum status;
 
-	private Date statusDate;
+    private Date statusDate;
 
-	private Date subscriptionDate;
+    private Date subscriptionDate;
 
-	private Date terminationDate;
+    private Date terminationDate;
 
-	private BigDecimal quantity;
+    private BigDecimal quantity;
 
-	private String terminationReason;
+    private String terminationReason;
 
-	private Date endAgreementDate;
+    private Date endAgreementDate;
 
-	private CustomFieldsDto customFields;
+    private CustomFieldsDto customFields;
 
-	@XmlElementWrapper(name = "recurringChargeInstances")
-	@XmlElement(name = "recurringChargeInstance")
-	private List<ChargeInstanceDto> recurringChargeInstances;
+    @XmlElementWrapper(name = "recurringChargeInstances")
+    @XmlElement(name = "recurringChargeInstance")
+    private List<ChargeInstanceDto> recurringChargeInstances;
 
-	@XmlElementWrapper(name = "subscriptionChargeInstances")
-	@XmlElement(name = "subscriptionChargeInstance")
-	private List<ChargeInstanceDto> subscriptionChargeInstances;
+    @XmlElementWrapper(name = "subscriptionChargeInstances")
+    @XmlElement(name = "subscriptionChargeInstance")
+    private List<ChargeInstanceDto> subscriptionChargeInstances;
 
-	@XmlElementWrapper(name = "terminationChargeInstances")
-	@XmlElement(name = "terminationChargeInstance")
-	private List<ChargeInstanceDto> terminationChargeInstances;
+    @XmlElementWrapper(name = "terminationChargeInstances")
+    @XmlElement(name = "terminationChargeInstance")
+    private List<ChargeInstanceDto> terminationChargeInstances;
 
-	@XmlElementWrapper(name = "usageChargeInstances")
-	@XmlElement(name = "usageChargeInstance")
-	private List<ChargeInstanceDto> usageChargeInstances;
-	
-	private String orderNumber;
+    @XmlElementWrapper(name = "usageChargeInstances")
+    @XmlElement(name = "usageChargeInstance")
+    private List<ChargeInstanceDto> usageChargeInstances;
 
-	public ServiceInstanceDto() {
+    private String orderNumber;
 
-	}
+    private Date rateUntilDate;
 
-	public ServiceInstanceDto(ServiceInstance e, CustomFieldsDto customFieldInstances) {
-		code = e.getCode();
-		description = e.getDescription();
-		status = e.getStatus();
-		statusDate = e.getStatusDate();
-		subscriptionDate = e.getSubscriptionDate();
-		terminationDate = e.getTerminationDate();
-		quantity = e.getQuantity();
-		orderNumber = e.getOrderNumber();
-		if (e.getSubscriptionTerminationReason() != null) {
-			terminationReason = e.getSubscriptionTerminationReason().getCode();
-		}
-		endAgreementDate = e.getEndAgreementDate();
+    public ServiceInstanceDto() {
 
-		if (e.getRecurringChargeInstances() != null) {
-			recurringChargeInstances = new ArrayList<ChargeInstanceDto>();
+    }
 
-			for (RecurringChargeInstance ci : e.getRecurringChargeInstances()) {
-				recurringChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode()));
-			}
-		}
+    public ServiceInstanceDto(ServiceInstance e, CustomFieldsDto customFieldInstances) {
 
-		if (e.getSubscriptionChargeInstances() != null) {
-			subscriptionChargeInstances = new ArrayList<ChargeInstanceDto>();
+        id = e.getId();
+        code = e.getCode();
+        description = e.getDescription();
+        status = e.getStatus();
+        statusDate = e.getStatusDate();
+        subscriptionDate = e.getSubscriptionDate();
+        terminationDate = e.getTerminationDate();
+        quantity = e.getQuantity();
+        orderNumber = e.getOrderNumber();
+        if (e.getSubscriptionTerminationReason() != null) {
+            terminationReason = e.getSubscriptionTerminationReason().getCode();
+        }
+        endAgreementDate = e.getEndAgreementDate();
 
-			for (OneShotChargeInstance ci : e.getSubscriptionChargeInstances()) {
-				subscriptionChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode()));
-			}
-		}
+        if (e.getRecurringChargeInstances() != null) {
+            recurringChargeInstances = new ArrayList<ChargeInstanceDto>();
 
-		if (e.getTerminationChargeInstances() != null) {
-			terminationChargeInstances = new ArrayList<ChargeInstanceDto>();
+            for (RecurringChargeInstance ci : e.getRecurringChargeInstances()) {
+                recurringChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(),
+                    ci.getSeller().getCode(), ci.getUserAccount().getCode()));
+            }
+        }
 
-			for (OneShotChargeInstance ci : e.getTerminationChargeInstances()) {
-				terminationChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode()));
-			}
-		}
+        if (e.getSubscriptionChargeInstances() != null) {
+            subscriptionChargeInstances = new ArrayList<ChargeInstanceDto>();
 
-		if (e.getUsageChargeInstances() != null) {
-			usageChargeInstances = new ArrayList<ChargeInstanceDto>();
+            for (OneShotChargeInstance ci : e.getSubscriptionChargeInstances()) {
+                subscriptionChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(),
+                    ci.getSeller().getCode(), ci.getUserAccount().getCode()));
+            }
+        }
 
-			for (UsageChargeInstance ci : e.getUsageChargeInstances()) {
-				usageChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(), ci
-						.getSeller().getCode(), ci.getUserAccount().getCode()));
-			}
-		}
+        if (e.getTerminationChargeInstances() != null) {
+            terminationChargeInstances = new ArrayList<ChargeInstanceDto>();
 
-		customFields = customFieldInstances;
-	}
+            for (OneShotChargeInstance ci : e.getTerminationChargeInstances()) {
+                terminationChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(),
+                    ci.getSeller().getCode(), ci.getUserAccount().getCode()));
+            }
+        }
 
-	public String getCode() {
-		return code;
-	}
+        if (e.getUsageChargeInstances() != null) {
+            usageChargeInstances = new ArrayList<ChargeInstanceDto>();
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+            for (UsageChargeInstance ci : e.getUsageChargeInstances()) {
+                usageChargeInstances.add(new ChargeInstanceDto(ci.getCode(), ci.getDescription(), ci.getStatus().name(), ci.getAmountWithTax(), ci.getAmountWithoutTax(),
+                    ci.getSeller().getCode(), ci.getUserAccount().getCode()));
+            }
+        }
 
-	public InstanceStatusEnum getStatus() {
-		return status;
-	}
+        customFields = customFieldInstances;
+    }
 
-	public void setStatus(InstanceStatusEnum status) {
-		this.status = status;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public InstanceStatusEnum getStatus() {
+        return status;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public void setStatus(InstanceStatusEnum status) {
+        this.status = status;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public Date getStatusDate() {
+        return statusDate;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
-				+ terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + ", orderNumber="+orderNumber+"]";
-	}
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
 
-	public String getTerminationReason() {
-		return terminationReason;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public void setTerminationReason(String terminationReason) {
-		this.terminationReason = terminationReason;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    @Override
+    public String toString() {
+        return "ServiceInstanceDto [code=" + code + ", description=" + description + ", status=" + status + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
+                + terminationDate + ", quantity=" + quantity + ", terminationReason=" + terminationReason + ", orderNumber=" + orderNumber + "]";
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getTerminationReason() {
+        return terminationReason;
+    }
 
-	public Date getEndAgreementDate() {
-		return endAgreementDate;
-	}
+    public void setTerminationReason(String terminationReason) {
+        this.terminationReason = terminationReason;
+    }
 
-	public void setEndAgreementDate(Date endAgreementDate) {
-		this.endAgreementDate = endAgreementDate;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public Date getEndAgreementDate() {
+        return endAgreementDate;
+    }
 
-	public String getOrderNumber() {
-		return orderNumber;
-	}
+    public void setEndAgreementDate(Date endAgreementDate) {
+        this.endAgreementDate = endAgreementDate;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
-	
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Date getRateUntilDate() {
+        return rateUntilDate;
+    }
+
+    public void setRateUntilDate(Date rateUntilDate) {
+        this.rateUntilDate = rateUntilDate;
+    }
 }

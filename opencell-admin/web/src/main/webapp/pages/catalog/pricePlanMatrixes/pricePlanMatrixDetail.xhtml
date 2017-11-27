@@ -182,29 +182,20 @@
 						<hftl:formField label="#{messages['pricePlanMatrix.criteriaEL']}"
 							field="criteriaEL" textArea="true" rows="1" maxlength="2000" />
 
-						<hftl:formField
-							label="#{messages['pricePlanMatrix.amountWithoutTax']}"
-							field="amountWithoutTax" converter="bigDecimal4DigitsConverter"
-							required="true" newLine="true" />
-						<hftl:formField
-							label="#{messages['pricePlanMatrix.amountWithoutTax']} EL"
-							field="amountWithoutTaxEL" textArea="true" rows="1" maxlength="2000" />
-						<hftl:formField
-							label="#{messages['pricePlanMatrix.amountWithTax']}"
-							newLine="true" field="amountWithTax"
-							converter="bigDecimal4DigitsConverter"
-							rendered="#{!appProvider.entreprise}"
-							required="true" />
-						<hftl:formField
-							label="#{messages['pricePlanMatrix.amountWithTax']} EL"
-							field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000"
-							rendered="#{!appProvider.entreprise}" />
-					
-						<hftl:formField id="scriptSelectId"
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" required="true" newLine="true"
+                            rendered="#{appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithoutTax']} EL" field="amountWithoutTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{appProvider.entreprise}" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithTax']}" newLine="true" field="amountWithTax" converter="bigDecimal4DigitsConverter"
+                            rendered="#{!appProvider.entreprise}" required="true" />
+                        <hftl:formField label="#{messages['pricePlanMatrix.amountWithTax']} EL" field="amountWithTaxEL" textArea="true" rows="1" maxlength="2000" rendered="#{!appProvider.entreprise}" />
+
+                    <hftl:formField id="scriptSelectId"
     							label="#{messages['pricePlanMatrix.scriptCode']}"
     							field="scriptInstance" valueLabelField="code" required="false"
     							popup="true" popupId="pricePlanMatScriptPopup" showResetButton="true" /> 
 					
+                     <hftl:formField label="#{messages['pricePlanMatrix.woDescriptionEL']}" field="woDescriptionEL" textArea="true" rows="1" maxlength="2000" />
+                    
 					</p:tab>
 					
 					<hftl:customFields backingBean="#{pricePlanMatrixBean}"
