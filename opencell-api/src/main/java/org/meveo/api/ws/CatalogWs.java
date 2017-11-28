@@ -8,6 +8,7 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
@@ -27,6 +28,7 @@ import org.meveo.api.dto.catalog.RecurringChargeTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
@@ -110,9 +112,8 @@ public interface CatalogWs extends IBaseWs {
     public ActionStatus createOrUpdateOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplate") OneShotChargeTemplateDto postData);
 
     @WebMethod
-    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(@WebParam(name = "languageCode") String languageCode,
-            @WebParam(name = "countryCode") String countryCode, @WebParam(name = "currencyCode") String currencyCode, @WebParam(name = "sellerCode") String sellerCode,
-            @WebParam(name = "date") String date);
+    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplate(@WebParam(name = "languageCode") String languageCode, @WebParam(name = "countryCode") String countryCode,
+            @WebParam(name = "currencyCode") String currencyCode, @WebParam(name = "sellerCode") String sellerCode, @WebParam(name = "date") String date);
 
     @WebMethod
     public ActionStatus removeOneShotChargeTemplate(@WebParam(name = "oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
@@ -158,18 +159,29 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus updateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
 
     @WebMethod
-    GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+    GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom,
+            @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
-    ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+    ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom,
+            @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
     ActionStatus createOrUpdateOfferTemplate(@WebParam(name = "offerTemplate") OfferTemplateDto postData);
-    
-    @WebMethod
-    GetListOfferTemplateResponseDto listOfferTemplate(@WebParam(name = "offerTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
-    
+    /**
+     * List all offer templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered.If only validFrom is provided, a
+     * search will return offers valid on a given date. If only validTo date is provided, a search will return offers valid from today to a given date.
+     * 
+     * @param code Offer template code for optional filtering
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @return A list of offer templates
+     */
+    @WebMethod
+    GetListOfferTemplateResponseDto listOfferTemplate(@Deprecated @WebParam(name = "offerTemplateCode") String code, @Deprecated @WebParam(name = "validFrom") Date validFrom,
+            @Deprecated @WebParam(name = "validTo") Date validTo, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
     // price plan
 
     @WebMethod
@@ -256,6 +268,11 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOfferFromBOM(@WebParam(name = "bomOffer") BomOfferDto postData);
+    
+    //bsm service
+    
+    @WebMethod
+    ActionStatus createServiceFromBSM(@WebParam(name = "bsmService") BsmServiceDto postData);
 
     // discount Plan
     @WebMethod
@@ -290,7 +307,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetOfferTemplateCategoryResponseDto findOfferTemplateCategory(@WebParam(name = "offerTemplateCategoryCode") String code);
-    
+
     // discount Plan item
     @WebMethod
     ActionStatus createDiscountPlanItem(@WebParam(name = "discountPlanItem") DiscountPlanItemDto postData);
@@ -309,6 +326,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     DiscountPlanItemsResponseDto listDiscountPlanItem();
+
     @WebMethod
     ActionStatus createProductTemplate(@WebParam(name = "productTemplate") ProductTemplateDto postData);
 
@@ -320,13 +338,27 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     ActionStatus removeProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
-    
+
+    /**
+     * List product templates matching filtering and query criteria or code and validity dates.
+     * 
+     * If neither date is provided, validity dates will not be considered.If only validFrom is provided, a search will return product bundles valid on a given date. If only valdTo
+     * date is provided, a search will return product valid from today to a given date.
+     * 
+     * @param code Product template code for optional filtering
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @param pagingAndFiltering Paging and filtering criteria.
+     * @return A list of product templates
+     */
     @WebMethod
-    GetListProductTemplateResponseDto listProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+    GetListProductTemplateResponseDto listProductTemplate(@Deprecated @WebParam(name = "productTemplateCode") String code, @Deprecated @WebParam(name = "validFrom") Date validFrom,
+            @Deprecated @WebParam(name = "validTo") Date validTo, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     @WebMethod
-    GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
-    
+    GetProductTemplateResponseDto findProductTemplate(@WebParam(name = "productTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom,
+            @WebParam(name = "validTo") Date validTo);
+
     @WebMethod
     ActionStatus createDigitalResource(@WebParam(name = "digitalResource") DigitalResourcesDto postData);
 
@@ -341,7 +373,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetDigitalResourceResponseDto findDigitalResource(@WebParam(name = "digitalResourceCode") String code);
-    
+
     @WebMethod
     public ActionStatus createOrUpdateProductChargeTemplate(@WebParam(name = "productChargeTemplate") ProductChargeTemplateDto postData);
 
@@ -356,7 +388,7 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     public ActionStatus removeProductChargeTemplate(@WebParam(name = "productChargeTemplateCode") String productChargeTemplateCode);
-    
+
     @WebMethod
     ActionStatus createBundleTemplate(@WebParam(name = "bundleTemplate") BundleTemplateDto postData);
 
@@ -370,11 +402,24 @@ public interface CatalogWs extends IBaseWs {
     ActionStatus removeBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
 
     @WebMethod
-    GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
-    
-    @WebMethod
-    GetListBundleTemplateResponseDto listBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom, @WebParam(name = "validTo") Date validTo);
+    GetBundleTemplateResponseDto findBundleTemplate(@WebParam(name = "bundleTemplateCode") String code, @WebParam(name = "validFrom") Date validFrom,
+            @WebParam(name = "validTo") Date validTo);
 
+    /**
+     * List product bundle templates matching filtering and query criteria or code and validity dates.
+     * 
+     * If neither date is provided, validity dates will not be considered.If only validFrom is provided, a search will return product bundles valid on a given date. If only valdTo
+     * date is provided, a search will return product bundles valid from today to a given date.
+     * 
+     * @param code Product template code for optional filtering
+     * @param validFrom Validity range from date.
+     * @param validTo Validity range to date.
+     * @param pagingAndFiltering Paging and filtering criteria.
+     * @return A list of product templates
+     */
+    @WebMethod
+    GetListBundleTemplateResponseDto listBundleTemplate(@Deprecated @WebParam(name = "bundleTemplateCode") String code, @Deprecated @WebParam(name = "validFrom") Date validFrom,
+            @Deprecated @WebParam(name = "validTo") Date validTo, @WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     @WebMethod
     ActionStatus createChannel(@WebParam(name = "channel") ChannelDto postData);

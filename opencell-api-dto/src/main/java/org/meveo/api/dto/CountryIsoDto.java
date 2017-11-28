@@ -1,5 +1,7 @@
 package org.meveo.api.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -22,10 +24,9 @@ public class CountryIsoDto extends BaseDto {
 	private String countryCode;
 
 	@XmlAttribute()
-	private String nameEn;
+	private String description;
 	
-	@XmlAttribute()
-	private String nameFr;
+	private List<LanguageDescriptionDto> languageDescriptions;
 
 	@XmlElement(required = true)
 	private String currencyCode;
@@ -39,8 +40,8 @@ public class CountryIsoDto extends BaseDto {
 
 	public CountryIsoDto(Country e) {
 		countryCode = e.getCountryCode();
-		nameEn = e.getDescriptionEn();
-		nameFr = e.getDescriptionFr();
+		description = e.getDescription();
+		setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(e.getDescriptionI18n()));
 		currencyCode = e.getCurrency().getCurrencyCode();
 
 		if (e.getLanguage() != null) {
@@ -57,23 +58,35 @@ public class CountryIsoDto extends BaseDto {
 		this.countryCode = countryCode;
 	}
 
-	public String getNameEn() {
-		return nameEn;
-	}
+	/**
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	public void setNameEn(String nameEn) {
-		this.nameEn = nameEn;
-	}
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public String getNameFr() {
-		return nameFr;
-	}
+    /**
+     * @return the languageDescriptions
+     */
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
 
-	public void setNameFr(String nameFr) {
-		this.nameFr = nameFr;
-	}
+    /**
+     * @param languageDescriptions the languageDescriptions to set
+     */
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 
-	public String getCurrencyCode() {
+    public String getCurrencyCode() {
 		return currencyCode;
 	}
 
@@ -89,12 +102,5 @@ public class CountryIsoDto extends BaseDto {
 		this.languageCode = languageCode;
 	}
 
-	public String toString() {
-		return "CountryIsoDto [countryCode=" + countryCode + 
-				", nameEn=" + nameEn + 
-				", nameFr=" + nameFr + 
-				", currencyCode=" + currencyCode +
-				", languageCode=" + languageCode + "]";
-	}
-
+	
 }

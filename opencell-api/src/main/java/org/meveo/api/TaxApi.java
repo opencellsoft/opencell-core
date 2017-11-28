@@ -129,7 +129,7 @@ public class TaxApi extends BaseApi {
             throw new EntityDoesNotExistsException(Tax.class, taxCode);
         }
 
-        result = new TaxDto(tax, entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
+        result = new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, true));
 
         return result;
     }
@@ -168,7 +168,7 @@ public class TaxApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null && !taxes.isEmpty()) {
             for (Tax tax : taxes) {
-                TaxDto taxDto = new TaxDto(tax, entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true));
+                TaxDto taxDto = new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, true));
                 taxesDto.getTax().add(taxDto);
             }
         }

@@ -966,7 +966,7 @@ public class InvoiceApi extends BaseApi {
     /**
      * List invoices matching filtering and query criteria
      * 
-     * @param pagingAndFiltering Paging and filtering criteria
+     * @param pagingAndFiltering Paging and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return A list of invoices
      * @throws InvalidParameterException
      */

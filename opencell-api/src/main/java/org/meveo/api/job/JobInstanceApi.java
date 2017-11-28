@@ -270,7 +270,7 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         dto.setRunOnNodes(jobInstance.getRunOnNodes());
         dto.setLimitToSingleNode(jobInstance.isLimitToSingleNode());
         
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(jobInstance, true));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance, true));
 
         if (jobInstance.getFollowingJob() != null) {
             dto.setFollowingJob(jobInstance.getFollowingJob().getCode());

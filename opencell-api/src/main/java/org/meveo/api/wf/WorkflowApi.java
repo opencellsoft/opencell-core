@@ -25,7 +25,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.wf.WFTransition;
 import org.meveo.model.wf.Workflow;
 import org.meveo.model.wf.WorkflowHistory;
-import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.wf.WFTransitionService;
 import org.meveo.service.wf.WorkflowHistoryService;
 import org.meveo.service.wf.WorkflowService;
@@ -44,9 +43,6 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
 
     @Inject
     private WFTransitionService wfTransitionService;
-
-    @Inject
-    private BusinessEntityService businessEntityService;
 
     /**
      * 

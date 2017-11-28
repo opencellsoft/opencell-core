@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui"
-    xmlns:of="http://omnifaces.org/functions" xmlns:hftl="http://hftl.org">
+    xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:o="http://omnifaces.org/ui" xmlns:of="http://omnifaces.org/functions"
+    xmlns:hftl="http://hftl.org">
 
 <ui:composition>
 
@@ -36,61 +36,58 @@
         </p:panel>
 
         <p:panel>
-            <h:panelGrid id="productDiv" columns="1" styleClass="ui-panelgrid-blank Wid100">
-                <h:outputText value="#{mainBackingBean.entity.nameOrCode}" rendered="#{!mainBackingBean.edit}" styleClass="field-value"/>
+            <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100" columnClasses="Wid100">
+                <h:outputText value="#{mainBackingBean.entity.nameOrCode}" rendered="#{!mainBackingBean.edit}" styleClass="field-value" />
                 <hftl:formField label="#{messages['offerTemplate.name']}" required="true" field="name" rendered="#{mainBackingBean.edit}" actionListenerBean="#{mainBackingBean}"
                     actionListenerMethod="onNameChange" listenerUpdate="code" />
 
                 <hftl:formField id="code" label="#{messages['offerTemplate.code']}" field="code" required="true" />
                 <hftl:formField label="#{messages['productTemplate.family']}" field="businessProductModel" id="businessProductModel" valueLabelField="code"
                     listElements="#{businessProductModelBean.listAll()}" rendered="#{!mainBackingBean.edit and mainBackingBean.entity.businessProductModel != null}" />
-                <hftl:formLanguageFields field="description" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" />
-                <hftl:formLanguageFields field="longDescription" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
-            </h:panelGrid>
-            <p:panel>
                 <h:outputText value="#{messages['commons.lastEditor']}: "></h:outputText>
                 <h:outputText value="#{mainBackingBean.entity.auditable.creator}"></h:outputText>
-            </p:panel>
-            <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100 Responsive100">
-               <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true"/>       
-               <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />         
+                <hftl:formField label="#{messages['commons.valid']}" field="validity" time="true" />
+                <hftl:formField label="#{messages['commons.status']}" field="lifeCycleStatus" displayOneLine="true" labelWidth="40" />
             </h:panelGrid>
+
+            <o:validateMultiple components="#{idPath}:code #{idPath}:validity_date #{idPath}:validity_date_toRange" validator="#{backingBean.validateUniqueVersion}"
+                message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists.short':'productTemplate.version.exists.short']}" />
         </p:panel>
-        
-        <o:validateMultiple components="#{idPath}:code #{idPath}:validity_date #{idPath}:validity_date_toRange"
-			validator="#{backingBean.validateUniqueVersion}" message="#{messages[mode eq 'BUNDLE'?'bundleTemplate.version.exists.short':'productTemplate.version.exists.short']}" />
- 
+
         <h:panelGrid columns="1" styleClass="ui-panelgrid-blank Wid100">
             <hftl:formField id="offerTemplateCategories" label="#{messages['offerTemplate.category']}" field="offerTemplateCategories" listType="selectCheckbox" valueLabelField="descriptionOrCode"
-                listBean="#{offerTemplateCategoryListBean}" componentWidth="100"  />
-            <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="descriptionOrCode"
-                listBean="#{channelListBean}" newLine="true" componentWidth="100" />
+                listBean="#{offerTemplateCategoryListBean}" componentWidth="100" />
+            <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="descriptionOrCode" listBean="#{channelListBean}"
+                newLine="true" componentWidth="100" />
             <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
                 valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" newLine="true" componentWidth="100" />
+            <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox" valueLabelField="descriptionOrCode" listBean="#{sellerListBean}"
+                componentWidth="100" />
         </h:panelGrid>
 
     </p:panelGrid>
 
-	
-	<!-- Product Templates -->
+    <hftl:formLanguageFields field="description" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" />
+    <hftl:formLanguageFields field="longDescription" entity="#{mainBackingBean.entity}" backingBean="#{mainBackingBean}" label="#{messages['offerTemplate.longDescription']}" componentWidth="100" />
+
+
+    <!-- Product Templates -->
     <c:if test="#{mode eq 'BUNDLE'}">
         <p:panel id="bundleProductPanel" header="#{messages['menu.productTemplates']}">
             <p:panel rendered="#{mainBackingBean.edit}">
                 <p:commandButton value="#{messages['bundleTemplate.addProduct']}" type="button" onclick="PF('selectProduct').show();" update=":selectProduct" />
             </p:panel>
             <p:panel>
-                <p:dataTable id="bundleTemplateList" var="prod" value="#{mainBackingBean.entity.bundleProducts}" paginator="true" rows="5" paginatorPosition="top"
-                    paginatorAlwaysVisible="true" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
-                    styleClass="ui-panelgrid-blank custom-grid" widgetVar="bundleList">
+                <p:dataTable id="bundleTemplateList" var="prod" value="#{mainBackingBean.entity.bundleProducts}" paginator="true" rows="5" paginatorPosition="top" paginatorAlwaysVisible="true"
+                    paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" styleClass="ui-panelgrid-blank custom-grid"
+                    widgetVar="bundleList">
                     <p:column>
-						<p:graphicImage value="#{defaultImageStreamer.image}"
-							cache="false" width="100" height="100">
-							<f:param name="providerCode"
-								value="#{appProvider.code}"></f:param>
-							<f:param name="fileName" value="#{prod.productTemplate.imagePath}"></f:param>
-							<f:param name="pictureGroupName" value="product"></f:param>
-						</p:graphicImage>
-					</p:column>
+                        <p:graphicImage value="#{defaultImageStreamer.image}" cache="false" width="100" height="100">
+                            <f:param name="providerCode" value="#{appProvider.code}"></f:param>
+                            <f:param name="fileName" value="#{prod.productTemplate.imagePath}"></f:param>
+                            <f:param name="pictureGroupName" value="product"></f:param>
+                        </p:graphicImage>
+                    </p:column>
                     <p:column headerText="#{messages['commons.name']}">
                         <p:link outcome="mm_productTemplateDetail" value="#{prod.productTemplate.name}">
                             <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
@@ -102,7 +99,7 @@
                     </p:column>
                     <p:column headerText="#{messages['BusinessEntity.description']}">
                         <h:outputText value="#{prod.productTemplate.description}" />
-                    </p:column>                      
+                    </p:column>
                     <p:column headerText="#{messages['commons.validFrom']}">
                         <h:outputText value="#{prod.productTemplate.validity.from}">
                             <f:converter converterId="dateTimeConverter"></f:converter>
@@ -112,7 +109,7 @@
                         <h:outputText value="#{prod.productTemplate.validity.to}">
                             <f:converter converterId="dateTimeConverter"></f:converter>
                         </h:outputText>
-                    </p:column>         
+                    </p:column>
                     <p:column headerText="#{messages['commons.actions']}" rendered="#{mainBackingBean.edit}">
                         <h:panelGroup layout="block" styleClass="form-panel-actions">
                             <p:commandButton value="#{messages['bundleTemplate.removeProduct']}" action="#{mainBackingBean.removeProductTemplateFromBundle(prod)}"
@@ -125,8 +122,7 @@
         </p:panel>
     </c:if>
 
-<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank" rendered="false">
-
+	<p:panel id="customFieldsWrappPanel" styleClass="ui-panel-blank" rendered="false">
         <f:facet name="header">
             <h:outputText value="#{messages['productTemplate.attributes']}" styleClass="SubHeader" />
             <p:commandLink action="#{customEntityTemplateBean.initCustomization(mainBackingBean.entity.class.name)}" process="@this customFieldsWrappPanel"
@@ -143,8 +139,8 @@
                 <hftl:customFields backingBean="#{mainBackingBean}" messagesId=":formId:messages" defaultTabLabel="#{messages['commons.parameters']}" />
             </p:tabView>
         </c:if>
-        
     </p:panel>
+    
 </ui:composition>
 
 </html>

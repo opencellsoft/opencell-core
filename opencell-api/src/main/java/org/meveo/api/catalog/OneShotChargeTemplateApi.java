@@ -255,7 +255,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             throw new EntityDoesNotExistsException(OneShotChargeTemplate.class, code);
         }
 
-        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+        result = new OneShotChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
 
         return result;
     }

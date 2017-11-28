@@ -80,20 +80,9 @@
 	</page>
 	
 	<page view-id=".+\/admin\/meveoUsers\/.*">
-		<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
-		<constraint>currentUser.hasRole('catalogManagement')</constraint>
-		<constraint>currentUser.hasRole('administrationManagement')</constraint>
-		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
-		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
+		<constraint>currentUser.hasRole('userManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('userVisualization')</constraint>
 	</page>
-
-    <page view-id=".+\/admin\/userGroupHierarchy\/.*">
-        <constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
-        <constraint>currentUser.hasRole('catalogManagement')</constraint>
-        <constraint>currentUser.hasRole('administrationManagement')</constraint>
-        <constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
-        <constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
-    </page>
 	
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>

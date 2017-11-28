@@ -24,7 +24,7 @@
             column1Label="#{messages['currency.currencyCode']}"
             column1="currencyCode"
             column2Label="#{messages['tradingLanguage.prDescription']}"
-            column2="descriptionEn">
+            column2="description">
         </hftl:entityPopup>
         
         <hftl:entityPopup id="popupForLanguage" header="#{messages['language.popup.header']}"
@@ -36,16 +36,14 @@
             column1Label="#{messages['language.languageCode']}"
             column1="languageCode"
             column2Label="#{messages['tradingLanguage.prDescription']}"
-            column2="descriptionEn">
+            column2="description">
         </hftl:entityPopup>
 
 		<hftl:formPanel formId="formCountry"  label="#{messages['country.countryPanel']}"	backingBean="#{countryBean}">
 		
 			<hftl:formField label="#{messages['country.code']}"		field="countryCode" required="true" maxlength="3" />
 			
-			<hftl:formField label="#{messages['country.nameEn']}" 	field="descriptionEn" required="true" />
-			
-			<hftl:formField label="#{messages['country.nameFr']}" 	field="descriptionFr" required="true" />
+			 <hftl:formLanguageFields field="description" />
 			
 			<hftl:formField id="currencySelectedId" label="#{messages['currency.currencyCode']}" field="currency" 
 			    valueLabelField="currencyCode"  required="true" popup="true"  popupId="popupForCurrency"/>

@@ -25,7 +25,6 @@ import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -912,7 +911,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String descTranslated = descriptionMap.get(translationKey);
                 if (descTranslated == null) {
                     descTranslated = account.getName().getTitle().getDescriptionOrCode();
-                    if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().containsKey(languageCode)) {
+                    if (account.getName().getTitle().getDescriptionI18n() != null && account.getName().getTitle().getDescriptionI18n().get(languageCode) != null) {
                         descTranslated = account.getName().getTitle().getDescriptionI18n().get(languageCode);
                     }
                     descriptionMap.put(translationKey, descTranslated);
@@ -985,7 +984,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Text countryNameTxt;
             if (countrybyCode != null) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription(languageCode));
+                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18nNullSafe().get(languageCode));
             } else {
                 countryNameTxt = doc.createTextNode("");
             }
@@ -1364,7 +1363,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                             if (descTranslated == null) {
                                 descTranslated = ratedTransaction.getPriceplan().getDescriptionOrCode();
                                 if (ratedTransaction.getPriceplan().getDescriptionI18n() != null
-                                        && ratedTransaction.getPriceplan().getDescriptionI18n().containsKey(languageCode)) {
+                                        && ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode) != null) {
                                     descTranslated = ratedTransaction.getPriceplan().getDescriptionI18n().get(languageCode);
                                 }
                                 descriptionMap.put(translationKey, descTranslated);
@@ -1564,7 +1563,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 String descTranslated = descriptionMap.get(translationKey);
                 if (descTranslated == null) {
                     descTranslated = taxInvoiceAgregate.getTax().getDescriptionOrCode();
-                    if (taxInvoiceAgregate.getTax().getDescriptionI18n() != null && taxInvoiceAgregate.getTax().getDescriptionI18n().containsKey(languageCode)) {
+                    if (taxInvoiceAgregate.getTax().getDescriptionI18n() != null && taxInvoiceAgregate.getTax().getDescriptionI18n().get(languageCode) != null) {
                         descTranslated = taxInvoiceAgregate.getTax().getDescriptionI18n().get(languageCode);
                     }
                     descriptionMap.put(translationKey, descTranslated);

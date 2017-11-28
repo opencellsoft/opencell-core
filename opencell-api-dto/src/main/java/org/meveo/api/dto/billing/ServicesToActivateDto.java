@@ -22,9 +22,6 @@ public class ServicesToActivateDto implements Serializable {
     private List<ServiceToActivateDto> service;
 
     public List<ServiceToActivateDto> getService() {
-        if (service == null) {
-            service = new ArrayList<>();
-        }
         return service;
     }
 
@@ -32,13 +29,15 @@ public class ServicesToActivateDto implements Serializable {
         this.service = services;
     }
 
-    public void addService(ServiceToActivateDto service) {
-        getService().add(service);
+    public void addService(ServiceToActivateDto serviceToActivate) {
+        if (service == null) {
+            service = new ArrayList<>();
+        }
+        service.add(serviceToActivate);
     }
 
     @Override
     public String toString() {
         return "ServicesToActivateDto [service=" + service + "]";
     }
-
 }

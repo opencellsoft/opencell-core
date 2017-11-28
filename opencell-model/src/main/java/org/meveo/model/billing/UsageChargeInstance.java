@@ -18,6 +18,7 @@
  */
 package org.meveo.model.billing;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -34,66 +35,76 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.model.catalog.UsageChargeTemplate;
 
 @Entity
 @Table(name = "billing_usage_charge_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_usage_charge_inst_seq"), })
-@NamedQueries({
-        @NamedQuery(name = "UsageChargeInstance.listPrepaid", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and  c.status='ACTIVE'"),
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_usage_charge_inst_seq"), })
+@NamedQueries({ @NamedQuery(name = "UsageChargeInstance.listPrepaid", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and  c.status='ACTIVE'"),
         @NamedQuery(name = "UsageChargeInstance.list", query = "SELECT c FROM UsageChargeInstance c where c.status='ACTIVE'") })
 public class UsageChargeInstance extends ChargeInstance {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "service_instance_id")
-	private ServiceInstance serviceInstance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_instance_id")
+    private ServiceInstance serviceInstance;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "counter_id")
-	private CounterInstance counter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_id")
+    private CounterInstance counter;
 
-	@Column(name = "rating_unit_description", length = 20)
-	@Size(max = 20)
-	private String ratingUnitDescription;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "last_update")
-	private Date lastUpdate;
+    @Column(name = "rating_unit_description", length = 20)
+    @Size(max = 20)
+    private String ratingUnitDescription;
 
-	public ServiceInstance getServiceInstance() {
-		return serviceInstance;
-	}
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_update")
+    private Date lastUpdate;
 
-	public void setServiceInstance(ServiceInstance serviceInstance) {
-		this.serviceInstance = serviceInstance;
-		//if (serviceInstance != null) {
-		//	serviceInstance.getUsageChargeInstances().add(this);
-		//}
-	}
+    public UsageChargeInstance() {
+        // TODO Auto-generated constructor stub
+    }
 
-	public CounterInstance getCounter() {
-		return counter;
-	}
+    public UsageChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, UsageChargeTemplate usageChargeTemplate, ServiceInstance serviceInstance,
+            InstanceStatusEnum status) {
 
-	public void setCounter(CounterInstance counter) {
-		this.counter = counter;
-	}
+        super(amountWithoutTax, amountWithTax, usageChargeTemplate, serviceInstance, status);
 
-	public Date getLastUpdate() {
-		return lastUpdate;
-	}
+        this.ratingUnitDescription = usageChargeTemplate.getRatingUnitDescription();
+        this.serviceInstance = serviceInstance;
+    }
 
-	public void setLastUpdate(Date lastUpdate) {
-		this.lastUpdate = lastUpdate;
-	}
+    public ServiceInstance getServiceInstance() {
+        return serviceInstance;
+    }
 
-	public String getRatingUnitDescription() {
-		return ratingUnitDescription;
-	}
+    public void setServiceInstance(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
 
-	public void setRatingUnitDescription(String ratingUnitDescription) {
-		this.ratingUnitDescription = ratingUnitDescription;
-	}
+    public CounterInstance getCounter() {
+        return counter;
+    }
 
+    public void setCounter(CounterInstance counter) {
+        this.counter = counter;
+    }
+
+    public Date getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(Date lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
+    public String getRatingUnitDescription() {
+        return ratingUnitDescription;
+    }
+
+    public void setRatingUnitDescription(String ratingUnitDescription) {
+        this.ratingUnitDescription = ratingUnitDescription;
+    }
 }

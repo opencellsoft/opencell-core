@@ -33,65 +33,64 @@ import org.meveo.model.catalog.ProductChargeTemplate;
 
 @Entity
 @Table(name = "billing_product_charge_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_product_chrg_inst_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_product_chrg_inst_seq"), })
 public class ProductChargeInstance extends ChargeInstance {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_chrg_tmpl_id")
-	private ProductChargeTemplate productChargeTemplate;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "product_instance_id")
-	private ProductInstance productInstance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_chrg_tmpl_id")
+    private ProductChargeTemplate productChargeTemplate;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_instance_id")
+    private ProductInstance productInstance;
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
     protected BigDecimal quantity = BigDecimal.ONE;
 
-	public ProductChargeInstance(ProductInstance productInstance, ProductChargeTemplate productChargeTemplate){
-		this.code = productInstance.getCode();
-		this.description = productInstance.getDescription();
-		this.chargeDate = productInstance.getApplicationDate();
-		this.userAccount=productInstance.getUserAccount();
-		this.subscription=productInstance.getSubscription();
-		this.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-		this.setCountry(userAccount.getBillingAccount().getTradingCountry());
-		this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
-		this.productInstance = productInstance;
-		this.status = InstanceStatusEnum.ACTIVE;
-		this.setQuantity(productInstance.getQuantity()==null?BigDecimal.ONE:productInstance.getQuantity());
-		this.chargeTemplate=productChargeTemplate;
-		this.productChargeTemplate=productChargeTemplate;		
-	}
+    public ProductChargeInstance(ProductInstance productInstance, ProductChargeTemplate productChargeTemplate) {
+        this.code = productInstance.getCode();
+        this.description = productInstance.getDescription();
+        this.chargeDate = productInstance.getApplicationDate();
+        this.userAccount = productInstance.getUserAccount();
+        this.subscription = productInstance.getSubscription();
+        this.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
+        this.setCountry(userAccount.getBillingAccount().getTradingCountry());
+        this.setCurrency(userAccount.getBillingAccount().getCustomerAccount().getTradingCurrency());
+        this.productInstance = productInstance;
+        this.status = InstanceStatusEnum.ACTIVE;
+        this.setQuantity(productInstance.getQuantity() == null ? BigDecimal.ONE : productInstance.getQuantity());
+        this.chargeTemplate = productChargeTemplate;
+        this.productChargeTemplate = productChargeTemplate;
+    }
 
-	public ProductChargeInstance() {
+    public ProductChargeInstance() {
 
-	}
+    }
 
-	public ProductChargeTemplate getProductChargeTemplate() {
-		return productChargeTemplate;
-	}
+    public ProductChargeTemplate getProductChargeTemplate() {
+        return productChargeTemplate;
+    }
 
-	public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
-		this.productChargeTemplate = productChargeTemplate;
-	}
+    public void setProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+        this.productChargeTemplate = productChargeTemplate;
+    }
 
-	public ProductInstance getProductInstance() {
-		return productInstance;
-	}
+    public ProductInstance getProductInstance() {
+        return productInstance;
+    }
 
-	public void setProductInstance(ProductInstance productInstance) {
-		this.productInstance = productInstance;
-	}
+    public void setProductInstance(ProductInstance productInstance) {
+        this.productInstance = productInstance;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
-	
-	
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 }

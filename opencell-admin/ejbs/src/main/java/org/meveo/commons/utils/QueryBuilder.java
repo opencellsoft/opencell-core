@@ -81,7 +81,7 @@ public class QueryBuilder {
      */
     public QueryBuilder(String sql, String alias) {
         q = new StringBuffer(sql);
-        this.alias = null;
+        this.alias = alias;
         params = new HashMap<String, Object>();
         hasOneOrMoreCriteria = false;
         inOrClause = false;
@@ -275,7 +275,7 @@ public class QueryBuilder {
      * @return
      */
     public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
-        if (StringUtils.isBlank(value)){
+        if (StringUtils.isBlank(value)) {
             return this;
         }
 
@@ -298,7 +298,7 @@ public class QueryBuilder {
     }
 
     public QueryBuilder addCriterionEntityInList(String field, Object entity) {
-        if (entity == null){
+        if (entity == null) {
             return this;
         }
 
@@ -528,7 +528,7 @@ public class QueryBuilder {
      * @param ascending
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
-        q.append(" ORDER BY " + orderColumn);
+        q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
         if (ascending) {
             q.append(" ASC ");
         } else {
@@ -642,11 +642,31 @@ public class QueryBuilder {
      */
     public Query getCountQuery(EntityManager em) {
         String from = "from ";
-        String s = "select count(*) " + q.toString().substring(q.indexOf(from));
 
-        Query result = em.createQuery(s);
-        for (Map.Entry<String, Object> e : params.entrySet())
+        String countSql = "select count(*) " + q.toString().substring(q.indexOf(from));
+
+        // Uncomment if plan to use addCollectionMember()
+        // String sql = q.toString().toLowerCase();
+        // if (sql.contains(" distinct")) {
+        //
+        // String regex = "from[ \\t]+[\\w\\.]+[ \\t]+(\\w+)";
+        // Pattern pattern = Pattern.compile(regex);
+        // Matcher matcher = pattern.matcher(sql);
+        // if (!matcher.find()) {
+        // throw new RuntimeException("Can not determine alias name");
+        // }
+        // String aliasName = matcher.group(1);
+        //
+        // countSql = "select count(distinct " + aliasName + ") " + q.toString().substring(q.indexOf(from));
+        // }
+
+        // Logger log = LoggerFactory.getLogger(getClass());
+        // log.trace("Count query is {}", countSql);
+
+        Query result = em.createQuery(countSql);
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             result.setParameter(e.getKey(), e.getValue());
+        }
         return result;
     }
 
@@ -670,15 +690,25 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
+     * @param fieldname
      * @return
      */
-    public String convertFieldToParam(String field) {
-        field = field.replace(".", "_").replace("(", "_").replace(")", "_");
-        StringBuilder newField = new StringBuilder(field);
+    public String convertFieldToParam(String fieldname) {
+        fieldname = fieldname.replace(".", "_").replace("(", "_").replace(")", "_");
+        StringBuilder newField = new StringBuilder(fieldname);
         while (params.containsKey(newField.toString()))
-            newField = new StringBuilder(field).append("_" + String.valueOf(new Random().nextInt(100)));
+            newField = new StringBuilder(fieldname).append("_" + String.valueOf(new Random().nextInt(100)));
         return newField.toString();
+    }
+
+    /**
+     * Convert fieldname to a collection member item name
+     * 
+     * @param fieldname Fieldname
+     * @return Fieldname converted to parameter name with suffix "Item". e.g. for "sellers" it will return sellersItem
+     */
+    public String convertFieldToCollectionMemberItem(String fieldname) {
+        return convertFieldToParam(fieldname) + "Item";
     }
 
     /**
@@ -738,4 +768,32 @@ public class QueryBuilder {
         }
         return result;
     }
+
+    // Was causing issues with distinct clause. Switched to EXISTS clause instead when using inList criteria for list type field
+    // /**
+    // * Add a collection member join e.g " IN (a.sellers) s " right after a from clause
+    // *
+    // * @param fieldName
+    // */
+    // public void addCollectionMember(String fieldName) {
+    //
+    // String sql = q.toString().toLowerCase();
+    //
+    // String regex = "(from[ \\t]+[\\w\\.]+[ \\t]+(\\w+))";
+    // Pattern pattern = Pattern.compile(regex);
+    // Matcher matcher = pattern.matcher(sql);
+    // if (!matcher.find()) {
+    // throw new RuntimeException("Can not determine where to add collection member clause");
+    // }
+    // String fromClause = matcher.group(1);
+    // String aliasName = matcher.group(2);
+    //
+    // q.insert(sql.indexOf(fromClause) + fromClause.length(),
+    // ", IN (" + (aliasName != null ? aliasName + "." : "") + fieldName + ") as " + convertFieldToCollectionMemberItem(fieldName));
+    //
+    // // Append select clause to select only a main entity
+    // if (!sql.startsWith("select") && aliasName != null) {
+    // q.insert(0, "select distinct " + aliasName + " ");
+    // }
+    // }
 }

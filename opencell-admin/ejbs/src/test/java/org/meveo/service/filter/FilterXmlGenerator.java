@@ -279,7 +279,7 @@ public class FilterXmlGenerator {
 		FilterSelector filterSelector6 = new FilterSelector();
 		filterSelector6.setTargetEntity("org.meveo.model.admin.Currency");
 		filterSelector6.setAlias("curr");
-		filterSelector6.setDisplayFields(new ArrayList<>(Arrays.asList("currencyCode", "descriptionEn")));
+		filterSelector6.setDisplayFields(new ArrayList<>(Arrays.asList("currencyCode", "description")));
 
 		filterSelectors.add(filterSelector6);
 
