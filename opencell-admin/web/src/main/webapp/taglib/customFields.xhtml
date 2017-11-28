@@ -63,7 +63,7 @@
 
     <c:forEach items="#{customFieldDataEntryBean.getGroupedFieldTemplates(entity).children}" var="cfTab" varStatus="cfTabStatus">
 
-        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data}"></c:set>
+        <c:set var="tabLabel" value="#{cfTab.data eq 'Custom fields'? defaultTabLabel: cfTab.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}" ></c:set>
         <c:set var="renderTab" value="#{cfTab.hasVisibleCustomFields(entity, cfValueHolder)}" />
 
         <p:tab title="#{tabLabel}" rendered="#{renderTab}">

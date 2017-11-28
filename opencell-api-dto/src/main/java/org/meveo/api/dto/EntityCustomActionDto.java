@@ -1,5 +1,7 @@
 package org.meveo.api.dto;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -9,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.crm.custom.EntityCustomAction;
 
 /**
+ * Custom action
+ * 
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "EntityCustomAction")
@@ -17,39 +21,72 @@ public class EntityCustomActionDto extends BaseDto {
 
     private static final long serialVersionUID = -2916923287316823939L;
 
+    /**
+     * Code
+     */
     @XmlAttribute(required = true)
     private String code;
 
+    /**
+     * Description
+     */
     @XmlAttribute()
     private String description;
 
+    /**
+     * Entity action applies to
+     */
     @XmlAttribute(required = false)
     protected String appliesTo;
 
+    /**
+     * EL expression when action button should be visible
+     */
     @XmlElement(required = false)
     private String applicableOnEl;
 
+    /**
+     * Button label
+     */
     @XmlElement(required = false)
     private String label;
 
+    /**
+     * Button label translations
+     */
+    protected List<LanguageDescriptionDto> labelsTranslated;
+
+    /**
+     * Script to execute
+     */
     private ScriptInstanceDto script;
-    
+
+    /**
+     * Where action should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;action:&lt;action relative position in tab&gt;<br/>
+     * <br/>
+     * 
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * 
+     * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
+     * english:0;action:0 OR tab:Second tab:1;action:1
+     */
     private String guiPosition;
 
     public EntityCustomActionDto() {
         super();
     }
 
-    public EntityCustomActionDto(EntityCustomAction e) {
-        this.code = e.getCode();
-        this.description = e.getDescription();
+    public EntityCustomActionDto(EntityCustomAction action) {
+        this.code = action.getCode();
+        this.description = action.getDescription();
 
-        this.appliesTo = e.getAppliesTo();
-        this.applicableOnEl = e.getApplicableOnEl();
-        this.label = e.getLabel();
-        this.guiPosition = e.getGuiPosition();
+        this.appliesTo = action.getAppliesTo();
+        this.applicableOnEl = action.getApplicableOnEl();
+        this.label = action.getLabel();
+        this.labelsTranslated = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(action.getLabelI18n());
+        this.guiPosition = action.getGuiPosition();
 
-        this.setScript(new ScriptInstanceDto(e.getScript()));
+        this.setScript(new ScriptInstanceDto(action.getScript()));
     }
 
     public String getCode() {
@@ -106,11 +143,19 @@ public class EntityCustomActionDto extends BaseDto {
             label, script);
     }
 
-	public String getGuiPosition() {
-		return guiPosition;
-	}
+    public String getGuiPosition() {
+        return guiPosition;
+    }
 
-	public void setGuiPosition(String guiPosition) {
-		this.guiPosition = guiPosition;
-	}
+    public void setGuiPosition(String guiPosition) {
+        this.guiPosition = guiPosition;
+    }
+
+    public List<LanguageDescriptionDto> getLabelsTranslated() {
+        return labelsTranslated;
+    }
+
+    public void setLabelsTranslated(List<LanguageDescriptionDto> labelsTranslated) {
+        this.labelsTranslated = labelsTranslated;
+    }
 }

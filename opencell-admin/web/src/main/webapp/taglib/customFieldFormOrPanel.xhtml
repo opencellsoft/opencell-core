@@ -35,7 +35,7 @@
         </c:if>
         <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
             <c:if test="${cfFieldOrFg.hasVisibleCustomFields(entity, cfValueHolder)}">
-                <p:fieldset legend="#{cfFieldOrFg.data}">
+                <p:fieldset legend="#{cfFieldOrFg.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}">
                     <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                         <c:set var="cft" value="#{cfField.data}" />
                         <c:if

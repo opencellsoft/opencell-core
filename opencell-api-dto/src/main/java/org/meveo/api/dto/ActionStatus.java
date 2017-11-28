@@ -7,6 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Determine the status of the MEVEO API web service response.
  * 
@@ -14,6 +17,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonInclude(Include.NON_NULL)
 public class ActionStatus {
 
     /**

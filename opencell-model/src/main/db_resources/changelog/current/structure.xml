@@ -1410,4 +1410,18 @@
         </addColumn>        
     </changeSet>
     
+    <changeSet id="#2880_20171113" author="AndriusKarpavicius">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="crm_custom_action">
+            <column name="label_i18n" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#2880_20171114" author="AndriusKarpavicius">
+        <modifyDataType tableName="crm_custom_field_tmpl" columnName="gui_position" newDataType="varchar(2000)"/>
+        <modifyDataType tableName="crm_custom_action" columnName="gui_position" newDataType="varchar(2000)"/>
+    </changeSet>
+    
 </databaseChangeLog> 

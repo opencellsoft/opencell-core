@@ -6,7 +6,7 @@
 
 <ui:composition>
 
-    <!--  not not really work. Looks like it has to be passed from c: expression -->
+    <!--  not not really work. Looks like it has to be passed from c: expression or has to be initialized before hand even the fresh page-->
     <c:if test="${entity == null}">
         <!--         <c:set var="fieldEntityIsNull" value="true"/> -->
         <c:set var="entity" value="${formLevelEntity!=null ? formLevelEntity : backingBean.entity}" />
@@ -74,7 +74,7 @@
         </div>
 
         <c:if test="#{multiLang}">
-            <ui:repeat var="languageCode" value="#{backingBean.providerLanguages}">
+            <ui:repeat var="languageCode" value="#{providerBean.providerLanguages}">
                 <div style="float: left">
                     <h:graphicImage value="/img/img#{languageCode}.png" style="height:17px; width:33px; margin-right:3px" />
                 </div>

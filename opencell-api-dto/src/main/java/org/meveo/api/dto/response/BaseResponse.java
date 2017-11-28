@@ -6,11 +6,15 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * All the Opencell API web service response must extend this class.
  * 
  * @author Edward P. Legaspi
  **/
+@JsonInclude(Include.NON_NULL)
 public abstract class BaseResponse implements Serializable {
 
     private static final long serialVersionUID = -4985814323159091933L;

@@ -4219,14 +4219,13 @@ public class Action1 extends Script {
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
-   <soapenv:Header/> 
-   <soapenv:Body> 
-      <ws:findSeller> 
-          
-         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_SELLER_ALL</sellerCode> 
-      </ws:findSeller> 
-   </soapenv:Body> 
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findSeller>\r
+         <sellerCode>${#Project#entityPrefix}_${#TestSuite#index}_SELLER_ALL</sellerCode>\r
+      </ws:findSeller>\r
+   </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="4547bad7-6411-45c4-ab21-d8865b3cbdb6"/>
             <con:assertion type="Simple Contains" name="Contains1" id="e0178d56-e4eb-41cf-bb4f-865515db301c">
@@ -12630,7 +12629,6 @@ public class Action1 extends Script {
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
                      <maxValue>50</maxValue>
-                     <cacheValue>false</cacheValue>
                   </field>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -12650,7 +12648,6 @@ public class Action1 extends Script {
                      <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
-                     <cacheValue>false</cacheValue>
                   </field>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -13032,7 +13029,6 @@ public class Action1 extends Script {
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
                      <maxValue>50</maxValue>
-                     <cacheValue>false</cacheValue>
                   </field>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -13052,7 +13048,6 @@ public class Action1 extends Script {
                      <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
                      <allowEdit>true</allowEdit>
                      <hideOnNew>false</hideOnNew>
-                     <cacheValue>false</cacheValue>
                   </field>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -29497,7 +29492,16 @@ public class Action1 extends Script {
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>true</valueRequired>\r
                   <versionable>false</versionable>\r
-                  <tags>page1 page4</tags>
+                  <tags>page1 page4</tags>\r
+                  <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
+                  <languageDescriptions>\r
+                     <languageCode>FRA</languageCode>\r
+                     <description>French potatoes</description>\r
+                  </languageDescriptions>\r
+                  <languageDescriptions>\r
+                     <languageCode>ENG</languageCode>\r
+                     <description>English pudding</description>\r
+                  </languageDescriptions>\r
                </field>\r
                <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2">\r
                   <fieldType>LONG</fieldType>\r
@@ -29505,7 +29509,7 @@ public class Action1 extends Script {
                   <storageType>SINGLE</storageType>\r
                   <valueRequired>false</valueRequired>\r
                   <versionable>false</versionable>\r
-                  <tags>page2 page4</tags>
+                  <tags>page2 page4</tags>\r
                </field>\r
             </fields>\r
             <actions>\r
@@ -29526,6 +29530,15 @@ public class Action1 extends Script {
                   </script>\r
                   <applicableOnEl>#{entity.active}</applicableOnEl>\r
                   <label>Action 2</label>\r
+                  <guiPosition>tab:First action tab|FRA=French action tab|ENG=English action tab;action:0</guiPosition>
+                  <labelsTranslated>\r
+                     <languageCode>FRA</languageCode>\r
+                     <description>French potatoes</description>\r
+                  </labelsTranslated>\r
+                  <labelsTranslated>\r
+                     <languageCode>ENG</languageCode>\r
+                     <description>English pudding</description>\r
+                  </labelsTranslated>\r
                </action>\r
             </actions>\r
          </entityCustomization>\r
@@ -29587,77 +29600,101 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2">
+            <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match">
               <con:configuration>
-                <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1">
-                     <fieldType>STRING</fieldType>
-                     <accountLevel>JOB_PurgeJob</accountLevel>
-                     <appliesTo>JOB_PurgeJob</appliesTo>
-                     <defaultValue>Hello</defaultValue>
-                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
-                     <storageType>SINGLE</storageType>
-                     <valueRequired>true</valueRequired>
-                     <versionable>false</versionable>
-                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-                     <allowEdit>true</allowEdit>
-                     <hideOnNew>false</hideOnNew>
-                     <maxValue>50</maxValue>
-                     <cacheValue>false</cacheValue>
-                     <tags>page1 page4</tags>
-                  </field>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <languageDescriptions>
+    <languageCode>FRA</languageCode>
+    <description>French potatoes</description>
+  </languageDescriptions>
+  <languageDescriptions>
+    <languageCode>ENG</languageCode>
+    <description>English pudding</description>
+  </languageDescriptions>
+  <fieldType>STRING</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>Hello</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>true</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+  <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
+  <tags>page1 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3">
+            <con:assertion type="XPath Match" id="6f0bf3cc-84d4-40cc-a3e0-09b8c207fb49" name="XPath Match 1">
               <con:configuration>
-                <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2">
-                     <fieldType>LONG</fieldType>
-                     <accountLevel>JOB_PurgeJob</accountLevel>
-                     <appliesTo>JOB_PurgeJob</appliesTo>
-                     <defaultValue>15</defaultValue>
-                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
-                     <storageType>SINGLE</storageType>
-                     <valueRequired>false</valueRequired>
-                     <versionable>false</versionable>
-                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-                     <allowEdit>true</allowEdit>
-                     <hideOnNew>false</hideOnNew>
-                     <cacheValue>false</cacheValue>
-                     <tags>page2 page4</tags>
-                  </field>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Entity field2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>LONG</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>15</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>false</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <tags>page2 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="4e54810e-c205-4378-b8bc-57c1f6dbae02" name="Contains 4">
+            <con:assertion type="XPath Match" id="9426c99d-dc19-4f1c-9ee3-33e56c4d25fc" name="XPath Match 2">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" appliesTo="JOB_PurgeJob">
-                     <applicableOnEl>#{!entity.active}</applicableOnEl>
-                     <label>Action 1</label>
-                     <script code="Action1">
-                        <type>JAVA</type>
-                        <script>import org.meveo.service.script.Script;
+                <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1"]</path>
+                <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <applicableOnEl>#{!entity.active}</applicableOnEl>
+  <label>Action 1</label>
+  <script code="Action1">
+    <type>JAVA</type>
+    <script>import org.meveo.service.script.Script;
                   public class Action1 extends Script {}</script>
-                     </script>
-                  </action>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+  </script>
+</action>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="62bbf5c3-270b-46c1-8dca-5723dd3e4193" name="Contains 5">
+            <con:assertion type="XPath Match" id="6dd4ef3d-519a-423b-baf0-d48de1e233f2" name="XPath Match 3">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob">
-                     <applicableOnEl>#{entity.active}</applicableOnEl>
-                     <label>Action 2</label>
-                     <script code="Action2">
-                        <type>JAVA</type>
-                        <script>import org.meveo.service.script.Script;
+                <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
+                <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <applicableOnEl>#{entity.active}</applicableOnEl>
+  <label>Action 2</label>
+  <labelsTranslated>
+    <languageCode>FRA</languageCode>
+    <description>French potatoes</description>
+  </labelsTranslated>
+  <labelsTranslated>
+    <languageCode>ENG</languageCode>
+    <description>English pudding</description>
+  </labelsTranslated>
+  <script code="Action2">
+    <type>JAVA</type>
+    <script>import org.meveo.service.script.Script;
                   public class Action2 extends Script {}</script>
-                     </script>
-                  </action>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+  </script>
+  <guiPosition>tab:First action tab|FRA=French action tab|ENG=English action tab;action:0</guiPosition>
+</action>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -29688,7 +29725,7 @@ public class Action1 extends Script {
       <ws:customizeEntity>\r
          <entityCustomization classname="org.meveo.admin.job.PurgeJob">\r
             <fields>\r
-               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 1">\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3">\r
                   <fieldType>STRING</fieldType>\r
                   <defaultValue>Help</defaultValue>\r
                   <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>\r
@@ -29696,24 +29733,10 @@ public class Action1 extends Script {
                   <valueRequired>false</valueRequired>\r
                   <versionable>false</versionable>\r
                </field>\r
-               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Custom field 2">\r
-                  <fieldType>LONG</fieldType>\r
-                  <defaultValue>17</defaultValue>\r
-                  <storageType>SINGLE</storageType>\r
-                  <valueRequired>false</valueRequired>\r
-                  <versionable>false</versionable>\r
-               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"/>
             </fields>\r
             <actions>\r
-               <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1">\r
-                  <script>\r
-                     <type>JAVA</type>\r
-                     <script>import org.meveo.service.script.Script;
-                  public class Action1 extends Script {}</script>\r
-                  </script>\r
-                  <applicableOnEl>#{entity.active and entity.code!='test'}</applicableOnEl>\r
-                  <label>Action 1</label>\r
-               </action>\r
+               <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" />
                <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3">\r
                   <script>\r
                      <type>JAVA</type>\r
@@ -29783,75 +29806,317 @@ public class Action1 extends Script {
                 <useRegEx>false</useRegEx>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="d9953d2c-e0de-4384-8224-4c83f7394250" name="Contains 2">
+            <con:assertion type="XPath Match" id="f7ba7a79-ae82-4f71-a03c-63bd4a3ce291" name="XPath Match">
               <con:configuration>
-                <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 1">
-                     <fieldType>STRING</fieldType>
-                     <accountLevel>JOB_PurgeJob</accountLevel>
-                     <appliesTo>JOB_PurgeJob</appliesTo>
-                     <defaultValue>Help</defaultValue>
-                     <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
-                     <storageType>SINGLE</storageType>
-                     <valueRequired>false</valueRequired>
-                     <versionable>false</versionable>
-                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-                     <allowEdit>true</allowEdit>
-                     <hideOnNew>false</hideOnNew>
-                     <maxValue>50</maxValue>
-                     <cacheValue>false</cacheValue>
-                  </field>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <languageDescriptions>
+    <languageCode>FRA</languageCode>
+    <description>French potatoes</description>
+  </languageDescriptions>
+  <languageDescriptions>
+    <languageCode>ENG</languageCode>
+    <description>English pudding</description>
+  </languageDescriptions>
+  <fieldType>STRING</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>Hello</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>true</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+  <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
+  <tags>page1 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="de5f3d52-0be9-4bf7-84de-fba46ae6e1e2" name="Contains 3">
+            <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
               <con:configuration>
-                <token><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT2" description="Custom field 2">
-                     <fieldType>LONG</fieldType>
-                     <accountLevel>JOB_PurgeJob</accountLevel>
-                     <appliesTo>JOB_PurgeJob</appliesTo>
-                     <defaultValue>17</defaultValue>
-                     <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
-                     <storageType>SINGLE</storageType>
-                     <valueRequired>false</valueRequired>
-                     <versionable>false</versionable>
-                     <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
-                     <allowEdit>true</allowEdit>
-                     <hideOnNew>false</hideOnNew>
-                     <cacheValue>false</cacheValue>
-                  </field>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>Help</defaultValue>
+  <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>false</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="96f00e2d-f3fa-4a40-b9b8-3737acb19212" name="Contains 4">
+            <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION1" description="Action 1" appliesTo="JOB_PurgeJob">
-                     <applicableOnEl>#{entity.active and entity.code!='test'}</applicableOnEl>
-                     <label>Action 1</label>
-                     <script code="Action1">
-                        <type>JAVA</type>
-                        <script>import org.meveo.service.script.Script;
-                  public class Action1 extends Script {}</script>
-                     </script>
-                  </action>]]></token>
-                <ignoreCase>false</ignoreCase>
-                <useRegEx>false</useRegEx>
+                <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
+                <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <applicableOnEl>#{entity.active}</applicableOnEl>
+  <label>Action 2</label>
+  <labelsTranslated>
+    <languageCode>FRA</languageCode>
+    <description>French potatoes</description>
+  </labelsTranslated>
+  <labelsTranslated>
+    <languageCode>ENG</languageCode>
+    <description>English pudding</description>
+  </labelsTranslated>
+  <script code="Action2">
+    <type>JAVA</type>
+    <script>import org.meveo.service.script.Script;
+                  public class Action2 extends Script {}</script>
+  </script>
+  <guiPosition>tab:First action tab|FRA=French action tab|ENG=English action tab;action:0</guiPosition>
+</action>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
-            <con:assertion type="Simple Contains" id="151c124b-d993-4152-a936-036410e0b528" name="Contains 5">
+            <con:assertion type="XPath Match" id="da534676-c16e-45ba-aeaa-3b5a5e33c9b1" name="XPath Match 3">
               <con:configuration>
-                <token><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" appliesTo="JOB_PurgeJob">
-                     <applicableOnEl>#{entity.active}</applicableOnEl>
-                     <label>Action 3</label>
-                     <script code="Action3">
-                        <type>JAVA</type>
-                        <script>import org.meveo.service.script.Script;
+                <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
+                <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <applicableOnEl>#{entity.active}</applicableOnEl>
+  <label>Action 3</label>
+  <script code="Action3">
+    <type>JAVA</type>
+    <script>import org.meveo.service.script.Script;
                   public class Action3 extends Script {}</script>
-                     </script>
-                  </action>]]></token>
+  </script>
+</action>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Customize PurgeJob 3" id="b8e6012f-e13e-49a5-bced-eee726a546b7">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>customizeEntity</con:operation>
+          <con:request name="Customize PurgeJob 3" id="37325412-edef-4e28-91b0-6c66c999581c">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:customizeEntity>\r
+         <entityCustomization classname="org.meveo.admin.job.PurgeJob">\r
+            <fields>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3-updated">\r
+                  <fieldType>DOUBLE</fieldType>\r
+                  <defaultValue>Help-updated</defaultValue>\r
+                  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
+                  <storageType>LIST</storageType>\r
+                  <valueRequired>true</valueRequired>\r
+                  <versionable>true</versionable>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1">
+                   <languageDescriptions>
+                     <languageCode>ENG</languageCode>
+                     <description>English pudding - updated</description>
+                  </languageDescriptions>
+               </field>\r
+            </fields>\r
+            <actions>\r
+               <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2">\r
+                  <labelsTranslated>\r
+                     <languageCode>ENG</languageCode>\r
+                     <description>English pudding - updated</description>\r
+                  </labelsTranslated>\r
+               </action>\r
+               <action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated">\r
+                  <script>\r
+                     <type>JAVA</type>\r
+                     <script>import org.meveo.service.script.Script;
+                  public class Action34 extends Script {}</script>\r
+                  </script>\r
+                  <applicableOnEl>#{!entity.active}</applicableOnEl>\r
+                  <label>Action 3 - updated</label>\r
+               </action>\r
+            </actions>\r
+         </entityCustomization>\r
+      </ws:customizeEntity>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="ca801a59-34a9-4d31-bd70-1dd32b03dfda"/>
+            <con:assertion type="Simple Contains" id="43bffbcc-5045-4ced-8a12-5b1199eb51c6" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Find PurgeJob customizations 4" id="3a204361-a927-46fd-8087-365a81bb586b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>findEntityCustomizations</con:operation>
+          <con:request name="Find PurgeJob customizations 4" id="7c716c95-7f19-4dfe-be43-9ff1cf4d4d1b">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:findEntityCustomizations>
+         <customizedEntityClass>org.meveo.admin.job.PurgeJob</customizedEntityClass>
+      </ws:findEntityCustomizations>
+   </soapenv:Body>
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="dc02b508-ddde-4feb-9c03-cc19140c611d"/>
+            <con:assertion type="Simple Contains" id="9bcba2be-3ac5-4070-873a-1d75da961b57" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="fdf38239-5fa8-47c2-83c5-9a86b1cf003f" name="Contains 1">
+              <con:configuration>
+                <token>&lt;entityCustomization classname="org.meveo.admin.job.PurgeJob"></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="f7ba7a79-ae82-4f71-a03c-63bd4a3ce291" name="XPath Match">
+              <con:configuration>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT1" description="Entity field1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <languageDescriptions>
+    <languageCode>FRA</languageCode>
+    <description>French potatoes</description>
+  </languageDescriptions>
+  <languageDescriptions>
+    <languageCode>ENG</languageCode>
+    <description>English pudding - updated</description>
+  </languageDescriptions>
+  <fieldType>STRING</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>Hello</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>true</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+  <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
+  <tags>page1 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
+              <con:configuration>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>Help-updated</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>SINGLE</storageType>
+  <valueRequired>true</valueRequired>
+  <versionable>true</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="c789fd9f-bbd8-4397-b577-b2f1f19aaefb" name="XPath Match 2">
+              <con:configuration>
+                <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2"]</path>
+                <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION2" description="Action 2" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <applicableOnEl>#{entity.active}</applicableOnEl>
+  <label>Action 2</label>
+  <labelsTranslated>
+    <languageCode>FRA</languageCode>
+    <description>French potatoes</description>
+  </labelsTranslated>
+  <labelsTranslated>
+    <languageCode>ENG</languageCode>
+    <description>English pudding - updated</description>
+  </labelsTranslated>
+  <script code="Action2">
+    <type>JAVA</type>
+    <script>import org.meveo.service.script.Script;
+                  public class Action2 extends Script {}</script>
+  </script>
+  <guiPosition>tab:First action tab|FRA=French action tab|ENG=English action tab;action:0</guiPosition>
+</action>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="da534676-c16e-45ba-aeaa-3b5a5e33c9b1" name="XPath Match 3">
+              <con:configuration>
+                <path>//action[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3"]</path>
+                <content><![CDATA[<action code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_ACTION3" description="Action 3 - updated" appliesTo="JOB_PurgeJob" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <applicableOnEl>#{!entity.active}</applicableOnEl>
+  <label>Action 3 - updated</label>
+  <script code="Action34">
+    <type>JAVA</type>
+    <script>import org.meveo.service.script.Script;
+                  public class Action34 extends Script {}</script>
+  </script>
+</action>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>

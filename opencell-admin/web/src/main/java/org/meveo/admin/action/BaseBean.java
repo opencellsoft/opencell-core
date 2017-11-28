@@ -921,7 +921,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @return Currently active locale
      */
-    protected Locale getCurrentLocale() {
+    public Locale getCurrentLocale() {
         return FacesContext.getCurrentInstance().getViewRoot().getLocale();
     }
 
