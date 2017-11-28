@@ -40071,21 +40071,17 @@ public class ForgotPassword extends ModuleScript{
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
             <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
-            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
-   <soapenv:Header/>\r
-   <soapenv:Body>\r
-      <ws:createOrUpdateRole>\r
-         <role name="CUSTOMER_CARE_USER" description="Customer Care User">\r
-            <permissions>\r
-               <permission permission="apiAccess" name="API User" resource="user"/>\r
-               <permission permission="administrationVisualization" name="Administration visualization" resource="administration"/>\r
-            </permissions>\r
-            <roles>\r
-               <role name="ModifyAllCE" description="Modify all CE"></role>\r
-            </roles>\r
-         </role>\r
-      </ws:createOrUpdateRole>\r
-   </soapenv:Body>\r
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <ws:createOrUpdateRole>
+         <role name="CUSTOMER_CARE_USER" description="Customer Care User">
+            <roles>
+               <role name="ModifyAllCE" description="Modify all CE"></role>
+            </roles>
+         </role>
+      </ws:createOrUpdateRole>
+   </soapenv:Body>
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="0582d6f1-bcdf-4793-863e-097319a2fc48"/>
             <con:assertion type="Simple Contains" id="665d61b2-4263-4c5f-bad6-cba03d34ee4c" name="Contains">
