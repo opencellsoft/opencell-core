@@ -18,6 +18,8 @@
  */
 package org.meveo.service.admin.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -26,6 +28,7 @@ import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -260,6 +263,21 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
         }
 
         super.remove(module);
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<T> listInstalled() {
+        QueryBuilder qb = new QueryBuilder(entityClass, "b", null);
+        qb.startOrClause();
+        qb.addCriterion("installed", "=", true, true);
+        qb.addSql("moduleSource is null");
+        qb.endOrClause();
+
+        try {
+            return (List<T>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
 }
