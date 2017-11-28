@@ -123,11 +123,15 @@ public class SubscriptionDto extends BusinessDto {
         this.endAgreementDate = endAgreementDate;
     }
 
+
+
     @Override
     public String toString() {
-        return "SubscriptionDto [code=" + getCode() + ", description=" + getDescription() + ", userAccount=" + userAccount + ", offerTemplate=" + offerTemplate
-                + ", subscriptionDate=" + subscriptionDate + ", terminationDate=" + terminationDate + ", status=" + status + ",statusDate=" + statusDate + ", customFields="
-                + customFields + ", accesses=" + accesses + ", services=" + services + ", terminationReason=" + terminationReason + ", orderNumber=" + orderNumber + "]";
+        return "SubscriptionDto [userAccount=" + userAccount + ", offerTemplate=" + offerTemplate + ", subscriptionDate=" + subscriptionDate + ", terminationDate="
+                + terminationDate + ", endAgreementDate=" + endAgreementDate + ", status=" + status + ", statusDate=" + statusDate + ", customFields=" + customFields
+                + ", accesses=" + accesses + ", services=" + services + ", products=" + products + ", productInstances=" + productInstances + ", terminationReason="
+                + terminationReason + ", orderNumber=" + orderNumber + ", subscribedTillDate=" + subscribedTillDate + ", renewed=" + renewed + ", renewalNotifiedDate="
+                + renewalNotifiedDate + ", renewalRule=" + renewalRule + "]";
     }
 
     public SubscriptionStatusEnum getStatus() {

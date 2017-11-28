@@ -17,14 +17,12 @@ import org.meveo.admin.exception.IncorrectSusbcriptionException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.api.dto.billing.ActivateServicesRequestDto;
 import org.meveo.api.dto.billing.ApplicableDueDateDelayDto;
 import org.meveo.api.dto.billing.DueDateDelayLevelEnum;
 import org.meveo.api.dto.billing.DueDateDelayReferenceDateEnum;
-import org.meveo.api.dto.billing.ServiceToActivateDto;
+import org.meveo.api.dto.billing.ServiceInstanceDto;
+import org.meveo.api.dto.billing.SubscriptionDto;
 import org.meveo.api.dto.billing.SubscriptionRenewalDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionRequestDto;
-import org.meveo.api.dto.billing.TerminateSubscriptionServicesRequestDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -398,9 +396,16 @@ public class OrderApi extends BaseApi {
 
         ProductOrderItem productOrderItem = ProductOrderItem.deserializeOrderItem(orderItem.getSource());
 
+        // For modify and delete actions, product offering might not be specified
+        // But we need productOffering so we know if product is subscription or productInstance
+
+        ProductOffering primaryOffering = orderItem.getMainOffering();
+        if (primaryOffering == null) {
+            throw new MissingParameterException("productOffering");
+        }
+
         // Ordering a new product
         if (orderItem.getAction() == OrderItemActionEnum.ADD) {
-            ProductOffering primaryOffering = orderItem.getMainOffering();
 
             // Just a simple case of ordering a single product
             if (primaryOffering instanceof ProductTemplate) {
@@ -416,39 +421,8 @@ public class OrderApi extends BaseApi {
                 // products
             } else {
 
-                // Distinguish bundled products which could be either services or products
-
-                List<Product> products = new ArrayList<>();
-                List<Product> services = new ArrayList<>();
-                int index = 1;
-                if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
-                    for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                        if (index < orderItem.getOrderItemProductOfferings().size()) {
-                            products.add(productRelationship.getProduct());
-                        } else {
-                            services.add(productRelationship.getProduct());
-                        }
-                        index++;
-                    }
-                }
-
                 // Instantiate a service
-                Subscription subscription = instantiateSubscription((OfferTemplate) primaryOffering, services, orderItem, productOrderItem, orderNumber);
-                orderItem.setSubscription(subscription);
-                // Instantiate products - find a matching product offering. The order of
-                // products must match the order of productOfferings
-                index = 1;
-                for (Product product : products) {
-                    ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
-                    productOffering = productTemplateService.refreshOrRetrieve(productOffering);
-                    ProductInstance productInstance = instantiateProduct(productOffering, product, orderItem, productOrderItem, subscription, orderNumber);
-                    if (productInstance != null) {
-                        orderItem.addProductInstance(productInstance);
-                        product.setId(productInstance.getCode());
-                    }
-                    index++;
-                }
-                productOrderItem.getProduct().setId(subscription.getCode());
+                instantiateSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
 
             }
 
@@ -461,105 +435,38 @@ public class OrderApi extends BaseApi {
                 throw new MissingParameterException("product.id");
             }
 
-            // For modify and delete actions, product offering might not be specified
-            ProductOffering primaryOffering = orderItem.getMainOffering();
-
-            // We need productOffering so we know if product is subscription or
-            // productInstance
-            if (primaryOffering == null) {
-                throw new MissingParameterException("productOffering");
-
-                // Modifying an existing product
-            } else if (primaryOffering instanceof ProductTemplate) {
-                // TODO modify product
+            // Modifying an existing product
+            if (primaryOffering instanceof ProductTemplate) {
+                // TODO For now modify product does nothing
 
                 ProductInstance productInstance = productInstanceService.findByCode(productOrderItem.getProduct().getId());
                 if (productInstance == null) {
                     throw new EntityDoesNotExistsException(ProductInstance.class, productOrderItem.getProduct().getId());
                 }
                 log.debug("will modify product instance {}", productInstance);
+
                 orderItem.addProductInstance(productInstance);
 
                 // Modifying an existing subscription
             } else if (primaryOffering instanceof OfferTemplate) {
-
-                Subscription subscription = subscriptionService.findByCode(productOrderItem.getProduct().getId());
-                if (subscription == null) {
-                    throw new EntityDoesNotExistsException(Subscription.class, productOrderItem.getProduct().getId());
-                }
-                log.debug("will modify subscription {}", subscription);
-
-                // Verify that subscription properties match
-                if (!subscription.getUserAccount().equals(orderItem.getUserAccount())) {
-                    throw new MeveoApiException("Sub's userAccount doesn't match with orderitem's billingAccount");
-                }
-
-                // Update renewal rule if applicable
-                subscription.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(),
-                    extractSubscriptionRenewalDto(productOrderItem.getProduct()), subscription.isRenewed()));
-
-                // Validate and populate customFields
-                CustomFieldsDto customFields = extractCustomFields(productOrderItem.getProduct(), Subscription.class);
-
-                try {
-                    populateCustomFields(customFields, subscription, true, true);
-                } catch (MissingParameterException e) {
-                    log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-                    throw e;
-                } catch (Exception e) {
-                    log.error("Failed to associate custom field instance to an entity", e);
-                    throw e;
-                }
-
-                // Services are expressed as child products
-                // instantiate, activate and terminate services
-                List<Product> services = new ArrayList<>();
-                if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
-                    for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                        services.add(productRelationship.getProduct());
-                    }
-                }
-
-                processServices(subscription, services, orderNumber);
-                subscription = subscriptionService.update(subscription);
-
-                orderItem.setSubscription(subscription);
+                updateSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
 
             }
+
         } else if (orderItem.getAction() == OrderItemActionEnum.DELETE) {
 
             if (productOrderItem.getProduct().getId() == null) {
                 throw new MissingParameterException("product.id");
             }
-
-            // For modify and delete actions, product offering might not be specified
-            ProductOffering primaryOffering = orderItem.getMainOffering();
-
-            if (primaryOffering == null) {
-                throw new MissingParameterException("productOffering");
-
-                // Modifying an existing product
-            } else if (primaryOffering instanceof ProductTemplate) {
+            // Terminating an existing product
+            if (primaryOffering instanceof ProductTemplate) {
                 // modify product
 
-                // Modifying an existing subscription
+                // Terminating an existing subscription
             } else if (primaryOffering instanceof OfferTemplate) {
 
-                Subscription subscription = subscriptionService.findByCode(productOrderItem.getProduct().getId());
-                log.debug("will modify subscription {}", subscription);
-                if (subscription == null) {
-                    throw new EntityDoesNotExistsException(Subscription.class, productOrderItem.getProduct().getId());
-                }
+                deleteSubscription((OfferTemplate) primaryOffering, orderItem, productOrderItem, orderNumber);
             }
-
-            TerminateSubscriptionRequestDto terminateSubscription = new TerminateSubscriptionRequestDto();
-            terminateSubscription.setSubscriptionCode(productOrderItem.getProduct().getId());
-            terminateSubscription.setTerminationDate((Date) getProductCharacteristic(productOrderItem.getProduct(),
-                OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-            terminateSubscription.setTerminationReason(
-                (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
-
-            subscriptionApi.terminateSubscription(terminateSubscription, orderNumber);
 
         }
 
@@ -569,49 +476,136 @@ public class OrderApi extends BaseApi {
         log.info("Finished processing order item {} {}", order.getCode(), orderItem.getItemId());
     }
 
-    private Subscription instantiateSubscription(OfferTemplate offerTemplate, List<Product> services, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,
-            String orderNumber) throws BusinessException, MeveoApiException {
+    private Subscription instantiateSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)
+            throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating subscription from offer template {} for order {} line {}", offerTemplate.getCode(), orderItem.getOrder().getCode(), orderItem.getItemId());
 
-        Product product = productOrderItem.getProduct();
-        String subscriptionCode = (String) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
-            UUID.randomUUID().toString());
+        // Distinguish bundled products which could be either services or products
 
+        List<Product> products = new ArrayList<>();
+        List<Product> services = new ArrayList<>();
+        int index = 1;
+        if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+            for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
+                if (index < orderItem.getOrderItemProductOfferings().size()) {
+                    products.add(productRelationship.getProduct());
+                } else {
+                    services.add(productRelationship.getProduct());
+                }
+                index++;
+            }
+        }
+
+        // Instantiate a subscription with services
+        Product subscriptionProduct = productOrderItem.getProduct();
+        String subscriptionCode = (String) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_CODE.getCharacteristicName(), String.class,
+            UUID.randomUUID().toString());
         if (subscriptionService.findByCode(subscriptionCode) != null) {
             throw new BusinessException("Subscription with code " + subscriptionCode + " already exists");
         }
 
-        Subscription subscription = new Subscription();
-        subscription.setCode(subscriptionCode);
-        subscription.setUserAccount(orderItem.getUserAccount());
-        subscription.setOffer(offerTemplate);
+        SubscriptionDto subscriptionDto = new SubscriptionDto();
 
-        subscription.setSubscriptionDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-            DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
-        subscription.setEndAgreementDate((Date) getProductCharacteristic(product, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
-
-        subscription.setSubscriptionRenewal(subscriptionApi.subscriptionRenewalFromDto(null, extractSubscriptionRenewalDto(product), false));
-
-        // Validate and populate customFields
-        CustomFieldsDto customFields = extractCustomFields(product, Subscription.class);
-
-        try {
-            populateCustomFields(customFields, subscription, true, true);
-        } catch (MissingParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw new BusinessException("Failed to associate custom field instance to an entity", e);
-        }
-
-        subscriptionService.create(subscription);
+        subscriptionDto.setCode(subscriptionCode);
+        subscriptionDto.setUserAccount(orderItem.getUserAccount().getCode());
+        subscriptionDto.setOfferTemplate(offerTemplate.getCode());
+        subscriptionDto.setSubscriptionDate((Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+            Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
+        subscriptionDto.setEndAgreementDate(
+            (Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+        subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(subscriptionProduct));
+        subscriptionDto.setCustomFields(extractCustomFields(subscriptionProduct, Subscription.class));
 
         // instantiate and activate services
-        processServices(subscription, services, orderNumber);
+        extractServices(subscriptionDto, services);
+
+        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
+
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        orderItem.setSubscription(subscription);
+
+        productOrderItem.getProduct().setId(subscription.getCode());
+
+        // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
+        index = 1;
+        for (Product productOfProduct : products) {
+            ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
+            productOffering = productTemplateService.refreshOrRetrieve(productOffering);
+            ProductInstance productInstance = instantiateProduct(productOffering, productOfProduct, orderItem, productOrderItem, subscription, orderNumber);
+            if (productInstance != null) {
+                orderItem.addProductInstance(productInstance);
+                productOfProduct.setId(productInstance.getCode());
+            }
+            index++;
+        }
 
         return subscription;
+    }
+
+    private Subscription updateSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)
+            throws BusinessException, MeveoApiException {
+        String subscriptionCode = productOrderItem.getProduct().getId();
+
+        log.debug("Updating subscription {} from offer template {} for order {} line {}", subscriptionCode, offerTemplate.getCode(), orderItem.getOrder().getCode(),
+            orderItem.getItemId());
+
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+        // Verify that subscription properties match
+        if (!subscription.getUserAccount().equals(orderItem.getUserAccount())) {
+            throw new MeveoApiException("Subscription's userAccount doesn't match with orderitem's billingAccount");
+        }
+        Product subscriptionProduct = productOrderItem.getProduct();
+
+        SubscriptionDto subscriptionDto = new SubscriptionDto();
+        subscriptionDto.setCode(subscriptionCode);
+        subscriptionDto.setEndAgreementDate(
+            (Date) getProductCharacteristic(subscriptionProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+        subscriptionDto.setRenewalRule(extractSubscriptionRenewalDto(productOrderItem.getProduct()));
+        subscriptionDto.setCustomFields(extractCustomFields(productOrderItem.getProduct(), Subscription.class));
+
+        // Services are expressed as child products
+        // instantiate, activate and terminate services
+        List<Product> services = new ArrayList<>();
+        if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
+            for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
+                services.add(productRelationship.getProduct());
+            }
+        }
+
+        extractServices(subscriptionDto, services);
+
+        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
+
+        subscriptionService.refresh(subscription);
+        orderItem.setSubscription(subscription);
+
+        return subscription;
+    }
+
+    private void deleteSubscription(OfferTemplate offerTemplate, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem, String orderNumber)
+            throws BusinessException, MeveoApiException {
+
+        String subscriptionCode = productOrderItem.getProduct().getId();
+
+        log.debug("Deleting subscription {} from offer template {} for order {} line {}", subscriptionCode, offerTemplate.getCode(), orderItem.getOrder().getCode(),
+            orderItem.getItemId());
+        Subscription subscription = subscriptionService.findByCode(subscriptionCode);
+        if (subscription == null) {
+            throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
+        }
+
+        SubscriptionDto subscriptionDto = new SubscriptionDto();
+        subscriptionDto.setCode(subscriptionCode);
+        subscriptionDto.setTerminationDate((Date) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(),
+            Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
+        subscriptionDto.setTerminationReason(
+            (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
+        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
     }
 
     private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,
@@ -723,6 +717,9 @@ public class OrderApi extends BaseApi {
                 } else if (valueClass == Integer.class) {
                     value = new Integer((String) value);
 
+                } else if (valueClass == Long.class) {
+                    value = new Long((String) value);
+
                 } else if (valueClass == Date.class) {
                     String originalValue = (String) value;
                     value = DateUtils.parseDateWithPattern(originalValue, DateUtils.DATE_TIME_PATTERN);
@@ -745,65 +742,54 @@ public class OrderApi extends BaseApi {
         return value;
     }
 
-    private void processServices(Subscription subscription, List<Product> services, String orderNumber)
+    private void extractServices(SubscriptionDto subscriptionDto, List<Product> services)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
-
-        ActivateServicesRequestDto activateServicesRequestDto = new ActivateServicesRequestDto();
-        activateServicesRequestDto.setSubscription(subscription.getCode());
-
-        List<TerminateSubscriptionServicesRequestDto> servicesToTerminate = new ArrayList<>();
 
         for (Product serviceProduct : services) {
 
             String serviceCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_CODE.getCharacteristicName(), String.class, null);
+            Long serviceId = (Long) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_ID.getCharacteristicName(), Long.class, null);
 
-            if (StringUtils.isBlank(serviceCode)) {
-                throw new MissingParameterException("serviceCode");
-            }
+            Date terminationDate = (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null);
 
-            // Service will be activated
-            if (getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null) == null) {
+            ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto();
+            subscriptionDto.getServices().addServiceInstance(serviceInstanceDto);
 
-                ServiceToActivateDto service = new ServiceToActivateDto();
-                service.setCode(serviceCode);
-                service.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(),
-                    BigDecimal.class, new BigDecimal(1)));
-                service.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(), Date.class,
-                    DateUtils.setTimeToZero(new Date())));
-                service.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(), Date.class,
-                    DateUtils.setTimeToZero(new Date())));
+            serviceInstanceDto.setId(serviceId);
+            serviceInstanceDto.setCode(serviceCode);
 
-                // FIX - no way to set value via API
-                // service.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct,
-                // OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
-                // Date.class,
-                // null));
+            if (terminationDate != null) {
+                if (StringUtils.isBlank(serviceCode) && serviceId == null) {
+                    throw new MissingParameterException("serviceCode or serviceId");
+                }
 
-                service.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
-
-                activateServicesRequestDto.getServicesToActivateDto().addService(service);
-
-                // Service will be terminated
-            } else {
-
-                TerminateSubscriptionServicesRequestDto terminationDto = new TerminateSubscriptionServicesRequestDto();
-                terminationDto.setSubscriptionCode(subscription.getCode());
-                terminationDto
-                    .setTerminationDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null));
-                terminationDto.setTerminationReason(
+                serviceInstanceDto.setTerminationDate(terminationDate);
+                serviceInstanceDto.setTerminationReason(
                     (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
-                terminationDto.getServices().add(serviceCode);
-                servicesToTerminate.add(terminationDto);
-            }
-        }
+                // Service will be activated
+            } else if (serviceId == null) {
 
-        // Activate services
-        if (!activateServicesRequestDto.getServicesToActivateDto().getService().isEmpty()) {
-            subscriptionApi.activateServices(activateServicesRequestDto, orderNumber, true);
-        }
-        if (!servicesToTerminate.isEmpty()) {
-            for (TerminateSubscriptionServicesRequestDto terminationDto : servicesToTerminate) {
-                subscriptionApi.terminateServices(terminationDto, orderNumber);
+                if (StringUtils.isBlank(serviceCode)) {
+                    throw new MissingParameterException("serviceCode");
+                }
+
+                serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
+                    OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY.getCharacteristicName(), BigDecimal.class, new BigDecimal(1)));
+                serviceInstanceDto.setSubscriptionDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
+                    Date.class, DateUtils.setTimeToZero(new Date())));
+                serviceInstanceDto.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
+                    Date.class, DateUtils.setTimeToZero(new Date())));
+
+                serviceInstanceDto.setEndAgreementDate(
+                    (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
+                serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
+
+                // Service will be updated
+            } else if (serviceId != null) {
+                serviceInstanceDto.setCustomFields(extractCustomFields(serviceProduct, ServiceInstance.class));
+
+                serviceInstanceDto.setEndAgreementDate(
+                    (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
             }
         }
     }

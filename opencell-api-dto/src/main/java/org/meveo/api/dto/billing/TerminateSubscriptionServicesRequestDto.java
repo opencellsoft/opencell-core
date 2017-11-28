@@ -20,8 +20,11 @@ public class TerminateSubscriptionServicesRequestDto extends BaseDto {
 
     private static final long serialVersionUID = 7356243821434866938L;
 
-    @XmlElement(required = true)
+    @XmlElement()
     private List<String> services;
+
+    @XmlElement()
+    private List<Long> serviceIds;
 
     @XmlElement(required = true)
     private String subscriptionCode;
@@ -32,11 +35,32 @@ public class TerminateSubscriptionServicesRequestDto extends BaseDto {
     @XmlElement(required = true)
     private Date terminationDate;
 
+    private String orderNumber;
+
+    public List<Long> getServiceIds() {
+        return serviceIds;
+    }
+
+    public void setServiceIds(List<Long> serviceIds) {
+        this.serviceIds = serviceIds;
+    }
+
+    public void addServiceId(Long serviceId) {
+        if (serviceIds == null) {
+            serviceIds = new ArrayList<>();
+        }
+        serviceIds.add(serviceId);
+    }
+
     public List<String> getServices() {
+        return services;
+    }
+
+    public void addServiceCode(String serviceCode) {
         if (services == null) {
             services = new ArrayList<>();
         }
-        return services;
+        services.add(serviceCode);
     }
 
     public void setServices(List<String> services) {
@@ -67,10 +91,17 @@ public class TerminateSubscriptionServicesRequestDto extends BaseDto {
         this.subscriptionCode = subscriptionCode;
     }
 
-	@Override
-    public String toString() {
-        return "TerminateSubscriptionServicesDto [services=" + services + ", subscriptionCode=" + subscriptionCode + ", terminationReason=" + terminationReason
-                + ", terminationDate=" + terminationDate + "]";
+    public String getOrderNumber() {
+        return orderNumber;
     }
 
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "TerminateSubscriptionServicesRequestDto [services=" + services + ", serviceIds=" + serviceIds + ", subscriptionCode=" + subscriptionCode + ", terminationReason="
+                + terminationReason + ", terminationDate=" + terminationDate + ", orderNumber=" + orderNumber + "]";
+    }
 }

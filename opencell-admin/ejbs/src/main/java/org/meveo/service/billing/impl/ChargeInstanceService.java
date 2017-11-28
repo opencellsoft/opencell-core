@@ -18,8 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Date;
-
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
@@ -27,16 +25,13 @@ import javax.persistence.NonUniqueResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
-import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.UsageChargeInstance;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.service.base.BusinessService;
 
 @Stateless
@@ -88,79 +83,6 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
             log.error("findByCodeAndService error={} ", e.getMessage());
         }
         return chargeInstance;
-    }
-
-    public RecurringChargeInstance recurringChargeInstanciation(ServiceInstance serviceInst, RecurringChargeTemplate recurringChargeTemplate, Date subscriptionDate, Seller seller)
-            throws BusinessException {
-
-        if (serviceInst == null) {
-            throw new BusinessException("service instance does not exist.");
-        }
-
-        if (serviceInst.getStatus() == InstanceStatusEnum.CANCELED || serviceInst.getStatus() == InstanceStatusEnum.TERMINATED
-                || serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
-            throw new BusinessException("service instance is " + serviceInst.getStatus() + ". code=" + serviceInst.getCode());
-        }
-        String chargeCode = recurringChargeTemplate.getCode();
-        RecurringChargeInstance chargeInst = (RecurringChargeInstance) recurringChargeInstanceService.findByCodeAndService(chargeCode, serviceInst.getId());
-
-        if (chargeInst != null) {
-            throw new BusinessException("charge instance code already exists. code=" + chargeCode);
-        }
-
-        RecurringChargeInstance chargeInstance = new RecurringChargeInstance();
-        chargeInstance.setCode(chargeCode);
-        chargeInstance.setDescription(recurringChargeTemplate.getDescription());
-        chargeInstance.setStatus(InstanceStatusEnum.INACTIVE);
-        chargeInstance.setChargeDate(subscriptionDate);
-        chargeInstance.setSubscriptionDate(subscriptionDate);
-        chargeInstance.setSubscription(serviceInst.getSubscription());
-        chargeInstance.setChargeTemplate(recurringChargeTemplate);
-        chargeInstance.setRecurringChargeTemplate(recurringChargeTemplate);
-        chargeInstance.setServiceInstance(serviceInst);
-        chargeInstance.setSeller(seller);
-        chargeInstance.setCountry(serviceInst.getSubscription().getUserAccount().getBillingAccount().getTradingCountry());
-        chargeInstance.setCurrency(serviceInst.getSubscription().getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
-        chargeInstance.setOrderNumber(serviceInst.getOrderNumber());
-
-        recurringChargeInstanceService.create(chargeInstance);
-        return chargeInstance;
-    }
-
-    public void recurringChargeDeactivation(long recurringChargeInstanId, Date terminationDate) throws BusinessException {
-
-        RecurringChargeInstance recurringChargeInstance = recurringChargeInstanceService.findById(recurringChargeInstanId, true);
-
-        log.debug("recurringChargeDeactivation : recurringChargeInstanceId={},ChargeApplications size={}", recurringChargeInstance.getId(),
-            recurringChargeInstance.getWalletOperations().size());
-
-        recurringChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-
-        // chargeApplicationService.cancelChargeApplications(recurringChargeInstanId,
-        // null);
-
-        recurringChargeInstanceService.update(recurringChargeInstance);
-
-    }
-
-    public void recurringChargeReactivation(ServiceInstance serviceInst, Subscription subscription, Date subscriptionDate) throws BusinessException {
-        if (subscription.getStatus() == SubscriptionStatusEnum.RESILIATED || subscription.getStatus() == SubscriptionStatusEnum.CANCELED) {
-            throw new BusinessException("subscription is " + subscription.getStatus());
-        }
-
-        if (serviceInst.getStatus() == InstanceStatusEnum.TERMINATED || serviceInst.getStatus() == InstanceStatusEnum.CANCELED
-                || serviceInst.getStatus() == InstanceStatusEnum.SUSPENDED) {
-            throw new BusinessException(
-                "service instance is " + subscription.getStatus() + ". service Code=" + serviceInst.getCode() + ",subscription Code" + subscription.getCode());
-        }
-
-        for (RecurringChargeInstance recurringChargeInstance : serviceInst.getRecurringChargeInstances()) {
-            recurringChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-            // recurringChargeInstance.setSubscriptionDate(subscriptionDate);
-            recurringChargeInstance.setTerminationDate(null);
-            recurringChargeInstance.setChargeDate(subscriptionDate);
-            recurringChargeInstanceService.update(recurringChargeInstance);
-        }
     }
 
     @SuppressWarnings("unchecked")

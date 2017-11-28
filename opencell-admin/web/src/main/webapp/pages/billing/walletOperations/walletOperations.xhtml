@@ -158,13 +158,15 @@
             <hftl:searchField label="#{messages['walletOperation.param1']}" field="parameter1" />
             <hftl:searchField label="#{messages['walletOperation.param2']}" field="parameter2" />
             <hftl:searchField label="#{messages['walletOperation.param3']}" field="parameter3" />
-            <hftl:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
             <hftl:searchField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />
             <hftl:searchField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
             <hftl:searchField label="#{messages['walletOperation.startDate']}" field="startDate" />
             <hftl:searchField label="#{messages['walletOperation.endDate']}" field="endDate" />
             <hftl:searchField label="#{messages['walletOperation.quantity']}" field="quantity" />
+            <hftl:searchField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax"/>
+            <hftl:searchField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" />
             <hftl:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
+            <hftl:searchField label="#{messages['invoice.amountWithTax']}" field="amountWithTax"/>
 
         </hftl:searchPanel>
         <hftl:dataList label="#{messages['walletOperations.title']}"
@@ -176,8 +178,8 @@
 			<hftl:column label="#{messages['walletOperation.operationDate']}" field="operationDate" isDate="true" />
 			<hftl:column label="#{messages['walletOperation.chargeInstance']}" field="chargeInstance.code" />
 			<hftl:column label="#{messages['walletOperation.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true"  rendered="#{ ! appProvider.entreprise}"/>
+			<hftl:column label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true"/>
+			<hftl:column label="#{messages['invoice.amountWithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['walletOperation.status']}" field="status.label" isMessage="true" />
 				 <p:column  width="50px"> 
 			<f:facet name="header">

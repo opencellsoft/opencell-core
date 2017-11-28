@@ -21,71 +21,97 @@ package org.meveo.model.billing;
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.catalog.OneShotChargeTemplate;
+import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
 @Entity
 @Table(name = "billing_one_shot_charge_inst")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_one_shot_chrg_inst_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_one_shot_chrg_inst_seq"), })
 public class OneShotChargeInstance extends ChargeInstance {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subs_serv_inst_id")
-	private ServiceInstance subscriptionServiceInstance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subs_serv_inst_id")
+    private ServiceInstance subscriptionServiceInstance;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "term_serv_inst_id")
-	private ServiceInstance terminationServiceInstance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "term_serv_inst_id")
+    private ServiceInstance terminationServiceInstance;
 
-	public OneShotChargeInstance(String code, String description, Date chargeDate,
-			BigDecimal amountWithoutTax, BigDecimal amount2, Subscription subscription,
-			OneShotChargeTemplate oneShotChargeTemplate) {
-		this.code = code;
-		this.description = description;
-		setChargeDate(chargeDate);
-		setAmountWithoutTax(amountWithoutTax);
-		setAmountWithTax(amount2);
-		this.setSubscription(subscription);
-		this.setSeller(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller());
-		this.setCountry(subscription.getUserAccount().getBillingAccount().getTradingCountry());
-		this.setCurrency(subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency());
-		this.chargeTemplate = oneShotChargeTemplate;
-		this.status = InstanceStatusEnum.ACTIVE;
-	}
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS, nullable = false)
+    @NotNull
+    protected BigDecimal quantity = BigDecimal.ONE;
 
-	public OneShotChargeInstance() {
+    public OneShotChargeInstance() {
 
-	}
+    }
 
-	public ServiceInstance getSubscriptionServiceInstance() {
-		return subscriptionServiceInstance;
-	}
+    public OneShotChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, OneShotChargeTemplate chargeTemplate, ServiceInstance serviceInstance,
+            InstanceStatusEnum status) {
 
-	public void setSubscriptionServiceInstance(ServiceInstance subscriptionServiceInstance) {
-		this.subscriptionServiceInstance = subscriptionServiceInstance;
-		//if (subscriptionServiceInstance != null) {
-		//	subscriptionServiceInstance.getSubscriptionChargeInstances().add(this);
-		//}
-	}
+        super(amountWithoutTax, amountWithTax, chargeTemplate, serviceInstance, status);
 
-	public ServiceInstance getTerminationServiceInstance() {
-		return terminationServiceInstance;
-	}
+        this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
 
-	public void setTerminationServiceInstance(ServiceInstance terminationServiceInstance) {
-		this.terminationServiceInstance = terminationServiceInstance;
-		//if (terminationServiceInstance != null) {
-		//	terminationServiceInstance.getTerminationChargeInstances().add(this);
-		//}
-	}
+        if (chargeTemplate.getOneShotChargeTemplateType() == OneShotChargeTemplateTypeEnum.TERMINATION) {
+            setTerminationServiceInstance(serviceInstance);
+        } else {
+            setSubscriptionServiceInstance(serviceInstance);
+        }
+    }
 
+    public OneShotChargeInstance(String description, Date chargeDate, BigDecimal amountWithoutTax, BigDecimal amountWithTax, BigDecimal quantity, String orderNumber,
+            Subscription subscription, OneShotChargeTemplate chargeTemplate) {
+
+        this.code = chargeTemplate.getCode();
+        this.description = description != null ? description : chargeTemplate.getDescription();
+        this.chargeDate = chargeDate;
+        this.amountWithoutTax = amountWithoutTax;
+        this.amountWithTax = amountWithTax;
+        this.userAccount = subscription.getUserAccount();
+        this.subscription = subscription;
+        this.seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
+        this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+        this.chargeTemplate = chargeTemplate;
+        this.quantity = quantity == null ? BigDecimal.ONE : quantity;
+        this.orderNumber = orderNumber;
+        this.status = InstanceStatusEnum.ACTIVE;
+    }
+
+    public ServiceInstance getSubscriptionServiceInstance() {
+        return subscriptionServiceInstance;
+    }
+
+    public void setSubscriptionServiceInstance(ServiceInstance subscriptionServiceInstance) {
+        this.subscriptionServiceInstance = subscriptionServiceInstance;
+    }
+
+    public ServiceInstance getTerminationServiceInstance() {
+        return terminationServiceInstance;
+    }
+
+    public void setTerminationServiceInstance(ServiceInstance terminationServiceInstance) {
+        this.terminationServiceInstance = terminationServiceInstance;
+    }
+
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 }
