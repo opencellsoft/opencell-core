@@ -212,4 +212,23 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
         return PaymentStatusEnum.REJECTED;
     }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doRefundToken(org.meveo.model.payments.CardPaymentMethod, java.lang.Long, java.util.Map)
+     */
+    @Override
+    public PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doRefundCard(org.meveo.model.payments.CustomerAccount, java.lang.Long, java.lang.String, java.lang.String, java.lang.String, java.lang.String, org.meveo.model.payments.CreditCardTypeEnum, java.lang.String, java.util.Map)
+     */
+    @Override
+    public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+            CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

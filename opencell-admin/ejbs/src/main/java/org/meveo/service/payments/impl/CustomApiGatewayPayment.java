@@ -67,7 +67,52 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 		
 	}
 
+    @Override
+    public PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
+        scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
 
-	
-	
+        paymentScriptInterface.doRefundToken(scriptContext);
+
+        PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+        doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
+        doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+        doPaymentResponseDto.setErrorMessage((String) scriptContext.get(PaymentScript.RESULT_ERROR_MSG));
+        doPaymentResponseDto.setCodeClientSide((String) scriptContext.get(PaymentScript.RESULT_CODE_CLIENT_SIDE));
+        doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
+        doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
+        return doPaymentResponseDto;
+    }
+
+
+    @Override
+    public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+            CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_NUMBER, cardNumber);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_OWNER, ownerName);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_EXPIRATION, expirayDate);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_TYPE, cardType);
+        scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
+        scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_CVV, cvv);
+
+        paymentScriptInterface.doRefundCard(scriptContext);
+
+        PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+        doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
+        doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+        doPaymentResponseDto.setErrorMessage((String) scriptContext.get(PaymentScript.RESULT_ERROR_MSG));
+        doPaymentResponseDto.setCodeClientSide((String) scriptContext.get(PaymentScript.RESULT_CODE_CLIENT_SIDE));
+        doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
+        doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
+        doPaymentResponseDto.setTokenId((String) scriptContext.get(PaymentScript.RESULT_TOKEN_ID));
+        return doPaymentResponseDto;
+    }
+
 }

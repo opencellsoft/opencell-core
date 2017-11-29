@@ -3,7 +3,7 @@
 	<groupId>info.opencell.tests</groupId>
 	<artifactId>opencelltests</artifactId>
 	<name>Opencell tests</name>
-	<version>4.7.2</version>
+	<version>4.7.3</version>
 
 	<pluginRepositories>
 		<pluginRepository>
@@ -95,4 +95,5 @@
 		</plugins>
 	</reporting>
 
+	<packaging>ejb</packaging>
 </project>

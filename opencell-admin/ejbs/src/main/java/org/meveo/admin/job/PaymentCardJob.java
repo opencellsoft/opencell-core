@@ -61,6 +61,10 @@ public class PaymentCardJob extends Job {
         lisValuesYesNo.put("YES", "YES");
         lisValuesYesNo.put("NO", "NO");
 
+        Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
+        lisValuesCreditDebit.put("Credit", "Payment");
+        lisValuesCreditDebit.put("Debit", "Refund");
+        
         CustomFieldTemplate createAO = new CustomFieldTemplate();
         createAO.setCode("PaymentCardJob_createAO");
         createAO.setAppliesTo("JOB_PaymentCardJob");
@@ -82,6 +86,17 @@ public class PaymentCardJob extends Job {
         matchingAO.setValueRequired(false);
         matchingAO.setListValues(lisValuesYesNo);
         result.put("PaymentCardJob_matchingAO", matchingAO);
+        
+        CustomFieldTemplate creditOrDebit = new CustomFieldTemplate();
+        creditOrDebit.setCode("PaymentCardJob_creditOrDebit");
+        creditOrDebit.setAppliesTo("JOB_PaymentCardJob");
+        creditOrDebit.setActive(true);
+        creditOrDebit.setDefaultValue("Credit");
+        creditOrDebit.setDescription(resourceMessages.getString("jobExecution.paymentOrRefund"));
+        creditOrDebit.setFieldType(CustomFieldTypeEnum.LIST);
+        creditOrDebit.setValueRequired(true);
+        creditOrDebit.setListValues(lisValuesCreditDebit);
+        result.put("PaymentCardJob_creditOrDebit", creditOrDebit);
 
         return result;
     }

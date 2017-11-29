@@ -12,9 +12,11 @@ import javax.inject.Inject;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.meveo.service.payments.impl.RefundService;
 import org.slf4j.Logger;
 
 /**
@@ -29,34 +31,43 @@ public class UnitPaymentCardJobBean {
     private Logger log;
 
     @Inject
-    private RecordedInvoiceService recordedInvoiceService;
+    private AccountOperationService accountOperationService;
 
     @Inject
     private PaymentService paymentService;
+    
+    @Inject
+    private RefundService refundService;
 
-    // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO) {
-	log.debug("Running with RecordedInvoice ID={}", aoId);
+    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO,OperationCategoryEnum operationCategory) {
+        log.debug("Running with RecordedInvoice ID={}", aoId);
 
-	RecordedInvoice recordedInvoice = null;
-	try {
-	    recordedInvoice = recordedInvoiceService.findById(aoId);
-	    if (recordedInvoice == null) {
-		return;
-	    }
-	    List<Long> listAOids = new ArrayList<>();
-	    listAOids.add(aoId);
-	    PayByCardResponseDto doPaymentResponseDto = paymentService.payByCard(recordedInvoice.getCustomerAccount(),
-		    recordedInvoice.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
-	    if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
-		result.registerSucces();
-	    }
+        AccountOperation accountOperation = null;
+        try {
+            accountOperation = accountOperationService.findById(aoId);
+            if (accountOperation == null) {
+                return;
+            }
+            List<Long> listAOids = new ArrayList<>();
+            listAOids.add(aoId);
+            PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+            if(operationCategory == OperationCategoryEnum.CREDIT) {
+                doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
+                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+            }else {
+                doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
+                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+            }
+           
+            if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
+                result.registerSucces();
+            }
 
-	} catch (Exception e) {
-	    log.error("Failed to pay recorded invoice id:" + aoId, e);
-	    result.registerError(aoId, e.getMessage());
-	    result.addReport("RecordedInvoice id : " + aoId + " RejectReason : " + e.getMessage());
-	}
+        } catch (Exception e) {
+            log.error("Failed to pay recorded invoice id:" + aoId, e);
+            result.registerError(aoId, e.getMessage());
+            result.addReport("AccountOperation id : " + aoId + " RejectReason : " + e.getMessage());
+        }
     }
 }
