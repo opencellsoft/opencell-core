@@ -128,7 +128,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (gatewayPaymentInterface != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
                 StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType(), coutryCode);
+                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType().getId(), coutryCode);
 
             cardPaymentMethod.setTokenId(tockenID);
         } else {

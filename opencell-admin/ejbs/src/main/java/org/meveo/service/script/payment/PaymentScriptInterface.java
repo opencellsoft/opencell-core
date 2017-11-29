@@ -43,6 +43,20 @@ public interface PaymentScriptInterface extends ScriptInterface {
      * @throws BusinessException the business exception
      */
     void cancelPayment(Map<String, Object> methodContext) throws BusinessException;
-
-   
+    
+    /**
+     * Do refund with token.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void doRefundToken(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Do refund with card.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void doRefundCard(Map<String, Object> methodContext) throws BusinessException;
 }

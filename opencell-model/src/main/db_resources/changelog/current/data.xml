@@ -58,4 +58,54 @@
         <sql>insert into adm_role_permission (role_id, permission_id) (select role_id, -28 from adm_role_permission where role_id&lt;&gt;-1 and permission_id=-25)</sql>        
     </changeSet>
 
+	<changeSet author="anasseh" id="#1732_13112017_Manual_Invoice_permissions">
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-27" />
+            <column name="name" value="Create invoice" />
+            <column name="permission" value="createInvoice" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-27" />
+        </insert>      
+     </changeSet>
+     
+     <changeSet author="anasseh" id="#3074_23112017_add_refund_service">
+       	<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-28" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="account_code" value="90590,41110,00000,000,0000,00000000,00000" />
+			<column name="account_code_client_side" value="90590,51214100,00000,000,0000,00000000,00000" />
+			<column name="code" value="FA_N_FACT" />
+			<column name="description" value="Negative invoice" />
+			<column name="occ_category" value="CREDIT" />
+		</insert>   
+       	<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-29" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="account_code" value="90500,41110,00000,000,0000,00000000,00000" />
+			<column name="account_code_client_side" value="90500,51214100,00000,000,0000,00000000,00000" />
+			<column name="code" value="FA_ADJ" />
+			<column name="description" value="Adjustement" />
+			<column name="occ_category" value="CREDIT" />
+		</insert> 	
+       	<insert tableName="ar_occ_template">
+			<column name="id" valueNumeric="-30" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="account_code" value="88500,41110,00000,000,0000,00000000,00000" />
+			<column name="account_code_client_side" value="88500,51214100,00000,000,0000,00000000,00000" />
+			<column name="code" value="RF_CARD" />
+			<column name="description" value="Refund card" />
+			<column name="occ_category" value="DEBIT" />
+		</insert> 				
+		 <sql>update billing_invoice_type set occ_templ_negative_id =-28 where code='COM'</sql>
+		 <sql>update billing_invoice_type set occ_template_id =-29 where code='ADJ'</sql>
+     </changeSet>
+
 </databaseChangeLog>

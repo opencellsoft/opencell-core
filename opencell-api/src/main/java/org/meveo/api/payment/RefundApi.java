@@ -2,7 +2,6 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,33 +13,31 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
-import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.RefundDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
+import org.meveo.service.payments.impl.RefundService;
 
 @Stateless
-public class PaymentApi extends BaseApi {
+public class RefundApi extends BaseApi {
 
     @Inject
-    private PaymentService paymentService;
+    private RefundService refundService;
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
@@ -55,65 +52,62 @@ public class PaymentApi extends BaseApi {
     private OCCTemplateService oCCTemplateService;
 
     /**
-     * @param paymentDto payment object which encapsulates the input data sent by client
+     * @param refundDto refund object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
      * @throws NoAllOperationUnmatchedException
      * @throws UnbalanceAmountException
      * @throws BusinessException
      * @throws MeveoApiException
      */
-    public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
-        log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
-                + "  customerAccount:" + paymentDto.getCustomerAccountCode() + "...");
+    public Long createPayment(RefundDto refundDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
+        log.info("create payment for amount:" + refundDto.getAmount() + " paymentMethodEnum:" + refundDto.getPaymentMethod() + " isToMatching:" + refundDto.isToMatching()
+                + "  customerAccount:" + refundDto.getCustomerAccountCode() + "...");
 
-        if (StringUtils.isBlank(paymentDto.getAmount())) {
+        if (StringUtils.isBlank(refundDto.getAmount())) {
             missingParameters.add("amount");
         }
-        if (StringUtils.isBlank(paymentDto.getCustomerAccountCode())) {
+        if (StringUtils.isBlank(refundDto.getCustomerAccountCode())) {
             missingParameters.add("customerAccountCode");
         }
-        if (StringUtils.isBlank(paymentDto.getOccTemplateCode())) {
+        if (StringUtils.isBlank(refundDto.getOccTemplateCode())) {
             missingParameters.add("occTemplateCode");
         }
-        if (StringUtils.isBlank(paymentDto.getReference())) {
+        if (StringUtils.isBlank(refundDto.getReference())) {
             missingParameters.add("reference");
         }
-        if (StringUtils.isBlank(paymentDto.getPaymentMethod())) {
+        if (StringUtils.isBlank(refundDto.getPaymentMethod())) {
             missingParameters.add("paymentMethod");
         }
         handleMissingParameters();
-        CustomerAccount customerAccount = customerAccountService.findByCode(paymentDto.getCustomerAccountCode());
+        CustomerAccount customerAccount = customerAccountService.findByCode(refundDto.getCustomerAccountCode());
         if (customerAccount == null) {
-            throw new BusinessException("Cannot find customer account with code=" + paymentDto.getCustomerAccountCode());
+            throw new BusinessException("Cannot find customer account with code=" + refundDto.getCustomerAccountCode());
         }
 
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(paymentDto.getOccTemplateCode());
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(refundDto.getOccTemplateCode());
         if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + paymentDto.getOccTemplateCode());
+            throw new BusinessException("Cannot find OCC Template with code=" + refundDto.getOccTemplateCode());
         }
 
-        Payment payment = new Payment();
-        payment.setPaymentMethod(paymentDto.getPaymentMethod());
-        payment.setAmount(paymentDto.getAmount());
-        payment.setUnMatchingAmount(paymentDto.getAmount());
-        payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setAccountCode(occTemplate.getAccountCode());
-        payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
-        payment.setTransactionCategory(occTemplate.getOccCategory());
-        payment.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
-        payment.setCustomerAccount(customerAccount);
-        payment.setReference(paymentDto.getReference());
-        payment.setDueDate(paymentDto.getDueDate());
-        payment.setTransactionDate(paymentDto.getTransactionDate());
-        payment.setMatchingStatus(MatchingStatusEnum.O);
-        payment.setPaymentOrder(paymentDto.getPaymentOrder());
-        payment.setFees(paymentDto.getFees());
-        payment.setComment(paymentDto.getComment());
+        Refund refund = new Refund();
+        refund.setPaymentMethod(refundDto.getPaymentMethod());
+        refund.setAmount(refundDto.getAmount());
+        refund.setUnMatchingAmount(refundDto.getAmount());
+        refund.setMatchingAmount(BigDecimal.ZERO);
+        refund.setAccountCode(occTemplate.getAccountCode());
+        refund.setOccCode(occTemplate.getCode());
+        refund.setOccDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
+        refund.setTransactionCategory(occTemplate.getOccCategory());
+        refund.setAccountCodeClientSide(occTemplate.getAccountCodeClientSide());
+        refund.setCustomerAccount(customerAccount);
+        refund.setReference(refundDto.getReference());
+        refund.setDueDate(refundDto.getDueDate());
+        refund.setTransactionDate(refundDto.getTransactionDate());
+        refund.setMatchingStatus(MatchingStatusEnum.O);
 
         // populate customFields
         try {
-            populateCustomFields(paymentDto.getCustomFields(), payment, true);
+            populateCustomFields(refundDto.getCustomFields(), refund, true);
         } catch (MissingParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
@@ -122,39 +116,39 @@ public class PaymentApi extends BaseApi {
             throw e;
         }
 
-        paymentService.create(payment);
+        refundService.create(refund);
 
         int nbOccMatched = 0;
-        if (paymentDto.isToMatching()) {
+        if (refundDto.isToMatching()) {
             List<Long> listReferenceToMatch = new ArrayList<Long>();
-            if (paymentDto.getListOCCReferenceforMatching() != null) {
-                nbOccMatched = paymentDto.getListOCCReferenceforMatching().size();
+            if (refundDto.getListOCCReferenceforMatching() != null) {
+                nbOccMatched = refundDto.getListOCCReferenceforMatching().size();
                 for (int i = 0; i < nbOccMatched; i++) {
-                    RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(paymentDto.getListOCCReferenceforMatching().get(i));
+                    RecordedInvoice accountOperationToMatch = recordedInvoiceService.getRecordedInvoice(refundDto.getListOCCReferenceforMatching().get(i));
                     if (accountOperationToMatch == null) {
-                        throw new BusinessApiException("Cannot find account operation with reference:" + paymentDto.getListOCCReferenceforMatching().get(i));
+                        throw new BusinessApiException("Cannot find account operation with reference:" + refundDto.getListOCCReferenceforMatching().get(i));
                     }
                     listReferenceToMatch.add(accountOperationToMatch.getId());
                 }
-                listReferenceToMatch.add(payment.getId());
+                listReferenceToMatch.add(refund.getId());
                 matchingCodeService.matchOperations(null, customerAccount.getCode(), listReferenceToMatch, null, MatchingTypeEnum.A);
             }
 
         } else {
             log.info("no matching created ");
         }
-        log.debug("payment created for amount:" + payment.getAmount());
-        
-        if (payment != null) {
-        	return payment.getId();
+        log.debug("refund created for amount:" + refund.getAmount());
+
+        if (refund != null) {
+            return refund.getId();
         } else {
-        	return null;
+            return null;
         }
-        
+
     }
 
-    public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
-        List<PaymentDto> result = new ArrayList<PaymentDto>();
+    public List<RefundDto> getRefundList(String customerAccountCode) throws Exception {
+        List<RefundDto> result = new ArrayList<RefundDto>();
 
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 
@@ -166,51 +160,24 @@ public class PaymentApi extends BaseApi {
 
         List<AccountOperation> ops = customerAccount.getAccountOperations();
         for (AccountOperation op : ops) {
-            if (op instanceof Payment) {
-                Payment p = (Payment) op;
-                PaymentDto paymentDto = new PaymentDto();
-                paymentDto.setType(p.getType());
-                paymentDto.setAmount(p.getAmount());
-                paymentDto.setDueDate(p.getDueDate());
-                paymentDto.setOccTemplateCode(p.getOccCode());
-                paymentDto.setPaymentMethod(p.getPaymentMethod());
-                paymentDto.setReference(p.getReference());
-                paymentDto.setTransactionDate(p.getTransactionDate());
-                paymentDto.setPaymentOrder(p.getOrderNumber());
-                paymentDto.setFees(p.getFees());
-                paymentDto.setComment(p.getComment());
-                paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
-                if (p instanceof AutomatedPayment) {
-                    AutomatedPayment ap = (AutomatedPayment) p;
-                    paymentDto.setBankCollectionDate(ap.getBankCollectionDate());
-                    paymentDto.setBankLot(ap.getBankLot());
-                    paymentDto.setDepositDate(ap.getDepositDate());
-                }
-                result.add(paymentDto);
-            } else if (op instanceof OtherCreditAndCharge) {
-                OtherCreditAndCharge occ = (OtherCreditAndCharge) op;
-                PaymentDto paymentDto = new PaymentDto();
-                paymentDto.setType(occ.getType());
-                paymentDto.setDescription(op.getOccDescription());
-                paymentDto.setAmount(occ.getAmount());
-                paymentDto.setDueDate(occ.getDueDate());
-                paymentDto.setOccTemplateCode(occ.getOccCode());
-                paymentDto.setReference(occ.getReference());
-                paymentDto.setTransactionDate(occ.getTransactionDate());
-                result.add(paymentDto);
-            }
+            if (op instanceof Refund) {
+                Refund refund = (Refund) op;
+                RefundDto refundDto = new RefundDto();
+                refundDto.setType(refund.getType());
+                refundDto.setAmount(refund.getAmount());
+                refundDto.setDueDate(refund.getDueDate());
+                refundDto.setOccTemplateCode(refund.getOccCode());
+                refundDto.setPaymentMethod(refund.getPaymentMethod());
+                refundDto.setReference(refund.getReference());
+                refundDto.setTransactionDate(refund.getTransactionDate());
+                refundDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
+                result.add(refundDto);
+            } 
         }
         return result;
     }
 
-    public double getBalance(String customerAccountCode) throws BusinessException {
-
-        CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
-
-        return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
-    }
-
-    public PayByCardResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
+    public PayByCardResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 
         if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -261,11 +228,11 @@ public class PaymentApi extends BaseApi {
         PayByCardResponseDto doPaymentResponseDto = null;
         if (useCard) {
 
-            doPaymentResponseDto = paymentService.payByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
+            doPaymentResponseDto = refundService.refundByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
                 cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
                 cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());
         } else {
-            doPaymentResponseDto = paymentService.payByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
+            doPaymentResponseDto = refundService.refundByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
                 cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());
         }
 
