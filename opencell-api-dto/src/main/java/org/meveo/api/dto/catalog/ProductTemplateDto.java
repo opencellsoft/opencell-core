@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.model.catalog.BusinessProductModel;
@@ -82,4 +83,8 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 	public void setWalletTemplates(List<WalletTemplateDto> walletTemplates) {
 		this.walletTemplates = walletTemplates;
 	}
+
+    public boolean isCodeOnly() {
+        return StringUtils.isBlank(getDescription()) && (productChargeTemplates == null || productChargeTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
+    }
 }

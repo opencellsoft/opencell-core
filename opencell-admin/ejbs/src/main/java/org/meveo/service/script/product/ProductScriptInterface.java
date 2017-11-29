@@ -22,7 +22,7 @@ public interface ProductScriptInterface extends ScriptInterface {
 	 *            CONTEXT_PARAMETERS=List<CustomFieldDto>
 	 * @throws BusinessException
 	 */
-	void beforeCreateProductFromPMS(Map<String, Object> methodContext) throws BusinessException;
+	void beforeCreate(Map<String, Object> methodContext) throws BusinessException;
 
 	/**
 	 * Called at the end of BusinessOfferModelService.createOfferFromBOM method
@@ -34,6 +34,6 @@ public interface ProductScriptInterface extends ScriptInterface {
 	 *            CONTEXT_PARAMETERS=List<CustomFieldDto>
 	 * @throws BusinessException
 	 */
-	void afterCreateProductFromPMS(Map<String, Object> methodContext) throws BusinessException;
+	void afterCreate(Map<String, Object> methodContext) throws BusinessException;
 
 }

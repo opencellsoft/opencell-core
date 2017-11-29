@@ -15,6 +15,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Subscription;
@@ -42,6 +43,7 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -134,7 +136,7 @@ public class CatalogHierarchyBuilderService {
 
     public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, List<PricePlanMatrix> pricePlansInMemory,
             List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
-        return duplicateProduct(offerProductTemplate, prefix, null, pricePlansInMemory, chargeTemplateInMemory);
+        return duplicateOfferProductTemplate(offerProductTemplate, prefix, null, pricePlansInMemory, chargeTemplateInMemory);
     }
 
     /**
@@ -146,7 +148,7 @@ public class CatalogHierarchyBuilderService {
      * @param prefix
      * @throws BusinessException
      */
-    public OfferProductTemplate duplicateProduct(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
+    public OfferProductTemplate duplicateOfferProductTemplate(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
             List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {
 
         OfferProductTemplate newOfferProductTemplate = new OfferProductTemplate();
@@ -161,21 +163,30 @@ public class CatalogHierarchyBuilderService {
 
         ProductTemplate newProductTemplate = new ProductTemplate();
 
+        duplicateProductTemplate(prefix, serviceConfiguration != null ? serviceConfiguration.getDescription() : "", productTemplate, newProductTemplate, pricePlansInMemory,
+            chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
+        newOfferProductTemplate.setProductTemplate(newProductTemplate);
+        
+        return newOfferProductTemplate;
+    }
+
+    public ProductTemplate duplicateProductTemplate(String prefix, String description, ProductTemplate productTemplate, ProductTemplate newProductTemplate,
+            List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory, Map<String, List<CustomFieldValue>> customFieldValues) throws BusinessException {
         try {
             BeanUtils.copyProperties(newProductTemplate, productTemplate);
-            newProductTemplate.setCode(prefix + productTemplate.getCode());
-            if (serviceConfiguration != null) {
-                newProductTemplate.setDescription(serviceConfiguration.getDescription());
+            if (description != null) {
+                newProductTemplate.setDescription(description);
             }
-
-            // duplicate custom field values - // TODO need to check if it is not covered by
-            // BeanUtils.copyProperties
-            newProductTemplate.setCfValues(productTemplate.getCfValues());
+            // true on GUI instantiation
+            if (StringUtils.isBlank(prefix)) {
+                prefix = "";
+            }
 
             newProductTemplate.setId(null);
             newProductTemplate.clearUuid();
             newProductTemplate.clearCfValues();
             newProductTemplate.setVersion(0);
+            newProductTemplate.setCode(prefix + productTemplate.getCode());
 
             newProductTemplate.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
             newProductTemplate.setAttachments(new ArrayList<DigitalResource>());
@@ -208,20 +219,24 @@ public class CatalogHierarchyBuilderService {
             }
 
             // set custom fields
-            if (serviceConfiguration != null && serviceConfiguration.getCfValues() != null) {
-                newProductTemplate.getCfValuesNullSafe().setValuesByCode(serviceConfiguration.getCfValues());
+            if (customFieldValues != null) {
+                newProductTemplate.getCfValuesNullSafe().setValuesByCode(customFieldValues);
             } else {
                 newProductTemplate.setCfValues(productTemplate.getCfValues());
             }
 
             productTemplateService.create(newProductTemplate);
 
+            // true on GUI instantiation
+            if (StringUtils.isBlank(prefix)) {
+                prefix = newProductTemplate.getId() + "_";
+            }
+
             duplicateProductPrices(productTemplate, prefix, pricePlansInMemory, chargeTemplateInMemory);
             duplicateProductOffering(productTemplate, newProductTemplate);
             duplicateProductCharges(productTemplate, newProductTemplate, prefix, chargeTemplateInMemory);
 
-            newOfferProductTemplate.setProductTemplate(newProductTemplate);
-            return newOfferProductTemplate;
+            return newProductTemplate;
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new BusinessException(e.getMessage());
         }
@@ -229,7 +244,7 @@ public class CatalogHierarchyBuilderService {
 
     public void duplicateProductCharges(ProductTemplate productTemplate, ProductTemplate newProductTemplate, String prefix, List<ChargeTemplate> chargeTemplateInMemory)
             throws BusinessException, IllegalAccessException, InvocationTargetException {
-        if (productTemplate.getProductChargeTemplates() != null && productTemplate.getProductChargeTemplates().size() > 0) {
+        if (productTemplate.getProductChargeTemplates() != null && !productTemplate.getProductChargeTemplates().isEmpty()) {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
                 ProductChargeTemplate newChargeTemplate = new ProductChargeTemplate();
                 copyChargeTemplate((ChargeTemplate) productCharge, newChargeTemplate, prefix);
@@ -243,9 +258,9 @@ public class CatalogHierarchyBuilderService {
                 }
 
                 productChargeTemplateService.create(newChargeTemplate);
-                
+
                 productCharge = productChargeTemplateService.refreshOrRetrieve(productCharge);
-                
+
                 copyEdrTemplates((ChargeTemplate) productCharge, newChargeTemplate);
 
                 newProductTemplate.addProductChargeTemplate(newChargeTemplate);
