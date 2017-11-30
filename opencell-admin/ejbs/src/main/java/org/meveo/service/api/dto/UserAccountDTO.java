@@ -19,7 +19,7 @@
 package org.meveo.service.api.dto;
 
 /**
- * Contains information about a user account
+ * Contains information about a user account.
  * 
  * @author Andrius Karpavicius
  * 
@@ -28,8 +28,22 @@ public class UserAccountDTO extends AccountDTO {
 
     private static final long serialVersionUID = -8444588283337483623L;
 
+    /**
+     * billing account code.
+     */
     private String billingAccountCode;
 
+    /**
+     * @param id id of user account
+     * @param code code of user account
+     * @param externalRef1 external reference 1
+     * @param externalRef2 external reference 2
+     * @param address address
+     * @param titleCode code of title
+     * @param firstName first name
+     * @param lastName last name.
+     * @param billingAccountCode billing account code
+     */
     public UserAccountDTO(Long id, String code, String externalRef1, String externalRef2, AddressDTO address, String titleCode, String firstName, String lastName,
             String billingAccountCode) {
         super(id, code, externalRef1, externalRef2, address, titleCode, firstName, lastName);
@@ -37,6 +51,9 @@ public class UserAccountDTO extends AccountDTO {
         this.billingAccountCode = billingAccountCode;
     }
 
+    /**
+     * @return billing account.
+     */
     public String getBillingAccountCode() {
         return billingAccountCode;
     }

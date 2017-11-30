@@ -71,8 +71,8 @@ public class RefundService extends PersistenceService<Refund> {
 
    
     /**
-     * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
-     * used (and marked as preferred)
+     * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
+     * will be used (and marked as preferred)
      * 
      * @param customerAccount Customer account
      * @param ctsAmount Amount to mpau

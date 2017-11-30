@@ -56,7 +56,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private AccountOperationService accountOperationService;
 
     /**
-     * Match account operations
+     * Match account operations.
      * 
      * @param listOcc Account operations to match
      * @param amount Amount to match
@@ -184,6 +184,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
+    /**
+     * @param aoID account operation id
+     * @throws BusinessException business exception.
+     */
     public void unmatchingByAOid(Long aoID) throws BusinessException {
 
         AccountOperation accountOperation = accountOperationService.findById(aoID);
@@ -197,6 +201,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
+    /**
+     * @param idMatchingCode id of matching code 
+     * @throws BusinessException business exception
+     */
     public void unmatching(Long idMatchingCode) throws BusinessException {
         log.info("start cancelMatching with id {}", idMatchingCode);
         if (idMatchingCode == null) {
@@ -234,7 +242,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     }
 
     /**
-     * Match account operations of a given customer account
+     * Match account operations of a given customer account.
      * 
      * @param customerAccountId Customer account - id or
      * @param customerAccountCode Customer account - code
@@ -251,7 +259,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     }
 
     /**
-     * Match account operations of a given customer account
+     * Match account operations of a given customer account.
      * 
      * @param customerAccountId Customer account - id or
      * @param customerAccountCode Customer account - code
@@ -381,6 +389,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         return matchingReturnObject;
     }
 
+    /**
+     * @param code code of finding matching code
+     * @return found matching code.
+     */
     public MatchingCode findByCode(String code) {
         QueryBuilder qb = new QueryBuilder(MatchingCode.class, "m", null);
         qb.addCriterion("code", "=", code, true);
