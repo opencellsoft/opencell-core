@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -50,6 +51,11 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     private ResourceBundle resourceMessages;
 
     private DualListModel<CustomFieldMatrixColumn> childEntityFieldDM;
+
+    /**
+     * To what entity class CFT should be copied to - a appliesTo value
+     */
+    private String copyCftTo;
 
     public CustomFieldTemplateBean() {
         super(CustomFieldTemplate.class);
@@ -117,7 +123,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNames(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, false, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -135,7 +141,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNamesCEIOnly(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, false, null, null);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, true, false, false, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplay());
@@ -153,7 +159,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
     public List<String> autocompleteClassNamesHuman(String query) {
         List<String> clazzNames = new ArrayList<String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, null, null);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(query, false, true, true, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
             clazzNames.add(customizedEntity.getClassnameToDisplayHuman());
@@ -173,6 +179,9 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         }
         if (entity.getStorageType() == CustomFieldStorageTypeEnum.MAP && entity.getMapKeyType() == null) {
             entity.setMapKeyType(CustomFieldMapKeyEnum.STRING);
+        }
+        if (entity.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+            entity.setStorageType(CustomFieldStorageTypeEnum.MATRIX);
         }
     }
 
@@ -254,5 +263,30 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             fc.validationFailed();
             fc.renderResponse();
         }
+    }
+
+    public String getCopyCftTo() {
+        return copyCftTo;
+    }
+
+    public void setCopyCftTo(String copyCftTo) {
+        this.copyCftTo = copyCftTo;
+    }
+
+    /**
+     * Copy and associate custom field template with another entity class
+     * 
+     * @throws BusinessException
+     */
+    @ActionMethod
+    public void copyCFT() throws BusinessException {
+
+        if (copyCftTo == null) {
+            throw new ValidationException("Not specified what class to copy CFT to", "customFieldTemplate.copyCFT.targetNotSpecified");
+        }
+
+        customFieldTemplateService.copyCustomFieldTemplate(entity, copyCftTo);
+
+        messages.info(new BundleKey("messages", "customFieldTemplate.copyCFT.ok"));
     }
 }

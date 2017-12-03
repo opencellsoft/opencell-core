@@ -48,7 +48,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private String appliesTo;
 
     /**
-     * Class corresponding to a entityClassName value of CustomEntityTemplate class if null
+     * Class corresponding to a entityClassName value or CustomEntityTemplate class if null
      */
     @SuppressWarnings("rawtypes")
     private Class entityClass = CustomEntityTemplate.class;
@@ -443,7 +443,6 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                     parent.getChildren().remove(currentIndex);
                     siblingDown.getChildren().add(0, node);
                     moved = true;
-                    // log.error("AKK return 1");
                     // return;
                 }
             }

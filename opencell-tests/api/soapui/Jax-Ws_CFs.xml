@@ -3597,7 +3597,7 @@ public class Action1 extends Script {
                      </entry>\r
                   </mapValue>\r
                </customField>\r
-               <!--Map values versioned by a calendar-->\r
+               <!--Matrix values versioned by a calendar-->\r
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_VC" valueDate="2015-09-10">\r
                   <mapValue>\r
                      <entry>\r
@@ -3818,7 +3818,7 @@ public class Action1 extends Script {
                      </entry>\r
                   </mapValue>\r
                </customField>\r
-               <!--Map values versioned by date range-->\r
+               <!--Matrix values versioned by date range-->\r
                <customField code="${#Project#baseEntityPrefix}_SELLER_STRING_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">\r
                   <mapValue>\r
                      <entry>\r
@@ -4178,12 +4178,146 @@ public class Action1 extends Script {
                                        </value>\r
                                     </entry>\r
                                  </mapValue>\r
-                              </customField>\r
+                              </customField>\r                           
                            </customFields>\r
                         </childEntityValue>\r
                      </value>\r
                   </listValue>\r
                </customField>\r
+
+               <!--Matrix multi-values not versioned-->
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV">
+                  <mapValue>
+                     <entry>
+                        <key>a|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_15|15.89</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>c|1&lt;9</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_16|16.90</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+
+               <!--Matrix multi-values versioned by a calendar-->
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valueDate="2015-09-10">
+                  <mapValue>
+                     <entry>
+                        <key>k|17&lt;87</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_17|17.91</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>l|18&lt;88</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_18|18.92</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valueDate="2015-08-10">
+                  <mapValue>
+                     <entry>
+                        <key>m|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_19|19.93</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>n|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_20|20.94</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+
+               <!--Matrix multi-values versioned by date range-->
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodStartDate="2015-09-04" valuePeriodEndDate="2015-09-30" valuePeriodPriority="1">
+                  <mapValue>
+                     <entry>
+                        <key>ff|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_21|21</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>gg|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_22|22.25</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodEndDate="2015-09-24" valuePeriodPriority="2">
+                  <mapValue>
+                     <entry>
+                        <key>hh|11&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_23|23.45</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|12&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_24|24</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodStartDate="2015-09-08" valuePeriodPriority="3">
+                  <mapValue>
+                     <entry>
+                        <key>hh|13&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_23|23.66</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|14&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_24|24.54</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodEndDate="2015-09-24" valuePeriodPriority="4">
+                  <mapValue>
+                     <entry>
+                        <key>hh|15&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_23|23.99</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|16&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_24|24.75</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodPriority="5">
+                  <mapValue>
+                     <entry>
+                        <key>hh|17&lt;81</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_23|23.12</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>ii|18&lt;82</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_24|24</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>                  
             </customFields>\r
          </seller>\r
       </ws:createSeller>\r
@@ -6447,6 +6581,246 @@ public class Action1 extends Script {
                   </customField>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 5">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>a|1&lt;8</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_15|15.89</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>c|1&lt;9</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_16|16.90</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 6">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" and contains(@valuePeriodStartDate,"2015-09-01")]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valuePeriodStartDate="2015-09-01T00:00:00*" valuePeriodEndDate="2015-10-01T00:00:00*" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>k|17&lt;87</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_17|17.91</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>l|18&lt;88</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_18|18.92</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 7">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" and contains(@valuePeriodStartDate,"2015-08-01")]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valuePeriodStartDate="2015-08-01T00:00:00-03:00" valuePeriodEndDate="2015-09-01T00:00:00-03:00" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>m|1&lt;8</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_19|19.93</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>n|1&lt;8</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_20|20.94</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 8">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" and contains(@valuePeriodStartDate,"2015-09-04")]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodStartDate="2015-09-04T00:00:00*" valuePeriodEndDate="2015-09-30T00:00:00*" valuePeriodPriority="1" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>ff|1&lt;8</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_21|21</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>gg|1&lt;8</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_22|22.25</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 9">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" and contains(@valuePeriodStartDate,"2015-09-08") and @valuePeriodPriority="2"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00*" valuePeriodEndDate="2015-09-24T00:00:00*" valuePeriodPriority="2" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>hh|11&lt;81</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_23|23.45</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>ii|12&lt;82</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_24|24</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 10">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" and contains(@valuePeriodStartDate,"2015-09-08") and @valuePeriodPriority="3"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodStartDate="2015-09-08T00:00:00*" valuePeriodPriority="3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>hh|13&lt;81</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_23|23.66</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>ii|14&lt;82</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_24|24.54</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 11">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" and contains(@valuePeriodEndDate,"2015-09-24") and @valuePeriodPriority="4"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodEndDate="2015-09-24T00:00:00*" valuePeriodPriority="4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>hh|15&lt;81</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_23|23.99</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>ii|16&lt;82</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_24|24.75</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="0adaa2a4-bae3-4ec5-91d5-d1d8d51a14ba" name="XPath Match 12">
+              <con:configuration>
+                <path>//customField[@code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" and @valuePeriodPriority="5"]</path>
+                <content><![CDATA[<customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_V" valuePeriodPriority="5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <mapValue>
+    <entry>
+      <key>hh|17&lt;81</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_23|23.12</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>ii|18&lt;82</key>
+      <value>
+        <stringValue>SELLER_MULTI_VALUE_24|24</stringValue>
+      </value>
+    </entry>
+    <entry>
+      <key>key</key>
+      <value>
+        <stringValue>MAT_1/MAT_2/VAL_1/VAL_2</stringValue>
+      </value>
+    </entry>
+  </mapValue>
+</customField>]]></content>
+                <allowWildcards>true</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
             <con:credentials>
@@ -14357,6 +14731,39 @@ public class Action1 extends Script {
                      <fieldCode>${#Project#baseEntityPrefix}_CET_CFT3</fieldCode>\r
                   </childEntityFieldsForSummary>\r
                </field>\r
+               <field code="${#Project#baseEntityPrefix}_${#TestCase#cfType}_MULTI_VALUE_MATRIX_NV" description="${#TestCase#cfType}_MULTI_VALUE_MATRIX_NV field">
+                  <fieldType>MULTI_VALUE</fieldType>
+                  <storageType>MATRIX</storageType>
+                  <matrixColumns>
+                     <matrixColumn columnUse="USE_KEY" code="MAT_1" position="1" label="One" keyType="STRING"/>
+                     <matrixColumn columnUse="USE_KEY" code="MAT_2" position="2" label="Two" keyType="RON"/>
+                     <matrixColumn columnUse="USE_VALUE" code="VAL_1" position="1" label="Value One" keyType="STRING"/>
+                     <matrixColumn columnUse="USE_VALUE" code="VAL_2" position="2" label="Value Two" keyType="DOUBLE"/>
+                  </matrixColumns>
+               </field>
+               <field code="${#Project#baseEntityPrefix}_${#TestCase#cfType}_MULTI_VALUE_MATRIX_V" description="${#TestCase#cfType}_MULTI_VALUE_MATRIX_V field">
+                  <fieldType>MULTI_VALUE</fieldType>
+                  <storageType>MATRIX</storageType>
+                  <versionable>true</versionable>
+                  <matrixColumns>
+                     <matrixColumn columnUse="USE_KEY" code="MAT_1" position="1" label="One" keyType="STRING"/>
+                     <matrixColumn columnUse="USE_KEY" code="MAT_2" position="2" label="Two" keyType="RON"/>
+                     <matrixColumn columnUse="USE_VALUE" code="VAL_1" position="1" label="Value One" keyType="STRING"/>
+                     <matrixColumn columnUse="USE_VALUE" code="VAL_2" position="2" label="Value Two" keyType="DOUBLE"/>
+                  </matrixColumns>
+               </field>
+               <field code="${#Project#baseEntityPrefix}_${#TestCase#cfType}_MULTI_VALUE_MATRIX_VC" description="${#TestCase#cfType}_MULTI_VALUE_MATRIX_VC field">
+                  <fieldType>MULTI_VALUE</fieldType>
+                  <storageType>MATRIX</storageType>
+                  <versionable>true</versionable>
+                  <calendar>MONTHLY</calendar>
+                  <matrixColumns>
+                     <matrixColumn columnUse="USE_KEY" code="MAT_1" position="1" label="One" keyType="STRING"/>
+                     <matrixColumn columnUse="USE_KEY" code="MAT_2" position="2" label="Two" keyType="RON"/>
+                     <matrixColumn columnUse="USE_VALUE" code="VAL_1" position="1" label="Value One" keyType="STRING"/>
+                     <matrixColumn columnUse="USE_VALUE" code="VAL_2" position="2" label="Value Two" keyType="DOUBLE"/>
+                  </matrixColumns>
+               </field>               
             </fields>\r
          </entityCustomization>\r
       </ws:customizeEntity>\r
@@ -23713,6 +24120,54 @@ public class Action1 extends Script {
                      </entry>
                   </mapValue>
                </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV">
+                  <mapValue>
+                     <entry>
+                        <key>a|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_15|15.89</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>c|1&lt;9</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_16|16.90</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valueDate="2015-09-10">
+                  <mapValue>
+                     <entry>
+                        <key>k|17&lt;87</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_17|17.91</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>l|18&lt;88</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_18|18.92</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valueDate="2015-08-10">
+                  <mapValue>
+                     <entry>
+                        <key>m|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_19|19.93</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>n|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_20|20.94</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>               
             </customFields>
          </seller>\r
       </ws:createSeller>\r
@@ -23970,6 +24425,57 @@ public class Action1 extends Script {
                      </entry>
                   </mapValue>
                </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV">
+                  <mapValue>
+                     <entry>
+                        <key>b|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_151|15.89</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>d|1&lt;9</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_161|16.90</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+
+               <!--Matrix values versioned by a calendar-->
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valueDate="2015-09-10">
+                  <mapValue>
+                     <entry>
+                        <key>o|17&lt;87</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_171|17.91</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>p|18&lt;88</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_181|18.92</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+               <customField code="${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC" valueDate="2015-08-10">
+                  <mapValue>
+                     <entry>
+                        <key>q|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_191|19.93</stringValue>
+                        </value>
+                     </entry>
+                     <entry>
+                        <key>r|1&lt;8</key>
+                        <value>
+                           <stringValue>SELLER_MULTI_VALUE_201|20.94</stringValue>
+                        </value>
+                     </entry>
+                  </mapValue>
+               </customField>
+
             </customFields>\r
          </seller>\r
       </ws:createSeller>\r
@@ -26722,6 +27228,402 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Test mv:getCFValueByKey2Keys Matrix Multi-value 55" id="b26efad6-582b-48a6-9c67-e542e0b1f36d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getCFValueByKey2Keys Matrix Multi-value 55" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_55" description="Customer EL 55">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'b',7)['VAL_1']=='SELLER_MULTI_VALUE_151'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getCFValueByKey Matrix Multi-value 56" id="06db0dd5-f11e-4600-b911-dc8634fc2e27">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getCFValueByKey Matrix Multi-value 56" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_56" description="Customer EL 56">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'b|7')['VAL_2']==15.89}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getInheritedCFValueByKey2Keys Matrix Multi-value 57" id="4a860a0b-d51c-427a-9699-8dee62896a27">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getInheritedCFValueByKey2Keys Matrix Multi-value 57" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_57" description="Customer EL 57">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getInheritedCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'a',7)['VAL_1']=='SELLER_MULTI_VALUE_15'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getCFValueByKeyForDate2Keys Matrix Multi-value 58" id="05420fca-bc07-4b43-b2b4-50a73ed934e9">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getCFValueByKeyForDate2Keys Matrix Multi-value 58" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_58" description="Customer EL 58">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'p',27)['VAL_1']=='SELLER_MULTI_VALUE_181'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getInheritedCFValueForDateByKey2Keys Matrix Multi-value 59" id="d09d322b-2632-49fc-b0b5-cf30a9a8350f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getInheritedCFValueForDateByKey2Keys Matrix Multi-value 59" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_59" description="Customer EL 59">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'k',27)['VAL_2']==17.91}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getCFValueByKey Matrix Multi-value 60 - ko" id="4bf15528-77d6-4fab-9fce-a1de8c8e3867">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getCFValueByKey Matrix Multi-value 60 - ko" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_60" description="Customer EL 60">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getCFValueByKey(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'b|7')['VAL_1']=='SELLER_MULTI_VALUE_15KO'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getInheritedCFValueByKey2Keys Matrix Multi-value 61 - ko" id="503e68d1-b5c4-4d36-a992-3093a65256d3">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getInheritedCFValueByKey2Keys Matrix Multi-value 61 - ko" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_61" description="Customer EL 61">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getInheritedCFValueByKey2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_NV', 'a',7)['VAL_1']=='SELLER_MULTI_VALUE_15KO'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getCFValueByKeyForDate2Keys Matrix Multi-value 62 - ko" id="cf8abe3d-a517-49ff-a7b4-d564a86e21ba">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getCFValueByKeyForDate2Keys Matrix Multi-value 62 - ko" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_62" description="Customer EL 62">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'p',27)['VAL_1']=='SELLER_MULTI_VALUE_181KO'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Test mv:getInheritedCFValueForDateByKey2Keys Matrix Multi-value 63 - ko" id="7489818d-af16-47a5-9d9f-d3532a7ecd89">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>createField</con:operation>
+          <con:request name="Test mv:getInheritedCFValueForDateByKey2Keys Matrix Multi-value 63 - ko" id="3753bce2-3fec-40e6-a41f-454620694710">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateField>\r
+         <customField code="${#Project#baseEntityPrefix}_EL_63" description="Customer EL 63">\r
+            <fieldType>LONG</fieldType>\r
+            <appliesTo>CUST</appliesTo>\r
+            <storageType>SINGLE</storageType>\r
+            <valueRequired>true</valueRequired>
+            <applicableOnEl>#{mv:getInheritedCFValueByKeyForDate2Keys(entity.seller,'${#Project#baseEntityPrefix}_SELLER_MULTI_VALUE_MATRIX_VC',mv:parseDate('2015-09-15','yyyy-MM-dd'), 'k',27)['VAL_1']=='SELLER_MULTI_VALUE_17KO'}</applicableOnEl>
+         </customField>\r
+      </ws:createOrUpdateField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="17928b76-3978-42e5-b2ee-02069bc187cb"/>
+            <con:assertion type="Simple Contains" id="d66b73c0-4bea-4ff4-ab95-469cc8c65a36" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Create customer - ko" id="39326bd3-b540-41a8-ab66-9a4b801fc9ca">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -26755,7 +27657,7 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" id="cfdc5ee4-56b3-4e32-80e9-fbc78d7f2f13" name="Contains 1">
               <con:configuration>
-                <token>&lt;message>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_EL_1, ${#Project#baseEntityPrefix}_EL_10, ${#Project#baseEntityPrefix}_EL_12, ${#Project#baseEntityPrefix}_EL_13, ${#Project#baseEntityPrefix}_EL_15, ${#Project#baseEntityPrefix}_EL_16, ${#Project#baseEntityPrefix}_EL_18, ${#Project#baseEntityPrefix}_EL_19, ${#Project#baseEntityPrefix}_EL_21, ${#Project#baseEntityPrefix}_EL_22, ${#Project#baseEntityPrefix}_EL_24, ${#Project#baseEntityPrefix}_EL_25, ${#Project#baseEntityPrefix}_EL_25-1, ${#Project#baseEntityPrefix}_EL_27, ${#Project#baseEntityPrefix}_EL_27-1, ${#Project#baseEntityPrefix}_EL_28, ${#Project#baseEntityPrefix}_EL_28-1, ${#Project#baseEntityPrefix}_EL_3, ${#Project#baseEntityPrefix}_EL_30, ${#Project#baseEntityPrefix}_EL_30-1, ${#Project#baseEntityPrefix}_EL_31, ${#Project#baseEntityPrefix}_EL_33, ${#Project#baseEntityPrefix}_EL_34, ${#Project#baseEntityPrefix}_EL_36, ${#Project#baseEntityPrefix}_EL_37, ${#Project#baseEntityPrefix}_EL_39, ${#Project#baseEntityPrefix}_EL_4, ${#Project#baseEntityPrefix}_EL_40, ${#Project#baseEntityPrefix}_EL_42, ${#Project#baseEntityPrefix}_EL_43, ${#Project#baseEntityPrefix}_EL_45, ${#Project#baseEntityPrefix}_EL_46, ${#Project#baseEntityPrefix}_EL_48, ${#Project#baseEntityPrefix}_EL_49, ${#Project#baseEntityPrefix}_EL_49-1, ${#Project#baseEntityPrefix}_EL_51, ${#Project#baseEntityPrefix}_EL_51-1, ${#Project#baseEntityPrefix}_EL_52, ${#Project#baseEntityPrefix}_EL_52-1, ${#Project#baseEntityPrefix}_EL_54, ${#Project#baseEntityPrefix}_EL_54-1, ${#Project#baseEntityPrefix}_EL_6, ${#Project#baseEntityPrefix}_EL_7, ${#Project#baseEntityPrefix}_EL_9.&lt;/message></token>
+                <token>&lt;message>The following parameters are required or contain invalid values: ${#Project#baseEntityPrefix}_EL_1, ${#Project#baseEntityPrefix}_EL_10, ${#Project#baseEntityPrefix}_EL_12, ${#Project#baseEntityPrefix}_EL_13, ${#Project#baseEntityPrefix}_EL_15, ${#Project#baseEntityPrefix}_EL_16, ${#Project#baseEntityPrefix}_EL_18, ${#Project#baseEntityPrefix}_EL_19, ${#Project#baseEntityPrefix}_EL_21, ${#Project#baseEntityPrefix}_EL_22, ${#Project#baseEntityPrefix}_EL_24, ${#Project#baseEntityPrefix}_EL_25, ${#Project#baseEntityPrefix}_EL_25-1, ${#Project#baseEntityPrefix}_EL_27, ${#Project#baseEntityPrefix}_EL_27-1, ${#Project#baseEntityPrefix}_EL_28, ${#Project#baseEntityPrefix}_EL_28-1, ${#Project#baseEntityPrefix}_EL_3, ${#Project#baseEntityPrefix}_EL_30, ${#Project#baseEntityPrefix}_EL_30-1, ${#Project#baseEntityPrefix}_EL_31, ${#Project#baseEntityPrefix}_EL_33, ${#Project#baseEntityPrefix}_EL_34, ${#Project#baseEntityPrefix}_EL_36, ${#Project#baseEntityPrefix}_EL_37, ${#Project#baseEntityPrefix}_EL_39, ${#Project#baseEntityPrefix}_EL_4, ${#Project#baseEntityPrefix}_EL_40, ${#Project#baseEntityPrefix}_EL_42, ${#Project#baseEntityPrefix}_EL_43, ${#Project#baseEntityPrefix}_EL_45, ${#Project#baseEntityPrefix}_EL_46, ${#Project#baseEntityPrefix}_EL_48, ${#Project#baseEntityPrefix}_EL_49, ${#Project#baseEntityPrefix}_EL_49-1, ${#Project#baseEntityPrefix}_EL_51, ${#Project#baseEntityPrefix}_EL_51-1, ${#Project#baseEntityPrefix}_EL_52, ${#Project#baseEntityPrefix}_EL_52-1, ${#Project#baseEntityPrefix}_EL_54, ${#Project#baseEntityPrefix}_EL_54-1, ${#Project#baseEntityPrefix}_EL_55, ${#Project#baseEntityPrefix}_EL_56, ${#Project#baseEntityPrefix}_EL_57, ${#Project#baseEntityPrefix}_EL_58, ${#Project#baseEntityPrefix}_EL_59, ${#Project#baseEntityPrefix}_EL_6, ${#Project#baseEntityPrefix}_EL_7, ${#Project#baseEntityPrefix}_EL_9.&lt;/message></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -29378,6 +30280,357 @@ public class Action1 extends Script {
           </con:request>
         </con:config>
       </con:testStep>
+      <con:testStep type="request" name="Delete CFT 55" id="a03ee80c-c24c-4a59-889c-95611b1d07ab">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 55" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_55</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 56" id="62d0b566-1a3b-409c-86b5-0f8720cac3d2">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 56" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_56</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 57" id="52d81e47-d7b1-4b92-a96c-f67094618c02">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 57" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_57</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 58" id="6523c5d2-0bd5-42f8-b70a-1f11f6f6972f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 58" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_58</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 59" id="ea9f4614-2e32-4f27-a2ac-8ca68ae7456c">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 59" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_59</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 60" id="acf7be1a-3ad0-4b22-9c8e-b2c64f658ce4">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 60" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_60</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 61" id="fa27c429-a70f-4b3d-be96-a4d58a865784">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 61" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_61</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 62" id="40df9451-594d-4354-b555-ed6897b8a976">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 62" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_62</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Delete CFT 63" id="03c2c713-be3d-4a62-8ed8-d68a3907bbf0">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>EntityCustomizationWsSoapBinding</con:interface>
+          <con:operation>removeField</con:operation>
+          <con:request name="Delete CFT 63" id="4d7824f9-b675-4361-a1a7-a642a78a7cad">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeField>\r
+         <customFieldTemplateCode>${#Project#baseEntityPrefix}_EL_63</customFieldTemplateCode>\r
+         <appliesTo>CUST</appliesTo>\r
+      </ws:removeField>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="12d7ad7e-2f9f-4641-aa04-274d56a892ea"/>
+            <con:assertion type="Simple Contains" id="73cbc090-aee1-4b05-a099-b685d497d6da" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="abb76448-b057-486b-b954-1f6d80c24d20" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Customization" searchProperties="true">
@@ -29493,7 +30746,7 @@ public class Action1 extends Script {
                   <valueRequired>true</valueRequired>\r
                   <versionable>false</versionable>\r
                   <tags>page1 page4</tags>\r
-                  <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>
+                  <guiPosition>tab:First tab|FRA=French tab|ENG=English tab;fieldGroup:Group one|FRA=French group|ENG=English group;field:1</guiPosition>\r
                   <languageDescriptions>\r
                      <languageCode>FRA</languageCode>\r
                      <description>French potatoes</description>\r
@@ -29510,6 +30763,46 @@ public class Action1 extends Script {
                   <valueRequired>false</valueRequired>\r
                   <versionable>false</versionable>\r
                   <tags>page2 page4</tags>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3">\r
+                  <fieldType>STRING</fieldType>\r
+                  <defaultValue>15</defaultValue>\r
+                  <storageType>MATRIX</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <tags>page2 page4</tags>\r
+                  <matrixColumns>\r
+                     <matrixColumn code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4">\r
+                  <fieldType>MULTI_VALUE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>false</versionable>\r
+                  <tags>page2 page4</tags>\r
+                  <matrixColumns>\r
+                     <matrixColumn columnUse="USE_KEY" code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn columnUse="USE_KEY" code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                     <matrixColumn columnUse="USE_VALUE" code="MAT_V_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn columnUse="USE_VALUE" code="MAT_V_2" position="2" label="One" keyType="LONG"/>\r
+                     <matrixColumn columnUse="USE_VALUE" code="MAT_V_3" position="3" label="One" keyType="DOUBLE"/>\r
+                  </matrixColumns>\r
+               </field>\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5">\r
+                  <fieldType>MULTI_VALUE</fieldType>\r
+                  <storageType>MATRIX</storageType>\r
+                  <valueRequired>false</valueRequired>\r
+                  <versionable>true</versionable>\r
+                  <tags>page2 page4</tags>\r
+                  <matrixColumns>\r
+                     <matrixColumn columnUse="USE_KEY" code="MAT_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn columnUse="USE_KEY" code="MAT_2" position="2" label="Two" keyType="RON"/>\r
+                     <matrixColumn columnUse="USE_VALUE" code="MAT_V_1" position="1" label="One" keyType="STRING"/>\r
+                     <matrixColumn columnUse="USE_VALUE" code="MAT_V_2" position="2" label="One" keyType="LONG"/>\r
+                     <matrixColumn columnUse="USE_VALUE" code="MAT_V_3" position="3" label="One" keyType="DOUBLE"/>\r
+                  </matrixColumns>\r
                </field>\r
             </fields>\r
             <actions>\r
@@ -29530,7 +30823,7 @@ public class Action1 extends Script {
                   </script>\r
                   <applicableOnEl>#{entity.active}</applicableOnEl>\r
                   <label>Action 2</label>\r
-                  <guiPosition>tab:First action tab|FRA=French action tab|ENG=English action tab;action:0</guiPosition>
+                  <guiPosition>tab:First action tab|FRA=French action tab|ENG=English action tab;action:0</guiPosition>\r
                   <labelsTranslated>\r
                      <languageCode>FRA</languageCode>\r
                      <description>French potatoes</description>\r
@@ -29697,6 +30990,89 @@ public class Action1 extends Script {
                 <ignoreComments>false</ignoreComments>
               </con:configuration>
             </con:assertion>
+            <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 4">
+              <con:configuration>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Entity field3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>STRING</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <defaultValue>15</defaultValue>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>MATRIX</storageType>
+  <valueRequired>false</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <maxValue>50</maxValue>
+  <matrixColumns>
+    <matrixColumn columnUse="USE_KEY" position="1" code="MAT_1" label="One" keyType="STRING"/>
+    <matrixColumn columnUse="USE_KEY" position="2" code="MAT_2" label="Two" keyType="RON"/>
+  </matrixColumns>
+  <tags>page2 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 5">
+              <con:configuration>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT4" description="Entity field4" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>MULTI_VALUE</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>MATRIX</storageType>
+  <valueRequired>false</valueRequired>
+  <versionable>false</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <matrixColumns>
+    <matrixColumn columnUse="USE_KEY" position="1" code="MAT_1" label="One" keyType="STRING"/>
+    <matrixColumn columnUse="USE_KEY" position="2" code="MAT_2" label="Two" keyType="RON"/>
+    <matrixColumn columnUse="USE_VALUE" position="1" code="MAT_V_1" label="One" keyType="STRING"/>
+    <matrixColumn columnUse="USE_VALUE" position="2" code="MAT_V_2" label="One" keyType="LONG"/>
+    <matrixColumn columnUse="USE_VALUE" position="3" code="MAT_V_3" label="One" keyType="DOUBLE"/>
+  </matrixColumns>
+  <tags>page2 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="XPath Match" id="4e6928ba-4d13-45c7-964f-a88e37016e3f" name="XPath Match 6">
+              <con:configuration>
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT5" description="Entity field5" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <fieldType>MULTI_VALUE</fieldType>
+  <accountLevel>JOB_PurgeJob</accountLevel>
+  <appliesTo>JOB_PurgeJob</appliesTo>
+  <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>
+  <storageType>MATRIX</storageType>
+  <valueRequired>false</valueRequired>
+  <versionable>true</versionable>
+  <triggerEndPeriodEvent>false</triggerEndPeriodEvent>
+  <allowEdit>true</allowEdit>
+  <hideOnNew>false</hideOnNew>
+  <matrixColumns>
+    <matrixColumn columnUse="USE_KEY" position="1" code="MAT_1" label="One" keyType="STRING"/>
+    <matrixColumn columnUse="USE_KEY" position="2" code="MAT_2" label="Two" keyType="RON"/>
+    <matrixColumn columnUse="USE_VALUE" position="1" code="MAT_V_1" label="One" keyType="STRING"/>
+    <matrixColumn columnUse="USE_VALUE" position="2" code="MAT_V_2" label="One" keyType="LONG"/>
+    <matrixColumn columnUse="USE_VALUE" position="3" code="MAT_V_3" label="One" keyType="DOUBLE"/>
+  </matrixColumns>
+  <tags>page2 page4</tags>
+</field>]]></content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -29725,7 +31101,7 @@ public class Action1 extends Script {
       <ws:customizeEntity>\r
          <entityCustomization classname="org.meveo.admin.job.PurgeJob">\r
             <fields>\r
-               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3">\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6">\r
                   <fieldType>STRING</fieldType>\r
                   <defaultValue>Help</defaultValue>\r
                   <useInheritedAsDefaultValue>true</useInheritedAsDefaultValue>\r
@@ -29840,8 +31216,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
               <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>
@@ -29931,7 +31307,7 @@ public class Action1 extends Script {
       <ws:customizeEntity>\r
          <entityCustomization classname="org.meveo.admin.job.PurgeJob">\r
             <fields>\r
-               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3-updated">\r
+               <field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated">\r
                   <fieldType>DOUBLE</fieldType>\r
                   <defaultValue>Help-updated</defaultValue>\r
                   <useInheritedAsDefaultValue>false</useInheritedAsDefaultValue>\r
@@ -30056,8 +31432,8 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="XPath Match" id="ad553491-52d8-49a0-b5a7-01c4710caff6" name="XPath Match 1">
               <con:configuration>
-                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3"]</path>
-                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT3" description="Custom field 3-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+                <path>//field[@code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6"]</path>
+                <content><![CDATA[<field code="${#Project#entityPrefix}_${#TestSuite#index}_PurgeJob_CFT6" description="Custom field 6-updated" xmlns:ns2="http://ws.api.meveo.org/" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <fieldType>STRING</fieldType>
   <accountLevel>JOB_PurgeJob</accountLevel>
   <appliesTo>JOB_PurgeJob</appliesTo>

@@ -5,6 +5,7 @@
 
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
     <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
+    <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum" />
 
     <h:form id="fieldsForm">
         <p:panel width="100" header="#{messages['customizedEntities.fieldsAndActions']}" rendered="#{customEntityTemplateBean.cetPrefix!=null}">
@@ -131,6 +132,11 @@
 
                         <p:tooltip for="disablelink" value="#{messages['commons.disable']}" showEffect="slide" hideEffect="slide" />
 
+                        <p:commandButton id="copylink" icon="ui-icon-copy" update=":copyCFTForm" oncomplete="PF('copyCFTDialog').show()">
+                            <f:setPropertyActionListener target="#{customFieldTemplateBean.entity}" value="#{entity}" />
+                        </p:commandButton>
+
+                        <p:tooltip for="copylink" value="#{messages['customFieldTemplate.copyCFT.action']}" showEffect="slide" hideEffect="slide" />
 
 
                         <p:remoteCommand id="remoteDeleteButton" actionListener="#{customFieldTemplateBean.deleteInlist}" action="#{customEntityTemplateBean.removeField(node)}" name="fieldsDoDelete"
@@ -238,6 +244,28 @@
 
     </h:form>
 
+
+    <p:dialog id="copyCFTDialog" header="#{messages['customFieldTemplate.copyCFT.header']}" modal="true" closeOnEscape="true" widgetVar="copyCFTDialog" width="50%" closable="false" appendTo="@(body)">
+
+        <hftl:decorateFormPanel formId="copyCFTForm">
+            <ui:define name="fields">
+                <hftl:decorateFormField fieldId="fieldToCopy" label="#{messages['customFieldTemplate.copyCFT.fieldToCopy']}">
+                    <h:outputText id="fieldToCopy" value="#{customFieldTemplateBean.entity.descriptionAndCode}" styleClass="field-value" />
+                </hftl:decorateFormField>
+
+                <hftl:decorateFormField fieldId="copyCftTo" label="#{messages['customFieldTemplate.copyCFT.target']}">
+                    <p:autoComplete id="copyCftTo" value="#{customFieldTemplateBean.copyCftTo}" completeMethod="#{customFieldTemplateBean.autocompleteClassNamesHuman}"
+                        converter="customFieldAppliesToConverter" required="true" size="50" dropdown="true" dropdownMode="current" />
+                </hftl:decorateFormField>
+            </ui:define>
+            <ui:define name="buttons">
+                <p:commandButton value="#{messages['customFieldTemplate.copyCFT.action']}" action="#{customFieldTemplateBean.copyCFT}" update="@form :cftForm:messages"
+                    oncomplete="if (args &amp;&amp; !args.validationFailed){PF('copyCFTDialog').hide();}" ajax="true" />
+                <p:button value="#{messages['action.cancel']}" onclick="PF('copyCFTDialog').hide(); return false;" />
+            </ui:define>
+        </hftl:decorateFormPanel>
+    </p:dialog>
+
     <p:dialog id="groupDialog" header="#{messages['customizedEntities.groupDialogHeader']}" modal="true" closeOnEscape="false" widgetVar="groupDialog" width="50%" closable="false" appendTo="@(body)">
 
         <hftl:decorateFormPanel formId="groupForm" label="#{messages['customizedEntities.'.concat(customEntityTemplateBean.selectedFieldGrouping.type).concat('DialogHeader')]}">
@@ -287,7 +315,7 @@
 
                         <h:panelGroup id="mapKeyTypeField">
                             <hftl:formField label="#{messages['customFieldTemplate.mapKeyType']}" field="mapKeyType" required="true" componentWidth="30"
-                                rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
+                                listValues="#{CustomFieldMapKeyEnum.enumValuesForKey}" rendered="#{customFieldTemplateBean.entity.storageType == 'MAP'}" />
                         </h:panelGroup>
 
                         <h:panelGroup id="defaultValueField">
@@ -326,8 +354,14 @@
 
                 <h:panelGroup id="matrixColumns" styleClass="clearfix">
                     <p:fieldset legend="#{messages['customFieldTemplate.matrixColumn.columns']}" styleClass="clearLeft" rendered="#{customFieldTemplateBean.entity.storageType == 'MATRIX'}">
-                        <p:dataTable editable="true" editMode="cell" value="#{customFieldTemplateBean.entity.matrixColumns}" var="matrixColumn" style="width: 850px" sortBy="#{matrixColumn.position}">
+                        <p:dataTable editable="true" editMode="cell" value="#{customFieldTemplateBean.entity.matrixColumns}" var="matrixColumn" style="width: 850px" sortBy="#{matrixColumn.columnUse}">
                             <!--                                 <p:ajax event="cellEdit" update=":cftForm:matrixColumns" partialSubmit="true" /> -->
+                            <p:headerRow>
+                                <p:column colspan="#{customFieldTemplateBean.edit?5:4}">
+                                    <h:outputText value="#{messages['customFieldTemplate.matrixColumn.columnUse.'.concat(matrixColumn.columnUse)]}" />
+                                </p:column>
+                            </p:headerRow>
+
                             <p:column headerText="#{messages['customFieldTemplate.matrixColumn.position']}" width="50">
                                 <h:outputText value="#{matrixColumn.position}" styleClass="field-value" />
                             </p:column>
@@ -361,11 +395,14 @@
                                             <f:converter converterId="enumConverter" />
                                             <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
                                             <f:selectItem />
-                                            <f:selectItems value="#{CustomFieldMapKeyEnum.values()}" var="item" itemValue="#{item}" itemLabel="#{messages[item.label]}" />
+                                            <f:selectItems
+                                                value="#{matrixColumn.columnUse == CustomFieldColumnUseEnum.USE_KEY? CustomFieldMapKeyEnum.enumValuesForKey:CustomFieldMapKeyEnum.enumValuesForValue}"
+                                                var="item" itemValue="#{item}" itemLabel="#{messages[item.label]}" />
                                         </h:selectOneMenu>
                                     </f:facet>
                                 </p:cellEditor>
                             </p:column>
+
                             <c:if test="#{customFieldTemplateBean.edit}">
                                 <p:column width="50">
                                     <p:tooltip for="deletelink" value="#{messages['commons.delete']}" showEffect="slide" hideEffect="slide" />
@@ -376,8 +413,10 @@
                             </c:if>
                             <c:if test="#{customFieldTemplateBean.edit}">
                                 <f:facet name="footer" layout="block">
-                                    <p:commandButton value="#{messages['customFieldTemplate.addColumn']}" partialSubmit="true" process="@this" update=":cftForm:matrixColumns"
-                                        action="#{customFieldTemplateBean.entity.addMatrixColumn()}" />
+                                    <p:commandButton value="#{messages['customFieldTemplate.addKeyColumn']}" partialSubmit="true" process="@this" update=":cftForm:matrixColumns"
+                                        action="#{customFieldTemplateBean.entity.addMatrixKeyColumn()}" />
+                                    <p:commandButton value="#{messages['customFieldTemplate.addValueColumn']}" partialSubmit="true" process="@this" update=":cftForm:matrixColumns"
+                                        action="#{customFieldTemplateBean.entity.addMatrixValueColumn()}" rendered="#{customFieldTemplateBean.entity.fieldType == CustomFieldTypeEnum.MULTI_VALUE}" />
                                 </f:facet>
                             </c:if>
                         </p:dataTable>
@@ -449,7 +488,13 @@
                             oncomplete="if (args &amp;&amp; !args.validationFailed){refreshFields();PF('cftDialog').hide();}">
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
                         </p:commandButton>
+
+                        <p:commandButton id="copyButton" icon="ui-icon-copy" value="#{messages['customFieldTemplate.copyCFT.action']}"
+                            rendered="#{customFieldTemplateBean.entity.id!=null and customFieldTemplateBean.canUserUpdateEntity()}" oncomplete="PF('copyCFTDialog').show()" update=":copyCFTForm">
+                        </p:commandButton>
+
                         <p:commandButton value="#{messages['commons.close']}" onclick="PF('cftDialog').hide()" type="button" process="@this" />
+
                     </hf:formButtons>
 
                 </ui:define>
@@ -472,7 +517,7 @@
 
                 <h:panelGroup>
                     <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" useConverter="false" maxlength="50" componentWidth="100" />
-<!--                     <hftl:formField label="#{messages['entityCustomAction.guiPosition']}" field="guiPosition" /> -->
+                    <!--                     <hftl:formField label="#{messages['entityCustomAction.guiPosition']}" field="guiPosition" /> -->
                     <hftl:formField label="#{messages['customizedEntities.actionApplicableOnEl']}" field="applicableOnEl" componentWidth="50" textArea="true" maxlength="2000" rows="1" />
 
                     <hftl:formField id="script" label="#{messages['customizedEntities.actionScript']}" field="script" valueLabelField="code" newLine="true" componentWidth="100" popup="true"

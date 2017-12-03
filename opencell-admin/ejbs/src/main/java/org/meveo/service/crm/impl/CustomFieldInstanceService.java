@@ -546,7 +546,7 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Get a custom field value for a given entity's parent's. If custom field is versionable, a current date will be used to access the value.
+     * Get a custom field value for a given entity's parent's. (DOES NOT include a given entity). If custom field is versionable, a current date will be used to access the value.
      * 
      * @param entity Entity
      * @param cfCode Custom field code
@@ -565,7 +565,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -581,19 +581,62 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Get a a list of custom field CFvalues for a given entity's parent's. NOTE: retrieves only the first parent up - does not climb up the hierarchy as getInheritedOnlyCFValue
-     * does.
+     * Get a a list of custom field CFvalues for a given entity and its parent's CF entity hierarchy up.
      * 
      * @param entity Entity
      * @param cfCode Custom field code
-     * @return A list of Custom field CFvalues
+     * @return A list of Custom field CFvalues. From this and all the entities CF entity hierarchy up.
      */
-    public List<CustomFieldValue> getInheritedVersionableOnlyCFValue(ICustomFieldEntity entity, String code) {
+    public List<CustomFieldValue> getInheritedAllCFValues(ICustomFieldEntity entity, String cfCode) {
 
         // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
         if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
             entity = providerService.findById(appProvider.getId());
         }
+
+        List<CustomFieldValue> allValues = new ArrayList<>();
+
+        if (entity.getCfValues() != null) {
+            List<CustomFieldValue> entityValues = entity.getCfValues().getValuesByCode().get(cfCode);
+            if (entityValues != null) {
+                allValues.addAll(entityValues);
+            }
+        }
+
+        ICustomFieldEntity[] parentCfEntities = entity.getParentCFEntities();
+        if (parentCfEntities != null) {
+            for (ICustomFieldEntity parentCfEntity : parentCfEntities) {
+                if (parentCfEntity == null) {
+                    continue;
+                }
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
+                if (parentCfEntity instanceof Provider) {
+                    parentCfEntity = providerService.findById(appProvider.getId());
+                } else {
+                    parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
+                }
+                allValues.addAll(getInheritedAllCFValues(parentCfEntity, cfCode));
+            }
+        }
+
+        return allValues;
+    }
+
+    /**
+     * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
+     * 
+     * @param entity Entity
+     * @param cfCode Custom field code
+     * @return A list of Custom field CFvalues. From all the entities CF entity hierarchy up.
+     */
+    public List<CustomFieldValue> getInheritedOnlyAllCFValues(ICustomFieldEntity entity, String cfCode) {
+
+        // Handle cases when appProvider was passed instead of a real Provider entity. The class in this case is org.meveo.model.crm.Provider$Proxy$_$$_WeldClientProxy
+        if (entity instanceof Provider && entity.getClass().getSimpleName().contains("Proxy")) {
+            entity = providerService.findById(appProvider.getId());
+        }
+
+        List<CustomFieldValue> allValues = new ArrayList<>();
 
         ICustomFieldEntity[] parentCFEntities = entity.getParentCFEntities();
         if (parentCFEntities != null) {
@@ -601,21 +644,16 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
                 }
-                if (parentCfEntity.getCfValues() != null) {
-                    List<CustomFieldValue> value = parentCfEntity.getCfValues().getValuesByCode().get(code);
-                    if (value != null) {
-                        return value;
-                    }
-                }
+                allValues.addAll(getInheritedAllCFValues(parentCfEntity, cfCode));
             }
         }
-        return null;
+        return allValues;
     }
 
     /**
@@ -638,7 +676,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -679,7 +717,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -738,7 +776,7 @@ public class CustomFieldInstanceService extends BaseService {
             if (parentCfEntity == null) {
                 continue;
             }
-            // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+            // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
             if (parentCfEntity instanceof Provider) {
                 parentCfEntity = providerService.findById(appProvider.getId());
             } else {
@@ -754,8 +792,8 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Get a cumulative and unique custom field value for a given entity's all parent chain. Applies to Map (matrix) values only. The closest parent entity's CF value will be
-     * preserved. If custom field is versionable, a current date will be used to access the value.
+     * Get a cumulative and unique custom field value for a given entity's all parent chain. (DOES NOT include a given entity). Applies to Map (matrix) values only. The closest
+     * parent entity's CF value will be preserved. If custom field is versionable, a current date will be used to access the value.
      * 
      * @param entity Entity
      * @param cfCode Custom field code
@@ -812,7 +850,7 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Get a custom field value for a given entity's parent's and a date
+     * Get a custom field value for a given entity's parent's and a date. (DOES NOT include a given entity)
      * 
      * @param entity Entity
      * @param cfCode Custom field code
@@ -832,7 +870,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -875,7 +913,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -922,7 +960,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -967,7 +1005,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -1011,7 +1049,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -1055,7 +1093,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -1100,7 +1138,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -1142,7 +1180,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -1185,7 +1223,7 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity == null) {
                     continue;
                 }
-                // If Parent entity is Provider, use appProvider instead as entity passed will be a fake one.
+                // If Parent entity is Provider, lookup provider from appProvider as appProvider is not managed
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
@@ -1285,8 +1323,16 @@ public class CustomFieldInstanceService extends BaseService {
         Object valueMatched = CustomFieldInstanceService.matchClosestValue(value, keyToMatch);
 
         log.trace("Found closest match value {} for keyToMatch={}", valueMatched, keyToMatch);
-        return valueMatched;
 
+        // Need to check if it is a multi-value type value and convert it to a map
+        if (valueMatched != null && valueMatched instanceof String) {
+            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
+            if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+                return cft.deserializeMultiValue((String) valueMatched, null);
+            }
+        }
+
+        return valueMatched;
     }
 
     /**
@@ -1316,8 +1362,16 @@ public class CustomFieldInstanceService extends BaseService {
 
         Object valueMatched = CustomFieldInstanceService.matchClosestValue(value, keyToMatch);
         log.trace("Found closest match value {} for period {} and keyToMatch={}", valueMatched, date, keyToMatch);
-        return valueMatched;
 
+        // Need to check if it is a multi-value type value and convert it to a map
+        if (valueMatched != null && valueMatched instanceof String) {
+            CustomFieldTemplate cft = cfTemplateService.findByCodeAndAppliesTo(cfCode, entity);
+            if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+                return cft.deserializeMultiValue((String) valueMatched, null);
+            }
+        }
+
+        return valueMatched;
     }
 
     /**
@@ -1387,6 +1441,12 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         log.trace("Found value match {} by keyToMatch={}", valueMatched, keys);
+
+        // Need to check if it is a multi-value type value and convert it to a map
+        if (valueMatched != null && valueMatched instanceof String && cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+            return cft.deserializeMultiValue((String) valueMatched, null);
+        }
+
         return valueMatched;
 
     }
@@ -1459,8 +1519,13 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         log.trace("Found matrix value match {} for period {} and keyToMatch={}", valueMatched, date, keys);
-        return valueMatched;
 
+        // Need to check if it is a multi-value type value and convert it to a map
+        if (valueMatched != null && valueMatched instanceof String && cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
+            return cft.deserializeMultiValue((String) valueMatched, null);
+        }
+
+        return valueMatched;
     }
 
     /**

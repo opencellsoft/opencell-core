@@ -1,6 +1,6 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html"
-    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui"
-    xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:s="http://jboss.org/seam/faces" template="/layout/template.xhtml">
+    xmlns:hftl="http://hftl.org" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:p="http://primefaces.org/ui" xmlns:o="http://omnifaces.org/ui" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:s="http://jboss.org/seam/faces" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
@@ -12,37 +12,28 @@
 
     <ui:define name="body">
 
-		<h:form id="crumbmenuForm">
-			<p:breadCrumb homeDisplay="text" id="crumbmenu">
-				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-				<p:menuitem outcome="customizedEntities"
-					value="#{messages['menu.customizedEntities']}" />
+        <h:form id="crumbmenuForm">
+            <p:breadCrumb homeDisplay="text" id="crumbmenu">
+                <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
+                <p:menuitem outcome="customizedEntities" value="#{messages['menu.customizedEntities']}" />
 
-				<p:menuitem
-					value="#{messages['commons.new']} #{messages['customizedEntities.customEntity']}"
-					disabled="true"
-					rendered="#{customEntityTemplateBean.entity.code==null and customEntityTemplateBean.customEntityTemplate}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['customizedEntities.customEntity']}" disabled="true"
+                    rendered="#{customEntityTemplateBean.entity.code==null and customEntityTemplateBean.customEntityTemplate}" />
 
-				<p:menuitem value="#{customEntityTemplateBean.entity.code}"
-					disabled="true"
-					rendered="#{customEntityTemplateBean.entity.code!=null}" />
+                <p:menuitem value="#{customEntityTemplateBean.entity.code}" disabled="true" rendered="#{customEntityTemplateBean.entity.code!=null}" />
 
-				<p:menuitem
-					value="#{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}"
-					disabled="true"
-					rendered="#{! customEntityTemplateBean.customEntityTemplate}" />
+                <p:menuitem value="#{customEntityTemplateBean.customizedEntity.classnameToDisplayHuman}" disabled="true" rendered="#{! customEntityTemplateBean.customEntityTemplate}" />
 
-			</p:breadCrumb>
-		</h:form>
+            </p:breadCrumb>
+        </h:form>
 
-		<o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
+        <o:importConstants type="org.meveo.model.crm.custom.CustomFieldMapKeyEnum" />
         <o:importConstants type="org.meveo.model.crm.custom.CustomFieldTypeEnum" />
 
         <h:panelGroup rendered="#{customEntityTemplateBean.customEntityTemplate}">
-            <hftl:formPanel formId="cetForm"
-                label="#{messages['customizedEntities.detail'].concat(customEntityTemplateBean.entity.code!=null?(' - '.concat(customEntityTemplateBean.entity.code)):'')}"
+            <hftl:formPanel formId="cetForm" label="#{messages['customizedEntities.detail'].concat(customEntityTemplateBean.entity.code!=null?(' - '.concat(customEntityTemplateBean.entity.code)):'')}"
                 backingBean="#{customEntityTemplateBean}">
-                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true" validateUnique="true"/>
+                <hftl:formField label="#{messages['BusinessEntity.code']}" field="code" showOnlyOnNew="true" required="true" validateUnique="true" />
                 <hftl:formField label="#{messages['customizedEntities.name']}" field="name" required="true" />
                 <hftl:formField label="#{messages['BusinessEntity.description']}" field="description" />
                 <hftl:decorateFormField label="#{messages['meveoModule.partOfModules']}" rendered="#{!customEntityTemplateBean.entity.transient}">

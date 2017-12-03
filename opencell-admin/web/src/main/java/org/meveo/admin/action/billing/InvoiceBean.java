@@ -672,7 +672,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public Set<Invoice> getLinkedInvoices(Invoice invoice) {
+        if (invoice!=null){
         return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+        } return null;
     }
 
     public boolean isSelectedInvoices() {

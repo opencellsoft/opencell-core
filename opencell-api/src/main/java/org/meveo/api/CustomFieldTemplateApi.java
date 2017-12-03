@@ -401,7 +401,7 @@ public class CustomFieldTemplateApi extends BaseApi {
 
     private List<String> getCustomizedEntitiesAppliesTo() {
         List<String> cftAppliesto = new ArrayList<String>();
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, true, null, null);
         for (CustomizedEntity customizedEntity : entities) {
             cftAppliesto.add(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), customizedEntity.getEntityCode()));
         }

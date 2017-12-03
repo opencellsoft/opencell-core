@@ -545,6 +545,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public E refreshOrRetrieve(E entity) {
 
+        if (entity == null){
+            return null;
+        }
+        
         if (getEntityManager().contains(entity)) {
             log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);

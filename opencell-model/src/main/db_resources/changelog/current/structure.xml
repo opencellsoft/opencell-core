@@ -1424,4 +1424,12 @@
         <modifyDataType tableName="crm_custom_action" columnName="gui_position" newDataType="varchar(2000)"/>
     </changeSet>
     
+    <changeSet id="#3067_20171130" author="AndriusKarpavicius">
+        <addColumn tableName="crm_custom_field_tmpl_mcols">
+            <column name="column_use" type="int4" defaultValueNumeric="0"/>
+        </addColumn>
+        <sql>update crm_custom_field_tmpl_mcols set column_use=0 </sql>
+        <addNotNullConstraint tableName="crm_custom_field_tmpl_mcols" columnName="column_use" />        
+    </changeSet>
+    
 </databaseChangeLog> 

@@ -1,6 +1,7 @@
 package org.meveo.model.crm.custom;
 
 import java.util.Date;
+import java.util.Map;
 
 import org.meveo.model.crm.EntityReferenceWrapper;
 
@@ -43,7 +44,12 @@ public enum CustomFieldTypeEnum {
     /**
      * An embedded entity data
      */
-    CHILD_ENTITY(true, EntityReferenceWrapper.class);
+    CHILD_ENTITY(true, EntityReferenceWrapper.class),
+
+    /**
+     * Multi value (map) type value
+     */
+    MULTI_VALUE(true, Map.class);
 
     /**
      * Is value stored in a serialized form in DB
