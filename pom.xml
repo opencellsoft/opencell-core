@@ -23,6 +23,8 @@
 			configuration (e.g. import.sql) -->
 		<env>dev</env>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		
+		<version.keycloak>2.5.5.Final</version.keycloak>
 
 		<dbtype>generic</dbtype>
 	</properties>
@@ -450,7 +452,7 @@
 			<dependency>
 				<groupId>org.keycloak</groupId>
 				<artifactId>keycloak-core</artifactId>
-				<version>2.5.5.Final</version>
+				<version>${version.keycloak}</version>
 				<scope>provided</scope>
 			</dependency>
 

@@ -26,6 +26,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -406,5 +407,49 @@ public class ReflectionUtils {
 
         }
         return null;
+    }
+
+    /**
+     * This is a recursive function that aims to walk through the properties of an object until it gets the final value.
+     * 
+     * e.g. If we received an Object named obj and given a string property of "code.name", then the value of obj.code.name will be returned.
+     * 
+     * @param obj The object that contains the property value.
+     * @param property The property of the object that contains the data.
+     * @return The value of the data contained in obj.property
+     * @throws IllegalAccessException
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static Object getPropertyValue(Object obj, String property) throws IllegalAccessException {
+
+        // Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
+        // log.error("AKK getProperty value {} {} {}", obj, property, obj.getClass());
+
+        if (obj instanceof Collection) {
+            List propertyValues = new ArrayList<>();
+            for (Object value : (Collection) obj) {
+                Object propertyValue = getPropertyValue(value, property);
+                if (propertyValue != null) {
+                    propertyValues.add(propertyValue);
+                }
+            }
+            if (propertyValues.isEmpty()) {
+                return null;
+            } else {
+                return propertyValues;
+            }
+        }
+
+        int fieldIndex = property.indexOf(".");
+        if (property.indexOf(".") != -1) {
+            String fieldName = property.substring(0, fieldIndex);
+            Object fieldValue = FieldUtils.readField(obj, fieldName, true);
+            if (fieldValue == null) {
+                return null;
+            }
+            return getPropertyValue(fieldValue, property.substring(fieldIndex + 1));
+        } else {
+            return FieldUtils.readField(obj, property, true);
+        }
     }
 }

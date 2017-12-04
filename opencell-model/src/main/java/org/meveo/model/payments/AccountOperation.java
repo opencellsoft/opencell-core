@@ -35,6 +35,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -63,6 +65,17 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
+@NamedQueries({
+    @NamedQuery(name = "AccountOperation.listAOIdsToPay", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' and "
+            + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
+    @NamedQuery(name = "RecordedInvoice.listAOToPayByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' "
+            + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
+            + " and pm.preferred is true and ao.unMatchingAmount <> 0"),
+    @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and "
+            + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
+    @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
+            + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
+            + " and pm.preferred is true and ao.unMatchingAmount <> 0")})
 public class AccountOperation extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;

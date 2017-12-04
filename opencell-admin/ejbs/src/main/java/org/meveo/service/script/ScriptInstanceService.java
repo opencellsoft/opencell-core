@@ -48,9 +48,9 @@ import org.meveo.model.security.Role;
 public class ScriptInstanceService extends CustomScriptService<ScriptInstance, ScriptInterface> {
 
     /**
-     * Get all ScriptInstances with error
+     * Get all ScriptInstances with error.
      *
-     * @return
+     * @return list of custom script.
      */
     public List<CustomScript> getScriptInstancesWithError() {
         return ((List<CustomScript>) getEntityManager().createNamedQuery("CustomScript.getScriptInstanceOnError", CustomScript.class).setParameter("isError", Boolean.TRUE)
@@ -58,16 +58,16 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     }
 
     /**
-     * Count scriptInstances with error
-     *
-     * @return
+     * Count scriptInstances with error.
+     * 
+     * @return number of script instances with error.
      */
     public long countScriptInstancesWithError() {
         return ((Long) getEntityManager().createNamedQuery("CustomScript.countScriptInstanceOnError", Long.class).setParameter("isError", Boolean.TRUE).getSingleResult());
     }
 
     /**
-     * Compile all scriptInstances
+     * Compile all scriptInstances.
      */
     @PostConstruct
     void compileAll() {
@@ -81,7 +81,6 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      *
      * @param scriptCode ScriptInstanceCode
      * @param context Context parameters (optional)
-     * @param currentUser User executor
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws ElementNotFoundException Script not found
@@ -98,10 +97,10 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
     }
 
     /**
-     * Wrap the logger and execute script
+     * Wrap the logger and execute script.
      *
-     * @param scriptCode
-     * @param context
+     * @param scriptCode code of script
+     * @param context context used in execution of script.
      */
     public void test(String scriptCode, Map<String, Object> context) {
         try {
@@ -123,9 +122,8 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * Only users having a role in executionRoles can execute the script, not having the role should throw an InvalidPermission exception that extends businessException. A script
      * with no executionRoles can be executed by any user.
      *
-     * @param scriptInstance
-     * @param user
-     * @throws InvalidPermissionException
+     * @param scriptInstance instance of script
+     * @throws InvalidPermissionException invalid permission exception.
      */
     public void isUserHasExecutionRole(ScriptInstance scriptInstance) throws InvalidPermissionException {
         if (scriptInstance != null && scriptInstance.getExecutionRoles() != null && !scriptInstance.getExecutionRoles().isEmpty()) {
@@ -139,6 +137,10 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
         }
     }
 
+    /**
+     * @param scriptInstance instance of script
+     * @return true if user have the souring role.
+     */
     public boolean isUserHasSourcingRole(ScriptInstance scriptInstance) {
         if (scriptInstance != null && scriptInstance.getSourcingRoles() != null && !scriptInstance.getSourcingRoles().isEmpty()) {
             Set<Role> sourcingRoles = scriptInstance.getSourcingRoles();
@@ -159,7 +161,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      * @param workerName The name of the API or service that will be invoked.
      * @param methodName The name of the method that will be invoked.
      * @param parameters The array of parameters accepted by the method. They must be specified in exactly the same order as the target method.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void callWithNewTransaction(String workerName, String methodName, Object... parameters) throws BusinessException {

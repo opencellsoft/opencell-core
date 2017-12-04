@@ -25,16 +25,16 @@ public class ServiceToActivateDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
-    
+
     @XmlAttribute
     private String description;
 
-    @XmlElement(required = true)
+    @XmlElement(required = false)
     private BigDecimal quantity;
 
     private Date subscriptionDate;
     private ChargeInstanceOverridesDto chargeInstanceOverrides;
-    
+
     private CustomFieldsDto customFields;
 
     @XmlTransient
@@ -42,7 +42,7 @@ public class ServiceToActivateDto implements Serializable {
     private ServiceTemplate serviceTemplate;
 
     private Date rateUntilDate;
-    
+
     public String getCode() {
         return code;
     }
@@ -52,8 +52,6 @@ public class ServiceToActivateDto implements Serializable {
     }
 
     public BigDecimal getQuantity() {
-        if (quantity == null)
-            return new BigDecimal(0);
         return quantity;
     }
 
@@ -91,7 +89,7 @@ public class ServiceToActivateDto implements Serializable {
         this.chargeInstanceOverrides = chargeInstanceOverrides;
     }
 
-	public CustomFieldsDto getCustomFields() {
+    public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
@@ -99,13 +97,13 @@ public class ServiceToActivateDto implements Serializable {
         this.customFields = customFields;
     }
 
-	public Date getRateUntilDate() {
-		return rateUntilDate;
-	}
+    public Date getRateUntilDate() {
+        return rateUntilDate;
+    }
 
-	public void setRateUntilDate(Date rateUtilDate) {
-		this.rateUntilDate = rateUtilDate;
-	}
+    public void setRateUntilDate(Date rateUtilDate) {
+        this.rateUntilDate = rateUtilDate;
+    }
 
     public String getDescription() {
         return description;

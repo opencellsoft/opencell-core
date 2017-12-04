@@ -1,36 +1,45 @@
 package org.meveo.api.catalog;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.account.FilterProperty;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.primefaces.model.SortOrder;
 
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, ProductTemplateDto> {
 
     @Inject
@@ -44,6 +53,8 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public ProductTemplateDto find(String code, Date validFrom, Date validTo)
             throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -64,7 +75,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
     private ProductTemplateDto convertProductTemplateToDto(ProductTemplate productTemplate) {
 
-        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false);
+        ProductTemplateDto productTemplateDto = new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false);
         processProductChargeTemplateToDto(productTemplate, productTemplateDto);
         return productTemplateDto;
     }
@@ -118,6 +129,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
         try {
             saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -139,8 +151,18 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), null));
 
-        // save product template now so that they can be referenced by the
-        // related entities below.
+        if (postData.getSellers() != null) {
+            productTemplate.getSellers().clear();
+            for (String sellerCode : postData.getSellers()) {
+                Seller seller = sellerService.findByCode(sellerCode);
+                if (seller == null) {
+                    throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+                }
+                productTemplate.addSeller(seller);
+            }
+        }
+
+        // save product template now so that they can be referenced by the related entities below.
         productTemplateService.create(productTemplate);
 
         if (postData.getProductChargeTemplates() != null) {
@@ -223,6 +245,16 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), productTemplate.getLongDescriptionI18n()));
         }
 
+        if (postData.getSellers() != null) {
+            productTemplate.getSellers().clear();
+            for (String sellerCode : postData.getSellers()) {
+                Seller seller = sellerService.findByCode(sellerCode);
+                if (seller == null) {
+                    throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+                }
+                productTemplate.addSeller(seller);
+            }
+        }
         productTemplate = productTemplateService.update(productTemplate);
 
         return productTemplate;
@@ -247,23 +279,33 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     }
 
     /**
-     * List all product templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered. If only validFrom is
-     * provided, a search will return products valid on a given date. If only validTo date is provided, a search will return products valid from today to a given date.
+     * List product templates matching filtering and query criteria or code and validity dates.
+     * 
+     * If neither date is provided, validity dates will not be considered.If only validFrom is provided, a search will return product bundles valid on a given date. If only valdTo
+     * date is provided, a search will return product valid from today to a given date.
      * 
      * @param code Product template code for optional filtering
      * @param validFrom Validity range from date.
      * @param validTo Validity range to date.
+     * @param pagingAndFiltering Paging and filtering criteria.
      * @return A list of product templates
      */
-    public List<ProductTemplateDto> list(String code, Date validFrom, Date validTo) {
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "listProductTemplate", itemPropertiesToFilter = {
+            @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
+    public GetListProductTemplateResponseDto list(@Deprecated String code, @Deprecated Date validFrom, @Deprecated Date validTo, PagingAndFiltering pagingAndFiltering)
+            throws InvalidParameterException {
 
-        Map<String, Object> filters = new HashMap<String, Object>();
-        filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, ProductTemplate.class);
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        pagingAndFiltering.addFilter(PersistenceService.SEARCH_ATTR_TYPE_CLASS, ProductTemplate.class);
 
         if (!StringUtils.isBlank(code) || validFrom != null || validTo != null) {
 
             if (!StringUtils.isBlank(code)) {
-                filters.put("code", code);
+                pagingAndFiltering.addFilter("code", code);
             }
 
             // If only validTo date is provided, a search will return products valid from today to a given date.
@@ -273,24 +315,32 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
             // search by a single date
             if (validFrom != null && validTo == null) {
-
-                filters.put("minmaxOptionalRange validity.from validity.to", validFrom);
+                pagingAndFiltering.addFilter("minmaxOptionalRange validity.from validity.to", validFrom);
 
                 // search by date range
             } else if (validFrom != null && validTo != null) {
-                filters.put("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
+                pagingAndFiltering.addFilter("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
             }
+
+            pagingAndFiltering.addFilter("disabled", false);
+
         }
 
-        PaginationConfiguration config = new PaginationConfiguration(filters);
-        List<ProductTemplate> productTemplates = productTemplateService.list(config);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, ProductTemplate.class);
 
-        List<ProductTemplateDto> dtos = new ArrayList<ProductTemplateDto>();
-        if (productTemplates != null) {
+        Long totalCount = productTemplateService.count(paginationConfig);
+
+        GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<ProductTemplate> productTemplates = productTemplateService.list(paginationConfig);
             for (ProductTemplate productTemplate : productTemplates) {
-                dtos.add(convertProductTemplateToDto(productTemplate));
+                result.addProductTemplate(convertProductTemplateToDto(productTemplate));
             }
         }
-        return dtos;
+
+        return result;
     }
 }

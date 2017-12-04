@@ -12,7 +12,7 @@
     Attributes
         backingBean - backing bean associated with data entry
         entity - entity associated to data entry. One, associatated with a backing bean will be used, if not provided.
-        label - a panel header (@deprecated, replaced by breadcrumb)
+        label - a panel header
         edit - edit or view mode
         formId - form id value. Defaults to "formId"
         showFormButtons - should default form buttons be displayed
@@ -94,7 +94,7 @@
 
     <h:form id="#{formId}" enctype="#{enctype}" onkeypress="if (event.keyCode == 13) { return #{ignoreEnterKey ? 'false':'true'}; }" rendered="#{rendered==null?true:rendered}">
 
-        <p:panel>
+        <p:panel header="${label}">
             <p:panel styleClass="TexAlRight" rendered="#{formButtonsTopRight}">
                 <c:if test="#{showFormButtons}">
                     <hf:formButtons backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"

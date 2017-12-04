@@ -362,7 +362,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		// template that was duplicated in initEntity() method
 		if (businessOfferModel != null) {
 			Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
-			CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues);
+			CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
 
 			List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
 			// process the services

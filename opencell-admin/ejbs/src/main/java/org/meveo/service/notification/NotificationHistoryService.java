@@ -12,9 +12,21 @@ import org.meveo.model.notification.NotificationHistory;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author phung
+ *
+ */
 @Stateless
 public class NotificationHistoryService extends PersistenceService<NotificationHistory> {
 
+    /**
+     * @param notification notification which will put on history
+     * @param entityOrEvent entity or event
+     * @param result result of notification
+     * @param status status of notification history status.
+     * @return notification history
+     * @throws BusinessException business exception.
+     */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public NotificationHistory create(Notification notification, Object entityOrEvent, String result, NotificationHistoryStatusEnum status) throws BusinessException {
         IEntity entity = null;
@@ -30,7 +42,7 @@ public class NotificationHistoryService extends PersistenceService<NotificationH
         history.setSerializedEntity(entity.getId() == null ? entity.toString() : entity.getId().toString());
         history.setResult(result);
         history.setStatus(status);
-        
+
         create(history);
 
         return history;

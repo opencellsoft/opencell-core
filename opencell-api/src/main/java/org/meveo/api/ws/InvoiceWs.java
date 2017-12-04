@@ -137,8 +137,7 @@ public interface InvoiceWs extends IBaseWs {
     /**
      * List invoices matching a given criteria
      * 
-     * @param postData Search criteria
-     * @param paging Pagination and filtering criteria
+     * @param paging Pagination and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return An invoice list
      */
     @WebMethod

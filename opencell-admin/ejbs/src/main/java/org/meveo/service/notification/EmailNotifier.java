@@ -19,7 +19,10 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.communication.impl.EmailSender;
 import org.slf4j.Logger;
 
-//TODO : transform that into MDB to correctly handle retries
+/**
+ * @author phung
+ *
+ */
 @Stateless
 public class EmailNotifier {
 
@@ -28,40 +31,40 @@ public class EmailNotifier {
 
     @Inject
     private Logger log;
-    
+
     @Inject
     private EmailSender emailSender;
 
     @Asynchronous
-    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context) {       
+    public void sendEmail(EmailNotification notification, Object entityOrEvent, Map<String, Object> context) {
         try {
-        	       	
+
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
             userMap.put("event", entityOrEvent);
             userMap.put("context", context);
             log.debug("event[{}], context[{}]", entityOrEvent, context);
             String subject = (String) ValueExpressionWrapper.evaluateExpression(notification.getSubject(), userMap, String.class);
-            String htmlBody = null,body = null;
+            String htmlBody = null, body = null;
             if (!StringUtils.isBlank(notification.getHtmlBody())) {
-                 htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);                
+                htmlBody = (String) ValueExpressionWrapper.evaluateExpression(notification.getHtmlBody(), userMap, String.class);
             } else {
-                 body = (String) ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);               
+                body = (String) ValueExpressionWrapper.evaluateExpression(notification.getBody(), userMap, String.class);
             }
             List<String> to = new ArrayList<String>();
 
             if (!StringUtils.isBlank(notification.getEmailToEl())) {
-               to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
+                to.add((String) ValueExpressionWrapper.evaluateExpression(notification.getEmailToEl(), userMap, String.class));
             }
             if (notification.getEmails() != null) {
-            	to.addAll(notification.getEmails());
-            }            
-            emailSender.send(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);             
+                to.addAll(notification.getEmails());
+            }
+            emailSender.send(notification.getEmailFrom(), Arrays.asList(notification.getEmailFrom()), to, subject, body, htmlBody);
             notificationHistoryService.create(notification, entityOrEvent, "", NotificationHistoryStatusEnum.SENT);
         } catch (Exception e) {
             try {
-            	log.error("Error occured when sending email",e);
-                notificationHistoryService.create(notification, entityOrEvent, e.getMessage(), e instanceof MessagingException ? NotificationHistoryStatusEnum.TO_RETRY
-                        : NotificationHistoryStatusEnum.FAILED);
+                log.error("Error occured when sending email", e);
+                notificationHistoryService.create(notification, entityOrEvent, e.getMessage(),
+                    e instanceof MessagingException ? NotificationHistoryStatusEnum.TO_RETRY : NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
                 log.error("Failed to create notification history", e2);
             }

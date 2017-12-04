@@ -18,7 +18,6 @@
  */
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -44,218 +43,199 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.omnifaces.cdi.Param;
 
 /**
- * Standard backing bean for {@link InvoiceSubCategory} (extends
- * {@link BaseBean} that provides almost all common methods to handle entities
- * filtering/sorting in datatable, their create, edit, view, delete operations).
- * It works with Manaty custom JSF components.
+ * Standard backing bean for {@link InvoiceSubCategory} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components.
  */
 @Named
 @ViewScoped
 public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link InvoiceSubCategory} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
+    /**
+     * Injected @{link InvoiceSubCategory} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
-	@Inject
-	private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
+    @Inject
+    private InvoiceSubCategoryCountryService invoiceSubCategoryCountryService;
 
-	/**
-	 * Inject InvoiceCategory service, that is used to load default category if
-	 * its id was passed in parameters.
-	 */
-	@Inject
-	private InvoiceCategoryService invoiceCategoryService;
+    /**
+     * Inject InvoiceCategory service, that is used to load default category if its id was passed in parameters.
+     */
+    @Inject
+    private InvoiceCategoryService invoiceCategoryService;
 
-	@Inject
-	private Messages messages;
+    @Inject
+    private Messages messages;
 
-	/**
-	 * InvoiceCategory Id passed as a parameter. Used when creating new
-	 * InvoiceSubCategory from InvoiceCategory window, so default
-	 * InvoiceCategory will be set on newly created InvoiceSubCategory.
-	 */
-	@Inject
-	@Param
-	private Long invoiceCategoryId;
+    /**
+     * InvoiceCategory Id passed as a parameter. Used when creating new InvoiceSubCategory from InvoiceCategory window, so default InvoiceCategory will be set on newly created
+     * InvoiceSubCategory.
+     */
+    @Inject
+    @Param
+    private Long invoiceCategoryId;
 
-	private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+    private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 
-	public void newInvoiceSubcategoryCountryInstance() {
-		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
-	}
+    public void newInvoiceSubcategoryCountryInstance() {
+        invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+    }
 
-	public String saveInvoiceSubCategoryCountry() {
-		log.info("saveOneShotChargeIns getObjectId={}", getObjectId());
+    public String saveInvoiceSubCategoryCountry() {
+        log.info("saveOneShotChargeIns getObjectId={}", getObjectId());
 
-		try {
-			if (invoiceSubcategoryCountry != null) {
-				ParamBean paramBean = ParamBean.getInstance();
-				String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
+        try {
+            if (invoiceSubcategoryCountry != null) {
+                ParamBean paramBean = ParamBean.getInstance();
+                String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
 
-				if (invoiceSubcategoryCountry.getId() != null) {
-					invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
-					messages.info(new BundleKey("messages", "update.successful"));
-				} else {
-					invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
-					try {
-						invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
-					} catch (BusinessException e1) {
-						if (invoiceSubcategoryCountry.isStrictMatch()) {
-							messages.error(new BundleKey("messages", "invoiceSubCategoryCountry.validityDates.matchingFound.strict"),
-									invoiceSubcategoryCountry.getStartValidityDateMatch() == null ? "null"
-											: DateUtils.formatDateWithPattern(
-													invoiceSubcategoryCountry.getStartValidityDateMatch(), datePattern),
-									invoiceSubcategoryCountry.getEndValidityDateMatch() == null ? "null"
-											: DateUtils.formatDateWithPattern(
-													invoiceSubcategoryCountry.getEndValidityDateMatch(), datePattern));
-							return null;
-						}
-					}
-					
-					if (invoiceSubcategoryCountry.isStrictMatch() != null
-							&& !invoiceSubcategoryCountry.isStrictMatch()) {
-						messages.warn(
-								new BundleKey("messages", "invoiceSubCategoryCountry.validityDates.matchingFound"),
-								invoiceSubcategoryCountry.getStartValidityDateMatch() == null ? "null"
-										: DateUtils.formatDateWithPattern(
-												invoiceSubcategoryCountry.getStartValidityDateMatch(), datePattern),
-								invoiceSubcategoryCountry.getEndValidityDateMatch() == null ? "null"
-										: DateUtils.formatDateWithPattern(
-												invoiceSubcategoryCountry.getEndValidityDateMatch(), datePattern));
-					}
-					
-					entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
-					messages.info(new BundleKey("messages", "save.successful"));
-				}
+                if (invoiceSubcategoryCountry.getId() != null) {
+                    invoiceSubCategoryCountryService.update(invoiceSubcategoryCountry);
+                    messages.info(new BundleKey("messages", "update.successful"));
+                } else {
+                    invoiceSubcategoryCountry.setInvoiceSubCategory(entity);
+                    try {
+                        invoiceSubCategoryCountryService.create(invoiceSubcategoryCountry);
+                    } catch (BusinessException e1) {
+                        if (invoiceSubcategoryCountry.isStrictMatch()) {
+                            messages.error(new BundleKey("messages", "invoiceSubCategoryCountry.validityDates.matchingFound.strict"),
+                                invoiceSubcategoryCountry.getStartValidityDateMatch() == null ? "null"
+                                        : DateUtils.formatDateWithPattern(invoiceSubcategoryCountry.getStartValidityDateMatch(), datePattern),
+                                invoiceSubcategoryCountry.getEndValidityDateMatch() == null ? "null"
+                                        : DateUtils.formatDateWithPattern(invoiceSubcategoryCountry.getEndValidityDateMatch(), datePattern));
+                            return null;
+                        }
+                    }
 
-				invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
-				return null;
-			}
-		} catch (Exception e) {
-			log.error("exception when applying one invoiceSubCategoryCountry !", e);
-			messages.error(new BundleKey("messages", "invoiceSubCategory.uniqueTaxFlied"));
+                    if (invoiceSubcategoryCountry.isStrictMatch() != null && !invoiceSubcategoryCountry.isStrictMatch()) {
+                        messages.warn(new BundleKey("messages", "invoiceSubCategoryCountry.validityDates.matchingFound"),
+                            invoiceSubcategoryCountry.getStartValidityDateMatch() == null ? "null"
+                                    : DateUtils.formatDateWithPattern(invoiceSubcategoryCountry.getStartValidityDateMatch(), datePattern),
+                            invoiceSubcategoryCountry.getEndValidityDateMatch() == null ? "null"
+                                    : DateUtils.formatDateWithPattern(invoiceSubcategoryCountry.getEndValidityDateMatch(), datePattern));
+                    }
 
-			return null;
-		}
+                    entity.getInvoiceSubcategoryCountries().add(invoiceSubcategoryCountry);
+                    messages.info(new BundleKey("messages", "save.successful"));
+                }
 
-		invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+                invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("exception when applying one invoiceSubCategoryCountry !", e);
+            messages.error(new BundleKey("messages", "invoiceSubCategory.uniqueTaxFlied"));
 
-		return null;
-	}
+            return null;
+        }
+
+        invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
+
+        return null;
+    }
 
     @ActionMethod
     public void deleteInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
         try {
-            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = entity.getInvoiceSubcategoryCountries();
-            invoiceSubcategoryCountries.remove(invoiceSubcategoryCountry);
-            invoiceSubcategoryCountry = (InvoiceSubcategoryCountry) invoiceSubCategoryCountryService.attach(invoiceSubcategoryCountry);
-            invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry);
-            entity.setInvoiceSubcategoryCountries(new ArrayList<>(invoiceSubcategoryCountries));
+            invoiceSubCategoryCountryService.remove(invoiceSubcategoryCountry.getId());
+            entity = invoiceSubCategoryService.refreshOrRetrieve(entity);
 
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }
 
-	public void editInvoiceSubcategoryCountry(
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-		this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
-	}
+    public void editInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
+    }
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public InvoiceSubCategoryBean() {
-		super(InvoiceSubCategory.class);
-	}
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public InvoiceSubCategoryBean() {
+        super(InvoiceSubCategory.class);
+    }
 
-	/**
-	 * Factory method for entity to edit. If objectId param set load that entity
-	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
-	 */
-	@Override
-	public InvoiceSubCategory initEntity() {
-		InvoiceSubCategory invoiceCatSub = super.initEntity();
+    /**
+     * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    @Override
+    public InvoiceSubCategory initEntity() {
+        InvoiceSubCategory invoiceCatSub = super.initEntity();
 
-		if (invoiceCategoryId != null) {
-			entity.setInvoiceCategory(invoiceCategoryService
-					.findById(invoiceCategoryId));
-		}
-		return invoiceCatSub;
-	}
+        if (invoiceCategoryId != null) {
+            entity.setInvoiceCategory(invoiceCategoryService.findById(invoiceCategoryId));
+        }
+        return invoiceCatSub;
+    }
 
-	public List<InvoiceSubCategory> listAll() {
-		getFilters();
-		if (filters.containsKey("languageCode")) {
-			filters.put("language.languageCode", filters.get("languageCode"));
-			filters.remove("languageCode");
-		} else if (filters.containsKey("language.languageCode")) {
-			filters.remove("language.languageCode");
-		}
-		return super.listAll();
-	}
+    public List<InvoiceSubCategory> listAll() {
+        getFilters();
+        if (filters.containsKey("languageCode")) {
+            filters.put("language.languageCode", filters.get("languageCode"));
+            filters.remove("languageCode");
+        } else if (filters.containsKey("language.languageCode")) {
+            filters.remove("language.languageCode");
+        }
+        return super.listAll();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		if (entity.getId() != null) {
-			super.saveOrUpdate(killConversation);
-	        return getListViewName();
+        if (entity.getId() != null) {
+            super.saveOrUpdate(killConversation);
+            return getListViewName();
 
-		} else {
-		    super.saveOrUpdate(killConversation);
-			messages.info(new BundleKey("messages", "invoiceSubCaterogy.AddTax"));
-			if (killConversation) {
-				endConversation();
-			}
-			return null;
-		}
-	}
+        } else {
+            super.saveOrUpdate(killConversation);
+            messages.info(new BundleKey("messages", "invoiceSubCaterogy.AddTax"));
+            if (killConversation) {
+                endConversation();
+            }
+            return null;
+        }
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "invoiceSubCategories";
-	}
+    @Override
+    protected String getListViewName() {
+        return "invoiceSubCategories";
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<InvoiceSubCategory> getPersistenceService() {
-		return invoiceSubCategoryService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<InvoiceSubCategory> getPersistenceService() {
+        return invoiceSubCategoryService;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	@Override
-	protected List<String> getFormFieldsToFetch() {
-		return Arrays.asList("invoiceSubcategoryCountries");
-	}
+    @Override
+    protected List<String> getFormFieldsToFetch() {
+        return Arrays.asList("invoiceSubcategoryCountries");
+    }
 
-	public InvoiceSubcategoryCountry getInvoiceSubcategoryCountry() {
-		return invoiceSubcategoryCountry;
-	}
+    public InvoiceSubcategoryCountry getInvoiceSubcategoryCountry() {
+        return invoiceSubcategoryCountry;
+    }
 
-	public void setInvoiceSubcategoryCountry(
-			InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
-		this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
-	}
+    public void setInvoiceSubcategoryCountry(InvoiceSubcategoryCountry invoiceSubcategoryCountry) {
+        this.invoiceSubcategoryCountry = invoiceSubcategoryCountry;
+    }
 }

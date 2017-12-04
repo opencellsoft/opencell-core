@@ -20,67 +20,69 @@ import org.meveo.model.billing.ProductInstance;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductInstanceDto extends BusinessDto {
 
-	private static final long serialVersionUID = 6853333357907373635L;
+    private static final long serialVersionUID = 6853333357907373635L;
 
-	private Date applicationDate;
-	protected BigDecimal quantity = BigDecimal.ONE;
-	private String orderNumber;
-	
-	@XmlElement(name = "productChargeInstance")
-	private List<ProductChargeInstanceDto> productChargeInstances = new ArrayList<>();
+    private Date applicationDate;
+    protected BigDecimal quantity = BigDecimal.ONE;
+    private String orderNumber;
 
-	private CustomFieldsDto customFields;
+    @XmlElement(name = "productChargeInstance")
+    private List<ProductChargeInstanceDto> productChargeInstances = new ArrayList<>();
 
-	public ProductInstanceDto() {
+    private CustomFieldsDto customFields;
 
-	}
+    public ProductInstanceDto() {
 
-	public ProductInstanceDto(ProductInstance e, CustomFieldsDto customFieldInstances) {
-		code = e.getCode();
-		description = e.getDescription();
-		applicationDate = e.getApplicationDate();
-		quantity = e.getQuantity();
-		orderNumber = e.getOrderNumber();
-		
-		if (e.getProductChargeInstances() != null) {
-			for (ProductChargeInstance pci : e.getProductChargeInstances()) {
-				productChargeInstances.add(new ProductChargeInstanceDto(pci));
-			}
-		}
-		
-		customFields = customFieldInstances;
-	}
+    }
 
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
+    public ProductInstanceDto(ProductInstance e, CustomFieldsDto customFieldInstances) {
 
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
-	}
+        id = e.getId();
+        code = e.getCode();
+        description = e.getDescription();
+        applicationDate = e.getApplicationDate();
+        quantity = e.getQuantity();
+        orderNumber = e.getOrderNumber();
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+        if (e.getProductChargeInstances() != null) {
+            for (ProductChargeInstance pci : e.getProductChargeInstances()) {
+                productChargeInstances.add(new ProductChargeInstanceDto(pci));
+            }
+        }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+        customFields = customFieldInstances;
+    }
 
-	public String getOrderNumber() {
-		return orderNumber;
-	}
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
 
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
+
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
 }

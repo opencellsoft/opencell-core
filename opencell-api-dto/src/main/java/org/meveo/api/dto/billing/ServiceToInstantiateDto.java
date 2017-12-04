@@ -30,7 +30,7 @@ public class ServiceToInstantiateDto implements Serializable {
     private String description;
 
     @XmlElement(required = true)
-    private BigDecimal quantity;
+    private BigDecimal quantity = BigDecimal.ONE;
 
     private Date subscriptionDate;
 
@@ -53,8 +53,6 @@ public class ServiceToInstantiateDto implements Serializable {
     }
 
     public BigDecimal getQuantity() {
-        if (quantity == null)
-            return new BigDecimal(0);
         return quantity;
     }
 

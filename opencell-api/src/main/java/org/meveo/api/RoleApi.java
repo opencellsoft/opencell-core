@@ -6,19 +6,26 @@ import java.util.Set;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.PermissionDto;
 import org.meveo.api.dto.RoleDto;
+import org.meveo.api.dto.RolesDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.ActionForbiddenException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.service.admin.impl.PermissionService;
 import org.meveo.service.admin.impl.RoleService;
+import org.primefaces.model.SortOrder;
 
 @Stateless
 public class RoleApi extends BaseApi {
@@ -29,10 +36,13 @@ public class RoleApi extends BaseApi {
     @Inject
     private PermissionService permissionService;
 
+    @Inject
+    private KeycloakAdminClientService keycloakAdminClientService;
+
     /**
      * 
      * @param postData
-
+     * 
      * @return Role entity
      * @throws MeveoApiException
      * @throws BusinessException
@@ -55,13 +65,13 @@ public class RoleApi extends BaseApi {
         }
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new ActionForbiddenException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles.");
         }
 
         Role role = new Role();
         role.setName(name);
         role.setDescription(postData.getDescription());
-        
+
         List<PermissionDto> permissionDtos = postData.getPermission();
         if (permissionDtos != null && !permissionDtos.isEmpty()) {
             Set<Permission> permissions = new HashSet<Permission>();
@@ -105,7 +115,7 @@ public class RoleApi extends BaseApi {
      * Update role
      * 
      * @param postData Role DTO
-
+     * 
      * @return Updated Role entity
      * @throws MeveoApiException
      * @throws BusinessException
@@ -117,14 +127,10 @@ public class RoleApi extends BaseApi {
             missingParameters.add("name");
         }
 
-        if (StringUtils.isBlank(postData.getDescription())) {
-            missingParameters.add("description");
-        }
-
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new ActionForbiddenException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles");
         }
 
         Role role = roleService.findByName(name);
@@ -133,7 +139,9 @@ public class RoleApi extends BaseApi {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
 
-        role.setDescription(postData.getDescription());
+        if (postData.getDescription() != null) {
+            role.setDescription(postData.getDescription());
+        }
 
         List<PermissionDto> permissionDtos = postData.getPermission();
         if (permissionDtos != null && !permissionDtos.isEmpty()) {
@@ -181,7 +189,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
-            throw new ActionForbiddenException("User has no permission to access roles for provider");
+            throw new ActionForbiddenException("User has no permission to access roles");
         }
 
         RoleDto roleDto = null;
@@ -189,7 +197,7 @@ public class RoleApi extends BaseApi {
         if (role == null) {
             throw new EntityDoesNotExistsException(Role.class, name, "name");
         }
-        roleDto = new RoleDto(role);
+        roleDto = new RoleDto(role, true, true);
 
         return roleDto;
     }
@@ -202,7 +210,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new ActionForbiddenException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles");
         }
 
         Role role = roleService.findByName(name);
@@ -223,7 +231,7 @@ public class RoleApi extends BaseApi {
         handleMissingParameters();
 
         if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationManagement")))) {
-            throw new ActionForbiddenException("User has no permission to manage roles for provider");
+            throw new ActionForbiddenException("User has no permission to manage roles");
         }
 
         Role role = roleService.findByName(name);
@@ -233,4 +241,42 @@ public class RoleApi extends BaseApi {
             return update(postData);
         }
     }
+
+    /**
+     * List roles matching filtering and query criteria
+     * 
+     * @param pagingAndFiltering Paging and filtering criteria. Specify "permissions" in fields to include the permissions. Specify "roles" to include child roles.
+     * @return A list of roles
+     * @throws ActionForbiddenException
+     * @throws InvalidParameterException
+     */
+    public RolesDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException {
+
+        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
+            throw new ActionForbiddenException("User has no permission to access roles");
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("name", SortOrder.ASCENDING, null, pagingAndFiltering, Role.class);
+
+        Long totalCount = roleService.count(paginationConfig);
+
+        RolesDto result = new RolesDto();
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<Role> roles = roleService.list(paginationConfig);
+            for (Role role : roles) {
+                result.getRoles().add(new RoleDto(role, pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("roles"),
+                    pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("permissions")));
+            }
+        }
+
+        return result;
+    }
+
+    public List<RoleDto> listExternalRoles(HttpServletRequest httpServletRequest) throws BusinessException {
+        return keycloakAdminClientService.listRoles(httpServletRequest);
+    }
+
 }

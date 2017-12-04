@@ -25,6 +25,11 @@ public enum OrderProductCharacteristicEnum {
     SERVICE_CODE("serviceCode", String.class),
 
     /**
+     * Service instance id
+     */
+    SERVICE_ID("serviceId", Long.class),
+
+    /**
      * Product instance code
      */
     PRODUCT_INSTANCE_CODE("productInstanceCode", String.class),
@@ -103,22 +108,22 @@ public enum OrderProductCharacteristicEnum {
      * The period to renew subscription for - value
      */
     SUBSCRIPTION_RENEW_FOR("renewFor", Integer.class),
-	
+
     /**
      * The criteria1
      */
     CRITERIA_1("criteria_1", String.class),
-	
+
     /**
      * The criteria2
      */
     CRITERIA_2("criteria_2", String.class),
-    
+
     /**
      * The criteria3
      */
-    CRITERIA_3("criteria_3", String.class), 
-    
+    CRITERIA_3("criteria_3", String.class),
+
     /**
      * The rate_until_date, if set so the recurring charge will be rated on activation service until this date
      */

@@ -30,6 +30,7 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -42,14 +43,15 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "hierarchyType"})
+@ExportIdentifier({ "code", "hierarchyType" })
 @Table(name = "hierarchy_entity", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "hierarchy_type" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "hierarchy_entity_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "hierarchy_entity_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "hierarchy_type")
-public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel<T>>{
+public abstract class HierarchyLevel<T> extends BusinessEntity implements Comparable<HierarchyLevel<T>> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @SuppressWarnings("rawtypes")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,6 +60,7 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
 
     @SuppressWarnings("rawtypes")
     @OneToMany(mappedBy = "parentLevel", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OrderBy("orderLevel")
     private Set<HierarchyLevel> childLevels;
 
     @Column(name = "hierarchy_type", insertable = false, updatable = false, length = 10)
@@ -111,19 +114,22 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
+        if (!super.equals(o))
+            return false;
 
         HierarchyLevel<?> that = (HierarchyLevel<?>) o;
         boolean equalCode;
-        if(code == null){
+        if (code == null) {
             equalCode = that.getCode() == null;
         } else {
             equalCode = code.equals(that.getCode());
         }
         boolean equalHierarchyType;
-        if(hierarchyType == null){
+        if (hierarchyType == null) {
             equalHierarchyType = that.getHierarchyType() == null;
         } else {
             equalHierarchyType = hierarchyType.equals(that.hierarchyType);
@@ -134,10 +140,15 @@ public abstract class HierarchyLevel<T> extends BusinessEntity implements Compar
     @Override
     public int hashCode() {
         int result = super.hashCode();
-        if(hierarchyType != null){
+        if (hierarchyType != null) {
             result = 31 * result + hierarchyType.hashCode();
         }
         result = 31 * result + code.hashCode();
         return result;
+    }
+
+    @Override
+    public BusinessEntity getParentEntity() {
+        return parentLevel;
     }
 }

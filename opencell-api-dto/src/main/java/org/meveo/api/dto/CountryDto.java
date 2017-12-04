@@ -38,7 +38,7 @@ public class CountryDto extends BaseDto {
 
 	public CountryDto(Country e) {
 		countryCode = e.getCountryCode();
-		name = e.getDescriptionEn();
+		name = e.getDescription();
 		currencyCode = e.getCurrency().getCurrencyCode();
 
 		if (e.getLanguage() != null) {

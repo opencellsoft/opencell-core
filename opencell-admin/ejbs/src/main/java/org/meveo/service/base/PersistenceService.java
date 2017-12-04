@@ -19,6 +19,7 @@
 package org.meveo.service.base;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
@@ -45,6 +46,7 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Created;
 import org.meveo.event.qualifier.Disabled;
@@ -170,7 +172,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id) {
-        return findById(id, false);
+
+        log.trace("Find {}/{} by id", entityClass.getSimpleName(), id);
+        return getEntityManager().find(entityClass, id);
+
     }
 
     /**
@@ -178,17 +183,17 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public E findById(Long id, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
-        final Class<? extends E> productClass = getEntityClass();
-        E e = getEntityManager().find(productClass, id);
+        log.trace("start of find {}/{} by id ..", entityClass.getSimpleName(), id);
+        E e = getEntityManager().find(entityClass, id);
         if (e != null) {
             if (refresh) {
                 log.debug("refreshing loaded entity");
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        log.trace("end of find {}/{} by id. Result found={}.", entityClass.getSimpleName(), id, e != null);
         return e;
+
     }
 
     /**
@@ -204,7 +209,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @SuppressWarnings("unchecked")
     public E findById(Long id, List<String> fetchFields, boolean refresh) {
-        log.debug("start of find {} by id (id={}) ..", getEntityClass().getSimpleName(), id);
+        log.debug("start of find {}/{} by id ..", getEntityClass().getSimpleName(), id);
         final Class<? extends E> productClass = getEntityClass();
         StringBuilder queryString = new StringBuilder("from " + productClass.getName() + " a");
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -225,7 +230,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 getEntityManager().refresh(e);
             }
         }
-        log.trace("end of find {} by id (id={}). Result found={}.", getEntityClass().getSimpleName(), id, e != null);
+        log.trace("end of find {}/{} by id. Result found={}.", getEntityClass().getSimpleName(), id, e != null);
         return e;
     }
 
@@ -541,6 +546,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E refreshOrRetrieve(E entity) {
 
         if (getEntityManager().contains(entity)) {
+            log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);
             return entity;
         } else {
@@ -623,6 +629,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>IS_NULL. Field value is null</li>
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
+     * 
+     * 
+     * 
+     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
+     * same in case when quering a customer account: customer.code=aaa OR customer=aaa<br/>
+     * 
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
+     * sellers=code1,code2<br/>
+     * <br/>
+     * 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists <br/>
+     * <br/>
      * 
      * Examples:<br/>
      * <ul>
@@ -718,7 +736,33 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         // Field value is in value (list)
                     } else if ("inList".equals(condition)) {
-                        queryBuilder.addSql("a." + fieldName + " in (" + filterValue + ")");
+
+                        Field field = ReflectionUtils.getField(entityClass, fieldName);
+                        Class<?> fieldClassType = field.getType();
+
+                        // Searching for a list inside a list field requires to join it first as collection member e.g. "IN (a.sellers) seller"
+                        if (Collection.class.isAssignableFrom(fieldClassType)) {
+
+                            String paramName = queryBuilder.convertFieldToParam(fieldName);
+                            String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
+
+                            // this worked at first, but now complains about distinct clause, so switched to EXISTS clause instead. 
+                            // queryBuilder.addCollectionMember(fieldName);
+                            // queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
+
+                            String inListAlias = collectionItem + "Alias";
+                            queryBuilder.addSqlCriterion(" exists (select " + inListAlias + " from " + entityClass.getName() + " " + inListAlias + ",IN (" + inListAlias + "."
+                                    + fieldName + ") as " + collectionItem + " where " + inListAlias + "=a and " + collectionItem + " IN (:" + paramName + "))",
+                                paramName, filterValue);
+
+                        } else {
+                            if (filterValue instanceof String) {
+                                queryBuilder.addSql("a." + fieldName + " IN (" + filterValue + ")");
+                            } else if (filterValue instanceof Collection) {
+                                String paramName = queryBuilder.convertFieldToParam(fieldName);
+                                queryBuilder.addSqlCriterion("a." + fieldName + " in (:" + paramName + ")", paramName, filterValue);
+                            }
+                        }
 
                         // Search by an entity type
                     } else if (SEARCH_ATTR_TYPE_CLASS.equals(fieldName)) {
@@ -804,7 +848,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                                 + ") or (a." + fieldName2 + " IS NULL and a." + fieldName + "<:" + paramNameTo + ") or (a." + fieldName + " IS NOT NULL and a." + fieldName2
                                 + " IS NOT NULL and ((a." + fieldName + "<=:" + paramNameFrom + " and :" + paramNameFrom + "<a." + fieldName2 + ") or (:" + paramNameFrom + "<=a."
                                 + fieldName + " and a." + fieldName + "<:" + paramNameTo + "))))";
-                        queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
+
+                        if (filterValue.getClass().isArray()) {
+                            queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((Object[]) filterValue)[0], paramNameTo, ((Object[]) filterValue)[1]);
+                        } else if (filterValue instanceof List) {
+                            queryBuilder.addSqlCriterionMultiple(sql, paramNameFrom, ((List) filterValue).get(0), paramNameTo, ((List) filterValue).get(1));
+                        }
 
                         // Any of the multiple field values wildcard or not wildcard match the value (OR criteria)
                     } else if ("likeCriterias".equals(condition)) {
@@ -835,10 +884,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                     } else {
                         if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
-                            queryBuilder.addSql("a." + fieldName + " is null ");
+                            Field field = ReflectionUtils.getField(entityClass, fieldName);
+                            Class<?> fieldClassType = field.getType();
+
+                            if (Collection.class.isAssignableFrom(fieldClassType)) {
+                                queryBuilder.addSql("a." + fieldName + " is empty ");
+                            } else {
+                                queryBuilder.addSql("a." + fieldName + " is null ");
+                            }
 
                         } else if (filterValue instanceof String && SEARCH_IS_NOT_NULL.equals(filterValue)) {
-                            queryBuilder.addSql("a." + fieldName + " is not null ");
+                            Field field = ReflectionUtils.getField(entityClass, fieldName);
+                            Class<?> fieldClassType = field.getType();
+
+                            if (Collection.class.isAssignableFrom(fieldClassType)) {
+
+                                queryBuilder.addSql("a." + fieldName + " is not empty ");
+                            } else {
+                                queryBuilder.addSql("a." + fieldName + " is not null ");
+                            }
 
                         } else if (filterValue instanceof String) {
 
@@ -893,10 +957,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // log.trace("Query is {}", queryBuilder.getSqlString());
         // log.trace("Query params are {}", queryBuilder.getParams());
         return queryBuilder;
-    }
-
-    public E attach(E entity) {
-        return (E) getEntityManager().merge(entity);
     }
 
     protected boolean isConversationScoped() {

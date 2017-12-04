@@ -1,6 +1,7 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +14,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.catalog.Channel;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -68,6 +70,10 @@ public class ProductOfferingDto extends BusinessDto {
     
     private String globalRatingScriptInstance;
 
+    @XmlElementWrapper(name = "sellers")
+    @XmlElement(name = "seller")
+    private List<String> sellers;
+
     public ProductOfferingDto() {
     }
 
@@ -120,9 +126,19 @@ public class ProductOfferingDto extends BusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getDescriptionI18n()));
         setLongDescription(productOffering.getLongDescription());
         setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
+
         if(productOffering.getGlobalRatingScriptInstance() != null) {
             setGlobalRatingScriptInstance(productOffering.getGlobalRatingScriptInstance().getCode());
         }        
+
+        if (productOffering.getSellers() != null && !productOffering.getSellers().isEmpty()) {
+            this.sellers = new ArrayList<>();
+            for (Seller seller : productOffering.getSellers()) {
+                this.sellers.add(seller.getCode());
+            }
+            Collections.sort(this.sellers);
+        }
+
         this.customFields = customFieldsDto;
     }
 
@@ -260,4 +276,11 @@ public class ProductOfferingDto extends BusinessDto {
         this.globalRatingScriptInstance = globalRatingScriptInstance;
     }
     
+    public List<String> getSellers() {
+        return sellers;
+    }
+
+    public void setSellers(List<String> sellers) {
+        this.sellers = sellers;
+    }
 }

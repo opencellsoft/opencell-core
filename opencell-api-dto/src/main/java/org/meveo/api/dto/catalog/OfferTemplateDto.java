@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -23,10 +22,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     private static final long serialVersionUID = 9156372453581362595L;
 
-    // @XmlTransient
-    @XmlAttribute()
-    private Long id;
-
     private String bomCode;
 
     @Deprecated
@@ -44,20 +39,6 @@ public class OfferTemplateDto extends ProductOfferingDto {
 
     public OfferTemplateDto() {
 
-    }
-
-    /**
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
     }
 
     /**

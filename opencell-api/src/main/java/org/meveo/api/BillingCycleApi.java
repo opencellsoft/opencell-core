@@ -180,7 +180,7 @@ public class BillingCycleApi extends BaseApi {
             throw new EntityDoesNotExistsException(BillingCycle.class, billingCycleCode);
         }
 
-        result = new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsWithInheritedDTO(billingCycle, true));
+        result = new BillingCycleDto(billingCycle,entityToDtoConverter.getCustomFieldsDTO(billingCycle, true));
 
         return result;
     }

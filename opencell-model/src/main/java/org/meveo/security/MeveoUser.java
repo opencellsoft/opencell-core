@@ -50,6 +50,8 @@ public abstract class MeveoUser implements Serializable {
     protected Set<String> roles = new HashSet<>();
     
     protected String locale;
+    
+    protected int authTime;
 
     public MeveoUser() {
     }
@@ -122,5 +124,13 @@ public abstract class MeveoUser implements Serializable {
 
     public Object toStringShort() {
         return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + "]";
+    }
+
+    public int getAuthTime() {
+        return authTime;
+    }
+
+    public void setAuthTime(int authTime) {
+        this.authTime = authTime;
     }
 }

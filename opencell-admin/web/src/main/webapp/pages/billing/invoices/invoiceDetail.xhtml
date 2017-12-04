@@ -92,6 +92,9 @@
                                 <p:column headerText="#{messages['discountPlan.discountAmountWithoutTax']}">
                                     <h:outputText value="#{agregate.amountWithoutTax}" converter="#{getConverter.forType(agregate.amountWithoutTax,'4digits')}" />
                                 </p:column>
+                                <p:column headerText="#{messages['discountPlan.discountAmountWithTax']}">
+                                    <h:outputText value="#{agregate.amountWithTax}" converter="#{getConverter.forType(agregate.amountWithTax,'4digits')}" />
+                                </p:column>
                                 <p:column headerText="#{messages['discountPlanItem.percent']}">
                                     <h:outputText value="#{agregate.discountPercent}" converter="#{getConverter.forType(agregate.discountPercent,'4digits')}" />
                                 </p:column>
@@ -147,11 +150,11 @@
                                                     <p:column headerText="#{messages['pricePlanMatrix.amountWithoutTax']}">
                                                         <h:outputText value="#{rated.amountWithoutTax}" converter="bigDecimal4DigitsConverter" />
                                                     </p:column>
-                                                    <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}">
-                                                        <h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
-                                                    </p:column>
                                                     <p:column headerText="#{messages['walletOperation.amountTax']}">
                                                         <h:outputText value="#{rated.amountTax}" converter="bigDecimal4DigitsConverter" />
+                                                    </p:column>
+                                                    <p:column headerText="#{messages['pricePlanMatrix.amountWithTax']}">
+                                                        <h:outputText value="#{rated.amountWithTax}" converter="bigDecimal4DigitsConverter" />
                                                     </p:column>
                                                     <p:column headerText="#{messages['serviceInstance.quantity']}">
                                                         <h:outputText value="#{rated.quantity}" converter="bigDecimal4DigitsConverter" />

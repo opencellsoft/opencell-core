@@ -48,9 +48,9 @@ public class PricePlanMatrixColumnSelectorBean implements Serializable {
 	 */
 	@PostConstruct
 	 public void init() {
-		columnVisibilitylist = Arrays.asList(true, true, true, true, true, true, false, 
+		columnVisibilitylist = Arrays.asList(true, true, true, true, true, true, true, true, 
 	     		false, false, false, false, false, false, false, 
-	     		false, false, false, false, false, false, false);
+	     		false, false, false, false, false, false);
 	 }
 	 public List<Boolean> getColumnVisibilitylist() {
 	     return columnVisibilitylist;
