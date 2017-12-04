@@ -401,7 +401,7 @@ public class InvoiceApi extends BaseApi {
                 invoiceList = billingAccount.getInvoices();
             }
             for (Invoice invoice : invoiceList) {
-                InvoiceDto customerInvoiceDto = invoiceToDto(invoice, false, false);
+                InvoiceDto customerInvoiceDto = invoiceToDto(invoice, false, true);
                 customerInvoiceDtos.add(customerInvoiceDto);
             }
         }
