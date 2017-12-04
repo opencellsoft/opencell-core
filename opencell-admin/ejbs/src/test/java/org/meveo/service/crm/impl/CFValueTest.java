@@ -46,14 +46,15 @@ public class CFValueTest {
 
         CustomFieldTemplate cft = new CustomFieldTemplate();
 
+        // Now the order is important as matrix columns are no longer resorted after retrieval - it relies on being sorted when retrieving from DB
         CustomFieldMatrixColumn column = new CustomFieldMatrixColumn();
-        column.setKeyType(CustomFieldMapKeyEnum.STRING);
-        column.setPosition(2);
+        column.setKeyType(CustomFieldMapKeyEnum.RON);
+        column.setPosition(1);
         cft.getMatrixColumns().add(column);
 
         column = new CustomFieldMatrixColumn();
-        column.setKeyType(CustomFieldMapKeyEnum.RON);
-        column.setPosition(1);
+        column.setKeyType(CustomFieldMapKeyEnum.STRING);
+        column.setPosition(2);
         cft.getMatrixColumns().add(column);
 
         column = new CustomFieldMatrixColumn();

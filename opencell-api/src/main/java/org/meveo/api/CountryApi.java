@@ -65,7 +65,7 @@ public class CountryApi extends BaseApi {
         // If country code doesn't exist in the reference table, create the country in this table ("adm_country") with the currency code for the default provider.
         if (country == null) {
             country = new Country();
-            country.setDescriptionEn(postData.getName());
+            country.setDescription(postData.getName());
             country.setCountryCode(postData.getCountryCode());
         }
         if (!StringUtils.isBlank(postData.getLanguageCode())) {
@@ -187,10 +187,10 @@ public class CountryApi extends BaseApi {
             }
         }
 
-        if (!StringUtils.isBlank(postData.getName()) && (!postData.getName().equals(country.getDescriptionEn()) || !postData.getName().equals(tradingCountry.getPrDescription()))) {
+        if (!StringUtils.isBlank(postData.getName()) && (!postData.getName().equals(country.getDescription()) || !postData.getName().equals(tradingCountry.getPrDescription()))) {
             tradingCountry.setPrDescription(postData.getName());
             country.setCurrency(currency);
-            country.setDescriptionEn(postData.getName());
+            country.setDescription(postData.getName());
 
             if (language != null) {
                 country.setLanguage(language);
@@ -230,7 +230,7 @@ public class CountryApi extends BaseApi {
 			}
 			tradingCountry = new TradingCountry();
 			tradingCountry.setCountry(country);
-			tradingCountry.setPrDescription(country.getDescriptionEn());
+			tradingCountry.setPrDescription(country.getDescription());
 			tradingCountryService.create(tradingCountry);
 		}
 	}

@@ -19,6 +19,7 @@
 package org.meveo.model.admin;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -44,6 +45,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -76,7 +79,7 @@ import org.meveo.model.shared.Name;
         @Parameter(name = "sequence_name", value = "adm_user_seq"), })
 @NamedQueries({ @NamedQuery(name = "User.listUsersInMM", query = "SELECT u FROM User u LEFT JOIN u.roles as role WHERE role.name IN (:roleNames)"),
         @NamedQuery(name = "User.getByUsername", query = "SELECT u FROM User u LEFT JOIN u.roles WHERE lower(u.userName)=:username", hints = {
-                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+                @QueryHint(name = "org.hibernate.cacheable", value = "TRUE") }) })
 public class User extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -119,6 +122,10 @@ public class User extends EnableEntity implements ICustomFieldEntity {
 
     @Transient
     private Map<Class<?>, Set<SecuredEntity>> securedEntitiesMap;
+    
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "last_login_date")
+    private Date lastLoginDate;
 
     public User() {
     }
@@ -306,6 +313,14 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return null;
+    }
+
+    public Date getLastLoginDate() {
+        return lastLoginDate;
+    }
+
+    public void setLastLoginDate(Date lastLoginDate) {
+        this.lastLoginDate = lastLoginDate;
     }
 
 }

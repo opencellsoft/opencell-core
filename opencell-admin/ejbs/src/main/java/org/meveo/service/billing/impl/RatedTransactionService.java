@@ -422,7 +422,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 String invSubCatDescTranslated = descriptionMap.get(translationSCKey);
                 if (invSubCatDescTranslated == null) {
                     invSubCatDescTranslated = invoiceSubCategory.getDescriptionOrCode();
-                    if (invoiceSubCategory.getDescriptionI18n() != null && invoiceSubCategory.getDescriptionI18n().containsKey(languageCode)) {
+                    if (invoiceSubCategory.getDescriptionI18n() != null && invoiceSubCategory.getDescriptionI18n().get(languageCode) != null) {
                         invSubCatDescTranslated = invoiceSubCategory.getDescriptionI18n().get(languageCode);
                     }
                     descriptionMap.put(translationSCKey, invSubCatDescTranslated);
@@ -508,7 +508,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     if (invCatDescTranslated == null) {
                         invCatDescTranslated = invoiceSubCategory.getInvoiceCategory().getDescriptionOrCode();
                         if (invoiceSubCategory.getInvoiceCategory().getDescriptionI18n() != null
-                                && invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().containsKey(languageCode)) {
+                                && invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().get(languageCode) != null) {
                             invCatDescTranslated = invoiceSubCategory.getInvoiceCategory().getDescriptionI18n().get(languageCode);
                         }
                         descriptionMap.put(translationCKey, invCatDescTranslated);
@@ -1121,7 +1121,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BillingAccount billingAccount = userAccount.getBillingAccount();
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), unitAmountWithTax,
             unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
-            invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getOrderNumber(),
+            invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getParameterExtra(), walletOperation.getOrderNumber(),
             walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(), walletOperation.getOfferCode(),
             walletOperation.getEdr(), null, null);
 

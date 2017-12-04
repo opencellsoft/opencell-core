@@ -114,7 +114,8 @@
                                             <hftl:formField label="#{messages['name.firstName']}" field="name" childField="firstName"
                                                 rendered="#{customerAccountBean.entity.name.title == null or !customerAccountBean.entity.name.title.isCompany}" />
                                         </h:panelGroup>
-
+										
+										<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />
                                         <hftl:formField label="#{messages['customerAccount.excludedFromPayment']}" field="excludedFromPayment"  />
                                         <hftl:formField label="#{messages['customerAccount.creditCategory']}" field="creditCategory" valueLabelField="code" listBean="#{creditCategoryBean}" />
                                         <hftl:formField label="#{messages['billingCycle.dueDateDelayEL']}" field="dueDateDelayEL" required="false" />                                       
@@ -141,7 +142,7 @@
                                         <!-- 												<hftl:formField id="countryPanel" -->
                                         <!-- 													label="#{messages['address.country']}" fkToEntity="true" -->
                                         <!-- 													field="address" childField="country" -->
-                                        <!-- 													valueLabelField="descriptionEn" valueField="countryCode" -->
+                                        <!-- 													valueLabelField="description" valueField="countryCode" -->
                                         <!-- 													listBean="#{countryBean}"/> -->
                                     </p:fieldset>
 

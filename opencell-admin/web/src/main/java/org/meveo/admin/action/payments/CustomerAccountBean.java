@@ -152,7 +152,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             throw new ValidationException("CustomerAccount does not have a preferred payment method", "paymentMethod.noPreferredPaymentMethod");
         }
 
-        entity.setCustomer(customerService.refreshOrRetrieve(entity.getCustomer()));
+        entity.setCustomer(customerService.findById(entity.getCustomer().getId()));
 
         String outcome = super.saveOrUpdate(killConversation);
 

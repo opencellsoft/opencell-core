@@ -176,7 +176,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        entity.setBillingAccount(billingAccountService.attach(entity.getBillingAccount()));
+        entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
 
         try {
 
@@ -226,7 +226,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String terminateAccount() {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
-            entity = userAccountService.attach(entity);
+            entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
@@ -240,7 +240,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String cancelAccount() {
         log.info("cancelAccount userAccountId:" + entity.getId());
         try {
-            entity = userAccountService.attach(entity);
+            entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountCancellation(entity, new Date());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 
@@ -254,7 +254,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String reactivateAccount() {
         log.info("reactivateAccount userAccountId:" + entity.getId());
         try {
-            entity = userAccountService.attach(entity);
+            entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountReactivation(entity, new Date());
             messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 
@@ -516,9 +516,9 @@ public class UserAccountBean extends AccountBean<UserAccount> {
             productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
 
             try {
-                productInstanceService.create(productInstance);
+                //productInstanceService.create(productInstance);
                 customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
-                List<WalletOperation> walletOps = productInstanceService.applyProductInstance(productInstance, null, null, null, true);
+                List<WalletOperation> walletOps = productInstanceService.saveAndApplyProductInstance(productInstance, null, null, null, true);
 
                 if (walletOps == null || walletOps.size() == 0) {
                     messages.error(new BundleKey("messages", "message.userAccount.applyProduct.noProductCharge"));

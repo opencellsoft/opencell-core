@@ -31,8 +31,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.PersistenceService;
-import org.primefaces.model.SortOrder;
 
 /**
  * AccountOperation service implementation.
@@ -85,5 +85,31 @@ public class AccountOperationService extends PersistenceService<AccountOperation
         super.create(aop);
         return aop.getId();
         
+    }
+    
+    /**
+     * Return list debit AO to pay
+     * @param paymentMethodEnum
+     * @return
+     */
+    public List<Long> getAOidsToPay(PaymentMethodEnum paymentMethodEnum) {
+        try {
+            return (List<Long>)getEntityManager().createNamedQuery("AccountOperation.listAOIdsToPay").setParameter("payMethod", paymentMethodEnum).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+    
+    /**
+     * Return list credit AO to refund
+     * @param paymentMethodEnum
+     * @return
+     */
+    public List<Long> getAOidsToRefund(PaymentMethodEnum paymentMethodEnum) {
+        try {
+            return (List<Long>)getEntityManager().createNamedQuery("AccountOperation.listAOIdsToRefund").setParameter("payMethod", paymentMethodEnum).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 }

@@ -25,6 +25,7 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
+import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetOneShotChargesResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -86,7 +87,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.activateServices(postData, null, false);
+            subscriptionApi.activateServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -137,7 +138,8 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            subscriptionApi.terminateServices(postData, ChargeInstance.NO_ORDER_NUMBER);
+            postData.setOrderNumber(ChargeInstance.NO_ORDER_NUMBER);
+            subscriptionApi.terminateServices(postData);
         } catch (Exception e) {
             processException(e, result);
         }
@@ -155,7 +157,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             sortBy, sortOrder);
 
         try {
-            return subscriptionApi.list(null, pagingAndFiltering);
+            return subscriptionApi.list(mergedCF, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -199,6 +201,17 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
             processException(e, result);
         }
 
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateSubscriptionPartial(SubscriptionDto subscriptionDto) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+            subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null);
+        } catch (Exception e) {
+            processException(e, result);
+        }
         return result;
     }
 
@@ -280,11 +293,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+    public GetServiceInstanceResponseDto findServiceInstance(String subscriptionCode, Long serviceInstanceId, String serviceInstanceCode) {
         GetServiceInstanceResponseDto result = new GetServiceInstanceResponseDto();
 
         try {
-            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceCode));
+            result.setServiceInstance(subscriptionApi.findServiceInstance(subscriptionCode, serviceInstanceId, serviceInstanceCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -315,6 +328,19 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
         try {
             List<OneShotChargeTemplateDto> oneShotChargeOthers = subscriptionApi.getOneShotChargeOthers();
             result.getOneshotCharges().addAll(oneShotChargeOthers);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetListServiceInstanceResponseDto listServiceInstance(String subscriptionCode, String serviceInstanceCode) {
+        GetListServiceInstanceResponseDto result = new GetListServiceInstanceResponseDto();
+
+        try {
+            result.setServiceInstances(subscriptionApi.listServiceInstance(subscriptionCode, serviceInstanceCode));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

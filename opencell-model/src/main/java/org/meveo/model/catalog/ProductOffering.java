@@ -13,11 +13,13 @@ import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OrderColumn;
@@ -35,8 +37,10 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.VersionedEntity;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * @author Edward P. Legaspi
@@ -106,6 +110,14 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @Type(type = "json")
     @Column(name = "long_description_i18n", columnDefinition = "text")
     private Map<String, String> longDescriptionI18n;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "script_instance_id")
+    private ScriptInstance globalRatingScriptInstance;
+
+    @ManyToMany
+    @JoinTable(name = "cat_product_offer_seller", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
+    private List<Seller> sellers = new ArrayList<>();
 
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {
@@ -215,6 +227,21 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         this.imagePath = imagePath;
     }
 
+    
+    /**
+     * @return the globalRatingScriptInstance
+     */
+    public ScriptInstance getGlobalRatingScriptInstance() {
+        return globalRatingScriptInstance;
+    }
+
+    /**
+     * @param globalRatingScriptInstance the globalRatingScriptInstance to set
+     */
+    public void setGlobalRatingScriptInstance(ScriptInstance globalRatingScriptInstance) {
+        this.globalRatingScriptInstance = globalRatingScriptInstance;
+    }
+
     @Override
     public boolean equals(Object obj) {
 
@@ -296,5 +323,22 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
             longDescriptionI18n = new HashMap<>();
         }
         return longDescriptionI18n;
+    }
+    
+    public List<Seller> getSellers() {
+        return sellers;
+    }
+    
+    public void setSellers(List<Seller> sellers) {
+        this.sellers = sellers;
+    }
+    
+    public void addSeller(Seller seller) {
+        if (sellers == null) {
+            sellers = new ArrayList<>();
+        }
+        if (!sellers.contains(seller)) {
+            sellers.add(seller);
+        }
     }
 }

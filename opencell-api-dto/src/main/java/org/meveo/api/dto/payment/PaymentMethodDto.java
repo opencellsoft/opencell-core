@@ -216,6 +216,7 @@ public class PaymentMethodDto extends BaseDto {
      *
      * @param cardPaymentMethodDto
      */
+    @SuppressWarnings("deprecation")
     public PaymentMethodDto(CardPaymentMethodDto cardPaymentMethodDto) {
         this.setPaymentMethodType(PaymentMethodEnum.CARD);
         this.id = cardPaymentMethodDto.getId();
@@ -270,6 +271,12 @@ public class PaymentMethodDto extends BaseDto {
             default:
                 break;
         }
+        pmEntity.setInfo1(getInfo1());
+        pmEntity.setInfo2(getInfo2());
+        pmEntity.setInfo3(getInfo3());
+        pmEntity.setInfo4(getInfo4());
+        pmEntity.setInfo5(getInfo5());
+        pmEntity.setUserId(getUserId());
         return pmEntity;
     }
 
@@ -340,6 +347,24 @@ public class PaymentMethodDto extends BaseDto {
                 break;
             default:
                 break;
+        }
+        if (!StringUtils.isBlank(getInfo1())) {
+            paymentMethod.setInfo1(getInfo1());
+        }
+        if (!StringUtils.isBlank(getInfo3())) {
+            paymentMethod.setInfo2(getInfo2());
+        }
+        if (!StringUtils.isBlank(getInfo3())) {
+            paymentMethod.setInfo3(getInfo3());
+        }
+        if (!StringUtils.isBlank(getInfo4())) {
+            paymentMethod.setInfo4(getInfo4());
+        }
+        if (!StringUtils.isBlank(getInfo5())) {
+            paymentMethod.setInfo5(getInfo5());
+        }
+        if (!StringUtils.isBlank(getUserId())) {
+            paymentMethod.setUserId(getUserId());
         }
         return paymentMethod;
     }
@@ -677,7 +702,11 @@ public class PaymentMethodDto extends BaseDto {
             throw new InvalidDTOException("Missing customerAccountCode");
         }
         if (type == PaymentMethodEnum.CARD) {
-            if (StringUtils.isBlank(getCardNumber()) || getCardNumber().length() != 16) {
+            int numberLength = getCardNumber().length();
+            CreditCardTypeEnum cardType = getCardType();
+            if (StringUtils.isBlank(getCardNumber())
+                    || (numberLength != 16 && cardType != CreditCardTypeEnum.AMERICAN_EXPRESS)
+                    || (numberLength != 15 && cardType == CreditCardTypeEnum.AMERICAN_EXPRESS)) {
                 throw new InvalidDTOException("Invalid cardNumber");
             }
             if (StringUtils.isBlank(getOwner())) {
@@ -698,6 +727,7 @@ public class PaymentMethodDto extends BaseDto {
 
     /**
      * Check bank coordinates fields.
+     *
      *
      * @param bankCoordinatesDto the bankCoordinatesDto.
      */

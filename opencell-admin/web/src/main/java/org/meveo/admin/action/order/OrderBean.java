@@ -462,14 +462,17 @@ public class OrderBean extends CustomFieldBean<Order> {
         // Take offer characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering order item to modify
         // or delete and subscription is selected)
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
-        Subscription subscriptionEntity = null;
+
+        BusinessCFEntity mainEntityForCFValues = null;
+
         if (orderItemDto != null && orderItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(orderItemDto.getProduct().getProductCharacteristic());
 
         } else if (subscriptionConfiguration != null && subscriptionConfiguration.containsKey(mainOffering.getCode())) {
             mainOfferCharacteristics = subscriptionConfiguration.get(mainOffering.getCode());
             if (existingOfferEntities != null) {
-                subscriptionEntity = (Subscription) existingOfferEntities.get(mainOffering.getCode());
+                Subscription subscriptionEntity = (Subscription) existingOfferEntities.get(mainOffering.getCode());
+                mainEntityForCFValues = subscriptionEntity;
             }
         }
 
@@ -480,11 +483,17 @@ public class OrderBean extends CustomFieldBean<Order> {
         Date mainOfferSubscriptionDate = (Date) mainOfferCharacteristics.get(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE);
 
         // Default quantity to 1 for product and bundle templates
-        if (!(mainOffering instanceof OfferTemplate) && !mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
-            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
+        // Default instance.code to template.code for product and bundle templates
+        if (!(mainOffering instanceof OfferTemplate)) {
+            if (!mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
+                mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
+            }
+            if (!mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE)) {
+                mainOfferCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, mainOffering.getCode());
+            }
         }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, subscriptionEntity);
+        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, mainEntityForCFValues);
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -606,6 +615,9 @@ public class OrderBean extends CustomFieldBean<Order> {
                         }
                         if (!productCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
                             productCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
+                        }
+                        if (!productCharacteristics.containsKey(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE)) {
+                            productCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, offerProductTemplate.getProductTemplate().getCode());
                         }
 
                         offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,

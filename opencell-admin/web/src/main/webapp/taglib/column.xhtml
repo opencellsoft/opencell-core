@@ -162,7 +162,7 @@
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-        <c:if test="#{sort}">
+        <c:if test="#{sort and field}">
             <f:attribute name="field" value="#{field}" />
             <f:attribute name="sortable" value="#{true}" />
             <f:attribute name="sortBy" value="#{valueField}" />
@@ -208,8 +208,8 @@
 
                                 <f:facet name="inline">
                                     <p:panel style="width: 1020px">
-                                        <p:scrollPanel mode="native" style="width:1000px">
-                                            <h:outputText value="#{valueField}" style="white-space: normal" />
+                                        <p:scrollPanel  style="width:1000px;height:800px">
+                                           <p:inputTextarea value="#{valueField}" cols="190" rows="55" />
                                         </p:scrollPanel>
                                     </p:panel>
                                 </f:facet>

@@ -65,7 +65,7 @@ public class WfTransitionBean extends BaseBean<WFTransition> {
 
     private static final String EL = "#{mv:getBean('OrderService').routeToUserGroup(entity,'%s')}";
 
-    private static final String WF_ORDER = "Customer Care Assignation of Orders";
+    private static final String WF_ORDER = "Customer_Care_Assignation_of_Orders";
     private static final String CATCH_ALL = "Catch all";
     public static final int CATCH_ALL_PRIORITY = 100;
 

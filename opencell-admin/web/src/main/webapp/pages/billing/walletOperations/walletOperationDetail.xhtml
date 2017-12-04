@@ -35,19 +35,20 @@
             </hftl:decorateFormField>
             <hftl:formField label="#{messages['operation.wallet']}" field="wallet" valueLabelField="code" />
             <hftl:formField label="#{messages['walletOperation.operationDate']}" field="operationDate" />
-            <hftl:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter" />
-            <hftl:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
-            <hftl:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
             <hftl:formField label="#{messages['accountOperation.type']}" field="type" isMessage="true" />
             <hftl:formField label="#{messages['walletOperation.ratingUnitDescription']}" field="ratingUnitDescription"/>
 			<hftl:formField label="#{messages['walletOperation.inputUnitDescription']}" field="inputUnitDescription"/>
+            <hftl:formField label="#{messages['walletOperation.quantity']}" field="quantity" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['walletOperation.unitAmountWithoutTax']}" field="unitAmountWithoutTax" converter="bigDecimal4DigitsConverter"/>
+            <hftl:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter"/>
+            <hftl:formField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" converter="bigDecimal4DigitsConverter" />
             <hftl:formField label="#{messages['walletOperation.taxPercent']}" field="taxPercent" converter="bigDecimal4DigitsConverter" />
-            <hftl:formField label="#{messages['walletOperation.unitAmountWithTax']}" field="unitAmountWithTax" converter="bigDecimal4DigitsConverter" />
-            <hftl:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
             <hftl:formField label="#{messages['walletOperation.amountTax']}" field="amountTax" converter="bigDecimal4DigitsConverter" />
+            <hftl:formField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" converter="bigDecimal4DigitsConverter" />
             <hftl:formField label="#{messages['walletOperation.param1']}" field="parameter1" />
             <hftl:formField label="#{messages['walletOperation.param2']}" field="parameter2" />
             <hftl:formField label="#{messages['walletOperation.param3']}" field="parameter3" />
+            <hftl:formField label="#{messages['walletOperation.paramExtra']}" field="parameterExtra" textArea="true" rows="1"/>
             <hftl:formField label="#{messages['walletOperation.startDate']}" field="startDate" />
             <hftl:formField label="#{messages['walletOperation.endDate']}" field="endDate" />
             <hftl:formField label="#{messages['walletOperation.subscriptionDate']}" field="subscriptionDate" />

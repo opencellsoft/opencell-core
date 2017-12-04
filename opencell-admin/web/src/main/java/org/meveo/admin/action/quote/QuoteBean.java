@@ -47,9 +47,6 @@ import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.ProductInstance;
-import org.meveo.model.billing.ServiceInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -453,10 +450,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
         // Take offer characteristics from DTO or default them from offer
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
-        Subscription subscriptionEntity = null;
+
         if (quoteItemDto != null && quoteItemDto.getProduct() != null) {
             mainOfferCharacteristics = productCharacteristicsToMap(quoteItemDto.getProduct().getProductCharacteristic());
-        
+
             // Default values from offer template if entering data for the first time
         } else if (mainOffering instanceof OfferTemplate) {
 
@@ -484,11 +481,17 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         Date mainOfferSubscriptionDate = (Date) mainOfferCharacteristics.get(OrderProductCharacteristicEnum.SUBSCRIPTION_DATE);
 
         // Default quantity to 1 for product and bundle templates
-        if (!(mainOffering instanceof OfferTemplate) && !mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
-            mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
+        // Default instance.code to template.code for product and bundle templates
+        if (!(mainOffering instanceof OfferTemplate)) {
+            if (!mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
+                mainOfferCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
+            }
+            if (!mainOfferCharacteristics.containsKey(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE)) {
+                mainOfferCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, mainOffering.getCode());
+            }
         }
 
-        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, subscriptionEntity);
+        OfferItemInfo offerItemInfo = new OfferItemInfo(mainOffering, mainOfferCharacteristics, true, true, true, null);
         TreeNode mainOfferingNode = new DefaultTreeNode(mainOffering.getClass().getSimpleName(), offerItemInfo, root);
         mainOfferingNode.setExpanded(true);
         offerConfigurations.add(offerItemInfo);
@@ -525,7 +528,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         // Take service characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering
                         // quote item to modify or delete and subscription is selected
                         Map<OrderProductCharacteristicEnum, Object> serviceCharacteristics = new HashMap<>();
-                        ServiceInstance serviceInstanceEntity = null;
+
                         if (serviceProductMatched != null) {
                             serviceCharacteristics = productCharacteristicsToMap(serviceProductMatched.getProductCharacteristic());
                         }
@@ -540,7 +543,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         boolean isMandatory = offerServiceTemplate.isMandatory();
                         boolean isSelected = serviceProductMatched != null || isMandatory;
 
-                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, serviceInstanceEntity);
+                        offerItemInfo = new OfferItemInfo(offerServiceTemplate.getServiceTemplate(), serviceCharacteristics, false, isSelected, isMandatory, null);
 
                         new DefaultTreeNode(ServiceTemplate.class.getSimpleName(), offerItemInfo, servicesNode);
                         if (offerItemInfo.isSelected()) {
@@ -583,7 +586,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         // Take product characteristics either from DTO (priority) or from current product configuration (will be used only for the first time when entering
                         // quote item to modify or delete and subscription/product is selected
                         Map<OrderProductCharacteristicEnum, Object> productCharacteristics = new HashMap<>();
-                        ProductInstance productInstanceEntity = null;
+
                         if (productProductMatched != null) {
                             productCharacteristics = productCharacteristicsToMap(productProductMatched.getProductCharacteristic());
                         }
@@ -596,9 +599,12 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                         if (!productCharacteristics.containsKey(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY)) {
                             productCharacteristics.put(OrderProductCharacteristicEnum.SERVICE_PRODUCT_QUANTITY, 1);
                         }
+                        if (!productCharacteristics.containsKey(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE)) {
+                            productCharacteristics.put(OrderProductCharacteristicEnum.PRODUCT_INSTANCE_CODE, offerProductTemplate.getProductTemplate().getCode());
+                        }
 
                         offerItemInfo = new OfferItemInfo(offerProductTemplate.getProductTemplate(), productCharacteristics, false,
-                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), productInstanceEntity);
+                            productProductMatched != null || offerProductTemplate.isMandatory(), offerProductTemplate.isMandatory(), null);
                         new DefaultTreeNode(ProductTemplate.class.getSimpleName(), offerItemInfo, productsNode);
 
                         if (offerItemInfo.isSelected()) {

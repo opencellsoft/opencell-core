@@ -1,7 +1,5 @@
 package org.meveo.api.rest.payment.impl;
 
-import java.util.Calendar;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -46,30 +44,30 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
      */
     @Override
     public PaymentActionStatus create(PaymentDto postData) {
-	PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
+        PaymentActionStatus result = new PaymentActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    Long id = paymentApi.createPayment(postData);
-	    result.setPaymentId(id);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            Long id = paymentApi.createPayment(postData);
+            result.setPaymentId(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public CustomerPaymentsResponse list(@QueryParam("customerAccountCode") String customerAccountCode) {
-	CustomerPaymentsResponse result = new CustomerPaymentsResponse();
-	result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        CustomerPaymentsResponse result = new CustomerPaymentsResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
 
-	try {
-	    result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
-	    result.setBalance(paymentApi.getBalance(customerAccountCode));
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
-	return result;
+        try {
+            result.setCustomerPaymentDtoList(paymentApi.getPaymentList(customerAccountCode));
+            result.setBalance(paymentApi.getBalance(customerAccountCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+        return result;
     }
 
     /************************************************************************************************/
@@ -81,66 +79,66 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         PaymentMethodTokenDto response = new PaymentMethodTokenDto();
         try {
             PaymentMethodDto paymentMethodDto = new PaymentMethodDto(cardPaymentMethodDto);
-			Long tokenId = paymentMethodApi.create(paymentMethodDto);
+            Long tokenId = paymentMethodApi.create(paymentMethodDto);
             PaymentMethodDto find = paymentMethodApi.find(tokenId);
-			response.setPaymentMethod(find);
+            response.setPaymentMethod(find);
         } catch (Exception e) {
             processException(e, response.getActionStatus());
         }
-        
+
         return new CardPaymentMethodTokenDto(response);
     }
 
     @Override
     public ActionStatus updateCardPaymentMethod(CardPaymentMethodDto cardPaymentMethod) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.update(new PaymentMethodDto(cardPaymentMethod));
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.update(new PaymentMethodDto(cardPaymentMethod));
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus removeCardPaymentMethod(Long id) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.remove(id);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.remove(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public CardPaymentMethodTokensDto listCardPaymentMethods(Long customerAccountId, String customerAccountCode) {
-	PaymentMethodTokensDto response = new PaymentMethodTokensDto();
-	try {
-	    response = paymentMethodApi.list(customerAccountId, customerAccountCode);
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        PaymentMethodTokensDto response = new PaymentMethodTokensDto();
+        try {
+            response = paymentMethodApi.list(customerAccountId, customerAccountCode);
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return new CardPaymentMethodTokensDto(response);
+        return new CardPaymentMethodTokensDto(response);
     }
 
     @Override
     public CardPaymentMethodTokenDto findCardPaymentMethod(Long id) {
 
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
 
-	try {
-	    response.setPaymentMethod(paymentMethodApi.find(id));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        try {
+            response.setPaymentMethod(paymentMethodApi.find(id));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return new CardPaymentMethodTokenDto(response);
+        return new CardPaymentMethodTokenDto(response);
     }
 
     /************************************************************************************************/
@@ -148,80 +146,80 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
     /************************************************************************************************/
     @Override
     public PaymentMethodTokenDto addPaymentMethod(PaymentMethodDto paymentMethodDto) {
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
-	try {
-	    Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
-	    response.setPaymentMethod(paymentMethodApi.find(paymentMethodId));
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        try {
+            Long paymentMethodId = paymentMethodApi.create(paymentMethodDto);
+            response.setPaymentMethod(paymentMethodApi.find(paymentMethodId));
 
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return response;
+        return response;
     }
 
     @Override
     public ActionStatus updatePaymentMethod(PaymentMethodDto paymentMethodDto) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.update(paymentMethodDto);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.update(paymentMethodDto);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public ActionStatus removePaymentMethod(Long id) {
-	ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
-	try {
-	    paymentMethodApi.remove(id);
-	} catch (Exception e) {
-	    processException(e, result);
-	}
+        try {
+            paymentMethodApi.remove(id);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public PaymentMethodTokensDto listPaymentMethodGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
-	PaymentMethodTokensDto result = new PaymentMethodTokensDto();
-	try {
-	    result = paymentMethodApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        try {
+            result = paymentMethodApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public PaymentMethodTokensDto listPaymentMethodPost(PagingAndFiltering pagingAndFiltering) {
-	PaymentMethodTokensDto result = new PaymentMethodTokensDto();
-	try {
-	    result = paymentMethodApi.list(pagingAndFiltering);
-	} catch (Exception e) {
-	    processException(e, result.getActionStatus());
-	}
+        PaymentMethodTokensDto result = new PaymentMethodTokensDto();
+        try {
+            result = paymentMethodApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-	return result;
+        return result;
     }
 
     @Override
     public PaymentMethodTokenDto findPaymentMethod(Long id) {
 
-	PaymentMethodTokenDto response = new PaymentMethodTokenDto();
+        PaymentMethodTokenDto response = new PaymentMethodTokenDto();
 
-	try {
-	    response.setPaymentMethod(paymentMethodApi.find(id));
-	} catch (Exception e) {
-	    processException(e, response.getActionStatus());
-	}
+        try {
+            response.setPaymentMethod(paymentMethodApi.find(id));
+        } catch (Exception e) {
+            processException(e, response.getActionStatus());
+        }
 
-	return response;
+        return response;
     }
 
 }

@@ -39,7 +39,7 @@ public class AccountEntityApi extends BaseApi {
             address.setCity(postData.getAddress().getCity());
             if(!StringUtils.isBlank(postData.getAddress().getCountry())){
             	Country country=countryService.findByCode(postData.getAddress().getCountry());
-                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescription():postData.getAddress().getCountry());
                 
             }
             address.setState(postData.getAddress().getState());
@@ -64,7 +64,7 @@ public class AccountEntityApi extends BaseApi {
         accountEntity.setExternalRef2(postData.getExternalRef2());
         accountEntity.setAddress(address);
         accountEntity.setName(name);
-
+        accountEntity.setJobTitle(postData.getJobTitle());
     }
 
     public void updateAccount(AccountEntity accountEntity, AccountDto postData) throws MeveoApiException {
@@ -93,7 +93,7 @@ public class AccountEntityApi extends BaseApi {
             }
             if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
             	Country country=countryService.findByCode(postData.getAddress().getCountry());
-                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescription():postData.getAddress().getCountry());
             }
             if (!StringUtils.isBlank(postData.getAddress().getState())) {
                 address.setState(postData.getAddress().getState());
@@ -133,6 +133,9 @@ public class AccountEntityApi extends BaseApi {
         }
         if (!StringUtils.isBlank(postData.getExternalRef2())) {
             accountEntity.setExternalRef2(postData.getExternalRef2());
+        }
+        if (!StringUtils.isBlank(postData.getJobTitle())) {
+            accountEntity.setJobTitle(postData.getJobTitle());
         }
 
     }

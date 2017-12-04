@@ -70,16 +70,16 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	private static final long serialVersionUID = 1L;
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<ServiceChargeTemplateRecurring>();
+	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<ServiceChargeTemplateSubscription>();
+	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<ServiceChargeTemplateTermination>();
+	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
 
 	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
-	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<ServiceChargeTemplateUsage>();
+	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
 	@ManyToOne
 	@JoinColumn(name = "invoicing_calendar_id")
@@ -100,6 +100,15 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	
 	@Transient
 	private boolean selected;
+	
+	/**
+	 * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
+	 */
+	@Transient
+	private boolean instantiatedFromBSM;
+	
+	@Transient
+	private String descriptionOverride;
 
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
@@ -236,6 +245,21 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	public void setImagePath(String imagePath) {
 		this.imagePath = imagePath;
 	}
+
+	public boolean isInstantiatedFromBSM() {
+		return instantiatedFromBSM;
+	}
+
+	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
+		this.instantiatedFromBSM = instantiatedFromBSM;
+	}
+    public String getDescriptionOverride() {
+        return descriptionOverride;
+    }
+
+    public void setDescriptionOverride(String descriptionOverride) {
+        this.descriptionOverride = descriptionOverride;
+    }
 
 
 }

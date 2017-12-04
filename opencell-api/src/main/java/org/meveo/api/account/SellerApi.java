@@ -55,7 +55,7 @@ public class SellerApi extends BaseApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-    
+
     @Inject
     private InvoiceTypeService invoiceTypeService;
 
@@ -70,10 +70,10 @@ public class SellerApi extends BaseApi {
     public Seller create(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
-        
-        handleMissingParametersAndValidate(postData);        
+
+        handleMissingParametersAndValidate(postData);
 
         if (sellerService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(Seller.class, postData.getCode());
@@ -82,16 +82,16 @@ public class SellerApi extends BaseApi {
         Seller seller = new Seller();
         seller.setCode(postData.getCode());
         seller.setDescription(postData.getDescription());
-        if(postData.getInvoiceTypeSequences() != null){
-        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
-        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
-        		if(invoiceType == null){
-        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
-        		}
-        		seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
-        	}
+        if (postData.getInvoiceTypeSequences() != null) {
+            for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
+                InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
+                if (invoiceType == null) {
+                    throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
+                }
+                seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+            }
         }
-        
+
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
@@ -130,7 +130,7 @@ public class SellerApi extends BaseApi {
             seller.setSeller(parentSeller);
         }
 
-        if(businessAccountModel != null) {
+        if (businessAccountModel != null) {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
@@ -146,7 +146,7 @@ public class SellerApi extends BaseApi {
         }
 
         sellerService.create(seller);
-        
+
         return seller;
     }
 
@@ -161,7 +161,7 @@ public class SellerApi extends BaseApi {
     public Seller update(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -170,25 +170,24 @@ public class SellerApi extends BaseApi {
         if (seller == null) {
             throw new EntityDoesNotExistsException(Seller.class, postData.getCode());
         }
-        seller.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode() );
+        seller.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         seller.setDescription(postData.getDescription());
-        if(postData.getInvoiceTypeSequences() != null){
-        	for(Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet() ){
-        		InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
-        		if(invoiceType == null){
-        			 throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
-        		}
-        		
-        		if(entry.getValue().getCurrentInvoiceNb().longValue() 
-        				< invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceType.getCode()).longValue()) {
-                	throw new MeveoApiException("Not able to update, check the current number");
+        if (postData.getInvoiceTypeSequences() != null) {
+            for (Entry<String, SequenceDto> entry : postData.getInvoiceTypeSequences().entrySet()) {
+                InvoiceType invoiceType = invoiceTypeService.findByCode(entry.getKey());
+                if (invoiceType == null) {
+                    throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-        		if (seller.isContainsInvoiceTypeSequence(invoiceType)){
-        		    seller.getInvoiceTypeSequenceByType(invoiceType).setSequence(entry.getValue().fromDto());
-        		} else {
-        		    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
-        		}
-        	}
+
+                if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceType.getCode()).longValue()) {
+                    throw new MeveoApiException("Not able to update, check the current number");
+                }
+                if (seller.isContainsInvoiceTypeSequence(invoiceType)) {
+                    seller.getInvoiceTypeSequenceByType(invoiceType).setSequence(entry.getValue().fromDto());
+                } else {
+                    seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
+                }
+            }
         }
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
@@ -237,7 +236,7 @@ public class SellerApi extends BaseApi {
             seller.setSeller(parentSeller);
         }
 
-        if(businessAccountModel != null) {
+        if (businessAccountModel != null) {
             seller.setBusinessAccountModel(businessAccountModel);
         }
 
@@ -257,11 +256,9 @@ public class SellerApi extends BaseApi {
         return seller;
     }
 
-    @SecuredBusinessEntityMethod(
-			validate = @SecureMethodParameter)
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass=Seller.class))
     public SellerDto find(String sellerCode) throws MeveoApiException {
 
-    	
         if (StringUtils.isBlank(sellerCode)) {
             missingParameters.add("sellerCode");
             handleMissingParameters();
@@ -274,11 +271,12 @@ public class SellerApi extends BaseApi {
             throw new EntityDoesNotExistsException(Seller.class, sellerCode);
         }
 
-        result = new SellerDto(seller, entityToDtoConverter.getCustomFieldsWithInheritedDTO(seller, true));
+        result = new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, true));
 
         return result;
     }
-
+    
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass=Seller.class))
     public void remove(String sellerCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(sellerCode)) {
@@ -307,7 +305,7 @@ public class SellerApi extends BaseApi {
         List<Seller> sellers = sellerService.list();
         if (sellers != null) {
             for (Seller seller : sellers) {
-                result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsWithInheritedDTO(seller, true)));
+                result.getSeller().add(new SellerDto(seller, entityToDtoConverter.getCustomFieldsDTO(seller, true)));
             }
         }
 
@@ -331,9 +329,9 @@ public class SellerApi extends BaseApi {
      * creates or updates seller based on the seller code. If seller is not existing based on the seller code, it will be created else, will be updated.
      * 
      * @param postData
-
+     * 
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     public void createOrUpdate(SellerDto postData) throws MeveoApiException, BusinessException {
         Seller seller = sellerService.findByCode(postData.getCode());

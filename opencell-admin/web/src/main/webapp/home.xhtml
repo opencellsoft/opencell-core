@@ -10,7 +10,7 @@
 
 	<ui:define name="body">
 		<p:messages id="messages" />
-		<p:panel>
+		<p:panel rendered="#{currentUser.hasRole('administrationVisualization')}">
 
 
 			<!-- REMOVED FOR NOW -->

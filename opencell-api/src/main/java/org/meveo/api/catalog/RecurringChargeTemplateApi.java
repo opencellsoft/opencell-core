@@ -251,7 +251,7 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
             throw new EntityDoesNotExistsException(RecurringChargeTemplate.class, code);
         }
 
-        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(chargeTemplate, true));
+        RecurringChargeTemplateDto result = new RecurringChargeTemplateDto(chargeTemplate, entityToDtoConverter.getCustomFieldsDTO(chargeTemplate, true));
 
         return result;
     }

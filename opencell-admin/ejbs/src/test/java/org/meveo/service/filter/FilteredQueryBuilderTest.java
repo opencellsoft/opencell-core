@@ -137,7 +137,7 @@ public class FilteredQueryBuilderTest extends BaseFilterTest {
 		FilterSelector filterSelector1 = new FilterSelector();
 		filterSelector1.setTargetEntity("org.meveo.model.billing.Country");
 		filterSelector1.setAlias("c");
-		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("id", "countryCode", "descriptionEn",
+		filterSelector1.setDisplayFields(new ArrayList<>(Arrays.asList("id", "countryCode", "description",
 				"currency", "language")));
 
 		Filter filter = new Filter();

@@ -14,33 +14,42 @@ import org.meveo.api.dto.BaseDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InstantiateServicesRequestDto extends BaseDto {
 
-	private static final long serialVersionUID = 1150993171011072506L;
+    private static final long serialVersionUID = 1150993171011072506L;
 
-	@XmlElement(required = true)
-	private String subscription;
+    @XmlElement(required = true)
+    private String subscription;
 
-	@XmlElement
-	private ServicesToInstantiateDto servicesToInstantiate = new ServicesToInstantiateDto();
+    @XmlElement
+    private ServicesToInstantiateDto servicesToInstantiate = new ServicesToInstantiateDto();
 
-	public String getSubscription() {
-		return subscription;
-	}
+    private String orderNumber;
 
-	public void setSubscription(String subscription) {
-		this.subscription = subscription;
-	}
+    public String getSubscription() {
+        return subscription;
+    }
 
-	@Override
-	public String toString() {
-		return "InstantiateServicesDto [subscription=" + subscription + ", servicesToInstantiate=" + servicesToInstantiate + "]";
-	}
+    public void setSubscription(String subscription) {
+        this.subscription = subscription;
+    }
 
-	public ServicesToInstantiateDto getServicesToInstantiate() {
-		return servicesToInstantiate;
-	}
+    public String getOrderNumber() {
+        return orderNumber;
+    }
 
-	public void setServicesToInstantiate(ServicesToInstantiateDto servicesToInstantiate) {
-		this.servicesToInstantiate = servicesToInstantiate;
-	}
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
+    public ServicesToInstantiateDto getServicesToInstantiate() {
+        return servicesToInstantiate;
+    }
+
+    public void setServicesToInstantiate(ServicesToInstantiateDto servicesToInstantiate) {
+        this.servicesToInstantiate = servicesToInstantiate;
+    }
+
+    @Override
+    public String toString() {
+        return "InstantiateServicesRequestDto [subscription=" + subscription + ", servicesToInstantiate=" + servicesToInstantiate + ", orderNumber=" + orderNumber + "]";
+    }
 }

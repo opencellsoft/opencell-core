@@ -7,7 +7,14 @@ import org.meveo.service.script.module.ModuleScript;
 
 public class AccountScript extends ModuleScript implements AccountScriptInterface {
 
+    /**
+     * seller constant.
+     */
     public static String CONTEXT_SELLER = "CONTEXT_SELLER";
+
+    /**
+     * account hierachy constant.
+     */
     public static String CONTEXT_ACCOUNT_HIERARCHY_DTO = "CONTEXT_ACCOUNT_HIERARCHY_DTO";
 
     @Override

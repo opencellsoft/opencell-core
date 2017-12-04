@@ -59,4 +59,30 @@ public interface GatewayPaymentInterface {
      */
     public void cancelPayment(String paymentID) throws BusinessException;
 
+
+    /**
+     * 
+     * @param paymentToken
+     * @param ctsAmount
+     * @param additionalParams
+     * @return
+     * @throws BusinessException
+     */
+    public PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+
+    /**
+     * 
+     * @param customerAccount
+     * @param ctsAmount
+     * @param cardNumber
+     * @param ownerName
+     * @param cvv
+     * @param expirayDate format MMyy
+     * @param cardType
+     * @return
+     * @throws BusinessException
+     */
+    public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+            CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
+
 }

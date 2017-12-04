@@ -1,5 +1,6 @@
 package org.meveo.api.dto.response.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -9,11 +10,11 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.catalog.OfferTemplateDto;
-import org.meveo.api.dto.response.BaseResponse;
+import org.meveo.api.dto.response.SearchResponse;
 
 @XmlRootElement(name = "GetListOfferTemplateResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetListOfferTemplateResponseDto extends BaseResponse {
+public class GetListOfferTemplateResponseDto extends SearchResponse {
 
     private static final long serialVersionUID = 5535571034571826093L;
 
@@ -33,8 +34,10 @@ public class GetListOfferTemplateResponseDto extends BaseResponse {
         this.offerTemplates = offerTemplates;
     }
 
-    @Override
-    public String toString() {
-        return "GetListOfferTemplateResponseDto [offerTemplates=" + offerTemplates + "]";
+    public void addOfferTemplate(OfferTemplateDto offerTemplate) {
+        if (offerTemplates == null) {
+            offerTemplates = new ArrayList<>();
+        }
+        offerTemplates.add(offerTemplate);
     }
 }

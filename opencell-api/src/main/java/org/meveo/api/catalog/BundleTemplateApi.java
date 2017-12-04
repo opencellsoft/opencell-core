@@ -3,27 +3,35 @@ package org.meveo.api.catalog;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.api.dto.account.FilterProperty;
+import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.catalog.BundleProductTemplateDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.catalog.GetListBundleTemplateResponseDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidImageData;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
+import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
+import org.meveo.api.security.filter.ListFilter;
+import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -33,8 +41,10 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
+import org.primefaces.model.SortOrder;
 
 @Stateless
+@Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, BundleTemplateDto> {
 
     @Inject
@@ -51,6 +61,8 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public BundleTemplateDto find(String code, Date validFrom, Date validTo)
             throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -70,7 +82,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
     }
 
     private BundleTemplateDto convertBundleTemplateToDto(BundleTemplate bundleTemplate) {
-        BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(bundleTemplate, true), false);
+        BundleTemplateDto bundleTemplateDto = new BundleTemplateDto(bundleTemplate, entityToDtoConverter.getCustomFieldsDTO(bundleTemplate, true), false);
 
         processProductChargeTemplateToDto(bundleTemplate, bundleTemplateDto);
 
@@ -87,7 +99,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
                     bundleProductTemplateDto
-                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(productTemplate, true), false));
+                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }
@@ -146,6 +158,17 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         bundleTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), null));
+
+        if (postData.getSellers() != null) {
+            bundleTemplate.getSellers().clear();
+            for (String sellerCode : postData.getSellers()) {
+                Seller seller = sellerService.findByCode(sellerCode);
+                if (seller == null) {
+                    throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+                }
+                bundleTemplate.addSeller(seller);
+            }
+        }
 
         // save product template now so that they can be referenced by the
         // related entities below.
@@ -210,6 +233,17 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         }
         if (postData.getLongDescriptionsTranslated() != null) {
             bundleTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), bundleTemplate.getLongDescriptionI18n()));
+        }
+
+        if (postData.getSellers() != null) {
+            bundleTemplate.getSellers().clear();
+            for (String sellerCode : postData.getSellers()) {
+                Seller seller = sellerService.findByCode(sellerCode);
+                if (seller == null) {
+                    throw new EntityDoesNotExistsException(Seller.class, sellerCode);
+                }
+                bundleTemplate.addSeller(seller);
+            }
         }
 
         processProductChargeTemplate(postData, bundleTemplate);
@@ -302,23 +336,32 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
     }
 
     /**
-     * List all product bundle templates optionally filtering by code and validity dates. If neither date is provided, validity dates will not be considered.If only validFrom is
-     * provided, a search will return product bundles valid on a given date. If only valdTo date is provided, a search will return product bundles valid from today to a given date.
+     * List product bundle templates matching filtering and query criteria or code and validity dates.
+     * 
+     * If neither date is provided, validity dates will not be considered.If only validFrom is provided, a search will return product bundles valid on a given date. If only valdTo
+     * date is provided, a search will return product bundles valid from today to a given date.
      * 
      * @param code Product template code for optional filtering
      * @param validFrom Validity range from date.
      * @param validTo Validity range to date.
+     * @param pagingAndFiltering Paging and filtering criteria.
      * @return A list of product templates
      */
-    public List<BundleTemplateDto> list(String code, Date validFrom, Date validTo) {
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "bundleTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
+    public GetListBundleTemplateResponseDto list(@Deprecated String code, @Deprecated Date validFrom, @Deprecated Date validTo, PagingAndFiltering pagingAndFiltering)
+            throws InvalidParameterException {
 
-        Map<String, Object> filters = new HashMap<String, Object>();
-        filters.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, BundleTemplate.class);
+        if (pagingAndFiltering == null) {
+            pagingAndFiltering = new PagingAndFiltering();
+        }
+
+        pagingAndFiltering.addFilter(PersistenceService.SEARCH_ATTR_TYPE_CLASS, BundleTemplate.class);
 
         if (!StringUtils.isBlank(code) || validFrom != null || validTo != null) {
 
             if (!StringUtils.isBlank(code)) {
-                filters.put("code", code);
+                pagingAndFiltering.addFilter("code", code);
             }
 
             // If only validTo date is provided, a search will return products valid from today to a given date.
@@ -328,24 +371,32 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
             // search by a single date
             if (validFrom != null && validTo == null) {
-
-                filters.put("minmaxOptionalRange validity.from validity.to", validFrom);
+                pagingAndFiltering.addFilter("minmaxOptionalRange validity.from validity.to", validFrom);
 
                 // search by date range
             } else if (validFrom != null && validTo != null) {
-                filters.put("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
+                pagingAndFiltering.addFilter("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
             }
+
+            pagingAndFiltering.addFilter("disabled", false);
+
         }
 
-        PaginationConfiguration config = new PaginationConfiguration(filters);
-        List<BundleTemplate> bundleTemplates = bundleTemplateService.list(config);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("code", SortOrder.ASCENDING, null, pagingAndFiltering, BundleTemplate.class);
 
-        List<BundleTemplateDto> dtos = new ArrayList<BundleTemplateDto>();
-        if (bundleTemplates != null) {
+        Long totalCount = bundleTemplateService.count(paginationConfig);
+
+        GetListBundleTemplateResponseDto result = new GetListBundleTemplateResponseDto();
+        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<BundleTemplate> bundleTemplates = bundleTemplateService.list(paginationConfig);
             for (BundleTemplate bundleTemplate : bundleTemplates) {
-                dtos.add(convertBundleTemplateToDto(bundleTemplate));
+                result.addBundleTemplate(convertBundleTemplateToDto(bundleTemplate));
             }
         }
-        return dtos;
+
+        return result;
     }
 }

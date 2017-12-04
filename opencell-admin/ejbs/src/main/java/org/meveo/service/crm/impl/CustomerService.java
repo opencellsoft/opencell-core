@@ -31,6 +31,12 @@ import org.meveo.service.base.AccountService;
  */
 @Stateless
 public class CustomerService extends AccountService<Customer> {
+    /**
+     * find customer by code.
+     * @param code code of customer
+     * @return found customer or null
+     * @see org.meveo.service.base.BusinessService#findByCode(java.lang.String)
+     */
     public Customer findByCode(String code) {
         Query query = getEntityManager().createQuery("from " + Customer.class.getSimpleName() + " where code=:code").setParameter("code", code);
         if (query.getResultList().size() == 0) {
@@ -38,6 +44,11 @@ public class CustomerService extends AccountService<Customer> {
         }
         return (Customer) query.getResultList().get(0);
     }
+    /**
+     * @param code code of customer
+     * @param fetchFields list of fields will be fetched with.
+     * @return customer.
+     */
     public Customer findByCodeAndFetch(String code, List<String> fetchFields) {
         QueryBuilder qb = new QueryBuilder(Customer.class, "c", fetchFields);
         qb.addCriterion("c.code", "=", code, true);
@@ -47,6 +58,10 @@ public class CustomerService extends AccountService<Customer> {
             return null;
         }
     }
+    /**
+     * @param code code of seller
+     * @return list of customer for give seller's code
+     */
     @SuppressWarnings("unchecked")
     public List<Customer> listBySellerCode(String code) {
         QueryBuilder qb = new QueryBuilder(Customer.class, "c");
@@ -57,6 +72,9 @@ public class CustomerService extends AccountService<Customer> {
             return null;
         }
     }
+    /**
+     * @return list of sellers.
+     */
     @SuppressWarnings("unchecked")
     public List<Seller> listSellersWithCustomers() {
         try {

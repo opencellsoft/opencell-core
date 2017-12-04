@@ -11,6 +11,7 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -115,6 +116,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         product.getChannels().size();
         product.getOfferTemplateCategories().size();
         product.getProductChargeTemplates().size();
+        product.getSellers().size();
 
         String code = findDuplicateCode(product);
 
@@ -140,6 +142,9 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
 
         List<ProductChargeTemplate> chargeTemplates = product.getProductChargeTemplates();
         product.setProductChargeTemplates(new ArrayList<>());
+
+        List<Seller> sellers = product.getSellers();
+        product.setSellers(new ArrayList<>());
 
         product.setCode(code);
 
@@ -176,6 +181,12 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         if (chargeTemplates != null) {
             for (ProductChargeTemplate chargeTemplate : chargeTemplates) {
                 product.getProductChargeTemplates().add(chargeTemplate);
+            }
+        }
+
+        if (sellers != null) {
+            for (Seller seller : sellers) {
+                product.getSellers().add(seller);
             }
         }
 
