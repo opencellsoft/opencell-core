@@ -48,12 +48,9 @@ public abstract class BaseService {
 	@Inject
 	private BeanManager beanManager;
 
-//	@EJB
-//	private UserService userService;	
-
-	protected String generateRequestId() {
-		return "MEVEOADMIN-" + String.valueOf(RANDOM.nextInt());
-	}
+    protected String generateRequestId() {
+        return "MEVEOADMIN-" + RANDOM.nextInt();
+    }
 
 	@SuppressWarnings("unchecked")
 	protected <E> E getManagedBeanInstance(Class<E> beanClazz) {

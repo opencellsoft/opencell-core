@@ -10,7 +10,9 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,7 +43,7 @@ public class CurrentUserProvider {
     private EntityManager em;
     
     @Inject
-    private UserAuthTimeProducer userAuthTimeProducer;
+    private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
     private String forcedUserUsername;
 
@@ -103,13 +105,14 @@ public class CurrentUserProvider {
             User user = null;
             try {
                 user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
-                if (userAuthTimeProducer != null && userAuthTimeProducer.getAuthTime() != currentUser.getAuthTime()) {
-                    userAuthTimeProducer.setAuthTime(currentUser.getAuthTime());
+
+                if (userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
+                    userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
                     user.setLastLoginDate(new Date());
                     em.merge(user);
                     em.flush();
                 }
-                
+
             } catch (NoResultException e) {
 
                 user = new User();
@@ -131,6 +134,9 @@ public class CurrentUserProvider {
                 em.persist(user);
                 em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
+         
+            } catch (ContextNotActiveException e) {
+                log.error("No session context={}", e.getMessage());
             }
 
         } catch (Exception e) {
