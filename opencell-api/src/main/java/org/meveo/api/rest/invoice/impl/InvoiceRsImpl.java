@@ -185,6 +185,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
     }
 
     @Override
+    @Deprecated
     public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
         try {

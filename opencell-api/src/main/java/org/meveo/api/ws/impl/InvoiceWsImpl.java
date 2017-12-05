@@ -43,6 +43,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     }
 
     @Override
+    @Deprecated
     public CustomerInvoicesResponse findInvoice(String customerAccountCode) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
@@ -167,6 +168,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
     }
 
     @Override
+    @Deprecated
     public CustomerInvoicesResponse listPresentInAR(String customerAccountCode) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
         try {

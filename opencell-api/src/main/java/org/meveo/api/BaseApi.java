@@ -1087,7 +1087,8 @@ public abstract class BaseApi {
             String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
 
             // Nothing to convert
-            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)) {
+            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)
+                    || (value instanceof String && (PersistenceService.SEARCH_IS_NOT_NULL.equals((String) value) || PersistenceService.SEARCH_IS_NULL.equals((String) value)))) {
                 filters.put(key, value);
 
                 // Filter already contains a special
