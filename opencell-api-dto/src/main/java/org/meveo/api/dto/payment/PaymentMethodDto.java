@@ -299,7 +299,6 @@ public class PaymentMethodDto extends BaseDto {
         switch (getPaymentMethodType()) {
 
             case DIRECTDEBIT:
-
                 if (!StringUtils.isBlank(getMandateIdentification())) {
                     ((DDPaymentMethod) paymentMethod).setMandateIdentification(getMandateIdentification());
                 }
@@ -342,6 +341,46 @@ public class PaymentMethodDto extends BaseDto {
                     }
                     if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
                         ((DDPaymentMethod) paymentMethod).getBankCoordinates().setKey(getBankCoordinates().getKey());
+                    }
+                }
+                break;
+            case TIP:
+                if (getBankCoordinates() != null) {
+                    if (!StringUtils.isBlank(getBankCoordinates().getAccountNumber())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountNumber());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getAccountOwner())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setAccountOwner(getBankCoordinates().getAccountOwner());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getBankCode())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankCode(getBankCoordinates().getBankCode());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getBankId())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankId(getBankCoordinates().getBankId());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getBankName())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankName(getBankCoordinates().getBankName());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getBic())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBic(getBankCoordinates().getBic());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getBranchCode())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBranchCode(getBankCoordinates().getBranchCode());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getIban())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIban(getBankCoordinates().getIban());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getIcs())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIcs(getBankCoordinates().getIcs());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getIssuerName())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIssuerName(getBankCoordinates().getIssuerName());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getIssuerNumber())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIssuerNumber(getBankCoordinates().getIssuerNumber());
+                    }
+                    if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
+                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setKey(getBankCoordinates().getKey());
                     }
                 }
                 break;
@@ -728,8 +767,7 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * Check bank coordinates fields.
      *
-     *
-     * @param bankCoordinatesDto the bankCoordinatesDto.
+     * @param type the PaymentMethodEnum type.
      */
     private void validateBankCoordinates(PaymentMethodEnum type) {
         BankCoordinatesDto bankCoordinates = getBankCoordinates();
