@@ -771,27 +771,53 @@ public class PaymentMethodDto extends BaseDto {
      */
     private void validateBankCoordinates(PaymentMethodEnum type) {
         BankCoordinatesDto bankCoordinates = getBankCoordinates();
-        if (bankCoordinates == null) {
-            throw new InvalidDTOException("Missing bank coordinates.");
-        }
-        if (StringUtils.isBlank(bankCoordinates.getAccountOwner())) {
-            throw new InvalidDTOException("Missing account owner.");
-        }
-        if (StringUtils.isBlank(bankCoordinates.getBankName())) {
-            throw new InvalidDTOException("Missing bank name.");
-        }
 
         if (type == PaymentMethodEnum.DIRECTDEBIT) {
-            if (StringUtils.isBlank(bankCoordinates.getBic())) {
-                throw new InvalidDTOException("Missing BIC.");
+            // Start compatibility with pre-4.6 versions
+            if (getMandateIdentification() == null && bankCoordinates == null) {
+                throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
             }
 
-            if (StringUtils.isBlank(bankCoordinates.getIban())) {
-                throw new InvalidDTOException("Missing IBAN.");
+            if (bankCoordinates != null) {
+                if (StringUtils.isBlank(bankCoordinates.getAccountOwner())) {
+                    throw new InvalidDTOException("Missing account owner.");
+                }
+
+                if (StringUtils.isBlank(bankCoordinates.getBankName())) {
+                    throw new InvalidDTOException("Missing bank name.");
+                }
+
+                if (StringUtils.isBlank(bankCoordinates.getBic())) {
+                    throw new InvalidDTOException("Missing BIC.");
+                }
+
+                if (StringUtils.isBlank(bankCoordinates.getIban())) {
+                    throw new InvalidDTOException("Missing IBAN.");
+                }
+            } else {
+                if (StringUtils.isBlank(getMandateIdentification())) {
+                    throw new InvalidDTOException("Missing mandate identification.");
+                }
+                if (getMandateDate() == null) {
+                    throw new InvalidDTOException("Missing mandate date.");
+                }
             }
+            // End of compatibility with pre-4.6 versions
         }
 
         if (type == PaymentMethodEnum.TIP) {
+            if (getMandateIdentification() == null && bankCoordinates == null) {
+                throw new InvalidDTOException("Missing bank coordinates.");
+            }
+
+            if (StringUtils.isBlank(bankCoordinates.getAccountOwner())) {
+                throw new InvalidDTOException("Missing account owner.");
+            }
+
+            if (StringUtils.isBlank(bankCoordinates.getBankName())) {
+                throw new InvalidDTOException("Missing bank name.");
+            }
+
             if (StringUtils.isBlank(bankCoordinates.getAccountNumber())) {
                 throw new InvalidDTOException("Missing account number.");
             }
