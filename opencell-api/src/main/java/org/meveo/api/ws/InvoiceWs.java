@@ -128,7 +128,16 @@ public interface InvoiceWs extends IBaseWs {
     public GetInvoiceResponseDto findInvoiceByIdOrType(@WebParam(name = "id") Long id, @WebParam(name = "invoiceNumber") String invoiceNumber,
             @WebParam(name = "invoiceType") String invoiceType, @WebParam(name = "includeTransations") boolean includeTransactions);
 
+    /**
+     * List invoices with account operation for a given customer account
+     * 
+     * Deprecated in v.4.8. Use list() instead with criteria "recordedInvoice=IS_NOT_NULL and billingAccount.customerAccount.code=xxx"
+     * 
+     * @param customerAccountCode Customer account code
+     * @return List of invoices
+     */
     @WebMethod
+    @Deprecated
     public CustomerInvoicesResponse listPresentInAR(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
     @WebMethod

@@ -1308,7 +1308,7 @@
             <column name="description_i18n" type="${type.json}" />
         </addColumn>
          <dropColumn tableName="adm_country" columnName="description_fr" /> 
-         <renameColumn newColumnName="description"  oldColumnName="description_en" tableName="adm_country"/>
+         <renameColumn newColumnName="description"  oldColumnName="description_en" tableName="adm_country" columnDataType="varchar(100)"/>
      </changeSet>
      
      <changeSet id="20171121-2816 Add last login date" author="EdwardPLegaspi">
@@ -1352,15 +1352,15 @@
     </changeSet>    
     
     <changeSet id="#2836_20171018_migration_M" author="AndriusKarpavicius" dbms="mysql">    
-        <sql>update billing_one_shot_charge_inst join billing_service_instance on billing_one_shot_charge_inst.subs_serv_inst_id = billing_service_instance.id set quantity= billing_service_instance.quantity where billing_one_shot_charge_inst.subs_serv_inst_id is not null</sql>
-        <sql>update billing_one_shot_charge_inst join billing_service_instance on billing_one_shot_charge_inst.term_serv_inst_id = billing_service_instance.id set quantity= billing_service_instance.quantity where billing_one_shot_charge_inst.term_serv_inst_id is not null</sql>  
-        <sql>update billing_one_shot_charge_inst join billing_wallet_operation on billing_wallet_operation.charge_instance_id = billing_one_shot_charge_inst.id set quantity= billing_wallet_operation.input_quantity where billing_one_shot_charge_inst.term_serv_inst_id is null and billing_one_shot_charge_inst.subs_serv_inst_id is null</sql>
-        <sql>update billing_recurring_charge_inst join billing_service_instance on billing_recurring_charge_inst.service_instance_id = billing_service_instance.id set quantity= billing_service_instance.quantity</sql>  
+        <sql>update billing_one_shot_charge_inst join billing_service_instance on billing_one_shot_charge_inst.subs_serv_inst_id = billing_service_instance.id set billing_one_shot_charge_inst.quantity= billing_service_instance.quantity where billing_one_shot_charge_inst.subs_serv_inst_id is not null</sql>
+        <sql>update billing_one_shot_charge_inst join billing_service_instance on billing_one_shot_charge_inst.term_serv_inst_id = billing_service_instance.id set billing_one_shot_charge_inst.quantity= billing_service_instance.quantity where billing_one_shot_charge_inst.term_serv_inst_id is not null</sql>  
+        <sql>update billing_one_shot_charge_inst join billing_wallet_operation on billing_wallet_operation.charge_instance_id = billing_one_shot_charge_inst.id set billing_one_shot_charge_inst.quantity= billing_wallet_operation.input_quantity where billing_one_shot_charge_inst.term_serv_inst_id is null and billing_one_shot_charge_inst.subs_serv_inst_id is null</sql>
+        <sql>update billing_recurring_charge_inst join billing_service_instance on billing_recurring_charge_inst.service_instance_id = billing_service_instance.id set billing_recurring_charge_inst.quantity= billing_service_instance.quantity</sql>  
     </changeSet>
 
     <changeSet id="#2836_20171018-end" author="AndriusKarpavicius">
-        <addNotNullConstraint tableName="billing_one_shot_charge_inst" columnName="quantity"/>
-        <addNotNullConstraint tableName="billing_recurring_charge_inst" columnName="quantity"/>
+        <addNotNullConstraint tableName="billing_one_shot_charge_inst" columnName="quantity" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_recurring_charge_inst" columnName="quantity" columnDataType="numeric(23, 12)"/>
     </changeSet>
     
 <!--     <changeSet id="#2836_20171019" author="AndriusKarpavicius"> -->
@@ -1390,16 +1390,16 @@
     </changeSet>    
     
     <changeSet id="#2836_20171019_update_end" author="AndriusKarpavicius">
-        <addNotNullConstraint tableName="billing_charge_instance" columnName="user_account_id"/>
-        <addNotNullConstraint tableName="billing_charge_instance" columnName="trading_country"/>
-        <addNotNullConstraint tableName="billing_charge_instance" columnName="trading_currency"/>
-        <addNotNullConstraint tableName="billing_charge_instance" columnName="seller_id"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="user_account_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="trading_country" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="trading_currency" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="seller_id" columnDataType="bigint"/>
         
         <!--  added for consistency with API and GUI -->
-        <addNotNullConstraint tableName="ar_customer_account" columnName="trading_currency_id"/>
-        <addNotNullConstraint tableName="ar_customer_account" columnName="trading_language_id"/>
-        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_country_id"/>
-        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_language_id"/>
+        <addNotNullConstraint tableName="ar_customer_account" columnName="trading_currency_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="ar_customer_account" columnName="trading_language_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_country_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_language_id" columnDataType="bigint"/>
         
     </changeSet>
     
