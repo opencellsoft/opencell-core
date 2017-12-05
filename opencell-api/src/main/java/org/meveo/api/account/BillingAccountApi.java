@@ -113,6 +113,11 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
+        }        
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
         }
 
         handleMissingParametersAndValidate(postData);
@@ -220,6 +225,11 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -281,7 +291,7 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getTerminationDate())) {
             billingAccount.setTerminationDate(postData.getTerminationDate());
         }
-        if (!StringUtils.isBlank(postData.getElectronicBilling())) {
+        if (postData.getElectronicBilling() != null) {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
         if (!StringUtils.isBlank(postData.getEmail())) {
