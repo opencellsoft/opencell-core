@@ -103,10 +103,10 @@ public class CurrentUserProvider {
             User user = null;
             try {
                 user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
-                if (userAuthTimeProducer.getAuthTime() != currentUser.getAuthTime()) {
+                if (userAuthTimeProducer != null && userAuthTimeProducer.getAuthTime() != currentUser.getAuthTime()) {
                     userAuthTimeProducer.setAuthTime(currentUser.getAuthTime());
                     user.setLastLoginDate(new Date());
-                    user = em.merge(user);
+                    em.merge(user);
                     em.flush();
                 }
                 
