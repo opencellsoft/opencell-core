@@ -61,14 +61,14 @@ public class UsageRatingJob extends Job {
         waitingMillis.setDefaultValue("0");
         result.put("waitingMillis", waitingMillis);
 
-        CustomFieldTemplate rateUtilDate = new CustomFieldTemplate();
-        rateUtilDate.setCode("rateUtilDate");
-        rateUtilDate.setAppliesTo("JOB_UsageRatingJob");
-        rateUtilDate.setActive(true);
-        rateUtilDate.setDescription(resourceMessages.getString("jobExecution.rateUtilDate"));
-        rateUtilDate.setFieldType(CustomFieldTypeEnum.DATE);
-        rateUtilDate.setValueRequired(false);
-        result.put("rateUtilDate", rateUtilDate);
+        CustomFieldTemplate rateUntilDate = new CustomFieldTemplate();
+        rateUntilDate.setCode("rateUntilDate");
+        rateUntilDate.setAppliesTo("JOB_UsageRatingJob");
+        rateUntilDate.setActive(true);
+        rateUntilDate.setDescription(resourceMessages.getString("jobExecution.rateUntilDate"));
+        rateUntilDate.setFieldType(CustomFieldTypeEnum.DATE);
+        rateUntilDate.setValueRequired(false);
+        result.put("rateUntilDate", rateUntilDate);
 
         return result;
     }
