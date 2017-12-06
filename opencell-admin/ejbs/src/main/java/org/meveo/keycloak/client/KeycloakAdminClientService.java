@@ -290,9 +290,10 @@ public class KeycloakAdminClientService {
         try {
             UserRepresentation userRepresentation = usersResource.search(username, null, null, null, 0, 1).get(0);
 
-            return userRepresentation != null ? usersResource.get(userRepresentation.getId()).roles().realmLevel().listEffective().stream().map(p -> {
-                return new RoleDto(p.getName());
-            }).collect(Collectors.toList()) : new ArrayList<>();
+            return userRepresentation != null ? usersResource.get(userRepresentation.getId()).roles().realmLevel().listEffective().stream()
+                .filter(p -> !KeycloakConstants.ROLE_KEYCLOAK_DEFAULT_EXCLUDED.contains(p.getName())).map(p -> {
+                    return new RoleDto(p.getName());
+                }).collect(Collectors.toList()) : new ArrayList<>();
         } catch (Exception e) {
             return new ArrayList<RoleDto>();
         }
