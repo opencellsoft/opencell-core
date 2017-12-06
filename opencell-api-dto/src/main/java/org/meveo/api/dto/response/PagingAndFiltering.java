@@ -40,7 +40,7 @@ public class PagingAndFiltering implements Serializable {
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value<=field.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value<=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
-     * <li>inList. Field value is in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
+     * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
      * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
      * <li>overlapOptionalRange. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array of two

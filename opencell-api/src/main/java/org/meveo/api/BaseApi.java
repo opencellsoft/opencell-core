@@ -1112,7 +1112,7 @@ public abstract class BaseApi {
                     fieldClassType = ReflectionUtils.getFieldGenericsType(field);
                 }
 
-                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition) || "overlapOptionalRange".equals(condition));
+                Object valueConverted = castFilterValue(value, fieldClassType, (condition!=null && condition.contains("inList")) || "overlapOptionalRange".equals(condition));
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {

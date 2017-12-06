@@ -612,7 +612,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value<=field.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value<=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
-     * <li>inList. Field value is in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
+     * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
+     * of one item</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
      * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
      * <li>overlapOptionalRange. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array of two
@@ -735,7 +736,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                         queryBuilder.addSqlCriterion(":" + paramName + " in elements(a." + fieldName + ")", paramName, filterValue);
 
                         // Field value is in value (list)
-                    } else if ("inList".equals(condition)) {
+                    } else if ("inList".equals(condition) || "not-inList".equals(condition)) {
+
+                        boolean isNot = "not-inList".equals(condition);
 
                         Field field = ReflectionUtils.getField(entityClass, fieldName);
                         Class<?> fieldClassType = field.getType();
@@ -746,21 +749,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                             String paramName = queryBuilder.convertFieldToParam(fieldName);
                             String collectionItem = queryBuilder.convertFieldToCollectionMemberItem(fieldName);
 
-                            // this worked at first, but now complains about distinct clause, so switched to EXISTS clause instead. 
+                            // this worked at first, but now complains about distinct clause, so switched to EXISTS clause instead.
                             // queryBuilder.addCollectionMember(fieldName);
                             // queryBuilder.addSqlCriterion(collectionItem + " IN (:" + paramName + ")", paramName, filterValue);
 
                             String inListAlias = collectionItem + "Alias";
-                            queryBuilder.addSqlCriterion(" exists (select " + inListAlias + " from " + entityClass.getName() + " " + inListAlias + ",IN (" + inListAlias + "."
-                                    + fieldName + ") as " + collectionItem + " where " + inListAlias + "=a and " + collectionItem + " IN (:" + paramName + "))",
+                            queryBuilder.addSqlCriterion(
+                                " exists (select " + inListAlias + " from " + entityClass.getName() + " " + inListAlias + ",IN (" + inListAlias + "." + fieldName + ") as "
+                                        + collectionItem + " where " + inListAlias + "=a and " + collectionItem + (isNot ? " NOT " : "") + " IN (:" + paramName + "))",
                                 paramName, filterValue);
 
                         } else {
                             if (filterValue instanceof String) {
-                                queryBuilder.addSql("a." + fieldName + " IN (" + filterValue + ")");
+                                queryBuilder.addSql("a." + fieldName + (isNot ? " NOT " : "") + " IN (" + filterValue + ")");
                             } else if (filterValue instanceof Collection) {
                                 String paramName = queryBuilder.convertFieldToParam(fieldName);
-                                queryBuilder.addSqlCriterion("a." + fieldName + " in (:" + paramName + ")", paramName, filterValue);
+                                queryBuilder.addSqlCriterion("a." + fieldName + (isNot ? " NOT " : "") + " IN (:" + paramName + ")", paramName, filterValue);
                             }
                         }
 
@@ -878,9 +882,13 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
                         // Search by additional Sql clause with specified parameters
                     } else if (SEARCH_SQL.equals(key)) {
-                        String additionalSql = (String) ((Object[]) filterValue)[0];
-                        Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);
-                        queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
+                        if (filterValue.getClass().isArray()) {
+                            String additionalSql = (String) ((Object[]) filterValue)[0];
+                            Object[] additionalParameters = Arrays.copyOfRange(((Object[]) filterValue), 1, ((Object[]) filterValue).length);
+                            queryBuilder.addSqlCriterionMultiple(additionalSql, additionalParameters);
+                        } else {
+                            queryBuilder.addSql((String) filterValue);
+                        }
 
                     } else {
                         if (filterValue instanceof String && SEARCH_IS_NULL.equals(filterValue)) {
