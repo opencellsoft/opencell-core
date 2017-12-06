@@ -226,14 +226,16 @@ public class KeycloakAdminClientService {
             // add from posted data
             usersResource.get(userRepresentation.getId()).roles().realmLevel().add(externalRolesRepresentation);
 
-            // Define password credential
-            CredentialRepresentation credential = new CredentialRepresentation();
-            credential.setTemporary(false);
-            credential.setType(CredentialRepresentation.PASSWORD);
-            credential.setValue(postData.getPassword());
+            if (!StringUtils.isBlank(postData.getPassword())) {
+                // Define password credential
+                CredentialRepresentation credential = new CredentialRepresentation();
+                credential.setTemporary(false);
+                credential.setType(CredentialRepresentation.PASSWORD);
+                credential.setValue(postData.getPassword());
 
-            // Set password credential
-            userResource.resetPassword(credential);
+                // Set password credential
+                userResource.resetPassword(credential);
+            }
         } catch (Exception e) {
             throw new BusinessException("Failed updating user with error=" + e.getMessage());
         }
