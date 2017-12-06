@@ -40,6 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -100,7 +101,9 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
         if (StringUtils.isBlank(postData.getName())) {
             postData.setName(postData.getCode());
         }
-
+        if (postData.getLifeCycleStatus() == null) {
+            postData.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
+        }
         handleMissingParameters();
 
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);

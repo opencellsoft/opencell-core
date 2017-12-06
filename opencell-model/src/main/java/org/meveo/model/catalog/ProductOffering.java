@@ -87,7 +87,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
 
     @Enumerated(EnumType.STRING)
     @Column(name = "life_cycle_status")
-    private LifeCycleStatusEnum lifeCycleStatus;
+    private LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
 
     @ManyToMany
     @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))

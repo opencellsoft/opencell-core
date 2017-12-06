@@ -50,7 +50,8 @@ public class ProductOfferingDto extends BusinessDto {
 
     protected String modelCode;
 
-    protected LifeCycleStatusEnum lifeCycleStatus;
+    @XmlElement(required = true)
+    protected LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
 
     protected CustomFieldsDto customFields;
 
