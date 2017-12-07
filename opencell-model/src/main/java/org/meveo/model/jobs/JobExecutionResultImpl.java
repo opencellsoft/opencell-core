@@ -107,6 +107,9 @@ public class JobExecutionResultImpl extends BaseEntity {
         nbItemsProcessedWithError++;
     }
 
+    public synchronized void registerError() {        
+        nbItemsProcessedWithError++;
+    }
     public void close(String report) {
         this.report = report;
         this.endDate = new Date();

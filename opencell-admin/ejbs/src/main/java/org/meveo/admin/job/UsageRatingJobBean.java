@@ -93,8 +93,6 @@ public class UsageRatingJobBean {
 
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
-                    result.registerError(cause.getMessage());
-                    result.addReport(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }

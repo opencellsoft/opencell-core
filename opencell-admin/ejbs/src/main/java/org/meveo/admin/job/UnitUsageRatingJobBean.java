@@ -41,8 +41,6 @@ public class UnitUsageRatingJobBean {
     @Rejected
     private Event<Serializable> rejectededEdrProducer;
 
-    @EJB
-    private UnitUsageRatingJobBean unitUsageRatingJobBean;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
@@ -81,7 +79,7 @@ public class UnitUsageRatingJobBean {
         edr.setStatus(EDRStatusEnum.REJECTED);
         edr.setRejectReason(StringUtils.truncate(e.getMessage(), 255, true));
         rejectededEdrProducer.fire(edr);
-        result.registerError(edr.getId(), e != null ? e.getMessage() : edr.getRejectReason());
+        result.registerError();
         String aLine = "EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()) +"\n";
         aLine += "eventDate:"+edr.getEventDate() +"\n";
         aLine += "originBatch:"+edr.getOriginBatch() +"\n";
