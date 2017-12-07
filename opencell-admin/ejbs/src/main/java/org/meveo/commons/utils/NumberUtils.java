@@ -61,7 +61,7 @@ public class NumberUtils {
 			return minuend;
 		}
 
-		return minuend.subtract(minuend);
+		return minuend.subtract(subtrahend);
 	}
   
 }

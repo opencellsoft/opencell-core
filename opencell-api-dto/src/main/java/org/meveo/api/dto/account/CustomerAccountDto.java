@@ -57,19 +57,19 @@ public class CustomerAccountDto extends AccountDto {
     private Date mandateDate;
 
     /**
-     * Balance due. status=O, P, I; isDue=false, dunning=false
+     * balanceExigible (status=O, P; isDue=true; dunning=false) - creditBalance
      */
     private BigDecimal balance = BigDecimal.ZERO;
     /**
-     * exigibleWithoutLitigation; status=O, P, isDue=true, dunning=true
+     * exigibleWithoutLitigation; status=O, P; isDue=true; dunning=true
      */
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
     /**
-     * exigible; status=O, P, isDue=true, dunning=true
+     * totalInvoiceBalance - creditBalance
      */
     private BigDecimal accountBalance = BigDecimal.ZERO;
     /**
-     * Blance. status=O, P, I; isDue=false, dunning=false, category=CREDIT.
+     * Balance. status=O, P, I; isDue=false; dunning=false; category=CREDIT.
      */
     private BigDecimal creditBalance = BigDecimal.ZERO;
 
