@@ -12,6 +12,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
+import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
@@ -30,6 +31,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
@@ -135,18 +137,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         } catch (IOException e1) {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
-        }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), productTemplate, false);
-        } catch (MissingParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+        }        
 
         productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), null));
@@ -160,6 +151,28 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
                 }
                 productTemplate.addSeller(seller);
             }
+        }
+        
+        if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
+            productTemplate.getChannels().clear();
+            for (ChannelDto channelDto : postData.getChannels()) {
+                Channel channel = channelService.findByCode(channelDto.getCode());
+                if (channel == null) {
+                    throw new EntityDoesNotExistsException(Channel.class, channelDto.getCode());
+                }
+                productTemplate.addChannel(channel);
+            }
+        }
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), productTemplate, false);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
         }
 
         // save product template now so that they can be referenced by the related entities below.
@@ -225,18 +238,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         }
         if (postData.getAttachments() != null) {
             processDigitalResources(postData, productTemplate);
-        }
-
-        // populate customFields
-        try {
-            populateCustomFields(postData.getCustomFields(), productTemplate, false);
-        } catch (MissingParameterException e) {
-            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-            throw e;
-        } catch (Exception e) {
-            log.error("Failed to associate custom field instance to an entity", e);
-            throw e;
-        }
+        }        
 
         if (postData.getLanguageDescriptions() != null) {
             productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), productTemplate.getDescriptionI18n()));
@@ -255,6 +257,29 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
                 productTemplate.addSeller(seller);
             }
         }
+        
+        if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
+            productTemplate.getChannels().clear();
+            for (ChannelDto channelDto : postData.getChannels()) {
+                Channel channel = channelService.findByCode(channelDto.getCode());
+                if (channel == null) {
+                    throw new EntityDoesNotExistsException(Channel.class, channelDto.getCode());
+                }
+                productTemplate.addChannel(channel);
+            }
+        }
+        
+        // populate customFields
+        try {
+            populateCustomFields(postData.getCustomFields(), productTemplate, false);
+        } catch (MissingParameterException e) {
+            log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            log.error("Failed to associate custom field instance to an entity", e);
+            throw e;
+        }
+        
         productTemplate = productTemplateService.update(productTemplate);
 
         return productTemplate;

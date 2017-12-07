@@ -15,6 +15,7 @@ import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
 import org.meveo.api.dto.catalog.BundleProductTemplateDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
+import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.GetListBundleTemplateResponseDto;
@@ -34,6 +35,7 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
@@ -169,6 +171,17 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleTemplate.addSeller(seller);
             }
         }
+        
+        if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
+            bundleTemplate.getChannels().clear();
+            for (ChannelDto channelDto : postData.getChannels()) {
+                Channel channel = channelService.findByCode(channelDto.getCode());
+                if (channel == null) {
+                    throw new EntityDoesNotExistsException(Channel.class, channelDto.getCode());
+                }
+                bundleTemplate.addChannel(channel);
+            }
+        }
 
         // save product template now so that they can be referenced by the
         // related entities below.
@@ -243,6 +256,17 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                     throw new EntityDoesNotExistsException(Seller.class, sellerCode);
                 }
                 bundleTemplate.addSeller(seller);
+            }
+        }
+        
+        if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
+            bundleTemplate.getChannels().clear();
+            for (ChannelDto channelDto : postData.getChannels()) {
+                Channel channel = channelService.findByCode(channelDto.getCode());
+                if (channel == null) {
+                    throw new EntityDoesNotExistsException(Channel.class, channelDto.getCode());
+                }
+                bundleTemplate.addChannel(channel);
             }
         }
 

@@ -22,6 +22,7 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.catalog.impl.ChannelService;
 import org.meveo.service.catalog.impl.DigitalResourceService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductChargeTemplateService;
@@ -42,6 +43,9 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 
     @Inject
     private DigitalResourceApi digitalResourceApi;
+    
+    @Inject
+    protected ChannelService channelService;
 
     protected void processProductChargeTemplateToDto(ProductTemplate productTemplate, ProductTemplateDto productTemplateDto) {
         List<ProductChargeTemplate> productChargeTemplates = productTemplate.getProductChargeTemplates();

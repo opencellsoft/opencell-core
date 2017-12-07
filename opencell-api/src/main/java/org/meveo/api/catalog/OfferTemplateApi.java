@@ -11,10 +11,10 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.BaseCrudVersionedApi;
 import org.meveo.api.billing.SubscriptionApi;
 import org.meveo.api.dto.account.FilterProperty;
 import org.meveo.api.dto.account.FilterResults;
+import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.OfferProductTemplateDto;
 import org.meveo.api.dto.catalog.OfferServiceTemplateDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
@@ -40,6 +40,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -64,7 +65,7 @@ import org.primefaces.model.SortOrder;
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
-public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferTemplateDto> {
+public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTemplateDto> {
 
     @Inject
     private OfferTemplateService offerTemplateService;
@@ -224,6 +225,17 @@ public class OfferTemplateApi extends BaseCrudVersionedApi<OfferTemplate, OfferT
                     throw new EntityDoesNotExistsException(Seller.class, sellerCode);
                 }
                 offerTemplate.addSeller(seller);
+            }
+        }
+        
+        if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
+            offerTemplate.getChannels().clear();
+            for (ChannelDto channelDto : postData.getChannels()) {
+                Channel channel = channelService.findByCode(channelDto.getCode());
+                if (channel == null) {
+                    throw new EntityDoesNotExistsException(Channel.class, channelDto.getCode());
+                }
+                offerTemplate.addChannel(channel);
             }
         }
 

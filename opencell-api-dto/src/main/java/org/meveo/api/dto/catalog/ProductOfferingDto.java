@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -41,7 +42,8 @@ public class ProductOfferingDto extends BusinessDto {
     @XmlElement(name = "offerTemplateCategory")
     protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
-    @XmlElement
+    @XmlElementWrapper(name = "channels")
+    @XmlElement(name = "channel")
     private List<ChannelDto> channels;
 
     @XmlElementWrapper(name = "digitalResources")
@@ -110,10 +112,10 @@ public class ProductOfferingDto extends BusinessDto {
                 this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
             }
         }
-        List<DigitalResource> attachments = productOffering.getAttachments();
-        if (attachments != null && !attachments.isEmpty()) {
+        List<DigitalResource> digitalResources = productOffering.getAttachments();
+        if (digitalResources != null && !digitalResources.isEmpty()) {
             this.setAttachments(new ArrayList<DigitalResourcesDto>());
-            for (DigitalResource digitalResource : attachments) {
+            for (DigitalResource digitalResource : digitalResources) {
                 this.getAttachments().add(new DigitalResourcesDto(digitalResource));
             }
         }
@@ -138,6 +140,12 @@ public class ProductOfferingDto extends BusinessDto {
                 this.sellers.add(seller.getCode());
             }
             Collections.sort(this.sellers);
+        }
+        
+        if(productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
+            setChannels(productOffering.getChannels().stream().map(p -> {
+                return new ChannelDto(p);
+            }).collect(Collectors.toList()));
         }
 
         this.customFields = customFieldsDto;
