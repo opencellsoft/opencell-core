@@ -485,6 +485,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         BigDecimal result = new BigDecimal(0);
         try {
             result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+            result = result == null ? new BigDecimal(0) : result;
             ParamBean param = ParamBean.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
             balanceFlag = Math.negateExact(balanceFlag);
