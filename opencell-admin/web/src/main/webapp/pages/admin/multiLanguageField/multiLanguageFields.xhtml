@@ -74,9 +74,12 @@
                     <p:scrollPanel mode="native" style="max-height:550px;">
                         <hftl:decorateFormPanel formId="entityForm">
                             <ui:define name="fields">
-                                <hftl:decorateFormField label="#{messages['businessEntity.code']}">
-                                    <h:outputText value="#{multiLanguageFieldListBean.selectedEntity.code}" />
+                                <hftl:decorateFormField label="#{messages['businessEntity.code']}" rendered="#{ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}" >
+                                    <h:outputText value="#{multiLanguageFieldListBean.selectedEntity.code}"  />                                  
                                 </hftl:decorateFormField>
+                                <hftl:decorateFormField label="#{messages['baseEntity.id']}" rendered="#{! ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}">                                   
+                                    <h:outputText value="#{multiLanguageFieldListBean.selectedEntity.id}"  />
+                                </hftl:decorateFormField>                                
 
                                 <c:forEach items="#{multiLanguageFieldListBean.multiLanguageFields}" var="field">
                                     <hftl:formLanguageFields backingBean="#{multiLanguageFieldListBean}" entity="#{multiLanguageFieldListBean.selectedEntity}"
