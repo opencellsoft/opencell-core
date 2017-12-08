@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.http.HttpStatus;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -146,7 +148,12 @@ public class KeycloakAdminClientService {
 
         if (response.getStatus() != Status.CREATED.getStatusCode()) {
             log.error("Keycloak user creation with http status.code={} and reason={}", response.getStatus(), response.getStatusInfo().getReasonPhrase());
-            throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus());
+
+            if (response.getStatus() == HttpStatus.SC_CONFLICT) {
+                throw new BusinessException("Username or email already exists.");
+            } else {
+                throw new BusinessException("Unable to create user with httpStatusCode=" + response.getStatus());
+            }
         }
 
         String userId = response.getLocation().getPath().replaceAll(".*/([^/]+)$", "$1");
@@ -235,6 +242,12 @@ public class KeycloakAdminClientService {
 
                 // Set password credential
                 userResource.resetPassword(credential);
+            }
+        } catch (ClientErrorException e) {
+            if (e.getResponse().getStatus() == HttpStatus.SC_CONFLICT) {
+                throw new BusinessException("Username or email already exists.");
+            } else {
+                throw new BusinessException("Failed updating user with error=" + e.getMessage());
             }
         } catch (Exception e) {
             throw new BusinessException("Failed updating user with error=" + e.getMessage());

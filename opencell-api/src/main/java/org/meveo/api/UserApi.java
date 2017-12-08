@@ -377,9 +377,7 @@ public class UserApi extends BaseApi {
         // create the user in core
         create(postData, false);
 
-        String userId = keycloakAdminClientService.createUser(httpServletRequest, postData);
-
-        return userId;
+        return keycloakAdminClientService.createUser(httpServletRequest, postData);
     }
 
     public void updateExternalUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, MeveoApiException {
