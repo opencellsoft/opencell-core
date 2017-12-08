@@ -178,12 +178,13 @@ public class SellerApi extends BaseApi {
                 if (invoiceType == null) {
                     throw new EntityDoesNotExistsException(InvoiceType.class, entry.getKey());
                 }
-
-                if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceType.getCode()).longValue()) {
-                    throw new MeveoApiException("Not able to update, check the current number");
+                if (entry.getValue().getCurrentInvoiceNb() != null) {
+                    if (entry.getValue().getCurrentInvoiceNb().longValue() < invoiceTypeService.getMaxCurrentInvoiceNumber(invoiceType.getCode()).longValue()) {
+                        throw new MeveoApiException("Not able to update, check the current number");
+                    }
                 }
                 if (seller.isContainsInvoiceTypeSequence(invoiceType)) {
-                    seller.getInvoiceTypeSequenceByType(invoiceType).setSequence(entry.getValue().fromDto());
+                    seller.getInvoiceTypeSequenceByType(invoiceType).setSequence(entry.getValue().updateFromDto(seller.getInvoiceTypeSequenceByType(invoiceType).getSequence()));
                 } else {
                     seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
                 }
