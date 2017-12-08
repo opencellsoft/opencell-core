@@ -1307,6 +1307,7 @@
         <addColumn tableName="adm_country">
             <column name="description_i18n" type="${type.json}" />
         </addColumn>
+           <sql>update adm_country set description_i18n = '{"FRA":"' || description_fr || '","ENG":"' || description_en || '"}'</sql>
          <dropColumn tableName="adm_country" columnName="description_fr" /> 
          <renameColumn newColumnName="description"  oldColumnName="description_en" tableName="adm_country" columnDataType="varchar(100)"/>
      </changeSet>
