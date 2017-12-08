@@ -481,13 +481,19 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 	
 	}
     
-	public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to,
-			boolean dunningExclusion) throws BusinessException {
-		try {
-			return computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion,
-					MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
-		} catch (Exception e) {
-			throw new BusinessException("Internal error");
-		}
-	}
+    public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to, boolean dunningExclusion) throws BusinessException {
+        BigDecimal result = new BigDecimal(0);
+        try {
+            result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+            ParamBean param = ParamBean.getInstance();
+            int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
+            balanceFlag = Math.negateExact(balanceFlag);
+            result = result.multiply(new BigDecimal(balanceFlag));
+
+        } catch (Exception e) {
+            throw new BusinessException("Internal error");
+        }
+
+        return result;
+    }
 }
