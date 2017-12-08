@@ -26,16 +26,16 @@
                     <p:ajax update="entityList entityDialog" listener="#{multiLanguageFieldListBean.changeEntityClass}" event="change" />
                 </p:selectOneMenu>
             </hftl:decorateFormField>
-            <hftl:decorateFormField label="#{messages['businessEntity.code']}">
-                <h:inputText value="#{multiLanguageFieldListBean.filters['code']}" />
-            </hftl:decorateFormField>
+            <hftl:decorateFormField label="#{messages['businessEntity.code']}" >
+                <h:inputText value="#{multiLanguageFieldListBean.filters['code']}"  />
+            </hftl:decorateFormField>            
         </hftl:searchPanel>
 
         <h:panelGroup id="entityList">
             <c:if test="#{multiLanguageFieldListBean.entityClass!=null}">
                 <h:form id="results_form" prependId="false" onkeypress="if (event.keyCode == 13) {return false;}">
                     <p:dataTable id="datatable_results" var="entity" scrollable="false" value="#{multiLanguageFieldListBean.lazyDataModel}" paginator="true" rows="20"
-                        selection="#{multiLanguageFieldListBean.selectedEntity}" selectionMode="single" sortBy="#{'sortBy'}" sortField="code"
+                        selection="#{multiLanguageFieldListBean.selectedEntity}" selectionMode="single" sortBy="#{'sortBy'}" sortField="id"
                         paginatorTemplate="${prePaginatorControls} {RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}"
                         rowsPerPageTemplate="20,50,100" lazy="true" resizableColumns="true" styleClass="custom-grid" rowKey="#{entity.id}" first="#{multiLanguageFieldListBean.dataTableFirstAttribute}"
                         reflow="true" paginatorPosition="#{paginatorPosition}">
@@ -44,7 +44,8 @@
 
                         <p:column width="10%" headerText="#{messages['businessEntity.code']}">
 
-                            <h:outputText value="#{entity.code}" />
+                            <h:outputText value="#{entity.code}" rendered="#{ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}"/>
+                             <h:outputText value="#{entity.id}" rendered="#{ ! ref:isClassHasField(multiLanguageFieldListBean.entityClass, 'code')}"/>
                             <!--                         <c:if test="#{multiLanguageFieldListBean.canUserUpdateEntity()}"> -->
                             <!--                             <p:commandLink value="#{entity.code}" oncomplete="PF('entityDialog').show()" update=":entityDialog"> -->
                             <!--                                 <f:setPropertyActionListener target="#{multiLanguageFieldListBean.selectedEntity}" value="#{entity}" /> -->

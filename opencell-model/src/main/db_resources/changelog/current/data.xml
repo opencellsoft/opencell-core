@@ -107,5 +107,2400 @@
 		 <sql>update billing_invoice_type set occ_templ_negative_id =-28 where code='COM'</sql>
 		 <sql>update billing_invoice_type set occ_template_id =-29 where code='ADJ'</sql>
      </changeSet>
+     
+    <changeSet author="anasseh" id="#3068_08122017">
+            <createTable tableName="tmp_adm_country">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+               
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="version" type="int4" />
+            <column name="country_code" type="varchar(10)" />
+            <column name="description_en" type="varchar(100)" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="currency_id" type="bigint" />
+            <column name="language_id" type="bigint" />
+            <column name="description_fr" type="varchar(100)" />
+        </createTable>
+        
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="1" />
+            <column name="created" valueDate="2015-03-19 00:04:03.579" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AD" />
+            <column name="description_fr" value="Andorre" />
+            <column name="description_en" value="Andorra" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="2" />
+            <column name="created" valueDate="2015-03-19 00:04:03.6" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AE" />
+            <column name="description_fr" value="Emirats Arabes Unis" />
+            <column name="description_en" value="United Arab Emirates" />
+            <column name="currency_id" valueNumeric="54" />
+            <column name="language_id" valueNumeric="3" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="3" />
+            <column name="created" valueDate="2015-03-19 00:04:03.621" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AF" />
+            <column name="description_fr" value="Afghanistan" />
+            <column name="description_en" value="Afghanistan" />
+            <column name="currency_id" valueNumeric="1" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="4" />
+            <column name="created" valueDate="2015-03-19 00:04:03.641" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AG" />
+            <column name="description_fr" value="Antigua-et-Barbuda" />
+            <column name="description_en" value="Antigua and Barbuda" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="5" />
+            <column name="created" valueDate="2015-03-19 00:04:03.663" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AI" />
+            <column name="description_fr" value="Anguilla" />
+            <column name="description_en" value="Anguilla" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="6" />
+            <column name="created" valueDate="2015-03-19 00:04:03.684" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AL" />
+            <column name="description_fr" value="Albanie" />
+            <column name="description_en" value="Albania" />
+            <column name="currency_id" valueNumeric="3" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="7" />
+            <column name="created" valueDate="2015-03-19 00:04:03.706" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AM" />
+            <column name="description_fr" value="Arménie" />
+            <column name="description_en" value="Armenia" />
+            <column name="currency_id" valueNumeric="11" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="8" />
+            <column name="created" valueDate="2015-03-19 00:04:03.727" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AN" />
+            <column name="description_fr" value="Antilles néerlandaises" />
+            <column name="description_en" value="Netherlands Antilles" />
+            <column name="currency_id" valueNumeric="8" />
+            <column name="language_id" valueNumeric="21" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="9" />
+            <column name="created" valueDate="2015-03-19 00:04:03.748" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AO" />
+            <column name="description_fr" value="Angola" />
+            <column name="description_en" value="Angola" />
+            <column name="currency_id" valueNumeric="6" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="10" />
+            <column name="created" valueDate="2015-03-19 00:04:03.768" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AR" />
+            <column name="description_fr" value="Argentine" />
+            <column name="description_en" value="Argentina" />
+            <column name="currency_id" valueNumeric="10" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="11" />
+            <column name="created" valueDate="2015-03-19 00:04:03.796" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AS" />
+            <column name="description_fr" value="Samoa orientales" />
+            <column name="description_en" value="American Samoa" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="1" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="12" />
+            <column name="created" valueDate="2015-03-19 00:04:03.816" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AT" />
+            <column name="description_fr" value="Autriche" />
+            <column name="description_en" value="Austria" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="1" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="13" />
+            <column name="created" valueDate="2015-03-19 00:04:03.839" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AU" />
+            <column name="description_fr" value="Australie" />
+            <column name="description_en" value="Australia" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="14" />
+            <column name="created" valueDate="2015-03-19 00:04:03.86" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AW" />
+            <column name="description_fr" value="Aruba" />
+            <column name="description_en" value="Aruba" />
+            <column name="currency_id" valueNumeric="12" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="15" />
+            <column name="created" valueDate="2015-03-19 00:04:03.882" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="AZ" />
+            <column name="description_fr" value="Azerbaïdjan" />
+            <column name="description_en" value="Azerbaijan" />
+            <column name="currency_id" valueNumeric="6" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="16" />
+            <column name="created" valueDate="2015-03-19 00:04:03.903" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BA" />
+            <column name="description_fr" value="Bosnie-Herzégovine" />
+            <column name="description_en" value="Bosnia and Herzegovina" />
+            <column name="currency_id" valueNumeric="25" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="17" />
+            <column name="created" valueDate="2015-03-19 00:04:03.924" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BB" />
+            <column name="description_fr" value="Barbade" />
+            <column name="description_en" value="Barbados" />
+            <column name="currency_id" valueNumeric="18" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="18" />
+            <column name="created" valueDate="2015-03-19 00:04:03.951" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BD" />
+            <column name="description_fr" value="Bangladesh" />
+            <column name="description_en" value="Bangladesh" />
+            <column name="currency_id" valueNumeric="17" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="19" />
+            <column name="created" valueDate="2015-03-19 00:04:03.973" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BE" />
+            <column name="description_fr" value="Belgique" />
+            <column name="description_en" value="Belgium" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="20" />
+            <column name="created" valueDate="2015-03-19 00:04:03.994" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BF" />
+            <column name="description_fr" value="Burkina Faso" />
+            <column name="description_en" value="Burkina Faso" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="21" />
+            <column name="created" valueDate="2015-03-19 00:04:04.016" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BG" />
+            <column name="description_fr" value="Bulgarie" />
+            <column name="description_en" value="Bulgaria" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="22" />
+            <column name="created" valueDate="2015-03-19 00:04:04.037" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BH" />
+            <column name="description_fr" value="Bahreïn" />
+            <column name="description_en" value="Bahrain" />
+            <column name="currency_id" valueNumeric="16" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="23" />
+            <column name="created" valueDate="2015-03-19 00:04:04.057" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BI" />
+            <column name="description_fr" value="Burundi" />
+            <column name="description_en" value="Burundi" />
+            <column name="currency_id" valueNumeric="30" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="24" />
+            <column name="created" valueDate="2015-03-19 00:04:04.079" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BJ" />
+            <column name="description_fr" value="Bénin" />
+            <column name="description_en" value="Benin" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="25" />
+            <column name="created" valueDate="2015-03-19 00:04:04.1" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BM" />
+            <column name="description_fr" value="Bermudes" />
+            <column name="description_en" value="Bermuda" />
+            <column name="currency_id" valueNumeric="21" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="26" />
+            <column name="created" valueDate="2015-03-19 00:04:04.12" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BN" />
+            <column name="description_fr" value="Bruneï" />
+            <column name="description_en" value="Brunei Darussalam" />
+            <column name="currency_id" valueNumeric="28" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="27" />
+            <column name="created" valueDate="2015-03-19 00:04:04.142" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BO" />
+            <column name="description_fr" value="Bolivie" />
+            <column name="description_en" value="Bolivia" />
+            <column name="currency_id" valueNumeric="24" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="28" />
+            <column name="created" valueDate="2015-03-19 00:04:04.163" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BR" />
+            <column name="description_fr" value="Brésil" />
+            <column name="description_en" value="Brazil" />
+            <column name="currency_id" valueNumeric="27" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="29" />
+            <column name="created" valueDate="2015-03-19 00:04:04.185" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BS" />
+            <column name="description_fr" value="Bahamas" />
+            <column name="description_en" value="The Bahamas" />
+            <column name="currency_id" valueNumeric="15" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="30" />
+            <column name="created" valueDate="2015-03-19 00:04:04.206" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BT" />
+            <column name="description_fr" value="Bhoutan" />
+            <column name="description_en" value="Bhutan" />
+            <column name="currency_id" valueNumeric="16" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="31" />
+            <column name="created" valueDate="2015-03-19 00:04:04.234" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BV" />
+            <column name="description_fr" value="Bouvet (Île)" />
+            <column name="description_en" value="Bouvet Island" />
+            <column name="currency_id" valueNumeric="31" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="32" />
+            <column name="created" valueDate="2015-03-19 00:04:04.255" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BW" />
+            <column name="description_fr" value="Botswana" />
+            <column name="description_en" value="Botswana" />
+            <column name="currency_id" valueNumeric="26" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="33" />
+            <column name="created" valueDate="2015-03-19 00:04:04.276" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BY" />
+            <column name="description_fr" value="Biélorussie" />
+            <column name="description_en" value="Belarus" />
+            <column name="currency_id" valueNumeric="23" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="34" />
+            <column name="created" valueDate="2015-03-19 00:04:04.297" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="BZ" />
+            <column name="description_fr" value="Bélize" />
+            <column name="description_en" value="Belize" />
+            <column name="currency_id" valueNumeric="19" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="35" />
+            <column name="created" valueDate="2015-03-19 00:04:04.318" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CA" />
+            <column name="description_fr" value="Canada" />
+            <column name="description_en" value="Canada" />
+            <column name="currency_id" valueNumeric="35" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="36" />
+            <column name="created" valueDate="2015-03-19 00:04:04.34" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CC" />
+            <column name="description_fr" value="Cocos / Keeling (Îles)" />
+            <column name="description_en" value="Cocos (Keeling) Islands" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="37" />
+            <column name="created" valueDate="2015-03-19 00:04:04.361" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CD" />
+            <column name="description_fr" value="République Démocratique du Congo" />
+            <column name="description_en" value="Congo, Democratic Republic of th" />
+            <column name="currency_id" valueNumeric="43" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="38" />
+            <column name="created" valueDate="2015-03-19 00:04:04.382" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CF" />
+            <column name="description_fr" value="République Centrafricaine" />
+            <column name="description_en" value="Central African Republic" />
+            <column name="currency_id" valueNumeric="34" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="39" />
+            <column name="created" valueDate="2015-03-19 00:04:04.404" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CG" />
+            <column name="description_fr" value="Congo" />
+            <column name="description_en" value="Congo, Republic of the" />
+            <column name="currency_id" valueNumeric="34" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="40" />
+            <column name="created" valueDate="2015-03-19 00:04:04.425" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CH" />
+            <column name="description_fr" value="Suisse" />
+            <column name="description_en" value="Switzerland" />
+            <column name="currency_id" valueNumeric="92" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="41" />
+            <column name="created" valueDate="2015-03-19 00:04:04.452" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CI" />
+            <column name="description_fr" value="Côte D'Ivoire" />
+            <column name="description_en" value="Cote Ivoire" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="42" />
+            <column name="created" valueDate="2015-03-19 00:04:04.474" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CK" />
+            <column name="description_fr" value="Cook (Îles)" />
+            <column name="description_en" value="Cook Islands" />
+            <column name="currency_id" valueNumeric="72" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="43" />
+            <column name="created" valueDate="2015-03-19 00:04:04.494" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CL" />
+            <column name="description_fr" value="Chili" />
+            <column name="description_en" value="Chile" />
+            <column name="currency_id" valueNumeric="38" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="44" />
+            <column name="created" valueDate="2015-03-19 00:04:04.516" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CM" />
+            <column name="description_fr" value="Cameroun" />
+            <column name="description_en" value="Cameroon" />
+            <column name="currency_id" valueNumeric="34" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="45" />
+            <column name="created" valueDate="2015-03-19 00:04:04.536" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CN" />
+            <column name="description_fr" value="Chine" />
+            <column name="description_en" value="China" />
+            <column name="currency_id" valueNumeric="39" />
+            <column name="language_id" valueNumeric="6" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="46" />
+            <column name="created" valueDate="2015-03-19 00:04:04.559" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CO" />
+            <column name="description_fr" value="Colombie" />
+            <column name="description_en" value="Colombia" />
+            <column name="currency_id" valueNumeric="41" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="47" />
+            <column name="created" valueDate="2015-03-19 00:04:04.58" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CR" />
+            <column name="description_fr" value="Costa Rica" />
+            <column name="description_en" value="Costa Rica" />
+            <column name="currency_id" valueNumeric="46" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="48" />
+            <column name="created" valueDate="2015-03-19 00:04:04.601" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CU" />
+            <column name="description_fr" value="Cuba" />
+            <column name="description_en" value="Cuba" />
+            <column name="currency_id" valueNumeric="48" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="49" />
+            <column name="created" valueDate="2015-03-19 00:04:04.622" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CV" />
+            <column name="description_fr" value="Cap Vert" />
+            <column name="description_en" value="Cape Verde" />
+            <column name="currency_id" valueNumeric="36" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="50" />
+            <column name="created" valueDate="2015-03-19 00:04:04.644" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CX" />
+            <column name="description_fr" value="Christmas (Île)" />
+            <column name="description_en" value="Christmas Island" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="51" />
+            <column name="created" valueDate="2015-03-19 00:04:04.665" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CY" />
+            <column name="description_fr" value="Chypre" />
+            <column name="description_en" value="Cyprus" />
+            <column name="currency_id" valueNumeric="40" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="52" />
+            <column name="created" valueDate="2015-03-19 00:04:04.687" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="CZ" />
+            <column name="description_fr" value="République Tchèque" />
+            <column name="description_en" value="Czech Republic" />
+            <column name="currency_id" valueNumeric="152" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="53" />
+            <column name="created" valueDate="2015-03-19 00:04:04.708" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="DE" />
+            <column name="description_fr" value="Allemagne" />
+            <column name="description_en" value="Germany" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="1" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="54" />
+            <column name="created" valueDate="2015-03-19 00:04:04.729" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="DJ" />
+            <column name="description_fr" value="Djibouti" />
+            <column name="description_en" value="Djibouti" />
+            <column name="currency_id" valueNumeric="51" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="55" />
+            <column name="created" valueDate="2015-03-19 00:04:04.75" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="DK" />
+            <column name="description_fr" value="Danemark" />
+            <column name="description_en" value="Denmark" />
+            <column name="currency_id" valueNumeric="50" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="56" />
+            <column name="created" valueDate="2015-03-19 00:04:04.772" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="DM" />
+            <column name="description_fr" value="Dominique" />
+            <column name="description_en" value="Dominica" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="57" />
+            <column name="created" valueDate="2015-03-19 00:04:04.795" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="DO" />
+            <column name="description_fr" value="République Dominicaine" />
+            <column name="description_en" value="Dominican Republic" />
+            <column name="currency_id" valueNumeric="52" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="58" />
+            <column name="created" valueDate="2015-03-19 00:04:04.816" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="DZ" />
+            <column name="description_fr" value="Algérie" />
+            <column name="description_en" value="Algeria" />
+            <column name="currency_id" valueNumeric="4" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="59" />
+            <column name="created" valueDate="2015-03-19 00:04:04.837" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="EC" />
+            <column name="description_fr" value="Equateur" />
+            <column name="description_en" value="Ecuador" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="60" />
+            <column name="created" valueDate="2015-03-19 00:04:04.857" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="EE" />
+            <column name="description_fr" value="Estonie" />
+            <column name="description_en" value="Estonia" />
+            <column name="currency_id" valueNumeric="56" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="61" />
+            <column name="created" valueDate="2015-03-19 00:04:04.879" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="EG" />
+            <column name="description_fr" value="Egypte" />
+            <column name="description_en" value="Egypt" />
+            <column name="currency_id" valueNumeric="53" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="62" />
+            <column name="created" valueDate="2015-03-19 00:04:05.043" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ER" />
+            <column name="description_fr" value="Erythrée" />
+            <column name="description_en" value="Eritrea" />
+            <column name="currency_id" valueNumeric="55" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="63" />
+            <column name="created" valueDate="2015-03-19 00:04:05.064" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ES" />
+            <column name="description_fr" value="Espagne" />
+            <column name="description_en" value="Spain" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="64" />
+            <column name="created" valueDate="2015-03-19 00:04:05.086" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ET" />
+            <column name="description_fr" value="Ethiopie" />
+            <column name="description_en" value="Ethiopia" />
+            <column name="currency_id" valueNumeric="57" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="65" />
+            <column name="created" valueDate="2015-03-19 00:04:05.109" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="FI" />
+            <column name="description_fr" value="Finlande" />
+            <column name="description_en" value="Finland" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="66" />
+            <column name="created" valueDate="2015-03-19 00:04:05.129" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="FJ" />
+            <column name="description_fr" value="Fiji" />
+            <column name="description_en" value="Fiji" />
+            <column name="currency_id" valueNumeric="59" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="67" />
+            <column name="created" valueDate="2015-03-19 00:04:05.151" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="FK" />
+            <column name="description_fr" value="Falkland / Malouines (Îles)" />
+            <column name="description_en" value="Falkland Islands (Islas Malvinas" />
+            <column name="currency_id" valueNumeric="58" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="68" />
+            <column name="created" valueDate="2015-03-19 00:04:05.172" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="FM" />
+            <column name="description_fr" value="Micronésie (Etats fédérés de)" />
+            <column name="description_en" value="Micronesia, Federated States of" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="69" />
+            <column name="created" valueDate="2015-03-19 00:04:05.192" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="FO" />
+            <column name="description_fr" value="Féroé (Îles)" />
+            <column name="description_en" value="Faroe Islands" />
+            <column name="currency_id" valueNumeric="50" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="70" />
+            <column name="created" valueDate="2015-03-19 00:04:05.214" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="FR" />
+            <column name="description_fr" value="France" />
+            <column name="description_en" value="France" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="71" />
+            <column name="created" valueDate="2015-03-19 00:04:05.236" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GA" />
+            <column name="description_fr" value="Gabon" />
+            <column name="description_en" value="Gabon" />
+            <column name="currency_id" valueNumeric="34" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="72" />
+            <column name="created" valueDate="2015-03-19 00:04:05.257" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GD" />
+            <column name="description_fr" value="Grenade" />
+            <column name="description_en" value="Grenada" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="73" />
+            <column name="created" valueDate="2015-03-19 00:04:05.277" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GE" />
+            <column name="description_fr" value="Géorgie" />
+            <column name="description_en" value="Georgia" />
+            <column name="currency_id" valueNumeric="61" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="74" />
+            <column name="created" valueDate="2015-03-19 00:04:05.298" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GF" />
+            <column name="description_fr" value="Guyane française" />
+            <column name="description_en" value="French Guiana" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="75" />
+            <column name="created" valueDate="2015-03-19 00:04:05.324" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GH" />
+            <column name="description_fr" value="Ghana" />
+            <column name="description_en" value="Ghana" />
+            <column name="currency_id" valueNumeric="62" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="76" />
+            <column name="created" valueDate="2015-03-19 00:04:05.345" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GI" />
+            <column name="description_fr" value="Gibraltar" />
+            <column name="description_en" value="Gibraltar" />
+            <column name="currency_id" valueNumeric="63" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="77" />
+            <column name="created" valueDate="2015-03-19 00:04:05.366" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GL" />
+            <column name="description_fr" value="Groënland" />
+            <column name="description_en" value="Greenland" />
+            <column name="currency_id" valueNumeric="50" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="78" />
+            <column name="created" valueDate="2015-03-19 00:04:05.391" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GM" />
+            <column name="description_fr" value="Gambie" />
+            <column name="description_en" value="The Gambia" />
+            <column name="currency_id" valueNumeric="60" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="79" />
+            <column name="created" valueDate="2015-03-19 00:04:05.411" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GN" />
+            <column name="description_fr" value="Guinée" />
+            <column name="description_en" value="Guinea" />
+            <column name="currency_id" valueNumeric="66" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="80" />
+            <column name="created" valueDate="2015-03-19 00:04:05.432" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GP" />
+            <column name="description_fr" value="Guadeloupe" />
+            <column name="description_en" value="Guadeloupe" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="81" />
+            <column name="created" valueDate="2015-03-19 00:04:05.454" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GQ" />
+            <column name="description_fr" value="Guinée Equatoriale" />
+            <column name="description_en" value="Equatorial Guinea" />
+            <column name="currency_id" valueNumeric="34" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="82" />
+            <column name="created" valueDate="2015-03-19 00:04:05.476" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GR" />
+            <column name="description_fr" value="Grèce" />
+            <column name="description_en" value="Greece" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="83" />
+            <column name="created" valueDate="2015-03-19 00:04:05.496" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GS" />
+            <column name="description_fr" value="Géorgie du Sud et îles Sandwich du Sud" />
+            <column name="description_en" value="South Georgia and the South Sand" />
+            <column name="currency_id" valueNumeric="65" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="84" />
+            <column name="created" valueDate="2015-03-19 00:04:05.518" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GT" />
+            <column name="description_fr" value="Guatemala" />
+            <column name="description_en" value="Guatemala" />
+            <column name="currency_id" valueNumeric="64" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="85" />
+            <column name="created" valueDate="2015-03-19 00:04:05.546" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GU" />
+            <column name="description_fr" value="Guam" />
+            <column name="description_en" value="Guam" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="86" />
+            <column name="created" valueDate="2015-03-19 00:04:05.567" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GW" />
+            <column name="description_fr" value="Guinée-Bissau" />
+            <column name="description_en" value="Guinea-Bissau" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="87" />
+            <column name="created" valueDate="2015-03-19 00:04:05.589" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GY" />
+            <column name="description_fr" value="Guyana" />
+            <column name="description_en" value="Guyana" />
+            <column name="currency_id" valueNumeric="67" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="88" />
+            <column name="created" valueDate="2015-03-19 00:04:05.611" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="HK" />
+            <column name="description_fr" value="Hong Kong" />
+            <column name="description_en" value="Hong Kong (SAR)" />
+            <column name="currency_id" valueNumeric="70" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="89" />
+            <column name="created" valueDate="2015-03-19 00:04:05.631" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="HM" />
+            <column name="description_fr" value="Territoire des Îles Heard et McDonald" />
+            <column name="description_en" value="Heard Island and McDonald Island" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="90" />
+            <column name="created" valueDate="2015-03-19 00:04:05.653" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="HN" />
+            <column name="description_fr" value="Honduras" />
+            <column name="description_en" value="Honduras" />
+            <column name="currency_id" valueNumeric="69" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="91" />
+            <column name="created" valueDate="2015-03-19 00:04:05.676" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="HR" />
+            <column name="description_fr" value="Croatie" />
+            <column name="description_en" value="Croatia" />
+            <column name="currency_id" valueNumeric="47" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="92" />
+            <column name="created" valueDate="2015-03-19 00:04:05.7" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="HT" />
+            <column name="description_fr" value="Haïti" />
+            <column name="description_en" value="Haiti" />
+            <column name="currency_id" valueNumeric="68" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="93" />
+            <column name="created" valueDate="2015-03-19 00:04:05.722" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="HU" />
+            <column name="description_fr" value="Hongrie" />
+            <column name="description_en" value="Hungary" />
+            <column name="currency_id" valueNumeric="71" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="94" />
+            <column name="created" valueDate="2015-03-19 00:04:05.743" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ID" />
+            <column name="description_fr" value="Indonésie" />
+            <column name="description_en" value="Indonesia" />
+            <column name="currency_id" valueNumeric="74" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="95" />
+            <column name="created" valueDate="2015-03-19 00:04:05.765" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IE" />
+            <column name="description_fr" value="Irlande" />
+            <column name="description_en" value="Ireland" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="96" />
+            <column name="created" valueDate="2015-03-19 00:04:05.786" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IL" />
+            <column name="description_fr" value="Israël" />
+            <column name="description_en" value="Israel" />
+            <column name="currency_id" valueNumeric="78" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="97" />
+            <column name="created" valueDate="2015-03-19 00:04:05.808" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IN" />
+            <column name="description_fr" value="Indie" />
+            <column name="description_en" value="India" />
+            <column name="currency_id" valueNumeric="73" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="98" />
+            <column name="created" valueDate="2015-03-19 00:04:05.829" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IO" />
+            <column name="description_fr" value="Territoire britannique de l''Océan Indien" />
+            <column name="description_en" value="British Indian Ocean Territory" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="99" />
+            <column name="created" valueDate="2015-03-19 00:04:05.85" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IQ" />
+            <column name="description_fr" value="Irak" />
+            <column name="description_en" value="Iraq" />
+            <column name="currency_id" valueNumeric="76" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="100" />
+            <column name="created" valueDate="2015-03-19 00:04:05.871" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IR" />
+            <column name="description_fr" value="Iran (République islamique d)" />
+            <column name="description_en" value="Iran" />
+            <column name="currency_id" valueNumeric="75" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="101" />
+            <column name="created" valueDate="2015-03-19 00:04:05.892" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IS" />
+            <column name="description_fr" value="Islande" />
+            <column name="description_en" value="Iceland" />
+            <column name="currency_id" valueNumeric="77" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="102" />
+            <column name="created" valueDate="2015-03-19 00:04:05.913" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="IT" />
+            <column name="description_fr" value="Italie" />
+            <column name="description_en" value="Italy" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="103" />
+            <column name="created" valueDate="2015-03-19 00:04:05.933" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="JM" />
+            <column name="description_fr" value="Jamaïque" />
+            <column name="description_en" value="Jamaica" />
+            <column name="currency_id" valueNumeric="79" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="104" />
+            <column name="created" valueDate="2015-03-19 00:04:05.955" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="JO" />
+            <column name="description_fr" value="Jordanie" />
+            <column name="description_en" value="Jordan" />
+            <column name="currency_id" valueNumeric="81" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="105" />
+            <column name="created" valueDate="2015-03-19 00:04:05.977" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="JP" />
+            <column name="description_fr" value="Japon" />
+            <column name="description_en" value="Japan" />
+            <column name="currency_id" valueNumeric="80" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="106" />
+            <column name="created" valueDate="2015-03-19 00:04:05.998" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KE" />
+            <column name="description_fr" value="Kenya" />
+            <column name="description_en" value="Kenya" />
+            <column name="currency_id" valueNumeric="83" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="107" />
+            <column name="created" valueDate="2015-03-19 00:04:06.019" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KG" />
+            <column name="description_fr" value="Kyrgyzstan" />
+            <column name="description_en" value="Kyrgyzstan" />
+            <column name="currency_id" valueNumeric="84" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="108" />
+            <column name="created" valueDate="2015-03-19 00:04:06.045" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KH" />
+            <column name="description_fr" value="Cambodge" />
+            <column name="description_en" value="Cambodia" />
+            <column name="currency_id" valueNumeric="33" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="109" />
+            <column name="created" valueDate="2015-03-19 00:04:06.066" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KI" />
+            <column name="description_fr" value="Kiribati" />
+            <column name="description_en" value="Kiribati" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="110" />
+            <column name="created" valueDate="2015-03-19 00:04:06.087" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KM" />
+            <column name="description_fr" value="Comores" />
+            <column name="description_en" value="Comoros" />
+            <column name="currency_id" valueNumeric="42" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="111" />
+            <column name="created" valueDate="2015-03-19 00:04:06.11" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KN" />
+            <column name="description_fr" value="Saint Kitts et Nevis" />
+            <column name="description_en" value="Saint Kitts and Nevis" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="112" />
+            <column name="created" valueDate="2015-03-19 00:04:06.132" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KP" />
+            <column name="description_fr" value="Corée (République populaire démocratique du)" />
+            <column name="description_en" value="Korea, North" />
+            <column name="currency_id" valueNumeric="45" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="113" />
+            <column name="created" valueDate="2015-03-19 00:04:06.153" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KR" />
+            <column name="description_fr" value="Corée (République démocratique du)" />
+            <column name="description_en" value="Korea, South" />
+            <column name="currency_id" valueNumeric="44" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="114" />
+            <column name="created" valueDate="2015-03-19 00:04:06.174" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KW" />
+            <column name="description_fr" value="Koweït" />
+            <column name="description_en" value="Kuwait" />
+            <column name="currency_id" valueNumeric="85" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="115" />
+            <column name="created" valueDate="2015-03-19 00:04:06.195" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KY" />
+            <column name="description_fr" value="Caïmans (Îles)" />
+            <column name="description_en" value="Cayman Islands" />
+            <column name="currency_id" valueNumeric="32" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="116" />
+            <column name="created" valueDate="2015-03-19 00:04:06.215" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="KZ" />
+            <column name="description_fr" value="Kazakstan" />
+            <column name="description_en" value="Kazakhstan" />
+            <column name="currency_id" valueNumeric="82" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="117" />
+            <column name="created" valueDate="2015-03-19 00:04:06.237" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LA" />
+            <column name="description_fr" value="Laos (République populaire démocratique du)" />
+            <column name="description_en" value="Laos" />
+            <column name="currency_id" valueNumeric="86" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="118" />
+            <column name="created" valueDate="2015-03-19 00:04:06.258" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LB" />
+            <column name="description_fr" value="Liban" />
+            <column name="description_en" value="Lebanon" />
+            <column name="currency_id" valueNumeric="89" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="119" />
+            <column name="created" valueDate="2015-03-19 00:04:06.279" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LC" />
+            <column name="description_fr" value="Sainte Lucie" />
+            <column name="description_en" value="Saint Lucia" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="120" />
+            <column name="created" valueDate="2015-03-19 00:04:06.3" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LI" />
+            <column name="description_fr" value="Liechtenstein" />
+            <column name="description_en" value="Liechtenstein" />
+            <column name="currency_id" valueNumeric="92" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="121" />
+            <column name="created" valueDate="2015-03-19 00:04:06.326" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LK" />
+            <column name="description_fr" value="Sri Lanka" />
+            <column name="description_en" value="Sri Lanka" />
+            <column name="currency_id" valueNumeric="143" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="122" />
+            <column name="created" valueDate="2015-03-19 00:04:06.346" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LR" />
+            <column name="description_fr" value="Libéria" />
+            <column name="description_en" value="Liberia" />
+            <column name="currency_id" valueNumeric="90" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="123" />
+            <column name="created" valueDate="2015-03-19 00:04:06.368" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LS" />
+            <column name="description_fr" value="Lesotho" />
+            <column name="description_en" value="Lesotho" />
+            <column name="currency_id" valueNumeric="87" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="124" />
+            <column name="created" valueDate="2015-03-19 00:04:06.389" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LT" />
+            <column name="description_fr" value="Lithuanie" />
+            <column name="description_en" value="Lithuania" />
+            <column name="currency_id" valueNumeric="93" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="125" />
+            <column name="created" valueDate="2015-03-19 00:04:06.411" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LU" />
+            <column name="description_fr" value="Luxembourg" />
+            <column name="description_en" value="Luxembourg" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="126" />
+            <column name="created" valueDate="2015-03-19 00:04:06.432" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LV" />
+            <column name="description_fr" value="Lettonie" />
+            <column name="description_en" value="Latvia" />
+            <column name="currency_id" valueNumeric="88" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="127" />
+            <column name="created" valueDate="2015-03-19 00:04:06.452" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="LY" />
+            <column name="description_fr" value="Libye (Jamahiriya Arabe Libyenne)" />
+            <column name="description_en" value="Libya" />
+            <column name="currency_id" valueNumeric="91" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="128" />
+            <column name="created" valueDate="2015-03-19 00:04:06.475" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MA" />
+            <column name="description_fr" value="Maroc" />
+            <column name="description_en" value="Morocco" />
+            <column name="currency_id" valueNumeric="102" />
+            <column name="language_id" valueNumeric="3" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="129" />
+            <column name="created" valueDate="2015-03-19 00:04:06.495" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MC" />
+            <column name="description_fr" value="Monaco" />
+            <column name="description_en" value="Monaco" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="130" />
+            <column name="created" valueDate="2015-03-19 00:04:06.516" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MD" />
+            <column name="description_fr" value="Moldavie" />
+            <column name="description_en" value="Moldova" />
+            <column name="currency_id" valueNumeric="106" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="131" />
+            <column name="created" valueDate="2015-03-19 00:04:06.537" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MG" />
+            <column name="description_fr" value="Madagascar" />
+            <column name="description_en" value="Madagascar" />
+            <column name="currency_id" valueNumeric="97" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="132" />
+            <column name="created" valueDate="2015-03-19 00:04:06.558" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MH" />
+            <column name="description_fr" value="Marshall (Îles)" />
+            <column name="description_en" value="Marshall Islands" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="133" />
+            <column name="created" valueDate="2015-03-19 00:04:06.581" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MK" />
+            <column name="description_fr" value="Macédoine (ancienne République yougoslave de)" />
+            <column name="description_en" value="Macedonia, The Former Yugoslav R" />
+            <column name="currency_id" valueNumeric="95" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="134" />
+            <column name="created" valueDate="2015-03-19 00:04:06.608" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ML" />
+            <column name="description_fr" value="Mali" />
+            <column name="description_en" value="Mali" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="135" />
+            <column name="created" valueDate="2015-03-19 00:04:06.631" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MM" />
+            <column name="description_fr" value="Myanmar" />
+            <column name="description_en" value="Burma" />
+            <column name="currency_id" valueNumeric="109" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="136" />
+            <column name="created" valueDate="2015-03-19 00:04:06.652" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MN" />
+            <column name="description_fr" value="Mongolie" />
+            <column name="description_en" value="Mongolia" />
+            <column name="currency_id" valueNumeric="107" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="137" />
+            <column name="created" valueDate="2015-03-19 00:04:06.673" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MO" />
+            <column name="description_fr" value="Macau" />
+            <column name="description_en" value="Macao" />
+            <column name="currency_id" valueNumeric="94" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="138" />
+            <column name="created" valueDate="2015-03-19 00:04:06.695" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MP" />
+            <column name="description_fr" value="Mariannes (Îles)" />
+            <column name="description_en" value="Northern Mariana Islands" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="139" />
+            <column name="created" valueDate="2015-03-19 00:04:06.715" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MQ" />
+            <column name="description_fr" value="Martinique" />
+            <column name="description_en" value="Martinique" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="140" />
+            <column name="created" valueDate="2015-03-19 00:04:06.738" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MR" />
+            <column name="description_fr" value="Mauritanie" />
+            <column name="description_en" value="Mauritania" />
+            <column name="currency_id" valueNumeric="104" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="141" />
+            <column name="created" valueDate="2015-03-19 00:04:06.764" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MS" />
+            <column name="description_fr" value="Montserrat" />
+            <column name="description_en" value="Montserrat" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="142" />
+            <column name="created" valueDate="2015-03-19 00:04:06.784" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MT" />
+            <column name="description_fr" value="Malte" />
+            <column name="description_en" value="Malta" />
+            <column name="currency_id" valueNumeric="101" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="143" />
+            <column name="created" valueDate="2015-03-19 00:04:06.805" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MU" />
+            <column name="description_fr" value="Maurice" />
+            <column name="description_en" value="Mauritius" />
+            <column name="currency_id" valueNumeric="103" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="144" />
+            <column name="created" valueDate="2015-03-19 00:04:06.827" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MV" />
+            <column name="description_fr" value="Maldives" />
+            <column name="description_en" value="Maldives" />
+            <column name="currency_id" valueNumeric="100" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="145" />
+            <column name="created" valueDate="2015-03-19 00:04:06.849" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MW" />
+            <column name="description_fr" value="Malawi" />
+            <column name="description_en" value="Malawi" />
+            <column name="currency_id" valueNumeric="99" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="146" />
+            <column name="created" valueDate="2015-03-19 00:04:06.869" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MX" />
+            <column name="description_fr" value="Mexique" />
+            <column name="description_en" value="Mexico" />
+            <column name="currency_id" valueNumeric="105" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="147" />
+            <column name="created" valueDate="2015-03-19 00:04:06.891" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MY" />
+            <column name="description_fr" value="Malaysie" />
+            <column name="description_en" value="Malaysia" />
+            <column name="currency_id" valueNumeric="98" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="148" />
+            <column name="created" valueDate="2015-03-19 00:04:06.911" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="MZ" />
+            <column name="description_fr" value="Mozambique" />
+            <column name="description_en" value="Mozambique" />
+            <column name="currency_id" valueNumeric="108" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="149" />
+            <column name="created" valueDate="2015-03-19 00:04:06.931" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NA" />
+            <column name="description_fr" value="Namibie" />
+            <column name="description_en" value="Namibia" />
+            <column name="currency_id" valueNumeric="110" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="150" />
+            <column name="created" valueDate="2015-03-19 00:04:06.952" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NC" />
+            <column name="description_fr" value="Nouvelle-Calédonie" />
+            <column name="description_en" value="New Caledonia" />
+            <column name="currency_id" valueNumeric="114" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="151" />
+            <column name="created" valueDate="2015-03-19 00:04:06.974" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NE" />
+            <column name="description_fr" value="Niger" />
+            <column name="description_en" value="Niger" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="152" />
+            <column name="created" valueDate="2015-03-19 00:04:06.994" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NF" />
+            <column name="description_fr" value="Norfolk (Île)" />
+            <column name="description_en" value="Norfolk Island" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="153" />
+            <column name="created" valueDate="2015-03-19 00:04:07.016" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NG" />
+            <column name="description_fr" value="Nigéria" />
+            <column name="description_en" value="Nigeria" />
+            <column name="currency_id" valueNumeric="113" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="154" />
+            <column name="created" valueDate="2015-03-19 00:04:07.038" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NI" />
+            <column name="description_fr" value="Nicaragua" />
+            <column name="description_en" value="Nicaragua" />
+            <column name="currency_id" valueNumeric="112" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="155" />
+            <column name="created" valueDate="2015-03-19 00:04:07.059" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NL" />
+            <column name="description_fr" value="Pays-Bas" />
+            <column name="description_en" value="Netherlands" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="156" />
+            <column name="created" valueDate="2015-03-19 00:04:07.081" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NO" />
+            <column name="description_fr" value="Norvège" />
+            <column name="description_en" value="Norway" />
+            <column name="currency_id" valueNumeric="31" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="157" />
+            <column name="created" valueDate="2015-03-19 00:04:07.108" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NP" />
+            <column name="description_fr" value="Népal" />
+            <column name="description_en" value="Nepal" />
+            <column name="currency_id" valueNumeric="111" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="158" />
+            <column name="created" valueDate="2015-03-19 00:04:07.128" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NR" />
+            <column name="description_fr" value="Nauru" />
+            <column name="description_en" value="Nauru" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="159" />
+            <column name="created" valueDate="2015-03-19 00:04:07.15" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NU" />
+            <column name="description_fr" value="Niue" />
+            <column name="description_en" value="Niue" />
+            <column name="currency_id" valueNumeric="72" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="160" />
+            <column name="created" valueDate="2015-03-19 00:04:07.171" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="NZ" />
+            <column name="description_fr" value="Nouvelle-Zélande" />
+            <column name="description_en" value="New Zealand" />
+            <column name="currency_id" valueNumeric="72" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="161" />
+            <column name="created" valueDate="2015-03-19 00:04:07.191" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="OM" />
+            <column name="description_fr" value="Oman" />
+            <column name="description_en" value="Oman" />
+            <column name="currency_id" valueNumeric="115" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="162" />
+            <column name="created" valueDate="2015-03-19 00:04:07.214" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PA" />
+            <column name="description_fr" value="Panama" />
+            <column name="description_en" value="Panama" />
+            <column name="currency_id" valueNumeric="120" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="163" />
+            <column name="created" valueDate="2015-03-19 00:04:07.254" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PE" />
+            <column name="description_fr" value="Pérou" />
+            <column name="description_en" value="Peru" />
+            <column name="currency_id" valueNumeric="123" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="164" />
+            <column name="created" valueDate="2015-03-19 00:04:07.297" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PF" />
+            <column name="description_fr" value="Polynésie française" />
+            <column name="description_en" value="French Polynesia" />
+            <column name="currency_id" valueNumeric="114" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="165" />
+            <column name="created" valueDate="2015-03-19 00:04:07.318" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PG" />
+            <column name="description_fr" value="Papouasie Nouvelle-Guinée" />
+            <column name="description_en" value="Papua New Guinea" />
+            <column name="currency_id" valueNumeric="121" />
+            <column name="language_id" valueNumeric="12" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="166" />
+            <column name="created" valueDate="2015-03-19 00:04:07.34" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PH" />
+            <column name="description_fr" value="Philippines" />
+            <column name="description_en" value="Philippines" />
+            <column name="currency_id" valueNumeric="124" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="167" />
+            <column name="created" valueDate="2015-03-19 00:04:07.361" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PK" />
+            <column name="description_fr" value="Pakistan" />
+            <column name="description_en" value="Pakistan" />
+            <column name="currency_id" valueNumeric="119" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="168" />
+            <column name="created" valueDate="2015-03-19 00:04:07.382" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PL" />
+            <column name="description_fr" value="Pologne" />
+            <column name="description_en" value="Poland" />
+            <column name="currency_id" valueNumeric="125" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="169" />
+            <column name="created" valueDate="2015-03-19 00:04:07.404" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PM" />
+            <column name="description_fr" value="St. Pierre et Miquelon" />
+            <column name="description_en" value="Saint Pierre and Miquelon" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="170" />
+            <column name="created" valueDate="2015-03-19 00:04:07.425" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PN" />
+            <column name="description_fr" value="Pitcaïrn" />
+            <column name="description_en" value="Pitcairn Islands" />
+            <column name="currency_id" valueNumeric="72" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="171" />
+            <column name="created" valueDate="2015-03-19 00:04:07.452" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PR" />
+            <column name="description_fr" value="Porto Rico" />
+            <column name="description_en" value="Puerto Rico" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="8" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="172" />
+            <column name="created" valueDate="2015-03-19 00:04:07.472" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PS" />
+            <column name="description_fr" value="Territoire Palestinien Occupé" />
+            <column name="description_en" value="Palestinian Territory, Occupied" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="173" />
+            <column name="created" valueDate="2015-03-19 00:04:07.494" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PT" />
+            <column name="description_fr" value="Portugal" />
+            <column name="description_en" value="Portugal" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="174" />
+            <column name="created" valueDate="2015-03-19 00:04:07.515" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PW" />
+            <column name="description_fr" value="Palau" />
+            <column name="description_en" value="Palau" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="175" />
+            <column name="created" valueDate="2015-03-19 00:04:07.538" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="PY" />
+            <column name="description_fr" value="Paraguay" />
+            <column name="description_en" value="Paraguay" />
+            <column name="currency_id" valueNumeric="122" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="176" />
+            <column name="created" valueDate="2015-03-19 00:04:07.559" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="QA" />
+            <column name="description_fr" value="Quatar" />
+            <column name="description_en" value="Qatar" />
+            <column name="currency_id" valueNumeric="126" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="177" />
+            <column name="created" valueDate="2015-03-19 00:04:07.579" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="RE" />
+            <column name="description_fr" value="Réunion" />
+            <column name="description_en" value="RÃ©union" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="178" />
+            <column name="created" valueDate="2015-03-19 00:04:07.607" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="RO" />
+            <column name="description_fr" value="Romania" />
+            <column name="description_en" value="Romania" />
+            <column name="currency_id" valueNumeric="128" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="179" />
+            <column name="created" valueDate="2015-03-19 00:04:07.629" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="RU" />
+            <column name="description_fr" value="Russie (Fédération de)" />
+            <column name="description_en" value="Russia" />
+            <column name="currency_id" valueNumeric="129" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="180" />
+            <column name="created" valueDate="2015-03-19 00:04:07.651" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="RW" />
+            <column name="description_fr" value="Rwanda" />
+            <column name="description_en" value="Rwanda" />
+            <column name="currency_id" valueNumeric="130" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="181" />
+            <column name="created" valueDate="2015-03-19 00:04:07.672" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SA" />
+            <column name="description_fr" value="Arabie Séoudite" />
+            <column name="description_en" value="Saudi Arabia" />
+            <column name="currency_id" valueNumeric="9" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="182" />
+            <column name="created" valueDate="2015-03-19 00:04:07.692" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SB" />
+            <column name="description_fr" value="Salomon (Îles)" />
+            <column name="description_en" value="Solomon Islands" />
+            <column name="currency_id" valueNumeric="131" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="183" />
+            <column name="created" valueDate="2015-03-19 00:04:07.714" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SC" />
+            <column name="description_fr" value="Seychelles" />
+            <column name="description_en" value="Seychelles" />
+            <column name="currency_id" valueNumeric="136" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="184" />
+            <column name="created" valueDate="2015-03-19 00:04:07.736" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SD" />
+            <column name="description_fr" value="Soudan" />
+            <column name="description_en" value="Sudan" />
+            <column name="currency_id" valueNumeric="21" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="185" />
+            <column name="created" valueDate="2015-03-19 00:04:07.757" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SE" />
+            <column name="description_fr" value="Suède" />
+            <column name="description_en" value="Sweden" />
+            <column name="currency_id" valueNumeric="145" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="186" />
+            <column name="created" valueDate="2015-03-19 00:04:07.779" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SG" />
+            <column name="description_fr" value="Singapour" />
+            <column name="description_en" value="Singapore" />
+            <column name="currency_id" valueNumeric="138" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="187" />
+            <column name="created" valueDate="2015-03-19 00:04:07.8" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SH" />
+            <column name="description_fr" value="Ste Hélène" />
+            <column name="description_en" value="Saint Helena" />
+            <column name="currency_id" valueNumeric="144" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="188" />
+            <column name="created" valueDate="2015-03-19 00:04:07.821" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SI" />
+            <column name="description_fr" value="Slovénie" />
+            <column name="description_en" value="Slovenia" />
+            <column name="currency_id" valueNumeric="140" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="189" />
+            <column name="created" valueDate="2015-03-19 00:04:07.842" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SJ" />
+            <column name="description_fr" value="Svalbard et Jan Mayen (Îles)" />
+            <column name="description_en" value="Svalbard" />
+            <column name="currency_id" valueNumeric="31" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="190" />
+            <column name="created" valueDate="2015-03-19 00:04:07.863" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SK" />
+            <column name="description_fr" value="Slovaquie" />
+            <column name="description_en" value="Slovakia" />
+            <column name="currency_id" valueNumeric="139" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="191" />
+            <column name="created" valueDate="2015-03-19 00:04:07.891" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SL" />
+            <column name="description_fr" value="Sierra Léone" />
+            <column name="description_en" value="Sierra Leone" />
+            <column name="currency_id" valueNumeric="137" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="192" />
+            <column name="created" valueDate="2015-03-19 00:04:07.911" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SM" />
+            <column name="description_fr" value="San Marin" />
+            <column name="description_en" value="San Marino" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="193" />
+            <column name="created" valueDate="2015-03-19 00:04:07.933" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SN" />
+            <column name="description_fr" value="Sénégal" />
+            <column name="description_en" value="Senegal" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="194" />
+            <column name="created" valueDate="2015-03-19 00:04:07.955" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SO" />
+            <column name="description_fr" value="Somalie" />
+            <column name="description_en" value="Somalia" />
+            <column name="currency_id" valueNumeric="141" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="195" />
+            <column name="created" valueDate="2015-03-19 00:04:07.982" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SR" />
+            <column name="description_fr" value="Surinam" />
+            <column name="description_en" value="Suriname" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="196" />
+            <column name="created" valueDate="2015-03-19 00:04:08.004" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ST" />
+            <column name="description_fr" value="Sao Tomé et Principe" />
+            <column name="description_en" value="SÃ£o TomÃ© and PrÃ_ncipe" />
+            <column name="currency_id" valueNumeric="134" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="197" />
+            <column name="created" valueDate="2015-03-19 00:04:08.025" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SV" />
+            <column name="description_fr" value="Salvador" />
+            <column name="description_en" value="El Salvador" />
+            <column name="currency_id" valueNumeric="132" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="198" />
+            <column name="created" valueDate="2015-03-19 00:04:08.047" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SY" />
+            <column name="description_fr" value="Syrie (République arabe syrienne)" />
+            <column name="description_en" value="Syria" />
+            <column name="currency_id" valueNumeric="148" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="199" />
+            <column name="created" valueDate="2015-03-19 00:04:08.068" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="SZ" />
+            <column name="description_fr" value="Swaziland" />
+            <column name="description_en" value="Swaziland" />
+            <column name="currency_id" valueNumeric="147" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="200" />
+            <column name="created" valueDate="2015-03-19 00:04:08.089" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TC" />
+            <column name="description_fr" value="Turks et Caicos (Îles)" />
+            <column name="description_en" value="Turks and Caicos Islands" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="201" />
+            <column name="created" valueDate="2015-03-19 00:04:08.111" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TD" />
+            <column name="description_fr" value="Tchad" />
+            <column name="description_en" value="Chad" />
+            <column name="currency_id" valueNumeric="34" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="202" />
+            <column name="created" valueDate="2015-03-19 00:04:08.132" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TF" />
+            <column name="description_fr" value="Territoires Antarctiques français" />
+            <column name="description_en" value="French Southern and Antarctic La" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="203" />
+            <column name="created" valueDate="2015-03-19 00:04:08.154" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TG" />
+            <column name="description_fr" value="Togo" />
+            <column name="description_en" value="Togo" />
+            <column name="currency_id" valueNumeric="20" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="204" />
+            <column name="created" valueDate="2015-03-19 00:04:08.174" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TH" />
+            <column name="description_fr" value="Thaïlande" />
+            <column name="description_en" value="Thailand" />
+            <column name="currency_id" valueNumeric="153" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="205" />
+            <column name="created" valueDate="2015-03-19 00:04:08.202" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TJ" />
+            <column name="description_fr" value="Tadjikistan" />
+            <column name="description_en" value="Tajikistan" />
+            <column name="currency_id" valueNumeric="149" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="206" />
+            <column name="created" valueDate="2015-03-19 00:04:08.224" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TK" />
+            <column name="description_fr" value="Tokelau" />
+            <column name="description_en" value="Tokelau" />
+            <column name="currency_id" valueNumeric="72" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="207" />
+            <column name="created" valueDate="2015-03-19 00:04:08.245" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TM" />
+            <column name="description_fr" value="Turkménistan" />
+            <column name="description_en" value="Turkmenistan" />
+            <column name="currency_id" valueNumeric="157" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="208" />
+            <column name="created" valueDate="2015-03-19 00:04:08.266" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TN" />
+            <column name="description_fr" value="Tunisie" />
+            <column name="description_en" value="Tunisia" />
+            <column name="currency_id" valueNumeric="156" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="209" />
+            <column name="created" valueDate="2015-03-19 00:04:08.287" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TO" />
+            <column name="description_fr" value="Tonga" />
+            <column name="description_en" value="Tonga" />
+            <column name="currency_id" valueNumeric="154" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="210" />
+            <column name="created" valueDate="2015-03-19 00:04:08.307" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TL" />
+            <column name="description_fr" value="Timor oriental" />
+            <column name="description_en" value="East timor" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="211" />
+            <column name="created" valueDate="2015-03-19 00:04:08.33" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TR" />
+            <column name="description_fr" value="Turquie" />
+            <column name="description_en" value="Turkey" />
+            <column name="currency_id" valueNumeric="159" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="212" />
+            <column name="created" valueDate="2015-03-19 00:04:08.351" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TT" />
+            <column name="description_fr" value="Trinidad et Tobago" />
+            <column name="description_en" value="Trinidad and Tobago" />
+            <column name="currency_id" valueNumeric="155" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="213" />
+            <column name="created" valueDate="2015-03-19 00:04:08.372" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TV" />
+            <column name="description_fr" value="Tuvalu" />
+            <column name="description_en" value="Tuvalu" />
+            <column name="currency_id" valueNumeric="13" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="214" />
+            <column name="created" valueDate="2015-03-19 00:04:08.393" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TW" />
+            <column name="description_fr" value="Taïwan" />
+            <column name="description_en" value="Taiwan" />
+            <column name="currency_id" valueNumeric="150" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="215" />
+            <column name="created" valueDate="2015-03-19 00:04:08.421" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="TZ" />
+            <column name="description_fr" value="Tanzanie" />
+            <column name="description_en" value="Tanzania" />
+            <column name="currency_id" valueNumeric="151" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="216" />
+            <column name="created" valueDate="2015-03-19 00:04:08.441" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="UA" />
+            <column name="description_fr" value="Ukraine" />
+            <column name="description_en" value="Ukraine" />
+            <column name="currency_id" valueNumeric="160" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="217" />
+            <column name="created" valueDate="2015-03-19 00:04:08.463" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="UG" />
+            <column name="description_fr" value="Ouganda" />
+            <column name="description_en" value="Uganda" />
+            <column name="currency_id" valueNumeric="117" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="218" />
+            <column name="created" valueDate="2015-03-19 00:04:08.485" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="GB" />
+            <column name="description_fr" value="Royaume-Uni" />
+            <column name="description_en" value="United Kingdom" />
+            <column name="currency_id" valueNumeric="65" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="219" />
+            <column name="created" valueDate="2015-03-19 00:04:08.505" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="UM" />
+            <column name="description_fr" value="Territoires non incorporés des États-Unis" />
+            <column name="description_en" value="United States Minor Outlying Isl" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="220" />
+            <column name="created" valueDate="2015-03-19 00:04:08.528" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="US" />
+            <column name="description_fr" value="Etats-Unis d'Amérique" />
+            <column name="description_en" value="United States" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="221" />
+            <column name="created" valueDate="2015-03-19 00:04:08.55" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="UY" />
+            <column name="description_fr" value="Uruguay" />
+            <column name="description_en" value="Uruguay" />
+            <column name="currency_id" valueNumeric="161" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="222" />
+            <column name="created" valueDate="2015-03-19 00:04:08.577" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="UZ" />
+            <column name="description_fr" value="Ouzbékistan" />
+            <column name="description_en" value="Uzbekistan" />
+            <column name="currency_id" valueNumeric="118" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="223" />
+            <column name="created" valueDate="2015-03-19 00:04:08.599" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VA" />
+            <column name="description_fr" value="Vatican" />
+            <column name="description_en" value="Holy See Vatican City" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="224" />
+            <column name="created" valueDate="2015-03-19 00:04:08.621" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VC" />
+            <column name="description_fr" value="Saint Vincent et Grenadines" />
+            <column name="description_en" value="Saint Vincent and the Grenadines" />
+            <column name="currency_id" valueNumeric="7" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="225" />
+            <column name="created" valueDate="2015-03-19 00:04:08.641" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VE" />
+            <column name="description_fr" value="Vénézuela" />
+            <column name="description_en" value="Venezuela" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="226" />
+            <column name="created" valueDate="2015-03-19 00:04:08.662" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VG" />
+            <column name="description_fr" value="Vierges (Îles) - RU" />
+            <column name="description_en" value="British Virgin Islands" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="227" />
+            <column name="created" valueDate="2015-03-19 00:04:08.683" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VI" />
+            <column name="description_fr" value="Vierges (Îles) - EU" />
+            <column name="description_en" value="Virgin Islands" />
+            <column name="currency_id" valueNumeric="49" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="228" />
+            <column name="created" valueDate="2015-03-19 00:04:08.705" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VN" />
+            <column name="description_fr" value="Vietnam" />
+            <column name="description_en" value="Vietnam" />
+            <column name="currency_id" valueNumeric="164" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="229" />
+            <column name="created" valueDate="2015-03-19 00:04:08.726" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="VU" />
+            <column name="description_fr" value="Vanuatu" />
+            <column name="description_en" value="Vanuatu" />
+            <column name="currency_id" valueNumeric="162" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="230" />
+            <column name="created" valueDate="2015-03-19 00:04:08.748" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="WF" />
+            <column name="description_fr" value="Wallis et Futuna (Îles)" />
+            <column name="description_en" value="Wallis and Futuna" />
+            <column name="currency_id" valueNumeric="114" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="231" />
+            <column name="created" valueDate="2015-03-19 00:04:08.769" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="WS" />
+            <column name="description_fr" value="Samoa" />
+            <column name="description_en" value="Samoa" />
+            <column name="currency_id" valueNumeric="133" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="232" />
+            <column name="created" valueDate="2015-03-19 00:04:08.79" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="YE" />
+            <column name="description_fr" value="Yemen" />
+            <column name="description_en" value="Yemen" />
+            <column name="currency_id" valueNumeric="165" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="233" />
+            <column name="created" valueDate="2015-03-19 00:04:08.811" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="YT" />
+            <column name="description_fr" value="Mayotte" />
+            <column name="description_en" value="Mayotte" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="234" />
+            <column name="created" valueDate="2015-03-19 00:04:08.833" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="YU" />
+            <column name="description_fr" value="Yougoslavie" />
+            <column name="description_en" value="Yugoslavia" />
+            <column name="currency_id" valueNumeric="5" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="235" />
+            <column name="created" valueDate="2015-03-19 00:04:08.854" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ZA" />
+            <column name="description_fr" value="Afrique du Sud" />
+            <column name="description_en" value="South Africa" />
+            <column name="currency_id" valueNumeric="2" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="236" />
+            <column name="created" valueDate="2015-03-19 00:04:08.875" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ZM" />
+            <column name="description_fr" value="Zambie" />
+            <column name="description_en" value="Zambia" />
+            <column name="currency_id" valueNumeric="166" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        <insert tableName="tmp_adm_country">
+            <column name="id" valueNumeric="237" />
+            <column name="created" valueDate="2015-03-19 00:04:08.896" />
+            <column name="version" valueNumeric="1" />
+            <column name="country_code" value="ZW" />
+            <column name="description_fr" value="Zimbabwe" />
+            <column name="description_en" value="Zimbabwe" />
+            <column name="currency_id" valueNumeric="167" />
+            <column name="language_id" valueNumeric="2" />
+        </insert>
+        
+       <sql>update adm_country as cn set description_i18n = '{"FRA":"' || tm.description_fr || '","ENG":"' || tm.description_en || '"}' from tmp_adm_country as tm where cn.country_code = tm.country_code</sql>
+       <dropTable tableName="tmp_adm_country" />
+    </changeSet>
+      
 
 </databaseChangeLog>

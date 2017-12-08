@@ -982,9 +982,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
             Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
             Text countryNameTxt;
-            if (countrybyCode != null) {
+            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null ) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18nNullSafe().get(languageCode));
+                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
+            } else if (countrybyCode != null) {
+                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
             } else {
                 countryNameTxt = doc.createTextNode("");
             }
