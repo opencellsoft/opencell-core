@@ -2,8 +2,8 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:f="http://xmlns.jcp.org/jsf/core"
-    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
-    xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions" xmlns:pe="http://primefaces.org/ui/extensions">
+    xmlns:p="http://primefaces.org/ui" xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+    xmlns:pe="http://primefaces.org/ui/extensions">
 
 <!-- 
 
@@ -74,7 +74,7 @@
     <c:if test="${empty isDate}">
         <c:set var="isDate" value="false" />
     </c:if>
-    
+
     <c:if test="${empty isDateRange}">
         <c:set var="isDateRange" value="false" />
     </c:if>
@@ -207,21 +207,19 @@
                                 </h:outputLink>
 
                                 <f:facet name="inline">
-                                  
-                                         <p:panel  style="width:1000px;height:800px">
-                                           <pe:codeMirror readonly="true" id="codeMirror"  value="#{valueField}" lineNumbers="false" required="false" />
-                                        </p:panel>
-
+                                    <p:scrollPanel mode="native" style="width:1000px;max-height:600px">
+                                        <h:outputText value="#{valueField.replaceAll('\\n','&lt;BR/&gt;')}" escape="false" />
+                                    </p:scrollPanel>
                                 </f:facet>
                             </p:lightBox>
 
                             <!--  This is an alternative to lightbox -->
-                            <!--                             <h:outputText value="#{fn:substring(valueField,0,50)}" rendered="#{show}" converter="#{converter}" /> -->
-                            <!--                             <h:outputText id="${fieldId}_truncatedText" value=" ..." rendered="#{show and valueField.length()>50}" style="font-weight: bold" /> -->
-                            <!--                             <p:overlayPanel id="${fieldId}_truncatedTextDetails" for="${fieldId}_truncatedText" hideEffect="fade"  rendered="#{show and valueField.length()>50}" -->
-                            <!--                                 style="width: 1020px"> -->
-                            <!--                                 <p:scrollPanel mode="native" style="width:1000px"> -->
-                            <!--                                     <h:outputText value="#{valueField}" style="white-space: normal" /> -->
+                            <!--                             <h:outputText id="${fieldId}_truncatedText" value="#{fn:substring(valueField,0,50)} #{valueField.length()>50?'...':''}" rendered="#{show}" /> -->
+                            <!--                             <p:overlayPanel id="${fieldId}_truncatedTextDetails" for="${fieldId}_truncatedText" hideEffect="fade" rendered="#{show and valueField.length()>50}" style="width: 1020px" -->
+                            <!--                                 dismissable="true" showCloseIcon="true" showEvent="mouseover" hideEvent="mousedown"> -->
+
+                            <!--                                 <p:scrollPanel mode="native" style="width:1000px;max-height:600px"> -->
+                            <!--                                     <p:inputTextarea value="#{valueField}" cols="180" /> -->
                             <!--                                 </p:scrollPanel> -->
                             <!--                             </p:overlayPanel> -->
                         </c:if>
@@ -307,8 +305,8 @@
                         <c:set var="valueId" value="#{valueId[valueIdVar]}" />
                     </c:forEach>
                     <c:set var="attrId" value="#{field.replaceAll('\\.','\\_')}_#{attrId}" />
-                    <hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}" rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}"
-                        popupFields="#{popupFields}" value="#{valueLabel}" propagateConversation="${propagateConversation}" view="#{entityView}" backView="#{backView}" />
+                    <hf:linkToEntity linkId="#{attrId}_message_link" objectIdParamName="#{objectIdParamName}" rendered="#{isMessage}" entityId="#{valueId}" entity="#{c}" popupFields="#{popupFields}"
+                        value="#{valueLabel}" propagateConversation="${propagateConversation}" view="#{entityView}" backView="#{backView}" />
                     <hf:linkToEntity linkId="#{attrId}_message_link" rendered="#{not isMessage}" entity="#{c}" objectIdParamName="#{objectIdParamName}" popupFields="#{popupFields}"
                         entityId="#{valueId}" propagateConversation="${propagateConversation}" value="#{valueLabel}" view="#{entityView}" backView="#{backView}" />
                 </c:if>
