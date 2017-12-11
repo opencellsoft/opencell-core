@@ -393,8 +393,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (calculateBalances) {
         	Date now = new Date();
         	BigDecimal creditBalance = customerAccountService.computeCreditBalance(customerAccount, false, now, false);
-			BigDecimal balanceDue = NumberUtils.subtract(
-					customerAccountService.customerAccountBalanceExigible(customerAccount, now), creditBalance);
+			BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, now);
             BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, now);
             
             if (balanceDue == null) {
