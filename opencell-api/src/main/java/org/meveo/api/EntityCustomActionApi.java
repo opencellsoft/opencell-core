@@ -50,7 +50,7 @@ public class EntityCustomActionApi extends BaseApi {
     public List<ScriptInstanceErrorDto> create(EntityCustomActionDto actionDto, String appliesTo)
             throws MissingParameterException, EntityAlreadyExistsException, MeveoApiException, BusinessException {
 
-        checkDtoAndSetAppliesTo(actionDto, appliesTo);
+        checkDtoAndSetAppliesTo(actionDto, appliesTo, false);
 
         if (entityCustomActionService.findByCodeAndAppliesTo(actionDto.getCode(), actionDto.getAppliesTo()) != null) {
             throw new EntityAlreadyExistsException(EntityCustomAction.class, actionDto.getCode() + "/" + actionDto.getAppliesTo());
@@ -75,7 +75,7 @@ public class EntityCustomActionApi extends BaseApi {
     public List<ScriptInstanceErrorDto> update(EntityCustomActionDto actionDto, String appliesTo)
             throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 
-        checkDtoAndSetAppliesTo(actionDto, appliesTo);
+        checkDtoAndSetAppliesTo(actionDto, appliesTo, true);
 
         EntityCustomAction action = entityCustomActionService.findByCodeAndAppliesTo(actionDto.getCode(), actionDto.getAppliesTo());
         if (action == null) {
@@ -163,7 +163,7 @@ public class EntityCustomActionApi extends BaseApi {
             throws MissingParameterException, EntityAlreadyExistsException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
 
         List<ScriptInstanceErrorDto> result = new ArrayList<ScriptInstanceErrorDto>();
-        checkDtoAndSetAppliesTo(postData, appliesTo);
+        checkDtoAndSetAppliesTo(postData, appliesTo, true);
 
         EntityCustomAction scriptInstance = entityCustomActionService.findByCodeAndAppliesTo(postData.getCode(), postData.getAppliesTo());
 
@@ -175,7 +175,7 @@ public class EntityCustomActionApi extends BaseApi {
         return result;
     }
 
-    private void checkDtoAndSetAppliesTo(EntityCustomActionDto dto, String appliesTo) throws MissingParameterException, BusinessApiException {
+    private void checkDtoAndSetAppliesTo(EntityCustomActionDto dto, String appliesTo, boolean isUpdate) throws MissingParameterException, BusinessApiException {
 
         if (StringUtils.isBlank(dto.getCode())) {
             missingParameters.add("code");
@@ -189,7 +189,9 @@ public class EntityCustomActionApi extends BaseApi {
             missingParameters.add("appliesTo");
         }
         if (StringUtils.isBlank(dto.getScript())) {
-            missingParameters.add("script");
+            if (!isUpdate) {
+                missingParameters.add("script");
+            }
 
         } else {
             // If script was passed, code is needed if script source was not passed.
@@ -207,7 +209,6 @@ public class EntityCustomActionApi extends BaseApi {
         }
 
         handleMissingParameters();
-
     }
 
     /**
@@ -217,31 +218,46 @@ public class EntityCustomActionApi extends BaseApi {
      * @param action EntityCustomAction to update with values from dto
      * @return A new or updated EntityCustomAction object
      * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws BusinessException
      */
     private void entityCustomActionFromDTO(EntityCustomActionDto dto, EntityCustomAction action) throws MeveoApiException, BusinessException {
 
-        action.setCode(dto.getCode());
-        action.setDescription(dto.getDescription());
-        action.setApplicableOnEl(dto.getApplicableOnEl());
-        action.setAppliesTo(dto.getAppliesTo());
-        action.setLabel(dto.getLabel());
-        action.setGuiPosition(dto.getGuiPosition());
-
-        // Extract script associated with an action
-        ScriptInstance scriptInstance = null;
-
-        // Should create it or update script only if it has full information only
-        if (!dto.getScript().isCodeOnly()) {
-            scriptInstanceApi.createOrUpdate(dto.getScript());
+        if (action.isTransient()) {
+            action.setCode(dto.getCode());
+            action.setAppliesTo(dto.getAppliesTo());
+        }
+        if (dto.getDescription() != null) {
+            action.setDescription(dto.getDescription());
+        }
+        if (dto.getApplicableOnEl() != null) {
+            action.setApplicableOnEl(dto.getApplicableOnEl());
+        }
+        if (dto.getLabel() != null) {
+            action.setLabel(dto.getLabel());
+        }
+        if (dto.getGuiPosition() != null) {
+            action.setGuiPosition(dto.getGuiPosition());
         }
 
-        scriptInstance = scriptInstanceService.findByCode(dto.getScript().getCode());
-        if (scriptInstance == null) {
-            throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getScript().getCode());
+        if (dto.getLabelsTranslated() != null) {
+            action.setLabelI18n(convertMultiLanguageToMapOfValues(dto.getLabelsTranslated(), action.getLabelI18n()));
         }
-        action.setScript(scriptInstance);
 
+        if (dto.getScript() != null) {
+            // Extract script associated with an action
+            ScriptInstance scriptInstance = null;
+
+            // Should create it or update script only if it has full information only
+            if (!dto.getScript().isCodeOnly()) {
+                scriptInstanceApi.createOrUpdate(dto.getScript());
+            }
+
+            scriptInstance = scriptInstanceService.findByCode(dto.getScript().getCode());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, dto.getScript().getCode());
+            }
+            action.setScript(scriptInstance);
+        }
     }
 
     @SuppressWarnings("rawtypes")

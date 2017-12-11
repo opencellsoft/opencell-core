@@ -531,6 +531,9 @@ public class CustomFieldValue implements Serializable {
 
         case CHILD_ENTITY:
             throw new RuntimeException("Child entity type of field supports only list of entities");
+
+        case MULTI_VALUE:
+            throw new RuntimeException("Multi-value type of field supports only matrix");
         }
     }
 
@@ -654,10 +657,13 @@ public class CustomFieldValue implements Serializable {
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
             StringBuilder builder = new StringBuilder();
 
+            Logger log = LoggerFactory.getLogger(getClass());
+            log.error("AKK in short rep : map is {}, {}", mapDateValue!=null , mapValuesForGUI!=null);
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             int i = 0;
             for (Map<String, Object> valueInfo : mapValuesForGUI) {
                 builder.append(builder.length() == 0 ? "" : ", ");
+
                 Object value = valueInfo.get(MAP_VALUE);
                 if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
 
@@ -693,33 +699,53 @@ public class CustomFieldValue implements Serializable {
             int i = 0;
             for (Map<String, Object> mapInfo : matrixValuesForGUI) {
 
-                Object value = mapInfo.get(MAP_VALUE);
-                if (value == null) {
-                    continue;
+                StringBuilder keyBuilder = new StringBuilder();
+
+                for (CustomFieldMatrixColumn column : cft.getMatrixKeyColumns()) {
+                    String columnValue = (String) mapInfo.get(column.getCode());
+                    if (columnValue != null) {
+                        keyBuilder.append(keyBuilder.length() == 0 ? "" : "|");
+                        keyBuilder.append(column.getCode()).append("/").append(columnValue);
+                    }
                 }
 
-                if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
-                    value = sdf.format(value);
+                Object value = null;
 
-                } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY && value != null) {
-                    value = ((BusinessEntity) value).getCode();
+                if (cft.getFieldType() == CustomFieldTypeEnum.MULTI_VALUE) {
 
-                } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && value != null) {
-                    value = ((CustomFieldValueHolder) value).getShortRepresentationOfValues();
-                }
+                    StringBuilder valueBuilder = new StringBuilder();
 
-                StringBuilder valBuilder = new StringBuilder();
+                    for (CustomFieldMatrixColumn column : cft.getMatrixValueColumns()) {
+                        Object columnValue = mapInfo.get(column.getCode());
+                        if (columnValue != null) {
+                            valueBuilder.append(valueBuilder.length() == 0 ? "" : "|");
+                            // No need to check for column data type as they are all work fine with toString(). If in future date is added, would need to format it
+                            valueBuilder.append(column.getCode()).append("/").append(columnValue);
+                        }
+                    }
 
-                for (Entry<String, Object> valueInfo : mapInfo.entrySet()) {
-                    if (valueInfo.getKey().equals(MAP_VALUE)) {
+                    value = valueBuilder.toString();
+
+                } else {
+
+                    value = mapInfo.get(MAP_VALUE);
+                    if (value == null) {
                         continue;
                     }
 
-                    valBuilder.append(valBuilder.length() == 0 ? "" : "|");
-                    valBuilder.append(valueInfo.getKey()).append("/").append(valueInfo.getValue());
+                    if (cft.getFieldType() == CustomFieldTypeEnum.DATE) {
+                        value = sdf.format(value);
+
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.ENTITY && value != null) {
+                        value = ((BusinessEntity) value).getCode();
+
+                    } else if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && value != null) {
+                        value = ((CustomFieldValueHolder) value).getShortRepresentationOfValues();
+                    }
                 }
+
                 builder.append(builder.length() == 0 ? "" : ", ");
-                builder.append(String.format("%s: [%s]", valBuilder.toString(), value));
+                builder.append(String.format("%s: [%s]", keyBuilder.toString(), value));
                 i++;
                 if (i >= 10) {
                     break;
@@ -761,6 +787,8 @@ public class CustomFieldValue implements Serializable {
                 return stringValue;
             case CHILD_ENTITY:
                 throw new RuntimeException("Child entity type of field supports only list of entities");
+            case MULTI_VALUE:
+                throw new RuntimeException("Multi-value type of field supports only matrix");
             }
         }
         return null;
@@ -1019,7 +1047,9 @@ public class CustomFieldValue implements Serializable {
             if (Date.class.getSimpleName().equals(subType)) {
                 itemType = new TypeToken<LinkedHashMap<String, Date>>() {
                 }.getType();
-            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType)) {
+            } else if (Double.class.getSimpleName().equals(subType) || BigDecimal.class.getSimpleName().equals(subType))
+
+            {
                 itemType = new TypeToken<LinkedHashMap<String, Double>>() {
                 }.getType();
             } else if (Long.class.getSimpleName().equals(subType) || Integer.class.getSimpleName().equals(subType)) {

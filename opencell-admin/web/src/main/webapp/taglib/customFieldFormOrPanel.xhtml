@@ -35,7 +35,7 @@
         </c:if>
         <c:if test="#{cfFieldOrFg.type == 'fieldGroup'}">
             <c:if test="${cfFieldOrFg.hasVisibleCustomFields(entity, cfValueHolder)}">
-                <p:fieldset legend="#{cfFieldOrFg.data}">
+                <p:fieldset legend="#{cfFieldOrFg.data.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}">
                     <c:forEach items="${cfFieldOrFg.children}" var="cfField">
                         <c:set var="cft" value="#{cfField.data}" />
                         <c:if
@@ -50,7 +50,7 @@
     </c:forEach>
 
     <p:dialog id="#{prefix}dlg_periodValues" widgetVar="#{prefix}periodValuesDialogWidget" header="#{messages['customFieldTemplate.periodValues']}" closeOnEscape="true" modal="true" appendTo="@(body)"
-        width="900" position="center">
+        width="1100" position="center">
 
         <p:panel>
             <h:panelGroup id="#{prefix}periodFields" layout="block" styleClass="form-panel">
@@ -66,7 +66,7 @@
                 </hftl:decorateFormField>
                 <p:remoteCommand name="updateMasterTable" update="#{cfValueHolder.selectedValuePeriodId}" process="@this" partialSubmit="true" partialSubmitFilter=":not([name*='addNewFields'])" />
                 <!--  only customFieldListTable as for simple values no need to show a periodvalue dialog -->
-                <hftl:customFieldListTable edit="#{edit}" cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}" field="#{cfValueHolder.selectedValuePeriod}"
+                <hftl:customFieldListTable edit="#{cfValueHolder.selectedValuePeriodEdit}" cft="#{cfValueHolder.selectedFieldTemplate}" entity="#{entity}" field="#{cfValueHolder.selectedValuePeriod}"
                     updateOnAddEdit="#{cfValueHolder.selectedValuePeriodId}" messagesId="#{messagesId}" popupWidgetVar="#{prefix}periodValuesDialogWidget" prefix="#{prefix}"
                     datePattern="#{datePattern}" componentWidth="100" />
 

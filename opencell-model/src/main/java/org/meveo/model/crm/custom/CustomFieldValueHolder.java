@@ -46,9 +46,14 @@ public class CustomFieldValueHolder implements Serializable {
     private CustomFieldValue selectedValuePeriod;
 
     /**
-     * Field used to show detail values of a single value period
+     * GUI Field id used to show detail values of a single value period
      */
     private String selectedValuePeriodId; // TODO no longer available
+
+    /**
+     * Is single value period editable
+     */
+    private boolean selectedValuePeriodEdit = true;
 
     /**
      * Was value period found with identical/overlapping dates
@@ -183,7 +188,7 @@ public class CustomFieldValueHolder implements Serializable {
                 }
             }
         }
-        
+
         // Create a custom field value if match not found
         if (cfValueFound == null && createIfNotFound) {
             cfValueFound = new CustomFieldValue(new DatePeriod(startDate, endDate), getNextPriority(cft), null);
@@ -356,6 +361,14 @@ public class CustomFieldValueHolder implements Serializable {
 
     public boolean isUpdated() {
         return updated;
+    }
+
+    public boolean isSelectedValuePeriodEdit() {
+        return selectedValuePeriodEdit;
+    }
+
+    public void setSelectedValuePeriodEdit(boolean selectedValuePeriodEdit) {
+        this.selectedValuePeriodEdit = selectedValuePeriodEdit;
     }
 
     @Override

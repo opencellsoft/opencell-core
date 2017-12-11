@@ -40,7 +40,7 @@ public class CustomEntityTemplateListBean extends CustomEntityTemplateBean {
                 boolean isCustomEntityOnly = filters.get("customEntity") != null && (boolean) filters.get("customEntity");
                 String sortBy = sortOrder != null ? sortOrder.name() : null;
 
-                entities = customizedEntityService.getCustomizedEntities(query, isCustomEntityOnly, false, sortField, sortBy);
+                entities = customizedEntityService.getCustomizedEntities(query, isCustomEntityOnly, false, false, sortField, sortBy);
                 setRowCount(entities.size());
 
                 return entities.subList(first, (first + pageSize) > entities.size() ? entities.size() : (first + pageSize));

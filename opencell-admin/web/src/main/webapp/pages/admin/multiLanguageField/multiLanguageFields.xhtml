@@ -52,16 +52,18 @@
                             <!--                                 <f:setPropertyActionListener target="#{multiLanguageFieldListBean.selectedEntity}" value="#{entity}" /> -->
                             <!--                             </p:commandLink> -->
                         </p:column>
-                        <p:column width="30%" headerText="#{messages['businessEntity.description']}">
-                            <h:outputText value="#{entity.description}" />
-                        </p:column>
-                        <p:column width="60%" headerText="#{messages['multiLanguageFields.descriptionTranslation']}">
-                            <c:forEach items="#{multiLanguageFieldListBean.providerLanguages}" var="languageCode">
-                                <h:outputText value="#{languageCode}" /> -
-                            <h:outputText value="#{entity.descriptionI18n[languageCode]}" title="#{languageCode}" />
-                                <br />
-                            </c:forEach>
-                        </p:column>
+                        <c:forEach items="#{multiLanguageFieldListBean.multiLanguageFields}" var="field">
+                            <p:column width="30%" headerText="#{messages['multiLanguageFields.'.concat(field)]}">
+                                <h:outputText value="#{entity[field]}" />
+                            </p:column>
+                            <p:column width="60%" headerText="#{messages['multiLanguageFields.'.concat(field).concat('Translation')]}">
+                                <c:forEach items="#{multiLanguageFieldListBean.providerLanguages}" var="languageCode">
+                                    <h:outputText value="#{languageCode}" /> -
+                                    <h:outputText value="#{entity[field.concat('I18n')][languageCode]}" title="#{languageCode}" />
+                                    <br />
+                                </c:forEach>
+                            </p:column>
+                        </c:forEach>
                     </p:dataTable>
                 </h:form>
             </c:if>
