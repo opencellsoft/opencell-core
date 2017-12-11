@@ -52,6 +52,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -168,7 +169,15 @@ public class ChargeInstance extends BusinessEntity {
     public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
 
         this.code = chargeTemplate.getCode();
-        this.description = chargeTemplate.getDescription();
+        if (chargeTemplate.getDescriptionI18n() != null) {
+            String languageCode = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            if (!StringUtils.isBlank(chargeTemplate.getDescriptionI18n().get(languageCode))) {
+                this.description = chargeTemplate.getDescriptionI18n().get(languageCode);
+            }
+        }
+        if (StringUtils.isBlank(this.description)) {
+            this.description = chargeTemplate.getDescription();
+        }
         this.amountWithoutTax = amountWithoutTax;
         this.amountWithTax = amountWithTax;
         this.userAccount = serviceInstance.getSubscription().getUserAccount();
