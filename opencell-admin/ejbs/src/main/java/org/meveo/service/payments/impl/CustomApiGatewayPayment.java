@@ -22,15 +22,22 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     public CustomApiGatewayPayment(PaymentScriptInterface paymentScriptInterface) {
         this.paymentScriptInterface = paymentScriptInterface;
     }
-
+    
     @Override
-    public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber,
-            String cardHolderName, String expirayDate, String issueNumber, int productPaymentId, String countryCode)throws BusinessException {
-        Map<String, Object> scriptContext = new HashMap<String, Object>();
-        scriptContext.put(PaymentScript.CONTEXT_CA,customerAccount);
-        
+    public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
+            CreditCardTypeEnum cardType, String countryCode) throws BusinessException {
+        Map<String, Object> scriptContext = new HashMap<>();
+        scriptContext.put(PaymentScript.CONTEXT_CA, customerAccount);
+        scriptContext.put(PaymentScript.CONTEXT_ALIAS, alias);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_NUMBER, cardNumber);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_OWNER, cardHolderName);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_EXPIRATION, expirayDate);
+        scriptContext.put(PaymentScript.CONTEXT_CARD_TYPE, cardType);
+        scriptContext.put(PaymentScript.CONTEXT_ISSUE_NUMBER, issueNumber);
+        scriptContext.put(PaymentScript.CONTEXT_COUNTRY_CODE, countryCode);
+
         paymentScriptInterface.createCardToken(scriptContext);
-        
+
         return (String) scriptContext.get(PaymentScript.RESULT_TOKEN);
     }
 

@@ -42,7 +42,6 @@ public class PaymentScript extends Script implements PaymentScriptInterface {
     public void doPaymentCard(Map<String, Object> methodContext) throws BusinessException {        
     }
 
-  
     @Override
     public void cancelPayment(Map<String, Object> methodContext) throws BusinessException {        
     }
