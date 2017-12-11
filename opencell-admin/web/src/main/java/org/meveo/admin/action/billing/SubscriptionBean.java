@@ -28,7 +28,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
@@ -70,6 +69,7 @@ import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.billing.impl.TradingLanguageService;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
@@ -79,8 +79,6 @@ import org.meveo.service.catalog.impl.ServiceChargeTemplateSubscriptionService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 import org.primefaces.component.datatable.DataTable;
-import org.primefaces.event.CellEditEvent;
-import org.slf4j.Logger;
 
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
@@ -141,6 +139,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private OfferTemplateService offerTemplateService;
+
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
     private ServiceInstance selectedServiceInstance;
 
@@ -295,7 +296,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public void editOneShotChargeIns(OneShotChargeInstance oneShotChargeIns) {
         this.oneShotChargeInstance = oneShotChargeInstanceService.refreshOrRetrieve(oneShotChargeIns);
-
         selectedWalletTemplate = new WalletTemplate();
         selectedWalletTemplateCode = null;
     }
@@ -315,7 +315,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             entity = subscriptionService.refreshOrRetrieve(entity);
             String description = oneShotChargeInstance.getDescription();
-            oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId()));
+            OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
+            oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
             oneShotChargeInstance.setDescription(description);
 
             if (oneShotChargeInstance.getChargeDate() == null) {
@@ -406,6 +407,17 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public OneShotChargeInstance getOneShotChargeInstance() {
+        if (oneShotChargeInstance != null && oneShotChargeInstance.getChargeTemplate() != null) {
+            if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
+                String languageCode = tradingLanguageService.refreshOrRetrieve(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage().getLanguageCode();
+                if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
+                    oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode));
+                }
+            }
+            if (StringUtils.isBlank(oneShotChargeInstance.getDescription())) {
+                oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescription());
+            }
+        }
         return oneShotChargeInstance;
     }
 
@@ -807,7 +819,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     }
 
     public List<WalletTemplate> findBySubscriptionChargeTemplate() {
-
         if (oneShotChargeInstance == null || oneShotChargeInstance.getChargeTemplate() == null) {
             return null;
         }

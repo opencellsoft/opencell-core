@@ -31,6 +31,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.OneShotChargeTemplate;
 import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
@@ -76,7 +77,19 @@ public class OneShotChargeInstance extends ChargeInstance {
             Subscription subscription, OneShotChargeTemplate chargeTemplate) {
 
         this.code = chargeTemplate.getCode();
-        this.description = description != null ? description : chargeTemplate.getDescription();
+        if (StringUtils.isBlank(description)) {
+            if (chargeTemplate.getDescriptionI18n() != null) {
+                String languageCode = subscription.getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+                if (!StringUtils.isBlank(chargeTemplate.getDescriptionI18n().get(languageCode))) {
+                    this.description = chargeTemplate.getDescriptionI18n().get(languageCode);
+                }
+            }
+            if (StringUtils.isBlank(this.description)) {
+                this.description = chargeTemplate.getDescription();
+            }
+        } else {
+            this.description = description;
+        }
         this.chargeDate = chargeDate;
         this.amountWithoutTax = amountWithoutTax;
         this.amountWithTax = amountWithTax;
