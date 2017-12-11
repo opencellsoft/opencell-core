@@ -314,7 +314,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             entity = subscriptionService.refreshOrRetrieve(entity);
-            String description = oneShotChargeInstance.getDescription();
+            String description = oneShotChargeInstance.getDescription();           
             OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
             oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
             oneShotChargeInstance.setDescription(description);
@@ -408,6 +408,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public OneShotChargeInstance getOneShotChargeInstance() {
         if (oneShotChargeInstance != null && oneShotChargeInstance.getChargeTemplate() != null) {
+            if(oneShotChargeInstance.getDescription() != null && oneShotChargeInstance.getDescription().equals(oneShotChargeInstance.getChargeTemplate().getDescription())) {
             if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
                 String languageCode = tradingLanguageService.refreshOrRetrieve(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage().getLanguageCode();
                 if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
@@ -417,6 +418,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             if (StringUtils.isBlank(oneShotChargeInstance.getDescription())) {
                 oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescription());
             }
+        }
         }
         return oneShotChargeInstance;
     }

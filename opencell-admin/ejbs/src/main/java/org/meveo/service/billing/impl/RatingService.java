@@ -253,6 +253,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         walletOperation.setParameter2(criteria2);
         walletOperation.setParameter3(criteria3);
         if (chargeInstance != null) {
+            walletOperation.setDescription(chargeInstance.getDescription());
             walletOperation.setChargeInstance(chargeInstance);
             if (chargeInstance.getInvoicingCalendar() != null) {
                 chargeInstance.getInvoicingCalendar().setInitDate(subscriptionDate);
@@ -261,15 +262,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             }
         }
 
-        walletOperation.setCode(chargeTemplate.getCode());
-        String descTranslated = (chargeInstance == null || chargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : chargeInstance.getDescription();
-        Map<String, String> descriptionI18n = chargeTemplate.getDescriptionI18n();
-
-        if (descriptionI18n != null && !StringUtils.isBlank(descriptionI18n.get(languageCode))) {
-            descTranslated = descriptionI18n.get(languageCode);
-        }
-
-        walletOperation.setDescription(descTranslated);
+        walletOperation.setCode(chargeTemplate.getCode());              
         walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : taxPercent);
         walletOperation.setCurrency(tCurrency.getCurrency());
         walletOperation.setStartDate(startdate);
