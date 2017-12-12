@@ -1,8 +1,10 @@
 package org.meveo.api.dto.catalog;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -13,8 +15,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
-import org.meveo.model.catalog.Channel;
 import org.meveo.api.dto.LanguageDescriptionDto;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
@@ -39,7 +42,8 @@ public class ProductOfferingDto extends BusinessDto {
     @XmlElement(name = "offerTemplateCategory")
     protected List<OfferTemplateCategoryDto> offerTemplateCategories;
 
-    @XmlElement
+    @XmlElementWrapper(name = "channels")
+    @XmlElement(name = "channel")
     private List<ChannelDto> channels;
 
     @XmlElementWrapper(name = "digitalResources")
@@ -48,7 +52,8 @@ public class ProductOfferingDto extends BusinessDto {
 
     protected String modelCode;
 
-    protected LifeCycleStatusEnum lifeCycleStatus;
+    @XmlElement(required = true)
+    protected LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
 
     protected CustomFieldsDto customFields;
 
@@ -65,6 +70,12 @@ public class ProductOfferingDto extends BusinessDto {
     protected String longDescription;
 
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
+    
+    private String globalRatingScriptInstance;
+
+    @XmlElementWrapper(name = "sellers")
+    @XmlElement(name = "seller")
+    private List<String> sellers;
 
     public ProductOfferingDto() {
     }
@@ -101,10 +112,10 @@ public class ProductOfferingDto extends BusinessDto {
                 this.getOfferTemplateCategories().add(new OfferTemplateCategoryDto(offerTemplateCategory));
             }
         }
-        List<DigitalResource> attachments = productOffering.getAttachments();
-        if (attachments != null && !attachments.isEmpty()) {
+        List<DigitalResource> digitalResources = productOffering.getAttachments();
+        if (digitalResources != null && !digitalResources.isEmpty()) {
             this.setAttachments(new ArrayList<DigitalResourcesDto>());
-            for (DigitalResource digitalResource : attachments) {
+            for (DigitalResource digitalResource : digitalResources) {
                 this.getAttachments().add(new DigitalResourcesDto(digitalResource));
             }
         }
@@ -118,6 +129,24 @@ public class ProductOfferingDto extends BusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getDescriptionI18n()));
         setLongDescription(productOffering.getLongDescription());
         setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
+
+        if(productOffering.getGlobalRatingScriptInstance() != null) {
+            setGlobalRatingScriptInstance(productOffering.getGlobalRatingScriptInstance().getCode());
+        }        
+
+        if (productOffering.getSellers() != null && !productOffering.getSellers().isEmpty()) {
+            this.sellers = new ArrayList<>();
+            for (Seller seller : productOffering.getSellers()) {
+                this.sellers.add(seller.getCode());
+            }
+            Collections.sort(this.sellers);
+        }
+        
+        if(productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
+            setChannels(productOffering.getChannels().stream().map(p -> {
+                return new ChannelDto(p);
+            }).collect(Collectors.toList()));
+        }
 
         this.customFields = customFieldsDto;
     }
@@ -240,5 +269,27 @@ public class ProductOfferingDto extends BusinessDto {
 
     public void setLongDescriptionsTranslated(List<LanguageDescriptionDto> longDescriptionsTranslated) {
         this.longDescriptionsTranslated = longDescriptionsTranslated;
+    }
+
+    /**
+     * @return the globalRatingScriptInstance
+     */
+    public String getGlobalRatingScriptInstance() {
+        return globalRatingScriptInstance;
+    }
+
+    /**
+     * @param globalRatingScriptInstance the globalRatingScriptInstance to set
+     */
+    public void setGlobalRatingScriptInstance(String globalRatingScriptInstance) {
+        this.globalRatingScriptInstance = globalRatingScriptInstance;
+    }
+    
+    public List<String> getSellers() {
+        return sellers;
+    }
+
+    public void setSellers(List<String> sellers) {
+        this.sellers = sellers;
     }
 }

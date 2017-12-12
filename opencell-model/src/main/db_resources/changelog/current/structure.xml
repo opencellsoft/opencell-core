@@ -698,7 +698,6 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_quote" />
     </changeSet>
     <!-- https://mariadb.com/kb/en/the-mariadb-library/drop-index/ -->
-    
 	<changeSet id="performance_20170830" author="TienLanPHUNG" dbms="postgresql">
 	    <sql>DROP INDEX IF EXISTS invoice_billing_run_index</sql>
 		<sql>CREATE INDEX invoice_billing_run_index ON billing_invoice_agregate(billing_run_id)</sql>
@@ -1102,7 +1101,7 @@
 		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ;</sql>
 		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ;</sql>
-		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template((lower(code)));</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(lower(code));</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index;</sql>
 		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_title_id_index;</sql>
@@ -1207,7 +1206,7 @@
 		<sql>DROP INDEX IF EXISTS cat_ofrpt_pr_template_index ON cat_offer_product_template;</sql>
 		<sql>CREATE INDEX cat_ofrpt_pr_template_index ON cat_offer_product_template(product_template_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_service_template_code_index ON cat_service_template;</sql>
-		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code));</sql>
+		<sql>CREATE INDEX cat_service_template_code_index ON cat_service_template(code);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_bam_id_index ON account_entity;</sql>
 		<sql>CREATE INDEX account_entity_bam_id_index ON account_entity(bam_id);</sql>
 		<sql>DROP INDEX IF EXISTS account_entity_title_id_index ON account_entity;</sql>
@@ -1261,6 +1260,179 @@
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
 		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
     </changeSet>         
+    
+    <changeSet id="#3017_20171031 Add phone to ba" author="EdwardPLegapi">
+    	<addColumn tableName="billing_billing_account">
+    		<column name="phone" type="varchar(15)" />
+    	</addColumn>
+    </changeSet>
+    
+    <changeSet id="#2837_20171016 - Add fields vat, reg no and job title" author="EdwardPLegaspi">
+     	<addColumn tableName="crm_customer">
+            <column name="vat_no" type="varchar(100)"  />
+            <column name="registration_no" type="varchar(100)"  />           
+        </addColumn>
+        <addColumn tableName="account_entity">
+            <column name="job_title" type="varchar(255)"  />           
+        </addColumn>
+    </changeSet>
+    <changeSet id="#2994_20171026" author="AndriusKarpavicius">
+        <addColumn tableName="billing_wallet_operation">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+        <addColumn tableName="billing_rated_transaction">
+            <column name="parameter_extra" type="text"/>
+        </addColumn>
+    </changeSet>
+
+	<changeSet
+		id="#3043_20171107 - Add cascade delete on invoiceSubCategory + taxes"
+		author="EdwardLegaspi">
+		<dropForeignKeyConstraint baseTableName="billing_inv_sub_cat_country" constraintName="fk_95fqtc0o1qhxbvecs7rju1jhp" />
+		<addForeignKeyConstraint baseColumnNames="invoice_sub_category_id"
+			baseTableName="billing_inv_sub_cat_country" constraintName="fk_95fqtc0o1qhxbvecs7rju1jhp"
+			deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+			onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_invoice_sub_cat" />
+	</changeSet>
+
+    <changeSet id="#3016_20171106" author="anasseh">
+	    	<addColumn tableName="cat_offer_template">
+	    		<column name="script_instance_id" type="bigint" />
+	    	</addColumn>
+	    	<addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_offer_template" constraintName="fk_offer_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+    </changeSet>
+     
+    <changeSet id="#3068_20171116_Add DE and IT description to Country" author="anasseh">
+        <addColumn tableName="adm_country">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+           <sql>update adm_country set description_i18n = '{"FRA":"' || description_fr || '","ENG":"' || description_en || '"}'</sql>
+         <dropColumn tableName="adm_country" columnName="description_fr" /> 
+         <renameColumn newColumnName="description"  oldColumnName="description_en" tableName="adm_country" columnDataType="varchar(100)"/>
+     </changeSet>
+     
+     <changeSet id="20171121-2816 Add last login date" author="EdwardPLegaspi">
+    	<addColumn tableName="adm_user">
+    		<column name="last_login_date" type="datetime" />
+    	</addColumn>
+    </changeSet>
+
+    <changeSet id="#2979_20171106" author="AndriusKarpavicius">
+        <createTable tableName="cat_product_offer_seller">
+            <column name="product_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="seller_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_id, seller_id" constraintName="cat_product_offer_seller_pkey" tableName="cat_product_offer_seller" />
+        
+        <addForeignKeyConstraint baseColumnNames="seller_id" baseTableName="cat_product_offer_seller" constraintName="fk_pos_seller" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="crm_seller" />
+            
+        <addForeignKeyConstraint baseColumnNames="product_id" baseTableName="cat_product_offer_seller" constraintName="fk_pos_product" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="cat_offer_template" />            
+    </changeSet>    
+
+    <changeSet id="#2836_20171018" author="AndriusKarpavicius">
+        <addColumn tableName="billing_one_shot_charge_inst">            
+            <column name="quantity" type="numeric(23, 12)" />
+        </addColumn>
+        <addColumn tableName="billing_recurring_charge_inst">            
+            <column name="quantity" type="numeric(23, 12)" />
+        </addColumn>    
+    </changeSet>                   
+
+    <changeSet id="#2836_20171018_migration_P" author="AndriusKarpavicius" dbms="postgresql">    
+        <sql>update billing_one_shot_charge_inst set quantity= billing_service_instance.quantity from billing_service_instance where billing_one_shot_charge_inst.subs_serv_inst_id = billing_service_instance.id and billing_one_shot_charge_inst.subs_serv_inst_id is not null</sql> 
+        <sql>update billing_one_shot_charge_inst set quantity= billing_service_instance.quantity from billing_service_instance where billing_one_shot_charge_inst.term_serv_inst_id = billing_service_instance.id and billing_one_shot_charge_inst.term_serv_inst_id is not null</sql>
+        <sql>update billing_one_shot_charge_inst set quantity= billing_wallet_operation.input_quantity from billing_wallet_operation where billing_wallet_operation.charge_instance_id = billing_one_shot_charge_inst.id and billing_one_shot_charge_inst.term_serv_inst_id is null and billing_one_shot_charge_inst.subs_serv_inst_id is null</sql>
+        <sql>update billing_recurring_charge_inst set quantity= billing_service_instance.quantity from billing_service_instance where billing_recurring_charge_inst.service_instance_id = billing_service_instance.id</sql>
+    </changeSet>    
+    
+    <changeSet id="#2836_20171018_migration_M" author="AndriusKarpavicius" dbms="mysql">    
+        <sql>update billing_one_shot_charge_inst join billing_service_instance on billing_one_shot_charge_inst.subs_serv_inst_id = billing_service_instance.id set billing_one_shot_charge_inst.quantity= billing_service_instance.quantity where billing_one_shot_charge_inst.subs_serv_inst_id is not null</sql>
+        <sql>update billing_one_shot_charge_inst join billing_service_instance on billing_one_shot_charge_inst.term_serv_inst_id = billing_service_instance.id set billing_one_shot_charge_inst.quantity= billing_service_instance.quantity where billing_one_shot_charge_inst.term_serv_inst_id is not null</sql>  
+        <sql>update billing_one_shot_charge_inst join billing_wallet_operation on billing_wallet_operation.charge_instance_id = billing_one_shot_charge_inst.id set billing_one_shot_charge_inst.quantity= billing_wallet_operation.input_quantity where billing_one_shot_charge_inst.term_serv_inst_id is null and billing_one_shot_charge_inst.subs_serv_inst_id is null</sql>
+        <sql>update billing_recurring_charge_inst join billing_service_instance on billing_recurring_charge_inst.service_instance_id = billing_service_instance.id set billing_recurring_charge_inst.quantity= billing_service_instance.quantity</sql>  
+    </changeSet>
+
+    <changeSet id="#2836_20171018-end" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_one_shot_charge_inst" columnName="quantity" columnDataType="numeric(23, 12)"/>
+        <addNotNullConstraint tableName="billing_recurring_charge_inst" columnName="quantity" columnDataType="numeric(23, 12)"/>
+    </changeSet>
+    
+<!--     <changeSet id="#2836_20171019" author="AndriusKarpavicius"> -->
+<!--         <dropColumn tableName="billing_wallet_operation" columnName="input_quantity"/> -->
+<!--     </changeSet> -->
+    
+    <changeSet id="#2836_20171019_update_P" author="AndriusKarpavicius" dbms="postgresql">
+        <sql>update billing_charge_instance set seller_id=crm_customer.seller_id from billing_user_account, billing_billing_account, ar_customer_account, crm_customer where billing_charge_instance.seller_id is null and  billing_charge_instance.user_account_id=billing_user_account.id
+        and billing_user_account.billing_account_id=billing_billing_account.id and billing_billing_account.customer_account_id=ar_customer_account.id and ar_customer_account.customer_id=crm_customer.id</sql>
+
+        <sql>update billing_charge_instance set trading_country=billing_billing_account.trading_country_id from billing_user_account, billing_billing_account where billing_charge_instance.trading_country is null and billing_charge_instance.user_account_id=billing_user_account.id
+        and billing_user_account.billing_account_id=billing_billing_account.id</sql>
+
+        <sql>update billing_charge_instance set trading_currency=ar_customer_account.trading_currency_id from billing_user_account, billing_billing_account, ar_customer_account where billing_charge_instance.trading_currency is null and  billing_charge_instance.user_account_id=billing_user_account.id
+        and billing_user_account.billing_account_id=billing_billing_account.id and billing_billing_account.customer_account_id=ar_customer_account.id</sql>   
+    </changeSet>
+    
+    <changeSet id="#2836_20171019_update_M" author="AndriusKarpavicius" dbms="mysql">
+        <sql>update billing_charge_instance join billing_user_account on billing_charge_instance.user_account_id=billing_user_account.id join billing_billing_account on billing_user_account.billing_account_id=billing_billing_account.id
+         join ar_customer_account on billing_billing_account.customer_account_id=ar_customer_account.id join crm_customer on ar_customer_account.customer_id=crm_customer.id set billing_charge_instance.seller_id=crm_customer.seller_id where billing_charge_instance.seller_id is null</sql>
+
+         <sql>update billing_charge_instance join billing_user_account on billing_charge_instance.user_account_id=billing_user_account.id join billing_billing_account on billing_user_account.billing_account_id=billing_billing_account.id 
+         set trading_country=billing_billing_account.trading_country_id where billing_charge_instance.trading_country is null</sql>
+
+        <sql>update billing_charge_instance join billing_user_account on billing_charge_instance.user_account_id=billing_user_account.id join billing_billing_account on billing_user_account.billing_account_id=billing_billing_account.id
+        join ar_customer_account on billing_billing_account.customer_account_id=ar_customer_account.id set trading_currency=ar_customer_account.trading_currency_id where billing_charge_instance.trading_currency is null</sql>  
+    </changeSet>    
+    
+    <changeSet id="#2836_20171019_update_end" author="AndriusKarpavicius">
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="user_account_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="trading_country" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="trading_currency" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_charge_instance" columnName="seller_id" columnDataType="bigint"/>
+        
+        <!--  added for consistency with API and GUI -->
+        <addNotNullConstraint tableName="ar_customer_account" columnName="trading_currency_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="ar_customer_account" columnName="trading_language_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_country_id" columnDataType="bigint"/>
+        <addNotNullConstraint tableName="billing_billing_account" columnName="trading_language_id" columnDataType="bigint"/>
+        
+    </changeSet>
+    
+    
+    <changeSet id="#2231_20171123" author="AndriusKarpavicius">    
+        <addColumn tableName="cat_price_plan_matrix">
+            <column name="wo_description_el" type="varchar(2000)"  />           
+        </addColumn>        
+    </changeSet>
+    
+    <changeSet id="#2880_20171113" author="AndriusKarpavicius">
+        <addColumn tableName="crm_custom_field_tmpl">
+            <column name="description_i18n" type="${type.json}" />
+        </addColumn>
+        <addColumn tableName="crm_custom_action">
+            <column name="label_i18n" type="${type.json}" />
+        </addColumn>
+    </changeSet>
+    
+    <changeSet id="#2880_20171114" author="AndriusKarpavicius">
+        <modifyDataType tableName="crm_custom_field_tmpl" columnName="gui_position" newDataType="varchar(2000)"/>
+        <modifyDataType tableName="crm_custom_action" columnName="gui_position" newDataType="varchar(2000)"/>
+    </changeSet>
+    
+    <changeSet id="#3067_20171130" author="AndriusKarpavicius">
+        <addColumn tableName="crm_custom_field_tmpl_mcols">
+            <column name="column_use" type="int4" defaultValueNumeric="0"/>
+        </addColumn>
+        <sql>update crm_custom_field_tmpl_mcols set column_use=0 </sql>
+        <addNotNullConstraint tableName="crm_custom_field_tmpl_mcols" columnName="column_use" />        
+    </changeSet>
+    
     <changeSet id="#2792_20170919" author="AndriusKarpavicius">  
         <sql>update cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
         <sql>update cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>

@@ -25,9 +25,12 @@ public class ServiceToInstantiateDto implements Serializable {
 
     @XmlAttribute(required = true)
     private String code;
+    
+    @XmlAttribute
+    private String description;
 
     @XmlElement(required = true)
-    private BigDecimal quantity;
+    private BigDecimal quantity = BigDecimal.ONE;
 
     private Date subscriptionDate;
 
@@ -50,8 +53,6 @@ public class ServiceToInstantiateDto implements Serializable {
     }
 
     public BigDecimal getQuantity() {
-        if (quantity == null)
-            return new BigDecimal(0);
         return quantity;
     }
 
@@ -105,5 +106,13 @@ public class ServiceToInstantiateDto implements Serializable {
 	public void setRateUntilDate(Date rateUtilDate) {
 		this.rateUntilDate = rateUtilDate;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
     
 }

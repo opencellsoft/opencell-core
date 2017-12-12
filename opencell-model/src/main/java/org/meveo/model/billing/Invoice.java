@@ -68,8 +68,8 @@ import org.meveo.model.quote.Quote;
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
 @NamedQueries({ @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
-        @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL"),
-        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.billingRun.id=:billingRunId"),
+        @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
+        @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
@@ -619,7 +619,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         return pdfFilename;
     }
 
-    public void setPdfFilename(String pdfFilename) {
+    public void setPdfFilename(String pdfFilename) {	
         this.pdfFilename = pdfFilename;
     }
 
@@ -655,12 +655,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
      * 
      * @return XML file name without any subdirectories it might contain.
      */
-    public String getXmlFilenameOnly() {
-	
-	System.out.println("\n\n\n\n getXmlFilenameOnly \n\n\n\n");
-	System.out.println("\n\n\n\n xmlFilename="+xmlFilename+" \n\n\n\n");
-	
-
+    public String getXmlFilenameOnly() {	
         int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
         if (pos > -1) {
             return xmlFilename.substring(pos + 1);

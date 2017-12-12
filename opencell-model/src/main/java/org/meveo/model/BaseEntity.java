@@ -50,7 +50,7 @@ public abstract class BaseEntity implements Serializable, IEntity, IJPAVersioned
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
     @Column(name = "id")
-    @Access(AccessType.PROPERTY)
+    @Access(AccessType.PROPERTY) // Access is set to property so a call to getId() wont trigger hibernate proxy loading
     protected Long id;
 
     @Version

@@ -58,23 +58,23 @@ public class OfferTemplate extends ProductOffering {
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<OfferServiceTemplate>();
+	private List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>();
 
     @OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("id")
-    private List<OfferProductTemplate> offerProductTemplates = new ArrayList<OfferProductTemplate>();
+	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
 
     @Transient
-    public String prefix;
+	private String prefix;
 
     @Transient
-    public Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
+	private Map<ChargeTypeEnum, List<ServiceTemplate>> serviceTemplatesByChargeType;
 
     @Transient
-    public List<ProductTemplate> productTemplates;
+	private List<ProductTemplate> productTemplates;
 
     @Transient
     private String transientCode;

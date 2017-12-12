@@ -113,6 +113,11 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
+        }        
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
         }
 
         handleMissingParametersAndValidate(postData);
@@ -152,6 +157,8 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingAccount.setPhone(postData.getPhone());
+        
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
             if (discountPlan == null) {
@@ -218,6 +225,11 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -279,7 +291,7 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getTerminationDate())) {
             billingAccount.setTerminationDate(postData.getTerminationDate());
         }
-        if (!StringUtils.isBlank(postData.getElectronicBilling())) {
+        if (postData.getElectronicBilling() != null) {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
         if (!StringUtils.isBlank(postData.getEmail())) {
@@ -287,6 +299,9 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (!StringUtils.isBlank(postData.getPhone())) {
+            billingAccount.setPhone(postData.getPhone());
         }
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -326,7 +341,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = BillingAccount.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
@@ -340,6 +355,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return accountHierarchyApi.billingAccountToDto(billingAccount);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public void remove(String billingAccountCode) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");

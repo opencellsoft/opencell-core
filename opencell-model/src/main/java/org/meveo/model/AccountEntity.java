@@ -86,6 +86,9 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bam_id")
     protected BusinessAccountModel businessAccountModel;
+    
+    @Column(name = "job_title", length = 255)
+    private String jobTitle;
 
     public String getExternalRef1() {
         return externalRef1;
@@ -154,4 +157,12 @@ public abstract class AccountEntity extends BusinessCFEntity {
     public void setBusinessAccountModel(BusinessAccountModel businessAccountModel) {
         this.businessAccountModel = businessAccountModel;
     }
+
+	public String getJobTitle() {
+		return jobTitle;
+	}
+
+	public void setJobTitle(String jobTitle) {
+		this.jobTitle = jobTitle;
+	}
 }

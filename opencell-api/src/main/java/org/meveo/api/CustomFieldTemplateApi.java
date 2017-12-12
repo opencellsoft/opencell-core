@@ -76,7 +76,8 @@ public class CustomFieldTemplateApi extends BaseApi {
             }
         }
 
-        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
+        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY
+                && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || (postData.isVersionable() != null && postData.isVersionable()))) {
             throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
         }
         if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY
@@ -115,21 +116,11 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getDescription())) {
-            missingParameters.add("description");
-        }
         if (appliesTo == null && StringUtils.isBlank(postData.getAccountLevel()) && StringUtils.isBlank(postData.getAppliesTo())) {
             missingParameters.add("appliesTo");
         }
-        if (postData.getFieldType() == null) {
-            missingParameters.add("fieldType");
-        }
-        if (postData.getStorageType() == null) {
-            missingParameters.add("storageType");
-        }
-        if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && (postData.getMatrixColumns() == null || postData.getMatrixColumns().isEmpty())) {
-            missingParameters.add("matrixColumns");
-        } else if (postData.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+
+        if (postData.getMatrixColumns() != null) {
             for (CustomFieldMatrixColumnDto columnDto : postData.getMatrixColumns()) {
                 if (StringUtils.isBlank(columnDto.getCode())) {
                     missingParameters.add("matrixColumns/code");
@@ -141,13 +132,6 @@ public class CustomFieldTemplateApi extends BaseApi {
                     missingParameters.add("matrixColumns/keyType");
                 }
             }
-        }
-        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (postData.getStorageType() != CustomFieldStorageTypeEnum.LIST || postData.isVersionable())) {
-            throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
-        }
-        if (postData.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY
-                && (postData.getChildEntityFieldsForSummary() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
-            missingParameters.add("childEntityFieldsForSummary");
         }
 
         handleMissingParameters();
@@ -173,6 +157,14 @@ public class CustomFieldTemplateApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomFieldTemplate.class, postData.getCode());
         }
 
+        if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && postData.isVersionable() != null && postData.isVersionable()) {
+            throw new InvalidParameterException("Custom field of type CHILD_ENTITY only supports unversioned values and storage type of LIST");
+        }
+        if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY && (cft.getChildEntityFields() == null || postData.getChildEntityFieldsForSummary().isEmpty())) {
+            missingParameters.add("childEntityFieldsForSummary");
+        }
+
+        log.error("AKK in update CFT {} has {} translations", cft.getCode(), cft.getDescriptionI18n());
         cft = fromDTO(postData, appliesTo, cft);
 
         customFieldTemplateService.update(cft);
@@ -282,60 +274,93 @@ public class CustomFieldTemplateApi extends BaseApi {
         }
     }
 
-    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, String appliesTo, CustomFieldTemplate cftToUpdate) {
+    protected CustomFieldTemplate fromDTO(CustomFieldTemplateDto dto, String appliesTo, CustomFieldTemplate cftToUpdate) throws InvalidParameterException {
 
         // Set default values
         if (dto.getFieldType() == CustomFieldTypeEnum.STRING && dto.getMaxValue() == null) {
             dto.setMaxValue(CustomFieldTemplate.DEFAULT_MAX_LENGTH_STRING);
         }
 
-        CustomFieldTemplate cft = new CustomFieldTemplate();
-        if (cftToUpdate != null) {
-            cft = cftToUpdate;
-        }
-        cft.setCode(dto.getCode());
-        cft.setDescription(dto.getDescription());
-        if (appliesTo == null) {
+        CustomFieldTemplate cft = cftToUpdate;
+        if (cftToUpdate == null) {
+            cft = new CustomFieldTemplate();
+            cft.setCode(dto.getCode());
+            cft.setFieldType(dto.getFieldType());
+            cft.setStorageType(dto.getStorageType());
+            if (appliesTo == null) {
 
-            // Support for old API
-            if (dto.getAccountLevel() != null) {
-                appliesTo = dto.getAccountLevel();
-            } else {
-                appliesTo = dto.getAppliesTo();
+                // Support for old API
+                if (dto.getAccountLevel() != null) {
+                    appliesTo = dto.getAccountLevel();
+                } else {
+                    appliesTo = dto.getAppliesTo();
+                }
             }
+            cft.setAppliesTo(appliesTo);
         }
-        cft.setAppliesTo(appliesTo);
-        cft.setFieldType(dto.getFieldType());
-        cft.setDefaultValue(dto.getDefaultValue());
-        cft.setUseInheritedAsDefaultValue(dto.isUseInheritedAsDefaultValue());
-        cft.setStorageType(dto.getStorageType());
-        cft.setValueRequired(dto.isValueRequired());
-        cft.setVersionable(dto.isVersionable());
-        cft.setTriggerEndPeriodEvent(dto.isTriggerEndPeriodEvent());
-        cft.setEntityClazz(org.apache.commons.lang3.StringUtils.trimToNull(dto.getEntityClazz()));
-        cft.setAllowEdit(dto.isAllowEdit());
-        cft.setHideOnNew(dto.isHideOnNew());
-        cft.setMinValue(dto.getMinValue());
-        cft.setMaxValue(dto.getMaxValue());
-        // cft.setCacheValue(dto.isCacheValue());
-        cft.setRegExp(dto.getRegExp());
-        // cft.setCacheValueTimeperiod(dto.getCacheValueTimeperiod());
-        cft.setGuiPosition(dto.getGuiPosition());
-        cft.setApplicableOnEl(dto.getApplicableOnEl());
 
-        if (cft.getFieldType() == CustomFieldTypeEnum.LIST) {
+        if (dto.getDescription() != null) {
+            cft.setDescription(dto.getDescription());
+        }
+
+        if (dto.getDefaultValue() != null) {
+            cft.setDefaultValue(dto.getDefaultValue());
+        }
+        if (dto.isUseInheritedAsDefaultValue() != null) {
+            cft.setUseInheritedAsDefaultValue(dto.isUseInheritedAsDefaultValue());
+        }
+        if (dto.isValueRequired() != null) {
+            cft.setValueRequired(dto.isValueRequired());
+        }
+        if (dto.isVersionable() != null) {
+            cft.setVersionable(dto.isVersionable());
+        }
+        if (dto.isTriggerEndPeriodEvent() != null) {
+            cft.setTriggerEndPeriodEvent(dto.isTriggerEndPeriodEvent());
+        }
+        if (dto.getEntityClazz() != null) {
+            cft.setEntityClazz(org.apache.commons.lang3.StringUtils.trimToNull(dto.getEntityClazz()));
+        }
+        if (dto.isAllowEdit() != null) {
+            cft.setAllowEdit(dto.isAllowEdit());
+        }
+        if (dto.isHideOnNew() != null) {
+            cft.setHideOnNew(dto.isHideOnNew());
+        }
+        if (dto.getMinValue() != null) {
+            cft.setMinValue(dto.getMinValue());
+        }
+        if (dto.getMaxValue() != null) {
+            cft.setMaxValue(dto.getMaxValue());
+        }
+        if (dto.getRegExp() != null) {
+            cft.setRegExp(dto.getRegExp());
+        }
+        if (dto.getGuiPosition() != null) {
+            cft.setGuiPosition(dto.getGuiPosition());
+        }
+        if (dto.getApplicableOnEl() != null) {
+            cft.setApplicableOnEl(dto.getApplicableOnEl());
+        }
+
+        if (cft.getFieldType() == CustomFieldTypeEnum.LIST && dto.getListValues() != null) {
             cft.setListValues(dto.getListValues());
         }
 
-        cft.setMapKeyType(dto.getMapKeyType());
-        cft.setIndexType(dto.getIndexType());
-        cft.setTags(dto.getTags());
-
+        if (dto.getMapKeyType() != null) {
+            cft.setMapKeyType(dto.getMapKeyType());
+        }
+        if (dto.getIndexType() != null) {
+            cft.setIndexType(dto.getIndexType());
+        }
+        if (dto.getTags() != null) {
+            cft.setTags(dto.getTags());
+        }
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.MAP && cft.getMapKeyType() == null) {
             cft.setMapKeyType(CustomFieldMapKeyEnum.STRING);
         }
 
-        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX) {
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMatrixColumns() != null) {
             if (cft.getMatrixColumns() == null) {
                 cft.setMatrixColumns(new ArrayList<CustomFieldMatrixColumn>());
             } else {
@@ -350,25 +375,33 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (cft.getFieldType() == CustomFieldTypeEnum.CHILD_ENTITY) {
             cft.setStorageType(CustomFieldStorageTypeEnum.LIST);
             cft.setVersionable(false);
-            cft.setChildEntityFieldsAsList(dto.getChildEntityFieldsForSummary());
+            if (dto.getChildEntityFieldsForSummary() != null) {
+                cft.setChildEntityFieldsAsList(dto.getChildEntityFieldsForSummary());
+            }
         }
 
-        if (!StringUtils.isBlank(dto.getCalendar())) {
-            Calendar calendar = calendarService.findByCode(dto.getCalendar());
-            if (calendar != null) {
-                cft.setCalendar(calendar);
-            } else {
+        if (dto.getCalendar() != null) {
+            if (StringUtils.isBlank(dto.getCalendar())) {
                 cft.setCalendar(null);
+            } else {
+                Calendar calendar = calendarService.findByCode(dto.getCalendar());
+                if (calendar != null) {
+                    cft.setCalendar(calendar);
+                } else {
+                    cft.setCalendar(null);
+                }
             }
-        } else {
-            cft.setCalendar(null);
+        }
+
+        if (dto.getLanguageDescriptions() != null) {
+            cft.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), cft.getDescriptionI18n()));
         }
         return cft;
     }
 
     private List<String> getCustomizedEntitiesAppliesTo() {
         List<String> cftAppliesto = new ArrayList<String>();
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, true, null, null);
         for (CustomizedEntity customizedEntity : entities) {
             cftAppliesto.add(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), customizedEntity.getEntityCode()));
         }

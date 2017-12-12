@@ -30,7 +30,6 @@ import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.event.CounterPeriodEvent;
 import org.meveo.model.CounterValueChangeInfo;
-import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
@@ -41,7 +40,6 @@ import org.meveo.model.billing.ReservationStatus;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.Tax;
-import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
@@ -52,9 +50,7 @@ import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
-import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.Provider;
-import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
@@ -190,21 +186,13 @@ public class UsageRatingService implements Serializable {
         walletOperation.setParameter1(edr.getParameter1());
         walletOperation.setParameter2(edr.getParameter2());
         walletOperation.setParameter3(edr.getParameter3());
-        walletOperation.setInputQuantity(edr.getQuantity());
-        walletOperation.setOrderNumber(chargeInstance.getServiceInstance().getOrderNumber());
+        walletOperation.setOrderNumber(chargeInstance.getOrderNumber());
         walletOperation.setEdr(edr);
 
-        log.error("AKK URS line 197");
-        // FIXME: copy those info in chargeInstance instead of performing multiple queries
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
-        CustomerAccount customerAccount = billingAccount.getCustomerAccount();
-        Customer customer = customerAccount.getCustomer();
-        Seller seller = customer.getSeller();
 
-        TradingCountry country = billingAccount.getTradingCountry();
-
-        Long countryId = country.getId();
+        Long countryId = chargeInstance.getCountry().getId();
 
         log.error("AKK URS line 209");
         UsageChargeTemplate chargeTemplate = em.find(UsageChargeTemplate.class, cachedChargeInstance.getChargeTemplateId());
@@ -221,10 +209,9 @@ public class UsageRatingService implements Serializable {
         log.error("AKK URS line 222");
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
 
-        log.error("AKK URS line 224");
-        walletOperation.setSeller(seller);
+        walletOperation.setSeller(chargeInstance.getSeller());
 
-        TradingCurrency currency = customerAccount.getTradingCurrency();
+        TradingCurrency currency = chargeInstance.getCurrency();
         Tax tax = invoiceSubcategoryCountry.getTax();
         if (tax == null) {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, billingAccount, null);
@@ -249,7 +236,7 @@ public class UsageRatingService implements Serializable {
         String descTranslated = descriptionMap.get(translationKey);
         if (descTranslated == null) {
             descTranslated = (cachedChargeInstance.getDescription() == null) ? chargeTemplate.getDescriptionOrCode() : cachedChargeInstance.getDescription();
-            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().containsKey(languageCode)) {
+            if (chargeTemplate.getDescriptionI18n() != null && chargeTemplate.getDescriptionI18n().get(languageCode) != null) {
                 descTranslated = chargeTemplate.getDescriptionI18n().get(languageCode);
             }
             descriptionMap.put(translationKey, descTranslated);
@@ -257,10 +244,10 @@ public class UsageRatingService implements Serializable {
 
         log.error("AKK URS line 256");
         walletOperation.setDescription(descTranslated);
-        walletOperation.setQuantity(quantityToCharge);
 
-        walletOperation.setQuantity(
-            NumberUtils.getInChargeUnit(walletOperation.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
+        walletOperation.setInputQuantity(quantityToCharge);
+        walletOperation
+            .setQuantity(NumberUtils.getInChargeUnit(quantityToCharge, chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(), chargeTemplate.getRoundingMode()));
         walletOperation.setTaxPercent(isExonerated ? BigDecimal.ZERO : tax.getPercent());
         walletOperation.setStartDate(null);
         walletOperation.setEndDate(null);
@@ -496,6 +483,7 @@ public class UsageRatingService implements Serializable {
     private boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, CachedUsageChargeInstance charge) throws BusinessException {
         boolean stopEDRRating = false;
         BigDecimal deducedQuantity = null;
+
         if (charge.getCounterInstanceId() != null) {
             // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
             // If decremented partially or none - proceed with another charge
@@ -507,6 +495,12 @@ public class UsageRatingService implements Serializable {
             stopEDRRating = true;
         }
 
+        if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
+            log.warn("deduceQuantity is null");
+            return stopEDRRating;
+        }
+
+        //
         BigDecimal quantityToCharge = null;
         if (deducedQuantity == null) {
             quantityToCharge = edr.getQuantity();
@@ -515,24 +509,17 @@ public class UsageRatingService implements Serializable {
             quantityToCharge = deducedQuantity;
         }
 
-        if (deducedQuantity == null || deducedQuantity.compareTo(BigDecimal.ZERO) > 0) {
+        WalletReservation walletOperation = new WalletReservation();
 
-            WalletReservation walletOperation = new WalletReservation();
             rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, charge, false);
+
             walletOperation.setReservation(reservation);
             walletOperation.setStatus(WalletOperationStatusEnum.RESERVED);
             reservation.setAmountWithoutTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithoutTax()));
             reservation.setAmountWithTax(reservation.getAmountWithoutTax().add(walletOperation.getAmountWithTax()));
 
-            if (deducedQuantity != null) {
-                walletOperation.setQuantity(quantityToCharge);
-            }
-
             walletOperationService.chargeWalletOperation(walletOperation);
 
-        } else {
-            log.warn("deduceQuantity is null");
-        }
         return stopEDRRating;
     }
 

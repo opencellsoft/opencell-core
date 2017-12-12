@@ -384,7 +384,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplate.class, serviceTemplateCode);
         }
-        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsWithInheritedDTO(serviceTemplate, true));
+        ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsDTO(serviceTemplate, true));
         return result;
     }
     

@@ -25,7 +25,7 @@ public class PagingAndFiltering implements Serializable {
      * <li>"$FILTER". Value is a filter name</li>
      * <li>"type_class". Value is a full classname. Used to limit search results to a particular entity type in case of entity subclasses. Can be combined to condition "ne" to
      * exclude those classes.</li>
-     * <li>SQL. Additional sql to apply. Value is an array consisting of sql query and one or more paramaters to apply</li>
+     * <li>SQL. Additional sql to apply. Value is either a sql query or an array consisting of sql query and one or more parameters to apply</li>
      * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
      * </ul>
      * 
@@ -40,7 +40,7 @@ public class PagingAndFiltering implements Serializable {
      * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value<=field.value. Applies to date and number type fields.</li>
      * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value<=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
-     * <li>inList. Field value is in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
+     * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value of one item</li>
      * <li>minmaxRange. The value is in between two field values. TWO field names must be provided. Applies to date and number type fields.</li>
      * <li>minmaxOptionalRange. Similar to minmaxRange. The value is in between two field values with either them being optional. TWO fieldnames must be specified.</li>
      * <li>overlapOptionalRange. The value range is overlapping two field values with either them being optional. TWO fieldnames must be specified. Value must be an array of two
@@ -57,6 +57,17 @@ public class PagingAndFiltering implements Serializable {
      * <li>IS_NULL. Field value is null</li>
      * <li>IS_NOT_NULL. Field value is not null</li>
      * </ul>
+     * 
+     * 
+     * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
+     * same in case when quering a customer account: customer.code=aaa OR customer=aaa<br/>
+     * 
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
+     * sellers=code1,code2<br/><br/>
+     * 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists <br/>
+     * <br/>
+     * 
      * 
      * Examples:<br/>
      * <ul>
@@ -126,6 +137,16 @@ public class PagingAndFiltering implements Serializable {
 
     }
 
+    /**
+     * Paging and filtering criteria
+     * 
+     * @param encodedQuery Encoded query in format: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Fields to retrieve
+     * @param offset Retrieve from record number
+     * @param limit How many records to retrieve
+     * @param sortBy Sort by field name
+     * @param sortOrder Sort order
+     */
     public PagingAndFiltering(String encodedQuery, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
         this.filters = decodeQuery(encodedQuery);
@@ -136,6 +157,17 @@ public class PagingAndFiltering implements Serializable {
         this.sortOrder = sortOrder;
     }
 
+    /**
+     * Paging and filtering criteria
+     * 
+     * @param fullTextFilter Full text filter query
+     * @param filters Filtering criteria - a map of field names and values. See PersistenceService.getQuery for more details.
+     * @param fields Fields to retrieve
+     * @param offset Retrieve from record number
+     * @param limit How many records to retrieve
+     * @param sortBy Sort by field name
+     * @param sortOrder Sort order
+     */
     public PagingAndFiltering(String fullTextFilter, Map<String, Object> filters, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         super();
         this.fullTextFilter = fullTextFilter;

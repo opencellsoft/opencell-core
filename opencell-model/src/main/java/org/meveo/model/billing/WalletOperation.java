@@ -56,547 +56,541 @@ import org.meveo.model.rating.EDR;
 
 @Entity
 @Table(name = "billing_wallet_operation")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_wallet_operation_seq"), })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "operation_type", discriminatorType = DiscriminatorType.STRING)
 @DiscriminatorValue("W")
 @NamedQueries({
-	@NamedQuery(name = "WalletOperation.listToInvoice", 
-					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
-	@NamedQuery(name = "WalletOperation.listToInvoiceByUA", 
-					query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-									+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-									+ " AND o.wallet.userAccount=:userAccount"),							
-	@NamedQuery(name = "WalletOperation.listToInvoiceIds", 
-					query = "SELECT o.id FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
-							+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),							
-	@NamedQuery(name = "WalletOperation.getBalance", 
-			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
-					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
-	@NamedQuery(name = "WalletOperation.getMaxOpenId", 
-			query = "SELECT max(o.id) FROM WalletOperation o WHERE o.wallet=:wallet and "
-					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
-	@NamedQuery(name = "WalletOperation.getBalanceNoTaxUntilId", 
-			query = "SELECT sum(o.amountWithoutTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
-					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-					+ " AND o.id<=:maxId"),
-	@NamedQuery(name = "WalletOperation.getBalanceWithTaxUntilId", 
-					query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
-							+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-							+ " AND o.id<=:maxId"),
-	@NamedQuery(name = "WalletOperation.setTreatedStatusUntilId", 
-					query = "UPDATE WalletOperation o SET o.status= org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
-							+ " WHERE o.wallet=:wallet and "
-							+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"
-							+ " AND o.id<=:maxId"),
-	@NamedQuery(name = "WalletOperation.getReservedBalance", 
-			query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
-					+ "(o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN or "
-					+ "o.status=org.meveo.model.billing.WalletOperationStatusEnum.RESERVED) "),
-	@NamedQuery(name = "WalletOperation.setStatusToRerate",   
-					     query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
-					    		  + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
-					        + " and w.id IN :notBilledWalletIdList"),
-	@NamedQuery(name = "WalletOperation.listByChargeInstance", 
-	query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),							
-	@NamedQuery(name = "WalletOperation.deleteScheduled", 
-		query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
-				+ " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"),
-})
+        @NamedQuery(name = "WalletOperation.listToInvoice", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceByUA", query = "SELECT o FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.wallet.userAccount=:userAccount"),
+        @NamedQuery(name = "WalletOperation.listToInvoiceIds", query = "SELECT o.id FROM WalletOperation o WHERE (o.invoicingDate is NULL or o.invoicingDate<:invoicingDate ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+        @NamedQuery(name = "WalletOperation.getBalance", query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
+                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+        @NamedQuery(name = "WalletOperation.getMaxOpenId", query = "SELECT max(o.id) FROM WalletOperation o WHERE o.wallet=:wallet and "
+                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN"),
+        @NamedQuery(name = "WalletOperation.getBalanceNoTaxUntilId", query = "SELECT sum(o.amountWithoutTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
+                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.id<=:maxId"),
+        @NamedQuery(name = "WalletOperation.getBalanceWithTaxUntilId", query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet=:wallet and "
+                + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.id<=:maxId"),
+        @NamedQuery(name = "WalletOperation.setTreatedStatusUntilId", query = "UPDATE WalletOperation o SET o.status= org.meveo.model.billing.WalletOperationStatusEnum.TREATED "
+                + " WHERE o.wallet=:wallet and " + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN" + " AND o.id<=:maxId"),
+        @NamedQuery(name = "WalletOperation.getReservedBalance", query = "SELECT sum(o.amountWithTax)*-1 FROM WalletOperation o WHERE o.wallet.id=:walletId and "
+                + "(o.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN or " + "o.status=org.meveo.model.billing.WalletOperationStatusEnum.RESERVED) "),
+        @NamedQuery(name = "WalletOperation.setStatusToRerate", query = "update WalletOperation w set w.status=org.meveo.model.billing.WalletOperationStatusEnum.TO_RERATE"
+                + " where (w.status=org.meveo.model.billing.WalletOperationStatusEnum.OPEN OR w.status=org.meveo.model.billing.WalletOperationStatusEnum.TREATED)"
+                + " and w.id IN :notBilledWalletIdList"),
+        @NamedQuery(name = "WalletOperation.listByChargeInstance", query = "SELECT o FROM WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "),
+        @NamedQuery(name = "WalletOperation.deleteScheduled", query = "DELETE WalletOperation o WHERE (o.chargeInstance=:chargeInstance ) "
+                + " AND o.status=org.meveo.model.billing.WalletOperationStatusEnum.SCHEDULED"), })
 public class WalletOperation extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * The wallet on which the account operation is applied.
-	 */
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "wallet_id")
-	private WalletInstance wallet;
+    /**
+     * The wallet on which the account operation is applied.
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id")
+    private WalletInstance wallet;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "operation_date")
-	private Date operationDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "operation_date")
+    private Date operationDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "invoicing_date")
-	private Date invoicingDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "invoicing_date")
+    private Date invoicingDate;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "credit_debit_flag")
-	private OperationTypeEnum type;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "credit_debit_flag")
+    private OperationTypeEnum type;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "charge_instance_id",nullable=false)
-	@NotNull
-	private ChargeInstance chargeInstance;	
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "charge_instance_id", nullable = false)
+    @NotNull
+    private ChargeInstance chargeInstance;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "currency_id")
-	private Currency currency;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id")
+    private Currency currency;
 
-	@Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal taxPercent;
+    @Column(name = "tax_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal taxPercent;
 
-	@Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal unitAmountWithoutTax;
+    @Column(name = "unit_amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal unitAmountWithoutTax;
 
-	@Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal unitAmountWithTax;
+    @Column(name = "unit_amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal unitAmountWithTax;
 
-	@Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal unitAmountTax;
+    @Column(name = "unit_amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal unitAmountTax;
 
-	@Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal quantity;
+    @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal quantity;
 
-	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithoutTax;
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithoutTax;
 
-	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountWithTax;
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountWithTax;
 
-	@Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal amountTax;
+    @Column(name = "amount_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal amountTax;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "counter_id")
-	private CounterInstance counter;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_id")
+    private CounterInstance counter;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "aggregate_serv_id")
-	private ServiceInstance aggregatedServiceInstance;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "aggregate_serv_id")
+    private ServiceInstance aggregatedServiceInstance;
 
-	// @ManyToOne(fetch = FetchType.LAZY)
-	// @JoinColumn(name = "edr_id")
-	// private EDR usageEdr;
+    // @ManyToOne(fetch = FetchType.LAZY)
+    // @JoinColumn(name = "edr_id")
+    // private EDR usageEdr;
 
-	@Column(name = "parameter_1", length = 255)
-	@Size(max = 255)
-	private String parameter1;
-
-	@Column(name = "parameter_2", length = 255)
+    @Column(name = "parameter_1", length = 255)
     @Size(max = 255)
-	private String parameter2;
+    private String parameter1;
 
-	@Column(name = "parameter_3", length = 255)
+    @Column(name = "parameter_2", length = 255)
     @Size(max = 255)
-	private String parameter3;
+    private String parameter2;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "start_date")
-	private Date startDate;
+    @Column(name = "parameter_3", length = 255)
+    @Size(max = 255)
+    private String parameter3;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "end_date")
-	private Date endDate;
+    @Column(name = "parameter_extra", columnDefinition = "TEXT")
+    private String parameterExtra;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "subscription_date")
-	private Date subscriptionDate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "start_date")
+    private Date startDate;
 
-	@Column(name = "offer_code", length = 255)
-	@Size(max = 255, min = 1)
-	protected String offerCode;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "end_date")
+    private Date endDate;
 
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
-	private WalletOperationStatusEnum status;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "subscription_date")
+    private Date subscriptionDate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
+    @Column(name = "offer_code", length = 255)
+    @Size(max = 255, min = 1)
+    protected String offerCode;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "priceplan_id")
-	private PricePlanMatrix priceplan;
-	
-	@OneToOne(fetch = FetchType.LAZY,cascade={CascadeType.PERSIST})
-	private WalletOperation reratedWalletOperation;
-	
-	@Column(name = "input_unit_description", length = 20)
-	@Size(max = 20)
-	private String inputUnitDescription;
-	
-	@Column(name = "rating_unit_description", length = 20)
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private WalletOperationStatusEnum status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    private Seller seller;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "priceplan_id")
+    private PricePlanMatrix priceplan;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST })
+    private WalletOperation reratedWalletOperation;
+
+    @Column(name = "input_unit_description", length = 20)
     @Size(max = 20)
-	private String ratingUnitDescription;
-	
-	@Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
-	private BigDecimal inputQuantity;
+    private String inputUnitDescription;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "edr_id")
-	private EDR edr;
-	
+    @Column(name = "rating_unit_description", length = 20)
+    @Size(max = 20)
+    private String ratingUnitDescription;
+
+    @Column(name = "input_quantity", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
+    private BigDecimal inputQuantity;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "edr_id")
+    private EDR edr;
+
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-	
-	@Transient
-	private BillingAccount billingAccount;
 
-	@Transient
-	private InvoiceSubCategory invoiceSubCategory;
-	
-	@Transient
-	private BillingRun billingRun;
-	
-	@Transient
-	private OfferTemplate offerTemplate;
+    @Transient
+    private BillingAccount billingAccount;
 
-	public WalletInstance getWallet() {
-		return wallet;
-	}
+    @Transient
+    private InvoiceSubCategory invoiceSubCategory;
 
-	public void setWallet(WalletInstance wallet) {
-		this.wallet = wallet;
-	}
+    @Transient
+    private BillingRun billingRun;
 
-	public Date getOperationDate() {
-		return operationDate;
-	}
+    @Transient
+    private OfferTemplate offerTemplate;
 
-	public void setOperationDate(Date operationDate) {
-		this.operationDate = operationDate;
-	}
+    public WalletInstance getWallet() {
+        return wallet;
+    }
 
-	public Date getInvoicingDate() {
-		return invoicingDate;
-	}
+    public void setWallet(WalletInstance wallet) {
+        this.wallet = wallet;
+    }
 
-	public void setInvoicingDate(Date invoicingDate) {
-		this.invoicingDate = invoicingDate;
-	}
+    public Date getOperationDate() {
+        return operationDate;
+    }
 
-	public OperationTypeEnum getType() {
-		return type;
-	}
+    public void setOperationDate(Date operationDate) {
+        this.operationDate = operationDate;
+    }
 
-	public void setType(OperationTypeEnum type) {
-		this.type = type;
-	}
+    public Date getInvoicingDate() {
+        return invoicingDate;
+    }
 
-	public ChargeInstance getChargeInstance() {
-		return chargeInstance;
-	}
+    public void setInvoicingDate(Date invoicingDate) {
+        this.invoicingDate = invoicingDate;
+    }
 
-	public void setChargeInstance(ChargeInstance chargeInstance) {
-		this.chargeInstance = chargeInstance;
-	}
+    public OperationTypeEnum getType() {
+        return type;
+    }
 
-	public Currency getCurrency() {
-		return currency;
-	}
+    public void setType(OperationTypeEnum type) {
+        this.type = type;
+    }
 
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
-	}
+    public ChargeInstance getChargeInstance() {
+        return chargeInstance;
+    }
 
-	public BigDecimal getTaxPercent() {
-		return taxPercent;
-	}
+    public void setChargeInstance(ChargeInstance chargeInstance) {
+        this.chargeInstance = chargeInstance;
+    }
 
-	public void setTaxPercent(BigDecimal taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+    public Currency getCurrency() {
+        return currency;
+    }
 
-	public BigDecimal getUnitAmountWithoutTax() {
-		return unitAmountWithoutTax;
-	}
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
 
-	public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
-		this.unitAmountWithoutTax = unitAmountWithoutTax;
-	}
+    public BigDecimal getTaxPercent() {
+        return taxPercent;
+    }
 
-	public BigDecimal getUnitAmountWithTax() {
-		return unitAmountWithTax;
-	}
+    public void setTaxPercent(BigDecimal taxPercent) {
+        this.taxPercent = taxPercent;
+    }
 
-	public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
-		this.unitAmountWithTax = unitAmountWithTax;
-	}
+    public BigDecimal getUnitAmountWithoutTax() {
+        return unitAmountWithoutTax;
+    }
 
-	public BigDecimal getUnitAmountTax() {
-		return unitAmountTax;
-	}
+    public void setUnitAmountWithoutTax(BigDecimal unitAmountWithoutTax) {
+        this.unitAmountWithoutTax = unitAmountWithoutTax;
+    }
 
-	public void setUnitAmountTax(BigDecimal unitAmountTax) {
-		this.unitAmountTax = unitAmountTax;
-	}
+    public BigDecimal getUnitAmountWithTax() {
+        return unitAmountWithTax;
+    }
 
-	public BigDecimal getQuantity() {
-		return quantity;
-	}
+    public void setUnitAmountWithTax(BigDecimal unitAmountWithTax) {
+        this.unitAmountWithTax = unitAmountWithTax;
+    }
 
-	public void setQuantity(BigDecimal quantity) {
-		this.quantity = quantity;
-	}
+    public BigDecimal getUnitAmountTax() {
+        return unitAmountTax;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public void setUnitAmountTax(BigDecimal unitAmountTax) {
+        this.unitAmountTax = unitAmountTax;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public BigDecimal getQuantity() {
+        return quantity;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public void setQuantity(BigDecimal quantity) {
+        this.quantity = quantity;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public BigDecimal getAmountTax() {
-		return amountTax;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public void setAmountTax(BigDecimal amountTax) {
-		this.amountTax = amountTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public CounterInstance getCounter() {
-		return counter;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setCounter(CounterInstance counter) {
-		this.counter = counter;
-	}
+    public BigDecimal getAmountTax() {
+        return amountTax;
+    }
 
-	public ServiceInstance getAggregatedServiceInstance() {
-		return aggregatedServiceInstance;
-	}
+    public void setAmountTax(BigDecimal amountTax) {
+        this.amountTax = amountTax;
+    }
 
-	public void setAggregatedServiceInstance(ServiceInstance aggregatedServiceInstance) {
-		this.aggregatedServiceInstance = aggregatedServiceInstance;
-	}
+    public CounterInstance getCounter() {
+        return counter;
+    }
 
-	/*
-	 * public EDR getUsageEdr() { return usageEdr; }
-	 * 
-	 * public void setUsageEdr(EDR usageEdr) { this.usageEdr = usageEdr; }
-	 */
-	public String getParameter1() {
-		return parameter1;
-	}
+    public void setCounter(CounterInstance counter) {
+        this.counter = counter;
+    }
 
-	public void setParameter1(String parameter1) {
-		this.parameter1 = parameter1;
-	}
+    public ServiceInstance getAggregatedServiceInstance() {
+        return aggregatedServiceInstance;
+    }
 
-	public String getParameter2() {
-		return parameter2;
-	}
+    public void setAggregatedServiceInstance(ServiceInstance aggregatedServiceInstance) {
+        this.aggregatedServiceInstance = aggregatedServiceInstance;
+    }
 
-	public void setParameter2(String parameter2) {
-		this.parameter2 = parameter2;
-	}
+    /*
+     * public EDR getUsageEdr() { return usageEdr; }
+     * 
+     * public void setUsageEdr(EDR usageEdr) { this.usageEdr = usageEdr; }
+     */
+    public String getParameter1() {
+        return parameter1;
+    }
 
-	public String getParameter3() {
-		return parameter3;
-	}
+    public void setParameter1(String parameter1) {
+        this.parameter1 = parameter1;
+    }
 
-	public void setParameter3(String parameter3) {
-		this.parameter3 = parameter3;
-	}
+    public String getParameter2() {
+        return parameter2;
+    }
 
-	public Date getStartDate() {
-		return startDate;
-	}
+    public void setParameter2(String parameter2) {
+        this.parameter2 = parameter2;
+    }
 
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
+    public String getParameter3() {
+        return parameter3;
+    }
 
-	public Date getEndDate() {
-		return endDate;
-	}
+    public void setParameter3(String parameter3) {
+        this.parameter3 = parameter3;
+    }
+    
+    public String getParameterExtra() {
+        return parameterExtra;
+    }
+    
+    public void setParameterExtra(String parameterExtra) {
+        this.parameterExtra = parameterExtra;
+    }
 
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
+    public Date getStartDate() {
+        return startDate;
+    }
 
-	public WalletOperationStatusEnum getStatus() {
-		return status;
-	}
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
-	public void setStatus(WalletOperationStatusEnum status) {
-		this.status = status;
-	}
+    public Date getEndDate() {
+        return endDate;
+    }
 
-	public Date getSubscriptionDate() {
-		return subscriptionDate;
-	}
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
 
-	public void setSubscriptionDate(Date subscriptionDate) {
-		this.subscriptionDate = subscriptionDate;
-	}
+    public WalletOperationStatusEnum getStatus() {
+        return status;
+    }
 
-	public Seller getSeller() {
-		return seller;
-	}
+    public void setStatus(WalletOperationStatusEnum status) {
+        this.status = status;
+    }
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
+    public Date getSubscriptionDate() {
+        return subscriptionDate;
+    }
 
-	public String getOfferCode() {
-		return offerCode;
-	}
+    public void setSubscriptionDate(Date subscriptionDate) {
+        this.subscriptionDate = subscriptionDate;
+    }
 
-	public void setOfferCode(String offerCode) {
-		this.offerCode = offerCode;
-	}
+    public Seller getSeller() {
+        return seller;
+    }
 
-	public PricePlanMatrix getPriceplan() {
-		return priceplan;
-	}
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
-	public void setPriceplan(PricePlanMatrix priceplan) {
-		this.priceplan = priceplan;
-	}
+    public String getOfferCode() {
+        return offerCode;
+    }
 
-	public WalletOperation getReratedWalletOperation() {
-		return reratedWalletOperation;
-	}
+    public void setOfferCode(String offerCode) {
+        this.offerCode = offerCode;
+    }
 
-	public void setReratedWalletOperation(WalletOperation reratedWalletOperation) {
-		this.reratedWalletOperation = reratedWalletOperation;
-	}
+    public PricePlanMatrix getPriceplan() {
+        return priceplan;
+    }
+
+    public void setPriceplan(PricePlanMatrix priceplan) {
+        this.priceplan = priceplan;
+    }
+
+    public WalletOperation getReratedWalletOperation() {
+        return reratedWalletOperation;
+    }
+
+    public void setReratedWalletOperation(WalletOperation reratedWalletOperation) {
+        this.reratedWalletOperation = reratedWalletOperation;
+    }
 
     public EDR getEdr() {
-		return edr;
-	}
+        return edr;
+    }
 
-	public void setEdr(EDR edr) {
-		this.edr = edr;
-	}
+    public void setEdr(EDR edr) {
+        this.edr = edr;
+    }
 
-	@Transient
-	public WalletOperation getUnratedClone() {
-		WalletOperation result = new WalletOperation();
-		return fillUnratedClone(result);
-	}
-	
-	protected WalletOperation fillUnratedClone(WalletOperation result) {
-		result.setActive(true);
-		result.setAggregatedServiceInstance(aggregatedServiceInstance);
-		result.setAppendGeneratedCode(appendGeneratedCode);
-		result.setAuditable(getAuditable());
-		result.setBillingAccount(billingAccount);
-		result.setChargeInstance(chargeInstance);
-		result.setCode(code);
-		result.setCounter(counter);
-		result.setCurrency(currency);
-		result.setDescription(description);
-		result.setDisabled(false);
-		result.setEndDate(endDate);
-		result.setInvoiceSubCategory(invoiceSubCategory);
-		result.setInvoicingDate(invoicingDate);
-		result.setOfferCode(offerCode);
-		result.setOfferTemplate(offerTemplate);
-		result.setOperationDate(operationDate);
-		result.setParameter1(parameter1);
-		result.setParameter2(parameter2);
-		result.setParameter3(parameter3);
-		result.setOrderNumber(orderNumber);
-		result.setPriceplan(priceplan);
-		result.setQuantity(quantity);
-		result.setSeller(seller);
-		result.setStartDate(startDate);
-		result.setStatus(WalletOperationStatusEnum.OPEN);
-		result.setSubscriptionDate(subscriptionDate);
-		result.setTaxPercent(taxPercent);
-		result.setType(type);
-		result.setUnitAmountTax(unitAmountTax);
-		result.setUnitAmountWithoutTax(unitAmountWithoutTax);
-		result.setUnitAmountWithTax(unitAmountWithTax);
-		result.setRatingUnitDescription(ratingUnitDescription);
-		result.setInputQuantity(inputQuantity);
-		result.setInputUnitDescription(inputUnitDescription);
-		result.setWallet(wallet);
-		result.setEdr(edr);
-		return result;
-	}
+    @Transient
+    public WalletOperation getUnratedClone() {
+        WalletOperation result = new WalletOperation();
+        return fillUnratedClone(result);
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    protected WalletOperation fillUnratedClone(WalletOperation result) {
+        result.setActive(true);
+        result.setAggregatedServiceInstance(aggregatedServiceInstance);
+        result.setAppendGeneratedCode(appendGeneratedCode);
+        result.setAuditable(getAuditable());
+        result.setBillingAccount(billingAccount);
+        result.setChargeInstance(chargeInstance);
+        result.setCode(code);
+        result.setCounter(counter);
+        result.setCurrency(currency);
+        result.setDescription(description);
+        result.setDisabled(false);
+        result.setEndDate(endDate);
+        result.setInvoiceSubCategory(invoiceSubCategory);
+        result.setInvoicingDate(invoicingDate);
+        result.setOfferCode(offerCode);
+        result.setOfferTemplate(offerTemplate);
+        result.setOperationDate(operationDate);
+        result.setParameter1(parameter1);
+        result.setParameter2(parameter2);
+        result.setParameter3(parameter3);
+        result.setParameterExtra(parameterExtra);
+        result.setOrderNumber(orderNumber);
+        result.setPriceplan(priceplan);
+        result.setQuantity(quantity);
+        result.setSeller(seller);
+        result.setStartDate(startDate);
+        result.setStatus(WalletOperationStatusEnum.OPEN);
+        result.setSubscriptionDate(subscriptionDate);
+        result.setTaxPercent(taxPercent);
+        result.setType(type);
+        result.setUnitAmountTax(unitAmountTax);
+        result.setUnitAmountWithoutTax(unitAmountWithoutTax);
+        result.setUnitAmountWithTax(unitAmountWithTax);
+        result.setRatingUnitDescription(ratingUnitDescription);
+        result.setInputQuantity(inputQuantity);
+        result.setInputUnitDescription(inputUnitDescription);
+        result.setWallet(wallet);
+        result.setEdr(edr);
+        return result;
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public InvoiceSubCategory getInvoiceSubCategory() {
-		return invoiceSubCategory;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
-		this.invoiceSubCategory = invoiceSubCategory;
-	}
+    public InvoiceSubCategory getInvoiceSubCategory() {
+        return invoiceSubCategory;
+    }
 
-	public BillingRun getBillingRun() {
-		return billingRun;
-	}
+    public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+        this.invoiceSubCategory = invoiceSubCategory;
+    }
 
-	public void setBillingRun(BillingRun billingRun) {
-		this.billingRun = billingRun;
-	}
+    public BillingRun getBillingRun() {
+        return billingRun;
+    }
 
-	public OfferTemplate getOfferTemplate() {
-		return offerTemplate;
-	}
+    public void setBillingRun(BillingRun billingRun) {
+        this.billingRun = billingRun;
+    }
 
-	public void setOfferTemplate(OfferTemplate offerTemplate) {
-		this.offerTemplate = offerTemplate;
-	}
+    public OfferTemplate getOfferTemplate() {
+        return offerTemplate;
+    }
 
-	public String getInputUnitDescription() {
-		return inputUnitDescription;
-	}
+    public void setOfferTemplate(OfferTemplate offerTemplate) {
+        this.offerTemplate = offerTemplate;
+    }
 
-	public void setInputUnitDescription(String inputUnitDescription) {
-		this.inputUnitDescription = inputUnitDescription;
-	}
+    public String getInputUnitDescription() {
+        return inputUnitDescription;
+    }
 
-	public String getRatingUnitDescription() {
-		return ratingUnitDescription;
-	}
+    public void setInputUnitDescription(String inputUnitDescription) {
+        this.inputUnitDescription = inputUnitDescription;
+    }
 
-	public void setRatingUnitDescription(String ratingUnitDescription) {
-		this.ratingUnitDescription = ratingUnitDescription;
-	}
+    public String getRatingUnitDescription() {
+        return ratingUnitDescription;
+    }
 
-	public BigDecimal getInputQuantity() {
-		return inputQuantity;
-	}
+    public void setRatingUnitDescription(String ratingUnitDescription) {
+        this.ratingUnitDescription = ratingUnitDescription;
+    }
 
-	public void setInputQuantity(BigDecimal inputQuantity) {
-		this.inputQuantity = inputQuantity;
-	}
+    public BigDecimal getInputQuantity() {
+        return inputQuantity;
+    }
 
-	public String getOrderNumber() {
-		return orderNumber;
-	}
+    public void setInputQuantity(BigDecimal inputQuantity) {
+        this.inputQuantity = inputQuantity;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public String getOrderNumber() {
+        return orderNumber;
+    }
 
-	@Override
-	public String toString() {
-		return "WalletOperation [wallet=" + wallet + ", operationDate=" + operationDate + ", invoicingDate=" + invoicingDate + ", type=" + type + ", chargeInstance="
-				+ chargeInstance + ", currency=" + currency + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
-				+ unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
-				+ ", amountTax=" + amountTax + ", counter=" + counter + ", aggregatedServiceInstance=" + aggregatedServiceInstance + ", parameter1=" + parameter1 + ", parameter2="
-				+ parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", subscriptionDate=" + subscriptionDate + ", offerCode="
-				+ offerCode + ", status=" + status + ", seller=" + seller + ", priceplan=" + priceplan + ", reratedWalletOperation=" + reratedWalletOperation
-				+ ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", inputQuantity=" + inputQuantity + ", billingAccount="
-				+ billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate +", orderNumber="+ orderNumber +"]";
-	}
-	
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "WalletOperation [wallet=" + wallet + ", operationDate=" + operationDate + ", invoicingDate=" + invoicingDate + ", type=" + type + ", chargeInstance="
+                + chargeInstance + ", currency=" + currency + ", taxPercent=" + taxPercent + ", unitAmountWithoutTax=" + unitAmountWithoutTax + ", unitAmountWithTax="
+                + unitAmountWithTax + ", unitAmountTax=" + unitAmountTax + ", quantity=" + quantity + ", amountWithoutTax=" + amountWithoutTax + ", amountWithTax=" + amountWithTax
+                + ", amountTax=" + amountTax + ", counter=" + counter + ", aggregatedServiceInstance=" + aggregatedServiceInstance + ", parameter1=" + parameter1 + ", parameter2="
+                + parameter2 + ", parameter3=" + parameter3 + ", startDate=" + startDate + ", endDate=" + endDate + ", subscriptionDate=" + subscriptionDate + ", offerCode="
+                + offerCode + ", status=" + status + ", seller=" + seller + ", priceplan=" + priceplan + ", reratedWalletOperation=" + reratedWalletOperation
+                + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", inputQuantity=" + inputQuantity + ", billingAccount="
+                + billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate + ", orderNumber=" + orderNumber
+                + "]";
+    }
 
 }

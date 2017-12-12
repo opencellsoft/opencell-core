@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -74,7 +75,7 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     private BigDecimal discount;
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
     private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = new ArrayList<InvoiceSubcategoryCountry>();
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -70,7 +70,7 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Pay by card. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
+     * Pay by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
      * used (and marked as preferred)
      * 
      * @param customerAccount Customer account
@@ -83,7 +83,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws NoAllOperationUnmatchedException
      * @throws UnbalanceAmountException
      */
-    public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
+    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
@@ -218,7 +218,8 @@ public class PaymentService extends PersistenceService<Payment> {
         }
         return doPaymentResponseDto;
     }
-
+    
+  
     /**
      * 
      * @param customerAccount
@@ -252,5 +253,5 @@ public class PaymentService extends PersistenceService<Payment> {
         return payment.getId();
 
     }
-
+    
 }

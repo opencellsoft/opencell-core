@@ -513,8 +513,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.error("Error for BA {}", billingAccount.getCode(), e);
             if (billingRun != null) {
                 rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
-            }
+                //TODO if the invoice is created before the exception will not be rollbacked
+            }else {
             throw e;
+        }
         }
         return invoice;
     }
@@ -1130,6 +1132,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
         }
+        xmlFileName = StringUtils.normalizeFileName(xmlFileName);
         return xmlFileName;
     }
 
@@ -1203,6 +1206,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (!pdfFileName.toLowerCase().endsWith(".pdf")) {
             pdfFileName = pdfFileName + ".pdf";
         }
+        pdfFileName = StringUtils.normalizeFileName(pdfFileName);
         return pdfFileName;
     }
 

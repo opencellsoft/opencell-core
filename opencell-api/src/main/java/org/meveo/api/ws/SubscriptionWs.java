@@ -20,6 +20,7 @@ import org.meveo.api.dto.response.billing.GetDueDateDelayResponseDto;
 import org.meveo.api.dto.response.billing.GetSubscriptionResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsListResponseDto;
 import org.meveo.api.dto.response.billing.SubscriptionsResponseDto;
+import org.meveo.api.dto.response.catalog.GetListServiceInstanceResponseDto;
 import org.meveo.api.dto.response.catalog.GetServiceInstanceResponseDto;
 
 @WebService
@@ -72,8 +73,25 @@ public interface SubscriptionWs extends IBaseWs {
     @WebMethod
     GetSubscriptionResponseDto findSubscription(@WebParam(name = "subscriptionCode") String subscriptionCode);
 
+    /**
+     * Create or update subscription information ONLY. Does not include access, services nor products
+     * 
+     * @param subscriptionDto Subscription information
+     * @return Request processing status
+     */
     @WebMethod
-    ActionStatus createOrUpdateSubscription(@WebParam(name = "subscription") SubscriptionDto postData);
+    ActionStatus createOrUpdateSubscription(@WebParam(name = "subscription") SubscriptionDto subscriptionDto);
+
+    /**
+     * Create or update subscription information WITH access, services and products. Terminates subscription if termination date is provided on subscription. Terminates service if
+     * termination date is provided on service. Activates inactive service if service subscription date is provided. Instantiates service if no matching service found. Updates
+     * service if matching service found. Only those services, access and products passed will be afected.
+     * 
+     * @param subscriptionDto Subscription information
+     * @return Request processing status
+     */
+    @WebMethod
+    ActionStatus createOrUpdateSubscriptionPartial(@WebParam(name = "subscription") SubscriptionDto subscriptionDto);
 
     @WebMethod
     ActionStatus suspendSubscription(@WebParam(name = "suspendSubscriptionRequestDto") OperationSubscriptionRequestDto postData);
@@ -87,6 +105,12 @@ public interface SubscriptionWs extends IBaseWs {
     @WebMethod
     ActionStatus resumeServices(@WebParam(name = "operationServicesRequestDto") OperationServicesRequestDto postData);
 
+    /**
+     * Update existing services
+     * 
+     * @param postData Service information data
+     * @return Request processing status
+     */
     @WebMethod
     ActionStatus updateServices(@WebParam(name = "updateServicesRequest") UpdateServicesRequestDto postData);
 
@@ -103,8 +127,20 @@ public interface SubscriptionWs extends IBaseWs {
     GetDueDateDelayResponseDto findDueDateDelay(@WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "invoiceNumber") String invoiceNumber,
             @WebParam(name = "invoiceTypeCode") String invoiceTypeCode, @WebParam(name = "orderCode") String orderCode);
 
+    /**
+     * Find service instance
+     * 
+     * @param subscriptionCode Subscription code
+     * @param serviceInstanceId Service instance id
+     * @param serviceInstanceCode Service instance code
+     * @return Service instance
+     */
     @WebMethod
-    GetServiceInstanceResponseDto findServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
+    GetServiceInstanceResponseDto findServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode, @WebParam(name = "serviceInstanceId") Long serviceInstanceId,
+            @WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
+
+    @WebMethod
+    GetListServiceInstanceResponseDto listServiceInstance(@WebParam(name = "subscriptionCode") String subscriptionCode,
             @WebParam(name = "serviceInstanceCode") String serviceInstanceCode);
 
 }

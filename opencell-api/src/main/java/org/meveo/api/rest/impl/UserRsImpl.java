@@ -9,7 +9,10 @@ import javax.ws.rs.QueryParam;
 import org.meveo.api.UserApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.response.GetUserResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.UserRs;
 
@@ -67,7 +70,7 @@ public class UserRsImpl extends BaseRs implements UserRs {
         GetUserResponse result = new GetUserResponse();
 
         try {
-            result.setUser(userApi.find(username));
+            result.setUser(userApi.find(httpServletRequest, username));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -87,4 +90,71 @@ public class UserRsImpl extends BaseRs implements UserRs {
 
         return result;
     }
+    
+    public UsersDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        UsersDto result = new UsersDto();
+
+        try {
+            result = userApi.list(httpServletRequest, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public UsersDto listPost(PagingAndFiltering pagingAndFiltering) {
+
+        UsersDto result = new UsersDto();
+
+        try {
+            result = userApi.list(httpServletRequest, pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createExternalUser(UserDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            result.setMessage(userApi.createExternalUser(httpServletRequest, postData));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateExternalUser(UserDto postData) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.updateExternalUser(httpServletRequest, postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus deleteExternalUser(String username) {
+        ActionStatus result = new ActionStatus();
+
+        try {
+            userApi.deleteExternalUser(httpServletRequest, username);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
 }

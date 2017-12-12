@@ -19,12 +19,13 @@ public interface GatewayPaymentInterface {
      * @param cardHolderName Card holder's name on the card
      * @param expirayDate Expiry date of the card Format: MMYY ,Required for Create and Update token.
      * @param issueNumber Issue number on the card (if applicable)
-     * @param productPaymentId Payment product identifier (1 Visa | 2 American Express | 3 MasterCard)
+     * @param cardType ( Visa |  American Express | MasterCard)
      * @return
      * @throws BusinessException
      */
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            int productPaymentId, String countryCode) throws BusinessException;
+            CreditCardTypeEnum cardType, String countryCode) throws BusinessException;
+
 
     /**
      * 
@@ -58,5 +59,31 @@ public interface GatewayPaymentInterface {
      * @throws BusinessException
      */
     public void cancelPayment(String paymentID) throws BusinessException;
+
+
+    /**
+     * 
+     * @param paymentToken
+     * @param ctsAmount
+     * @param additionalParams
+     * @return
+     * @throws BusinessException
+     */
+    public PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+
+    /**
+     * 
+     * @param customerAccount
+     * @param ctsAmount
+     * @param cardNumber
+     * @param ownerName
+     * @param cvv
+     * @param expirayDate format MMyy
+     * @param cardType
+     * @return
+     * @throws BusinessException
+     */
+    public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+            CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
 
 }

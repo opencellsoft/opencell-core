@@ -36,6 +36,7 @@ import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
@@ -157,6 +158,34 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     }
 
+    public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException {
+        log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
+        return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+    }
+    
+    /**
+     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceDue(java.lang.Long, java.lang.String, java.util.Date)
+     */
+    public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
+        log.info("start customerAccountBalanceDue with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
+        return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), to);
+    }
+
+    public BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
+        log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
+        return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P);
+    }
+
+    public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
+        log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
+        return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
+    }    
+    
+    public BigDecimal customerAccountBalance(CustomerAccount customerAccount, Date to) throws BusinessException {
+        log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
+        return computeBalance(customerAccount, to, false, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+    }
+
     public BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceExigible  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
@@ -173,37 +202,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return computeBalance(customerAccount, to, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
-    public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, false, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
-    }
-
-    public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
-        return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
-    }
-
-    public BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException {
-        log.info("customerAccountBalanceDueWithoutLitigation  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
-        return computeBalance(customerAccount, to, false, false, MatchingStatusEnum.O, MatchingStatusEnum.P);
-    }
-
     /**
      * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceExigible(java.lang.Long, java.lang.String, java.util.Date)
      */
     public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("customerAccountBalanceExligible with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
         return customerAccountBalanceExigible(findCustomerAccount(customerAccountId, customerAccountCode), to);
-    }
-
-    /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceDue(java.lang.Long, java.lang.String, java.util.Date)
-     */
-    public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
-
-        log.info("start customerAccountBalanceDue with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
-
-        return customerAccountBalanceDue(findCustomerAccount(customerAccountId, customerAccountCode), to);
     }
 
     @MeveoAudit
@@ -476,5 +480,39 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             log.warn("Customer account {} has no preferred payment method", customerAccountId, e);
             return null;
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
+        long startDate = System.currentTimeMillis();
+        Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
+        query.setParameter("id", billingAccount.getId());
+        try {
+            List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
+            log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
+            return resultList;
+            
+        } catch (NoResultException e) {
+            log.warn("error while getting user account list by billing account",e);
+            return null;
+        }
+    
+    }
+    
+    public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to, boolean dunningExclusion) throws BusinessException {
+        BigDecimal result = new BigDecimal(0);
+        try {
+            result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
+            result = result == null ? new BigDecimal(0) : result;
+            ParamBean param = ParamBean.getInstance();
+            int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
+            balanceFlag = Math.negateExact(balanceFlag);
+            result = result.multiply(new BigDecimal(balanceFlag));
+
+        } catch (Exception e) {
+            throw new BusinessException("Internal error");
+        }
+
+        return result;
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.crm.custom.CustomFieldValues;
@@ -18,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * @author Andrius Karpavicius
  *
  */
+@Converter
 public class CustomFieldValuesConverter implements AttributeConverter<CustomFieldValues, String> {
 
     @Override

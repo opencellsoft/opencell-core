@@ -165,8 +165,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
     public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
-        refresh(counterInstance);
-        counterInstance = (CounterInstance) attach(counterInstance);
 
         CounterTemplate counterTemplate = counterInstance.getCounterTemplate();
 

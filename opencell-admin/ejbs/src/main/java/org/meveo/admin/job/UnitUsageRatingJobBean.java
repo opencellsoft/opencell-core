@@ -11,6 +11,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.InsufficientBalanceException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.rating.EDR;
@@ -40,13 +41,10 @@ public class UnitUsageRatingJobBean {
     @Rejected
     private Event<Serializable> rejectededEdrProducer;
 
-    @EJB
-    private UnitUsageRatingJobBean unitUsageRatingJobBean;
 
-    // @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
-    	long startDate = System.currentTimeMillis();
+        long startDate = System.currentTimeMillis();
         log.debug("Running with edrId={}", edrId);
         EDR edr = null;
         try {
@@ -56,36 +54,43 @@ public class UnitUsageRatingJobBean {
                 return;
             }
             usageRatingService.ratePostpaidUsage(edr);
-            
+
             log.debug("After ratePostpaidUsage:" + (System.currentTimeMillis() - startDate));
-            
+
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 edr = edrService.updateNoCheck(edr);
                 log.debug("After updateNoCheck:" + (System.currentTimeMillis() - startDate));
                 result.registerSucces();
                 log.debug("After registerSucces:" + (System.currentTimeMillis() - startDate));
             } else {
-                edr = edrService.updateNoCheck(edr);
-                log.debug("After updateNoCheck else:" + (System.currentTimeMillis() - startDate));
-                rejectededEdrProducer.fire(edr);
-                log.debug("After fire 2:" + (System.currentTimeMillis() - startDate));
-                result.registerError(edr.getId(), edr.getRejectReason());
-                result.addReport("EdrId : " + edr.getId() + " RejectReason : " + edr.getRejectReason());
+                throw new BusinessException(edr.getRejectReason());
             }
         } catch (BusinessException e) {
             if (!(e instanceof InsufficientBalanceException)) {
                 log.error("Failed to unit usage rate for {}", edrId, e);
             }
-            unitUsageRatingJobBean.registerFailedEdr(result, edr, e);
+            throw e;
         }
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void registerFailedEdr(JobExecutionResultImpl result, EDR edr, Exception e) throws BusinessException {
-
-        edr = edrService.updateNoCheck(edr);
+    public void registerFailedEdr(JobExecutionResultImpl result, Long edrId, Exception e) throws BusinessException {
+        EDR edr = edrService.findById(edrId);
+        edr.setStatus(EDRStatusEnum.REJECTED);
+        edr.setRejectReason(StringUtils.truncate(e.getMessage(), 255, true));
         rejectededEdrProducer.fire(edr);
-        result.registerError(edr.getId(), e != null ? e.getMessage() : edr.getRejectReason());
-        result.addReport("EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()));
+        result.registerError();
+        String aLine = "EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()) +"\n";
+        aLine += "eventDate:"+edr.getEventDate() +"\n";
+        aLine += "originBatch:"+edr.getOriginBatch() +"\n";
+        aLine += "originRecord:"+edr.getOriginRecord() +"\n";
+        aLine += "quantity:"+edr.getQuantity() +"\n";
+        aLine += "subscription:"+edr.getSubscription().getCode() +"\n";
+        aLine += "access:"+edr.getAccessCode() +"\n";
+        aLine += "parameter1:"+edr.getParameter1() +"\n";
+        aLine += "parameter2:"+edr.getParameter2() +"\n";
+        aLine += "parameter3:"+edr.getParameter3() +"\n";
+        aLine += "parameter4:"+edr.getParameter4() +"\n";
+        result.addReport(aLine);
     }
 }

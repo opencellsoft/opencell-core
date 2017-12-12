@@ -39,6 +39,8 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -189,6 +191,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getChannels().size();
         offerToDuplicate.getOfferProductTemplates().size();
         offerToDuplicate.getOfferTemplateCategories().size();
+        offerToDuplicate.getSellers().size();
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -235,6 +238,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         List<OfferTemplateCategory> offerTemplateCategories = offer.getOfferTemplateCategories();
         offer.setOfferTemplateCategories(new ArrayList<OfferTemplateCategory>());
 
+        List<Seller> sellers = offer.getSellers();
+        offer.setSellers(new ArrayList<>());
+
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
                 offer.getBusinessAccountModels().add(bam);
@@ -256,6 +262,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         if (offerTemplateCategories != null) {
             for (OfferTemplateCategory offerTemplateCategory : offerTemplateCategories) {
                 offer.getOfferTemplateCategories().add(offerTemplateCategory);
+            }
+        }
+
+        if (sellers != null) {
+            for (Seller seller : sellers) {
+                offer.getSellers().add(seller);
             }
         }
 
@@ -311,16 +323,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         return offer;
     }
     
-    public List<OfferTemplate> list(String code, Date validFrom, Date validTo) {
-    	return list(code, validFrom, validTo, null);
-    }
-    
-	public List<OfferTemplate> list(String code, Date validFrom, Date validTo,
-			LifeCycleStatusEnum lifeCycleStatusEnum) {
+    public List<OfferTemplate> list(String code, Date validFrom, Date validTo, LifeCycleStatusEnum lifeCycleStatusEnum) {
 		List<OfferTemplate> listOfferTemplates = null;
 
         if (StringUtils.isBlank(code) && validFrom == null && validTo == null && lifeCycleStatusEnum == null) {
             listOfferTemplates = list();
+        
         } else {
 
             Map<String, Object> filters = new HashMap<String, Object>();

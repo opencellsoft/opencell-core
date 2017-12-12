@@ -11,18 +11,19 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.payment.PaymentMethodDto;
-import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DunningLevelEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
+
 /**
  * Customer Account DTO
+ * 
  * @author anasseh
  *
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
-@FilterResults(property = "billingAccounts.billingAccount", entityClass = BillingAccount.class)
+// @FilterResults(propertyToFilter = "billingAccounts.billingAccount", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = BillingAccount.class) })
 public class CustomerAccountDto extends AccountDto {
 
     private static final long serialVersionUID = -137632696663739285L;
@@ -55,14 +56,29 @@ public class CustomerAccountDto extends AccountDto {
     @Deprecated
     private Date mandateDate;
 
+    /**
+     * balanceExigible (status=O, P; isDue=true; dunning=false) - creditBalance
+     */
     private BigDecimal balance = BigDecimal.ZERO;
+    /**
+     * exigibleWithoutLitigation; status=O, P; isDue=true; dunning=true
+     */
     private BigDecimal totalInvoiceBalance = BigDecimal.ZERO;
+    /**
+     * totalInvoiceBalance - creditBalance
+     */
+    private BigDecimal accountBalance = BigDecimal.ZERO;
+    /**
+     * Balance. status=O, P, I; isDue=false; dunning=false; category=CREDIT.
+     */
+    private BigDecimal creditBalance = BigDecimal.ZERO;
+
     // currently not use
     private Date terminationDate;
     private String dueDateDelayEL;
 
-    @XmlElementWrapper(name = "paymentMethods")  
-    @XmlElement(name="methodOfPayment")
+    @XmlElementWrapper(name = "paymentMethods")
+    @XmlElement(name = "methodOfPayment")
     private List<PaymentMethodDto> paymentMethods;
 
     private boolean excludedFromPayment;
@@ -79,15 +95,14 @@ public class CustomerAccountDto extends AccountDto {
     private BillingAccountsDto billingAccounts;
 
     public CustomerAccountDto() {
-	super();
+        super();
     }
 
     @Override
     public String toString() {
-	return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
-		+ ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
-		+ ",  balance=" + balance + ", terminationDate=" + terminationDate
-		+ ", billingAccounts=" + billingAccounts + "]";
+        return "CustomerAccountDto [customer=" + customer + ", currency=" + currency + ", language=" + language + ", status=" + status + ", creditCategory=" + creditCategory
+                + ", dateStatus=" + dateStatus + ", dateDunningLevel=" + dateDunningLevel + ", contactInformation=" + contactInformation + ", dunningLevel=" + dunningLevel
+                + ",  balance=" + balance + ", terminationDate=" + terminationDate + ", billingAccounts=" + billingAccounts + "]";
     }
 
     /**
@@ -354,5 +369,21 @@ public class CustomerAccountDto extends AccountDto {
      */
     public void setBillingAccounts(BillingAccountsDto billingAccounts) {
         this.billingAccounts = billingAccounts;
+    }
+
+    public BigDecimal getAccountBalance() {
+        return accountBalance;
+    }
+
+    public void setAccountBalance(BigDecimal accountBalance) {
+        this.accountBalance = accountBalance;
+    }
+
+    public BigDecimal getCreditBalance() {
+        return creditBalance;
+    }
+
+    public void setCreditBalance(BigDecimal creditBalance) {
+        this.creditBalance = creditBalance;
     }
 }

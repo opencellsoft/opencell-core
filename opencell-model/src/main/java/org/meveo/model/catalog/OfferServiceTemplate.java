@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +36,12 @@ import org.meveo.model.IEntity;
 @Table(name = "cat_offer_serv_templates")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "cat_offer_serv_templt_seq"), })
-public class OfferServiceTemplate implements IEntity {
+public class OfferServiceTemplate implements IEntity,Serializable {
+
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 3932032300922665293L;
 
     @Id
     @GeneratedValue(generator = "ID_GENERATOR", strategy = GenerationType.AUTO)
@@ -48,7 +54,7 @@ public class OfferServiceTemplate implements IEntity {
     @NotNull
     private OfferTemplate offerTemplate;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE }, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = { CascadeType.MERGE, CascadeType.REFRESH }, optional = false)
     @JoinColumn(name = "service_template_id")
     @NotNull
     private ServiceTemplate serviceTemplate;
@@ -183,4 +189,23 @@ public class OfferServiceTemplate implements IEntity {
         setValidity(otherOst.getValidity());
         setIncompatibleServices(otherOst.getIncompatibleServices());
     }
+    
+	public OfferServiceTemplate duplicate(OfferTemplate newOfferTemplate) {
+		OfferServiceTemplate newOst = new OfferServiceTemplate();
+		newOst.setIncompatibleServices(incompatibleServices);
+		newOst.setMandatory(mandatory);
+		newOst.setServiceTemplate(serviceTemplate);
+		newOst.setValidity(validity);
+		if (newOfferTemplate != null) {
+			newOst.setOfferTemplate(newOfferTemplate);
+		}
+		return newOst;
+	}
+
+	@Override
+	public String toString() {
+		return "OfferServiceTemplate [id=" + id + ", offerTemplate=" + offerTemplate + ", serviceTemplate="
+				+ serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices
+				+ ", validity=" + validity + "]";
+	}
 }

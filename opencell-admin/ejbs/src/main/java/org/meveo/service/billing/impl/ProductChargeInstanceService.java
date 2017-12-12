@@ -18,7 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +27,6 @@ import javax.ejb.Stateless;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.NumberUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.ProductChargeInstance;
 import org.meveo.model.billing.WalletOperation;
@@ -44,18 +42,16 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 	@EJB
 	private WalletOperationService walletOperationService;
 	
-
 	public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
 		ProductChargeInstance productChargeInstance = null;
 		try {
-			log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] {
-					"ProductChargeInstance", code, userAccountId });
+            log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] { "ProductChargeInstance", code, userAccountId });
 			QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
 			qb.addCriterion("c.code", "=", code, true);
 			qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
 			productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
-			log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.", new Object[] {
-					"ProductChargeInstance", code, userAccountId, productChargeInstance != null });
+            log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.",
+                new Object[] { "ProductChargeInstance", code, userAccountId, productChargeInstance != null });
 		} catch (NoResultException nre) {
 			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
 		} catch (Exception e) {
@@ -71,13 +67,10 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
 
         log.debug("Apply product charge. User account {}, subscription {}, offer {}, charge {}, quantity {}, date {}",
             productChargeInstance.getUserAccount() != null ? productChargeInstance.getUserAccount().getCode() : null,
-            productChargeInstance.getSubscription() != null ? productChargeInstance.getSubscription().getCode() : null, chargeTemplate.getCode(), productChargeInstance
-                .getQuantity(), productChargeInstance.getChargeDate());
+            productChargeInstance.getSubscription() != null ? productChargeInstance.getSubscription().getCode() : null, chargeTemplate.getCode(),
+            productChargeInstance.getQuantity(), productChargeInstance.getChargeDate());
 
-        BigDecimal inputQuantity = productChargeInstance.getQuantity();
-        BigDecimal quantity = NumberUtils.getInChargeUnit(productChargeInstance.getQuantity(), chargeTemplate.getUnitMultiplicator(), chargeTemplate.getUnitNbDecimal(),
-            chargeTemplate.getRoundingMode());
-        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, inputQuantity, quantity, isVirtual);
+        WalletOperation walletOperation = walletOperationService.rateProductApplication(productChargeInstance, isVirtual);
         if (!isVirtual) {
             walletOperations = walletOperationService.chargeWalletOperation(walletOperation);
         } else {

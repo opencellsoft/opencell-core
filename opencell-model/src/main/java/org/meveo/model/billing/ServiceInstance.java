@@ -34,9 +34,13 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostPersist;
+import javax.persistence.PostUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.StringUtils;
@@ -54,7 +58,8 @@ import org.meveo.model.catalog.ServiceTemplate;
 @CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")
 @Table(name = "billing_service_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_service_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_service_instance_seq"), })
 public class ServiceInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
@@ -116,16 +121,22 @@ public class ServiceInstance extends BusinessCFEntity {
     private SubscriptionTerminationReason subscriptionTerminationReason;
 
     @Column(name = "quantity", precision = NB_PRECISION, scale = NB_DECIMALS)
-    protected BigDecimal quantity = BigDecimal.ONE;
+    private BigDecimal quantity = BigDecimal.ONE;
+
+    /**
+     * Used to track if "quantity" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    private BigDecimal previousQuantity;
 
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-    
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
-	
+
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -247,23 +258,22 @@ public class ServiceInstance extends BusinessCFEntity {
     }
 
     public String getOrderNumber() {
-		return orderNumber;
-	}
+        return orderNumber;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	
-	public Date getRateUntilDate() {
-		return rateUntilDate;
-	}
+    public Date getRateUntilDate() {
+        return rateUntilDate;
+    }
 
-	public void setRateUntilDate(Date rateUntilDate) {
-		this.rateUntilDate = rateUntilDate;
-	}
+    public void setRateUntilDate(Date rateUntilDate) {
+        this.rateUntilDate = rateUntilDate;
+    }
 
-	public boolean equals(Object obj) {
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -283,6 +293,26 @@ public class ServiceInstance extends BusinessCFEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-        return new ICustomFieldEntity[]{serviceTemplate};
+        return new ICustomFieldEntity[] { serviceTemplate };
+    }
+
+    @PostLoad
+    @PostPersist
+    @PostUpdate
+    private void trackPreviousValues() {
+        previousQuantity = quantity;
+    }
+
+    /**
+     * Check if current and previous "quantity" field values match. Note: previous value is set to current value at postLoad, postPersist, postUpdate JPA events
+     * 
+     * @return True if current and previous "quantity" field values DO NOT match
+     */
+    public boolean isQuantityChanged() {
+        return quantity == null ? previousQuantity != null : previousQuantity == null ? true : quantity.compareTo(previousQuantity) != 0;
+    }
+
+    public BigDecimal getPreviousQuantity() {
+        return previousQuantity;
     }
 }

@@ -11,6 +11,8 @@
             <property name="hibernate.archive.autodetection" value="class" />
             <property name="hibernate.hbm2ddl.auto" value="validate" /> <!-- DB structure is managed by liquibase, not hibernate -->
             <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="false"></property>
+    		<property name="use_sql_comments" value="false"></property>
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
             <property name="hibernate.generate_statistics" value="false" />

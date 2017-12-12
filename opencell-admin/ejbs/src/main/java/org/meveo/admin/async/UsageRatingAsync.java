@@ -29,10 +29,14 @@ public class UsageRatingAsync {
     UnitUsageRatingJobBean unitUsageRatingJobBean;
 
     @Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) throws BusinessException {
         for (Long id : ids) {
-            unitUsageRatingJobBean.execute(result, id);
+            try {
+                unitUsageRatingJobBean.execute(result, id);
+            } catch (BusinessException be) {
+                unitUsageRatingJobBean.registerFailedEdr(result, id, be);
+            }
         }
         return new AsyncResult<String>("OK");
     }

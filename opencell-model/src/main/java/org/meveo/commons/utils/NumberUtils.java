@@ -53,6 +53,25 @@ public class NumberUtils {
         return value;
     }
 
+	public static BigDecimal subtract(BigDecimal minuend, BigDecimal subtrahend) {
+		if (minuend == null) {
+			return new BigDecimal(0);
+		}
+
+
+
+
+
+
+		if (subtrahend == null) {
+			return minuend;
+
+		}
+
+
+		return minuend.subtract(subtrahend);
+	}
+
     public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingModeEnum) {        
         if (unitMultiplicator == null){
             unitMultiplicator = BigDecimal.ONE;

@@ -204,8 +204,6 @@ public interface IPersistenceService<E extends IEntity> {
      */
     public void detach(E entity);
 
-    public E attach(E e);
-
     /**
      * Refresh entity with state from database.
      */

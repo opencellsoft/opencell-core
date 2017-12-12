@@ -65,7 +65,6 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.module.ModuleScriptService;
-import org.tmf.dsmapi.quote.ProductQuoteItem;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
@@ -317,40 +316,46 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         handleMissingParameters();
 
         MeveoModule meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
+        boolean installed = false;
         if (meveoModule == null) {
             create(moduleDto);
             meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
+            
         } else {
-
             if (!meveoModule.isDownloaded()) {
                 throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install",
                     "Module with the same code is being developped locally, can not overwrite it.");
             }
 
             if (meveoModule.isInstalled()) {
-                throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is already installed");
+                //throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is already installed");
+                installed = true;
+                
+            } else {
+                try {
+                    moduleDto = MeveoModuleService.moduleSourceToDto(meveoModule);
+                } catch (JAXBException e) {
+                    log.error("Failed to parse module {} source", meveoModule.getCode(), e);
+                    throw new BusinessException("Failed to parse module source", e);
+                }
+            }
+        }
+
+        if (!installed) {
+            if (meveoModule.getScript() != null) {
+                moduleScriptService.preInstallModule(meveoModule.getScript().getCode(), meveoModule);
             }
 
-            try {
-                moduleDto = MeveoModuleService.moduleSourceToDto(meveoModule);
-            } catch (JAXBException e) {
-                log.error("Failed to parse module {} source", meveoModule.getCode(), e);
-                throw new BusinessException("Failed to parse module source", e);
+            unpackAndInstallModuleItems(meveoModule, moduleDto);
+
+            meveoModule.setInstalled(true);
+            meveoModule = meveoModuleService.update(meveoModule);
+
+            if (meveoModule.getScript() != null) {
+                moduleScriptService.postInstallModule(meveoModule.getScript().getCode(), meveoModule);
             }
         }
-
-        if (meveoModule.getScript() != null) {
-            moduleScriptService.preInstallModule(meveoModule.getScript().getCode(), meveoModule);
-        }
-
-        unpackAndInstallModuleItems(meveoModule, moduleDto);
-
-        meveoModule.setInstalled(true);
-        meveoModule = meveoModuleService.update(meveoModule);
-
-        if (meveoModule.getScript() != null) {
-            moduleScriptService.postInstallModule(meveoModule.getScript().getCode(), meveoModule);
-        }
+        
         return meveoModule;
     }
 
@@ -749,7 +754,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void businessServiceModelToDto(BusinessServiceModel bsm, BusinessServiceModelDto dto) {
 
         if (bsm.getServiceTemplate() != null) {
-            dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsWithInheritedDTO(bsm.getServiceTemplate(), true)));
+            dto.setServiceTemplate(new ServiceTemplateDto(bsm.getServiceTemplate(), entityToDtoConverter.getCustomFieldsDTO(bsm.getServiceTemplate(), true)));
         }
         dto.setDuplicateService(bsm.isDuplicateService());
         dto.setDuplicatePricePlan(bsm.isDuplicatePricePlan());

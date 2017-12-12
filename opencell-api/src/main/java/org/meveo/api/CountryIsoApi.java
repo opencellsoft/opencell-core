@@ -20,7 +20,6 @@ import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.CurrencyService;
 import org.meveo.service.admin.impl.LanguageService;
 
-
 /**
  * @author Mounir HAMMAM
  **/
@@ -32,7 +31,7 @@ public class CountryIsoApi extends BaseApi {
 
     @Inject
     private CurrencyService currencyService;
-    
+
     @Inject
     private LanguageService languageService;
 
@@ -49,7 +48,7 @@ public class CountryIsoApi extends BaseApi {
         }
 
         handleMissingParameters();
-        
+
         if (countryService.findByCode(postData.getCountryCode()) != null) {
             throw new EntityAlreadyExistsException(Country.class, postData.getCountryCode());
         }
@@ -58,7 +57,7 @@ public class CountryIsoApi extends BaseApi {
         if (language == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getLanguageCode());
         }
-        
+
         Currency currency = currencyService.findByCode(postData.getCurrencyCode());
         if (currency == null) {
             throw new EntityDoesNotExistsException(Calendar.class, postData.getCurrencyCode());
@@ -66,10 +65,12 @@ public class CountryIsoApi extends BaseApi {
 
         Country country = new Country();
         country.setCountryCode(postData.getCountryCode());
-        country.setDescriptionEn(postData.getNameEn());
-        country.setDescriptionFr(postData.getNameFr());
+        country.setDescription(postData.getDescription());
+
         country.setLanguage(language);
         country.setCurrency(currency);
+
+        country.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
 
         countryService.create(country);
 
@@ -77,18 +78,9 @@ public class CountryIsoApi extends BaseApi {
 
     public void update(CountryIsoDto postData) throws MeveoApiException, BusinessException {
 
-    	 if (StringUtils.isBlank(postData.getCountryCode())) {
-             missingParameters.add("code");
-         }
-    	 if (StringUtils.isBlank(postData.getNameEn())) {
-             missingParameters.add("nameEn");
-         }
-         if (StringUtils.isBlank(postData.getLanguageCode())) {
-             missingParameters.add("languageCode");
-         }
-         if (StringUtils.isBlank(postData.getCurrencyCode())) {
-             missingParameters.add("currencyCode");
-         }
+        if (StringUtils.isBlank(postData.getCountryCode())) {
+            missingParameters.add("code");
+        }
 
         handleMissingParameters();
 
@@ -98,23 +90,32 @@ public class CountryIsoApi extends BaseApi {
             throw new EntityDoesNotExistsException(Country.class, postData.getCountryCode());
         }
 
-        Language language = languageService.findByCode(postData.getLanguageCode());
-        if (language == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getLanguageCode());
+        Language language = null;
+        if (!StringUtils.isBlank(postData.getLanguageCode())) {
+            language = languageService.findByCode(postData.getLanguageCode());
+            if (language == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getLanguageCode());
+            }
         }
-        
-        Currency currency = currencyService.findByCode(postData.getCurrencyCode());
-        if (currency == null) {
-            throw new EntityDoesNotExistsException(Calendar.class, postData.getCurrencyCode());
+        Currency currency = null;
+        if (!StringUtils.isBlank(postData.getCurrencyCode())) {
+            currency = currencyService.findByCode(postData.getCurrencyCode());
+            if (currency == null) {
+                throw new EntityDoesNotExistsException(Calendar.class, postData.getCurrencyCode());
+            }
         }
 
-        
-        country.setCountryCode(postData.getCountryCode());
-        country.setDescriptionEn(postData.getNameEn());
-        country.setDescriptionFr(postData.getNameFr());
-        country.setLanguage(language);
-        country.setCurrency(currency);
+        country.setDescription(postData.getDescription());
+        if (language != null) {
+            country.setLanguage(language);
+        }
+        if (currency != null) {
+            country.setCurrency(currency);
+        }
 
+        if (postData.getLanguageDescriptions() != null) {
+            country.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), country.getDescriptionI18n()));
+        }
         countryService.update(country);
     }
 
@@ -160,17 +161,17 @@ public class CountryIsoApi extends BaseApi {
             update(postData);
         }
     }
-    
-	public List<CountryIsoDto> list() {
-		List<CountryIsoDto> result = new ArrayList<>();
 
-		List<Country> countries = countryService.list();
-		if (countries != null) {
-			for (Country country : countries) {
-				result.add(new CountryIsoDto(country));
-			}
-		}
+    public List<CountryIsoDto> list() {
+        List<CountryIsoDto> result = new ArrayList<>();
 
-		return result;
-	}
+        List<Country> countries = countryService.list();
+        if (countries != null) {
+            for (Country country : countries) {
+                result.add(new CountryIsoDto(country));
+            }
+        }
+
+        return result;
+    }
 }

@@ -33,6 +33,10 @@ import org.meveo.service.base.PersistenceService;
 @Named
 public class CountryService extends PersistenceService<Country> {
 
+    /**
+     * @param countryCode country code
+     * @return found country
+     */
 	public Country findByCode(String countryCode) {
 	    
 		if (countryCode == null || countryCode.trim().length()==0) {
@@ -49,11 +53,14 @@ public class CountryService extends PersistenceService<Country> {
 		}
 	}
 
+    /**
+     * @param countryName countryName
+     * @return country
+     */
 	public Country findByName(String countryName) {				
 		QueryBuilder qb = new QueryBuilder(Country.class, "c");
 		qb.startOrClause();
-		qb.addCriterion("descriptionEn", "=", countryName, false);		
-		qb.addCriterion("descriptionFr", "=", countryName, false);
+        qb.addCriterion("description", "=", countryName, false);
 		qb.endOrClause();
 		try {
 			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
@@ -62,30 +69,16 @@ public class CountryService extends PersistenceService<Country> {
 		}	
 	}
 
+    /**
+     * @return list of country
+     * @see org.meveo.service.base.PersistenceService#list()
+     */
 	@SuppressWarnings("unchecked")
 	public List<Country> list() {
 		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-		queryBuilder.addOrderCriterion("a.descriptionEn", true);
+        queryBuilder.addOrderCriterion("a.description", true);
 		Query query = queryBuilder.getQuery(getEntityManager());
 		return query.getResultList();
 	}
-	//
-	//	public void create(Long userId, String countryCode, String name,
-	//			String currencyCode) {
-	//		User creator = userService.findById(userId);
-	//
-	//		Country c = new Country();
-	//
-	//		Auditable auditable = new Auditable();
-	//		auditable.setCreated(new Date());
-	//		auditable.setCreator(creator);
-	//
-	//		c.setAuditable(auditable);
-	//		c.setCountryCode(countryCode);
-	//		c.setDescriptionEn(name);
-	//		c.setCurrency(currencyService.findByCode(currencyCode));
-	//
-	//		create(c);
-	//	}
 
 }
