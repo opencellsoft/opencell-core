@@ -13,6 +13,7 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.BSMConfigurationDto;
 import org.meveo.api.dto.catalog.BomOfferDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
+import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
@@ -23,11 +24,13 @@ import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
+import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 
 @Stateless
@@ -41,6 +44,9 @@ public class BusinessOfferApi extends BaseApi {
 	
 	@Inject
 	private OfferTemplateService offerTemplateService;
+	
+	@Inject
+    private OfferTemplateCategoryService offerTemplateCategoryService;
 
     public Long createOfferFromBOM(BomOfferDto postData) throws MeveoApiException {
 
@@ -83,6 +89,18 @@ public class BusinessOfferApi extends BaseApi {
 			bomParams.setOfferDescription(postData.getDescription());
 			bomParams.setServiceCodes(postData.getServicesToActivate());
 			bomParams.setProductCodes(postData.getProductsToActivate());
+			bomParams.setLifeCycleStatusEnum(postData.getLifeCycleStatusEnum());
+			if(postData.getOfferTemplateCategories() != null) {
+			    List<OfferTemplateCategory> offerTemplateCategories = new ArrayList<OfferTemplateCategory>();
+			    for(OfferTemplateCategoryDto offerTemplateCategoryDto :  postData.getOfferTemplateCategories()) {
+			        OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(offerTemplateCategoryDto.getCode());
+	                if (offerTemplateCategory == null) {
+	                    throw new EntityDoesNotExistsException(OfferTemplateCategory.class, offerTemplateCategoryDto.getCode());
+	                } 
+	                offerTemplateCategories.add(offerTemplateCategory);
+			    }
+			    bomParams.setOfferTemplateCategories(offerTemplateCategories);
+			}			
 			newOfferTemplate = businessOfferModelService.createOfferFromBOM(bomParams);
 		} catch (BusinessException e) {
 			throw new MeveoApiException(e.getMessage());

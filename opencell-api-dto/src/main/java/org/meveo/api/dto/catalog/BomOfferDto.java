@@ -12,6 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 
 @XmlRootElement(name = "BomOffer")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -52,6 +53,12 @@ public class BomOfferDto extends BaseDto {
 	@XmlElementWrapper(name = "businessServiceModels")
 	@XmlElement(name = "businessServiceModel")
 	private List<BSMConfigurationDto> businessServiceModels;
+	
+	private LifeCycleStatusEnum lifeCycleStatusEnum;
+	
+	@XmlElementWrapper(name = "offerTemplateCategories")
+	@XmlElement(name = "offerTemplateCategory")
+	private List<OfferTemplateCategoryDto> offerTemplateCategories;
 
 	public String getBomCode() {
 		return bomCode;
@@ -93,13 +100,6 @@ public class BomOfferDto extends BaseDto {
 		this.customFields = customFields;
 	}
 
-	@Override
-	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description
-				+ ", customFields=" + customFields + ", prefix=" + prefix + ", servicesToActivate=" + servicesToActivate
-				+ ", productsToActivate=" + productsToActivate + "]";
-	}
-
 	public String getCode() {
 		return code;
 	}
@@ -132,4 +132,40 @@ public class BomOfferDto extends BaseDto {
 		this.businessServiceModels = businessServiceModels;
 	}
 
+    /**
+     * @return the lifeCycleStatusEnum
+     */
+    public LifeCycleStatusEnum getLifeCycleStatusEnum() {
+        return lifeCycleStatusEnum;
+    }
+
+    /**
+     * @param lifeCycleStatusEnum the lifeCycleStatusEnum to set
+     */
+    public void setLifeCycleStatusEnum(LifeCycleStatusEnum lifeCycleStatusEnum) {
+        this.lifeCycleStatusEnum = lifeCycleStatusEnum;
+    }
+
+    /**
+     * @return the offerTemplateCategories
+     */
+    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
+        return offerTemplateCategories;
+    }
+
+    /**
+     * @param offerTemplateCategories the offerTemplateCategories to set
+     */
+    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
+    }
+
+    @Override
+    public String toString() {
+        return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
+                + ", servicesToActivate=" + servicesToActivate + ", productsToActivate=" + productsToActivate + ", businessServiceModels=" + businessServiceModels
+                + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
+    }
+
+	
 }
