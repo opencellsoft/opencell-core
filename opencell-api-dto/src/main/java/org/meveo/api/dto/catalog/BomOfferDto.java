@@ -18,86 +18,146 @@ import org.meveo.model.catalog.LifeCycleStatusEnum;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BomOfferDto extends BaseDto {
 
-    private static final long serialVersionUID = 4557706201829891403L;
+	private static final long serialVersionUID = 4557706201829891403L;
 
-    @NotNull
-    @XmlAttribute(required = true)
-    private String bomCode;
+	@NotNull
+	@XmlAttribute(required = true)
+	private String bomCode;
+	
+	@NotNull
+	@XmlAttribute(required = true)
+	private String code;
+	
+	@NotNull
+	@XmlAttribute(required = true)
+	private String name;
 
-    @NotNull
-    @XmlAttribute(required = true)
-    private String code;
+	@XmlAttribute
+	private String description;
 
-    @NotNull
-    @XmlAttribute(required = true)
-    private String name;
+	@XmlElementWrapper(name = "parameters")
+	@XmlElement(name = "parameter")
+	private List<CustomFieldDto> customFields;
 
-    @XmlAttribute
-    private String description;
+	@Deprecated
+	private String prefix;
 
-    @XmlElementWrapper(name = "parameters")
-    @XmlElement(name = "parameter")
-    private List<CustomFieldDto> customFields;
+	@XmlElementWrapper(name = "servicesToActivate")
+	@XmlElement(name = "serviceToActivate")
+	private List<ServiceConfigurationDto> servicesToActivate;
+	
+	@XmlElementWrapper(name = "productsToActivate")
+	@XmlElement(name = "productToActivate")
+	private List<ServiceConfigurationDto> productsToActivate;
+	
+	@XmlElementWrapper(name = "businessServiceModels")
+	@XmlElement(name = "businessServiceModel")
+	private List<BSMConfigurationDto> businessServiceModels;
+	
+	private LifeCycleStatusEnum lifeCycleStatusEnum;
+	
+	@XmlElementWrapper(name = "offerTemplateCategories")
+	@XmlElement(name = "offerTemplateCategory")
+	private List<OfferTemplateCategoryDto> offerTemplateCategories;
 
-    @Deprecated
-    private String prefix;
+	public String getBomCode() {
+		return bomCode;
+	}
 
-    @XmlElementWrapper(name = "servicesToActivate")
-    @XmlElement(name = "serviceToActivate")
-    private List<ServiceConfigurationDto> servicesToActivate;
+	public void setBomCode(String bomCode) {
+		this.bomCode = bomCode;
+	}
 
-    @XmlElementWrapper(name = "productsToActivate")
-    @XmlElement(name = "productToActivate")
-    private List<ServiceConfigurationDto> productsToActivate;
+	public String getPrefix() {
+		return prefix;
+	}
 
-    @XmlElementWrapper(name = "businessServiceModels")
-    @XmlElement(name = "businessServiceModel")
-    private List<BSMConfigurationDto> businessServiceModels;
+	public void setPrefix(String prefix) {
+		this.prefix = prefix;
+	}
 
-    private LifeCycleStatusEnum lifeCycleStatusEnum;
+	public String getDescription() {
+		return description;
+	}
 
-    @XmlElementWrapper(name = "offerTemplateCategories")
-    @XmlElement(name = "offerTemplateCategory")
-    private List<OfferTemplateCategoryDto> offerTemplateCategories;
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-    public String getBomCode() {
-        return bomCode;
+	public List<ServiceConfigurationDto> getServicesToActivate() {
+		return servicesToActivate;
+	}
+
+	public void setServicesToActivate(List<ServiceConfigurationDto> servicesToActivate) {
+		this.servicesToActivate = servicesToActivate;
+	}
+
+	public List<CustomFieldDto> getCustomFields() {
+		return customFields;
+	}
+
+	public void setCustomFields(List<CustomFieldDto> customFields) {
+		this.customFields = customFields;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public List<ServiceConfigurationDto> getProductsToActivate() {
+		return productsToActivate;
+	}
+
+	public void setProductsToActivate(List<ServiceConfigurationDto> productsToActivate) {
+		this.productsToActivate = productsToActivate;
+	}
+
+	public List<BSMConfigurationDto> getBusinessServiceModels() {
+		return businessServiceModels;
+	}
+
+	public void setBusinessServiceModels(List<BSMConfigurationDto> businessServiceModels) {
+		this.businessServiceModels = businessServiceModels;
+	}
+
+    /**
+     * @return the lifeCycleStatusEnum
+     */
+    public LifeCycleStatusEnum getLifeCycleStatusEnum() {
+        return lifeCycleStatusEnum;
     }
 
-    public void setBomCode(String bomCode) {
-        this.bomCode = bomCode;
+    /**
+     * @param lifeCycleStatusEnum the lifeCycleStatusEnum to set
+     */
+    public void setLifeCycleStatusEnum(LifeCycleStatusEnum lifeCycleStatusEnum) {
+        this.lifeCycleStatusEnum = lifeCycleStatusEnum;
     }
 
-    public String getPrefix() {
-        return prefix;
+    /**
+     * @return the offerTemplateCategories
+     */
+    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
+        return offerTemplateCategories;
     }
 
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public List<ServiceConfigurationDto> getServicesToActivate() {
-        return servicesToActivate;
-    }
-
-    public void setServicesToActivate(List<ServiceConfigurationDto> servicesToActivate) {
-        this.servicesToActivate = servicesToActivate;
-    }
-
-    public List<CustomFieldDto> getCustomFields() {
-        return customFields;
-    }
-
-    public void setCustomFields(List<CustomFieldDto> customFields) {
-        this.customFields = customFields;
+    /**
+     * @param offerTemplateCategories the offerTemplateCategories to set
+     */
+    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
     }
 
     @Override
@@ -107,52 +167,5 @@ public class BomOfferDto extends BaseDto {
                 + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public List<ServiceConfigurationDto> getProductsToActivate() {
-        return productsToActivate;
-    }
-
-    public void setProductsToActivate(List<ServiceConfigurationDto> productsToActivate) {
-        this.productsToActivate = productsToActivate;
-    }
-
-    public List<BSMConfigurationDto> getBusinessServiceModels() {
-        return businessServiceModels;
-    }
-
-    public void setBusinessServiceModels(List<BSMConfigurationDto> businessServiceModels) {
-        this.businessServiceModels = businessServiceModels;
-    }
-
-    public LifeCycleStatusEnum getLifeCycleStatusEnum() {
-        return lifeCycleStatusEnum;
-    }
-
-    public void setLifeCycleStatusEnum(LifeCycleStatusEnum lifeCycleStatusEnum) {
-        this.lifeCycleStatusEnum = lifeCycleStatusEnum;
-    }
-
-    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
-        return offerTemplateCategories;
-    }
-
-    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
-        this.offerTemplateCategories = offerTemplateCategories;
-    }
-
+	
 }
