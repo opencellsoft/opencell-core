@@ -755,7 +755,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			entity = offerTemplateService.duplicate(offer, false);
 			// Preserve the offer template original code
 			entity.setCode(code);
-
+			// the new offer should be in design
+			entity.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
 			setObjectId(null);
 
 		} catch (BusinessException e) {

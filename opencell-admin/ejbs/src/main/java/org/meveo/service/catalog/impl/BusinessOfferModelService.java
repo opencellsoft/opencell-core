@@ -160,11 +160,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		if (bomParams.getBams() != null) {
 			newOfferTemplate.getBusinessAccountModels().addAll(bomParams.getBams());
 		}
-		newOfferTemplate.setActive(true);
+		newOfferTemplate.setActive(true);				
 		if (bomParams.getLifeCycleStatusEnum() != null) {
 		    newOfferTemplate.setLifeCycleStatus(bomParams.getLifeCycleStatusEnum());	
-		}else {
-		    newOfferTemplate.setLifeCycleStatus(bomOffer.getLifeCycleStatus());  
 		}
 		
         newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
