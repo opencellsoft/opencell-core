@@ -12,124 +12,147 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldDto;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 
 @XmlRootElement(name = "BomOffer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BomOfferDto extends BaseDto {
 
-	private static final long serialVersionUID = 4557706201829891403L;
+    private static final long serialVersionUID = 4557706201829891403L;
 
-	@NotNull
-	@XmlAttribute(required = true)
-	private String bomCode;
-	
-	@NotNull
-	@XmlAttribute(required = true)
-	private String code;
-	
-	@NotNull
-	@XmlAttribute(required = true)
-	private String name;
+    @NotNull
+    @XmlAttribute(required = true)
+    private String bomCode;
 
-	@XmlAttribute
-	private String description;
+    @NotNull
+    @XmlAttribute(required = true)
+    private String code;
 
-	@XmlElementWrapper(name = "parameters")
-	@XmlElement(name = "parameter")
-	private List<CustomFieldDto> customFields;
+    @NotNull
+    @XmlAttribute(required = true)
+    private String name;
 
-	@Deprecated
-	private String prefix;
+    @XmlAttribute
+    private String description;
 
-	@XmlElementWrapper(name = "servicesToActivate")
-	@XmlElement(name = "serviceToActivate")
-	private List<ServiceConfigurationDto> servicesToActivate;
-	
-	@XmlElementWrapper(name = "productsToActivate")
-	@XmlElement(name = "productToActivate")
-	private List<ServiceConfigurationDto> productsToActivate;
-	
-	@XmlElementWrapper(name = "businessServiceModels")
-	@XmlElement(name = "businessServiceModel")
-	private List<BSMConfigurationDto> businessServiceModels;
+    @XmlElementWrapper(name = "parameters")
+    @XmlElement(name = "parameter")
+    private List<CustomFieldDto> customFields;
 
-	public String getBomCode() {
-		return bomCode;
-	}
+    @Deprecated
+    private String prefix;
 
-	public void setBomCode(String bomCode) {
-		this.bomCode = bomCode;
-	}
+    @XmlElementWrapper(name = "servicesToActivate")
+    @XmlElement(name = "serviceToActivate")
+    private List<ServiceConfigurationDto> servicesToActivate;
 
-	public String getPrefix() {
-		return prefix;
-	}
+    @XmlElementWrapper(name = "productsToActivate")
+    @XmlElement(name = "productToActivate")
+    private List<ServiceConfigurationDto> productsToActivate;
 
-	public void setPrefix(String prefix) {
-		this.prefix = prefix;
-	}
+    @XmlElementWrapper(name = "businessServiceModels")
+    @XmlElement(name = "businessServiceModel")
+    private List<BSMConfigurationDto> businessServiceModels;
 
-	public String getDescription() {
-		return description;
-	}
+    private LifeCycleStatusEnum lifeCycleStatusEnum;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    @XmlElementWrapper(name = "offerTemplateCategories")
+    @XmlElement(name = "offerTemplateCategory")
+    private List<OfferTemplateCategoryDto> offerTemplateCategories;
 
-	public List<ServiceConfigurationDto> getServicesToActivate() {
-		return servicesToActivate;
-	}
+    public String getBomCode() {
+        return bomCode;
+    }
 
-	public void setServicesToActivate(List<ServiceConfigurationDto> servicesToActivate) {
-		this.servicesToActivate = servicesToActivate;
-	}
+    public void setBomCode(String bomCode) {
+        this.bomCode = bomCode;
+    }
 
-	public List<CustomFieldDto> getCustomFields() {
-		return customFields;
-	}
+    public String getPrefix() {
+        return prefix;
+    }
 
-	public void setCustomFields(List<CustomFieldDto> customFields) {
-		this.customFields = customFields;
-	}
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
 
-	@Override
-	public String toString() {
-		return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description
-				+ ", customFields=" + customFields + ", prefix=" + prefix + ", servicesToActivate=" + servicesToActivate
-				+ ", productsToActivate=" + productsToActivate + "]";
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public List<ServiceConfigurationDto> getServicesToActivate() {
+        return servicesToActivate;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setServicesToActivate(List<ServiceConfigurationDto> servicesToActivate) {
+        this.servicesToActivate = servicesToActivate;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public List<CustomFieldDto> getCustomFields() {
+        return customFields;
+    }
 
-	public List<ServiceConfigurationDto> getProductsToActivate() {
-		return productsToActivate;
-	}
+    public void setCustomFields(List<CustomFieldDto> customFields) {
+        this.customFields = customFields;
+    }
 
-	public void setProductsToActivate(List<ServiceConfigurationDto> productsToActivate) {
-		this.productsToActivate = productsToActivate;
-	}
+    @Override
+    public String toString() {
+        return "BomOfferDto [bomCode=" + bomCode + ", code=" + code + ", name=" + name + ", description=" + description + ", customFields=" + customFields + ", prefix=" + prefix
+                + ", servicesToActivate=" + servicesToActivate + ", productsToActivate=" + productsToActivate + ", businessServiceModels=" + businessServiceModels
+                + ", lifeCycleStatusEnum=" + lifeCycleStatusEnum + ", offerTemplateCategories=" + offerTemplateCategories + "]";
+    }
 
-	public List<BSMConfigurationDto> getBusinessServiceModels() {
-		return businessServiceModels;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setBusinessServiceModels(List<BSMConfigurationDto> businessServiceModels) {
-		this.businessServiceModels = businessServiceModels;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public List<ServiceConfigurationDto> getProductsToActivate() {
+        return productsToActivate;
+    }
+
+    public void setProductsToActivate(List<ServiceConfigurationDto> productsToActivate) {
+        this.productsToActivate = productsToActivate;
+    }
+
+    public List<BSMConfigurationDto> getBusinessServiceModels() {
+        return businessServiceModels;
+    }
+
+    public void setBusinessServiceModels(List<BSMConfigurationDto> businessServiceModels) {
+        this.businessServiceModels = businessServiceModels;
+    }
+
+    public LifeCycleStatusEnum getLifeCycleStatusEnum() {
+        return lifeCycleStatusEnum;
+    }
+
+    public void setLifeCycleStatusEnum(LifeCycleStatusEnum lifeCycleStatusEnum) {
+        this.lifeCycleStatusEnum = lifeCycleStatusEnum;
+    }
+
+    public List<OfferTemplateCategoryDto> getOfferTemplateCategories() {
+        return offerTemplateCategories;
+    }
+
+    public void setOfferTemplateCategories(List<OfferTemplateCategoryDto> offerTemplateCategories) {
+        this.offerTemplateCategories = offerTemplateCategories;
+    }
 
 }
