@@ -19,12 +19,19 @@
 package org.meveo.service.billing.impl;
 
 import javax.ejb.Stateless;
+import javax.ejb.TransactionAttribute;
+import javax.ejb.TransactionAttributeType;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.billing.RejectedBillingAccount;
 import org.meveo.service.base.PersistenceService;
 
 @Stateless
-public class RejectedBillingAccountService extends
-		PersistenceService<RejectedBillingAccount> {
-	
+public class RejectedBillingAccountService extends PersistenceService<RejectedBillingAccount> {
+
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void createInNewTransaction(RejectedBillingAccount entity) throws BusinessException {
+        super.create(entity);
+    }
+
 }
