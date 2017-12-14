@@ -517,17 +517,15 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 invoice.setOrders(orders);
             }
             Long endDate = System.currentTimeMillis();
-
-            log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
+          log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
                     + (endDate - startDate));
         } catch (BusinessException e) {
             log.error("Error for BA=" + billingAccount.getCode() + " : ", e);
             if (billingRun != null) {
                 RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
-                rejectedBillingAccountService.create(rejectedBA);    
-                //TODO if the invoice is created before the exception will not be rollbacked
+                rejectedBillingAccountService.createInNewTransaction(rejectedBA);    
             }else {
-        		throw e;
+        		    throw e;
             }
         }
         return invoice;

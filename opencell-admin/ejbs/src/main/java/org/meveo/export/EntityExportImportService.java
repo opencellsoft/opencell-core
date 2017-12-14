@@ -250,7 +250,7 @@ public class EntityExportImportService implements Serializable {
         // Create definitions dynamically for each class in model package.
         // Do not overwrite previously loaded definitions from configuration file.
         // Do not create definition if a definition for a parent class was found already
-        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
+        Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -1545,7 +1545,7 @@ public class EntityExportImportService implements Serializable {
     private void loadExportIdentifierMappings() {
         Map<Class<? extends IEntity>, String[]> exportIdMap = new HashMap<Class<? extends IEntity>, String[]>();
 
-        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
+        Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -1570,7 +1570,7 @@ public class EntityExportImportService implements Serializable {
     private void loadAtributesToOmit() {
         Map<String, Object[]> attributesToOmitLocal = new HashMap<String, Object[]>();
 
-        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
+        Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {
@@ -1619,7 +1619,7 @@ public class EntityExportImportService implements Serializable {
 
         Map<Class, List<Field>> nonCascadableFieldsLocal = new HashMap<Class, List<Field>>();
 
-        Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
+        Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
         for (Class clazz : classes) {

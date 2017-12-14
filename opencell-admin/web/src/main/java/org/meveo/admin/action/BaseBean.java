@@ -19,22 +19,21 @@
 package org.meveo.admin.action;
 
 import java.io.Serializable;
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.enterprise.context.Conversation;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ValueChangeEvent;
 import javax.inject.Inject;
-import javax.persistence.EntityExistsException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
@@ -373,8 +372,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         } catch (Exception e) {
             result = false;
         }
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.addCallbackParam("result", result);
+
+        RequestContext.getCurrentInstance().addCallbackParam("result", result);
         return null;
     }
 
@@ -518,65 +517,98 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
      * 
      * @param id Entity id to delete
+     * @throws BusinessException
      */
     @ActionMethod
-    public void delete(Long id) {
+    public void delete(Long id) throws BusinessException {
+
+        deleteInternal(id, null, true);
+    }
+
+    /**
+     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @param id Entity id to delete
+     * @param code Entity's code - just for display in error messages
+     * @param setOkMessages Shall success messages be set for display
+     * @throws BusinessException
+     */
+    private boolean deleteInternal(Long id, String code, boolean setOkMessages) throws BusinessException {
         try {
             log.info("Deleting entity {} with id = {}", clazz.getName(), id);
             getPersistenceService().remove(id);
 
-            messages.info(new BundleKey("messages", "delete.successful"));
-        } catch (Throwable t) {
-            if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-            } else {
-                log.info("unexpected exception when deleting!", t);
-                messages.error(new BundleKey("messages", "error.delete.unexpected"));
+            if (setOkMessages) {
+                messages.info(new BundleKey("messages", "delete.successful"));
             }
-        }
 
-        // initEntity();
+            return true;
+
+        } catch (Exception e) {
+            Throwable cause = e;
+            while (cause != null) {
+
+                if (cause instanceof org.hibernate.exception.ConstraintViolationException) {
+
+                    String referencedBy = findReferencedByEntities(clazz, id);
+                    log.info("Delete was unsuccessful because entity is used by other entities {}", referencedBy);
+
+                    if (referencedBy != null) {
+                        messages.error(new BundleKey("messages", "error.delete.entityUsedWDetails"), code == null ? "" : code, referencedBy);
+                    } else {
+                        messages.error(new BundleKey("messages", "error.delete.entityUsed"));
+                    }
+                    FacesContext.getCurrentInstance().validationFailed();
+                    return false;
+                }
+                cause = cause.getCause();
+            }
+
+            throw e;
+        }
     }
 
     @ActionMethod
-    public void delete() {
+    public void delete() throws BusinessException {
         delete((Long) getEntity().getId());
     }
 
     /**
      * Delete checked entities. Add error message to {@link statusMessages} if unsuccessful.
+     * 
+     * @throws Exception
      */
-    public void deleteMany() {
-        try {
-            if (selectedEntities != null && selectedEntities.size() > 0) {
-                Set<Long> idsToDelete = new HashSet<Long>();
-                StringBuilder idsString = new StringBuilder();
-                for (IEntity entity : selectedEntities) {
-                    idsToDelete.add((Long) entity.getId());
-                    idsString.append(entity.getId()).append(" ");
-                }
-                log.info("Deleting multiple entities {} with ids = {}", clazz.getName(), idsString.toString());
+    @ActionMethod
+    public void deleteMany() throws Exception {
 
-                getPersistenceService().remove(idsToDelete);
-                getPersistenceService().commit();
-                messages.info(new BundleKey("messages", "delete.entitities.successful"));
-            } else {
-                messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
-            }
-        } catch (Throwable t) {
-            if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-            } else {
-                log.info("unexpected exception when deleting!", t);
-                messages.error(new BundleKey("messages", "error.delete.unexpected"));
-            }
+        if (selectedEntities == null || selectedEntities.isEmpty()) {
+            messages.info(new BundleKey("messages", "delete.entitities.noSelection"));
+            return;
         }
 
-        // initEntity();
+        boolean allOk = true;
+        for (IEntity entity : selectedEntities) {
+            allOk = deleteInternal((Long) entity.getId(), entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : "", false) && allOk;
+        }
+
+        if (allOk) {
+            messages.info(new BundleKey("messages", "delete.entitities.successful"));
+        }
+    }
+
+    /**
+     * Delete current entity from detail page and redirect to a previous page. Used mostly for deletion in detail pages.
+     * 
+     * @return back() page if deleted success, if not, return a callback result to UI for validate
+     * @throws BusinessException
+     */
+    @ActionMethod
+    public String deleteWithBack() throws BusinessException {
+
+        if (this.deleteInternal((Long) getEntity().getId(), null, true)) {
+            return back();
+        }
+        return null;
     }
 
     /**
@@ -925,58 +957,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         return FacesContext.getCurrentInstance().getViewRoot().getLocale();
     }
 
-    /**
-     * delete current entity from list, return a callback result to UI for validate
-     */
-    public void deleteInlist() {
-        boolean result = true;
-        try {
-            this.delete();
-            getPersistenceService().commit();
-        } catch (Exception e) {
-            log.error("Failed to delete {}", entity, e);
-            result = false;
-        }
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.addCallbackParam("result", result);
-    }
-
-    /**
-     * delete current entity from detail page
-     * 
-     * @return back() page if deleted success, if not, return a callback result to UI for validate
-     */
-    public String deleteWithBack() {
-        boolean okFlag = true;
-        try {
-            this.delete();
-            getPersistenceService().commit();
-            return back();
-
-        } catch (Throwable t) {
-            okFlag = false;
-            messages.clear();
-            if (t.getCause() instanceof EntityExistsException) {
-                log.info("delete was unsuccessful because entity is used in the system {}", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-            } else if (t.getCause() instanceof javax.persistence.PersistenceException) {
-                log.info("delete was unsuccessful because entity is used in the system {}", t);
-                messages.error(new BundleKey("messages", "error.delete.entityUsed"));
-
-            } else {
-                log.info("unexpected exception when deleting {}", t);
-                messages.error(new BundleKey("messages", "error.delete.unexpected"));
-            }
-        }
-
-        RequestContext requestContext = RequestContext.getCurrentInstance();
-        requestContext.addCallbackParam("result", okFlag);
-
-        FacesContext.getCurrentInstance().validationFailed();
-        return null;
-    }
-
     public CSVExportOptions csvOptions() {
         ParamBean param = ParamBean.getInstance();
         String characterEncoding = param.getProperty("csv.characterEncoding", "iso-8859-1");
@@ -1192,5 +1172,61 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     public void setUploadedFile(UploadedFile uploadedFile) {
         this.uploadedFile = uploadedFile;
+    }
+
+    /**
+     * Find entities that reference a given class and ID
+     * 
+     * @param Entity class to reference
+     * @param id Record identifier
+     * @return A concatinated list of entities (humanized classnames and their codes) E.g. Customer Account: first ca, second ca, third ca; Customer: first customer, second
+     *         customer
+     */
+    @SuppressWarnings("rawtypes")
+    private String findReferencedByEntities(Class<T> entityClass, Long id) {
+
+        T referencedEntity = getPersistenceService().getEntityManager().getReference(entityClass, id);
+
+        int totalMatched = 0;
+        String matchedEntityInfo = null;
+        Map<Class, List<Field>> classesAndFields = ReflectionUtils.getClassesAndFieldsOfType(entityClass);
+
+        for (Entry<Class, List<Field>> classFieldInfo : classesAndFields.entrySet()) {
+
+            boolean isBusinessEntity = BusinessEntity.class.isAssignableFrom(classFieldInfo.getKey());
+
+            String sql = "select " + (isBusinessEntity ? "code" : "id") + " from " + classFieldInfo.getKey().getName() + " where ";
+            boolean fieldAddedToSql = false;
+            for (Field field : classFieldInfo.getValue()) {
+                // For now lets ignore list type fields
+                if (field.getType() == entityClass) {
+                    sql = sql + (fieldAddedToSql ? " or " : " ") + field.getName() + "=:id";
+                    fieldAddedToSql = true;
+                }
+            }
+
+            if (fieldAddedToSql) {
+
+                List entitiesMatched = getPersistenceService().getEntityManager().createQuery(sql).setParameter("id", referencedEntity).setMaxResults(10).getResultList();
+                if (!entitiesMatched.isEmpty()) {
+
+                    matchedEntityInfo = (matchedEntityInfo == null ? "" : matchedEntityInfo + "; ") + ReflectionUtils.getHumanClassName(classFieldInfo.getKey().getSimpleName())
+                            + ": ";
+                    boolean first = true;
+                    for (Object entityIdOrCode : entitiesMatched) {
+                        matchedEntityInfo += (first ? "" : ", ") + entityIdOrCode;
+                        first = false;
+                    }
+
+                    totalMatched += entitiesMatched.size();
+                }
+            }
+
+            if (totalMatched > 10) {
+                break;
+            }
+        }
+
+        return matchedEntityInfo;
     }
 }
