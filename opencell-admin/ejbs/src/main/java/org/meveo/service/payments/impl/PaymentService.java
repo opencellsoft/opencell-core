@@ -79,9 +79,9 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param createAO true if need to create account operation
      * @param matchingAO true if matching operation.
      * @return instance of PayByCardResponseDto
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws UnbalanceAmountException balance amount exception.
      */
     public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -164,7 +164,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @return instance of PayByCardResponseDto
      * @throws BusinessException business exception
      * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
-     * @throws UnbalanceAmountException balance ammount exception.
+     * @throws UnbalanceAmountException balance amount exception.
      */
     public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
             CreditCardTypeEnum cardType, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
