@@ -2109,6 +2109,12 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 		<redirect include-view-params="true" />
 	</navigation-case>
 	<navigation-case>
+		<from-outcome>mm_products</from-outcome>
+		<to-view-id>/pages/catalog/products/products.xhtml
+		</to-view-id>
+		<redirect include-view-params="true" />
+	</navigation-case>
+	<navigation-case>
 		<from-outcome>mm_productTemplateDetail</from-outcome>
 		<to-view-id>/pages/catalog/products/productTemplateDetail.xhtml
 		</to-view-id>

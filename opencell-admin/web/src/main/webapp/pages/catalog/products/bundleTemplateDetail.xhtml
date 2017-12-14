@@ -14,13 +14,13 @@
         <h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.catalog']}" disabled="true" styleClass="no-text-decoration" />
-                <p:menuitem value="#{messages['menu.productTemplates']}" outcome="mm_productTemplates" />
+                <p:menuitem value="#{messages['menu.productTemplates']}" outcome="mm_products" />
                 <p:menuitem value="#{messages['bundleTemplate.new']}" disabled="true" rendered="#{bundleTemplateBean.entity.transient}" />
                 <p:menuitem value="#{messages['bundleTemplate.editView']}" disabled="true" rendered="#{!bundleTemplateBean.entity.transient}" />
             </p:breadCrumb>
         </h:form>
 
-        <hftl:formPanel id="bundleForm" backingBean="#{bundleTemplateBean}" showFormButtons="true" showDeleteButton="false" formButtonsTopRight="true" backView="mm_productTemplates">
+        <hftl:formPanel id="bundleForm" backingBean="#{bundleTemplateBean}" showFormButtons="true" showDeleteButton="false" formButtonsTopRight="true" backView="mm_products">
             <ui:include src="productTemplateDetailCommon.xhtml">
                 <ui:param name="backingBean" value="#{bundleTemplateBean}" />
                 <ui:param name="mode" value="BUNDLE" />

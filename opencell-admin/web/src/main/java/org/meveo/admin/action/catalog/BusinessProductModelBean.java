@@ -8,10 +8,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.action.admin.module.GenericModuleBean;
+import org.meveo.api.dto.catalog.BusinessProductModelDto;
 import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.MeveoModuleItem;
+import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.catalog.impl.BusinessProductModelService;
 
@@ -52,5 +54,17 @@ public class BusinessProductModelBean extends GenericModuleBean<BusinessProductM
         }
 
         return result;
+    }
+    
+    public String getProductTemplateCodeFromModuleSource() {
+        try {
+            BusinessProductModelDto dto = (BusinessProductModelDto) MeveoModuleService.moduleSourceToDto(entity);
+            return dto.getProductTemplate().getCode();
+
+        } catch (Exception e) {
+            log.error("Failed to load module source {}", entity.getCode(), e);
+        }
+        
+        return null;
     }
 }
