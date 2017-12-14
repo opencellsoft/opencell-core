@@ -70,15 +70,15 @@ public class PaymentService extends PersistenceService<Payment> {
     }
 
     /**
-     * Pay by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment will be
-     * used (and marked as preferred)
+     * Pay by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
+     * will be used (and marked as preferred).
      * 
      * @param customerAccount Customer account
-     * @param ctsAmount Amount to mpau
-     * @param aoIdsToPay
-     * @param createAO
-     * @param matchingAO
-     * @return
+     * @param ctsAmount Amount to pay in cent
+     * @param aoIdsToPay list of account operations's id
+     * @param createAO true if need to create account operation
+     * @param matchingAO true if matching operation.
+     * @return instance of PayByCardResponseDto
      * @throws BusinessException
      * @throws NoAllOperationUnmatchedException
      * @throws UnbalanceAmountException
@@ -110,12 +110,11 @@ public class PaymentService extends PersistenceService<Payment> {
 
         CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        try{
-	         gatewayPaymentInterface = gatewayPaymentFactory
-	            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-        }catch (Exception e) {
-			throw new BusinessException(e.getMessage());
-		}
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
 
         PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
 
@@ -152,35 +151,34 @@ public class PaymentService extends PersistenceService<Payment> {
     /**
      * Pay by card. A new card payment type is registered if payment was successfull.
      * 
-     * @param customerAccount
-     * @param ctsAmount
-     * @param cardNumber
-     * @param ownerName
-     * @param cvv
-     * @param expiryDate
-     * @param cardType
-     * @param aoIdsToPay
-     * @param createAO
-     * @param matchingAO
-     * @return
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent.
+     * @param cardNumber card's number
+     * @param ownerName card's owner name
+     * @param cvv cvv number
+     * @param expiryDate expiry date
+     * @param cardType card type
+     * @param aoIdsToPay list of account operation's id
+     * @param createAO true if create account operation.
+     * @param matchingAO true if matching account operation.
+     * @return instance of PayByCardResponseDto
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws UnbalanceAmountException balance ammount exception.
      */
     public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
             CreditCardTypeEnum cardType, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-    	String coutryCode = null;//TODO : waiting #2830
-    	     	
+        String coutryCode = null;// TODO : waiting #2830
+
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        try{        
-	         gatewayPaymentInterface = gatewayPaymentFactory
-	            .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-        }catch (Exception e) {
-        	log.warn("Cant find payment gateway");
-		}
-        
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+        } catch (Exception e) {
+            log.warn("Cant find payment gateway");
+        }
+
         PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, coutryCode,
             null);
 
@@ -219,15 +217,15 @@ public class PaymentService extends PersistenceService<Payment> {
         }
         return doPaymentResponseDto;
     }
-    
-  
+
+
     /**
      * 
-     * @param customerAccount
-     * @param ctsAmount
-     * @param paymentID
-     * @return the AO id created
-     * @throws BusinessException
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent.
+     * @param doPaymentResponseDto payment responsse dto
+     * @return the AO id created 
+     * @throws BusinessException 
      */
     public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
@@ -254,5 +252,5 @@ public class PaymentService extends PersistenceService<Payment> {
         return payment.getId();
 
     }
-    
+
 }
