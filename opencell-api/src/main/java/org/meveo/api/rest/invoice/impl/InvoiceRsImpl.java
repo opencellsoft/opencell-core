@@ -57,7 +57,7 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false, false));
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -186,10 +186,10 @@ public class InvoiceRsImpl extends BaseRs implements InvoiceRs {
 
     @Override
     @Deprecated
-    public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode) {
+    public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") boolean includePdf) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, true));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, true, includePdf));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

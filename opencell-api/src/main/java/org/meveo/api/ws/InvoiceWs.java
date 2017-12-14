@@ -138,7 +138,7 @@ public interface InvoiceWs extends IBaseWs {
      */
     @WebMethod
     @Deprecated
-    public CustomerInvoicesResponse listPresentInAR(@WebParam(name = "customerAccountCode") String customerAccountCode);
+    public CustomerInvoicesResponse listPresentInAR(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "includePdf") boolean includePdf);
 
     @WebMethod
     public GenerateInvoiceResponseDto generateDraftInvoice(@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
