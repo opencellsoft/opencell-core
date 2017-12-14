@@ -22,22 +22,27 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.model.BusinessEntity;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +56,12 @@ import org.slf4j.LoggerFactory;
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    /**
+     * Mapping between an entity class and entity classes containing a field that that class
+     */
+    @SuppressWarnings("rawtypes")
+    private static Map<Class, Map<Class, List<Field>>> classReferences = new HashMap<>();
 
     /**
      * Creates instance from class name.
@@ -459,5 +470,51 @@ public class ReflectionUtils {
         } else {
             return FieldUtils.readField(obj, property, true);
         }
+    }
+
+    /**
+     * Get classes containing a given type field - can be either a single value or a list of values
+     * 
+     * @param fieldClass Field class
+     * @return A map of fields grouped by class
+     */
+    @SuppressWarnings("rawtypes")
+    public static Map<Class, List<Field>> getClassesAndFieldsOfType(Class fieldClass) {
+
+        if (classReferences.containsKey(fieldClass)) {
+            return classReferences.get(fieldClass);
+        }
+
+        Class superClass = fieldClass.getSuperclass();
+
+        Map<Class, List<Field>> matchedFields = new HashMap<>();
+
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends BusinessEntity>> classes = reflections.getSubTypesOf(BusinessEntity.class);
+
+        for (Class<? extends BusinessEntity> clazz : classes) {
+            if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
+                continue;
+            }
+            List<Field> fields = getAllFields(new ArrayList<Field>(), clazz);
+
+            for (Field field : fields) {
+
+                if (field.isAnnotationPresent(Transient.class)) {
+                    continue;
+                }
+
+                if (field.getType() == fieldClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == fieldClass) || (superClass != null
+                        && (field.getType() == superClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == superClass)))) {
+
+                    if (!matchedFields.containsKey(clazz)) {
+                        matchedFields.put(clazz, new ArrayList<>());
+                    }
+                    matchedFields.get(clazz).add(field);
+                }
+            }
+        }
+        classReferences.put(fieldClass, matchedFields);
+        return matchedFields;
     }
 }
