@@ -1403,8 +1403,7 @@
         <addNotNullConstraint tableName="billing_billing_account" columnName="trading_language_id" columnDataType="bigint"/>
         
     </changeSet>
-    
-    
+        
     <changeSet id="#2231_20171123" author="AndriusKarpavicius">    
         <addColumn tableName="cat_price_plan_matrix">
             <column name="wo_description_el" type="varchar(2000)"  />           
@@ -1431,6 +1430,11 @@
         </addColumn>
         <sql>update crm_custom_field_tmpl_mcols set column_use=0 </sql>
         <addNotNullConstraint tableName="crm_custom_field_tmpl_mcols" columnName="column_use" />        
+    </changeSet>
+    <changeSet id="#2814_20171123" author="AndriusKarpavicius">
+        <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_price_plan_matrix" constraintName="fk_pp_script" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
+
     </changeSet>
     
 </databaseChangeLog> 

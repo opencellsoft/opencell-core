@@ -288,16 +288,9 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     }
 
     @Override
-    public void deleteInlist() {
-        // accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
-        super.deleteInlist();
-    }
-
-    @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
         return null;
     }
-
 }

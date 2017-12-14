@@ -87,7 +87,7 @@ public class PaymentCardJobBean {
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
             while (subListCreator.isHasNext()) {
-                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO,operationCategory));
+                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, operationCategory));
 
                 if (subListCreator.isHasNext()) {
                     try {
