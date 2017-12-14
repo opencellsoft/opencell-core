@@ -1307,7 +1307,7 @@
         <addColumn tableName="adm_country">
             <column name="description_i18n" type="${type.json}" />
         </addColumn>
-           <sql>update adm_country set description_i18n = '{"FRA":"' || description_fr || '","ENG":"' || description_en || '"}'</sql>
+           <sql>update adm_country set description_i18n = concat( '{"FRA":"' , description_fr ,'","ENG":"' , description_en , '"}')</sql>
          <dropColumn tableName="adm_country" columnName="description_fr" /> 
          <renameColumn newColumnName="description"  oldColumnName="description_en" tableName="adm_country" columnDataType="varchar(100)"/>
      </changeSet>
@@ -1429,7 +1429,7 @@
             <column name="column_use" type="int4" defaultValueNumeric="0"/>
         </addColumn>
         <sql>update crm_custom_field_tmpl_mcols set column_use=0 </sql>
-        <addNotNullConstraint tableName="crm_custom_field_tmpl_mcols" columnName="column_use" />        
+        <addNotNullConstraint tableName="crm_custom_field_tmpl_mcols" columnName="column_use" columnDataType="int4" />        
     </changeSet>
     <changeSet id="#2814_20171123" author="AndriusKarpavicius">
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="cat_price_plan_matrix" constraintName="fk_pp_script" deferrable="false" initiallyDeferred="false"
