@@ -380,7 +380,7 @@ public class InvoiceApi extends BaseApi {
         return response;
     }
 
-    public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR) throws MeveoApiException, BusinessException {
+    public List<InvoiceDto> listByPresentInAR(String customerAccountCode, boolean isPresentInAR, boolean includePdf) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
             handleMissingParameters();
@@ -401,7 +401,7 @@ public class InvoiceApi extends BaseApi {
                 invoiceList = billingAccount.getInvoices();
             }
             for (Invoice invoice : invoiceList) {
-                InvoiceDto customerInvoiceDto = invoiceToDto(invoice, false, true);
+                InvoiceDto customerInvoiceDto = invoiceToDto(invoice, false, includePdf);
                 customerInvoiceDtos.add(customerInvoiceDto);
             }
         }

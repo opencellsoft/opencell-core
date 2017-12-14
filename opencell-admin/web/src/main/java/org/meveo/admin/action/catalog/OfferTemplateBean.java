@@ -413,7 +413,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			bomParams.setLongDescriptionI18n(entity.getLongDescriptionI18n());
 			bomParams.setOfferCfValue(offerCfValues);
 			
-			businessOfferModelService.createOfferFromBOM(bomParams);
+			businessOfferModelService.instantiateFromBOM(bomParams);
 
 			if (entity.getImagePath() != null) {
 				try {

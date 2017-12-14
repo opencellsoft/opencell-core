@@ -48,7 +48,7 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
 
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, false, false));
 
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());
@@ -169,10 +169,10 @@ public class InvoiceWsImpl extends BaseWs implements InvoiceWs {
 
     @Override
     @Deprecated
-    public CustomerInvoicesResponse listPresentInAR(String customerAccountCode) {
+    public CustomerInvoicesResponse listPresentInAR(String customerAccountCode, boolean includePdf) {
         CustomerInvoicesResponse result = new CustomerInvoicesResponse();
         try {
-            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, true));
+            result.setCustomerInvoiceDtoList(invoiceApi.listByPresentInAR(customerAccountCode, true, includePdf));
 
         } catch (Exception e) {
             super.processException(e, result.getActionStatus());

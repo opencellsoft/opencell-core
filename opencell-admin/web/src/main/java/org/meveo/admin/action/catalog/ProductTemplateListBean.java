@@ -16,6 +16,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.primefaces.model.LazyDataModel;
 
 @Named
 @ConversationScoped
@@ -123,5 +124,10 @@ public class ProductTemplateListBean extends ProductTemplateBean {
             searchCriteria.put(PersistenceService.SEARCH_ATTR_TYPE_CLASS, ProductTemplate.class);
         }
         return super.supplementSearchCriteria(searchCriteria);
+    }
+	
+	public LazyDataModel<ProductTemplate> getLazyDataModelNoBPM() {
+        filters.put("businessProductModel", PersistenceService.SEARCH_IS_NULL);
+        return getLazyDataModel(filters, listFiltered);
     }
 }

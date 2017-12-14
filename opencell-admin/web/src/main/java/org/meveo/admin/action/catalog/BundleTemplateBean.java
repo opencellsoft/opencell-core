@@ -125,7 +125,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
         String outcome = super.saveOrUpdate(killConversation);
 
         if (editMode != null && editMode.length() > 0) {
-            outcome = "mm_productTemplates";
+            outcome = "mm_products";
         }
 
         return outcome;

@@ -6,22 +6,41 @@
 	xmlns:p="http://primefaces.org/ui" template="/layout/template.xhtml">
 
 	<ui:define name="metadata">
-        <f:metadata>
-            <f:viewParam name="businessProductModelId" value="#{businessProductModelBean.objectId}" />
-        </f:metadata>
-    </ui:define>
+		<f:metadata>
+			<f:viewParam name="businessProductModelId"
+				value="#{businessProductModelBean.objectId}" />
+		</f:metadata>
+	</ui:define>
 
 	<ui:define name="body">
+		<hftl:entityPopup id="productTemplatePopup"
+			header="#{messages['productTemplate.title']}"
+			updateField=":moduleForm:productSelectId_entity"
+			selection="#{businessProductModelBean.entity.productTemplate}"
+			backingBean="#{productTemplateListBean}"
+			dataModel="#{productTemplateListBean.lazyDataModelNoBPM}"
+			width="1000" searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code"
+			searchField2Label="#{messages['businessEntity.description']}"
+			searchField2="description"
+			column1Label="#{messages['businessEntity.code']}" column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description">
+		</hftl:entityPopup>
+
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.catalog']}" disabled="true" />
 				<p:menuitem outcome="businessProductModels"
 					value="#{messages['menu.businessProductModels']}" />
-				<p:menuitem value="#{messages['commons.new']} #{messages['businessProductModel']}"
-					disabled="true" rendered="#{businessProductModelBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['commons.new']} #{messages['businessProductModel']}"
+					disabled="true"
+					rendered="#{businessProductModelBean.entity.transient}" />
 				<p:menuitem
 					value="#{messages['businessProductModel']} #{messages['commons.configuration']} - #{businessProductModelBean.entity.code}"
-					disabled="true" rendered="#{!businessProductModelBean.entity.transient}" />
+					disabled="true"
+					rendered="#{!businessProductModelBean.entity.transient}" />
 			</p:breadCrumb>
 		</h:form>
 
@@ -39,17 +58,17 @@
 			<hftl:formField label="#{messages['BusinessEntity.description']}"
 				field="description" useConverter="false" id="description" />
 
-			<hftl:formField id="offerSelectId"
-				label="#{messages['pricePlanMatrix.offerCode']}"
-				field="offerTemplate" valueLabelField="code" required="true"
-				popup="true" popupId="offerTemplatePopup"
+			<hftl:formField id="productSelectId"
+				label="#{messages['productTemplate.productCode']}"
+				field="productTemplate" valueLabelField="code" required="true"
+				popup="true" popupId="productTemplatePopup"
 				rendered="#{!businessProductModelBean.entity.downloaded}" />
 
 			<hftl:decorateFormField fieldId="offerId"
 				label="#{messages['pricePlanMatrix.offerCode']}" required="true"
 				rendered="#{businessProductModelBean.entity.downloaded}">
 				<h:outputText id="offerId"
-					value="#{businessProductModelBean.offerTemplateCodeFromModuleSource}"
+					value="#{businessProductModelBean.productTemplateCodeFromModuleSource}"
 					styleClass="field-value" />
 			</hftl:decorateFormField>
 
@@ -81,7 +100,8 @@
 
 			<ui:param name="buttons" value="true" />
 			<ui:define name="buttons">
-				<hf:formButtons backingBean="#{businessProductModelBean}" edit="true"
+				<hf:formButtons backingBean="#{businessProductModelBean}"
+					edit="true"
 					showEditButton="#{!businessProductModelBean.entity.downloaded}"
 					showEnableDisableButton="#{!businessProductModelBean.entity.downloaded}"
 					showDeleteButton="#{!businessProductModelBean.entity.downloaded}"
