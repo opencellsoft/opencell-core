@@ -26,13 +26,16 @@ import org.meveo.api.CustomFieldTemplateApi;
 import org.meveo.api.EntityCustomActionApi;
 import org.meveo.api.ScriptInstanceApi;
 import org.meveo.api.catalog.OfferTemplateApi;
+import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.catalog.ServiceTemplateApi;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.CustomFieldTemplateDto;
 import org.meveo.api.dto.EntityCustomActionDto;
 import org.meveo.api.dto.account.BusinessAccountModelDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessProductModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
+import org.meveo.api.dto.catalog.ProductTemplateDto;
 import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.exception.ActionForbiddenException;
@@ -49,8 +52,10 @@ import org.meveo.model.DatePeriod;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.VersionedEntity;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.OfferTemplate;
+import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -62,6 +67,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.MeveoModuleService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.module.ModuleScriptService;
@@ -102,6 +108,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
     @Inject
     private ModuleScriptService moduleScriptService;
+    
+    @Inject
+    private ProductTemplateApi productTemplateApi;
+    
+    @Inject
+    private ProductTemplateService productTemplateService;
 
     private static JAXBContext jaxbCxt;
 	static {
@@ -132,6 +144,10 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         } else if (moduleDto instanceof BusinessServiceModelDto && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null
                 || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
             missingParameters.add("serviceTemplate.code");
+            
+        } else if (moduleDto instanceof BusinessProductModelDto && (((BusinessProductModelDto) moduleDto).getProductTemplate() == null
+                || StringUtils.isBlank(((BusinessProductModelDto) moduleDto).getProductTemplate().getCode()))) {
+            missingParameters.add("productTemplate.code");
 
         } else if (moduleDto instanceof BusinessAccountModelDto && ((BusinessAccountModelDto) moduleDto).getHierarchyType() == null) {
             missingParameters.add("hierarchyType");
@@ -164,6 +180,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             meveoModule = new BusinessServiceModel();
         } else if (moduleDto instanceof BusinessAccountModelDto) {
             meveoModule = new BusinessAccountModel();
+        } else if (moduleDto instanceof BusinessProductModelDto) {
+            meveoModule = new BusinessProductModel();
         }
 
         parseModuleInfoOnlyFromDto(meveoModule, moduleDto);
@@ -432,6 +450,27 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         // nothing to do for now
     }
 
+    private void parseModuleInfoOnlyFromDtoBPM(BusinessProductModel bm, BusinessProductModelDto dto) {
+        // nothing to do for now
+    }
+    
+    private void unpackAndInstallBPMItems(BusinessProductModel businessModel, BusinessProductModelDto dto) throws MeveoApiException, BusinessException {
+        // Should create it or update productTemplate only if it has full information only
+        if (!dto.getProductTemplate().isCodeOnly()) {
+            productTemplateApi.createOrUpdate(dto.getProductTemplate());
+        }
+        ProductTemplate productTemplate = productTemplateService.findByCode(dto.getProductTemplate().getCode(), dto.getProductTemplate().getValidFrom(),
+            dto.getProductTemplate().getValidTo());
+        if (productTemplate == null) {
+            String datePattern = ParamBean.getInstance().getDateTimeFormat();
+            throw new EntityDoesNotExistsException(OfferTemplate.class,
+                dto.getProductTemplate().getCode() + " / " + DateUtils.formatDateWithPattern(dto.getProductTemplate().getValidFrom(), datePattern) + " / "
+                        + DateUtils.formatDateWithPattern(dto.getProductTemplate().getValidTo(), datePattern));
+        }
+
+        businessModel.setProductTemplate(productTemplate);
+    }
+
     public void parseModuleInfoOnlyFromDto(MeveoModule meveoModule, MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
         meveoModule.setCode(StringUtils.isBlank(moduleDto.getUpdatedCode()) ? moduleDto.getCode() : moduleDto.getUpdatedCode());
         meveoModule.setDescription(moduleDto.getDescription());
@@ -453,6 +492,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         } else if (moduleDto instanceof BusinessAccountModelDto) {
             parseModuleInfoOnlyFromDtoBAM((BusinessAccountModel) meveoModule, (BusinessAccountModelDto) moduleDto);
+        
+        } else if (moduleDto instanceof BusinessProductModelDto) {
+            parseModuleInfoOnlyFromDtoBPM((BusinessProductModel) meveoModule, (BusinessProductModelDto) moduleDto);
         }
 
         // Extract module script used for installation and module activation
@@ -504,6 +546,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                             moduleClazz = BusinessServiceModel.class;
                         } else if (dto instanceof BusinessAccountModelDto) {
                             moduleClazz = BusinessAccountModel.class;
+                        } else if (dto instanceof BusinessProductModelDto) {
+                            moduleClazz = BusinessProductModel.class;
                         }
                         meveoModule.addModuleItem(new MeveoModuleItem(((MeveoModuleDto) dto).getCode(), moduleClazz.getName(), null, null));
 
@@ -567,8 +611,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         } else if (moduleDto instanceof BusinessAccountModelDto) {
             unpackAndInstallBAMItems((BusinessAccountModel) meveoModule, (BusinessAccountModelDto) moduleDto);
+            
+        } else if (moduleDto instanceof BusinessProductModelDto) {
+            unpackAndInstallBPMItems((BusinessProductModel) meveoModule, (BusinessProductModelDto) moduleDto);
         }
-    }
+    }    
 
     private void writeModulePicture(String filename, byte[] fileData) {
         try {
@@ -657,6 +704,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             dtoClass = BusinessOfferModelDto.class;
         } else if (module instanceof BusinessAccountModel) {
             dtoClass = BusinessAccountModelDto.class;
+        } else if (module instanceof BusinessProductModel) {
+            dtoClass = BusinessProductModelDto.class;
         }
 
         MeveoModuleDto moduleDto = null;
@@ -726,9 +775,26 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         } else if (module instanceof BusinessAccountModel) {
             businessAccountModelToDto((BusinessAccountModel) module, (BusinessAccountModelDto) moduleDto);
+            
+        } else if (module instanceof BusinessProductModel) {
+            businessProductModelToDto((BusinessProductModel) module, (BusinessProductModelDto) moduleDto);
         }
 
         return moduleDto;
+    }
+    
+    /**
+     * Convert BusinessProductModel object to DTO representation
+     * 
+     * @param bpm BusinessProductModel object to convert
+     * @param dto BusinessProductModel object DTO representation (as result of base MeveoModule object conversion)
+     * @return BusinessProductModel object DTO representation
+     */
+    private void businessProductModelToDto(BusinessProductModel bpm, BusinessProductModelDto dto) {
+
+        if (bpm.getProductTemplate() != null) {
+            dto.setProductTemplate(new ProductTemplateDto(bpm.getProductTemplate(), entityToDtoConverter.getCustomFieldsDTO(bpm.getProductTemplate(), true), true));
+        }
     }
 
     /**

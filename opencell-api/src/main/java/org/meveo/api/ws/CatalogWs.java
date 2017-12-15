@@ -8,9 +8,11 @@ import javax.jws.WebService;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessProductModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
@@ -33,6 +35,7 @@ import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
+import org.meveo.api.dto.response.catalog.GetBusinessProductModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
@@ -263,6 +266,28 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     MeveoModuleDtosResponse listBusinessServiceModel();
+    
+    // bpm
+    @WebMethod
+    ActionStatus createBusinessProductModel(@WebParam(name = "businessProductModel") BusinessProductModelDto postData);
+
+    @WebMethod
+    ActionStatus updateBusinessProductModel(@WebParam(name = "businessProductModel") BusinessProductModelDto postData);
+
+    @WebMethod
+    GetBusinessProductModelResponseDto findBusinessProductModel(@WebParam(name = "businessProductModelCode") String businessProductModelCode);
+
+    @WebMethod
+    ActionStatus removeBusinessProductModel(@WebParam(name = "businessProductModelCode") String businessProductModelCode);
+
+    @WebMethod
+    ActionStatus createOrUpdateBusinessProductModel(@WebParam(name = "businessProductModel") BusinessProductModelDto postData);
+
+    @WebMethod
+    ActionStatus installBusinessProductModel(@WebParam(name = "businessProductModel") BusinessProductModelDto postData);
+
+    @WebMethod
+    MeveoModuleDtosResponse listBusinessProductModel();
 
     // bom offer
 
@@ -273,6 +298,16 @@ public interface CatalogWs extends IBaseWs {
     
     @WebMethod
     ActionStatus createServiceFromBSM(@WebParam(name = "bsmService") BsmServiceDto postData);
+    
+    // bpm
+    
+    /**
+     * Instantiates a product from a given BPM.
+     * @param postData
+     * @return
+     */
+    @WebMethod
+    ActionStatus createProductFromBPM(@WebParam(name = "bpm") BpmProductDto postData);
 
     // discount Plan
     @WebMethod

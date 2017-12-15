@@ -10,8 +10,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.ElementNotFoundException;
-import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.service.script.Script;
@@ -29,7 +27,7 @@ public class ProductModelScriptService implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void beforeCreate(List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
         ProductScriptInterface scriptInterface = (ProductScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         if (customFields != null) {
@@ -37,11 +35,10 @@ public class ProductModelScriptService implements Serializable {
         } else {
             scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, new ArrayList<CustomFieldDto>());
         }
-        scriptInterface.beforeCreateProductFromPMS(scriptContext);
+        scriptInterface.beforeCreate(scriptContext);
     }
 
-    public void afterCreateServiceFromBSM(ProductTemplate entity, List<CustomFieldDto> customFields, String scriptCode)
-            throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public void afterCreate(ProductTemplate entity, List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
         ProductScriptInterface scriptInterface = (ProductScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
@@ -50,6 +47,6 @@ public class ProductModelScriptService implements Serializable {
         } else {
             scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, new ArrayList<CustomFieldDto>());
         }
-        scriptInterface.afterCreateProductFromPMS(scriptContext);
+        scriptInterface.afterCreate(scriptContext);
     }
 }

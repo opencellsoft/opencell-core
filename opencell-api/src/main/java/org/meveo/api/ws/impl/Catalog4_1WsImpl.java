@@ -775,7 +775,7 @@ public class Catalog4_1WsImpl extends BaseWs implements Catalog4_1Ws {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            businessOfferApi.createOfferFromBOM(postData);
+            businessOfferApi.instantiateBOM(postData);
         } catch (Exception e) {
             processException(e, result);
         }

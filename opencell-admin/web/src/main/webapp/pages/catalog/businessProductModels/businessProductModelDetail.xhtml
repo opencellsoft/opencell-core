@@ -49,7 +49,7 @@
 		</ui:include>
 
 		<hftl:formPanel formId="moduleForm"
-			label="#{messages['businessOffer.title']}"
+			label="#{messages['businessProductModel.title']}"
 			backingBean="#{businessProductModelBean}" showFormButtons="false"
 			edit="#{!businessProductModelBean.entity.downloaded}">
 
@@ -65,7 +65,7 @@
 				rendered="#{!businessProductModelBean.entity.downloaded}" />
 
 			<hftl:decorateFormField fieldId="offerId"
-				label="#{messages['pricePlanMatrix.offerCode']}" required="true"
+				label="#{messages['productTemplate.productCode']}" required="true"
 				rendered="#{businessProductModelBean.entity.downloaded}">
 				<h:outputText id="offerId"
 					value="#{businessProductModelBean.productTemplateCodeFromModuleSource}"

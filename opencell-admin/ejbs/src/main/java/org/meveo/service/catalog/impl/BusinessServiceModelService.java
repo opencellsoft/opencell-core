@@ -41,7 +41,7 @@ public class BusinessServiceModelService extends GenericModuleService<BusinessSe
         }
     }
 
-    public ServiceTemplate createServiceFromBSM(BusinessServiceModel bsm, String prefix, List<CustomFieldDto> customFields) throws BusinessException {
+    public ServiceTemplate instantiateBSM(BusinessServiceModel bsm, String prefix, List<CustomFieldDto> customFields) throws BusinessException {
         if (bsm.getScript() != null) {
             try {
                 serviceModelScriptService.beforeCreateServiceFromBSM(customFields, bsm.getScript().getCode());

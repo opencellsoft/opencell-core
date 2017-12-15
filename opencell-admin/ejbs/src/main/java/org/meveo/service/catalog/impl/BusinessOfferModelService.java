@@ -270,14 +270,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			if (bpm != null && bpm.getScript() != null) {
 				try {
-					productModelScriptService.beforeCreateServiceFromBSM(
+					productModelScriptService.beforeCreate(
 							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
 				} catch (BusinessException e) {
 					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
 				}
 			}
 
-			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateProduct(
+			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateOfferProductTemplate(
 					offerProductTemplate, prefix, matchedProductConfigurationDto, pricePlansInMemory,
 					chargeTemplateInMemory);
 
@@ -285,7 +285,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			if (bpm != null && bpm.getScript() != null) {
 				try {
-					productModelScriptService.afterCreateServiceFromBSM(newOfferProductTemplate.getProductTemplate(),
+					productModelScriptService.afterCreate(newOfferProductTemplate.getProductTemplate(),
 							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
 				} catch (BusinessException e) {
 					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);

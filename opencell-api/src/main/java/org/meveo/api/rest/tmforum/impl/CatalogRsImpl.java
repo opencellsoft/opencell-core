@@ -19,6 +19,7 @@ import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
@@ -246,7 +247,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            responseBuilder = Response.ok().entity(businessOfferApi.createOfferFromBOM(postData));
+            responseBuilder = Response.ok().entity(businessOfferApi.instantiateBOM(postData));
 
         } catch (Exception e) {
             processException(e, result);
@@ -482,7 +483,25 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            responseBuilder = Response.ok().entity(businessOfferApi.createServiceFromBSM(postData));
+            responseBuilder = Response.ok().entity(businessOfferApi.instantiateBSM(postData));
+
+        } catch (Exception e) {
+            processException(e, result);
+            responseBuilder.entity(result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response createProductFromBPM(BpmProductDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            responseBuilder = Response.ok().entity(businessOfferApi.instantiateBPM(postData));
 
         } catch (Exception e) {
             processException(e, result);

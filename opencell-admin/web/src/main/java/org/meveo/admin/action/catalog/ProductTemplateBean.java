@@ -104,7 +104,6 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
         if (bpmId != null) {
             duplicateFromBPM();
             entity.setValidity(new DatePeriod());
-            entity.getProductChargeTemplates().clear();
             bpmId = null;
         } else {
             super.initEntity();
@@ -206,7 +205,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         if (businessProductModel != null) {
 
-            businessProductModelService.instantiateFromBPM(entity, businessProductModel);
+            businessProductModelService.instantiateBPM(entity, businessProductModel);
 
             if (entity.getImagePath() != null) {
                 try {

@@ -17,6 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
@@ -122,6 +123,10 @@ public interface CatalogRs {
     @POST
     @Path("/createServiceFromBSM")
     public Response createServiceFromBSM(BsmServiceDto postData); 
+    
+    @POST
+    @Path("/createProductFromBPM")
+    public Response createProductFromBPM(BpmProductDto postData); 
 
     /**
      * Get a single productTemplate by its code and validity dates. If no validity dates are provided, a product template valid on a current date will be deleted.
