@@ -33370,7 +33370,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
    <soapenv:Header/> 
    <soapenv:Body> 
@@ -33414,7 +33414,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>http://localhost:8080/opencell/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/"> 
    <soapenv:Header/> 
    <soapenv:Body> 
@@ -34090,7 +34090,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>9</con:value>
+        <con:value>12</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36721,7 +36721,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>55</con:value>
+        <con:value>58</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38141,7 +38141,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>14</con:value>
+        <con:value>17</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39364,7 +39364,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>10</con:value>
+        <con:value>13</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39384,11 +39384,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>Z</con:value>
+      <con:value>+01:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>-03:00</con:value>
+      <con:value>+02:00</con:value>
     </con:property>
     <con:property>
       <con:name>meveoAdminUserName</con:name>
