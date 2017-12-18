@@ -20667,7 +20667,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="JsonPath Match" id="c2fd3c07-cb57-479a-ad1d-89e56b0a28c3" name="JsonPath Match">
               <con:configuration>
                 <path>$.validFor.startDateTime</path>
-                <content>2017-04-01T00:00:00${#Project#timezone}</content>
+                <content>2017-04-01T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -21098,7 +21098,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>0354a44f-bebb-4628-8682-91392576de9a</con:value>
+              <con:value>ebfbf324-40c3-44e5-9e2b-4cf7a09b1c03</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -25081,7 +25081,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="0bfeb06d-8c77-4aad-a085-e6f0b0c8d775" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="b2980d4a-2f2b-4daf-b87c-a4a0cdb2ce05" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -26212,7 +26212,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="1389a065-425d-4dac-b0c6-d2ba6fa0ccb2" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="7255032c-f432-4059-bdeb-4ce17d1c92b2" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -26372,7 +26372,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                 <token><![CDATA[<subscription code="${#Project#entityPrefix}_${#TestSuite#index}_Quote_Version_V3_SUB1">
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER4</offerTemplate>
-               <subscriptionDate>2017-09-27T00:00:00${#Project#timezone}</subscriptionDate>]]></token>
+               <subscriptionDate>2017-09-27T00:00:00${#Project#timezone2}</subscriptionDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27251,7 +27251,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
             <con:jmsPropertyConfig/>
             <con:parameters>
-              <entry key="quoteId" value="74a4e845-9d5d-49dd-acca-7059345c9908" xmlns="http://eviware.com/soapui/config"/>
+              <entry key="quoteId" value="b779fd39-66d0-43e5-9574-7cb7a872c535" xmlns="http://eviware.com/soapui/config"/>
             </con:parameters>
           </con:restRequest>
         </con:config>
@@ -27436,7 +27436,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>serviceId1</con:name>
-              <con:value>62</con:value>
+              <con:value>15</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -27663,7 +27663,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-04-25T00:00:00${#Project#timezone}</content>
+                <content>2016-04-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -27778,7 +27778,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <endAgreementDate>2016-06-25T00:00:00${#Project#timezone}</endAgreementDate>]]></token>
+               <endAgreementDate>2016-06-25T00:00:00${#Project#timezone2}</endAgreementDate>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -27861,7 +27861,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-06-25T00:00:00${#Project#timezone}</content>
+                <content>2016-06-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -27879,7 +27879,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
               <con:configuration>
                 <path>//subscription/endAgreementDate</path>
-                <content>2016-06-25T00:00:00${#Project#timezone}</content>
+                <content>2016-06-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28070,7 +28070,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <content>2016-08-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28088,7 +28088,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
               <con:configuration>
                 <path>//subscription/endAgreementDate</path>
-                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <content>2016-08-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28357,7 +28357,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-10-25T00:00:00${#Project#timezone}</content>
+                <content>2016-10-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28375,7 +28375,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
               <con:configuration>
                 <path>//subscription/endAgreementDate</path>
-                <content>2016-08-25T00:00:00${#Project#timezone}</content>
+                <content>2016-08-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28637,7 +28637,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-10-25T00:00:00${#Project#timezone}</content>
+                <content>2016-10-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28771,8 +28771,8 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
                <userAccount>${#Project#baseEntityPrefix}_UA</userAccount>
                <offerTemplate>${#Project#baseEntityPrefix}_OFFER1</offerTemplate>
                <subscriptionDate>2016-01-25T00:00:00${#Project#timezone}</subscriptionDate>
-               <terminationDate>2016-10-25T00:00:00${#Project#timezone}</terminationDate>
-               <endAgreementDate>2018-05-25T00:00:00${#Project#timezone}</endAgreementDate>
+               <terminationDate>2016-10-25T00:00:00${#Project#timezone2}</terminationDate>
+               <endAgreementDate>2018-05-25T00:00:00${#Project#timezone2}</endAgreementDate>
                <status>SUSPENDED</status>]]></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
@@ -28856,7 +28856,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 7">
               <con:configuration>
                 <path>//subscribedTillDate</path>
-                <content>2016-10-25T00:00:00${#Project#timezone}</content>
+                <content>2016-10-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -28874,7 +28874,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
             <con:assertion type="XPath Match" id="10550ccc-e9ab-46e7-901d-6db907ba6786" name="XPath Match 9">
               <con:configuration>
                 <path>//subscription/endAgreementDate</path>
-                <content>2018-05-25T00:00:00${#Project#timezone}</content>
+                <content>2018-05-25T00:00:00${#Project#timezone2}</content>
                 <allowWildcards>false</allowWildcards>
                 <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
                 <ignoreComments>false</ignoreComments>
@@ -29664,7 +29664,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>19</con:value>
+        <con:value>23</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -29985,7 +29985,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>22dc1f77-b0b0-4e5d-9f8a-e2dd733e0c0a</orderNumber>
+            <orderNumber>f39af48f-a10b-408f-993e-9866e18fdd42</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30162,7 +30162,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>22dc1f77-b0b0-4e5d-9f8a-e2dd733e0c0a</orderNumber>
+            <orderNumber>f39af48f-a10b-408f-993e-9866e18fdd42</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30353,7 +30353,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-04-01T00:00:00</invoicingDate>
-            <orderNumber>22dc1f77-b0b0-4e5d-9f8a-e2dd733e0c0a</orderNumber>
+            <orderNumber>f39af48f-a10b-408f-993e-9866e18fdd42</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30594,7 +30594,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>45bdd03d-7f50-413f-89c6-508279099981</orderNumber>
+            <orderNumber>0766a4d4-3315-49aa-8fe6-1aff9a015043</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -30809,7 +30809,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>5978ec66-a79f-4182-9b63-0edcd5aa7656</orderNumber>
+            <orderNumber>0668f5f0-011d-4fec-94d8-8cddf80e7005</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31013,7 +31013,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
          <generateInvoiceRequest>
             <billingAccountCode>${#Project#baseEntityPrefix}_BA</billingAccountCode>
             <invoicingDate>2016-10-01T00:00:00</invoicingDate>
-            <orderNumber>4396ba86-21da-4780-a1d4-ba2a09ae32f8</orderNumber>
+            <orderNumber>cc15f03e-049c-4a5f-8d88-6e96bc600879</orderNumber>
          </generateInvoiceRequest>
       </ws:generateInvoiceData>
    </soapenv:Body>
@@ -31124,7 +31124,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>23</con:value>
+        <con:value>27</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -31776,7 +31776,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
       <con:testStep type="restrequest" name="Create Product order" id="8aecbdbd-45ac-4214-a534-a3a650b49b8f">
         <con:settings/>
         <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/orderManagement/productOrder" methodName="POST - createProductOrder" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-          <con:restRequest name="Create Product order - 3 items" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+          <con:restRequest name="Create Product order" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
             <con:settings>
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
@@ -31858,7 +31858,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           <con:properties>
             <con:property>
               <con:name>orderCode</con:name>
-              <con:value>328252f2-84c1-4a7a-a750-0deea5e32afa</con:value>
+              <con:value>f88e0f50-2a54-4ede-b1ae-dbeda6d4f1fb</con:value>
             </con:property>
           </con:properties>
         </con:config>
@@ -32161,15 +32161,15 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     <con:properties>
       <con:property>
         <con:name>orderId1</con:name>
-        <con:value>2ff532fc-7871-4a1a-beb5-679860add6bf</con:value>
+        <con:value>187428ee-c1b3-4e84-b2a0-5ef9f48c571a</con:value>
       </con:property>
       <con:property>
         <con:name>orderId2</con:name>
-        <con:value>d66c6bef-b978-4fc2-b007-a11a74c24a43</con:value>
+        <con:value>ce5b7762-7bdb-4f92-af12-4a336b800272</con:value>
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>4</con:value>
+        <con:value>8</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -32360,11 +32360,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
     </con:property>
     <con:property>
       <con:name>timezone</con:name>
-      <con:value>Z</con:value>
+      <con:value>+01:00</con:value>
     </con:property>
     <con:property>
       <con:name>timezone2</con:name>
-      <con:value>Z</con:value>
+      <con:value>+02:00</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
