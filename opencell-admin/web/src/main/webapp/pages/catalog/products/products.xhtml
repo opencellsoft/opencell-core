@@ -356,8 +356,9 @@
 										</p:link></li>
 									<li><p:commandLink
 											rendered="#{not productTemplateBean.isBundleTemplate(entity)}"
-											styleClass="fa fa-copy fa-2x text-blue"
+											styleClass=""
 											action="#{productTemplateBean.duplicate()}" update=":tabView">
+											<i class="fa fa-copy fa-2x no-text-decoration text-blue"/>
 											<f:param name="tab" value="1"></f:param>
 											<f:setPropertyActionListener value="#{entity}"
 												target="#{productTemplateBean.entity}"></f:setPropertyActionListener>
@@ -365,8 +366,9 @@
 												message="#{messages['commons.confirmDuplicate']}" />
 										</p:commandLink> <p:commandLink
 											rendered="#{productTemplateBean.isBundleTemplate(entity)}"
-											styleClass="fa fa-copy fa-2x text-blue"
+											styleClass=""
 											action="#{bundleTemplateBean.duplicate()}" update=":tabView">
+											<i class="fa fa-copy fa-2x no-text-decoration text-blue"/>
 											<f:param name="tab" value="1"></f:param>
 											<f:setPropertyActionListener value="#{entity}"
 												target="#{bundleTemplateBean.entity}"></f:setPropertyActionListener>
@@ -374,9 +376,10 @@
 												message="#{messages['commons.confirmDuplicate']}" />
 										</p:commandLink></li>
 									<li><p:commandLink
-											styleClass="fa fa-share-square-o fa-2x no-text-decoration text-blue"
+											styleClass=""
 											action="#{productAndBundleTemplateListBean.addProductTemplateToExport(entity)}"
 											update=":ptToExport :exportablePTs">
+											<i class="fa fa-share-square-o fa-2x no-text-decoration text-blue"/>
 										</p:commandLink></li>
 								</ul>
 							</p:column>
