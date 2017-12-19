@@ -1,6 +1,5 @@
 package org.meveo.admin.action.catalog;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -17,7 +16,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
@@ -204,19 +202,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         if (businessProductModel != null) {
-
             businessProductModelService.instantiateBPM(entity, businessProductModel);
-
-            if (entity.getImagePath() != null) {
-                try {
-                    ImageUploadEventHandler<ProductTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
-                    imageUploadEventHandler.deleteImage(entity);
-                } catch (IOException e) {
-                    log.error("Failed deleting image file", e);
-                }
-            }
-
             return back();
+            
         } else {
             if (!entity.isTransient()) {
                 productTemplateService.refreshOrRetrieve(entity);
