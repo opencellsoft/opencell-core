@@ -46,7 +46,6 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -333,8 +332,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             selectedPaymentMethod = new CardPaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.CHECK) {
             selectedPaymentMethod = new CheckPaymentMethod();
-        } else if (newPaymentMethodType == PaymentMethodEnum.TIP) {
-            selectedPaymentMethod = new TipPaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.WIRETRANSFER) {
             selectedPaymentMethod = new WirePaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {

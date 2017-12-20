@@ -27,8 +27,6 @@ public class PaymentGatewayDto extends BusinessDto {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8975150158860312801L;
 
-    private Long id;
-
     /** The type. */
     private PaymentGatewayTypeEnum type;
 
@@ -77,20 +75,6 @@ public class PaymentGatewayDto extends BusinessDto {
         this.tradingCountryCode = paymentGateway.getTradingCountry() == null ? null : paymentGateway.getTradingCountry().getCountryCode();
         this.tradingCurrencyCode = paymentGateway.getTradingCurrency() == null ? null : paymentGateway.getTradingCurrency().getCurrencyCode();
         this.type = paymentGateway.getType();
-    }
-
-    /**
-     * @return the id
-     */
-    public Long getId() {
-        return id;
-    }
-
-    /**
-     * @param id the id to set
-     */
-    public void setId(Long id) {
-        this.id = id;
     }
 
     /**

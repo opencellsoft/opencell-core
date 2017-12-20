@@ -148,9 +148,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             case DIRECTDEBIT:
                 directDebitBANumber++;
                 break;
-            case TIP:
-                tipBANumber++;
-                break;
             case WIRETRANSFER:
                 wiretransferBANumber++;
                 break;
@@ -179,10 +176,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             case DIRECTDEBIT:
                 directDebitBillableBANumber++;
                 directDebitBillableBAAmountHT = directDebitBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
-                break;
-            case TIP:
-                tipBillableBANumber++;
-                tipBillableBAAmountHT = tipBillableBAAmountHT.add(billingAccount.getBrAmountWithoutTax());
                 break;
             case WIRETRANSFER:
                 wiretransferBillableBANumber++;
@@ -268,11 +261,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     directDebitInvoicesNumber++;
                     directDebitAmuontHT = directDebitAmuontHT.add(invoice.getAmountWithoutTax());
                     directDebitAmuont = directDebitAmuont.add(invoice.getAmountWithTax());
-                    break;
-                case TIP:
-                    tipInvoicesNumber++;
-                    tipAmuontHT = tipAmuontHT.add(invoice.getAmountWithoutTax());
-                    tipAmuont = tipAmuont.add(invoice.getAmountWithTax());
                     break;
                 case WIRETRANSFER:
                     wiretransferInvoicesNumber++;

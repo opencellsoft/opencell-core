@@ -67,7 +67,6 @@ import org.meveo.model.payments.CheckPaymentMethod;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
@@ -984,8 +983,6 @@ public class OrderBean extends CustomFieldBean<Order> {
             entity.setPaymentMethod(new CardPaymentMethod());
         } else if (paymentMethodType == PaymentMethodEnum.CHECK) {
             entity.setPaymentMethod(new CheckPaymentMethod());
-        } else if (paymentMethodType == PaymentMethodEnum.TIP) {
-            entity.setPaymentMethod(new TipPaymentMethod());
         } else if (paymentMethodType == PaymentMethodEnum.WIRETRANSFER) {
             entity.setPaymentMethod(new WirePaymentMethod());
         } else if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {

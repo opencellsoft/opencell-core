@@ -72,7 +72,6 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
@@ -1742,8 +1741,6 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setPaymentMethod(paymentMethod.getPaymentType());
             if (paymentMethod instanceof DDPaymentMethod) {
                 dto.setBankCoordinates(new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates()));
-            } else if (paymentMethod instanceof TipPaymentMethod) {
-                dto.setBankCoordinates(new BankCoordinatesDto(((TipPaymentMethod) paymentMethod).getBankCoordinates()));
             }
         }
 

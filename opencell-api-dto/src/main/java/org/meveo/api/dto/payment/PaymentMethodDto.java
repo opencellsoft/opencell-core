@@ -19,7 +19,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 
 /**
@@ -189,10 +188,6 @@ public class PaymentMethodDto extends BaseDto {
             this.mandateIdentification = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
             this.bankCoordinates = new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates());
         }
-        if (paymentMethod instanceof TipPaymentMethod) {
-            this.setPaymentMethodType(PaymentMethodEnum.TIP);
-            this.bankCoordinates = new BankCoordinatesDto(((TipPaymentMethod) paymentMethod).getBankCoordinates());
-        }
         if (paymentMethod instanceof CardPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.CARD);
             this.cardNumber = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
@@ -247,29 +242,25 @@ public class PaymentMethodDto extends BaseDto {
     public final PaymentMethod fromDto(CustomerAccount customerAccount) {
         PaymentMethod pmEntity = null;
         switch (getPaymentMethodType()) {
-            case CARD:
-                pmEntity = new CardPaymentMethod(customerAccount, isDisabled(), getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
-                        getMonthExpiration(), getCardType());
-                break;
+        case CARD:
+            pmEntity = new CardPaymentMethod(customerAccount, isDisabled(), getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
+                getMonthExpiration(), getCardType());
+            break;
 
-            case DIRECTDEBIT:
-                pmEntity = new DDPaymentMethod(customerAccount, isDisabled(), getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
-                        getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
-                break;
+        case DIRECTDEBIT:
+            pmEntity = new DDPaymentMethod(customerAccount, isDisabled(), getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
+                getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
+            break;
 
-            case TIP:
-                pmEntity = new TipPaymentMethod(customerAccount, isDisabled(), getAlias(), getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
-                break;
+        case CHECK:
+            pmEntity = new CheckPaymentMethod(isDisabled(), alias, preferred, customerAccount);
+            break;
 
-            case CHECK:
-                pmEntity = new CheckPaymentMethod(isDisabled(), alias, preferred, customerAccount);
-                break;
-
-            case WIRETRANSFER:
-                pmEntity = new WirePaymentMethod(isDisabled(), alias, preferred, customerAccount);
-                break;
-            default:
-                break;
+        case WIRETRANSFER:
+            pmEntity = new WirePaymentMethod(isDisabled(), alias, preferred, customerAccount);
+            break;
+        default:
+            break;
         }
         pmEntity.setInfo1(getInfo1());
         pmEntity.setInfo2(getInfo2());
@@ -298,94 +289,54 @@ public class PaymentMethodDto extends BaseDto {
 
         switch (getPaymentMethodType()) {
 
-            case DIRECTDEBIT:
-                if (!StringUtils.isBlank(getMandateIdentification())) {
-                    ((DDPaymentMethod) paymentMethod).setMandateIdentification(getMandateIdentification());
+        case DIRECTDEBIT:
+            if (!StringUtils.isBlank(getMandateIdentification())) {
+                ((DDPaymentMethod) paymentMethod).setMandateIdentification(getMandateIdentification());
+            }
+            if (!StringUtils.isBlank(getMandateDate())) {
+                ((DDPaymentMethod) paymentMethod).setMandateDate(getMandateDate());
+            }
+            if (getBankCoordinates() != null) {
+                if (!StringUtils.isBlank(getBankCoordinates().getAccountNumber())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountNumber());
                 }
-                if (!StringUtils.isBlank(getMandateDate())) {
-                    ((DDPaymentMethod) paymentMethod).setMandateDate(getMandateDate());
+                if (!StringUtils.isBlank(getBankCoordinates().getAccountOwner())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setAccountOwner(getBankCoordinates().getAccountOwner());
                 }
-                if (getBankCoordinates() != null) {
-                    if (!StringUtils.isBlank(getBankCoordinates().getAccountNumber())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountNumber());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getAccountOwner())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setAccountOwner(getBankCoordinates().getAccountOwner());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBankCode())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBankCode(getBankCoordinates().getBankCode());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBankId())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBankId(getBankCoordinates().getBankId());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBankName())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBankName(getBankCoordinates().getBankName());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBic())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBic(getBankCoordinates().getBic());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBranchCode())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBranchCode(getBankCoordinates().getBranchCode());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIban())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIban(getBankCoordinates().getIban());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIcs())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIcs(getBankCoordinates().getIcs());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIssuerName())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIssuerName(getBankCoordinates().getIssuerName());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIssuerNumber())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIssuerNumber(getBankCoordinates().getIssuerNumber());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
-                        ((DDPaymentMethod) paymentMethod).getBankCoordinates().setKey(getBankCoordinates().getKey());
-                    }
+                if (!StringUtils.isBlank(getBankCoordinates().getBankCode())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBankCode(getBankCoordinates().getBankCode());
                 }
-                break;
-            case TIP:
-                if (getBankCoordinates() != null) {
-                    if (!StringUtils.isBlank(getBankCoordinates().getAccountNumber())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setAccountNumber(getBankCoordinates().getAccountNumber());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getAccountOwner())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setAccountOwner(getBankCoordinates().getAccountOwner());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBankCode())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankCode(getBankCoordinates().getBankCode());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBankId())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankId(getBankCoordinates().getBankId());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBankName())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBankName(getBankCoordinates().getBankName());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBic())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBic(getBankCoordinates().getBic());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getBranchCode())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setBranchCode(getBankCoordinates().getBranchCode());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIban())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIban(getBankCoordinates().getIban());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIcs())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIcs(getBankCoordinates().getIcs());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIssuerName())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIssuerName(getBankCoordinates().getIssuerName());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getIssuerNumber())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setIssuerNumber(getBankCoordinates().getIssuerNumber());
-                    }
-                    if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
-                        ((TipPaymentMethod) paymentMethod).getBankCoordinates().setKey(getBankCoordinates().getKey());
-                    }
+                if (!StringUtils.isBlank(getBankCoordinates().getBankId())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBankId(getBankCoordinates().getBankId());
                 }
-                break;
-            default:
-                break;
+                if (!StringUtils.isBlank(getBankCoordinates().getBankName())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBankName(getBankCoordinates().getBankName());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getBic())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBic(getBankCoordinates().getBic());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getBranchCode())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setBranchCode(getBankCoordinates().getBranchCode());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getIban())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIban(getBankCoordinates().getIban());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getIcs())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIcs(getBankCoordinates().getIcs());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getIssuerName())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIssuerName(getBankCoordinates().getIssuerName());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getIssuerNumber())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setIssuerNumber(getBankCoordinates().getIssuerNumber());
+                }
+                if (!StringUtils.isBlank(getBankCoordinates().getKey())) {
+                    ((DDPaymentMethod) paymentMethod).getBankCoordinates().setKey(getBankCoordinates().getKey());
+                }
+            }
+            break;
+        default:
+            break;
         }
         if (!StringUtils.isBlank(getInfo1())) {
             paymentMethod.setInfo1(getInfo1());
@@ -407,7 +358,6 @@ public class PaymentMethodDto extends BaseDto {
         }
         return paymentMethod;
     }
-
 
     /**
      * @return the paymentMethodType
@@ -743,8 +693,7 @@ public class PaymentMethodDto extends BaseDto {
         if (type == PaymentMethodEnum.CARD) {
             int numberLength = getCardNumber().length();
             CreditCardTypeEnum cardType = getCardType();
-            if (StringUtils.isBlank(getCardNumber())
-                    || (numberLength != 16 && cardType != CreditCardTypeEnum.AMERICAN_EXPRESS)
+            if (StringUtils.isBlank(getCardNumber()) || (numberLength != 16 && cardType != CreditCardTypeEnum.AMERICAN_EXPRESS)
                     || (numberLength != 15 && cardType == CreditCardTypeEnum.AMERICAN_EXPRESS)) {
                 throw new InvalidDTOException("Invalid cardNumber");
             }
@@ -757,7 +706,7 @@ public class PaymentMethodDto extends BaseDto {
 
             return;
         }
-        if (type == PaymentMethodEnum.DIRECTDEBIT || type == PaymentMethodEnum.TIP) {
+        if (type == PaymentMethodEnum.DIRECTDEBIT) {
             validateBankCoordinates(type);
             return;
         }
@@ -805,35 +754,6 @@ public class PaymentMethodDto extends BaseDto {
             // End of compatibility with pre-4.6 versions
         }
 
-        if (type == PaymentMethodEnum.TIP) {
-            if (getMandateIdentification() == null && bankCoordinates == null) {
-                throw new InvalidDTOException("Missing bank coordinates.");
-            }
-
-            if (StringUtils.isBlank(bankCoordinates.getAccountOwner())) {
-                throw new InvalidDTOException("Missing account owner.");
-            }
-
-            if (StringUtils.isBlank(bankCoordinates.getBankName())) {
-                throw new InvalidDTOException("Missing bank name.");
-            }
-
-            if (StringUtils.isBlank(bankCoordinates.getAccountNumber())) {
-                throw new InvalidDTOException("Missing account number.");
-            }
-
-            if (StringUtils.isBlank(bankCoordinates.getBankCode())) {
-                throw new InvalidDTOException("Missing bank code.");
-            }
-
-            if (StringUtils.isBlank(bankCoordinates.getBranchCode())) {
-                throw new InvalidDTOException("Missing branch code.");
-            }
-
-            if (StringUtils.isBlank(bankCoordinates.getKey())) {
-                throw new InvalidDTOException("Missing key.");
-            }
-        }
     }
 
     @Override

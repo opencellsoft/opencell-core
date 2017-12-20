@@ -41,7 +41,6 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
@@ -270,10 +269,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
             BankCoordinates bankCoordiates = null;
             if (preferedPaymentMethod instanceof DDPaymentMethod) {
                 bankCoordiates = ((DDPaymentMethod) preferedPaymentMethod).getBankCoordinates();
-            } else if (preferedPaymentMethod instanceof TipPaymentMethod) {
-                bankCoordiates = ((TipPaymentMethod) preferedPaymentMethod).getBankCoordinates();
             }
-
             if (bankCoordiates != null) {
                 recordedInvoice.setPaymentInfo(bankCoordiates.getIban());
                 recordedInvoice.setPaymentInfo1(bankCoordiates.getBankCode());
