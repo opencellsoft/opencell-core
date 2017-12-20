@@ -111,7 +111,7 @@ public class PaymentService extends PersistenceService<Payment> {
         CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
@@ -174,7 +174,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, null);
         } catch (Exception e) {
             log.warn("Cant find payment gateway");
         }
@@ -218,14 +218,13 @@ public class PaymentService extends PersistenceService<Payment> {
         return doPaymentResponseDto;
     }
 
-
     /**
      * 
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
-     * @return the AO id created 
-     * @throws BusinessException 
+     * @return the AO id created
+     * @throws BusinessException
      */
     public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));

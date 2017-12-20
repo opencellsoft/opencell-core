@@ -128,9 +128,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     @Lock(LockType.WRITE)
     public JobRunningStatusEnum markJobAsRunning(Long jobInstanceId, boolean limitToSingleNode) {
-
         JobRunningStatusEnum[] isRunning = new JobRunningStatusEnum[1];
-
         String currentNode = EjbUtils.getCurrentClusterNode();
 
         BiFunction<? super Long, ? super List<String>, ? extends List<String>> remappingFunction = (jobInstId, nodesOld) -> {

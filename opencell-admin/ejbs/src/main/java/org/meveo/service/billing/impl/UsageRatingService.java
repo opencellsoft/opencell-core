@@ -607,7 +607,6 @@ public class UsageRatingService {
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, isVirtual);
                 walletOperations.add(walletOperation);
-
                 if (edrIsRated) {
                     edr.setStatus(EDRStatusEnum.RATED);
                     break;

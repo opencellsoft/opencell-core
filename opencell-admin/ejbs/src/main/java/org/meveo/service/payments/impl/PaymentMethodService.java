@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -114,14 +113,13 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
             return;
         }
         String cardNumber = cardPaymentMethod.getCardNumber();
-        
 
         String coutryCode = null; // TODO : waiting #2830
         GatewayPaymentInterface gatewayPaymentInterface = null;
         try {
-
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
         } catch (Exception e) {
+            // Create the card even if there no payment gateway
             log.warn("Cant find payment gateway");
         }
 

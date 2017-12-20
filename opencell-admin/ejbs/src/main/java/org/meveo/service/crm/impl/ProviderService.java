@@ -55,7 +55,7 @@ public class ProviderService extends PersistenceService<Provider> {
         if (provider.getInvoiceConfiguration() != null) {
             provider.getInvoiceConfiguration().getDisplayBillingCycle();
         }
-
+        provider.getPaymentMethods().size();
         return provider;
     }
 
@@ -86,6 +86,7 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setCountry(provider.getCountry() != null ? provider.getCountry() : null);
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
+        appProvider.setPaymentMethods(provider.getPaymentMethods());
 
     }
 

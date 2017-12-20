@@ -18,6 +18,10 @@
  */
 package org.meveo.admin.action.admin;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,8 +32,10 @@ import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.InvoiceConfiguration;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.primefaces.model.DualListModel;
 
 @Named
 @ViewScoped
@@ -39,6 +45,8 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
     @Inject
     private ProviderService providerService;
+    
+    private DualListModel<PaymentMethodEnum> paymentMethodsModel;
 
     public ProviderBean() {
         super(Provider.class);
@@ -98,8 +106,31 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-
+	getEntity().getPaymentMethods().clear();
+	getEntity().setPaymentMethods(paymentMethodsModel.getTarget());
         super.saveOrUpdate(killConversation);
         return "providerSelfDetail";
     }
+    
+  public DualListModel<PaymentMethodEnum> getPaymentMethodsModel() {
+	if (paymentMethodsModel == null) {
+	    List<PaymentMethodEnum> source = new ArrayList<PaymentMethodEnum>(Arrays.asList(PaymentMethodEnum.values()));
+	    List<PaymentMethodEnum> target = new ArrayList<PaymentMethodEnum>();
+	    if (getEntity().getPaymentMethods() != null) {
+		target.addAll(getEntity().getPaymentMethods());
+	    }
+	    source.removeAll(target);
+	    paymentMethodsModel = new DualListModel<PaymentMethodEnum>(source, target);
+	}
+	return paymentMethodsModel;
+  }
+
+/**
+ * @param paymentMethodsModel the paymentMethodsModel to set
+ */
+public void setPaymentMethodsModel(DualListModel<PaymentMethodEnum> paymentMethodsModel) {
+    this.paymentMethodsModel = paymentMethodsModel;
+}
+
+  
 }

@@ -50,7 +50,6 @@ public class CachedCounterPeriod implements Serializable {
     }
 
     public boolean isCorrespondsToPeriod(Date dateToCheck) {
-
         // Logger log = LoggerFactory.getLogger(getClass());
         // log.error("AKK period match {} {} to {} {} {}", startDate, endDate, dateToCheck, !dateToCheck.before(startDate), !dateToCheck.after(endDate));
         return !dateToCheck.before(startDate) && !dateToCheck.after(endDate);
