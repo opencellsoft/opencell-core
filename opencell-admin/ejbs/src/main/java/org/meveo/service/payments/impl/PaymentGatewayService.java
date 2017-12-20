@@ -3,12 +3,14 @@
  */
 package org.meveo.service.payments.impl;
 
+import java.util.List;
+
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.base.BusinessService;
 
 /**
@@ -28,11 +30,21 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @throws BusinessException the business exception
      */
     // TODO paymentRun return gateway by CA, EL, Priority,.....
-    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, CardPaymentMethod cardPaymentMethod) throws BusinessException {
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod) throws BusinessException {
+        PaymentGateway paymentGateway = null;
+        if (paymentMethod == null) {
+            paymentMethod = customerAccount.getPreferredPaymentMethod();
+        }        
         try {
-            return listActive().get(0);
+            List<PaymentGateway> paymentGateways = (List<PaymentGateway>) getEntityManager()
+                .createQuery("from " + PaymentGateway.class.getSimpleName() + " where paymentMethodType =:paymenTypeValueIN and disabled=false  ")
+                .setParameter("paymenTypeValueIN", paymentMethod.getPaymentType()).getResultList();
+            if (paymentGateways != null && !paymentGateways.isEmpty()) {
+                paymentGateway = paymentGateways.get(0);
+            }
         } catch (Exception e) {
-            throw new BusinessException("Cant find active PaymentGateway");
+            log.error("Error on getPaymentGateway:", e);
         }
+        return paymentGateway;
     }
 }
