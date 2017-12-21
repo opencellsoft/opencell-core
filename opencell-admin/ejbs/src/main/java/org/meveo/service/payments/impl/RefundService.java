@@ -69,7 +69,6 @@ public class RefundService extends PersistenceService<Refund> {
         super.create(entity);
     }
 
-   
     /**
      * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
      * will be used (and marked as preferred)
@@ -111,10 +110,9 @@ public class RefundService extends PersistenceService<Refund> {
 
         CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        try{
-             gatewayPaymentInterface = gatewayPaymentFactory
-                .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-        }catch (Exception e) {
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
+        } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
 
@@ -172,16 +170,16 @@ public class RefundService extends PersistenceService<Refund> {
             CreditCardTypeEnum cardType, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-        String coutryCode = null;//TODO : waiting #2830
-                
+        String coutryCode = null;// TODO : waiting #2830
+
         GatewayPaymentInterface gatewayPaymentInterface = null;
-        try{        
-             gatewayPaymentInterface = gatewayPaymentFactory
-                .getInstance(GatewayPaymentNamesEnum.valueOf(ParamBean.getInstance().getProperty("meveo.gatewayPayment", "CUSTOM_API")));
-        }catch (Exception e) {
-            log.warn("Cant find payment gateway");
+        try {
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, null);
+        } catch (Exception e) {
+            log.error("Cant find payment gateway");
+            throw new BusinessException(e.getMessage());
         }
-        
+
         PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doRefundCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, coutryCode,
             null);
 
@@ -220,7 +218,7 @@ public class RefundService extends PersistenceService<Refund> {
         }
         return doPaymentResponseDto;
     }
-    
+
     /**
      * 
      * @param customerAccount

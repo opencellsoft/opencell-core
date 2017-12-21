@@ -22,7 +22,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 

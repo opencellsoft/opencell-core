@@ -24,10 +24,14 @@ import java.util.UUID;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.Convert;
+import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -36,7 +40,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -130,14 +133,12 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
 
-    private static final String PM_SEP = ",";
-
-    @Column(name = "payment_methods", length = 255)
-    @Size(max = 255)
-    private String serializedPaymentMethods;
-
-    @Transient
-    private List<PaymentMethodEnum> paymentMethods;
+    /** Payment methods allowed. */
+    @ElementCollection(targetClass = PaymentMethodEnum.class)
+    @CollectionTable(name = "crm_provider_pay_methods", joinColumns = @JoinColumn(name = "provider_id"))
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private List<PaymentMethodEnum> paymentMethods = new ArrayList<PaymentMethodEnum>();
 
     @Column(name = "rating_rounding", columnDefinition = "int DEFAULT 2")
     private Integer rounding = 2;
@@ -229,14 +230,6 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
         setDisabled(!active);
     }
 
-    public String getSerializedPaymentMethods() {
-        return serializedPaymentMethods;
-    }
-
-    public void setSerializedPaymentMethods(String serializedPaymentMethods) {
-        this.serializedPaymentMethods = serializedPaymentMethods;
-    }
-
     public Currency getCurrency() {
         return currency;
     }
@@ -315,34 +308,6 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     public void setUserAccount(UserAccount userAccount) {
         this.userAccount = userAccount;
-    }
-
-    public List<PaymentMethodEnum> getPaymentMethods() {
-        if (paymentMethods == null) {
-            paymentMethods = new ArrayList<PaymentMethodEnum>();
-            if (serializedPaymentMethods != null) {
-                int index = -1;
-                while ((index = serializedPaymentMethods.indexOf(PM_SEP)) > -1) {
-                    String paymentMethod = serializedPaymentMethods.substring(0, index);
-                    paymentMethods.add(PaymentMethodEnum.valueOf(paymentMethod));
-                    serializedPaymentMethods = serializedPaymentMethods.substring(index);
-                }
-            }
-        }
-        return paymentMethods;
-    }
-
-    public void setPaymentMethods(List<PaymentMethodEnum> paymentMethods) {
-        if (paymentMethods == null) {
-            serializedPaymentMethods = null;
-        } else {
-            serializedPaymentMethods = "";
-            String sep = "";
-            for (PaymentMethodEnum paymentMethod : paymentMethods) {
-                serializedPaymentMethods = sep + paymentMethod.name();
-                sep = PM_SEP;
-            }
-        }
     }
 
     public void setBankCoordinates(BankCoordinates bankCoordinates) {
@@ -484,6 +449,20 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
 
     public void setRecognizeRevenue(boolean recognizeRevenue) {
         this.recognizeRevenue = recognizeRevenue;
+    }
+
+    /**
+     * @return the paymentMethods
+     */
+    public List<PaymentMethodEnum> getPaymentMethods() {
+        return paymentMethods;
+    }
+
+    /**
+     * @param paymentMethods the paymentMethods to set
+     */
+    public void setPaymentMethods(List<PaymentMethodEnum> paymentMethods) {
+        this.paymentMethods = paymentMethods;
     }
 
     @Override
