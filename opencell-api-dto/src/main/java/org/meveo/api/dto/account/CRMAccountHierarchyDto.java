@@ -45,6 +45,7 @@ public class CRMAccountHierarchyDto extends BaseDto {
     private NameDto name;
     private AddressDto address;
     private ContactInformationDto contactInformation;
+    private String jobTitle;
 
     private String language;
 
@@ -55,6 +56,8 @@ public class CRMAccountHierarchyDto extends BaseDto {
     // customer
     private String customerCategory;
     private String customerBrand;
+    private String registrationNo;
+    private String vatNo;
     @Deprecated
     /**
      * We now use crmParentCode.
@@ -468,5 +471,29 @@ public class CRMAccountHierarchyDto extends BaseDto {
 
     public void setPaymentTerms(String paymentTerms) {
         this.paymentTerms = paymentTerms;
+    }
+
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
     }
 }

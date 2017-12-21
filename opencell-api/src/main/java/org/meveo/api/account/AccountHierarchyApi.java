@@ -254,6 +254,9 @@ public class AccountHierarchyApi extends BaseApi {
 
         CustomerDto customerDto = new CustomerDto();
         customerDto.setCode(customerCode);
+        customerDto.setRegistrationNo(postData.getRegistrationNo());
+        customerDto.setVatNo(postData.getRegistrationNo());
+        customerDto.setJobTitle(postData.getJobTitle());
 
         customerDto.setSeller(postData.getSellerCode());
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
@@ -312,6 +315,7 @@ public class AccountHierarchyApi extends BaseApi {
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
         customerAccountDto.setDateDunningLevel(new Date());
+        customerAccountDto.setJobTitle(postData.getJobTitle());
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -345,6 +349,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
+        billingAccountDto.setJobTitle(postData.getJobTitle());
 
         billingAccountApi.create(billingAccountDto);
 
@@ -358,6 +363,8 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setBillingAccount(billingAccountCode);
         userAccountDto.setCode(userAccountCode);
         userAccountDto.setAddress(address);
+        userAccountDto.setJobTitle(postData.getJobTitle());
+        
         userAccountApi.create(userAccountDto);
     }
 
@@ -432,6 +439,10 @@ public class AccountHierarchyApi extends BaseApi {
             throw new MeveoApiException("Customer " + customerCode + " isn't found");
         }
         customerDto.setSeller(postData.getSellerCode());
+        customerDto.setVatNo(postData.getRegistrationNo());
+        customerDto.setRegistrationNo(postData.getRegistrationNo());
+        customerDto.setVatNo(postData.getVatNo());
+        customerDto.setJobTitle(postData.getJobTitle());
 
         String customerBrandCode = StringUtils.normalizeHierarchyCode(postData.getCustomerBrandCode());
         if (!StringUtils.isBlank(customerBrandCode)) {
@@ -494,6 +505,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
         customerAccountDto.setCurrency(postData.getCurrencyCode());
         customerAccountDto.setLanguage(postData.getLanguageCode());
+        customerAccountDto.setJobTitle(postData.getJobTitle());
 
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -538,6 +550,7 @@ public class AccountHierarchyApi extends BaseApi {
         billingAccountDto.setAddress(address);
         billingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccountDto.setDiscountPlan(postData.getDiscountPlan());
+        billingAccountDto.setJobTitle(postData.getJobTitle());
 
         billingAccountApi.createOrUpdate(billingAccountDto);
 
@@ -561,6 +574,7 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setName(name);
         userAccountDto.setStatus(AccountStatusEnum.ACTIVE);
         userAccountDto.setAddress(address);
+        userAccountDto.setJobTitle(postData.getJobTitle());
         userAccountApi.createOrUpdate(userAccountDto);
     }
 
@@ -960,6 +974,9 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setContactInformation(postData.getContactInformation());
             customerDto.setExternalRef1(postData.getExternalRef1());
             customerDto.setExternalRef2(postData.getExternalRef2());
+            customerDto.setRegistrationNo(postData.getRegistrationNo());
+            customerDto.setVatNo(postData.getRegistrationNo());
+            customerDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1000,6 +1017,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setAddress(postData.getAddress());
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
+            customerAccountDto.setJobTitle(postData.getJobTitle());
 
             if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
                 customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -1053,6 +1071,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setAddress(postData.getAddress());
             billingAccountDto.setExternalRef1(postData.getExternalRef1());
             billingAccountDto.setExternalRef2(postData.getExternalRef2());
+            billingAccountDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1088,6 +1107,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setAddress(postData.getAddress());
             userAccountDto.setExternalRef1(postData.getExternalRef1());
             userAccountDto.setExternalRef2(postData.getExternalRef2());
+            userAccountDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1195,6 +1215,9 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setContactInformation(postData.getContactInformation());
             customerDto.setExternalRef1(postData.getExternalRef1());
             customerDto.setExternalRef2(postData.getExternalRef2());
+            customerDto.setRegistrationNo(postData.getRegistrationNo());
+            customerDto.setVatNo(postData.getRegistrationNo());
+            customerDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1235,6 +1258,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerAccountDto.setContactInformation(postData.getContactInformation());
             customerAccountDto.setExternalRef1(postData.getExternalRef1());
             customerAccountDto.setExternalRef2(postData.getExternalRef2());
+            customerAccountDto.setJobTitle(postData.getJobTitle());
 
             if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
                 customerAccountDto.setPaymentMethods(postData.getPaymentMethods());
@@ -1287,6 +1311,7 @@ public class AccountHierarchyApi extends BaseApi {
             billingAccountDto.setAddress(postData.getAddress());
             billingAccountDto.setExternalRef1(postData.getExternalRef1());
             billingAccountDto.setExternalRef2(postData.getExternalRef2());
+            billingAccountDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
@@ -1322,6 +1347,7 @@ public class AccountHierarchyApi extends BaseApi {
             userAccountDto.setAddress(postData.getAddress());
             userAccountDto.setExternalRef1(postData.getExternalRef1());
             userAccountDto.setExternalRef2(postData.getExternalRef2());
+            userAccountDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             if (postData.getCustomFields() != null && !postData.getCustomFields().isEmpty()) {
