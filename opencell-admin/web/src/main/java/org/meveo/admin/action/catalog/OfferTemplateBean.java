@@ -360,7 +360,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 		// Instantiating a new offer from BOM by using the data entered in offer
 		// template that was duplicated in initEntity() method
-		if (businessOfferModel != null) {
+		if (instantiatedFromBom) {
 			Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
 			CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
 
