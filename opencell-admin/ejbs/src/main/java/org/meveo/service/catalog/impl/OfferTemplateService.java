@@ -193,7 +193,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * @return A copy of Offer template
      * @throws BusinessException
      */
-    private synchronized OfferTemplate duplicate(OfferTemplate offerToDuplicate, boolean duplicateHierarchy, boolean persist, boolean preserveCode) throws BusinessException {
+    public synchronized OfferTemplate duplicate(OfferTemplate offerToDuplicate, boolean duplicateHierarchy, boolean persist, boolean preserveCode) throws BusinessException {
 
         offerToDuplicate = refreshOrRetrieve(offerToDuplicate);
 
@@ -283,6 +283,10 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 offer.getSellers().add(seller);
             }
         }
+        
+        if (persist) {
+            create(offer);
+        }
 
         if (duplicateHierarchy) {
             String prefix = offer.getId() + "_";
@@ -330,7 +334,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         if (persist) {
-            create(offer);
+            update(offer);
         }
 
         return offer;
