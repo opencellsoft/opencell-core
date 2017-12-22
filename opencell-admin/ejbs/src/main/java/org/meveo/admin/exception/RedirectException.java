@@ -22,7 +22,6 @@ package org.meveo.admin.exception;
  * Runtime exception thrown when redirect fails.
  * 
  * @author Ignas Lelys
- * @created Dec 9, 2010
  * 
  */
 public class RedirectException extends RuntimeException {

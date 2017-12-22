@@ -173,7 +173,7 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
      * @param dto ScriptInstanceDto object to convert
      * @param scriptInstanceToUpdate ScriptInstance to update with values from dto, or if null create a new one
      * @return A new or updated ScriptInstance object
-     * @throws EntityDoesNotExistsException
+     * @throws EntityDoesNotExistsException entity does not exist exception.
      */
     public ScriptInstance scriptInstanceFromDTO(ScriptInstanceDto dto, ScriptInstance scriptInstanceToUpdate) throws EntityDoesNotExistsException {
 

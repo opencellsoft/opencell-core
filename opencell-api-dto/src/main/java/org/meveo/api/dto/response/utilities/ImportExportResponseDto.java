@@ -91,13 +91,19 @@ public class ImportExportResponseDto extends BaseResponse {
             summary != null ? toString(summary.entrySet(), maxLen) : null, fieldsNotImported != null ? toString(fieldsNotImported.entrySet(), maxLen) : null, exceptionMessage);
     }
 
+    /**
+     * @param collection collection
+     * @param maxLen max length
+     * @return displayed string.
+     */
     private String toString(Collection<?> collection, int maxLen) {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
         int i = 0;
         for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-            if (i > 0)
+            if (i > 0) {
                 builder.append(", ");
+            }
             builder.append(iterator.next());
         }
         builder.append("]");
@@ -105,27 +111,27 @@ public class ImportExportResponseDto extends BaseResponse {
     }
 
     /**
-     * Determine if request has failed
+     * Determine if request has failed.
      * 
-     * @return
+     * @return true/false
      */
     public boolean isFailed() {
         return exceptionMessage != null || errorMessageKey != null || getActionStatus().getStatus() == ActionStatusEnum.FAIL;
     }
 
     /**
-     * Get a failure message as a message file key
+     * Get a failure message as a message file key.
      * 
-     * @return
+     * @return error message key
      */
     public String getFailureMessageKey() {
         return errorMessageKey;
     }
 
     /**
-     * Set a failure message as a message file key
+     * Set a failure message as a message file key.
      * 
-     * @param messageKey
+     * @param messageKey key of message.
      */
     public void setFailureMessageKey(String messageKey) {
         errorMessageKey = messageKey;

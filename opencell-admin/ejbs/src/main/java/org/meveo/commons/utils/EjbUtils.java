@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Util class for remote ejb lookups.
  * 
  * @author Ignas Lelys
- * @created Jan 19, 2011
  *
  */
 public class EjbUtils {

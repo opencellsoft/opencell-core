@@ -96,6 +96,11 @@ public class OccTemplateApi extends BaseApi {
 
     }
 
+    /**
+     * @param code account operation code
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
+     */
     public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
@@ -112,12 +117,12 @@ public class OccTemplateApi extends BaseApi {
     }
 
     /**
-     * create or update occ template based on occ template code
+     * create or update occ template based on occ template code.
      * 
      * @param postData
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void createOrUpdate(OccTemplateDto postData) throws MeveoApiException, BusinessException {
 
@@ -131,11 +136,9 @@ public class OccTemplateApi extends BaseApi {
     }
 
     /**
-     * retrieve a list of occ templates
+     * retrieve a list of occ templates.
      *
-     * @param provider
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception.
      */
     public OccTemplatesDto list() throws MeveoApiException {
         OccTemplatesDto occTemplatesDto = new OccTemplatesDto();

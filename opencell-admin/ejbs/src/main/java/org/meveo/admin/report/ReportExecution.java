@@ -54,7 +54,6 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * Class to generate PDF reports.
  * 
  * @author Gediminas Ubartas
- * @created 2010.10.07
  */
 @Named
 public class ReportExecution implements Serializable{
@@ -148,8 +147,8 @@ public class ReportExecution implements Serializable{
 	/**
 	 * Generates filename for report.
 	 * 
-	 * @param report
-	 *            Report name.
+	 * @param name file's name.
+	 * @param date date?
 	 * @return Report filename.
 	 */
 	public String generateFileName(String name, Date date) {
@@ -165,8 +164,6 @@ public class ReportExecution implements Serializable{
 	 * 
 	 * @param report
 	 *            Report to execute.
-	 * @param params
-	 *            Parameters to report.
 	 */
 	@SuppressWarnings("rawtypes")
     public void executeReport(Report report) {

@@ -41,11 +41,11 @@ public class RoleApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @return Role entity
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @return Role entity 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException meveo api exception
      */
     public Role create(RoleDto postData) throws MeveoApiException, BusinessException {
 
@@ -112,13 +112,13 @@ public class RoleApi extends BaseApi {
     }
 
     /**
-     * Update role
+     * Update role.
      * 
      * @param postData Role DTO
      * 
      * @return Updated Role entity
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public Role update(RoleDto postData) throws MeveoApiException, BusinessException {
 
@@ -243,12 +243,12 @@ public class RoleApi extends BaseApi {
     }
 
     /**
-     * List roles matching filtering and query criteria
+     * List roles matching filtering and query criteria.
      * 
      * @param pagingAndFiltering Paging and filtering criteria. Specify "permissions" in fields to include the permissions. Specify "roles" to include child roles.
      * @return A list of roles
-     * @throws ActionForbiddenException
-     * @throws InvalidParameterException
+     * @throws ActionForbiddenException action forbidden exception
+     * @throws InvalidParameterException invalid parameter exception.
      */
     public RolesDto list(PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException {
 

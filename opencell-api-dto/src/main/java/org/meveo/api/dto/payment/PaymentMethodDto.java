@@ -142,7 +142,7 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * constructor with paymentType.
      *
-     * @param paymentType
+     * @param paymentType payment type.
      */
     public PaymentMethodDto(PaymentMethodEnum paymentType) {
         this.paymentMethodType = paymentType;
@@ -209,7 +209,7 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * Constructor with cardPaymentMethodDto.
      *
-     * @param cardPaymentMethodDto
+     * @param cardPaymentMethodDto card payment method dto.
      */
     @SuppressWarnings("deprecation")
     public PaymentMethodDto(CardPaymentMethodDto cardPaymentMethodDto) {

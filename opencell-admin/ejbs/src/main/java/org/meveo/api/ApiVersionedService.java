@@ -11,7 +11,7 @@ import org.meveo.api.exception.MissingParameterException;
 import org.meveo.model.IEntity;
 
 /**
- * An interface of CRUD API service class for entities that are versioned - that contain validity dates
+ * An interface of CRUD API service class for entities that are versioned - that contain validity dates.
  * 
  * @author Andrius Karpavicius
  * 
@@ -21,7 +21,7 @@ import org.meveo.model.IEntity;
 public interface ApiVersionedService<E extends IEntity, T extends BaseDto> {
 
     /**
-     * Find entity identified by code
+     * Find entity identified by code.
      * 
      * @param code Entity code
      * @param validFrom Entity validity range - from date
@@ -50,12 +50,12 @@ public interface ApiVersionedService<E extends IEntity, T extends BaseDto> {
     public T findIgnoreNotFound(String code, Date validFrom, Date validTo) throws MissingParameterException, InvalidParameterException, MeveoApiException;
 
     /**
-     * Create or update an entity from DTO
+     * Create or update an entity from DTO.
      * 
      * @param dtoData DTO data
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
 
