@@ -26,15 +26,13 @@ import java.text.StringCharacterIterator;
  * Class to help converting MagicNumber values to different representations.
  * 
  * @author Ignas Lelys
- * @created Apr 7, 2009
  *
  */
 public class MagicNumberConverter {
-    
+
     /** Characters representing hexadecimal bytes. */
-    private static final char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
-            'f' };
-    
+    private static final char[] DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+
     /**
      * Converts MagicNumber from string to byte array representation.
      * 
@@ -56,11 +54,11 @@ public class MagicNumberConverter {
         }
         return decoded;
     }
-    
+
     /**
      * Converts MagicNumber from byte array to string representation.
      * 
-     * @param hashString Hash value as byte array.
+     * @param hashValue Hash value as byte array.
      * @return Hash value as String.
      */
     public static String convertToString(byte[] hashValue) {

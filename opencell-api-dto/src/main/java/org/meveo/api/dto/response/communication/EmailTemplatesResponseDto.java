@@ -14,7 +14,6 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 5:04:24 AM
  *
  */
 @XmlRootElement(name="EmailTemplatesResponse")

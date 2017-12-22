@@ -95,17 +95,21 @@ public class ParamBean {
     /**
      * Retourne une instance de ParamBean.
      * 
-     * @return ParamBean
+     * @return propertiesName properties name
      */
     public static ParamBean getInstance(String propertiesName) {
         if (reload) {
             setInstance(new ParamBean(propertiesName));
-        } else if (instance == null)
+        } else if (instance == null) {
             setInstance(new ParamBean(propertiesName));
+        }
 
         return instance;
     }
 
+    /**
+     * @return param bean.
+     */
     public static ParamBean getInstance() {
         try {
             return getInstance("meveo-admin.properties");
@@ -122,7 +126,7 @@ public class ParamBean {
      */
     /**
      * 
-     * @param newInstance
+     * @param newInstance instance of ParamBean
      */
     private static void setInstance(ParamBean newInstance) {
         instance = newInstance;
@@ -139,16 +143,15 @@ public class ParamBean {
 
     /**
      * 
-     * @param new_valid
+     * @param new_valid true/false
      */
     protected void setValid(boolean new_valid) {
         valid = new_valid;
     }
 
     /**
-     * Initialise les donnï¿½es ï¿½ partir du fichier de propriï¿½tï¿½s.
      * 
-     * @return <code>true</code> si l'initialisation s'est bien passï¿½e, <code>false</code> sinon
+     * @return <code>true/false</code> 
      */
     public boolean initialize() {
         log.debug("-Debut initialize  from file :" + _propertyFile + "...");
@@ -201,7 +204,7 @@ public class ParamBean {
     }
 
     /**
-     * Met ï¿½ jour les propriï¿½tï¿½s de l'application.
+     * 
      * 
      * @param new_properties Properties
      */
@@ -210,10 +213,8 @@ public class ParamBean {
     }
 
     /**
-     * Met ï¿½ jour la propriï¿½tï¿½ nommï¿½e "property_p"
-     * 
+     * Set property. 
      * @param property_p java.lang.String
-     * @return String
      */
     public void setProperty(String property_p, String vNewValue) {
         log.info("setProperty " + property_p + "->" + vNewValue);
@@ -231,18 +232,17 @@ public class ParamBean {
     }
 
     /**
-     * Sauvegarde du fichier de propriï¿½tï¿½s en vigueur.
      * 
-     * @return <code>true</code> si la sauvegarde a rï¿½ussi, <code>false</code> sinon
+     * @return <code>true if is ok</code> 
      */
     public synchronized boolean saveProperties() {
         return saveProperties(new File(_propertyFile));
     }
 
     /**
-     * Sauvegarde du fichier de propriï¿½tï¿½s.
      * 
-     * @return <code>true</code> si la sauvegarde a rï¿½ussi, <code>false</code> sinon
+     * 
+     * @return <code>true</code> if we save file sucessfully.
      */
     public boolean saveProperties(File file) {
         boolean result = false;
@@ -303,6 +303,11 @@ public class ParamBean {
         return result;
     }
 
+    /**
+     * @param key key of property
+     * @param defaultValue default value for key.
+     * @return
+     */
     public String getProperty(String key, String defaultValue) {
         String result = null;
         if (properties.containsKey(key)) {

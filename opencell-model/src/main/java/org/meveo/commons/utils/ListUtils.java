@@ -30,7 +30,6 @@ import java.util.Map;
  * Utilities class for working with Lists.
  * 
  * @author Ignas Lelys
- * @created Mar 6, 2009
  */
 public final class ListUtils {
 

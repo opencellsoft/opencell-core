@@ -29,7 +29,6 @@ import java.util.concurrent.TimeoutException;
  * Utils for multithreading.
  * 
  * @author Ignas Lelys
- * @created Apr 12, 2011
  * 
  */
 public class ThreadUtils {

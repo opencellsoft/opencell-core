@@ -42,6 +42,8 @@ public enum BillingWalletTypeEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id : id of billing wallet.
+	 * @return instance of BillingWalletTypeEnum
 	 */
 	public static BillingWalletTypeEnum getValue(Integer id) {
 		if (id != null) {

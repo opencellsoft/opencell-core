@@ -22,7 +22,6 @@ package org.meveo.commons.utils;
  * Utils class to help for ASN1 files parsing. 
  * 
  * @author Ignas Lelys
- * @created Apr 7, 2009
  *
  */
 public class ASN1Utils {
@@ -46,7 +45,7 @@ public class ASN1Utils {
      * 
      * @param lenghtOctet
      *            Lenght octet to check
-     * @return
+     * @return true/false
      */
     public static boolean isLongFormLenghtOctet(int lenghtOctet) {
         return (lenghtOctet & 0x80) == 0x80;

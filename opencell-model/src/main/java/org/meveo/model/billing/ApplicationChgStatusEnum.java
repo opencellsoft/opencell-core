@@ -44,6 +44,8 @@ public enum ApplicationChgStatusEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id id of application charge status.
+	 * @return application change status enum
 	 */
 	public static ApplicationChgStatusEnum getValue(Integer id) {
 		if (id != null) {

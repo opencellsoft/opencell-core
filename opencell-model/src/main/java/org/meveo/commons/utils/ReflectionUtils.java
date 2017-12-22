@@ -160,7 +160,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Convert a java type classname to a fuman readable name. E.g. CustomerAccount >> Customer Account
+     * Convert a java type classname to a fuman readable name. E.g. CustomerAccount to Customer Account
      * 
      * @param classname Full or simple classname
      * @return A humanized class name
@@ -175,7 +175,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Check if object has a field
+     * Check if object has a field.
      * 
      * @param object Object to check
      * @param fieldName Name of a field to check
@@ -190,9 +190,9 @@ public class ReflectionUtils {
     }
 
     /**
-     * Check if class has a field
+     * Check if class has a field.
      * 
-     * @param object Object to check
+     * @param clazz Object to check
      * @param fieldName Name of a field to check
      * @return True if object has a field
      */
@@ -204,6 +204,11 @@ public class ReflectionUtils {
         return field != null;
     }
 
+    /**
+     * @param className class name
+     * @param annotationClass annotation class
+     * @return instance of Class.
+     */
     public static Class<?> getClassBySimpleNameAndAnnotation(String className, Class<? extends Annotation> annotationClass) {
         Class<?> entityClass = null;
         if (!StringUtils.isBlank(className)) {
@@ -218,10 +223,19 @@ public class ReflectionUtils {
         return entityClass;
     }
 
+    /**
+     * @param annotationClass annotation class
+     * @return set of class
+     */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
         return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
     }
 
+    /**
+     * @param annotationClass annotation class
+     * @param prefix prefix
+     * @return set of class.
+     */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass, String prefix) {
         Reflections reflections = new Reflections(prefix);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
@@ -229,7 +243,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Find a class by its simple name that is a subclass of a certain class
+     * Find a class by its simple name that is a subclass of a certain class.
      * 
      * @param className Simple classname to match
      * @param parentClass Parent or interface class
@@ -255,7 +269,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Find subclasses of a certain class
+     * Find subclasses of a certain class.
      * 
      * @param parentClass Parent or interface class
      * @return A list of class objects
@@ -270,7 +284,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * A check if class represents a DTO or entity class
+     * A check if class represents a DTO or entity class.
      * 
      * @param clazz Class to check
      * @return True if class is annotated with @Entity, @Embeddable or @XmlRootElement
@@ -282,9 +296,9 @@ public class ReflectionUtils {
     /**
      * Checks if a method is from a particular object.
      * 
-     * @param obj
-     * @param name
-     * @return
+     * @param obj entity to check
+     * @param name name of method.
+     * @return true/false
      */
     public static boolean isMethodImplemented(Object obj, String name) {
         try {
@@ -303,9 +317,9 @@ public class ReflectionUtils {
     /**
      * Checks if a method is from a particular class.
      * 
-     * @param clazz
-     * @param name
-     * @return
+     * @param clazz instance of Class
+     * @param name name of method
+     * @return parameters
      */
     public static boolean isMethodImplemented(Class<? extends Object> clazz, String name, Class<?>... parameterTypes) {
         try {
@@ -318,8 +332,8 @@ public class ReflectionUtils {
     /**
      * Checks if a method is overriden from a parent class.
      * 
-     * @param myMethod
-     * @return
+     * @param myMethod method
+     * @return true/false
      */
     public static boolean isMethodOverrriden(final Method myMethod) {
         Class<?> declaringClass = myMethod.getDeclaringClass();
@@ -349,7 +363,7 @@ public class ReflectionUtils {
      * @param fieldName Fieldname
      * @return A field definition
      * @throws SecurityException
-     * @throws NoSuchFieldException
+     * @throws NoSuchFieldException no such field exception.
      */
     public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
 
@@ -409,8 +423,7 @@ public class ReflectionUtils {
     /**
      * Determine a generics type of a field (eg. for Set<String> field should return String)
      * 
-     * @param fieldName Field name
-     * @param childFieldName child field name in case of field hierarchy
+     * @param field instance of Field
      * @return A class
      */
     @SuppressWarnings("rawtypes")
@@ -473,7 +486,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Get classes containing a given type field - can be either a single value or a list of values
+     * Get classes containing a given type field - can be either a single value or a list of values.
      * 
      * @param fieldClass Field class
      * @return A map of fields grouped by class
