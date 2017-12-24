@@ -89,17 +89,18 @@ public class ReportExecution implements Serializable{
 	 *            Report template filename.
 	 * @param reportName
 	 *            Report name.
-	 * @param DSstring
+	 * @param dsString
 	 *            XML DS string.
 	 * @param recordPath
 	 *            Current XML DS row path.
+	 * @param executionDate execution date.
 	 */
-	public void generatePDF(String filename, String reportName, String DSstring, String recordPath,
+	public void generatePDF(String filename, String reportName, String dsString, String recordPath,
 			Date executionDate) {
 		InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(filename);
 		InputStream xmlDS;
 		try {
-			xmlDS = new ByteArrayInputStream(DSstring.getBytes("UTF-8"));
+			xmlDS = new ByteArrayInputStream(dsString.getBytes("UTF-8"));
 			// parameters.put("param_03", "value of your param");
 
 			JRXmlDataSource dataSource = new JRXmlDataSource(xmlDS, recordPath);
@@ -123,10 +124,13 @@ public class ReportExecution implements Serializable{
 	 *            Report template filename.
 	 * @param reportName
 	 *            Report name
-	 * @param DSstring
+	 * @param xmlDS xml datasource
 	 *            XML DS string.
 	 * @param recordPath
 	 *            Current XML DS row path.
+	 * @param executionDate execution date.
+	 * @param exportFileName export file name.
+	 * 
 	 */
 	public void generatePDF(String filename, String reportName, InputStream xmlDS,
 			String recordPath, Date executionDate, String exportFileName) {
@@ -209,6 +213,8 @@ public class ReportExecution implements Serializable{
 	 *            Parameters to report.
 	 * @param dataSource
 	 *            Data source file name.
+	 *            
+	 * @param exportFileName file name created when exporting
 	 */
 	public void executeReport(Report report, Map<String, Object> params, String dataSource,
 			String exportFileName) {
@@ -225,6 +231,8 @@ public class ReportExecution implements Serializable{
 
 	/**
 	 * Adds default parameters for report.
+	 * @param parameter name of parameter
+	 * @param parameterValue value of parameter
 	 */
 	public void addParameters(String parameter, String parameterValue) {
 		parameters.put(parameter, parameterValue);
@@ -232,7 +240,7 @@ public class ReportExecution implements Serializable{
 
 	/**
 	 * Execute all reports from DB.
-	 * @throws BusinessException 
+	 * @throws BusinessException business excepion.
 	 */
 	public void reportsExecution() throws BusinessException {
 		List<Report> reportList = (List<Report>) reportService.list();
@@ -253,10 +261,16 @@ public class ReportExecution implements Serializable{
 		}
 	}
 
+	/**
+	 * @return map of parameter
+	 */
 	public Map<String, Object> getParameters() {
 		return parameters;
 	}
 
+	/**
+	 * @param parameters map of parameter/its value.
+	 */
 	public void setParameters(Map<String, Object> parameters) {
 		this.parameters = parameters;
 	}

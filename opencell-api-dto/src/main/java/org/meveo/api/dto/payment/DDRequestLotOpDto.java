@@ -15,7 +15,7 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jul 11, 2016 7:15:09 PM
+ * @since Jul 11, 2016 7:15:09 PM
  **/
 @XmlRootElement(name="DDRequestLotOp")
 @XmlAccessorType(XmlAccessType.FIELD)

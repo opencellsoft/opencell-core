@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
- * @created 10 Nov 2017
+ * @since 10 Nov 2017
  **/
 @Stateless
 public class KeycloakAdminClientService {
@@ -46,6 +46,7 @@ public class KeycloakAdminClientService {
 
     /**
      * Reads the configuration from system property.
+     * @return KeycloakAdminClientConfig
      */
     public KeycloakAdminClientConfig loadConfig() {
         KeycloakAdminClientConfig keycloakAdminClientConfig = new KeycloakAdminClientConfig();
@@ -76,6 +77,11 @@ public class KeycloakAdminClientService {
         return keycloakAdminClientConfig;
     }
 
+    /**
+     * @param session keycloak session
+     * @param keycloakAdminClientConfig keycloak admin client config.
+     * @return instance of Keycloak.
+     */
     private Keycloak getKeycloakClient(KeycloakSecurityContext session, KeycloakAdminClientConfig keycloakAdminClientConfig) {
         Keycloak keycloak = KeycloakBuilder.builder() //
             .serverUrl(keycloakAdminClientConfig.getServerUrl()) //
@@ -91,6 +97,11 @@ public class KeycloakAdminClientService {
 
     /**
      * Creates a user in keycloak. Also assigns the role.
+     * @param httpServletRequest http request
+     * @param postData posted data to API
+     * @return user created id.
+     * @throws BusinessException business exception
+     * @throws EntityDoesNotExistsException entity does not exist exception.
      */
     public String createUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, EntityDoesNotExistsException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -193,6 +204,9 @@ public class KeycloakAdminClientService {
 
     /**
      * Updates a user in keycloak. Also assigns the role.
+     * @param httpServletRequest http request
+     * @param postData posted data.
+     * @throws BusinessException business exception.
      */
     public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -257,9 +271,9 @@ public class KeycloakAdminClientService {
     /**
      * Deletes a user in keycloak.
      * 
-     * @param httpServletRequest
-     * @param username
-     * @throws BusinessException
+     * @param httpServletRequest http request
+     * @param username user name 
+     * @throws BusinessException business exception.
      */
     public void deleteUser(HttpServletRequest httpServletRequest, String username) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -287,10 +301,10 @@ public class KeycloakAdminClientService {
     /**
      * Search for a user in keycloak via username.
      * 
-     * @param httpServletRequest
-     * @param username
-     * @return
-     * @throws BusinessException
+     * @param httpServletRequest http request
+     * @param username user name
+     * @return list of role
+     * @throws BusinessException business exception
      */
     public List<RoleDto> findUserRoles(HttpServletRequest httpServletRequest, String username) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -315,9 +329,9 @@ public class KeycloakAdminClientService {
     /**
      * List all the realm roles in keycloak.
      * 
-     * @param httpServletRequest
-     * @return
-     * @throws BusinessException
+     * @param httpServletRequest http servlet request
+     * @return list of role
+     * @throws BusinessException business exception.
      */
     public List<RoleDto> listRoles(HttpServletRequest httpServletRequest) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());

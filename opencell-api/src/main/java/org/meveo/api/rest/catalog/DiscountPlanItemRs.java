@@ -20,7 +20,7 @@ import org.meveo.api.rest.IBaseRs;
 /**
  * CRUD/list discountPlanItem via REST API
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Aug 2, 2016 11:02:01 AM
+ * @since Aug 2, 2016 11:02:01 AM
  *
  */
 @Path("/catalog/discountPlanItem")

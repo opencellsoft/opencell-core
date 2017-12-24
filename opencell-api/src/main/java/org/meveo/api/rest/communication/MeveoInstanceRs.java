@@ -20,7 +20,7 @@ import org.meveo.api.rest.IBaseRs;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 4, 2016 4:05:47 AM
+ * @since Jun 4, 2016 4:05:47 AM
  *
  */
 @Path("/communication/meveoInstance")

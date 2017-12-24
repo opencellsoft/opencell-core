@@ -43,6 +43,8 @@ public enum InstanceStatusEnum {
 
     /**
      * Gets enum by its id.
+     * @param id id of instance status
+     * @return instance status.
      */
     public static InstanceStatusEnum getValue(Integer id) {
         if (id != null) {

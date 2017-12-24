@@ -17,7 +17,7 @@ import org.slf4j.Logger;
  * Lauch a jobInstance and create a notificationHistory
  * 
  * @author anasseh
- * @created 19.06.2015
+ * @since 19.06.2015
  * 
  */
 @Stateless

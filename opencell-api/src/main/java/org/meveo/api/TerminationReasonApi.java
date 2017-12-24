@@ -55,7 +55,7 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * updates a SubscriptionTerminationReason based on code.
      * 
-     * @param postData
+     * @param postData posted data.
 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException  business exception.

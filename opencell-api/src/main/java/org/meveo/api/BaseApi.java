@@ -556,7 +556,7 @@ public abstract class BaseApi {
      * Validates the DTO based on its constraint annotations.
      * 
      * @param dto data transfer object.
-     * @throws ConstraintViolationException
+     * @throws ConstraintViolationException constraint violation exception.
      * @throws MeveoApiException meveo api exception.
      */
     public void validate(Object dto) throws MeveoApiException {
@@ -853,7 +853,7 @@ public abstract class BaseApi {
      * @param entityClass JPA entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws ClassNotFoundException class not found exception.
+     * 
      */
     @SuppressWarnings("rawtypes")
     protected ApiService getApiService(Class entityClass, boolean throwException) {
@@ -890,7 +890,7 @@ public abstract class BaseApi {
      * @param entityClass JPA entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws ClassNotFoundException class not found exception
+     *
      */
     @SuppressWarnings("rawtypes")
     protected ApiVersionedService getApiVersionedService(Class entityClass, boolean throwException) {
@@ -1037,8 +1037,9 @@ public abstract class BaseApi {
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
      * @param pagingAndFiltering Paging and filtering criteria
+     * @param targetClass class which is used for pagination.
      * @return Pagination configuration
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception.
      */
     @SuppressWarnings("rawtypes")
     protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,

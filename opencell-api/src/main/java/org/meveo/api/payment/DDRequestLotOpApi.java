@@ -19,7 +19,7 @@ import org.meveo.service.payments.impl.DDRequestLotOpService;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jul 11, 2016 7:30:19 PM
+ * @since Jul 11, 2016 7:30:19 PM
  **/
 @Stateless
 public class DDRequestLotOpApi extends BaseApi {

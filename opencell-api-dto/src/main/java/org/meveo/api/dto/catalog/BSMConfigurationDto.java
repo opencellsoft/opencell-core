@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Edward P. Legaspi
- * @created 2 Oct 2017
+ * @since 2 Oct 2017
  */
 @XmlRootElement(name = "BSMConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)

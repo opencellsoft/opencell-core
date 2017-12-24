@@ -147,7 +147,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected Long minValue;
 
     /**
-     * Regular expression to validate string values
+     * Regular expression to validate string values.
      */
     @XmlElement
     protected String regExp;
@@ -161,10 +161,10 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
-     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;<br/>
+     * position&gt;;field:&lt;field relative position in fieldgroup
      * <br/>
      * 
-     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
      * 
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;field:0 OR tab:Second tab:1;field:1
@@ -173,7 +173,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String guiPosition;
 
     /**
-     * Key format of a map for map type fields
+     * Key format of a map for map type fields.
      */
     @XmlElement()
     protected CustomFieldMapKeyEnum mapKeyType;
@@ -185,26 +185,26 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String applicableOnEl;
 
     /**
-     * A list of columns matrix consists of
+     * A list of columns matrix consists of.
      */
     @XmlElementWrapper(name = "matrixColumns")
     @XmlElement(name = "matrixColumn")
     private List<CustomFieldMatrixColumnDto> matrixColumns;
 
     /**
-     * A list of child entity fields to be displayed in a summary table of child entities
+     * A list of child entity fields to be displayed in a summary table of child entities.
      */
     @XmlElementWrapper(name = "childEntityFieldsForSummary")
     @XmlElement(name = "fieldCode")
     private List<String> childEntityFieldsForSummary;
 
     /**
-     * If and how custom field values should be indexed in Elastic Search
+     * If and how custom field values should be indexed in Elastic Search.
      */
     private CustomFieldIndexTypeEnum indexType;
 
     /**
-     * Tags assigned to custom field template
+     * Tags assigned to custom field template.
      */
     private String tags;
 

@@ -53,7 +53,7 @@ public interface ApiVersionedService<E extends IEntity, T extends BaseDto> {
      * Create or update an entity from DTO.
      * 
      * @param dtoData DTO data
-     * 
+     * @return created entity.
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
      */

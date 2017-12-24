@@ -23,7 +23,7 @@ package org.meveo.commons.exceptions;
  * correctly dues to misconfiguration or environment issues.
  * 
  * @author Donatas Remeika
- * @created Mar 10, 2009
+ * @since Mar 10, 2009
  */
 public class ConfigurationException extends RuntimeException {
 

@@ -17,7 +17,7 @@ import org.meveo.api.rest.impl.BaseRs;
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 4:40:19 AM
+ * @since Jun 3, 2016 4:40:19 AM
  *
  */
 @RequestScoped

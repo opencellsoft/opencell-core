@@ -62,6 +62,7 @@ public class PaymentGatewayDto extends BusinessDto {
 
     /**
      * Instantiates a new payment gateway dto from the entity.
+     * @param paymentGateway payment gateway instance.
      */
     public PaymentGatewayDto(PaymentGateway paymentGateway) {
         this.id = paymentGateway.getId();

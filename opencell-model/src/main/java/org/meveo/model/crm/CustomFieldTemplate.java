@@ -327,7 +327,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Extract codes of matrix columns into a sorted list by column index
+     * Extract codes of matrix columns into a sorted list by column index.
      * 
      * @return A list of matrix column codes
      */
@@ -390,8 +390,8 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     /**
      * Retrieve a cet code from classname and code as it is stored in entityClazz field.
      * 
-     * @param entityClazz
-     * @return
+     * @param entityClazz entity class
+     * @return code
      */
     public static String retrieveCetCode(String entityClazz) {
         if (entityClazz == null) {
@@ -620,7 +620,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Instantiate a CustomFieldValue from a template, setting a default value if applicable
+     * Instantiate a CustomFieldValue from a template, setting a default value if applicable.
      *
      * @return CustomFieldValue object
      */

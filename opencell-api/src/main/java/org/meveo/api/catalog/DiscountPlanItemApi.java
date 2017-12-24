@@ -25,7 +25,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Aug 1, 2016 9:46:32 PM
+ * @sincete Aug 1, 2016 9:46:32 PM
  *
  */
 @Stateless

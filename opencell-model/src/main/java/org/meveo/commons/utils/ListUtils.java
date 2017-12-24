@@ -52,8 +52,9 @@ public final class ListUtils {
     }
 
     /**
-     * Sort map by it's values
-     * 
+     * Sort map by it's values.
+     * @param <K> key
+     * @param <V> value
      * @param map Map to sort
      * @return A sorted map
      */

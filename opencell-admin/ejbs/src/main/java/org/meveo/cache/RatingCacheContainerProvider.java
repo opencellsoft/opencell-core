@@ -538,7 +538,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Retrieve cached usage charge template
+     * Retrieve cached usage charge template.
      * 
      * @param chargeTemplateId Usage charge template ID
      * @return Cached usage charge template
@@ -549,7 +549,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Are usage charge instances cached for a given subscription
+     * Are usage charge instances cached for a given subscription.
      * 
      * @param subscriptionId Subscription id
      * @return True if usage charge instances cached
@@ -559,7 +559,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Get a list of usage charge instances associated to subscription
+     * Get a list of usage charge instances associated to subscription.
      * 
      * @param subscriptionId Subsription id
      * @return A list of usage charge instances
@@ -569,7 +569,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Get a summary of cached information
+     * Get a summary of cached information.
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
@@ -586,7 +586,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Refresh cache by name
+     * Refresh cache by name.
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
@@ -605,10 +605,10 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Add counterPeriodToCache
+     * Add counterPeriodToCache.
      * 
      * @param counterPeriod Counter period
-     * @return
+     * @return cached counter period.
      */
     public CachedCounterPeriod addCounterPeriodToCache(CounterPeriod counterPeriod) {
 

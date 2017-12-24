@@ -11,7 +11,7 @@ import org.meveo.model.catalog.CounterTypeEnum;
 
 /**
  * 
- * A View of CounterInstance stored in Data Grid with its entity counterpart stored in Database
+ * A View of CounterInstance stored in Data Grid with its entity counterpart stored in Database.
  * 
  */
 public class CachedCounterInstance implements Serializable {
@@ -37,10 +37,9 @@ public class CachedCounterInstance implements Serializable {
     }
 
     /**
-     * Create a cache view of a counter entity it will store all the periods in a ascending order by startDate for a fast selection during rating
+     * Create a cache view of a counter entity it will store all the periods in a ascending order by startDate for a fast selection during rating.
      * 
-     * @param counterInstance
-     * @return
+     * @param counterInstance counter instance.
      */
     public CachedCounterInstance(CounterInstance counterInstance) {
 
@@ -75,7 +74,7 @@ public class CachedCounterInstance implements Serializable {
     }
 
     /**
-     * Get a matching period for a given date
+     * Get a matching period for a given date.
      * 
      * @param date Date to match
      * @return Counter period matched
@@ -96,9 +95,9 @@ public class CachedCounterInstance implements Serializable {
     }
 
     /**
-     * Get a matching period for a given date
+     * Get a matching period for a given date.
      * 
-     * @param date Date to match
+     * @param id id of counter period/
      * @return Counter period matched
      */
     public CachedCounterPeriod getCounterPeriod(Long id) {

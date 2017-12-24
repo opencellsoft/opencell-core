@@ -7,7 +7,7 @@ import org.meveo.api.dto.BaseDto;
 
 /**
  * @author Edward P. Legaspi
- * @created 13 Sep 2017
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ApplicableDueDateDelayDto extends BaseDto {

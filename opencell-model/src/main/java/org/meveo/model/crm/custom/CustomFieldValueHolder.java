@@ -36,42 +36,42 @@ public class CustomFieldValueHolder implements Serializable {
     private ICustomFieldEntity entity;
 
     /**
-     * Field used to show detail values of a single value period
+     * Field used to show detail values of a single value period.
      */
     private CustomFieldTemplate selectedFieldTemplate;
 
     /**
-     * Field used to show detail values of a single value period
+     * Field used to show detail values of a single value period.
      */
     private CustomFieldValue selectedValuePeriod;
 
     /**
-     * GUI Field id used to show detail values of a single value period
+     * GUI Field id used to show detail values of a single value period.
      */
     private String selectedValuePeriodId; // TODO no longer available
 
     /**
-     * Is single value period editable
+     * Is single value period editable.
      */
     private boolean selectedValuePeriodEdit = true;
 
     /**
-     * Was value period found with identical/overlapping dates
+     * Was value period found with identical/overlapping dates.
      */
     private Boolean valuePeriodMatched;
 
     /**
-     * Field used to show detail values of a single child entity
+     * Field used to show detail values of a single child entity.
      */
     private CustomFieldValueHolder selectedChildEntity;
 
     /**
-     * Were values updated - used only in child entity type field to not update not changed values
+     * Were values updated - used only in child entity type field to not update not changed values.
      */
     private boolean updated;
 
     /**
-     * Constructor
+     * Constructor.
      * 
      * @param customFieldTemplates Custom field templates applicable for the entity, mapped by a CFT code
      * @param cfValuesAsMap Custom field values mapped by a CFT code
@@ -129,7 +129,7 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Clear value from GUI "new value field" - used when displaying a popup with period values
+     * Clear value from GUI "new value field" - used when displaying a popup with period values.
      * 
      * @param cft Custom field template
      */
@@ -170,12 +170,12 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Get a custom field value corresponding to a given start and end date
+     * Get a custom field value corresponding to a given start and end date.
      * 
      * @param cft Custom field template
-     * @param date Date
+     * @param startDate Date
+     * @param endDate ending date.
      * @param createIfNotFound Should custom field value be created if not found
-     * @param calendar Calendar to determine custom field value start/end dates when creating a new custom field value
      * @param strictMatch Should a match occur only if start and end dates match. Non-strict match would match when dates overlap
      * @return Custom field value corresponding to a given start and end date
      */
@@ -198,7 +198,7 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Calculate the next priority value
+     * Calculate the next priority value.
      * 
      * @param cft Custom field template
      * @return Integer
@@ -212,10 +212,9 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Add a new custom field value, corresponding to a given date
+     * Add a new custom field value, corresponding to a given date.
      * 
      * @param cft Custom field template
-     * @param entity Entity
      * @param date Value date
      * @return Instantiated custom field instance corresponding to a value date period
      */
@@ -225,10 +224,9 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Add a new custom field value, corresponding to a given date range
+     * Add a new custom field value, corresponding to a given date range.
      * 
      * @param cft Custom field template
-     * @param entity Entity
      * @param startDate Custom field value start date
      * @param endDate Custom field value end date
      * @return Instantiated custom field value corresponding to a value date period
@@ -238,6 +236,9 @@ public class CustomFieldValueHolder implements Serializable {
         return period;
     }
 
+    /**
+     * @return list of customer field value.
+     */
     public Map<String, List<CustomFieldValue>> getValuesByCode() {
         return valuesByCode;
     }
@@ -256,9 +257,9 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Check if any field value should be considered as empty for GUI
-     * 
-     * @return
+     * Check if any field value should be considered as empty for GUI.
+     * @param cft custom field template.
+     * @return true if any field is emty.
      */
     public boolean isAnyFieldEmptyForGui(CustomFieldTemplate cft) {
 
@@ -299,7 +300,7 @@ public class CustomFieldValueHolder implements Serializable {
     }
 
     /**
-     * Check if all fields are empty
+     * Check if all fields are empty.
      * 
      * @return True if all the fields are empty
      */

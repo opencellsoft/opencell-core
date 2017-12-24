@@ -119,7 +119,7 @@ public class OccTemplateApi extends BaseApi {
     /**
      * create or update occ template based on occ template code.
      * 
-     * @param postData
+     * @param postData posted data.
 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException  business exception.
@@ -137,7 +137,7 @@ public class OccTemplateApi extends BaseApi {
 
     /**
      * retrieve a list of occ templates.
-     *
+     * @return occ template dto.
      * @throws MeveoApiException meveo api exception.
      */
     public OccTemplatesDto list() throws MeveoApiException {

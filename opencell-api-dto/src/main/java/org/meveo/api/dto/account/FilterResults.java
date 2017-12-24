@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Specified how and on what criteria to filter API results
+ * Specified how and on what criteria to filter API results.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.METHOD })
@@ -17,11 +17,13 @@ public @interface FilterResults {
      * value of "dto.customerAccounts.customerAccount" will be parsed and filtered.
      * 
      * If not specified - an object itself will be filtered
+     * @return name of property to be filtered
      */
     String propertyToFilter() default "";
 
     /**
-     * Identifies the filtering rule to apply to items selected for filtering
+     * Identifies the filtering rule to apply to items selected for filtering.
+     * @return array of property to be filtered.
      */
     FilterProperty[] itemPropertiesToFilter();
 }

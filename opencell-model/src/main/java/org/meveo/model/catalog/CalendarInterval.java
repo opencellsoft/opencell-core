@@ -34,9 +34,9 @@ import javax.persistence.OrderBy;
 /**
  * Represents a time inverval(s) based calendar. Time interval specifies a begin and end times, which can be expressed in the following units: weekdays, month/day and hour/minute.
  * 
- * Example: given a month/day interval of 01/15 - 01/30 a previous calendar date for 2015/01/20 will be 2015/01/15 and next calendar date will be 2015/01/30<br/>
- * given a hour/minute interval of 15:30 - 16:45 a previous calendar date for 2015/01/20 16:00 will be 2015/01/20 15:30 and next calendar date will be 2015/01/20 16:45 <br/>
- * given weekday interval of 1-5 (monday - friday) a previous calendar date for 2015/01/20 will be 2015/01/19 and next calendar date will be 2015/01/23<br/>
+ * Example: given a month/day interval of 01/15 - 01/30 a previous calendar date for 2015/01/20 will be 2015/01/15 and next calendar date will be 2015/01/30&lt;br/&gt;
+ * given a hour/minute interval of 15:30 - 16:45 a previous calendar date for 2015/01/20 16:00 will be 2015/01/20 15:30 and next calendar date will be 2015/01/20 16:45 &lt;br/&gt;
+ * given weekday interval of 1-5 (monday - friday) a previous calendar date for 2015/01/20 will be 2015/01/19 and next calendar date will be 2015/01/23&lt;br/&gt;
  * 
  * @author Andrius Karpavicius
  * 

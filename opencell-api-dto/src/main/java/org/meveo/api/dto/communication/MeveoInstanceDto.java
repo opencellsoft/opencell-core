@@ -14,7 +14,7 @@ import org.meveo.model.communication.MeveoInstanceStatusEnum;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 6:50:08 AM
+ * @since Jun 3, 2016 6:50:08 AM
  *
  */
 @XmlRootElement(name = "MeveoInstance")

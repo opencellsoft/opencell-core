@@ -42,30 +42,44 @@ import org.slf4j.LoggerFactory;
 public class ParamBean {
 
     private static final Logger log = LoggerFactory.getLogger(ParamBean.class);
+    
     private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+    
     private String _propertyFile;
 
 
+    /**
+     * true if it allows multi service instance.
+     */
     public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
     
     /**
-     * Save properties imported from the file
+     * Save properties imported from the file.
      */
     private Properties properties = new Properties();
 
+    /**
+     * map of categories.
+     */
     private HashMap<String, String> categories = new HashMap<String, String>();
     /**
-     * Initialisation du Bean correcte.
+     * true if read file is ok.
      */
     private boolean valid = false;
 
     /**
-     * instance unique
+     * instance unique.
      */
     private static ParamBean instance = null;
 
+    /**
+     * reload properties file.
+     */
     private static boolean reload = false;
 
+    /**
+     * default constructor.
+     */
     public ParamBean() {
 
     }
@@ -94,7 +108,7 @@ public class ParamBean {
 
     /**
      * Retourne une instance de ParamBean.
-     * 
+     * @param propertiesName property name
      * @return propertiesName properties name
      */
     public static ParamBean getInstance(String propertiesName) {
@@ -215,6 +229,7 @@ public class ParamBean {
     /**
      * Set property. 
      * @param property_p java.lang.String
+     * @param vNewValue new value.
      */
     public void setProperty(String property_p, String vNewValue) {
         log.info("setProperty " + property_p + "->" + vNewValue);
@@ -241,7 +256,7 @@ public class ParamBean {
 
     /**
      * 
-     * 
+     * @param file properties file
      * @return <code>true</code> if we save file sucessfully.
      */
     public boolean saveProperties(File file) {
@@ -306,7 +321,7 @@ public class ParamBean {
     /**
      * @param key key of property
      * @param defaultValue default value for key.
-     * @return
+     * @return value of property
      */
     public String getProperty(String key, String defaultValue) {
         String result = null;
@@ -320,11 +335,20 @@ public class ParamBean {
         return result;
     }
 
+    /**
+     * @param propertiesName property name
+     */
     public static void reload(String propertiesName) {
         // log.info("Reload");
         setInstance(new ParamBean(propertiesName));
     }
 
+    /**
+     * @param theString input string
+     * @param escapeSpace true if escape spacce
+     * @param escapeUnicode true if escape unicode
+     * @return escaped string.
+     */
     private String saveConvert(String theString, boolean escapeSpace, boolean escapeUnicode) {
         int len = theString.length();
         int bufLen = len * 2;
@@ -391,12 +415,16 @@ public class ParamBean {
         return outBuffer.toString();
     }
 
+    /**
+     * @param nibble input int
+     * @return hex output
+     */
     private static char toHex(int nibble) {
         return hexDigit[(nibble & 0xF)];
     }
 
     /**
-     * A shortcut to get date format
+     * A shortcut to get date format.
      * 
      * @return Date format string
      */
@@ -405,7 +433,8 @@ public class ParamBean {
     }
 
     /**
-     * A shortcut to get date with time format
+     * A shortcut to get date with time format.
+     * @return date time format.
      */
     public String getDateTimeFormat() {
         return getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");

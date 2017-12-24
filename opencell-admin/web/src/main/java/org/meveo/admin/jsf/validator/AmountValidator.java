@@ -34,7 +34,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 
 /**
  * @author Gediminas Ubartas
- * @created Jul 28, 2011
+ * @since Jul 28, 2011
  * 
  */
 @FacesValidator("amountValidator")

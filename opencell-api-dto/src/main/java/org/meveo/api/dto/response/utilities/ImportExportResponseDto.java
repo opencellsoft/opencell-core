@@ -138,9 +138,9 @@ public class ImportExportResponseDto extends BaseResponse {
     }
 
     /**
-     * Get a failure message as a complete message
+     * Get a failure message as a complete message.
      * 
-     * @return
+     * @return failure message.
      */
     public String getFailureMessage() {
         if (errorMessageKey != null) {

@@ -120,10 +120,10 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Mark job, identified by a given job instance id, as currently running on current cluster node
+     * Mark job, identified by a given job instance id, as currently running on current cluster node.
      * 
      * @param jobInstanceId Job instance identifier
-     * @param limitToSingleNode
+     * @param limitToSingleNode true if this job can be run on only one node.
      * @return Was Job running before and if on this or another node
      */
     @Lock(LockType.WRITE)

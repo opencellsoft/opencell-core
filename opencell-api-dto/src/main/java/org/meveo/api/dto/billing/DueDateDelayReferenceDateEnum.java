@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * @author Edward P. Legaspi
- * @created 13 Sep 2017
+ * @since 13 Sep 2017
  */
 @XmlEnum
 public enum DueDateDelayReferenceDateEnum {

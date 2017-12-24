@@ -235,7 +235,7 @@ public class MultiLanguageFieldApi extends BaseApi {
      * @param fieldname Field name. Optional
      * @param languageCode 3 letter language code. Optional
      * @return A list of entity field value translations
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public CatMessagesListDto list(String entityClassName, String fieldname, String languageCode) throws MeveoApiException {

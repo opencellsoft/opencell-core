@@ -48,7 +48,7 @@ public interface CSVCDRParser {
 	 *  The implementation should save locally the CDR as call to other methods do not contain reference to the CDR
 	 * @param line : the input CDR
 	 * @return the modified CDR
-	 * @throws InvalidFormatException 
+	 * @throws InvalidFormatException  invalid format exception.
 	 */
 	Serializable getCDR(String line) throws InvalidFormatException;
 	
@@ -75,18 +75,23 @@ public interface CSVCDRParser {
 	 * @param cdr : CDR returned by the getCDR method
 	 * @param origin origin
 	 * @return  EDR Data Access Object
-	 * @throws CDRParsingException cdr parsing exception.
+	 * 
 	 */
 	EDRDAO getEDR(Serializable cdr, String origin);
 
 	/**
 	 * Construct a csv record for the rejected CDR with given rejection reason.
-	 * @param cdr
-	 * @param reason
-	 * @return
+	 * @param cdr cdr
+	 * @param reason reason
+	 * @return cdr line
 	 */
 	String getCDRLine(Serializable cdr, String reason);
 
+	/**
+	 * @param username user name
+	 * @param ip Ip address.
+	 * 
+	 */
 	void initByApi(String username, String ip);
 	
 }

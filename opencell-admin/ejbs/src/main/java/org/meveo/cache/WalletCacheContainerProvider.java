@@ -125,9 +125,9 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Add association between usage charge instance and prepaid wallets
+     * Add association between usage charge instance and prepaid wallets.
      * 
-     * @param charge
+     * @param charge usage charge instance.
      */
     // @Lock(LockType.WRITE)
     public void updateCache(UsageChargeInstance charge) {
@@ -152,7 +152,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Update cached balance and reserved balance for a given wallet instance
+     * Update cached balance and reserved balance for a given wallet instance.
      * 
      * @param walletId Wallet ID
      * @return Balance amount

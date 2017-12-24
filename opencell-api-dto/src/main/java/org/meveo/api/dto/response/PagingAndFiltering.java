@@ -100,17 +100,17 @@ public class PagingAndFiltering implements Serializable {
     private Map<String, Object> filters;
 
     /**
-     * Data retrieval options/fieldnames separated by a comma
+     * Data retrieval options/fieldnames separated by a comma.
      */
     private String fields;
 
     /**
-     * Pagination - from record number
+     * Pagination - from record number.
      */
     private Integer offset;
 
     /**
-     * Pagination - number of items to retrieve
+     * Pagination - number of items to retrieve.
      */
     private Integer limit = 100;
 
@@ -158,7 +158,7 @@ public class PagingAndFiltering implements Serializable {
     }
 
     /**
-     * Paging and filtering criteria
+     * Paging and filtering criteria.
      * 
      * @param fullTextFilter Full text filter query
      * @param filters Filtering criteria - a map of field names and values. See PersistenceService.getQuery for more details.
@@ -260,10 +260,10 @@ public class PagingAndFiltering implements Serializable {
     }
 
     /**
-     * Check if a given field retrieval option is enabled
+     * Check if a given field retrieval option is enabled.
      * 
-     * @param fieldOption
-     * @return
+     * @param fieldOption field option
+     * @return true/false.
      */
     public boolean hasFieldOption(String fieldOption) {
         if (fields == null) {

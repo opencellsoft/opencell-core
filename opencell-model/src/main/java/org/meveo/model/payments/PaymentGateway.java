@@ -24,10 +24,11 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
- * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: <lu>
- * <li>Custom: The administrator can define the implementation in a script that extends {@link org.meveo.service.script.payment.PaymentScript PaymentScript}.</li>
- * <li>Natif: The business implementation code is available on the opencell core, currently the available PSP are Inginico Global Collect, and SEPA format payment file generation
- * and Paynum format.</li> </lu>
+ * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt;
+ * &lt;li&gt;Custom: The administrator can define the implementation in a script that extends {@link org.meveo.service.script.payment.PaymentScript PaymentScript}.&lt;/li&gt;
+ * &lt;li&gt;Natif: The business implementation code is available on the opencell core, currently the available PSP are Inginico Global Collect, and SEPA format payment file generation
+ * and Paynum format.&lt;/li&gt;
+ *  &lt;/ul&gt;
  *
  *
  * @author anasseh

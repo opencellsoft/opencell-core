@@ -297,10 +297,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Get custom field templates for a given entity (appliesTo value)
+     * Get custom field templates for a given entity (appliesTo value).
      * 
      * @param appliesTo entity (appliesTo value)
-     * @param provider Provider
      * @return A map of custom field templates with template code as a key
      */
     @Lock(LockType.READ)

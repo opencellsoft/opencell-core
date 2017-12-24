@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * File utilities class.
  * 
  * @author Donatas Remeika
- * @created Mar 4, 2009
+ * 
  */
 public final class FileUtils {
 
@@ -144,7 +144,7 @@ public final class FileUtils {
      * 
      * @param fromFileName File name that we are copying.
      * @param toFileName File(dir) name where to copy.
-     * @throws IOException
+     * @throws IOException IO exeption.
      */
     public static void copy(String fromFileName, String toFileName) throws IOException {
         File fromFile = new File(fromFileName);
@@ -484,6 +484,7 @@ public final class FileUtils {
      * Compress a folder with sub folders and its files into byte array.
      * 
      * @param sourceFolder source folder
+     * @return zip file as byte array
      * @throws Exception exception. 
      */
     public static byte[] createZipFile(String sourceFolder) throws Exception {

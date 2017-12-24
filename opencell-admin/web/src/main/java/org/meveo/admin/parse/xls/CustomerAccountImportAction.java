@@ -40,7 +40,7 @@ import org.slf4j.Logger;
  * Action for importing Customer Accounts.
  * 
  * @author Gediminas Ubartas
- * @created 2010.11.09
+ * @since 2010.11.09
  */
 @Named
 @ConversationScoped

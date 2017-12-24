@@ -27,9 +27,9 @@ import java.util.Set;
  * with pagination.
  * 
  * @author Ignas Lelys
- * @created Apr 6, 2011
+ * @since Apr 6, 2011
  * 
- * @param <E>
+ * @param <E> enity.
  */
 public class ListItemsSelector<E> implements Serializable {
 

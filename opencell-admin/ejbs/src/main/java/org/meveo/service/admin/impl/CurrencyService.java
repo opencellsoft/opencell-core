@@ -50,6 +50,8 @@ public class CurrencyService extends PersistenceService<Currency> {
 
 	/**
 	 * Don't let to delete a currency which is system currency.
+	 * @param currency curencey to check.
+	 * @throws BusinessException business exception.
 	 */
 	// TODO use it
 	public void validateBeforeRemove(Currency currency)

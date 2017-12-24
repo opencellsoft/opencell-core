@@ -67,7 +67,7 @@ public class IEntityExportIdentifierConverter implements Converter {
      * @param referenceFKById Should ID be used as a preferred way of retrieving an entity from DB - used when no ID clash can occur(e.g.import to a clean DB, import to a clone of
      *        DB)
      * @param ignoreNotFoundFK Ignore if entity was not found. Otherwise a runtime exception will be thrown
-     * @param forceToProvider
+     * @param forceToProvider force to provider.
      * @param iEntityClassConverter A converter for full entity conversion
      */
     public IEntityExportIdentifierConverter(ExportImportConfig exportImportConfig, EntityManager em, boolean referenceFKById, boolean ignoreNotFoundFK, Provider forceToProvider,

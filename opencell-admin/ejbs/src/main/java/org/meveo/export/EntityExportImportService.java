@@ -425,7 +425,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Export entities matching a given export template
+     * Export entities matching a given export template.
      * 
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
@@ -544,7 +544,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Remove entities after an export
+     * Remove entities after an export.
      * 
      * @param exportStats Export statistics, including entities to remove
      */
@@ -571,7 +571,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Export entities matching a given export template
+     * Export entities matching a given export template.
      * 
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
@@ -580,7 +580,6 @@ public class EntityExportImportService implements Serializable {
      * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
      * @param exportStats Export statistics
      * @param writer Writer for serialized entity output
-     * @return
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
@@ -2300,13 +2299,13 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Check status and get results of file upload to a remote meveo instance
+     * Check status and get results of file upload to a remote meveo instance.
      * 
      * @param executionId Import in remote meveo instance execution id
      * @param remoteInstance Remote meveo instance
-     * @throws RemoteAuthenticationException
-     * @throws RemoteImportException
-     * @throws Exception
+     * @return import export response
+     * @throws RemoteAuthenticationException remote authentication exception.
+     * @throws RemoteImportException remote import exception
      */
     public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance)
             throws RemoteAuthenticationException, RemoteImportException {
@@ -2345,7 +2344,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Get export template for a particular class
+     * Get export template for a particular class.
      * 
      * @param clazz Class
      * @return Export/import template definition
@@ -2378,7 +2377,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Get export template by name
+     * Get export template by name?
      * 
      * @param templateName Template name
      * @return Export/import template definition
@@ -2394,7 +2393,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Get export template by name
+     * Get export template by name.
      * 
      * @param relatedEntityInfo Related entity to be exported.
      * @return Export/import template definition

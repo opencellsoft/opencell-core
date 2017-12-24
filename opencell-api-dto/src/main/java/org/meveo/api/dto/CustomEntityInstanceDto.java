@@ -84,6 +84,7 @@ public class CustomEntityInstanceDto implements Serializable {
      * Convert CustomEntityInstance entity to CustomEntityInstanceDto object including custom field values.
      * 
      * @param cei CustomEntityInstance entity to convert
+     * @param customFieldInstances custom field instances.
      * @return CustomEntityInstanceDto object
      */
     public static CustomEntityInstanceDto toDTO(CustomEntityInstance cei, CustomFieldsDto customFieldInstances) {

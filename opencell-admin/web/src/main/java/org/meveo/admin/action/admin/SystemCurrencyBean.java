@@ -33,7 +33,7 @@ import org.meveo.service.admin.impl.CurrencyService;
  * Seam bean for system currency entity.
  * 
  * @author Ignas
- * @created 2009.09.15
+ * @since 2009.09.15
  */
 @Named
 @SessionScoped
