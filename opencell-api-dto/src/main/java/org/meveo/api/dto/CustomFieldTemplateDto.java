@@ -162,7 +162,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
      * position&gt;;field:&lt;field relative position in fieldgroup
-     * <br/>
+     * 
      * 
      * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
      * 

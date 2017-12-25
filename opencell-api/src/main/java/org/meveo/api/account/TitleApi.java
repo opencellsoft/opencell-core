@@ -24,9 +24,10 @@ public class TitleApi extends BaseApi {
     /**
      * Creates a new Title entity.
      * 
-     * @param postData
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API
+     * 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void create(TitleDto postData) throws MeveoApiException, BusinessException {
 
@@ -56,9 +57,9 @@ public class TitleApi extends BaseApi {
     /**
      * Returns TitleDto based on title code.
      * 
-     * @param titleCode
-     * @return
-     * @throws MeveoApiException
+     * @param titleCode title code
+     * @return title dto object
+     * @throws MeveoApiException meveo api exception.
      */
     public TitleDto find(String titleCode) throws MeveoApiException {
         if (StringUtils.isBlank(titleCode)) {
@@ -82,10 +83,10 @@ public class TitleApi extends BaseApi {
     /**
      * Updates a Title Entity based on title code.
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void update(TitleDto postData) throws MeveoApiException, BusinessException {
         String titleCode = postData.getCode();
@@ -113,10 +114,10 @@ public class TitleApi extends BaseApi {
     /**
      * Removes a title based on title code.
      * 
-     * @param postData
+     * @param titleCode title's code
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void remove(String titleCode) throws MeveoApiException, BusinessException {
 

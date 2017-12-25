@@ -432,10 +432,9 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Validate the Billing run
+     * Validate the Billing run.
      * 
      * @param billingRun billing run to validate
-     * @param user current logged user
      * @throws BusinessException business exception
      */
     public void validateBR(BillingRun billingRun) throws BusinessException {
@@ -443,13 +442,15 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : <ul> Create rated transactions
+     * Launch all the invoicing process for a given billingAccount, that's mean : 
+     * <ul>
      * <li>Create an exeptionnal billingRun with given dates
      * <li>Validate the preinvoicing resport
      * <li>Validate the postinvoicing report
-     * <li>Vaidate the BillingRun </ul>
+     * <li>Vaidate the BillingRun
+     * </ul>
      * 
-     * @param generateInvoiceRequestDto
+     * @param generateInvoiceRequestDto generate invoice request
      * 
      * @return The invoiceNumber invoice number.
      * @throws BusinessException business exception
@@ -457,7 +458,6 @@ public class InvoiceApi extends BaseApi {
      * @throws FileNotFoundException file not found exception
      * @throws ImportInvoiceException import invoice exception
      * @throws InvoiceExistException invoice exist exception
-     * @throws Exception exception
      */
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
@@ -583,7 +583,7 @@ public class InvoiceApi extends BaseApi {
     /**
      * 
      * @param invoiceNumber invoice number
-     * 
+     * @param invoiceId invoice' id
      * @return invoice's pdf as bytes
      * @throws MissingParameterException missing pararmeter exception
      * @throws EntityDoesNotExistsException entity does not exist exception
@@ -627,7 +627,7 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * 
+     * @param invoiceId invoice's id.
      * @param invoiceNumber invoice number
      * @param invoiceTypeCode invoice type code
      * 
@@ -968,7 +968,7 @@ public class InvoiceApi extends BaseApi {
      * 
      * @param pagingAndFiltering Paging and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return A list of invoices
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception
      */
     public InvoicesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
 

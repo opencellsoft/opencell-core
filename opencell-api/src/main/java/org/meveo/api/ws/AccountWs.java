@@ -62,16 +62,16 @@ public interface AccountWs extends IBaseWs {
     // customer
 
     /**
-     * Create a new customer
+     * Create a new customer.
      * 
-     * @param customer The customer's data
+     * @param postData The customer's data
      * @return Request processing status
      */
     @WebMethod
     ActionStatus createCustomer(@WebParam(name = "customer") CustomerDto postData);
 
     /**
-     * Update an existing customer
+     * Update an existing customer.
      * 
      * @param postData The customer's data
      * @return Request processing status
@@ -152,7 +152,7 @@ public interface AccountWs extends IBaseWs {
     // customer category
 
     /**
-     * Create a new customer category
+     * Create a new customer category.
      * 
      * @param postData The customer category's data
      * @return Request processing status
@@ -211,14 +211,15 @@ public interface AccountWs extends IBaseWs {
      * Search for a customer account with a given code.
      * 
      * @param customerAccountCode The customer account's code
-     * @return
+     * @param calculateBalances true if need to calculate balances.
+     * @return customer account
      */
     @WebMethod
     GetCustomerAccountResponseDto findCustomerAccount(@WebParam(name = "customerAccountCode") String customerAccountCode,
             @WebParam(name = "calculateBalances") Boolean calculateBalances);
 
     /**
-     * Remove customerAccount with a given code
+     * Remove customerAccount with a given code.
      * 
      * @param customerAccountCode The customer account's code
      * @return Request processing status
@@ -285,9 +286,9 @@ public interface AccountWs extends IBaseWs {
     // billing account
 
     /**
-     * Create a new billing account
+     * Create a new billing account.
      * 
-     * @param posteData Billing account data
+     * @param postData Billing account data
      * @return Request processing status
      */
     @WebMethod

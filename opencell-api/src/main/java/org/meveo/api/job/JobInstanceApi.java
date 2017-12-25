@@ -111,10 +111,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     }
 
     /**
-     * Updates JobInstance based on Code
+     * Updates JobInstance based on Code.
      * 
-     * @param jobInstanceDto job instance dto.
-     * 
+     * @param postData posted data to API.
+     * @return job instance
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */

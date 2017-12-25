@@ -146,6 +146,7 @@ public class CatalogHierarchyBuilderService {
      * @param chargeTemplateInMemory list of charge template
      * @param pricePlansInMemory list o price plan matrix
      * @param prefix prefix used to generate the codes
+     * @param serviceConfiguration service configuration.
      * @return offer product template.
      * @throws BusinessException business exception.
      */
@@ -718,11 +719,11 @@ public class CatalogHierarchyBuilderService {
     /**
      * Copy basic properties of a chargeTemplate to another object.
      * 
-     * @param sourceChargeTemplate
-     * @param targetTemplate
-     * @param prefix
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
+     * @param sourceChargeTemplate source charge template
+     * @param targetTemplate target template
+     * @param prefix prefix
+     * @throws InvocationTargetException invocation target exception
+     * @throws IllegalAccessException illegal access exception.
      */
     private void copyChargeTemplate(ChargeTemplate sourceChargeTemplate, ChargeTemplate targetTemplate, String prefix) throws IllegalAccessException, InvocationTargetException {
         BeanUtils.copyProperties(targetTemplate, sourceChargeTemplate);
@@ -784,7 +785,7 @@ public class CatalogHierarchyBuilderService {
 
     /**
      * @param serviceTemplate service template.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     @SuppressWarnings("rawtypes")
     private void deleteServiceAndCharge(ServiceTemplate serviceTemplate) throws BusinessException {

@@ -18,7 +18,7 @@ import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 
 /**
- * Web service for managing {@link org.meveo.model.Provider}.
+ * Web service for managing Provider.
  * 
  * @author Edward P. Legaspi
  **/
@@ -31,8 +31,8 @@ public interface ProviderRs extends IBaseRs {
     /**
      * Create provider.
      * 
-     * @param postData Provider data
-     * @return
+     * @param postData Provider data to be created
+     * @return action status
      */
     @POST
     @Path("/")
@@ -42,78 +42,86 @@ public interface ProviderRs extends IBaseRs {
      * Search for provider with a given code.
      * 
      * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
-     * @return
+     * @return providers
      */
     @GET
     @Path("/")
     GetProviderResponse find(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Update provider
+     * Update provider.
      * 
      * @param postData Provider data
-     * @return
+     * @return action status
      */
     @PUT
     @Path("/")
     ActionStatus update(ProviderDto postData);
 
     /**
-     * Returns list of trading countries, currencies and languages
+     * Returns list of trading countries, currencies and languages.
      * 
      * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
-     * @return
+     * @return trading configuration.
      */
     @GET
     @Path("/getTradingConfiguration")
     GetTradingConfigurationResponseDto findTradingConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Returns list of invoicing configuration (calendars, taxes, invoice categories, invoice sub categories, billing cycles and termination reasons
+     * Returns list of invoicing configuration (calendars, taxes, invoice categories, invoice sub categories, billing cycles and termination reasons.
      * 
      * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
-     * @return
+     * @return invoicing configuration
      */
     @GET
     @Path("/getInvoicingConfiguration")
     GetInvoicingConfigurationResponseDto findInvoicingConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Returns list of customer brands, categories and titles
+     * Returns list of customer brands, categories and titles.
      * 
      * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
-     * @return
+     * @return customer configuration
      */
     @GET
     @Path("/getCustomerConfiguration")
     GetCustomerConfigurationResponseDto findCustomerConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Returns list of payment method and credit categories
+     * Returns list of payment method and credit categories.
      * 
      * @param providerCode An optional Provider code. If not passed, a current user's provider will be retrieved
-     * @return
+     * @return customer account configuration
      */
     @GET
     @Path("/getCustomerAccountConfiguration")
     GetCustomerAccountConfigurationResponseDto findCustomerAccountConfiguration(@QueryParam("providerCode") String providerCode);
 
     /**
-     * Create or update a provider if it doesn't exists
+     * Create or update a provider if it doesn't exists.
      * 
      * @param postData Provider data
-     * @return
+     * @return action status
      */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(ProviderDto postData);
-    
+
+    /**
+     * @param postData provider to be updated
+     * @return action status
+     */
     @PUT
     @Path("/updateProviderCF")
     ActionStatus updateProviderCF(ProviderDto postData);
-    
+
+    /**
+     * @param providerCode provider's code
+     * @return provider if exists
+     */
     @GET
     @Path("/findProviderCF")
     GetProviderResponse findProviderCF(@QueryParam("providerCode") String providerCode);
-    
+
 }

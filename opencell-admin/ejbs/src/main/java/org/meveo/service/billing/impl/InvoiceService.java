@@ -1292,7 +1292,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoice Invoice
      * @return Invoice's XML file contents as a string
      * @throws BusinessException business exception
-     * @throws FileNotFoundException file not found exception
      */
     public String getInvoiceXml(Invoice invoice) throws BusinessException {
 

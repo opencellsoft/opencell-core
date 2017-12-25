@@ -477,9 +477,9 @@ public class CustomerApi extends AccountEntityApi {
     /**
      * Create or update customer brand based on code.
      *
-     * @param postData
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API containing customer's brand.
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void createOrUpdateBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
@@ -495,6 +495,11 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
+    /**
+     * @param customerDto customer data
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
+     */
     public void createOrUpdatePartial(CustomerDto customerDto) throws MeveoApiException, BusinessException {
         CustomerDto existedCustomerDto = null;
         try {

@@ -31,8 +31,8 @@ public interface SellerRs extends IBaseRs {
     /**
      * Create seller.
      * 
-     * @param postData
-     * @return
+     * @param postData posted data to API containing information of seller
+     * @return action status
      */
     @Path("/")
     @POST
@@ -41,8 +41,8 @@ public interface SellerRs extends IBaseRs {
     /**
      * Update seller.
      * 
-     * @param postData
-     * @return
+     * @param postData posted data
+     * @return action status.
      */
     @Path("/")
     @PUT
@@ -51,8 +51,8 @@ public interface SellerRs extends IBaseRs {
     /**
      * Search for seller with a given code.
      * 
-     * @param sellerCode
-     * @return
+     * @param sellerCode seller code
+     * @return found seller.
      */
     @Path("/")
     @GET
@@ -61,8 +61,8 @@ public interface SellerRs extends IBaseRs {
     /**
      * Remove seller with a given code.
      * 
-     * @param sellerCode
-     * @return
+     * @param sellerCode code of seller
+     * @return action status.
      */
     @Path("/{sellerCode}")
     @DELETE
@@ -71,17 +71,23 @@ public interface SellerRs extends IBaseRs {
     /**
      * Search for seller with a given code.
      * 
-     * @param sellerCode
-     * @return
+     * @return list of seller
      */
     @Path("/list")
     @GET
     SellerResponseDto list();
 
+    /**
+     * @return list of seller's code.
+     */
     @Path("/listSellerCodes")
     @GET
     SellerCodesResponseDto listSellerCodes();
 
+    /**
+     * @param postData posted data
+     * @return created or updated seller.
+     */
     @Path("/createOrUpdate")
     @POST
     ActionStatus createOrUpdate(SellerDto postData);

@@ -43,8 +43,8 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
      * Specified interval end. Depending on calendar interval type (calendar.intervalType) specifies:
      * 
      * a weekday (1=monday ... 7=sunday)
-     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format <month without leading zero><day with leading zero>, <br/>
-     * a hour and minute as 3 or 4 digits in a format <hour without leading zero><minute with leading zero if hour specified>
+     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format  &lt;month without leading zero&gt; &lt;day with leading zero&gt;
+     * a hour and minute as 3 or 4 digits in a format &lt;hour without leading zero&gt;&lt;minute with leading zero if hour specified&gt;
      */
     @Column(name = "interval_end", nullable = false)
     @NotNull

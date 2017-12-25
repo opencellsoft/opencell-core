@@ -28,62 +28,65 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 public interface MeasurableQuantityRs extends IBaseRs {
 
-	@POST
-	@Path("/")
-	public ActionStatus create(MeasurableQuantityDto postData);
+    /**
+     * @param postData posted data to API
+     * @return action status.
+     */
+    @POST
+    @Path("/")
+    ActionStatus create(MeasurableQuantityDto postData);
 
-	/**
-	 * Update Measurable quantity from mesearable quantities
-	 * 
-	 * @param postData
-	 * @return
-	 */
-	@PUT
-	@Path("/")
-	public ActionStatus update(MeasurableQuantityDto postData);
-	
-	/**
-	 * Get Measurable quantity from a given code
-	 * 
-	 * @param code Measureable quantity's code
-	 * @return
-	 */
-	@GET
-	@Path("/")
-	public GetMeasurableQuantityResponse find(@QueryParam("code") String code);
+    /**
+     * Update Measurable quantity from mesearable quantities.
+     * 
+     * @param postData posted data.
+     * @return actions status.
+     */
+    @PUT
+    @Path("/")
+    ActionStatus update(MeasurableQuantityDto postData);
 
-	/**
-	 * 
-	 * @param code
-	 * @param fromDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
-	 * @param toDate   format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
-	 * @param period
-	 * @param mqCode Measureable quantity's code
-	 * @return
-	 */
-	@GET
-	@Path("/findMVByDateAndPeriod")
-	public Response findMVByDateAndPeriod(@QueryParam("code") String code, @QueryParam("fromDate")  @RestDateParam Date fromDate, @QueryParam("toDate") @RestDateParam Date toDate,
-			@QueryParam("period") MeasurementPeriodEnum period, @QueryParam("mqCode") String mqCode);
-	
+    /**
+     * Get Measurable quantity from a given code.
+     * 
+     * @param code Measureable quantity's code
+     * @return
+     */
+    @GET
+    @Path("/")
+    GetMeasurableQuantityResponse find(@QueryParam("code") String code);
+
+    /**
+     * 
+     * @param code code of mesurable value.
+     * @param fromDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
+     * @param toDate format yyyy-MM-dd'T'HH:mm:ss or yyyy-MM-dd
+     * @param period period in which mesurable value is calculated.
+     * @param mqCode Measureable quantity's code
+     * @return mesurable value by date and period.
+     */
+    @GET
+    @Path("/findMVByDateAndPeriod")
+    Response findMVByDateAndPeriod(@QueryParam("code") String code, @QueryParam("fromDate") @RestDateParam Date fromDate, @QueryParam("toDate") @RestDateParam Date toDate,
+            @QueryParam("period") MeasurementPeriodEnum period, @QueryParam("mqCode") String mqCode);
+
     /**
      * Remove Measurable quantity with a given code.
      * 
      * @param code Measurable quantity's code
-     * @return
+     * @return action status.
      */
     @Path("/{code}")
     @DELETE
-    public ActionStatus remove(@PathParam("code") String code);
-   
-     /**
+    ActionStatus remove(@PathParam("code") String code);
+
+    /**
      * List Measurable quantity with a given code.
      * 
-     * @param code Measurable quantity's code
      * @return A list of measurable quantities
      */
     @Path("/list")
     @GET
-    public GetListMeasurableQuantityResponse list();
-	
+    GetListMeasurableQuantityResponse list();
+
 }

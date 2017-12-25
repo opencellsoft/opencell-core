@@ -160,7 +160,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * List users matching a given criteria
      * 
-     * @param paging Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
      * @return A list of users
      */
     @WebMethod
@@ -422,7 +422,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * List roles matching a given criteria
      * 
-     * @param paging Pagination and filtering criteria. Specify "permissions" in fields to include the permissions. Specify "roles" to include child roles.
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "permissions" in fields to include the permissions. Specify "roles" to include child roles.
      * @return A list of roles
      */
     @WebMethod
@@ -430,7 +430,7 @@ public interface SettingsWs extends IBaseWs {
     
     /**
      * List external source such as from keycloak.
-     * @return
+     * @return list of external roles
      */
     @WebMethod
     public RolesDto listExternalRoles();
@@ -459,10 +459,10 @@ public interface SettingsWs extends IBaseWs {
     public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     /**
-     * Provide translation of multi language field values
+     * Provide translation of multi language field values.
      * 
-     * @param postData Translated field values
-     * @return
+     * @param translations list of category messages.
+     * @return action status.
      */
     @WebMethod
     public ActionStatus updateTranslations(@WebParam(name = "translations") List<CatMessagesDto> translations);
@@ -802,7 +802,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * List user hierarchy levels matching a given criteria
      * 
-     * @param paging Pagination and filtering criteria. Specify "childLevels" in fields to include the child levels of user hierarchy level.
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "childLevels" in fields to include the child levels of user hierarchy level.
      * @return A list of user hierarchy levels
      */
     @WebMethod

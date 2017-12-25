@@ -57,7 +57,7 @@ public class PaymentApi extends BaseApi {
     /**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
-     * @throws NoAllOperationUnmatchedException 
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
      * @throws UnbalanceAmountException balance amount exception
      * @throws BusinessException business exception
      * @throws MeveoApiException opencell api exception

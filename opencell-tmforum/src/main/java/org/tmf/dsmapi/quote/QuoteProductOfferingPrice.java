@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * 
  * <pre>
- * &lt;complexType name="QuoteProductOfferingPrice">
+ * &lt;complexType name="QuoteProductOfferingPrice"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;

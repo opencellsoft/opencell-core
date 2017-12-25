@@ -679,11 +679,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     /**
-     * Convert MeveoModule or its subclass object to DTO representation
+     * Convert MeveoModule or its subclass object to DTO representation.
      * 
      * @param module Module object
-     * @param provider Provider
      * @return MeveoModuleDto object
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public MeveoModuleDto moduleToDto(MeveoModule module) throws MeveoApiException {

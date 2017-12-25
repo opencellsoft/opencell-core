@@ -17,7 +17,7 @@ import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
 import org.meveo.api.dto.response.GetCurrencyIsoResponse;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Currency} 
+ * Web service for managing Currency.
  * 
  * @author Edward P. Legaspi
  **/
@@ -30,51 +30,50 @@ public interface CurrencyIsoRs extends IBaseRs {
     /**
      * Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created
      * 
-     * @param postData
-     * @return
+     * @param currencyIsoDto currency iso
+     * @return action status.
      */
     @POST
-    @Path("/")
-    public ActionStatus create(CurrencyIsoDto currencyIsoDto);
+    @Path("/") ActionStatus create(CurrencyIsoDto currencyIsoDto);
 
     /**
      * Search currency with a given currency code.
      * 
-     * @param currencyCode
-     * @return
+     * @param currencyCode currency code
+     * @return currency iso if found.
      */
     @GET
-    @Path("/")
-    public GetCurrencyIsoResponse find(@QueryParam("currencyCode") String currencyCode);
+    @Path("/") GetCurrencyIsoResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
      * Remove currency with a given currency code.
      * 
-     * @param currencyCode
-     * @return
+     * @param currencyCode currency code
+     * @return action status.
      */
     @DELETE
-    @Path("/{currencyCode}")
-    public ActionStatus remove(@PathParam("currencyCode") String currencyCode);
+    @Path("/{currencyCode}") ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
     /**
      * Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is
      * null
      * 
-     * @param postData
-     * @return
+     * @param currencyIsoDto currency iso
+     * @return action status.
      */
     @PUT
-    @Path("/")
-    public ActionStatus update(CurrencyIsoDto currencyIsoDto);
+    @Path("/") ActionStatus update(CurrencyIsoDto currencyIsoDto);
 
+    /**
+     * @param currencyIsoDto currency iso to create or update
+     * @return action status.
+     */
     @POST
-    @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
+    @Path("/createOrUpdate") ActionStatus createOrUpdate(CurrencyIsoDto currencyIsoDto);
 
     /**
      * List all currencies.
-     * @return
+     * @return list of all currency iso/
      */
     @GET
     @Path("/")

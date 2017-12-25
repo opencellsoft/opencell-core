@@ -354,7 +354,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param javaSrc Java source to compile
      * @return Compiled class instance
-     * @throws CharSequenceCompilerException
+     * @throws CharSequenceCompilerException char sequence compiler exception.
      */
     protected Class<SI> compileJavaSource(String javaSrc) throws CharSequenceCompilerException {
 
@@ -507,8 +507,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     /**
      * Add a log line for a script
      * 
-     * @param message
-     * @param scriptCode
+     * @param message message to be displayed
+     * @param scriptCode code of script.
      */
     public void addLog(String message, String scriptCode) {
 
@@ -521,8 +521,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     /**
      * Get logs for script
      * 
-     * @param scriptCode
-     * @return
+     * @param scriptCode code of script
+     * @return list logs.
      */
     public List<String> getLogs(String scriptCode) {
 

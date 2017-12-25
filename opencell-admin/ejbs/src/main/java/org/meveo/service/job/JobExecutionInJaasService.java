@@ -45,7 +45,7 @@ public class JobExecutionInJaasService extends BaseService implements Serializab
      * 
      * @param jobInstance Job instance to run
      * @param job Job implementation class
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void executeInJaas(JobInstance jobInstance, Job job) throws BusinessException {

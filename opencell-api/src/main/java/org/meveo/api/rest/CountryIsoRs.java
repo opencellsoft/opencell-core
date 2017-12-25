@@ -17,7 +17,7 @@ import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Country}
+ * Web service for managing {@link org.meveo.model.billing.Country}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -30,50 +30,53 @@ public interface CountryIsoRs extends IBaseRs {
     /**
      * Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
      * 
-     * @param countryIsoDto
-     * @return
+     * @param countryIsoDto country iso.
+     * @return action status
      */
     @POST
     @Path("/")
-    public ActionStatus create(CountryIsoDto countryIsoDto);
+    ActionStatus create(CountryIsoDto countryIsoDto);
 
     /**
      * Search country with a given country code.
      * 
-     * @param countryCode
+     * @param countryCode country code
      * @return {@link org.meveo.api.dto.response.GetCountryIsoResponse}.
      */
     @GET
-    @Path("/")
-    public GetCountryIsoResponse find(@QueryParam("countryCode") String countryCode);
+    @Path("/") GetCountryIsoResponse find(@QueryParam("countryCode") String countryCode);
 
     /**
      * Does not delete a country but the tradingCountry associated to it.
      * 
-     * @param countryCode
-     * @return
+     * @param countryCode country code
+     * @return action status
      */
     @DELETE
     @Path("/")
-    public ActionStatus remove(@PathParam("countryCode") String countryCode);
+    ActionStatus remove(@PathParam("countryCode") String countryCode);
 
     /**
      * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.
      * 
-     * @param countryIsoDto
-     * @return
+     * @param countryIsoDto country iso
+     * @return action status
      */
     @PUT
     @Path("/")
-    public ActionStatus update(CountryIsoDto countryIsoDto);
+    ActionStatus update(CountryIsoDto countryIsoDto);
 
+    /**
+     * @param countryIsoDto country iso
+     * @return action status
+     */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CountryIsoDto countryIsoDto);
+    ActionStatus createOrUpdate(CountryIsoDto countryIsoDto);
     
     /**
      * List all countries.
-     * @return
+     * @return list of countries
      */
     @GET
     @Path("/list")

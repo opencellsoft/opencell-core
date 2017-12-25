@@ -223,6 +223,7 @@ public class RefundService extends PersistenceService<Refund> {
      * 
      * @param customerAccount customer account
      * @param ctsAmount amount in cent
+     * @param doPaymentResponseDto payment by card dto
      * @return the AO id created
      * @throws BusinessException business exception.
      */

@@ -131,7 +131,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private boolean useInheritedAsDefaultValue;
 
     /**
-     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
      */
     @Column(name = "entity_clazz", length = 255)
     @Size(max = 255)
@@ -152,10 +152,9 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
-     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;<br/>
-     * <br/>
+     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
      * 
-     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
      * 
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;field:0 OR tab:Second tab:1;field:1

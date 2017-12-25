@@ -103,7 +103,7 @@ public class CustomFieldInstanceService extends BaseService {
     /**
      * Find a list of entities of a given class and matching given code. In case classname points to CustomEntityTemplate, find CustomEntityInstances of a CustomEntityTemplate code
      * 
-     * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt:"
+     * @param classNameAndCode Classname to match. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;:"
      * @param wildcode Filter by entity code
      * @return A list of entities
      */
@@ -242,7 +242,7 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Get a custom field value for a given entity and a date
+     * Get a custom field value for a given entity and a date.
      * 
      * @param entity Entity
      * @param cfCode Custom field code
@@ -361,13 +361,13 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Set a Custom field value on an entity
+     * Set a Custom field value on an entity.
      * 
      * @param entity Entity
      * @param cfCode Custom field value code
      * @param value Value to set
-     * 
-     * @throws BusinessException
+     * @return custom field value
+     * @throws BusinessException business exception.
      */
     public CustomFieldValue setCFValue(ICustomFieldEntity entity, String cfCode, Object value) throws BusinessException {
 

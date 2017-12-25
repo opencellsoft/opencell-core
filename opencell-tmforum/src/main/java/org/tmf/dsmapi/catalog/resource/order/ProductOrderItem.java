@@ -108,7 +108,7 @@ public class ProductOrderItem implements Serializable {
      * @param productOrderItem Order item to serialize
      * @return String in XML format
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public static String serializeOrderItem(ProductOrderItem productOrderItem) throws BusinessException {
         try {
@@ -129,12 +129,12 @@ public class ProductOrderItem implements Serializable {
     }
 
     /**
-     * Deserialize order item from a string
+     * Deserialize order item from a string.
      * 
      * @param orderItemSource Serialized orderItem dto
      * @return Order item object
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public static ProductOrderItem deserializeOrderItem(String orderItemSource) throws BusinessException {
         // Store orderItem DTO into DB to be retrieved for full information

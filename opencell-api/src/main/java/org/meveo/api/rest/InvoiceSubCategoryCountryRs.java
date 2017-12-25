@@ -29,52 +29,52 @@ public interface InvoiceSubCategoryCountryRs extends IBaseRs {
     /**
      * Create invoice sub category country.
      * 
-     * @param postData
-     * @return
+     * @param postData invoice sub category to be created
+     * @return action status
      */
     @Path("/")
     @POST
-    public ActionStatus create(InvoiceSubCategoryCountryDto postData);
+    ActionStatus create(InvoiceSubCategoryCountryDto postData);
 
     /**
      * Update invoice sub category country.
      * 
-     * @param postData
-     * @return
+     * @param postData invoice sub category to be updated
+     * @return action status
      */
     @Path("/")
     @PUT
-    public ActionStatus update(InvoiceSubCategoryCountryDto postData);
+    ActionStatus update(InvoiceSubCategoryCountryDto postData);
 
     /**
      * Search invoice sub category country with a given code and country with the highest priority (1-lowest).
      * 
-     * @param invoiceSubCategoryCode
-     * @param country
-     * @return
+     * @param invoiceSubCategoryCode invoice sub category code
+     * @param country country
+     * @return invoice sub category if exists for given codes.
      */
     @Path("/")
     @GET
-    public GetInvoiceSubCategoryCountryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @QueryParam("country") String country);
+    GetInvoiceSubCategoryCountryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @QueryParam("country") String country);
 
     /**
      * Remove all the InvoiceSubCategoryCountries with a given code and country.
      * 
-     * @param invoiceSubCategoryCode
-     * @param country
-     * @return
+     * @param invoiceSubCategoryCode invoice sub category code
+     * @param country country
+     * @return action status
      */
     @Path("/{invoiceSubCategoryCode}/{country}")
     @DELETE
-    public ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @PathParam("country") String country);
+    ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode, @PathParam("country") String country);
 
     /**
-     * Create or update Invoice SubCategory Country based on invoice sub-category and country
+     * Create or update Invoice SubCategory Country based on invoice sub-category and country.
      * 
-     * @param postData
-     * @return
+     * @param postData invoice sub category to be created or updated
+     * @return action status
      */
     @Path("/createOrUpdate")
     @POST
-    public ActionStatus createOrUpdate(InvoiceSubCategoryCountryDto postData);
+    ActionStatus createOrUpdate(InvoiceSubCategoryCountryDto postData);
 }

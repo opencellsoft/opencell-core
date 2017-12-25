@@ -74,9 +74,9 @@ public abstract class BaseRs implements IBaseRs {
     }
 
     /**
-     * Returns teh authenticated user
+     * Returns the authenticated user.
      * 
-     * @return
+     * @return action status.
      */
     @GET
     @Path("/user")

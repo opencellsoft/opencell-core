@@ -39,7 +39,7 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @POST
     @Path("/")
-    public ActionStatus create(OneShotChargeTemplateDto postData);
+    ActionStatus create(OneShotChargeTemplateDto postData);
 
     /**
      * Update one shot charge template.
@@ -49,31 +49,31 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @PUT
     @Path("/")
-    public ActionStatus update(OneShotChargeTemplateDto postData);
+    ActionStatus update(OneShotChargeTemplateDto postData);
 
     /**
      * Search one shot charge templatewith a given code.
      * 
      * @param oneShotChargeTemplateCode The one shot charge template's code
-     * @return
+     * @return one shot charge template
      */
     @GET
     @Path("/")
-    public GetOneShotChargeTemplateResponseDto find(@QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+    GetOneShotChargeTemplateResponseDto find(@QueryParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
     /**
      * List one shot charge template with the following filters.
      * 
-     * @param languageCode
-     * @param countryCode
-     * @param currencyCode
-     * @param sellerCode
-     * @param date
-     * @return 
+     * @param languageCode language's code
+     * @param countryCode country's code
+     * @param currencyCode currency's code
+     * @param sellerCode seller's code
+     * @param date application date
+     * @return list of one shot charge template
      */
     @GET
     @Path("/list")
-    public OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
+    OneShotChargeTemplateWithPriceListDto listOneShotChargeTemplates(@QueryParam("languageCode") String languageCode, @QueryParam("countryCode") String countryCode,
             @QueryParam("currencyCode") String currencyCode, @QueryParam("sellerCode") String sellerCode, @QueryParam("date") @RestDateParam Date date);
 
     /**
@@ -84,15 +84,15 @@ public interface OneShotChargeTemplateRs extends IBaseRs {
      */
     @DELETE
     @Path("/{oneShotChargeTemplateCode}")
-    public ActionStatus remove(@PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
+    ActionStatus remove(@PathParam("oneShotChargeTemplateCode") String oneShotChargeTemplateCode);
 
     /**
-     * Create new or update an existing ###
+     * Create new or update an existing.
      * 
      * @param postData The exemple's data
      * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);
+    ActionStatus createOrUpdate(OneShotChargeTemplateDto postData);
 }

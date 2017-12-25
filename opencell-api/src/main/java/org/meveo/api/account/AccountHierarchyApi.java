@@ -190,8 +190,9 @@ public class AccountHierarchyApi extends BaseApi {
      * Account - Billing Account - User Account
      * 
      * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastName if title provided,languageCode,billingCycleCode
-     * 
-     * @throws BusinessException
+     * @param postData posted data to API to create CRM
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void create(AccountHierarchyDto postData) throws MeveoApiException, BusinessException {
 
@@ -369,10 +370,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void update(AccountHierarchyDto postData) throws MeveoApiException, BusinessException {
 
@@ -579,10 +580,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return a wrapper of customer.
+     * @throws MeveoApiException meveo api exception.
      */
     // @SecuredBusinessEntityMethod(resultFilter=ListFilter.class)
     // @FilterResults(propertyToFilter = "customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
@@ -695,10 +696,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void customerHierarchyUpdate(CustomerHierarchyDto postData) throws MeveoApiException, BusinessException {
         if (postData.getSellers() == null || postData.getSellers().getSeller().isEmpty()) {
@@ -810,10 +811,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return account hierarchy response
+     * @throws MeveoApiException meveo api exception.
      */
     public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) throws MeveoApiException {
 
@@ -892,10 +893,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Seller.class, parser = CRMAccountHierarchyDtoParser.class))
     public void createCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
@@ -1134,9 +1135,11 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * update CRM hierarchy.
+     * 
+     * @param postData posted data to API
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Seller.class, parser = CRMAccountHierarchyDtoParser.class))
     public void updateCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
@@ -1375,10 +1378,9 @@ public class AccountHierarchyApi extends BaseApi {
     /**
      * Create or update Account Hierarchy based on code.
      * 
-     * @param postData
-     * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void createOrUpdate(AccountHierarchyDto postData) throws MeveoApiException, BusinessException {
         String customerCodeOrId = postData.getCustomerCode();
@@ -1400,10 +1402,9 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * 
-     * @param postData
-     * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Seller.class, parser = CRMAccountHierarchyDtoParser.class))
     public void createOrUpdateCRMAccountHierarchy(CRMAccountHierarchyDto postData) throws MeveoApiException, BusinessException {
@@ -1463,6 +1464,11 @@ public class AccountHierarchyApi extends BaseApi {
         }
     }
 
+    /**
+     * @param accountEntity account entity
+     * @param accountDto account dto
+     * @throws MeveoApiException meveo api exception.
+     */
     public void populateNameAddress(AccountDto accountEntity, AccountDto accountDto) throws MeveoApiException {
 
         if (!StringUtils.isBlank(accountDto.getDescription())) {
@@ -1517,6 +1523,10 @@ public class AccountHierarchyApi extends BaseApi {
 
     }
 
+    /**
+     * @param result get account hierarchy response
+     * @param userAccount user account
+     */
     private void addUserAccount(GetAccountHierarchyResponseDto result, UserAccount userAccount) {
         BillingAccount billingAccount = userAccount.getBillingAccount();
 
@@ -1542,6 +1552,10 @@ public class AccountHierarchyApi extends BaseApi {
         }
     }
 
+    /**
+     * @param result get account hierarchy response 
+     * @param billingAccount billing account.
+     */
     private void addBillingAccount(GetAccountHierarchyResponseDto result, BillingAccount billingAccount) {
         CustomerAccount customerAccount = billingAccount.getCustomerAccount();
         Customer customer = customerAccount.getCustomer();

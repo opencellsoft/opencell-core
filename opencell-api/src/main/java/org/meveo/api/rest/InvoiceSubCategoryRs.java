@@ -29,51 +29,51 @@ public interface InvoiceSubCategoryRs extends IBaseRs {
     /**
      * Create invoice sub category.
      * 
-     * @param postData
-     * @return
+     * @param postData invoice sub category to be created
+     * @return action status.
      */
     @Path("/")
     @POST
-    public ActionStatus create(InvoiceSubCategoryDto postData);
+    ActionStatus create(InvoiceSubCategoryDto postData);
 
     /**
      * Update invoice sub category.
      * 
-     * @param postData
-     * @return
+     * @param postData invoice sub category to be created
+     * @return action status
      */
     @Path("/")
     @PUT
-    public ActionStatus update(InvoiceSubCategoryDto postData);
+    ActionStatus update(InvoiceSubCategoryDto postData);
 
     /**
      * Create or update invoice sub category.
      * 
-     * @param postData
-     * @return
+     * @param postData invoice sub category
+     * @return action status
      */
     @Path("/createOrUpdate")
     @POST
-    public ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
+    ActionStatus createOrUpdate(InvoiceSubCategoryDto postData);
 
     /**
      * Search for invoice sub category with a given code.
      * 
-     * @param invoiceSubCategoryCode
-     * @return
+     * @param invoiceSubCategoryCode invoice sub category code
+     * @return invoice sub category
      */
     @Path("/")
     @GET
-    public GetInvoiceSubCategoryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
+    GetInvoiceSubCategoryResponse find(@QueryParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
     /**
      * Remove invoice sub category with a given code.
      * 
-     * @param invoiceSubCategoryCode
-     * @return
+     * @param invoiceSubCategoryCode invoice sub category
+     * @return action status
      */
     @Path("/{invoiceSubCategoryCode}")
     @DELETE
-    public ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
+    ActionStatus remove(@PathParam("invoiceSubCategoryCode") String invoiceSubCategoryCode);
 
 }

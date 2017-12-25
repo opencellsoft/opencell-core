@@ -18,7 +18,7 @@ import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
- * CRUD/list discountPlanItem via REST API
+ * CRUD/list discountPlanItem via REST API.
  * @author Tyshan　Shi(tyshan@manaty.net)
  * @since Aug 2, 2016 11:02:01 AM
  *
@@ -30,7 +30,7 @@ import org.meveo.api.rest.IBaseRs;
 public interface DiscountPlanItemRs extends IBaseRs {
 
 	/**
-	 * Create a new discount plan item
+	 * Create a new discount plan item.
      *
 	 * @param postData A discount plan item's data
 	 * @return Request processing status
@@ -40,7 +40,7 @@ public interface DiscountPlanItemRs extends IBaseRs {
     ActionStatus create(DiscountPlanItemDto postData);
 
     /**
-     * update an existed discount plan item
+     * update an existed discount plan item.
      * @param postData A discount plan item's data
      * @return Request processing status
      */
@@ -49,7 +49,7 @@ public interface DiscountPlanItemRs extends IBaseRs {
     ActionStatus update(DiscountPlanItemDto postData);
 
     /**
-     * Find a discount plan item with a given code
+     * Find a discount plan item with a given code.
      *
      * @param discountPlanItemCode A discount plan item's code
      * @return A discount plan item
@@ -59,9 +59,9 @@ public interface DiscountPlanItemRs extends IBaseRs {
     DiscountPlanItemResponseDto find(@QueryParam("discountPlanItemCode") String discountPlanItemCode);
 
     /**
-     * remove a discount plan item by code
+     * remove a discount plan item by code.
      *
-     * @param discountPlanItemCode
+     * @param discountPlanItemCode discount plan item
      * @return Request processing status
      */
     @Path("/{discountPlanItemCode}")
@@ -69,9 +69,9 @@ public interface DiscountPlanItemRs extends IBaseRs {
     ActionStatus remove(@PathParam("discountPlanItemCode") String discountPlanItemCode);
 
     /**
-     * create/update a discount plan item
+     * create/update a discount plan item.
      *
-     * @param postData
+     * @param postData discount plan item
      * @return Request processing status
      */
     @Path("/createOrUpdate")
@@ -79,7 +79,7 @@ public interface DiscountPlanItemRs extends IBaseRs {
     ActionStatus createOrUpdate(DiscountPlanItemDto postData);
 
     /**
-     * List all discount plan items by current user
+     * List all discount plan items by current user.
      *
      * @return List of discount plan items
      */

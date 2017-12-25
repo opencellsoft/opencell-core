@@ -117,6 +117,7 @@ public class CustomerImportService extends ImportService {
      * @param custAcc customer account
      * @param cust jaxb customer
      * @param sell jaxb seller
+     * @return customer account.
      * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

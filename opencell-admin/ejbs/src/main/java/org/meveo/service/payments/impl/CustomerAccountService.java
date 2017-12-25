@@ -208,8 +208,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return computeBalance(customerAccount, to, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
+
     /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceExigible(java.lang.Long, java.lang.String, java.util.Date)
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance exigible 
+     * @throws BusinessException business exception.
      */
     public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("customerAccountBalanceExligible with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
@@ -295,13 +300,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
 
     /**
-     * @param fromCustomerAccountId 
-     * @param fromCustomerAccountCode
-     * @param toCustomerAccountId
-     * @param toCustomerAccountCode
-     * @param amount
-     * @throws BusinessException
-     * @throws Exception
+     * @param fromCustomerAccountId customer account id
+     * @param fromCustomerAccountCode customer account code
+     * @param toCustomerAccountId  customer account  of transfer's destination
+     * @param toCustomerAccountCode customer account code of transfer's destination
+     * @param amount transfer's amount
+     * @throws BusinessException business exception
+     * @throws Exception general exception.
      */
     public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode, BigDecimal amount)
             throws BusinessException, Exception {
@@ -378,8 +383,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             Iterator<AccountOperation> it = operations.iterator();
             while (it.hasNext()) {
                 Date transactionDate = it.next().getTransactionDate();
-                if (transactionDate == null)
+                if (transactionDate == null) {
                     continue;
+                }
                 if (from == null) {
                     if (transactionDate.after(to)) {
                         it.remove();

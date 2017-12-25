@@ -32,7 +32,7 @@ import org.meveo.api.serialize.RestDateParam;
 public interface UserAccountRs extends IBaseRs {
 
     /**
-     * Create a new user account
+     * Create a new user account.
      * 
      * @param postData The user account's data
      * @return Request processing status
@@ -54,15 +54,15 @@ public interface UserAccountRs extends IBaseRs {
     /**
      * Search for a user account with a given code.
      * 
-     * @param userAaccountCodeThe exemple's code
-     * @return
+     * @param userAccountCode user account code
+     * @return found user account if exist
      */
     @GET
     @Path("/")
     GetUserAccountResponseDto find(@QueryParam("userAccountCode") String userAccountCode);
 
     /**
-     * Remove an existing user account with a given code 
+     * Remove an existing user account with a given code.
      * 
      * @param userAccountCode The user account's code
      * @return Request processing status
@@ -75,14 +75,14 @@ public interface UserAccountRs extends IBaseRs {
      * List user accounts filtered by a billing account's code.
      * 
      * @param billingAccountCode The user billing account's code
-     * @return
+     * @return list of user accounts.
      */
     @GET
     @Path("/list")
     UserAccountsResponseDto listByBillingAccount(@QueryParam("billingAccountCode") String billingAccountCode);
 
     /**
-     * Create new or update an existing user account
+     * Create new or update an existing user account.
      * 
      * @param postData The user account's data
      * @return Request processing status
@@ -92,22 +92,21 @@ public interface UserAccountRs extends IBaseRs {
     ActionStatus createOrUpdate(UserAccountDto postData);
     
     /**
-     * Filter counters by period date
+     * Filter counters by period date.
      *
      * @param userAccountCode The user account's code
      * @param date The date corresponding to the period
-     * @return
+     * @return counter instances.
      */
     @GET
     @Path("/filterCountersByPeriod")
-	GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, 
-			@QueryParam("date") @RestDateParam Date date);
+    GetCountersInstancesResponseDto filterUserAccountCountersByPeriod(@QueryParam("userAccountCode") String userAccountCode, @QueryParam("date") @RestDateParam Date date);
 
     /**
      * Apply a product on a user account.
      *
      * @param postData ApplyProductRequestDto userAccount field must be set
-     * @return
+     * @return action status.
      */
     @POST
     @Path("/applyProduct")

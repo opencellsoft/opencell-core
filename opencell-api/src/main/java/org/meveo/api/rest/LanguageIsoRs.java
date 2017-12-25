@@ -17,7 +17,7 @@ import org.meveo.api.dto.response.GetLanguageIsoResponse;
 import org.meveo.api.dto.response.GetLanguagesIsoResponse;
 
 /**
- * * Web service for managing {@link org.meveo.model.billing.Language}
+ * * Web service for managing {@link org.meveo.model.billing.Language}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -30,56 +30,57 @@ public interface LanguageIsoRs extends IBaseRs {
     /**
      * Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.
      * 
-     * @param postData
-     * @return
+     * @param languageIsoDto language iso.
+     * @return action status
      */
     @POST
     @Path("/")
-    public ActionStatus create(LanguageIsoDto languageIsoDto);
+    ActionStatus create(LanguageIsoDto languageIsoDto);
 
     /**
      * Search language given a code.
      * 
-     * @param languageCode
-     * @return
+     * @param languageCode code of language
+     * @return language iso for given code
      */
     @GET
     @Path("/")
-    public GetLanguageIsoResponse find(@QueryParam("languageCode") String languageCode);
+    GetLanguageIsoResponse find(@QueryParam("languageCode") String languageCode);
 
     /**
      * Does not delete a language but the tradingLanguage associated to it.
      * 
-     * @param languageCode
-     * @return
+     * @param languageCode code of language.
+     * @return action status
      */
     @DELETE
     @Path("/{languageCode}")
-    public ActionStatus remove(@PathParam("languageCode") String languageCode);
+    ActionStatus remove(@PathParam("languageCode") String languageCode);
 
     /**
      * modify a language. Same input parameter as create. The language and trading Language are created if they don't exists. The operation fails if the tradingLanguage is null.
      * 
-     * @param postData
-     * @return
+     * @param languageIsoDto language iso
+     * @return action status
      */
     @PUT
     @Path("/")
-    public ActionStatus update(LanguageIsoDto languageIsoDto);
+    ActionStatus update(LanguageIsoDto languageIsoDto);
 
     /**
-     * Create or update a language if it doesn't exists
+     * Create or update a language if it doesn't exists.
      * 
-     * @param postData
-     * @return
+     * @param languageIsoDto langauge iso
+     * @return action status
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(LanguageIsoDto languageIsoDto);
-    
+    ActionStatus createOrUpdate(LanguageIsoDto languageIsoDto);
+
     /**
      * List all languages.
-     * @return
+     * 
+     * @return all languages
      */
     @GET
     @Path("/")

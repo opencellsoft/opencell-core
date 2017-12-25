@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * 
  * <pre>
- * &lt;complexType name="QuotePriceAlteration">
+ * &lt;complexType name="QuotePriceAlteration"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
@@ -83,7 +83,7 @@ public class QuotePriceAlteration implements Serializable {
     /**
      * Définit la valeur de la propriété description.
      * 
-     * @param value allowed object is {@link String }
+     * @param value allowed object
      * 
      */
     public void setDescription(String value) {
@@ -91,9 +91,8 @@ public class QuotePriceAlteration implements Serializable {
     }
 
     /**
-     * Obtient la valeur de la propriété validFor.
      * 
-     * @return possible object is {@link ValidFor }
+     * @return possible object
      * 
      */
     public TimeRange getValidFor() {
@@ -101,9 +100,8 @@ public class QuotePriceAlteration implements Serializable {
     }
 
     /**
-     * Définit la valeur de la propriété validFor.
      * 
-     * @param value allowed object is {@link ValidFor }
+     * @param value allowed objec
      * 
      */
     public void setValidFor(TimeRange value) {

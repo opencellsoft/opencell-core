@@ -218,10 +218,10 @@ public class BusinessOfferApi extends BaseApi {
     }
 
     /**
-     * @param postData
-     * @return
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData business service model service.
+     * @return id of new service template
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public Long instantiateBSM(BsmServiceDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getBsmCode())) {
@@ -254,10 +254,10 @@ public class BusinessOfferApi extends BaseApi {
 
     /**
      * Instantiates a product from a given BusinessProductModel.
-     * @param postData
-     * @return
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData business product model product
+     * @return product template's id
+     * @throws MeveoApiException  meveo api exception
+     * @throws BusinessException business exception.
      */
     public Long instantiateBPM(BpmProductDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getBpmCode())) {

@@ -30,10 +30,10 @@ import org.meveo.api.rest.IBaseRs;
 public interface MeveoInstanceRs extends IBaseRs {
 
 	/**
-	 * Create a meveoInstance by dto
+	 * Create a meveoInstance by dto.
      *
-	 * @param meveoInstanceDto
-	 * @return
+	 * @param meveoInstanceDto meveo instance
+	 * @return action status
 	 */
 	@POST
     @Path("/")

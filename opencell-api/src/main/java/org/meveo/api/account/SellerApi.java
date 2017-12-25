@@ -329,10 +329,10 @@ public class SellerApi extends BaseApi {
     /**
      * creates or updates seller based on the seller code. If seller is not existing based on the seller code, it will be created else, will be updated.
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(SellerDto postData) throws MeveoApiException, BusinessException {
         Seller seller = sellerService.findByCode(postData.getCode());

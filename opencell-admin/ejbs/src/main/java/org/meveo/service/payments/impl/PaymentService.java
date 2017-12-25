@@ -224,7 +224,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
      * @return the AO id created
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));

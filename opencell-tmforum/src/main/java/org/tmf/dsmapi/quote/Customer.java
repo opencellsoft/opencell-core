@@ -20,11 +20,10 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  * <p>
  * Classe Java pour Customer complex type.
  * 
- * <p>
- * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
- * 
+ * </p>
+ *
  * <pre>
- * &lt;complexType name="Customer">
+ * &lt;complexType name="Customer"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;

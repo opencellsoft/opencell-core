@@ -77,6 +77,8 @@ public class EmailSender {
      * @param subject email subject
      * @param textContent text content
      * @param htmlContent html content
+     * @param attachments list of attached file.
+     * @param sendDate date when email is sent.
      * @throws BusinessException business exception.
      */
     @Deprecated
@@ -104,7 +106,7 @@ public class EmailSender {
     }
 
     /**
-     * Send an email message
+     * Send an email message.
      * 
      * @param from Sender's email address
      * @param replyTo Reply to email addresses
@@ -119,7 +121,7 @@ public class EmailSender {
     }
 
     /**
-     * Send an email message
+     * Send an email message.
      * 
      * @param from Sender's email address
      * @param replyTo Reply to email addresses

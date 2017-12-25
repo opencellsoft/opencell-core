@@ -267,9 +267,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @param aoToMatchLast An operation to match last - most likely will be matched partially
      * @param matchingTypeEnum Matching type
      * @return Information on matched operations
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception.
+     * @throws UnbalanceAmountException un balance amount exception
      */
     public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast, MatchingTypeEnum matchingTypeEnum)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {

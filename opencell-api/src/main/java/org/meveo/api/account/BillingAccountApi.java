@@ -417,10 +417,10 @@ public class BillingAccountApi extends AccountEntityApi {
     /**
      * Create or update Billing Account based on Billing Account Code
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         if (billingAccountService.findByCode(postData.getCode()) == null) {

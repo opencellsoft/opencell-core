@@ -38,7 +38,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * 
  * <pre>
- * &lt;complexType name="Quote">
+ * &lt;complexType name="Quote"&gt;
  *   &lt;complexContent&gt;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
@@ -125,7 +125,7 @@ public class ProductQuote implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link BillingAccount }
-     * 
+     * @return list of billing account.
      * 
      */
     public List<BillingAccount> getBillingAccount() {
@@ -136,17 +136,16 @@ public class ProductQuote implements Serializable {
     }
 
     /**
-     * 
+     * @param billingAccount billing account
      * 
      */
     public void setBillingAccount(List<BillingAccount> billingAccount) {
         this.billingAccount = billingAccount;
     }
 
-    /**
-     * Obtient la valeur de la propriété state.
+    /**.
      * 
-     * @return possible object is {@link StateQuote }
+     * @return possible object
      * 
      */
     public String getState() {
@@ -154,9 +153,8 @@ public class ProductQuote implements Serializable {
     }
 
     /**
-     * Définit la valeur de la propriété state.
      * 
-     * @param value allowed object is {@link StateQuote }
+     * @param value allowed object is
      * 
      */
     public void setState(String value) {
@@ -372,9 +370,9 @@ public class ProductQuote implements Serializable {
     }
 
     /**
-     * Obtient la valeur de la propriété validFor.
+     * Oget value of property validFor.
      * 
-     * @return possible object is {@link ValidFor }
+     * @return possible object time rang
      * 
      */
     public TimeRange getValidFor() {
@@ -382,9 +380,8 @@ public class ProductQuote implements Serializable {
     }
 
     /**
-     * Définit la valeur de la propriété validFor.
      * 
-     * @param value allowed object is {@link ValidFor }
+     * @param value allowed object
      * 
      */
     public void setValidFor(TimeRange value) {
@@ -408,6 +405,7 @@ public class ProductQuote implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link Note }
+     * @return list o note
      * 
      * 
      */
@@ -418,6 +416,9 @@ public class ProductQuote implements Serializable {
         return this.note;
     }
 
+    /**
+     * @param note list of note to set
+     */
     public void setNote(List<Note> note) {
         this.note = note;
     }
@@ -429,7 +430,7 @@ public class ProductQuote implements Serializable {
      * This accessor method returns a reference to the live list, not a snapshot. Therefore any modification you make to the returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the characteristic property.
      * 
-     * <p>
+     * </p>
      * For example, to add a new item, do as follows:
      * 
      * <pre>
@@ -439,6 +440,7 @@ public class ProductQuote implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link Characteristic }
+     * @return list of characteristic.
      * 
      * 
      */
@@ -454,7 +456,6 @@ public class ProductQuote implements Serializable {
     }
 
     /**
-     * Obtient la valeur de la propriété customer.
      * 
      * @return possible object is {@link Customer }
      * 
@@ -490,6 +491,7 @@ public class ProductQuote implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link RelatedParty }
+     * @return list of related party.
      * 
      * 
      */
@@ -520,7 +522,8 @@ public class ProductQuote implements Serializable {
      * 
      * 
      * <p>
-     * Objects of the following type(s) are allowed in the list {@link Agreement }
+     * Objects of the following type(s) are allowed in the list {@link ServiceLevelAgreement }
+     * @return list of service level agreement.
      * 
      * 
      */
@@ -552,6 +555,7 @@ public class ProductQuote implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link QuoteProductOfferingPrice }
+     * @return list of quote product offering price.
      * 
      * 
      */
@@ -584,6 +588,8 @@ public class ProductQuote implements Serializable {
      * <p>
      * Objects of the following type(s) are allowed in the list {@link ProductQuoteItem }
      * 
+     * @return list of product quote item.
+     * 
      * 
      */
     public List<ProductQuoteItem> getQuoteItem() {
@@ -593,22 +599,37 @@ public class ProductQuote implements Serializable {
         return this.quoteItem;
     }
 
+    /**
+     * @param quoteItem list of product quote item.
+     */
     public void setQuoteItem(List<ProductQuoteItem> quoteItem) {
         this.quoteItem = quoteItem;
     }
 
+    /**
+     * @return a wrapper of custom field
+     */
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
+    /**
+     * @param customFields a wrapper of list of custom field.
+     */
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
 
+    /**
+     * @return list of genereate invoice result.
+     */
     public List<GenerateInvoiceResultDto> getInvoices() {
         return invoices;
     }
 
+    /**
+     * @param invoices list of generate invoice result.
+     */
     public void setInvoices(List<GenerateInvoiceResultDto> invoices) {
         this.invoices = invoices;
     }

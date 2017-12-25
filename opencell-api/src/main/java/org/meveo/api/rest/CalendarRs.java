@@ -33,55 +33,52 @@ public interface CalendarRs extends IBaseRs {
      */
     @Path("/")
     @POST
-    public ActionStatus create(CalendarDto postData);
+    ActionStatus create(CalendarDto postData);
 
     /**
      * Update calendar.
      * 
-     * @param postData
+     * @param postData calendar infos
      * @return Request processing status
      */
     @Path("/")
     @PUT
-    public ActionStatus update(CalendarDto postData);
+    ActionStatus update(CalendarDto postData);
 
     /**
      * Search for calendar with a given code.
      * 
      * @param calendarCode The calendar's code
-     * @return
+     * @return calendar if exists
      */
     @Path("/")
     @GET
-    public GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
+    GetCalendarResponse find(@QueryParam("calendarCode") String calendarCode);
 
     /**
      * Retrieve a list of all calendars.
      * 
-     * @return
+     * @return list of all calendars
      */
     @Path("/list")
-    @GET
-    public ListCalendarResponse list();
+    @GET ListCalendarResponse list();
 
     /**
      * Remove calendar with a given code.
      * 
      * @param calendarCode The calendar's code
-     * @return
+     * @return action result
      */
     @Path("/{calendarCode}")
-    @DELETE
-    public ActionStatus remove(@PathParam("calendarCode") String calendarCode);
+    @DELETE ActionStatus remove(@PathParam("calendarCode") String calendarCode);
 
     /**
-     * Create new or update an existing calendar with a given code
+     * Create new or update an existing calendar with a given code.
      * 
      * @param postData The calendars data
      * @return Request processing status
      */
     @Path("/createOrUpdate")
-    @POST
-    public ActionStatus createOrUpdate(CalendarDto postData);
+    @POST ActionStatus createOrUpdate(CalendarDto postData);
 
 }

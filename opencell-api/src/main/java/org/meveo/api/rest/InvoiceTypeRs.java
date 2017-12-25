@@ -17,7 +17,7 @@ import org.meveo.api.dto.response.GetInvoiceTypeResponse;
 import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.InvoiceType}
+ * Web service for managing {@link org.meveo.model.billing.InvoiceType}.
  * 
  * @author Edward P. Legaspi
  **/
@@ -30,52 +30,52 @@ public interface InvoiceTypeRs extends IBaseRs {
     /**
      * Create invoiceType. Description per language can be defined
      * 
-     * @param invoiceTypeDto
-     * @return
+     * @param invoiceTypeDto invoice type to be created
+     * @return action status
      */
     @Path("/")
     @POST
-    public ActionStatus create(InvoiceTypeDto invoiceTypeDto);
+    ActionStatus create(InvoiceTypeDto invoiceTypeDto);
 
     /**
      * Update invoiceType. Description per language can be defined
      * 
-     * @param invoiceTypeDto
-     * @return
+     * @param invoiceTypeDto invoice type to be updated
+     * @return action status
      */
     @Path("/")
     @PUT
-    public ActionStatus update(InvoiceTypeDto invoiceTypeDto);
+    ActionStatus update(InvoiceTypeDto invoiceTypeDto);
 
     /**
      * Search invoiceType with a given code.
      * 
-     * @param invoiceTypeCode
-     * @return
+     * @param invoiceTypeCode invoice type's code
+     * @return invoice type
      */
     @Path("/")
     @GET
-    public GetInvoiceTypeResponse find(@QueryParam("invoiceTypeCode") String invoiceTypeCode);
+    GetInvoiceTypeResponse find(@QueryParam("invoiceTypeCode") String invoiceTypeCode);
 
     /**
      * Remove invoiceType with a given code.
      * 
-     * @param invoiceTypeCode
-     * @return
+     * @param invoiceTypeCode invoice type's code
+     * @return action status
      */
     @Path("/{invoiceTypeCode}")
     @DELETE
-    public ActionStatus remove(@PathParam("invoiceTypeCode") String invoiceTypeCode);
+    ActionStatus remove(@PathParam("invoiceTypeCode") String invoiceTypeCode);
 
     /**
-     * Create new or update an existing invoiceType with a given code
+     * Create new or update an existing invoiceType with a given code.
      * 
      * @param invoiceTypeDto The invoiceType's data
      * @return Request processing status
      */
     @Path("/createOrUpdate")
     @POST
-    public ActionStatus createOrUpdate(InvoiceTypeDto invoiceTypeDto);
+    ActionStatus createOrUpdate(InvoiceTypeDto invoiceTypeDto);
 
     /**
      * List of invoiceType.
@@ -84,5 +84,5 @@ public interface InvoiceTypeRs extends IBaseRs {
      */
     @Path("/list")
     @GET
-    public GetInvoiceTypesResponse list();
+    GetInvoiceTypesResponse list();
 }
