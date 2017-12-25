@@ -148,6 +148,7 @@ public class Subscriptions {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Subscription }
+     * @return list of subscription.
      * 
      * 
      */

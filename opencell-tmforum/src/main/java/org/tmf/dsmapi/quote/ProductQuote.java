@@ -39,33 +39,33 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * 
  * <pre>
  * &lt;complexType name="Quote">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="billingAccount" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}BillingAccount" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="state" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}StateQuote" minOccurs="0"/>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="href" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="externalId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="category" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="quoteDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="effectiveQuoteCompletionDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="quoteCompletionDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/>
- *         &lt;element name="notificationContact" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="validFor" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}ValidFor" minOccurs="0"/>
- *         &lt;element name="note" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Note" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="characteristic" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Characteristic" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="customer" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Customer" minOccurs="0"/>
- *         &lt;element name="relatedParty" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}RelatedParty" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="agreement" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Agreement" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="quoteProductOfferingPrice" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}QuoteProductOfferingPrice" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="quoteItem" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}QuoteItem" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="billingAccount" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}BillingAccount" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="state" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}StateQuote" minOccurs="0"/&gt;
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="href" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="externalId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="category" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="version" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="quoteDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="effectiveQuoteCompletionDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="quoteCompletionDate" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0"/&gt;
+ *         &lt;element name="notificationContact" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="validFor" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}ValidFor" minOccurs="0"/&gt;
+ *         &lt;element name="note" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Note" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="characteristic" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Characteristic" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="customer" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Customer" minOccurs="0"/&gt;
+ *         &lt;element name="relatedParty" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}RelatedParty" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="agreement" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Agreement" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="quoteProductOfferingPrice" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}QuoteProductOfferingPrice" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="quoteItem" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}QuoteItem" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

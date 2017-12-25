@@ -84,6 +84,7 @@ public class Customers {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Customer }
+     * @return list of customer.
      * 
      * 
      */

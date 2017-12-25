@@ -79,16 +79,20 @@ public class Sellers {
     protected Warnings warnings;
     protected List<Seller> seller;
 
-    public Sellers(){}
-    
+    public Sellers() {
+    }
+
+    /**
+     * @param sellersInDB list of sellers on databas.
+     */
     public Sellers(List<org.meveo.model.admin.Seller> sellersInDB) {
-		if(sellersInDB!=null){
-			seller=new ArrayList<Seller>(sellersInDB.size());
-			for(org.meveo.model.admin.Seller sell:sellersInDB){
-				seller.add(new Seller(sell));
-			}
-		}
-	}
+        if (sellersInDB != null) {
+            seller = new ArrayList<Seller>(sellersInDB.size());
+            for (org.meveo.model.admin.Seller sell : sellersInDB) {
+                seller.add(new Seller(sell));
+            }
+        }
+    }
 
 	/**
      * Gets the value of the errors property.
@@ -157,7 +161,7 @@ public class Sellers {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Seller }
-     * 
+     * @return list of seller.
      * 
      */
     public List<Seller> getSeller() {

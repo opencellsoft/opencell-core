@@ -88,7 +88,7 @@ public class Errors {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ErrorCustomer }
-     * 
+     * @return list of error customer.
      * 
      */
     public List<ErrorCustomer> getErrorCustomer() {
@@ -124,7 +124,7 @@ public class Errors {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ErrorCustomerAccount }
-     * 
+     * @return list of error customer account.
      * 
      */
     public List<ErrorCustomerAccount> getErrorCustomerAccount() {

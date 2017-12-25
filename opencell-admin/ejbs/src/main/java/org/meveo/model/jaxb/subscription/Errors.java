@@ -87,7 +87,7 @@ public class Errors {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ErrorSubscription }
-     * 
+     * @return list of error subscription
      * 
      */
     public List<ErrorSubscription> getErrorSubscription() {
@@ -116,7 +116,7 @@ public class Errors {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link ErrorServiceInstance }
-     * 
+     * @return list of error servive intance
      * 
      */
     public List<ErrorServiceInstance> getErrorServiceInstance() {
@@ -126,9 +126,12 @@ public class Errors {
         return this.errorServiceInstance;
     }
 
+    /**
+     * @return list of error access.
+     */
     public List<ErrorAccess> getErrorAccess() {
         if (errorAccess == null) {
-        	errorAccess = new ArrayList<ErrorAccess>();
+            errorAccess = new ArrayList<ErrorAccess>();
         }
         return this.errorAccess;
     }

@@ -85,6 +85,7 @@ public class Warnings {
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link WarningSubscription }
+     * @return list of warning subscription.
      * 
      * 
      */

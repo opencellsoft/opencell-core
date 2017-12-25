@@ -73,11 +73,10 @@ public class ElasticSearchConfiguration implements Serializable {
     // private Logger log;
 
     /**
-     * Load configuration from elasticSearchConfiguration.json file
+     * Load configuration from elasticSearchConfiguration.json file.
      * 
-     * @return Configuration instance
-     * @throws IOException
-     * @throws JsonProcessingException
+     * @throws IOException I/O exception
+     * @throws JsonProcessingException Json processing exception.
      */
     public void loadConfiguration() throws JsonProcessingException, IOException {
 

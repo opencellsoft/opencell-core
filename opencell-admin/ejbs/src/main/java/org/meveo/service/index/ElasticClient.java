@@ -288,7 +288,7 @@ public class ElasticClient {
      * @param paginationConfig Query, pagination and sorting configuration
      * @param classnamesOrCetCodes An array of full classnames or CET codes
      * @return Json result
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public String search(PaginationConfiguration paginationConfig, String[] classnamesOrCetCodes) throws BusinessException {
 
@@ -322,7 +322,7 @@ public class ElasticClient {
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
      * @param classInfo Entity classes to match
      * @return Json result
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, List<ElasticSearchClassInfo> classInfo)
             throws BusinessException {
@@ -403,7 +403,7 @@ public class ElasticClient {
      * @param returnFields Return only certain fields - see Elastic Search documentation for details
      * @param classInfo Entity classes to match
      * @return Json result
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public String search(Map<String, ?> queryValues, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
             List<ElasticSearchClassInfo> classInfo) throws BusinessException {
@@ -558,9 +558,9 @@ public class ElasticClient {
     }
 
     /**
-     * Recreate index
+     * Recreate index.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void createIndexes() throws BusinessException {
 
@@ -575,7 +575,7 @@ public class ElasticClient {
      * Update Elastic Search model with custom entity template definition
      * 
      * @param cet Custom entity template
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
 
@@ -590,7 +590,7 @@ public class ElasticClient {
      * Update Elastic Search model with custom field definition
      * 
      * @param cft Custom field template
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {
 
@@ -618,8 +618,8 @@ public class ElasticClient {
      * 
      * @param classnamesOrCetCodes An array of classnames (full or simple name) or CET codes
      * @param ignoreUnknownNames Should unknown classnames or CET codes throw an exception?
-     * @return
-     * @throws BusinessException
+     * @return list of elastic search class info.
+     * @throws BusinessException business exception
      */
     public List<ElasticSearchClassInfo> getSearchScopeInfo(String[] classnamesOrCetCodes, boolean ignoreUnknownNames) throws BusinessException {
 

@@ -9,27 +9,29 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.finance.RevenueSchedule;
 import org.meveo.service.script.ScriptInterface;
 
+/**
+ * @author phung
+ *
+ */
 public interface RevenueRecognitionScriptInterface extends ScriptInterface {
 
     /**
-     * Called to create the Revenue Schedule of a charge
+     * Called to create the Revenue Schedule of a charge.
+     * 
      * @param chargeInstance the charge whose revenue is to be recognized
-     * @param user Current user
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
-	public void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException;
-		
-	
+    void createRevenueSchedule(ChargeInstance chargeInstance) throws BusinessException;
+
     /**
-     * Called byd default createRevenueSchedule impl to create the Revenue Schedule 
-     * with just recognized Revenue set
+     * Called byd default createRevenueSchedule impl to create the Revenue Schedule. with just recognized Revenue set
      * 
      * @param chargeInstance the charge whose revenue is to be recognized
      * @param startDate Contract's start date
      * @param endDate Contract's end date
-     * @param user Current user
-     * @throws BusinessException
+     * @return list of revenue schedule.
+     * @throws BusinessException business exception
      */
-    public List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance,List<WalletOperation> woList,Date startDate,Date endDate) throws BusinessException;
+    List<RevenueSchedule> scheduleRevenue(ChargeInstance chargeInstance, List<WalletOperation> woList, Date startDate, Date endDate) throws BusinessException;
 
 }

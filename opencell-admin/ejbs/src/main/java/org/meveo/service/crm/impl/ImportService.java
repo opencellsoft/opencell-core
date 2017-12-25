@@ -24,14 +24,12 @@ public abstract class ImportService {
     private CustomFieldInstanceService customFieldInstanceService;
 
     /**
-     * Populate custom field values from DTO
+     * Populate custom field values from DTO.
      * 
-     * @param cfType An entity that custom field template applies to
      * @param customFieldDtos Custom field values
      * @param entity Entity
-     * @param cfiFieldName Custom field name in an entity
-     * @throws BusinessException 
-     * @throws MissingParameterException
+     * @throws BusinessException  business exception.
+     * 
      */
     protected void populateCustomFields(List<CustomField> customFieldDtos, ICustomFieldEntity entity) throws BusinessException {
         // throws MissingParameterException {
@@ -42,17 +40,17 @@ public abstract class ImportService {
     }
 
     /**
-     * Populate custom field values from DTO
+     * Populate custom field values from DTO.
      * 
      * @param customFieldTemplates Custom field templates mapped by a template key
      * @param customFieldDtos Custom field values
      * @param entity Entity
-     * @param cfiFieldName Custom field name in an entity
-     * @throws BusinessException 
-     * @throws MissingParameterException
+     * @throws BusinessException business exception
+     * @throws MissingParameterException missing parameter exception.
      */
-    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomField> customFieldDtos, ICustomFieldEntity entity) throws BusinessException {
-        
+    private void populateCustomFields(Map<String, CustomFieldTemplate> customFieldTemplates, List<CustomField> customFieldDtos, ICustomFieldEntity entity)
+            throws BusinessException {
+
         // check if any templates are applicable
         if (customFieldTemplates == null || customFieldTemplates.isEmpty()) {
             log.warn("No custom field templates defined. Custom field values will be ignored");

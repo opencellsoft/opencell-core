@@ -285,9 +285,9 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     }
 
     /**
-     * Reschedule a job
+     * Reschedule a job.
      * 
-     * @param code Code of job instance to reschedule
+     * @param jobInstanceId id of job instance need to be scheduled.
      */
     public void scheduleUnscheduleJob(Long jobInstanceId) {
 

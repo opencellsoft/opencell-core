@@ -520,9 +520,9 @@ public class RatingService extends BusinessService<WalletOperation> {
     }
 
     /**
-     * Calculate, round (if needed) and set total amounts and taxes:<br/>
-     * [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax)<br/>
-     * [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax) <br/>
+     * Calculate, round (if needed) and set total amounts and taxes:
+     * [B2C] amountWithoutTax = round(amountWithTax) - round(amountTax)
+     * [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax)
      * 
      * Unit prices and taxes are not rounded
      * 

@@ -65,19 +65,9 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	/**
 	 * Creates an offer given a BusinessOfferModel.
 	 * 
-	 * @param businessOfferModel
-	 * @param customFields
-	 * @param code
-	 * @param name
-	 * @param offerDescription
-	 * @param serviceCodes
-	 * @param channels
-	 * @param bams
-	 * @param offerTemplateCategories
-	 * @param lifeCycleStatusEnum
-	 * @param map
-	 * @return
-	 * @throws BusinessException
+	 * @param bomParams business offer model parameters.
+	 * @return offer template
+	 * @throws BusinessException business exception.
 	 */
 	public OfferTemplate instantiateFromBOM(BOMInstantiationParameters bomParams) throws BusinessException {
 
@@ -406,6 +396,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return newOfferServiceTemplates;
 	}
 
+	/**
+	 * @param businessOfferModel business offer model
+	 * @return list of business service modle.
+	 */
 	public List<BusinessServiceModel> getBusinessServiceModels(BusinessOfferModel businessOfferModel) {
 		List<BusinessServiceModel> businessServiceModels = new ArrayList<>();
 		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
@@ -417,6 +411,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return businessServiceModels;
 	}
 
+	/**
+	 * @param businessOfferModel business offer model
+	 * @param serviceTemplate service template
+	 * @return business service model.
+	 */
 	public BusinessServiceModel findBsmFromBom(BusinessOfferModel businessOfferModel, ServiceTemplate serviceTemplate) {
 		BusinessServiceModel bsm = null;
 		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {

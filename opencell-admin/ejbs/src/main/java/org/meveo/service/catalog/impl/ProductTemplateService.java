@@ -57,8 +57,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
      * Create a shallow duplicate of an Product template (main Product template information and custom fields). A new Product template will have a code with suffix "- Copy"
      * 
      * @param product Product template to duplicate
-     * @return A persisted duplicated Bundle template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public synchronized void duplicate(ProductTemplate product) throws BusinessException {
         duplicate(product, true);
@@ -70,7 +69,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
      * 
      * @param product Product template to create new version for
      * @return A not-persisted copy of Product template
-     * @throws BusinessException
+     * @throws BusinessException  business exception.
      */
     public synchronized ProductTemplate instantiateNewVersion(ProductTemplate product) throws BusinessException {
 
@@ -103,7 +102,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
      * @param product Product template to duplicate
      * @param persist Shall new entity be persisted
      * @return A copy of Product template
-     * @throws BusinessException
+     * @throws BusinessException  business exception.
      */
     public synchronized ProductTemplate duplicate(ProductTemplate product, boolean persist) throws BusinessException {
 

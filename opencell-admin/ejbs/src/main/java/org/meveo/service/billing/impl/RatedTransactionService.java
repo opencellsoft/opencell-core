@@ -266,6 +266,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     *  @param billingAccount billing account
      * @param invoice invoice to create from
      * @param ratedTransactionFilter filter for rated transaction
+     * @param ratedTransactions list of rated transaction.
      * @param orderNumber order number
      * @param firstTransactionDate date of first transaction
      * @param lastTransactionDate date of last transaction
@@ -721,10 +722,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * <p>
      * If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction with amount=0 don't show up in the XML.
      * </p>
-     * @param wallet
-     * @param invoice
-     * @param invoiceSubCategory
-     * @return
+     * @param wallet wallet instance
+     * @param invoice invoice
+     * @param invoiceSubCategory invoice sub category
+     * @return list of rated transaction.
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
         long startDate = System.currentTimeMillis();

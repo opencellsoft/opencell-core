@@ -37,8 +37,11 @@ public class ValidationService {
 	private EntityManager em;
 
 	/**
-	 * @see org.meveo.service.validation.ValidationServiceLocal#validateUniqueField(java.lang.String,
-	 *      java.lang.String, java.lang.String, java.lang.Object)
+	 * @param className class name
+	 * @param fieldName field name
+	 * @param id id of checking object
+	 * @param value value of checking objec
+	 * @return true if object has unique field
 	 */
 	public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
 

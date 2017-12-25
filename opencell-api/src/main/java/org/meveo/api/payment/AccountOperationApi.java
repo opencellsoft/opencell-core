@@ -203,13 +203,7 @@ public class AccountOperationApi extends BaseApi {
 
     /**
      * List.
-     * 
-     * @param limit
-     * @param offset
-     *
-     * @param customerAccountCode the customer account code
-     * @param sortBy the sort by
-     * @param sortOrder the sort order
+     * @param pagingAndFiltering paging and filtering
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */

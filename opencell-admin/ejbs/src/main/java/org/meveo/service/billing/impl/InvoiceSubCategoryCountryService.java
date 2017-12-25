@@ -172,10 +172,10 @@ public class InvoiceSubCategoryCountryService extends
     /**
      * Find InvoiceSubCategoryCountry without fetching join entities.
      * 
-     * @param invoiceSubCategory
-     * @param tradingCountry
-     * @param applicationDate
-     * @return
+     * @param invoiceSubCategory invoice sub category
+     * @param tradingCountry trading country
+     * @param applicationDate application date
+     * @return invoice sub category country.
      */
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
 			InvoiceSubCategory invoiceSubCategory,
@@ -186,11 +186,11 @@ public class InvoiceSubCategoryCountryService extends
 
 	/**
 	 * Find InvoiceSubCategoryCountry with fetching join entities.
-	 * @param invoiceSubCategory
-	 * @param tradingCountry
-	 * @param fetchFields
-	 * @param applicationDate
-	 * @return
+	 * @param invoiceSubCategory invoice sub category
+	 * @param tradingCountry trading country
+	 * @param fetchFields list of fields to be fetched
+	 * @param applicationDate application date.
+	 * @return invoice sub category.
 	 */
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
 			InvoiceSubCategory invoiceSubCategory,
@@ -212,9 +212,9 @@ public class InvoiceSubCategoryCountryService extends
 	
 	/**
 	 * Get the tax with the most highest priority='1'.
-	 * @param invoiceSubCategoryId
-	 * @param countryId
-	 * @return
+	 * @param invoiceSubCategoryId invoice sub categoryId
+	 * @param countryId country id
+	 * @return invoice sub category country.
 	 */
 	@SuppressWarnings("unchecked")
     public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId) {
@@ -251,11 +251,11 @@ public class InvoiceSubCategoryCountryService extends
 	
 	/**
 	 * Find InvoiceSubCategoryCountry with a given range of validity dates. No fetching join entities.
-	 * @param invoiceSubCategory
-	 * @param tradingCountry
-	 * @param startValidityDate
-	 * @param endValidityDate
-	 * @return
+	 * @param invoiceSubCategory invoice sub category
+	 * @param tradingCountry trading country
+	 * @param startValidityDate start validity date
+	 * @param endValidityDate and validity date
+	 * @return invoice sub category.
 	 */
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory,
 			TradingCountry tradingCountry, Date startValidityDate, Date endValidityDate) {
@@ -264,12 +264,12 @@ public class InvoiceSubCategoryCountryService extends
 
 	/**
 	 * Find InvoiceSubCategoryCountry with a given range of validity dates. With fetching join entities.
-	 * @param invoiceSubCategory
-	 * @param tradingCountry
-	 * @param fetchFields
-	 * @param startValidityDate
-	 * @param endValidityDate
-	 * @return
+	 * @param invoiceSubCategory invoice sub category
+	 * @param tradingCountry trading country
+	 * @param fetchFields list of fields to be fetched
+	 * @param startValidityDate start validity date
+	 * @param endValidityDate and validity date
+	 * @return invoice sub category
 	 */
 	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(
 			InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, List<String> fetchFields,

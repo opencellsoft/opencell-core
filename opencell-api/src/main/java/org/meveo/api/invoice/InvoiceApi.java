@@ -443,21 +443,21 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : <lu> Create rated transactions
+     * Launch all the invoicing process for a given billingAccount, that's mean : <ul> Create rated transactions
      * <li>Create an exeptionnal billingRun with given dates
      * <li>Validate the preinvoicing resport
      * <li>Validate the postinvoicing report
-     * <li>Vaidate the BillingRun </lu>
+     * <li>Vaidate the BillingRun </ul>
      * 
      * @param generateInvoiceRequestDto
      * 
-     * @return The invoiceNumber
-     * @throws BusinessException
-     * @throws MeveoApiException
-     * @throws FileNotFoundException
-     * @throws ImportInvoiceException
-     * @throws InvoiceExistException
-     * @throws Exception
+     * @return The invoiceNumber invoice number.
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
+     * @throws FileNotFoundException file not found exception
+     * @throws ImportInvoiceException import invoice exception
+     * @throws InvoiceExistException invoice exist exception
+     * @throws Exception exception
      */
     public GenerateInvoiceResultDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto)
             throws BusinessException, MeveoApiException, FileNotFoundException, InvoiceExistException, ImportInvoiceException {
@@ -582,12 +582,12 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param invoiceNumber
+     * @param invoiceNumber invoice number
      * 
-     * @return
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws Exception
+     * @return invoice's pdf as bytes
+     * @throws MissingParameterException missing pararmeter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws Exception exception.
      */
     public byte[] getPdfInvoice(Long invoiceId, String invoiceNumber) throws MissingParameterException, EntityDoesNotExistsException, Exception {
         return getPdfInvoice(invoiceId, invoiceNumber, invoiceTypeService.getDefaultCommertial().getCode());
@@ -628,13 +628,13 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param invoiceNumber
-     * @param invoiceTypeCode
+     * @param invoiceNumber invoice number
+     * @param invoiceTypeCode invoice type code
      * 
-     * @return
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws Exception
+     * @return invoice pdf as bytes
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws Exception general exception.
      */
     public byte[] getPdfInvoice(Long invoiceId, String invoiceNumber, String invoiceTypeCode) throws MissingParameterException, EntityDoesNotExistsException, Exception {
         return getPdfInvoice(invoiceId, invoiceNumber, invoiceTypeCode, false);
@@ -642,12 +642,12 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param invoiceId
+     * @param invoiceId invoice id
      * 
-     * @return
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws BusinessException
+     * @return invoice number.
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws BusinessException business exception
      */
     public String validateInvoice(Long invoiceId) throws MissingParameterException, EntityDoesNotExistsException, BusinessException {
         if (StringUtils.isBlank(invoiceId)) {
@@ -666,12 +666,12 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param invoiceId
+     * @param invoiceId invoice id
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MissingParameterException issing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void cancelInvoice(Long invoiceId) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(invoiceId)) {
@@ -687,10 +687,10 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param invoiceDTO
+     * @param invoiceDTO invoie dto
      * 
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
+     * @throws MissingParameterException missing parametter exception
+     * @throws EntityDoesNotExistsException enity does not exist exception.
      */
     private void validateInvoiceDto(InvoiceDto invoiceDTO) throws MissingParameterException, EntityDoesNotExistsException {
         if (StringUtils.isBlank(invoiceDTO.getInvoiceMode())) {
@@ -771,11 +771,11 @@ public class InvoiceApi extends BaseApi {
      * @param invoiceNumber Invoice number
      * @param invoiceTypeCode Invoice type code
      * @param includeTransactions Should invoice list associated transactions
-     * @return
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @return invoice dto
+     * @throws MissingParameterException missing parameter exception
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public InvoiceDto find(Long id, String invoiceNumber, String invoiceTypeCode, boolean includeTransactions)
             throws MissingParameterException, EntityDoesNotExistsException, MeveoApiException, BusinessException {
@@ -791,9 +791,9 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param tax
-     * @param amountWithoutTax
-     * @return
+     * @param tax taxe
+     * @param amountWithoutTax amount with tax
+     * @return amount with tax.
      */
     private BigDecimal getAmountWithTax(Tax tax, BigDecimal amountWithoutTax) {
         Integer rounding = appProvider.getRounding() == null ? 2 : appProvider.getRounding();
@@ -803,9 +803,9 @@ public class InvoiceApi extends BaseApi {
 
     /**
      * 
-     * @param amountWithTax
-     * @param amountWithoutTax
-     * @return
+     * @param amountWithTax amount with tax
+     * @param amountWithoutTax amount without tax
+     * @return tax amount.
      */
     private BigDecimal getAmountTax(BigDecimal amountWithTax, BigDecimal amountWithoutTax) {
         return amountWithTax.subtract(amountWithoutTax);

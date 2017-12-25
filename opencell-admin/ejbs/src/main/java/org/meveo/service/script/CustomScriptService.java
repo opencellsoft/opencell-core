@@ -580,11 +580,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity
+     * Execute action on an entity.
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws ElementNotFoundException Script not found
@@ -596,7 +596,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity
+     * Execute action on an entity.
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
@@ -619,9 +619,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity
+     * Execute action on an entity.
      * 
-     * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
      * 
@@ -662,9 +661,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Parse parameters encoded in URL like style param=value&param=value
+     * Parse parameters encoded in URL like style param=value&amp;param=value.
      * 
-     * @param encodedParameters Parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Parameters encoded in URL like style param=value&amp;param=value
      * @return A map of parameter keys and values
      */
     public static Map<String, Object> parseParameters(String encodedParameters) {

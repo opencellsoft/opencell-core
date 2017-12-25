@@ -44,10 +44,10 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
 
     /**
      * Use by GUI. Prefix is null, as ID of the new product is used.
-     * @param entity
-     * @param bpm
-     * @return
-     * @throws BusinessException
+     * @param entity product template
+     * @param bpm business product model
+     * @return product template
+     * @throws BusinessException business exception.
      */
     public ProductTemplate instantiateBPM(ProductTemplate entity, BusinessProductModel bpm) throws BusinessException {
         return instantiateBPM(null, entity, bpm, null);
@@ -58,9 +58,9 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
      * @param prefix - if empty, productTemplate.id is used for child entities
      * @param productTemplate - source template
      * @param bpm - if productTemplate is null, bpm.productTemplate is used
-     * @param customFields
-     * @return
-     * @throws BusinessException
+     * @param customFields custom fields.
+     * @return product template
+     * @throws BusinessException business exception.
      */
     public ProductTemplate instantiateBPM(String prefix, ProductTemplate productTemplate, BusinessProductModel bpm, List<CustomFieldDto> customFields) throws BusinessException {
         if (bpm.getScript() != null) {

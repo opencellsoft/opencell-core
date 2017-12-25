@@ -142,11 +142,12 @@ public class CatalogHierarchyBuilderService {
     /**
      * Duplicate product, product charge template and prices.
      * 
-     * @param offerProductTemplate
-     * @param chargeTemplateInMemory
-     * @param pricePlansInMemory
-     * @param prefix
-     * @throws BusinessException
+     * @param offerProductTemplate offer product template
+     * @param chargeTemplateInMemory list of charge template
+     * @param pricePlansInMemory list o price plan matrix
+     * @param prefix prefix used to generate the codes
+     * @return offer product template.
+     * @throws BusinessException business exception.
      */
     public OfferProductTemplate duplicateOfferProductTemplate(OfferProductTemplate offerProductTemplate, String prefix, ServiceConfigurationDto serviceConfiguration,
             List<PricePlanMatrix> pricePlansInMemory, List<ChargeTemplate> chargeTemplateInMemory) throws BusinessException {

@@ -197,12 +197,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply one shot charge to a user account for a Virtual operation. Does not create/update/persist any entity.
      * 
+     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
-     * @param fromDate Recurring charge application start
-     * @param toDate Recurring charge application end
+     * @param effectiveDate Recurring charge application start
+     * @param quantity quantity
      * @return Wallet operations
-     * @throws BusinessException
+     * @throws BusinessException business excetion.
      */
     public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity)
             throws BusinessException {

@@ -524,8 +524,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             if (billingRun != null) {
                 RejectedBillingAccount rejectedBA = new RejectedBillingAccount(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
                 rejectedBillingAccountService.createInNewTransaction(rejectedBA);    
-            }else {
-        		    throw e;
+            } else {
+                throw e;
             }
         }
         return invoice;
@@ -609,7 +609,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Produce invoice.
      * 
      * @param invoice invoice to generate pdf
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
         long startDate = System.currentTimeMillis();
@@ -843,7 +843,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param invoice invoice to delete
-     * @throws BusinessException 
+     * @throws BusinessException business exception 
      */
     public void deleteInvoice(Invoice invoice) throws BusinessException {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice").setParameter("invoice", invoice).executeUpdate();
@@ -1245,7 +1245,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * Produce invoice's XML file.
      * 
      * @param invoice Invoice
-     * @return XML File
      * @throws BusinessException business exception
      */
     public void produceInvoiceXmlNoUpdate(Invoice invoice) throws BusinessException {
@@ -1258,7 +1257,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @param invoice Invoice
      * @return True if file was deleted
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public Invoice deleteInvoiceXml(Invoice invoice) throws BusinessException {
 
@@ -1433,6 +1432,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * 
      * @param billingAccount billing account
      * @param invoiceDate date of invoice
+     * @param firstTransactionDate first transaction date.
      * @param lastTransactionDate date of last transaction
      * @param ratedTxFilter rated transaction filter
      * @param orderNumber Order number associated to subscription
@@ -1557,7 +1557,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType > BillingCycle > default.
+     * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType &gt; BillingCycle &gt; default.
      * 
      * @param billingCycle Billing cycle
      * @param invoiceType Invoice type
@@ -1606,7 +1606,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Get a list of invoice identifiers that belong to a given Billing run and that do not have XML generated yet
+     * Get a list of invoice identifiers that belong to a given Billing run and that do not have XML generated yet.
      * 
      * @param billingRunId Billing run id
      * @return A list of invoice identifiers

@@ -34,7 +34,6 @@ public class TradingLanguageService extends PersistenceService<TradingLanguage> 
      * 
      * @param tradingLanguageCode Trading Language Code
      * @return Trading language found or null.
-     * @throws ElementNotFoundException
      */
     public TradingLanguage findByTradingLanguageCode(String tradingLanguageCode) {
         try {

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides custom functions for Meveo application. The following functions are provided:
  * <ul>
- * <li>mv:getCFValue(<entity>,<cf field code>) - retrieve a custom field value by code for a given entity</li>
+ * <li>mv:getCFValue(&lt;entity&gt;,&lt;cf field code&gt;) - retrieve a custom field value by code for a given entity</li>
  * </ul>
  * 
  * @author Andrius Karpavicius
@@ -331,6 +331,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * Exposes CustomFieldInstanceService.getCFValueByClosestMatch() function as EL function. See CustomFieldInstanceService.getCFValueByClosestMatch() function for documentation
      * @param entity entity to get infos
      * @param code code of entity
+     * @param date date to check.
      * @param keyToMatch jey to match.
      * @return cf value
      */
@@ -371,6 +372,12 @@ public class MeveoFunctionMapper extends FunctionMapper {
     /**
      * Exposes CustomFieldInstanceService.getCFValueByRangeOfNumbers() function as EL function. See CustomFieldInstanceService.getCFValueByRangeOfNumbers() function for
      * documentation
+     * 
+     * @param entity entity to get infos
+     * @param code code of entity
+     * @param date date to check.
+     * @param numberToMatch number to match.
+     * @return cfvalue
      */
     public static Object getCFValueByRangeOfNumbers(ICustomFieldEntity entity, String code, Date date, Object numberToMatch) {
 
@@ -534,6 +541,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      *
      * @param entity entity to get infos
      * @param code code of entity
+     * @param date date to check.
      * @param keyOne key one
      * @param keyTwo key two
      * @return cfvalue
@@ -549,6 +557,14 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
     /**
      * Exposes CustomFieldInstanceService.getCFValueByKey() function as EL function. See CustomFieldInstanceService.getCFValueByKey() function for documentation
+     *
+     * @param entity entity to get infos
+     * @param code code of entity
+     * @param date date to check.
+     * @param keyOne key one
+     * @param keyTwo key two
+     * @param keyThree key three.
+     * @return cfvalue
      */
     public static Object getCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree) {
 
@@ -808,6 +824,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param keyTwo key two
      * @param keyThree key three.
      * @param keyFour key four.
+     * @param keyFive key five.
      * @return cfvalue
      */
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
@@ -896,6 +913,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param keyOne key one
      * @param keyTwo key two
      * @param keyThree key three.
+     * @param keyFour key four.
      * @return cfvalue.
      */
     public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour) {
@@ -913,10 +931,14 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param code code of entity
      * @param date date to check
      * @param keyOne key of CF.
-     * @param keyTwo key of CF
+     * @param keyTwo key of CF.
+     * @param keyThree key three
+     * @param keyFour key four.
+     * @param keyFive key five.
      * @return cf value
      */
-    public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
+    public static Object getInheritedCFValueByKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour,
+            Object keyFive) {
 
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValueByKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
@@ -930,7 +952,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return A script execution result value
      */
     public static Object executeScript(IEntity entity, String scriptCode, String encodedParameters) {
@@ -1110,6 +1132,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param keyOne key one
      * @param keyTwo key two
      * @param keyThree key three.
+     * @param keyFour key four
+     * @param keyFive key five.
      * @return true if cfValue has key.
      */
     public static boolean isCFValueHasKey(ICustomFieldEntity entity, String code, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
@@ -1448,7 +1472,8 @@ public class MeveoFunctionMapper extends FunctionMapper {
      * @param keyFive key five.
      * @return true if cfvalue has key
      */
-    public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour, Object keyFive) {
+    public static boolean isInheritedCFValueHasKey(ICustomFieldEntity entity, String code, Date date, Object keyOne, Object keyTwo, Object keyThree, Object keyFour,
+            Object keyFive) {
 
         boolean hasKey = getCustomFieldInstanceService().isInheritedCFValueHasKey(entity, code, date, keyOne, keyTwo, keyThree, keyFour, keyFive);
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
