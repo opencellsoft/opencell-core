@@ -21,6 +21,7 @@ package org.meveo.service.base;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -68,6 +69,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
@@ -127,6 +129,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    ProviderRegistry providerRegistry;
 
     /**
      * Constructor.
@@ -983,7 +988,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-    public EntityManager getEntityManager() {
+    public EntityManager getDefaultEntityManager() {
         EntityManager result = emfForJobs;
         if (conversation != null) {
             try {
@@ -1022,5 +1027,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         return q.getResultList();
+    }
+    
+    
+    public EntityManager getEntityManager() {
+        final String currentProvider = currentUser.getProviderCode();
+        String isMultiTenancyActive=ParamBean.getInstance().getProperty("meveo.multiTenancy", "false"); 
+
+        final EntityManager target;
+
+        if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
+            log.debug("Returning connection for provider " + currentProvider);
+            target = providerRegistry.getEntityManagerFactory(currentProvider).createEntityManager();
+        } else {
+            target = getDefaultEntityManager();
+        }
+        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{EntityManager.class},
+                (proxy, method, args) -> {
+                    target.joinTransaction();
+                    return method.invoke(target, args);
+                });
     }
 }
