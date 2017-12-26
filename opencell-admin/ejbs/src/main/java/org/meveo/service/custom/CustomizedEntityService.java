@@ -40,7 +40,7 @@ public class CustomizedEntityService implements Serializable {
      *        have @CustomFieldEntity(isManualyManaged=true)
      * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
      * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * 
+     * @param includeParentClassesOnly true if including parent classes.
      * @return A list of customized/customizable entities
      */
     public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, boolean includeParentClassesOnly,

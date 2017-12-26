@@ -95,10 +95,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Find scripts by source type
+     * Find scripts by source type.
      * 
-     * @param type
-     * @return
+     * @param type script source type
+     * @return list of scripts
      */
     @SuppressWarnings("unchecked")
     protected List<T> findByType(ScriptSourceTypeEnum type) {
@@ -182,7 +182,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Check full class name is existed class path or not
+     * Check full class name is existed class path or not.
+     * @param fullClassName full class name
+     * @return true i class is overridden 
      */
     public static boolean isOverwritesJavaClass(String fullClassName) {
         try {
@@ -238,7 +240,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Build the classpath and compile all scripts
+     * Build the classpath and compile all scripts.
+     * @param scripts list of scripts
      */
     protected void compile(List<T> scripts) {
         try {
@@ -533,9 +536,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Clear all logs for a script
+     * Clear all logs for a script.
      * 
-     * @param scriptCode
+     * @param scriptCode script's code
      */
     public void clearLogs(String scriptCode) {
         if (allLogs.containsKey(scriptCode)) {
@@ -544,7 +547,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Find the package name in a source java text
+     * Find the package name in a source java text.
      * 
      * @param src Java source code
      * @return Package name

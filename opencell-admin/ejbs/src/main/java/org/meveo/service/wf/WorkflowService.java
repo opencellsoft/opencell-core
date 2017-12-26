@@ -221,7 +221,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * 
      * @param entity Entity to execuet workflow on
      * @param workflow Workflow to execute
-
+     * @return business entity
      * @throws BusinessException business exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -291,12 +291,12 @@ public class WorkflowService extends BusinessService<Workflow> {
     }
 
     /**
-     * Return the workflowType class by name
+     * Return the workflowType class by name.
      * 
-     * @param wfTypeClassName
-     * @return
-     * @throws ClassNotFoundException
-     * @throws InvalidScriptException
+     * @param wfTypeClassName workflow type class name
+     * @return workflow 
+     * @throws ClassNotFoundException class not found exception
+     * @throws InvalidScriptException invalid script exception
      */
     public Class<?> getWFTypeClassForName(String wfTypeClassName) throws ClassNotFoundException, InvalidScriptException {
 

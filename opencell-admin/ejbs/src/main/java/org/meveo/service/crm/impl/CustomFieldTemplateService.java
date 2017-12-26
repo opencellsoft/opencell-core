@@ -291,6 +291,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
+     * @param updateExisting true if updating existing templates
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
      * @throws BusinessException business exception.
      */
@@ -305,14 +306,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
      * @param updateExisting true when updating missing template.
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans)
             throws BusinessException {

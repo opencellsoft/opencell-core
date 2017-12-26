@@ -27,7 +27,8 @@ public class RunTimeLogger implements org.slf4j.Logger {
     /**
      * 
      * @param clazz class to log
-     * @param scriptCode code of script.
+     * @param scriptCode code of script
+     * @param scriptServiceName script service name
      */
     public RunTimeLogger(Class<?> clazz, String scriptCode, String scriptServiceName) {
         this.clazz = clazz;

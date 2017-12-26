@@ -68,9 +68,7 @@ public class SystemCurrencyBean implements Serializable {
 
 	/**
 	 * Sets new system currency.
-	 * 
-	 * @param newCurrency
-	 *            New system currency.
+	 * s
 	 */
 	public void saveNewSystemCurrency() {
 		if (!systemCurrency.equals(selectedCurrency)) {

@@ -597,7 +597,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Get inherited custom field value for a given entity
      * 
-     * @param Entity to get the inherited value for
+     * @param entity to get the inherited value for
      * @param cfCode Custom field code
      * @return Custom field value
      */
@@ -626,7 +626,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Get inherited custom field value for a given entity. A cumulative custom field value is calculated for Map(Matrix) type fields
      * 
-     * @param Entity to get the inherited value for
+     * @param entity to get the inherited value for
      * @param cft Custom field definition
      * @return Custom field value
      */
@@ -795,7 +795,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param entity Entity to execute action on
      * @param action Action to execute
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
     public String executeCustomAction(ICustomFieldEntity entity, EntityCustomAction action, String encodedParameters) {

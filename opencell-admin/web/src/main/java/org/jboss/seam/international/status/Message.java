@@ -29,22 +29,26 @@ import javax.faces.application.FacesMessage.Severity;
 public interface Message extends Serializable {
     /**
      * Get the {@link Severity} representing the severity of this message.
+     * @return serverity
      */
     Severity getSeverity();
 
     /**
      * Get the message text.
+     * @return text
      */
     String getText();
 
     /**
      * Get message detail.
+     * @return detail
      */
     String getDetail();
 
     /**
      * Get the targets for which a given view-layer or consumer should display this message, or to which this message should be
      * attached.
+     * @return targets.
      */
     String getTargets();
 }

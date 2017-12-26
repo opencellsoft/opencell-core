@@ -41,46 +41,59 @@ public interface Messages extends Serializable {
 
     /**
      * Return true if there are no pending {@link Message} or {@link MessageBuilder} objects in the queue.
+     * @return true if it is empty
      */
     public boolean isEmpty();
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle message
      */
     public void info(final BundleKey message);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params parameter values
      */
     public void info(final BundleKey message, final Object... params);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
      */
     public void warn(final BundleKey message);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params list of parameter.s
      */
     public void warn(final BundleKey message, final Object... params);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key.
      */
     public void error(final BundleKey message);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params  list of values
      */
     public void error(final BundleKey message, final Object... params);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle message
      */
     public void fatal(final BundleKey message);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params  list of values
      */
     public void fatal(final BundleKey message, final Object... params);
 
@@ -91,16 +104,21 @@ public interface Messages extends Serializable {
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params  list of values
      */
     public void info(final String message, final Object... params);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message message to be displayed
      */
     public void warn(final String message);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params  list of values
      */
     public void warn(final String message, final Object... params);
 
@@ -111,16 +129,21 @@ public interface Messages extends Serializable {
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params  list of values
      */
     public void error(final String message, final Object... params);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
      */
     public void fatal(final String message);
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message bundle key
+     * @param params  list of values
      */
     public void fatal(final String message, final Object... params);
 

@@ -533,9 +533,9 @@ public class CustomFieldInstanceService extends BaseService {
     }
 
     /**
-     * Remove all custom field values for a given entity
+     * Remove all custom field values for a given entity.
      * 
-     * @param entity
+     * @param entity custom field entity
      * @throws BusinessException business exception.
      */
     public void removeCFValues(ICustomFieldEntity entity) throws BusinessException {
