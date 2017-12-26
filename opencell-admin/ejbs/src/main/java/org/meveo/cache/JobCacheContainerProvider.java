@@ -44,7 +44,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     private JobInstanceService jobInstanceService;
 
     /**
-     * Contains association between job instance and cluster nodes it runs in. Key format: <JobInstance.id>, value: List of <cluster node name>
+     * Contains association between job instance and cluster nodes it runs in. Key format: &lt;JobInstance.id&gt;, value: List of &lt;cluster node name&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-running-jobs")
     private Cache<Long, List<String>> runningJobsCache;
@@ -64,7 +64,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Get a summary of cached information
+     * Get a summary of cached information.
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
@@ -78,7 +78,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Refresh cache by name
+     * Refresh cache by name.
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
@@ -92,7 +92,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Determine if job, identified by a given job instance id, is currently running and if on this or another clusternode
+     * Determine if job, identified by a given job instance id, is currently running and if on this or another clusternode.
      * 
      * @param jobInstanceId Job instance identifier
      * @return Is Job currently running and if on this or another node
@@ -167,7 +167,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Mark job, identified by a given job instance id, as currently NOT running on CURRENT cluster node
+     * Mark job, identified by a given job instance id, as currently NOT running on CURRENT cluster node.
      * 
      * @param jobInstanceId Job instance identifier
      */

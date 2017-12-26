@@ -31,7 +31,7 @@ import org.jboss.seam.international.status.MessageFactory;
  * Message m = {@link MessageFactory}.info(&quot;There are {0} cars, and they are all {1}.&quot;, 5, &quot;green&quot;).build();
  * </pre>
  * 
- * A subsequent call to <code>m.getSummary()</code> will return:<br/>
+ * A subsequent call to <code>m.getSummary()</code> will return:
  * <code>"There are 5 cars, and they are all green."</code>;
  * 
  *

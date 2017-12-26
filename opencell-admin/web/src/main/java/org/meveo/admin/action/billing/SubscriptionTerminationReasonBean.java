@@ -35,11 +35,6 @@ public class SubscriptionTerminationReasonBean extends
 		BaseBean<SubscriptionTerminationReason> {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}
-	 */
 	@Inject
 	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 

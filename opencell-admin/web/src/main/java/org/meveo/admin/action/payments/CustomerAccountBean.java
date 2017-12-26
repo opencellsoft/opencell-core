@@ -101,9 +101,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return customer account 
      */
     @Override
     public CustomerAccount initEntity() {
@@ -166,8 +164,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     /**
      * Move selected accountOperation from current CustomerAccount to customerAccountTo
      * 
-     * @param customerAccountTo
-     * @return
+     * @return output view
      */
     public String transferAccount() {
         try {

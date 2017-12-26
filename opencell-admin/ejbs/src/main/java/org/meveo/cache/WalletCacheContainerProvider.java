@@ -58,20 +58,20 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     protected Event<WalletInstance> lowBalanceEventProducer;
 
     /**
-     * Contains association between prepaid wallet instance and balance value. Key format: <WalletInstance.id>, value: <prepaid wallet balance amount>
+     * Contains association between prepaid wallet instance and balance value. Key format: &lt;WalletInstance.id&gt;, value: &lt;prepaid wallet balance amount&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-balance")
     private Cache<Long, BigDecimal> balanceCache;
 
     /**
-     * Contains association between prepaid wallet instance and reserved balance value. Key format: <WalletInstance.id>, value: <prepaid wallet reserved balance amount>
+     * Contains association between prepaid wallet instance and reserved balance value. Key format: &lt;WalletInstance.id&gt;, value: &lt;prepaid wallet reserved balance amount&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-reservedBalance")
     private Cache<Long, BigDecimal> reservedBalanceCache;
 
     /**
-     * Contains association between usage chargeInstance and wallets ids (if it is not the only principal one). Key format: <UsageChargeInstance.id>, value: List of
-     * <WalletInstance.id>
+     * Contains association between usage chargeInstance and wallets ids (if it is not the only principal one). Key format: &lt;UsageChargeInstance.id&gt;, value: List of
+     * &lt;WalletInstance.id&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-usageChargeInstanceWallet")
     private Cache<Long, List<Long>> usageChargeInstanceWalletCache;

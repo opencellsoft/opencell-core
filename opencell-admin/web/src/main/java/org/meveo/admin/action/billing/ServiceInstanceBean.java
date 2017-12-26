@@ -49,11 +49,6 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
     private static final long serialVersionUID = -4881285967381681922L;
 
-    /**
-     * Injected
-     * 
-     * @{link ServiceInstance} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private ServiceInstanceService serviceInstanceService;
 

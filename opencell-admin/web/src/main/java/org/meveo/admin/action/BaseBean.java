@@ -834,7 +834,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     /**
      * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. 
-     * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and <&lt;name&gt; is an entit
+     * Criteria name consist of [&lt;condition&gt;]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;name&gt; is an entity
      * attribute name.
      * 
      * @param searchCriteria Search criteria - should be same as filters attribute

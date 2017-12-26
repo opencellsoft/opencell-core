@@ -77,12 +77,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link UserAccount} service. Extends {@link PersistenceService} .
-     */
-
     @Inject
     private WalletOperationBean walletOperationBean;
 

@@ -237,9 +237,9 @@ public abstract class ServiceBasedLazyDataModel<T extends IEntity> extends LazyD
     }
 
     /**
-     * Get search criteria for data searching.<br/>
-     * Search criteria is a map with filter criteria name as a key and value as a value. <br/>
-     * Criteria name consist of [<condition> ]<field name> (e.g. "like firstName") where <condition> is a condition to apply to field value comparison and <field name> is an entity
+     * Get search criteria for data searching.&lt;br/&gt;
+     * Search criteria is a map with filter criteria name as a key and value as a value. &lt;br/&gt;
+     * Criteria name consist of [&lt;condition&gt; ]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;field name&gt; is an entity
      * attribute name.
      * 
      * @return Map of search criteria

@@ -56,11 +56,6 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link Invoice} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private BillingRunService billingRunService;
 

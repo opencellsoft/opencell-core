@@ -79,11 +79,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link Invoice} service. Extends {@link PersistenceService}.
-	 */
 	@Inject
 	private InvoiceService invoiceService;
 
@@ -343,7 +338,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	/**
 	 * 
-	 * @throws BusinessException
 	 */
 	public void deleteLinkedInvoiceCategoryDetaild(){		
 		try{

@@ -421,8 +421,8 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     /**
      * Initiate processing of order
+     * @return output view
      * 
-     * @throws BusinessException
      */
     @ActionMethod
     public String sendToProcess() {

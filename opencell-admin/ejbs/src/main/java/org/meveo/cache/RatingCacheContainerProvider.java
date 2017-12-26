@@ -69,26 +69,27 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     private CalendarService calendarService;
 
     /**
-     * Contains association between charge code and price plans. Key format: <charge template code, which is pricePlanMatrix.eventCode>, value: List of <PricePlanMatrix entity>
+     * Contains association between charge code and price plans. Key format: &lt;charge template code, which is pricePlanMatrix.eventCode&gt;, value: List of &lt;PricePlanMatrix
+     * entity&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-price-plan")
     private Cache<String, List<PricePlanMatrix>> pricePlanCache;
 
     /**
-     * Contains association between usage charge template ID and cached usage charge template information. Key format: UsageChargeTemplate.id, value: <DTO version of
-     * UsageChargeTemplate>
+     * Contains association between usage charge template ID and cached usage charge template information. Key format: UsageChargeTemplate.id, value: &lt;DTO version of
+     * UsageChargeTemplate&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-usage-charge-template-cache")
     private Cache<Long, CachedUsageChargeTemplate> usageChargeTemplateCache;
 
     /**
-     * Contains association between subscription and usage charge instances. Key format: Subscription.id, value: List of <DTO version of UsageChargeInstance>
+     * Contains association between subscription and usage charge instances. Key format: Subscription.id, value: List of &lt;DTO version of UsageChargeInstance&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-charge-instance-cache")
     private Cache<Long, List<CachedUsageChargeInstance>> usageChargeInstanceCache;
 
     /**
-     * Contains association between counter instance ID and cached counter information. Key format: CounterInstance.id, value: <DTO version of CounterInstance>
+     * Contains association between counter instance ID and cached counter information. Key format: CounterInstance.id, value: &lt;DTOversion of CounterInstance&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-counter-cache")
     private Cache<Long, CachedCounterInstance> counterCache;
@@ -179,6 +180,9 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         log.info("Price plan cache populated with {} price plans", activePricePlans.size());
     }
 
+    /**
+     * @param calendar calendard
+     */
     private void preloadCache(Calendar calendar) {
         if (calendar != null) {
             calendar = calendarService.refreshOrRetrieve(calendar);
@@ -187,7 +191,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Add price plan to a cache
+     * Add price plan to a cache.
      * 
      * @param pricePlan Price plan to add
      */

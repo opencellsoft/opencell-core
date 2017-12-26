@@ -65,13 +65,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     /**
      * Helper method to get entity from backing bean.
-     * 
-     * @throws NoSuchFieldException
-     * @throws SecurityException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws NoSuchMethodException
-     * @throws InvocationTargetException
+     * @return entity. 
      */
     public Object getEntityFromBackingBeanOrAttribute() {
         Object entity = getStateHelper().get("entity");
@@ -559,7 +553,6 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
      * 
      * @param values Collection of values
      * @param itemIndex An index of an item to remove
-     * @return True/false if item was removed
      */
     @SuppressWarnings("rawtypes")
     public void deleteItemFromCollection(Collection values, int itemIndex) {
@@ -618,7 +611,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
     }
 
     /**
-     * Determine a generics type of a field (eg. for Set<String> field should return String)
+     * Determine a generics type of a field (eg. for Set&lt;String&gt; field should return String)
      * 
      * @param fieldName Field name
      * @param childFieldName child field name in case of field hierarchy

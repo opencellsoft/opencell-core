@@ -81,11 +81,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link Invoice} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private InvoiceService invoiceService;
 

@@ -61,11 +61,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link BillingAccount} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private BillingAccountService billingAccountService;
 
