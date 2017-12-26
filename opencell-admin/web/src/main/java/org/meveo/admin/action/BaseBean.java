@@ -512,7 +512,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Delete Entity using it's ID. Add error message to status message if unsuccessful.
      * 
      * @param id Entity id to delete
      * @throws BusinessException business exception
@@ -524,7 +524,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Delete Entity using it's ID. Add error message to status messages if unsuccessful.
      * 
      * @param id Entity id to delete
      * @param code Entity's code - just for display in error messages
@@ -572,7 +572,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete checked entities. Add error message to {@link statusMessages} if unsuccessful.
+     * Delete checked entities. Add error message to status messages if unsuccessful.
      * 
      * @throws Exception general exception
      */
@@ -682,7 +682,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Disable current entity. Add error message to {@link statusMessages} if unsuccessful.
+     * Disable current entity. Add error message to status messages if unsuccessful.
      * 
      */
     @ActionMethod
@@ -699,7 +699,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Disable Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Disable Entity using it's ID. Add error message to status messages if unsuccessful.
      * 
      * @param id Entity id to disable
      */
@@ -717,7 +717,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Enable current entity. Add error message to {@link statusMessages} if unsuccessful.
+     * Enable current entity. Add error message to status messages if unsuccessful.
      * 
      */
     @ActionMethod
@@ -734,7 +734,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Enable Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Enable Entity using it's ID. Add error message to status messages if unsuccessful.
      * 
      * @param id Entity id to enable
      */

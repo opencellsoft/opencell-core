@@ -26,11 +26,11 @@ import org.jboss.seam.international.status.builder.BundleKey;
 
 /**
  * A convenient way to add messages to be displayed to the user as Feedback, Toast, Alerts, etc.
- * <p/>
+ * 
  * It is the responsibility of the view-layer technology to consume and perform operations required to display any messages
  * added in this way.
  *
- * @author <a href="mailto:lincolnbaxter@gmail.com>Lincoln Baxter, III</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RequestScoped
 public interface Messages extends Serializable {
@@ -99,6 +99,7 @@ public interface Messages extends Serializable {
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message message info.
      */
     public void info(final String message);
 
@@ -124,6 +125,7 @@ public interface Messages extends Serializable {
 
     /**
      * Create a {@link MessageBuilder} with the specified {@link Severity}, add it to the internal queue, and return it.
+     * @param message error message.
      */
     public void error(final String message);
 

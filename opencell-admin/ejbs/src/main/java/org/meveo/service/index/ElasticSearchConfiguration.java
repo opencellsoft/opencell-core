@@ -229,6 +229,7 @@ public class ElasticSearchConfiguration implements Serializable {
      * Determine Type value for Elastic Search for a given class. If nothing found in configuration, a default value - classname will be used
      * 
      * @param clazzToConvert Entity class
+     * @param cetCode cet code
      * @return Type property name
      */
     @SuppressWarnings("rawtypes")

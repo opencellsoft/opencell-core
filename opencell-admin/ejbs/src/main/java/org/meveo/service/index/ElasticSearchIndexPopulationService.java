@@ -310,9 +310,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Make a REST call to drop all indexes
+     * Make a REST call to drop all indexes.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void dropIndexes() throws BusinessException {
 

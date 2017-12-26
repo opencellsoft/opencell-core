@@ -60,9 +60,7 @@ public class PonctualChargeInstanceBean extends
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return one shot charge instance.
 	 */
 	@Produces
 	@Named("ponctualChargeInstance")

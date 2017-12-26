@@ -18,7 +18,7 @@ public interface ServiceScriptInterface extends ScriptInterface {
 	/**
      * Called at the end of BusinessOfferModelService.createOfferFromBOM method at the end of service template creation for each service to duplicate.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate, CONTEXT_PARAMETERS=List<CustomFieldDto>
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=ServiceTemplate, CONTEXT_PARAMETERS=List&lt;CustomFieldDto&gt;
      * @throws BusinessException business exception
      */
 	void afterCreateServiceFromBSM(Map<String, Object> methodContext) throws BusinessException;

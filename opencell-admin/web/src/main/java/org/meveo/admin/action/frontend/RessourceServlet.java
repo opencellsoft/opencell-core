@@ -58,7 +58,6 @@ public class RessourceServlet extends HttpServlet {
 
     /**
      * Process GET request.
-     * @see HttpServlet#doGet(HttpServletRequest, HttpServletResponse).
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException

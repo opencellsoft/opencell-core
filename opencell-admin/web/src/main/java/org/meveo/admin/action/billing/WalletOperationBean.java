@@ -74,9 +74,7 @@ public class WalletOperationBean extends BaseBean<WalletOperation> {
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return wallet operation.
 	 */
 	@Produces
 	@Named("walletOperation")

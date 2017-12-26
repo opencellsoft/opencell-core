@@ -82,9 +82,8 @@ public class TradingCountryBean extends BaseBean<TradingCountry> {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @return
+	 * @return list of trading countries
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Override
 	public List<TradingCountry> listAll() {

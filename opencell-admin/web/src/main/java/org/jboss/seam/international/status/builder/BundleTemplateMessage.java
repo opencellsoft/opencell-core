@@ -60,6 +60,7 @@ public interface BundleTemplateMessage extends MessageBuilder {
      * 
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
+     * @return bundle template message
      */
     public BundleTemplateMessage key(final BundleKey text);
 
@@ -68,7 +69,8 @@ public interface BundleTemplateMessage extends MessageBuilder {
      * 
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
-     * @param detail kundle key.s
+     * @param detail bundle key
+     * @return bundle template message
      */
     public BundleTemplateMessage detail(final BundleKey detail);
 
@@ -80,15 +82,16 @@ public interface BundleTemplateMessage extends MessageBuilder {
      * 
      * Any expressions of the form "{0}, {1} ... {N}" found in the template will be interpolated; numbers reference the index of
      * any given parameters, and can be used more than once per template.
-     * @param text template's tedxt
+     * @param text template's text
+     * @return bundle template message
      */
     public BundleTemplateMessage defaults(final String text);
 
     /**
      * Set the parameters for this builder's template.
      * 
-     * Parameters may be referenced by index in the template or {@link #textDefault(String)}, using expressions of the form "
-     * {0}, {1} ... {N}". The same parameters will be used when interpolating default text, in the case when a {@link BundleKey}
+     * Parameters may be referenced by index in the template , using expressions of the form "
+     * {0}, {1} ... {N}". The same parameters will be used when interpolating default text, in the case when a bundle key
      * cannot be resolved.
      * @param textParams text params
      */
@@ -97,8 +100,8 @@ public interface BundleTemplateMessage extends MessageBuilder {
     /**
      * Set the parameters for detail text of this builder's template.
      * 
-     * Parameters may be referenced by index in the template or {@link #textDefault(String)}, using expressions of the form "
-     * {0}, {1} ... {N}". The same parameters will be used when interpolating default text, in the case when a {@link BundleKey}
+     * Parameters may be referenced by index in the template or text default , using expressions of the form "
+     * {0}, {1} ... {N}". The same parameters will be used when interpolating default text, in the case when a bundle key
      * cannot be resolved.
      */
     /**

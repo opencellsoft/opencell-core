@@ -27,6 +27,7 @@ import javax.faces.application.FacesMessage.Severity;
 public interface MutableMessage extends Message {
     /**
      * Set the {@link Severity} representing the severity of this message.
+     * @param severity serverity level
      */
     void setSeverity(Severity severity);
 

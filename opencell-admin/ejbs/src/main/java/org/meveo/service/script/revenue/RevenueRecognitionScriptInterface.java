@@ -29,6 +29,7 @@ public interface RevenueRecognitionScriptInterface extends ScriptInterface {
      * @param chargeInstance the charge whose revenue is to be recognized
      * @param startDate Contract's start date
      * @param endDate Contract's end date
+     * @param woList wallet operation list
      * @return list of revenue schedule.
      * @throws BusinessException business exception
      */

@@ -144,7 +144,6 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     /**
      * Fetch customer field so no LazyInitialize exception is thrown when we access it from account edit view.
      * 
-     * @see org.manaty.beans.base.BaseBean#getFormFieldsToFetch()
      */
     @Override
     protected List<String> getFormFieldsToFetch() {
