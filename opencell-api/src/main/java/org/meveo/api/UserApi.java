@@ -335,8 +335,8 @@ public class UserApi extends BaseApi {
      * @throws InvalidParameterException invalid parameter exception
      * @throws BusinessException  business exception.
      */
-    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
-    @FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
+   // @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    //@FilterResults(propertyToFilter = "users", itemPropertiesToFilter = { @FilterProperty(property = "userLevel", entityClass = UserHierarchyLevel.class) })
     public UsersDto list(HttpServletRequest httpServletRequest, PagingAndFiltering pagingAndFiltering) throws ActionForbiddenException, InvalidParameterException, BusinessException {
 
         boolean isViewerSelf = currentUser.hasRole(USER_SELF_MANAGEMENT);
