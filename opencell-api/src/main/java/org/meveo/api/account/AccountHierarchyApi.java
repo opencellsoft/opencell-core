@@ -255,7 +255,7 @@ public class AccountHierarchyApi extends BaseApi {
         CustomerDto customerDto = new CustomerDto();
         customerDto.setCode(customerCode);
         customerDto.setRegistrationNo(postData.getRegistrationNo());
-        customerDto.setVatNo(postData.getRegistrationNo());
+        customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
 
         customerDto.setSeller(postData.getSellerCode());
@@ -439,7 +439,7 @@ public class AccountHierarchyApi extends BaseApi {
             throw new MeveoApiException("Customer " + customerCode + " isn't found");
         }
         customerDto.setSeller(postData.getSellerCode());
-        customerDto.setVatNo(postData.getRegistrationNo());
+        customerDto.setVatNo(postData.getVatNo());
         customerDto.setRegistrationNo(postData.getRegistrationNo());
         customerDto.setVatNo(postData.getVatNo());
         customerDto.setJobTitle(postData.getJobTitle());
@@ -975,7 +975,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setExternalRef1(postData.getExternalRef1());
             customerDto.setExternalRef2(postData.getExternalRef2());
             customerDto.setRegistrationNo(postData.getRegistrationNo());
-            customerDto.setVatNo(postData.getRegistrationNo());
+            customerDto.setVatNo(postData.getVatNo());
             customerDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
@@ -1218,7 +1218,7 @@ public class AccountHierarchyApi extends BaseApi {
             customerDto.setExternalRef1(postData.getExternalRef1());
             customerDto.setExternalRef2(postData.getExternalRef2());
             customerDto.setRegistrationNo(postData.getRegistrationNo());
-            customerDto.setVatNo(postData.getRegistrationNo());
+            customerDto.setVatNo(postData.getVatNo());
             customerDto.setJobTitle(postData.getJobTitle());
 
             CustomFieldsDto cfsDto = new CustomFieldsDto();
