@@ -708,10 +708,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param orderNumber order number.
      * @return true/false
      */
-    public Boolean isBillingAccountBillable(BillingAccount billingAccount, String orderNumber) {
+    public Boolean isBillingAccountBillable(BillingAccount billingAccount, String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {
         long count = 0;
         TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countListToInvoiceByOrderNumber", Long.class);
-        count = q.setParameter("orderNumber", orderNumber).getSingleResult();
+        count = q.setParameter("orderNumber", orderNumber).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
         log.debug("isBillingAccountBillable code={},orderNumber={}) : {}", billingAccount.getCode(), orderNumber, count);
         return count > 0 ? true : false;
     }
