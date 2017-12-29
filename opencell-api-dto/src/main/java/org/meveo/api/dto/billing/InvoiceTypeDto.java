@@ -48,6 +48,8 @@ public class InvoiceTypeDto extends BusinessDto {
      * An EL expression to customize invoice XML file name.
      */
     private String xmlFilenameEL;
+    
+    private String billingTemplateNameEL;
 
     public InvoiceTypeDto() {
 
@@ -71,6 +73,7 @@ public class InvoiceTypeDto extends BusinessDto {
         this.billingTemplateName = invoiceType.getBillingTemplateName();
         this.pdfFilenameEL = invoiceType.getPdfFilenameEL();
         this.xmlFilenameEL = invoiceType.getXmlFilenameEL();
+        this.billingTemplateNameEL = invoiceType.getBillingTemplateNameEL();
     }
 
     public String getOccTemplateCode() {
@@ -150,5 +153,13 @@ public class InvoiceTypeDto extends BusinessDto {
         return "InvoiceTypeDto [code=" + getCode() + ", description=" + getDescription() + ", occTemplateCode=" + occTemplateCode + ", occTemplateNegativeCode="
                 + occTemplateNegativeCode + ", sequenceDto=" + sequenceDto + ", sellerSequences=" + sellerSequences + ", appliesTo=" + appliesTo + ", matchingAuto=" + matchingAuto
                 + "]";
+    }
+
+    public String getBillingTemplateNameEL() {
+        return billingTemplateNameEL;
+    }
+
+    public void setBillingTemplateNameEL(String billingTemplateNameEL) {
+        this.billingTemplateNameEL = billingTemplateNameEL;
     }
 }

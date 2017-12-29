@@ -356,7 +356,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String billingTemplateName = billingCycleMap.get(billingCycle);
         if (billingTemplateName == null) {
-            billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoiceType);
+            billingTemplateName = invoiceService.getInvoiceTemplateName(invoice, billingCycle, invoiceType);
             billingCycleMap.put(billingCycle, billingTemplateName);
         }
 

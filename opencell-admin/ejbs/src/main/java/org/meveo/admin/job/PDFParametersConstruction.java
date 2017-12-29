@@ -61,6 +61,9 @@ public class PDFParametersConstruction {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
+    
+    @Inject
+    private InvoiceService invoiceService;
 
     private String PDF_DIR_NAME = "pdf";
     private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
@@ -72,7 +75,7 @@ public class PDFParametersConstruction {
         try {
             currencyFormat.setMinimumFractionDigits(2);
 
-            Map<String, Object> parameters = new HashMap<String, Object>();
+            Map<String, Object> parameters = new HashMap<>();
             parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
 
             BillingAccount billingAccount = invoice.getBillingAccount();
@@ -81,7 +84,7 @@ public class PDFParametersConstruction {
                 billingCycle = billingAccount.getBillingCycle();
             }
 
-            String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
+            String billingTemplateName = invoiceService.getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
 
             ParamBean paramBean = ParamBean.getInstance();
             String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
