@@ -19,7 +19,7 @@ import org.meveo.model.IEntity;
 public interface ApiService<E extends IEntity, T extends BaseDto> {
 
     /**
-     * Find entity identified by code
+     * Find entity identified by code.
      * 
      * @param code Entity code
      * 
@@ -29,7 +29,7 @@ public interface ApiService<E extends IEntity, T extends BaseDto> {
      * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
-    public T find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException;
+    T find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException;
 
     /**
      * Find entity identified by code. Return null if not found
@@ -41,16 +41,16 @@ public interface ApiService<E extends IEntity, T extends BaseDto> {
      * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
-    public T findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException;
+    T findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException;
 
     /**
-     * Create or update an entity from DTO
+     * Create or update an entity from DTO.
      * 
      * @param dtoData DTO data
-     * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @return created or updated entity.
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
-    public E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
+    E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
 
 }

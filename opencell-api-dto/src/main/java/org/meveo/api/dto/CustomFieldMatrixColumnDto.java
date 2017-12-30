@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
 
 /**
  * @author Andrius Karpavicius
@@ -17,6 +18,9 @@ import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 public class CustomFieldMatrixColumnDto extends BaseDto {
 
     private static final long serialVersionUID = -7343379732647377673L;
+
+    @XmlAttribute(required = true)
+    private CustomFieldColumnUseEnum columnUse = CustomFieldColumnUseEnum.USE_KEY;
 
     @XmlAttribute(required = true)
     private int position;
@@ -37,6 +41,7 @@ public class CustomFieldMatrixColumnDto extends BaseDto {
     }
 
     public CustomFieldMatrixColumnDto(CustomFieldMatrixColumn column) {
+        this.columnUse = column.getColumnUse();
         this.position = column.getPosition();
         this.code = column.getCode();
         this.label = column.getLabel();
@@ -45,12 +50,21 @@ public class CustomFieldMatrixColumnDto extends BaseDto {
 
     public static CustomFieldMatrixColumn fromDto(CustomFieldMatrixColumnDto dto) {
         CustomFieldMatrixColumn column = new CustomFieldMatrixColumn();
+        column.setColumnUse(dto.getColumnUse());
         column.setCode(dto.getCode());
         column.setKeyType(dto.getKeyType());
         column.setLabel(dto.getLabel());
         column.setPosition(dto.getPosition());
 
         return column;
+    }
+
+    public CustomFieldColumnUseEnum getColumnUse() {
+        return columnUse;
+    }
+
+    public void setColumnUse(CustomFieldColumnUseEnum columnUse) {
+        this.columnUse = columnUse;
     }
 
     public int getPosition() {

@@ -35,7 +35,7 @@ public class TradingCurrencyService extends PersistenceService<TradingCurrency> 
      * 
      * @param tradingCurrencyCode Trading currency code
      * @return Trading currency found or null.
-     * @throws ElementNotFoundException
+     * 
      */
     public TradingCurrency findByTradingCurrencyCode(String tradingCurrencyCode) {
 

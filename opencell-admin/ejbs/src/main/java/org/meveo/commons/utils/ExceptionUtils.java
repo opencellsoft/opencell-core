@@ -20,11 +20,10 @@ package org.meveo.commons.utils;
 
 /**
  * @author Ignas Lelys
- * @created Dec 7, 2010
  *
  */
 public class ExceptionUtils {
-    
+
     /**
      * Returns root cause of exception.
      * 

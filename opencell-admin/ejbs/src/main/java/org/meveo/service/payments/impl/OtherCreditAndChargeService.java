@@ -119,7 +119,7 @@ public class OtherCreditAndChargeService extends
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away
-     * @throws BusinessException 
+     * @throws BusinessException business exception.
      */
 	@MeveoAudit
     @Override

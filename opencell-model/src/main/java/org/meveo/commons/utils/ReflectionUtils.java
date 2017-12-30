@@ -22,21 +22,27 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.model.BusinessEntity;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,11 +51,17 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
- * @created 2009.08.05
+ * 
  */
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
+
+    /**
+     * Mapping between an entity class and entity classes containing a field that that class.
+     */
+    @SuppressWarnings("rawtypes")
+    private static Map<Class, Map<Class, List<Field>>> classReferences = new HashMap<>();
 
     /**
      * Creates instance from class name.
@@ -148,7 +160,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Convert a java type classname to a fuman readable name. E.g. CustomerAccount >> Customer Account
+     * Convert a java type classname to a fuman readable name. E.g. CustomerAccount to Customer Account
      * 
      * @param classname Full or simple classname
      * @return A humanized class name
@@ -163,7 +175,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Check if object has a field
+     * Check if object has a field.
      * 
      * @param object Object to check
      * @param fieldName Name of a field to check
@@ -178,9 +190,9 @@ public class ReflectionUtils {
     }
 
     /**
-     * Check if class has a field
+     * Check if class has a field.
      * 
-     * @param object Object to check
+     * @param clazz Object to check
      * @param fieldName Name of a field to check
      * @return True if object has a field
      */
@@ -192,6 +204,11 @@ public class ReflectionUtils {
         return field != null;
     }
 
+    /**
+     * @param className class name
+     * @param annotationClass annotation class
+     * @return instance of Class.
+     */
     public static Class<?> getClassBySimpleNameAndAnnotation(String className, Class<? extends Annotation> annotationClass) {
         Class<?> entityClass = null;
         if (!StringUtils.isBlank(className)) {
@@ -206,10 +223,19 @@ public class ReflectionUtils {
         return entityClass;
     }
 
+    /**
+     * @param annotationClass annotation class
+     * @return set of class
+     */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass) {
         return getClassesAnnotatedWith(annotationClass, "org.meveo.model");
     }
 
+    /**
+     * @param annotationClass annotation class
+     * @param prefix prefix
+     * @return set of class.
+     */
     public static Set<Class<?>> getClassesAnnotatedWith(Class<? extends Annotation> annotationClass, String prefix) {
         Reflections reflections = new Reflections(prefix);
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(annotationClass);
@@ -217,7 +243,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Find a class by its simple name that is a subclass of a certain class
+     * Find a class by its simple name that is a subclass of a certain class.
      * 
      * @param className Simple classname to match
      * @param parentClass Parent or interface class
@@ -243,7 +269,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Find subclasses of a certain class
+     * Find subclasses of a certain class.
      * 
      * @param parentClass Parent or interface class
      * @return A list of class objects
@@ -258,7 +284,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * A check if class represents a DTO or entity class
+     * A check if class represents a DTO or entity class.
      * 
      * @param clazz Class to check
      * @return True if class is annotated with @Entity, @Embeddable or @XmlRootElement
@@ -270,9 +296,9 @@ public class ReflectionUtils {
     /**
      * Checks if a method is from a particular object.
      * 
-     * @param obj
-     * @param name
-     * @return
+     * @param obj entity to check
+     * @param name name of method.
+     * @return true/false
      */
     public static boolean isMethodImplemented(Object obj, String name) {
         try {
@@ -291,9 +317,10 @@ public class ReflectionUtils {
     /**
      * Checks if a method is from a particular class.
      * 
-     * @param clazz
-     * @param name
-     * @return
+     * @param clazz instance of Class
+     * @param name name of method
+     * @param parameterTypes parameter type list.
+     * @return true/false
      */
     public static boolean isMethodImplemented(Class<? extends Object> clazz, String name, Class<?>... parameterTypes) {
         try {
@@ -306,8 +333,8 @@ public class ReflectionUtils {
     /**
      * Checks if a method is overriden from a parent class.
      * 
-     * @param myMethod
-     * @return
+     * @param myMethod method
+     * @return true/false
      */
     public static boolean isMethodOverrriden(final Method myMethod) {
         Class<?> declaringClass = myMethod.getDeclaringClass();
@@ -334,12 +361,16 @@ public class ReflectionUtils {
      * Get a field from a given class. Fieldname can refer to an immediate field of a class or traverse class relationship hierarchy e.g. customerAccount.customer.seller
      * 
      * @param c Class to start with
-     * @param fieldName Fieldname
+     * @param fieldName Field name
      * @return A field definition
-     * @throws SecurityException
-     * @throws NoSuchFieldException
+     * @throws SecurityException security excetion
+     * @throws NoSuchFieldException no such field exception.
      */
     public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
+
+        if (c == null) {
+            throw new NoSuchFieldException("No field with name '" + fieldName + "' was found - EntityClass was not resolved");
+        }
 
         Field field = getField(c, fieldName);
         if (field == null) {
@@ -350,6 +381,10 @@ public class ReflectionUtils {
 
     @SuppressWarnings("rawtypes")
     public static Field getField(Class<?> c, String fieldName) {
+
+        if (c == null || fieldName == null) {
+            return null;
+        }
 
         Field field = null;
 
@@ -387,10 +422,9 @@ public class ReflectionUtils {
     }
 
     /**
-     * Determine a generics type of a field (eg. for Set<String> field should return String)
+     * Determine a generics type of a field.
      * 
-     * @param fieldName Field name
-     * @param childFieldName child field name in case of field hierarchy
+     * @param field instance of Field
      * @return A class
      */
     @SuppressWarnings("rawtypes")
@@ -406,5 +440,95 @@ public class ReflectionUtils {
 
         }
         return null;
+    }
+
+    /**
+     * This is a recursive function that aims to walk through the properties of an object until it gets the final value.
+     * 
+     * e.g. If we received an Object named obj and given a string property of "code.name", then the value of obj.code.name will be returned.
+     * 
+     * @param obj The object that contains the property value.
+     * @param property The property of the object that contains the data.
+     * @return The value of the data contained in obj.property
+     * @throws IllegalAccessException illegal access exception.
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public static Object getPropertyValue(Object obj, String property) throws IllegalAccessException {
+
+        // Logger log = LoggerFactory.getLogger(ReflectionUtils.class);
+        // log.error("AKK getProperty value {} {} {}", obj, property, obj.getClass());
+
+        if (obj instanceof Collection) {
+            List propertyValues = new ArrayList<>();
+            for (Object value : (Collection) obj) {
+                Object propertyValue = getPropertyValue(value, property);
+                if (propertyValue != null) {
+                    propertyValues.add(propertyValue);
+                }
+            }
+            if (propertyValues.isEmpty()) {
+                return null;
+            } else {
+                return propertyValues;
+            }
+        }
+
+        int fieldIndex = property.indexOf(".");
+        if (property.indexOf(".") != -1) {
+            String fieldName = property.substring(0, fieldIndex);
+            Object fieldValue = FieldUtils.readField(obj, fieldName, true);
+            if (fieldValue == null) {
+                return null;
+            }
+            return getPropertyValue(fieldValue, property.substring(fieldIndex + 1));
+        } else {
+            return FieldUtils.readField(obj, property, true);
+        }
+    }
+
+    /**
+     * Get classes containing a given type field - can be either a single value or a list of values.
+     * 
+     * @param fieldClass Field class
+     * @return A map of fields grouped by class
+     */
+    @SuppressWarnings("rawtypes")
+    public static Map<Class, List<Field>> getClassesAndFieldsOfType(Class fieldClass) {
+
+        if (classReferences.containsKey(fieldClass)) {
+            return classReferences.get(fieldClass);
+        }
+
+        Class superClass = fieldClass.getSuperclass();
+
+        Map<Class, List<Field>> matchedFields = new HashMap<>();
+
+        Reflections reflections = new Reflections("org.meveo.model");
+        Set<Class<? extends BusinessEntity>> classes = reflections.getSubTypesOf(BusinessEntity.class);
+
+        for (Class<? extends BusinessEntity> clazz : classes) {
+            if (clazz.isInterface() || Modifier.isAbstract(clazz.getModifiers())) {
+                continue;
+            }
+            List<Field> fields = getAllFields(new ArrayList<Field>(), clazz);
+
+            for (Field field : fields) {
+
+                if (field.isAnnotationPresent(Transient.class)) {
+                    continue;
+                }
+
+                if (field.getType() == fieldClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == fieldClass) || (superClass != null
+                        && (field.getType() == superClass || (Collection.class.isAssignableFrom(field.getType()) && getFieldGenericsType(field) == superClass)))) {
+
+                    if (!matchedFields.containsKey(clazz)) {
+                        matchedFields.put(clazz, new ArrayList<>());
+                    }
+                    matchedFields.get(clazz).add(field);
+                }
+            }
+        }
+        classReferences.put(fieldClass, matchedFields);
+        return matchedFields;
     }
 }

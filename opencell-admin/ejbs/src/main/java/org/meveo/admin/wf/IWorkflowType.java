@@ -5,31 +5,39 @@ import java.util.List;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.BusinessEntity;
 
+/**
+ * @author phung
+ *
+ * @param <E> entity
+ */
 public interface IWorkflowType<E extends BusinessEntity> {
 
     /**
-     * Get a list of statuses for the workflow
+     * Get a list of statuses for the workflow.
+     * @return list of status.
      */
-    public List<String> getStatusList();
+    List<String> getStatusList();
 
     /**
-     * Change status on a current entity
+     * Change status on a current entity.
      * 
      * @param newStatus New status
+     * @throws BusinessException business exception.
      */
-    public void changeStatus(String newStatus) throws BusinessException;
+    void changeStatus(String newStatus) throws BusinessException;
 
     /**
-     * Get current status of current entity
+     * Get current status of current entity.
+     * @return actual status.
      */
-    public String getActualStatus();
+    String getActualStatus();
 
     /**
-     * Get current entity
+     * Get current entity.
      * 
      * @return Current entity
      */
-    public E getEntity();
+    E getEntity();
 
     /**
      * Update current entity

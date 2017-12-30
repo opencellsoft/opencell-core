@@ -33,6 +33,16 @@ public class EmailSender {
 
     /**
      * Deprecated in v.4.7. Just a method name change. Use send() instead.
+     * 
+     * @param from email address from which the email is sent
+     * @param replyTo email address in wich the reply should be sent.
+     * @param to email address in which email is sent to
+     * @param cc email address 'cc 
+     * @param bcc email address's bcc
+     * @param subject email subject
+     * @param textContent text content
+     * @param htmlContent html content
+     * @throws BusinessException business exception.
      */
     @Deprecated
     public void sent(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent)
@@ -42,6 +52,14 @@ public class EmailSender {
 
     /**
      * Deprecated in v.4.7. Just a method name change. Use send() instead.
+     * 
+     * @param from email address from which the email is sent
+     * @param replyTo email address in wich the reply should be sent.
+     * @param to email address in which email is sent to
+     * @param subject email subject
+     * @param textContent text content
+     * @param htmlContent html content
+     * @throws BusinessException business exception.
      */
     @Deprecated
     public void sent(String from, List<String> replyTo, List<String> to, String subject, String textContent, String htmlContent) throws BusinessException {
@@ -50,6 +68,18 @@ public class EmailSender {
 
     /**
      * Deprecated in v.4.7. Just a method name change. Use send() instead.
+     * 
+     * @param from email address from which the email is sent
+     * @param replyTo email address in wich the reply should be sent.
+     * @param to email address in which email is sent to
+     * @param cc email address 'cc 
+     * @param bcc email address's bcc
+     * @param subject email subject
+     * @param textContent text content
+     * @param htmlContent html content
+     * @param attachments list of attached file.
+     * @param sendDate date when email is sent.
+     * @throws BusinessException business exception.
      */
     @Deprecated
     public void sent(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent,
@@ -68,7 +98,7 @@ public class EmailSender {
      * @param subject Email subject
      * @param textContent Plain text contents
      * @param htmlContent HTML type contents
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void send(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent)
             throws BusinessException {
@@ -76,7 +106,7 @@ public class EmailSender {
     }
 
     /**
-     * Send an email message
+     * Send an email message.
      * 
      * @param from Sender's email address
      * @param replyTo Reply to email addresses
@@ -84,14 +114,14 @@ public class EmailSender {
      * @param subject Email subject
      * @param textContent Plain text contents
      * @param htmlContent HTML type contents
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void send(String from, List<String> replyTo, List<String> to, String subject, String textContent, String htmlContent) throws BusinessException {
         send(from, replyTo, to, null, null, subject, textContent, htmlContent, null, null);
     }
 
     /**
-     * Send an email message
+     * Send an email message.
      * 
      * @param from Sender's email address
      * @param replyTo Reply to email addresses
@@ -103,7 +133,7 @@ public class EmailSender {
      * @param htmlContent HTML type contents
      * @param attachments Email attachments
      * @param sendDate Sending date
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void send(String from, List<String> replyTo, List<String> to, List<String> cc, List<String> bcc, String subject, String textContent, String htmlContent,
             List<File> attachments, Date sendDate) throws BusinessException {

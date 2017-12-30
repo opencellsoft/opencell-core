@@ -77,7 +77,8 @@ public class CustomEntityInstanceBean extends CustomFieldBean<CustomEntityInstan
 
         // Check for unicity of code
         CustomEntityInstance ceiSameCode = customEntityInstanceService.findByCodeByCet(entity.getCetCode(), entity.getCode());
-        if ((entity.isTransient() && ceiSameCode != null) || (!entity.isTransient() && entity.getId().longValue() != ceiSameCode.getId().longValue())) {
+        if ((entity.isTransient() && ceiSameCode != null)
+                || (!entity.isTransient() && ceiSameCode != null && ceiSameCode.getId() != null && entity.getId().longValue() != ceiSameCode.getId().longValue())) {
             messages.error(new BundleKey("messages", "commons.uniqueField.code"));
             return null;
         }

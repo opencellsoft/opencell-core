@@ -19,10 +19,10 @@ public interface ProductScriptInterface extends ScriptInterface {
 	 * 
 	 * @param methodContext
 	 *            Method variables in a form of a map where
-	 *            CONTEXT_PARAMETERS=List<CustomFieldDto>
-	 * @throws BusinessException
+	 *            CONTEXT_PARAMETERS=List&lt;CustomFieldDto&gt;
+	 * @throws BusinessException business exception
 	 */
-	void beforeCreateProductFromPMS(Map<String, Object> methodContext) throws BusinessException;
+	void beforeCreate(Map<String, Object> methodContext) throws BusinessException;
 
 	/**
 	 * Called at the end of BusinessOfferModelService.createOfferFromBOM method
@@ -31,9 +31,9 @@ public interface ProductScriptInterface extends ScriptInterface {
 	 * @param methodContext
 	 *            Method variables in a form of a map where
 	 *            CONTEXT_ENTITY=ServiceTemplate,
-	 *            CONTEXT_PARAMETERS=List<CustomFieldDto>
-	 * @throws BusinessException
+	 *            CONTEXT_PARAMETERS=List&lt;CustomFieldDto&gt;
+	 * @throws BusinessException business exception
 	 */
-	void afterCreateProductFromPMS(Map<String, Object> methodContext) throws BusinessException;
+	void afterCreate(Map<String, Object> methodContext) throws BusinessException;
 
 }

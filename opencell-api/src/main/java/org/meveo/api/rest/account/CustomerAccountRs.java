@@ -54,14 +54,15 @@ public interface CustomerAccountRs extends IBaseRs {
      * Search for a customer account with a given code.
      * 
      * @param customerAccountCode The customer account's code
-     * @return
+     * @param calculateBalances  true if needs  to calculate balances
+     * @return customer account
      */
     @GET
     @Path("/")
     GetCustomerAccountResponseDto find(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("calculateBalances") Boolean calculateBalances);
 
     /**
-     * Remove customerAccount with a given code 
+     * Remove customerAccount with a given code.
      * 
      * @param customerAccountCode The customer account's code
      * @return Request processing status
@@ -74,24 +75,24 @@ public interface CustomerAccountRs extends IBaseRs {
      * List CustomerAccount filtered by customerCode.
      * 
      * @param customerCode The customer account's code
-     * @return
+     * @return list of customer account by customer.
      */
     @GET
     @Path("/list")
     CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
 
     /**
-     * Performs dunning exclusion to customer account
+     * Performs dunning exclusion to customer account.
      * 
-     * @param DunningInclusionExclusionDto
-     * @return
+     * @param DunningInclusionExclusionDto dunning information
+     * @return action status
      */
     @PUT
     @Path("/dunningInclusionExclusion")
     ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);
 
     /**
-     * Create a new credit category
+     * Create a new credit category.
      * 
      * @param postData The credit category's data
      * @return Request processing status
@@ -101,7 +102,7 @@ public interface CustomerAccountRs extends IBaseRs {
     ActionStatus createCreditCategory(CreditCategoryDto postData);
 
     /**
-     * Remove credit category with a given code
+     * Remove credit category with a given code.
      * 
      * @param creditCategoryCode The credit category's code
      * @return Request processing status

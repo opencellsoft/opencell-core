@@ -15,25 +15,26 @@ import org.meveo.model.module.MeveoModule;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BusinessProductModelDto extends MeveoModuleDto implements Serializable {
 
-	private static final long serialVersionUID = -4510290371772010482L;
+    private static final long serialVersionUID = -4510290371772010482L;
 
-	@NotNull
-	@XmlElement(required = true)
-	private ProductTemplateDto productTemplate;
+    @NotNull
+    @XmlElement(required = true)
+    private ProductTemplateDto productTemplate;
 
-	public BusinessProductModelDto() {
-	}
+    public BusinessProductModelDto() {
 
-	public BusinessProductModelDto(MeveoModule module) {
-		super(module);
-	}
+    }
 
-	public ProductTemplateDto getProductTemplate() {
-		return productTemplate;
-	}
+    public BusinessProductModelDto(MeveoModule module) {
+        super(module);
+    }
 
-	public void setProductTemplate(ProductTemplateDto productTemplate) {
-		this.productTemplate = productTemplate;
-	}
+    public ProductTemplateDto getProductTemplate() {
+        return productTemplate;
+    }
+
+    public void setProductTemplate(ProductTemplateDto productTemplate) {
+        this.productTemplate = productTemplate;
+    }
 
 }

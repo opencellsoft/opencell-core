@@ -7,7 +7,7 @@ import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * @author Edward P. Legaspi
- * @created 22 Aug 2017
+ * @since 22 Aug 2017
  */
 public class CreditCategoriesResponseDto extends BaseResponse {
 

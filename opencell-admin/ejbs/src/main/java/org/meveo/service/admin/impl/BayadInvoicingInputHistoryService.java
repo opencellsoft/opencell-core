@@ -27,7 +27,6 @@ import org.meveo.service.base.PersistenceService;
  * Bayad invoicing input History service implementation.
  */
 @Stateless
-public class BayadInvoicingInputHistoryService extends
-		PersistenceService<BayadInvoicingInputHistory> {
+public class BayadInvoicingInputHistoryService extends PersistenceService<BayadInvoicingInputHistory> {
 
 }

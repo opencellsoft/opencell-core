@@ -81,11 +81,6 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link Invoice} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private InvoiceService invoiceService;
 
@@ -672,7 +667,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public Set<Invoice> getLinkedInvoices(Invoice invoice) {
+        if (invoice!=null){
         return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+        } return null;
     }
 
     public boolean isSelectedInvoices() {

@@ -36,267 +36,264 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 public interface ICustomerAccountService {
     /**
-     * Checks if customer account with current id exists
+     * Checks if customer account with current id exists.
      * 
      * @param id
      *            Customers accounts id
+     * @return true if a custumer account with given id exists
      * 
      */
-    public boolean isCustomerAccountWithIdExists(Long id);
+    boolean isCustomerAccountWithIdExists(Long id);
 
     /**
-     * Selects all billing keywords
+     * Selects all billing keywords.
      * 
      * @return list of billing keywords
      */
-    public List<String> getAllBillingKeywords();
+    List<String> getAllBillingKeywords();
 
     /**
-     * Imports customer accounts
+     * Imports customer accounts.
      * 
      * @param customerAccountsToImport
      *            List of customer accounts to import
      * @return List of failed imports
      */
-    public List<CustomerAccount> importCustomerAccounts(List<CustomerAccount> customerAccountsToImport);
+    List<CustomerAccount> importCustomerAccounts(List<CustomerAccount> customerAccountsToImport);
 
     /**
-     * Compute blanceExigible and multiple it by flag
+     * Compute blanceExigible and multiple it by flag.
      * 
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance exigible
+     * @throws BusinessException business exception.
      */
-    public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
 
     /**
-     * Compute blanceExigible and multiple it by flag
+     * Compute blanceExigible and multiple it by flag.
      * 
-     * @param customerAccount
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccount customer account
+     * @param to until date
+     * @return customer account balance exigible
+     * @throws BusinessException business excepton.
      */
-    public BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceExigible(CustomerAccount customerAccount, Date to) throws BusinessException;
+
+    /**
+     * Compute blanceExigible Without Litigation invoices and multiple it by.
+     * flag
+     * 
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance exigible without litigation.
+     * @throws BusinessException business exception.
+     */
+    BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
 
     /**
      * Compute blanceExigible Without Litigation invoices and multiple it by 
-     * flag
+     * flag.
      * 
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccount customer account
+     * @param to until date
+     * @return customer account balance exigible without ligigation
+     * @throws BusinessException business exception
      */
-    public BigDecimal customerAccountBalanceExigibleWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException;
 
     /**
-     * Compute blanceExigible Without Litigation invoices and multiple it by 
-     * flag
+     * Compute blanceDue and multiple it by flag.
      * 
-     * @param customerAccount
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance due
+     * @throws BusinessException business exception
      */
-    public BigDecimal customerAccountBalanceExigibleWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
 
     /**
-     * Compute blanceDue and multiple it by flag
+     * Compute blanceDue and multiple it by flag.
      * 
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccount customer account
+     * @param to until date
+     * @return customer account balance due
+     * @throws BusinessException business exception.
      */
-    public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException;
 
     /**
-     * Compute blanceDue and multiple it by flag
+     * Compute blanceDue Without Litigation invoices and multiple it by flag.
      * 
-     * @param customerAccount
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance due without litigation.
+     * @throws BusinessException business exception.
      */
-    public BigDecimal customerAccountBalanceDue(CustomerAccount customerAccount, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
 
     /**
-     * Compute blanceDue Without Litigation invoices and multiple it by flag
+     * Compute blanceDue Without Litigation invoices and multiple it by flag.
      * 
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccount customer account
+     * @param to until date
+     * @return customer account balance due without litigation
+     * @throws BusinessException business exception.
      */
-    public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException;
+    BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException;
 
     /**
-     * Compute blanceDue Without Litigation invoices and multiple it by flag
+     * Create CustomerAccount entity.
      * 
-     * @param customerAccount
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param code code of customer account
+     * @param title title of customer account
+     * @param firstName first name of customer account
+     * @param lastName last name of customer account
+     * @param address1 address 1 of customer account
+     * @param address2 address 2 of customer account
+     * @param zipCode zip code of customer account
+     * @param city city of customer account
+     * @param state state of customer account
+     * @param email email of customer account
+     * @param customerId customer id of customer account
+     * @param creditCategory credit category
+     * @param paymentMethod payment method.
+     * @throws BusinessException business exception.
      */
-    public BigDecimal customerAccountBalanceDueWithoutLitigation(CustomerAccount customerAccount, Date to) throws BusinessException;
-
-    /**
-     * Create CustomerAccount entity
-     * 
-     * @param code
-     * @param title
-     * @param firstName
-     * @param lastName
-     * @param address1
-     * @param address2
-     * @param zipCode
-     * @param city
-     * @param state
-     * @param email
-     * @param customerId
-     * @param creditCategory
-     * @param paymentMethod
-     * @param creator
-     * @throws BusinessException
-     */
-    public void createCustomerAccount(String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
+    void createCustomerAccount(String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
             String city, String state, String email, Long customerId, String creditCategory, PaymentMethodEnum paymentMethod)
             throws BusinessException;
 
     /**
-     * Update customerAccount entity
+     * Update customerAccount entity.
      * 
-     * @param id
-     * @param code
-     * @param title
-     * @param firstName
-     * @param lastName
-     * @param address1
-     * @param address2
-     * @param zipCode
-     * @param city
-     * @param state
-     * @param email
-     * @param creditCategory
-     * @param paymentMethod
-     * @param updateor
-     * @throws BusinessException
+     * @param id id of customer account.
+     * @param code code of customer account
+     * @param title title of customer account
+     * @param firstName first name of customer account
+     * @param lastName last name of customer account
+     * @param address1 address 1 of customer account
+     * @param address2 address 2 of customer account
+     * @param zipCode zip code of customer account
+     * @param city city of customer account
+     * @param state state of customer account
+     * @param email email of customer account
+     * @param creditCategory credit category
+     * @param paymentMethod payment method.
+     * @param updateor who updates customer account.
+     * @throws BusinessException business exception.
      */
-    public void updateCustomerAccount(Long id, String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
+    void updateCustomerAccount(Long id, String code, String title, String firstName, String lastName, String address1, String address2, String zipCode,
             String city, String state, String email, String creditCategory, PaymentMethodEnum paymentMethod, User updateor)
             throws BusinessException;
 
     /**
-     * Close CustomerAccount and create closeAccount OCC
+     * Close CustomerAccount and create closeAccount OCC.
      * 
-     * @param id
-     * @param customerAccountCode
-     * @param user
-     * @throws BusinessException
-     * @throws Exception
+     * 
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @throws BusinessException business exceptions
+     * @throws Exception general exception
      */
-    public void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException, Exception;
+    void closeCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException, Exception;
 
     /**
-     * Close CustomerAccount and create closeAccount OCC
+     * Close CustomerAccount and create closeAccount OCC.
      * 
-     * @param customerAccount
-     * @param user
-     * @throws BusinessException
-     * @throws Exception
+     * @param customerAccount customer account
+     * @throws BusinessException business exception
+     * @throws Exception exception.
      */
-    public void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException, Exception;
+    void closeCustomerAccount(CustomerAccount customerAccount) throws BusinessException, Exception;
 
     /**
      * Find one customer account by id or code, if id set,search by id or by
-     * code
+     * code.
      * 
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @return
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @return customer account
+     * @throws BusinessException business exception.
      */
-    public CustomerAccount consultCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException;
+    CustomerAccount consultCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException;
 
     /**
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param creditCategory
-     * @param updator
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param creditCategory credit category
+     * @param updator updater
+     * @throws BusinessException business exception.
      */
-    public void updateCreditCategory(Long customerAccountId, String customerAccountCode, String creditCategory, User updator)
+    void updateCreditCategory(Long customerAccountId, String customerAccountCode, String creditCategory, User updator)
             throws BusinessException;
 
     /**
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param dunningLevel
-     * @param updator
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param dunningLevel dunning level
+     * @param updator who update
+     * @throws BusinessException business exception.
      */
-    public void updateDunningLevel(Long customerAccountId, String customerAccountCode, DunningLevelEnum dunningLevel, User updator) throws BusinessException;
+    void updateDunningLevel(Long customerAccountId, String customerAccountCode, DunningLevelEnum dunningLevel, User updator) throws BusinessException;
 
     /**
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param paymentMethod
-     * @param updator
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param paymentMethod payment method
+     * @param updator who update
+     * @throws BusinessException business exception.
      */
-    public void updatePaymentMethod(Long customerAccountId, String customerAccountCode, PaymentMethodEnum paymentMethod, User updator) throws BusinessException;
+    void updatePaymentMethod(Long customerAccountId, String customerAccountCode, PaymentMethodEnum paymentMethod, User updator) throws BusinessException;
 
     /**
-     * Get accountOperation created between date from and date tos
+     * Get accountOperation created between date from and date tos.
      * 
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @param from
-     * @param to
-     * @return
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param from from date
+     * @param to until date
+     * @return list of account operation
+     * @throws BusinessException business exception.
      */
-    public List<AccountOperation> consultOperations(Long customerAccountId, String customerAccountCode, Date from, Date to) throws BusinessException;
+    List<AccountOperation> consultOperations(Long customerAccountId, String customerAccountCode, Date from, Date to) throws BusinessException;
 
     /**
-     * Transfer amount from fromCustomerAccountId to toCustomerAccountId
+     * Transfer amount from fromCustomerAccountId to toCustomerAccountId.
      * 
-     * @param fromCustomerAccountId
-     * @param fromCustomerAccountCode
-     * @param toCustomerAccountId
-     * @param toCustomerAccountCode
-     * @param amount
-     * @param user
-     * @throws BusinessException
-     * @throws Exception
+     * @param fromCustomerAccountId customer account id
+     * @param fromCustomerAccountCode customer account code
+     * @param toCustomerAccountId customer account id
+     * @param toCustomerAccountCode customer account code
+     * @param amount transfer amount
+     * @throws BusinessException business exception
+     * @throws Exception general excepion.
      */
-    public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode,
+    void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode,
             BigDecimal amount) throws BusinessException, Exception;
 
     /**
-     * Transfer amount from fromCustomerAccountId to toCustomerAccountId
+     * Transfer amount from fromCustomerAccountId to toCustomerAccountId.
      * 
-     * @param fromCustomerAccount
-     * @param toCustomerAccount
-     * @param amount
-     * @param user
-     * @throws BusinessException
-     * @throws Exception
+     * @param fromCustomerAccount customer account
+     * @param toCustomerAccount customer account
+     * @param amount transfer amount
+     * @throws BusinessException business exception
+     * @throws Exception exception.
      */
-    public void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException,
+    void transferAccount(CustomerAccount fromCustomerAccount, CustomerAccount toCustomerAccount, BigDecimal amount) throws BusinessException,
             Exception;
 
     /**
-     * @param customerAccountId
-     * @param customerAccountCode
-     * @return
-     * @throws BusinessException
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @return customer account
+     * @throws BusinessException business exception.
      */
-    public CustomerAccount findCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException;
+    CustomerAccount findCustomerAccount(Long customerAccountId, String customerAccountCode) throws BusinessException;
 }

@@ -61,6 +61,11 @@
                                         listenerUpdate="name" />
                                     <hftl:formField id="name" label="#{messages['offerTemplate.name']}" field="name" required="true" />
                                     <hftl:formField label="#{messages['commons.valid']}" field="validity" />
+                                            
+                                    <hftl:formField id="lifeCycleStatus" label="#{messages['productOffering.lifeCycleStatus']}" field="lifeCycleStatus" required="true" />
+                                        
+                                    <hftl:formField id="scriptSelectId" label="#{messages['offerTemplate.globalRatingScript']}" field="globalRatingScriptInstance" valueLabelField="code" required="false"
+                                        popup="true" popupId="offerTemplateScriptPopup" showResetButton="true" /> 
 
                                     <o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
                                         validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />
@@ -73,13 +78,13 @@
                                     listBean="#{channelListBean}" componentWidth="30" />
                                 <hftl:formField id="businessAccountModels" label="#{messages['marketingManager.catalog.targetSegment']}" field="businessAccountModels" listType="selectCheckbox"
                                     valueLabelField="descriptionOrCode" listBean="#{businessAccountModelListBean}" componentWidth="30" />
+                                <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
+                                    valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />    
                             </h:panelGrid>
                         </p:panelGrid>
 
-
-
-                                <hftl:formLanguageFields field="description"/>
-                                <hftl:formLanguageFields field="longDescription" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
+                        <hftl:formLanguageFields field="description"/>
+                        <hftl:formLanguageFields field="longDescription" label="#{messages['offerTemplate.longDescription']}" componentWidth="100"/>
 
                         <p:fieldset legend="#{messages['subscription.renewal']}" styleClass="clearLeft">
                             <h:panelGroup id="subscriptionRenewal">
@@ -110,9 +115,7 @@
                             </h:panelGroup>
                         </p:fieldset>
 
-                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />
-                        <hftl:formField id="scriptSelectId" label="#{messages['offerTemplate.globalRatingScript']}" field="globalRatingScriptInstance" valueLabelField="code" required="false"
-    							popup="true" popupId="offerTemplateScriptPopup" showResetButton="true" /> 
+                        <hftl:formField label="#{messages['enableEntity.disabled']}" doNotShowOnNew="true" allowEdit="false" field="disabled" isMessage="true" />                       
 
                     </hf:namingContainer>
                 </p:tab>

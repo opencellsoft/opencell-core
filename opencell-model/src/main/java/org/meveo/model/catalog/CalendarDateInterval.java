@@ -31,9 +31,9 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
     /**
      * Specified interval start. Depending on calendar interval type (calendar.intervalType) specifies:
      * 
-     * a weekday (1=monday ... 7=sunday)<br/>
-     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format <month without leading zero><day with leading zero>, <br/>
-     * a hour and minute as 3 or 4 digits in a format <hour without leading zero><minute with leading zero>
+     * a weekday (1=monday ... 7=sunday)
+     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format month without leading zero day with leading zero
+     * a hour and minute as 3 or 4 digits in a format hour without leading zero minute with leading zero
      */
     @Column(name = "interval_begin", nullable = false)
     @NotNull
@@ -42,9 +42,9 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
     /**
      * Specified interval end. Depending on calendar interval type (calendar.intervalType) specifies:
      * 
-     * a weekday (1=monday ... 7=sunday)<br/>
-     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format <month without leading zero><day with leading zero>, <br/>
-     * a hour and minute as 3 or 4 digits in a format <hour without leading zero><minute with leading zero if hour specified>
+     * a weekday (1=monday ... 7=sunday)
+     * a month (january = 1, december = 12) and day as 3 or 4 digits in a format  &lt;month without leading zero&gt; &lt;day with leading zero&gt;
+     * a hour and minute as 3 or 4 digits in a format &lt;hour without leading zero&gt;&lt;minute with leading zero if hour specified&gt;
      */
     @Column(name = "interval_end", nullable = false)
     @NotNull
@@ -98,9 +98,9 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
      * To handle special case when interval spans to another week (e.g. thursday to monday), another day (e.g. 23:15 to 00:45), or another year (e.g. 12/15 to 01/25), interval's
      * end date is adjusted accordingly:
      * 
-     * For weekday type interval when interval spans to another week (e.g. thursday to monday), the interval end value is adjusted by 7 days.<br/>
-     * For day type interval when interval spans to another year (e.g. 12/15 to 01/25), the interval end value is adjusted by 12 month. <br/>
-     * For hour type interval when interval spans to another day (e.g. 23:15 to 00:45), the interval end value is adjusted by 24 hours.<br/>
+     * For weekday type interval when interval spans to another week (e.g. thursday to monday), the interval end value is adjusted by 7 days.
+     * For day type interval when interval spans to another year (e.g. 12/15 to 01/25), the interval end value is adjusted by 12 month.
+     * For hour type interval when interval spans to another day (e.g. 23:15 to 00:45), the interval end value is adjusted by 24 hours.
      * 
      * @return Adjusted end interval value
      */

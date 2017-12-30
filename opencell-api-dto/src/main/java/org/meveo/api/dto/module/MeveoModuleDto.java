@@ -1,6 +1,5 @@
 package org.meveo.api.dto.module;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,6 +43,7 @@ import org.meveo.api.dto.notification.EmailNotificationDto;
 import org.meveo.api.dto.notification.JobTriggerDto;
 import org.meveo.api.dto.notification.NotificationDto;
 import org.meveo.api.dto.notification.WebHookDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.WorkflowDto;
 import org.meveo.model.module.MeveoModule;
 import org.meveo.model.module.ModuleLicenseEnum;
@@ -95,7 +95,8 @@ public class MeveoModuleDto extends BaseDataModelDto {
 			@XmlElement(name = "productTemplate", type = ProductTemplateDto.class),
 			@XmlElement(name = "bundleTemplate", type = BundleTemplateDto.class),
 			@XmlElement(name = "serviceTemplate", type = ServiceTemplateDto.class),
-			@XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class), })
+			@XmlElement(name = "offerTemplateCategory", type = OfferTemplateCategoryDto.class),
+			@XmlElement(name = "paymentGateway", type = PaymentGatewayDto.class), })
     private List<BaseDto> moduleItems;
 
     public MeveoModuleDto() {
@@ -133,16 +134,6 @@ public class MeveoModuleDto extends BaseDataModelDto {
 
     public void setLogoPictureFile(byte[] logoPictureFile) {
         this.logoPictureFile = logoPictureFile;
-    }
-
-    @Override
-    public Serializable getId() {
-        return getCode().hashCode();
-    }
-
-    @Override
-    public void setId(Long id) {
-
     }
 
     public List<BaseDto> getModuleItems() {

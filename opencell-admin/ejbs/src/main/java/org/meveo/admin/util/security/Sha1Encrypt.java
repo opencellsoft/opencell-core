@@ -25,41 +25,49 @@ import java.security.MessageDigest;
  *
  */
 public class Sha1Encrypt {
-	
-	public static final String SHA1="SHA-1";
-	public static final String SHA256="SHA-256";
-	public static final String SHA224="SHA-224";
-	/**
-	 * Encode a string, return the resulting encrypted password.
-	 * @param password
-	 * @return String
-	 */
-	public static String encodePassword(String password) {
-		return encodePassword(password,SHA1);
-	}
-	public static String encodePassword(String password,String algorithm){
-		byte[] unencodedPassword = password.getBytes();
-		MessageDigest md = null;
-		try {
-			
-			md = MessageDigest.getInstance(algorithm);
 
-		} catch (Exception e) {
+    public static final String SHA1 = "SHA-1";
+    public static final String SHA256 = "SHA-256";
+    public static final String SHA224 = "SHA-224";
 
-			return password;
-		}
-		md.reset();
-		md.update(unencodedPassword);
+    /**
+     * Encode a string, return the resulting encrypted password.
+     * 
+     * @param password password
+     * @return encoded password
+     */
+    public static String encodePassword(String password) {
+        return encodePassword(password, SHA1);
+    }
 
-		byte[] encodedPassword = md.digest();
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < encodedPassword.length; i++) {
-			if (((int) encodedPassword[i] & 0xff) < 0x10) {
-				buf.append("0");
-			}
-			buf.append(Long.toString((int) encodedPassword[i] & 0xff, 16));
-		}
-		return buf.toString();
-	}
+    /**
+     * @param password password
+     * @param algorithm algorith used to encode
+     * @return encoded password
+     */
+    public static String encodePassword(String password, String algorithm) {
+        byte[] unencodedPassword = password.getBytes();
+        MessageDigest md = null;
+        try {
+
+            md = MessageDigest.getInstance(algorithm);
+
+        } catch (Exception e) {
+
+            return password;
+        }
+        md.reset();
+        md.update(unencodedPassword);
+
+        byte[] encodedPassword = md.digest();
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < encodedPassword.length; i++) {
+            if (((int) encodedPassword[i] & 0xff) < 0x10) {
+                buf.append("0");
+            }
+            buf.append(Long.toString((int) encodedPassword[i] & 0xff, 16));
+        }
+        return buf.toString();
+    }
 
 }

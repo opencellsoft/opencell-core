@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonUnwrapped;
  * 
  * @author bahman.barzideh
  * 
- *         The prefix 'referenced' was added to the property names of this class to work around an issue in the platform. Without the prefix, you could not update the id & version
+ *         The prefix 'referenced' was added to the property names of this class to work around an issue in the platform. Without the prefix, you could not update the id &amp; version
  *         fields of entity properties that were of this class. For example, attempting to update or edit the ResourceCandidate.category[n].version would throw an exception. The
  *         exception would claim the operation was attempting to update a key field (the real key field is named ENTITY_VERSION in the database). The 'referenced' prefix fixes this
  *         issue while making this class a bit uglier than it needs to be.

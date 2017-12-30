@@ -10,7 +10,7 @@
 
 	<ui:define name="body">
 		<p:messages id="messages" />
-		<p:panel>
+		<p:panel rendered="#{currentUser.hasRole('administrationVisualization')}">
 
 
 			<!-- REMOVED FOR NOW -->
@@ -91,7 +91,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{usageChargeTemplateBean.deleteInlist}"
+													action="#{usageChargeTemplateBean.delete}"
 													update=":#{p:component('chargeTemplate')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -144,7 +144,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{recurringChargeTemplateBean.deleteInlist}"
+													action="#{recurringChargeTemplateBean.delete}"
 													update=":#{p:component('chargeTemplate')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -199,7 +199,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{oneShotChargeTemplateListBean.deleteInlist}"
+													action="#{oneShotChargeTemplateListBean.delete}"
 													update=":#{p:component('chargeTemplate')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -253,7 +253,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{taxBean.deleteInlist}"
+													action="#{taxBean.delete}"
 													update=":#{p:component('accordionTax')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener target="#{taxBean.entity}"
@@ -305,7 +305,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{tradingLanguageListBean.deleteInlist}"
+													action="#{tradingLanguageListBean.delete}"
 													update=":#{p:component('languages')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -356,7 +356,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{invoiceCategoryListBean.deleteInlist}"
+													action="#{invoiceCategoryListBean.delete}"
 													update=":#{p:component('invoiceCats')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -414,7 +414,7 @@
 												</p:button>
 											</p:column>
 											<p:commandButton icon="ui-icon-trash"
-												action="#{invoiceSubCategoryListBean.deleteInlist}"
+												action="#{invoiceSubCategoryListBean.delete}"
 												update=":#{p:component('invoiceSubs')}"
 												onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 												<f:setPropertyActionListener
@@ -491,7 +491,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{serviceTemplateListBean.deleteInlist}"
+													action="#{serviceTemplateListBean.delete}"
 													update=":#{p:component('servicesTmpl')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -564,7 +564,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{usageChargeTemplateListBean.deleteInlist}"
+													action="#{usageChargeTemplateListBean.delete}"
 													update=":#{p:component('usagesTempl')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -666,7 +666,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{counterTemplateListBean.deleteInlist}"
+													action="#{counterTemplateListBean.delete}"
 													update=":#{p:component('counters')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -734,7 +734,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{recurringChargeTemplateListBean.deleteInlist}"
+													action="#{recurringChargeTemplateListBean.delete}"
 													update=":#{p:component('recurrings')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener
@@ -801,7 +801,7 @@
 												</p:button>
 											</p:column>
 											<p:commandButton icon="ui-icon-trash"
-												action="#{oneShotChargeTemplateBean.deleteInlist}"
+												action="#{oneShotChargeTemplateBean.delete}"
 												update=":#{p:component('termCharges')}"
 												onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 												<f:setPropertyActionListener
@@ -866,7 +866,7 @@
 													<f:param name="edit" value="true" />
 												</p:button>
 												<p:commandButton icon="ui-icon-trash"
-													action="#{oneShotChargeTemplateBean.deleteInlist}"
+													action="#{oneShotChargeTemplateBean.delete}"
 													update=":#{p:component('subCharges')}"
 													onclick="if(confirm('#{messages['commons.confirmDelete']}')){return true;}else{return false;}">
 													<f:setPropertyActionListener

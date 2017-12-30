@@ -354,18 +354,6 @@ public class CustomerAccount extends AccountEntity {
 		return ddPaymentMethods;
 	}
 
-	public List<TipPaymentMethod> getTipPaymentMethods() {
-		List<TipPaymentMethod> tipPaymentMethods = new ArrayList<>();
-		if (getPaymentMethods() != null) {
-			for (PaymentMethod paymentMethod : getPaymentMethods()) {
-				if (paymentMethod instanceof TipPaymentMethod) {
-					tipPaymentMethods.add((TipPaymentMethod) paymentMethod);
-				}
-			}
-		}
-		return tipPaymentMethods;
-	}
-
 	public List<WirePaymentMethod> getWirePaymentMethods() {
 		List<WirePaymentMethod> wirePaymentMethods = new ArrayList<>();
 		if (getPaymentMethods() != null) {
@@ -474,16 +462,16 @@ public class CustomerAccount extends AccountEntity {
 	}
 
 	/**
-	 * Check if no more valid Card paymentMethod
+	 * Check if no more valid Card paymentMethod.
 	 * 
-	 * @return
+	 * @return true if no more valid card.
 	 */
-	public boolean isNoMoreValidCard(){
-		for (CardPaymentMethod card : getCardPaymentMethods(false)) {
-			if(!card.isDisabled() && card.isValidForDate(new Date())){
-				return false;        		         	
-			}
-		}    	
-		return true;
-	}
+    public boolean isNoMoreValidCard() {
+        for (CardPaymentMethod card : getCardPaymentMethods(false)) {
+            if (!card.isDisabled() && card.isValidForDate(new Date())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

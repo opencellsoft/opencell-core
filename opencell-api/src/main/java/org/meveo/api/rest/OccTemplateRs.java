@@ -25,8 +25,8 @@ public interface OccTemplateRs extends IBaseRs {
     /**
      * Create OccTemplate.
      * 
-     * @param postData
-     * @return
+     * @param postData posted data to API (account operation template)
+     * @return action status.
      */
     @Path("/")
     @POST
@@ -35,8 +35,8 @@ public interface OccTemplateRs extends IBaseRs {
     /**
      * Update OccTemplate.
      * 
-     * @param postData
-     * @return
+     * @param postData posted data to API
+     * @return action status.
      */
     @Path("/")
     @PUT
@@ -45,28 +45,28 @@ public interface OccTemplateRs extends IBaseRs {
     /**
      * Search OccTemplate with a given code.
      * 
-     * @param OccTemplateCode
-     * @return
+     * @param occtemplateCode  code of account operation template
+     * @return account operation template
      */
     @Path("/")
     @GET
-    GetOccTemplateResponseDto find(@QueryParam("occTemplateCode") String OcctemplateCode);
+    GetOccTemplateResponseDto find(@QueryParam("occTemplateCode") String occtemplateCode);
 
     /**
      * Remove OccTemplate with a given code.
      * 
-     * @param OccTemplateCode
-     * @return
+     * @param occTemplateCode code of account operation template
+     * @return action status.
      */
     @Path("/{occTemplateCode}")
     @DELETE
     ActionStatus remove(@PathParam("occTemplateCode") String occTemplateCode);
 
     /**
-     * Create or update OccTemplate
+     * Create or update OccTemplate.
      * 
-     * @param postData
-     * @return
+     * @param postData posted data
+     * @return action status.
      */
     @Path("/createOrUpdate")
     @POST
@@ -75,7 +75,7 @@ public interface OccTemplateRs extends IBaseRs {
     /**
      * Get List of OccTemplates.
      *
-     * @return
+     * @return list of all account operation template.
      */
     @Path("/list")
     @GET

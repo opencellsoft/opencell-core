@@ -31,9 +31,8 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.InstanceStatusEnum;
-import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -50,11 +49,6 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
     private static final long serialVersionUID = -4881285967381681922L;
 
-    /**
-     * Injected
-     * 
-     * @{link ServiceInstance} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private ServiceInstanceService serviceInstanceService;
 
@@ -77,9 +71,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return service instance.
      */
     @Override
     public ServiceInstance initEntity() {
@@ -197,20 +189,21 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         return null;
     }
 
-    @Override
-    @ActionMethod
-    public String saveOrUpdate(boolean killConversation) throws BusinessException {
-        // update recurring charges
-        if (entity.getRecurringChargeInstances() != null) {
-            for (RecurringChargeInstance recurringChargeInstance : entity.getRecurringChargeInstances()) {
-                recurringChargeInstance.setSubscriptionDate(entity.getSubscriptionDate());
-            }
-        }
-
-        return super.saveOrUpdate(killConversation);
-    }
-
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("recurringChargeInstances");
+    }
+
+    @Override
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+
+        boolean quantityChanged = entity.isQuantityChanged();
+
+        String outcome = super.saveOrUpdate(killConversation);
+
+        if (entity.getStatus() != InstanceStatusEnum.INACTIVE && quantityChanged) {
+            messages.warn(new BundleKey("messages", ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION ? "serviceInstance.quantityChangedMulti" : "serviceInstance.quantityChanged"));
+        }
+
+        return outcome;
     }
 }

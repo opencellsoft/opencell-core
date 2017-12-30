@@ -24,30 +24,29 @@ import java.math.BigDecimal;
  * Class for balance information for wallet.
  * 
  * @author Ignas
- * @created 2009.10.19
  */
 public class Balance {
-	
-	/** Total balance. */
-	private BigDecimal balance;
-	
-	/** Reserved balance. */
-	private BigDecimal reservedBalance;
 
-	public BigDecimal getBalance() {
-    	return balance;
+    /** Total balance. */
+    private BigDecimal balance;
+
+    /** Reserved balance. */
+    private BigDecimal reservedBalance;
+
+    public BigDecimal getBalance() {
+        return balance;
     }
 
-	public void setBalance(BigDecimal balance) {
-    	this.balance = balance;
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
     }
 
-	public BigDecimal getReservedBalance() {
-    	return reservedBalance;
+    public BigDecimal getReservedBalance() {
+        return reservedBalance;
     }
 
-	public void setReservedBalance(BigDecimal reservedBalance) {
-    	this.reservedBalance = reservedBalance;
+    public void setReservedBalance(BigDecimal reservedBalance) {
+        this.reservedBalance = reservedBalance;
     }
-	
+
 }

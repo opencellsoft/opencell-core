@@ -13,7 +13,7 @@ import org.meveo.api.dto.response.billing.GetPreInvoicingReportsResponseDto;
 
 /**
  * @author anasseh
- * @created 03.07.2015
+ * @since 03.07.2015
  **/
 @WebService
 public interface InvoicingWs extends IBaseWs {

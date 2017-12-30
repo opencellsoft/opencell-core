@@ -19,9 +19,12 @@ import org.meveo.api.catalog.ProductTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BpmProductDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.dto.response.catalog.GetListProductTemplateResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.tmforum.CatalogRs;
@@ -50,7 +53,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
     @Inject
     private OfferTemplateCategoryApi offerTemplateCategoryApi;
-    
+
     @Inject
     private ProductTemplateApi productTemplateApi;
 
@@ -72,8 +75,8 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
                 for (OfferTemplateCategoryDto otcd : offerTemplateCategoryDtos) {
                     Category category = new Category();
                     category.setId(String.valueOf(otcd.getId()));
-                    //TODO where to get data for version??
-                    //category.setVersion(String.valueOf(otcd.getVersion()));
+                    // TODO where to get data for version??
+                    // category.setVersion(String.valueOf(otcd.getVersion()));
                     category.setHref(otcd.getHref());
                     category.setName(otcd.getName());
                     category.setDescription(otcd.getDescription());
@@ -115,11 +118,11 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findByCode(code,  uriInfo);
+            OfferTemplateCategoryDto otcd = offerTemplateCategoryApi.findByCode(code, uriInfo);
 
             Category category = new Category();
             category.setId(String.valueOf(otcd.getId()));
-            //category.setVersion(String.valueOf(otcd.getVersion()));
+            // category.setVersion(String.valueOf(otcd.getVersion()));
             category.setHref(otcd.getHref());
             category.setName(otcd.getName());
             category.setDescription(otcd.getDescription());
@@ -160,9 +163,9 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
             List<ProductOffering> productOfferings = catalogApi.findProductOfferings(validFrom, validTo, uriInfo, Category.createProto(uriInfo));
             responseBuilder = Response.ok().entity(productOfferings);
 
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+            // } catch (MeveoApiException e) {
+            // responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
             responseBuilder.entity(result);
@@ -202,12 +205,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            List<ProductSpecification> productSpecifications = catalogApi.findProductSpecifications( uriInfo);
+            List<ProductSpecification> productSpecifications = catalogApi.findProductSpecifications(uriInfo);
             responseBuilder = Response.ok().entity(productSpecifications);
 
-//        } catch (MeveoApiException e) {
-//            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
-//            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+            // } catch (MeveoApiException e) {
+            // responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            // responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
         } catch (Exception e) {
             processException(e, result);
             responseBuilder.entity(result);
@@ -225,7 +228,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
 
         Response.ResponseBuilder responseBuilder = null;
         try {
-            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, validFrom, validTo,  uriInfo);           
+            ProductSpecification productSpecification = catalogApi.findProductSpecification(id, validFrom, validTo, uriInfo);
             responseBuilder = Response.ok().entity(productSpecification);
 
         } catch (Exception e) {
@@ -244,8 +247,7 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         Response.ResponseBuilder responseBuilder = null;
 
         try {
-            businessOfferApi.createOfferFromBOM(postData);
-            responseBuilder = Response.ok();
+            responseBuilder = Response.ok().entity(businessOfferApi.instantiateBOM(postData));
 
         } catch (Exception e) {
             processException(e, result);
@@ -257,13 +259,13 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response getProductTemplate(String code, Date validFrom, Date validTo) {
+    @Override
+    public Response getProductTemplate(String code, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("getProductTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductTemplateDto productTemplateDto = productTemplateApi.find(code, validFrom, validTo);
+            ProductTemplateDto productTemplateDto = productTemplateApi.find(code, validFrom, validTo);
             responseBuilder = Response.ok().entity(productTemplateDto);
 
         } catch (Exception e) {
@@ -276,12 +278,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response createProductTemplate(ProductTemplateDto postData) {
+    @Override
+    public Response createProductTemplate(ProductTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.create(postData);
+            productTemplateApi.create(postData);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -294,12 +296,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response createOrUpdateProductTemplate(ProductTemplateDto postData) {
+    @Override
+    public Response createOrUpdateProductTemplate(ProductTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.createOrUpdate(postData);
+            productTemplateApi.createOrUpdate(postData);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -312,12 +314,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response updateProductTemplate(ProductTemplateDto postData) {
+    @Override
+    public Response updateProductTemplate(ProductTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.update(postData);
+            productTemplateApi.update(postData);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -330,12 +332,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response removeProductTemplate(String code, Date validFrom, Date validTo) {
+    @Override
+    public Response removeProductTemplate(String code, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productTemplateApi.remove(code, validFrom, validTo);
+            productTemplateApi.remove(code, validFrom, validTo);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -348,13 +350,13 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response listProductTemplate(String code, Date validFrom, Date validTo) {
+    @Override
+    public Response listProductTemplate(String code, Date validFrom, Date validTo) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	List<ProductTemplateDto> listProductTemplate = productTemplateApi.list(code, validFrom, validTo);
-            responseBuilder = Response.ok().entity(listProductTemplate);
+            GetListProductTemplateResponseDto listProductTemplateDto = productTemplateApi.list(code, validFrom, validTo, null);
+            responseBuilder = Response.ok().entity(listProductTemplateDto.getListProductTemplate());
 
         } catch (Exception e) {
             processException(e, result);
@@ -365,14 +367,14 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         log.debug("RESPONSE={}", response.getEntity());
         return response;
     }
-	
-	@Override
-	public Response getProductChargeTemplate(String code) {
+
+    @Override
+    public Response getProductChargeTemplate(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         log.debug("getProductChargeTemplate by code {}", code);
         Response.ResponseBuilder responseBuilder = null;
         try {
-        	ProductChargeTemplateDto productChargeTemplateDto = productChargeTemplateApi.find(code);
+            ProductChargeTemplateDto productChargeTemplateDto = productChargeTemplateApi.find(code);
             responseBuilder = Response.ok().entity(productChargeTemplateDto);
 
         } catch (Exception e) {
@@ -385,12 +387,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response createProductChargeTemplate(ProductChargeTemplateDto postData) {
+    @Override
+    public Response createProductChargeTemplate(ProductChargeTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productChargeTemplateApi.create(postData);
+            productChargeTemplateApi.create(postData);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -403,12 +405,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData) {
+    @Override
+    public Response createOrUpdateProductChargeTemplate(ProductChargeTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productChargeTemplateApi.createOrUpdate(postData);
+            productChargeTemplateApi.createOrUpdate(postData);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -421,12 +423,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response updateProductChargeTemplate(ProductChargeTemplateDto postData) {
+    @Override
+    public Response updateProductChargeTemplate(ProductChargeTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	productChargeTemplateApi.update(postData);
+            productChargeTemplateApi.update(postData);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -439,12 +441,12 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response removeProductChargeTemplate(String code) {
+    @Override
+    public Response removeProductChargeTemplate(String code) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	 productChargeTemplateApi.remove(code);
+            productChargeTemplateApi.remove(code);
             responseBuilder = Response.ok();
 
         } catch (Exception e) {
@@ -457,16 +459,51 @@ public class CatalogRsImpl extends BaseRs implements CatalogRs {
         return response;
     }
 
-	@Override
-	public Response listProductChargeTemplate() {
+    @Override
+    public Response listProductChargeTemplate() {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-		Response.ResponseBuilder responseBuilder = null;
+        Response.ResponseBuilder responseBuilder = null;
         try {
-        	List<ProductChargeTemplateDto> listProductChargeTemplate = productChargeTemplateApi.list();
+            List<ProductChargeTemplateDto> listProductChargeTemplate = productChargeTemplateApi.list();
             responseBuilder = Response.ok().entity(listProductChargeTemplate);
 
+        } catch (Exception e) {
+            processException(e, result);
+            responseBuilder.entity(result);
         }
-         catch (Exception e) {
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+	
+    @Override
+    public Response createServiceFromBSM(BsmServiceDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            responseBuilder = Response.ok().entity(businessOfferApi.instantiateBSM(postData));
+
+        } catch (Exception e) {
+            processException(e, result);
+            responseBuilder.entity(result);
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response createProductFromBPM(BpmProductDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            responseBuilder = Response.ok().entity(businessOfferApi.instantiateBPM(postData));
+
+        } catch (Exception e) {
             processException(e, result);
             responseBuilder.entity(result);
         }

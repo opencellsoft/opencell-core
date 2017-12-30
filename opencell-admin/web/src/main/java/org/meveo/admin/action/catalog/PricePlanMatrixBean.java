@@ -99,9 +99,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return price plan matrix.
      */
 
     public PricePlanMatrix initEntity() {

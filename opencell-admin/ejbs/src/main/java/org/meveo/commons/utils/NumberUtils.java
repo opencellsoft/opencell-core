@@ -25,7 +25,6 @@ import java.util.Locale;
 
 /**
  * @author R.AITYAAZZA
- * @created 20 janv. 11
  */
 public class NumberUtils {
 
@@ -33,11 +32,10 @@ public class NumberUtils {
         if (what == null) {
             return null;
         }
-        
+
         what = what.setScale(howmuch, RoundingMode.HALF_UP);
         return what;
     }
-   
 
     public static String format(BigDecimal amount, String format) {
         if (amount == null) {
@@ -51,6 +49,17 @@ public class NumberUtils {
         String value = decimalFormat.format(amount);
         return value;
     }
-    
-  
+
+    public static BigDecimal subtract(BigDecimal minuend, BigDecimal subtrahend) {
+        if (minuend == null) {
+            return new BigDecimal(0);
+        }
+
+        if (subtrahend == null) {
+            return minuend;
+        }
+
+        return minuend.subtract(subtrahend);
+    }
+
 }

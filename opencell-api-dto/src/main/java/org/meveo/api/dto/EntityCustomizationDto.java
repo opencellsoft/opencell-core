@@ -64,9 +64,9 @@ public class EntityCustomizationDto extends BaseDto {
     }
 
     /**
-     * Convert CustomEntityTemplate instance to CustomEntityTemplateDto object including the fields and actions
+     * Convert CustomEntityTemplate instance to CustomEntityTemplateDto object including the fields and actions.
      * 
-     * @param cet CustomEntityTemplate object to convert
+     * @param clazz class
      * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
      * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
      * @return A CustomEntityTemplateDto object with fields set

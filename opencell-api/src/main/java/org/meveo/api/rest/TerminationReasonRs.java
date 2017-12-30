@@ -22,7 +22,7 @@ import org.meveo.api.dto.response.GetTerminationReasonResponse;
 public interface TerminationReasonRs extends IBaseRs {
 
     /**
-     * Create a new termination reason
+     * Create a new termination reason.
      * 
      * @param postData The termination reason's data
      * @return Request processing status
@@ -32,7 +32,7 @@ public interface TerminationReasonRs extends IBaseRs {
     ActionStatus create(TerminationReasonDto postData);
 
     /**
-     * Update an existing termination reason
+     * Update an existing termination reason.
      * 
      * @param postData The termination reason's data
      * @return Request processing status
@@ -42,7 +42,7 @@ public interface TerminationReasonRs extends IBaseRs {
     ActionStatus update(TerminationReasonDto postData);
 
     /**
-     * Create new or update an existing termination reason with a given code
+     * Create new or update an existing termination reason with a given code.
      * 
      * @param postData The termination reason's data
      * @return Request processing status
@@ -52,7 +52,7 @@ public interface TerminationReasonRs extends IBaseRs {
     ActionStatus createOrUpdate(TerminationReasonDto postData);
 
     /**
-     * Remove an existing termination reason with a given code 
+     * Remove an existing termination reason with a given code.
      * 
      * @param terminationReasonCode The termination reason's code
      * @return Request processing status
@@ -62,10 +62,10 @@ public interface TerminationReasonRs extends IBaseRs {
     ActionStatus remove(@PathParam("terminationReasonCode") String terminationReasonCode);
 
     /**
-     * Find a termination reason with a given code 
+     * Find a termination reason with a given code.
      * 
-     * @param terminationReasonCode The termination reason's code
-     * @return
+     * @param code The termination reason's code
+     * @return found termination reason
      */
     @Path("/")
     @GET

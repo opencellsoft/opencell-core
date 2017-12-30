@@ -50,7 +50,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     private NotificationService notificationService;
 
     /**
-     * Contains association between event type, entity class and notifications. Key format: <eventTypeFilter>-<entity class>
+     * Contains association between event type, entity class and notifications. Key format: &lt;eventTypeFilter&gt;-&lt;entity class&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-notification-cache")
     private Cache<String, List<Notification>> eventNotificationCache;
@@ -75,7 +75,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Populate notification cache
+     * Populate notification cache.
      */
     private void populateNotificationCache() {
         log.debug("Start to populate notification cache");
@@ -91,7 +91,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Add notification to a cache
+     * Add notification to a cache.
      * 
      * @param notif Notification to add
      */
@@ -123,7 +123,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Remove notification from cache
+     * Remove notification from cache.
      * 
      * @param notif Notification to remove
      */

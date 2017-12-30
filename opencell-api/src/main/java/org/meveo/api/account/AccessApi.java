@@ -137,7 +137,7 @@ public class AccessApi extends BaseApi {
             throw new EntityDoesNotExistsException(Access.class, accessCode);
         }
 
-        return new AccessDto(access, entityToDtoConverter.getCustomFieldsWithInheritedDTO(access, true));
+        return new AccessDto(access, entityToDtoConverter.getCustomFieldsDTO(access, true));
     }
 
     public void remove(String accessCode, String subscriptionCode) throws MeveoApiException, BusinessException {
@@ -180,7 +180,7 @@ public class AccessApi extends BaseApi {
         List<Access> accesses = accessService.listBySubscription(subscription);
         if (accesses != null) {
             for (Access ac : accesses) {
-                result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsWithInheritedDTO(ac, true)));
+                result.getAccess().add(new AccessDto(ac, entityToDtoConverter.getCustomFieldsDTO(ac, true)));
             }
         }
 
@@ -191,10 +191,10 @@ public class AccessApi extends BaseApi {
      * 
      * Create or update access based on the access user id and its subscription
      * 
-     * @param postData
+     * @param postData posted data to API
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void createOrUpdate(AccessDto postData) throws MeveoApiException, BusinessException {
 
@@ -211,6 +211,11 @@ public class AccessApi extends BaseApi {
             update(postData);
         }
     }
+    /**
+     * @param accessDto access dto
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
+     */
     public void createOrUpdatePartial(AccessDto accessDto) throws MeveoApiException, BusinessException{
     	AccessDto existedAccessDto = null;
 		try {

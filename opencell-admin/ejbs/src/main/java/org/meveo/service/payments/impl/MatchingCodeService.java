@@ -56,7 +56,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     private AccountOperationService accountOperationService;
 
     /**
-     * Match account operations
+     * Match account operations.
      * 
      * @param listOcc Account operations to match
      * @param amount Amount to match
@@ -184,6 +184,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
+    /**
+     * @param aoID account operation id
+     * @throws BusinessException business exception.
+     */
     public void unmatchingByAOid(Long aoID) throws BusinessException {
 
         AccountOperation accountOperation = accountOperationService.findById(aoID);
@@ -197,6 +201,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
 
     }
 
+    /**
+     * @param idMatchingCode id of matching code 
+     * @throws BusinessException business exception
+     */
     public void unmatching(Long idMatchingCode) throws BusinessException {
         log.info("start cancelMatching with id {}", idMatchingCode);
         if (idMatchingCode == null) {
@@ -234,16 +242,17 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     }
 
     /**
-     * Match account operations of a given customer account
+     * Match account operations of a given customer account.
      * 
      * @param customerAccountId Customer account - id or
      * @param customerAccountCode Customer account - code
      * @param operationIds Ids of account operations to match
      * @param aoToMatchLast An operation to match last - most likely will be matched partially
      * @return Information on matched operations
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
+     * @throws UnbalanceAmountException un balance amount exception
+     * @throws Exception general exception
      */
     public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
@@ -251,7 +260,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
     }
 
     /**
-     * Match account operations of a given customer account
+     * Match account operations of a given customer account.
      * 
      * @param customerAccountId Customer account - id or
      * @param customerAccountCode Customer account - code
@@ -259,9 +268,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @param aoToMatchLast An operation to match last - most likely will be matched partially
      * @param matchingTypeEnum Matching type
      * @return Information on matched operations
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception.
+     * @throws UnbalanceAmountException un balance amount exception
      */
     public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast, MatchingTypeEnum matchingTypeEnum)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -381,6 +390,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         return matchingReturnObject;
     }
 
+    /**
+     * @param code code of finding matching code
+     * @return found matching code.
+     */
     public MatchingCode findByCode(String code) {
         QueryBuilder qb = new QueryBuilder(MatchingCode.class, "m", null);
         qb.addCriterion("code", "=", code, true);

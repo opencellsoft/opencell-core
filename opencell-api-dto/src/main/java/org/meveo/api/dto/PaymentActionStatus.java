@@ -21,15 +21,15 @@ public class PaymentActionStatus extends ActionStatus {
 	private Long paymentId;
 
 	/**
-	 * defaut constructor
+	 * defaut constructor.
 	 */
 	public PaymentActionStatus() {
 		super();
 	}
 
 	/**
-	 * @param status
-	 * @param message
+	 * @param status action status
+	 * @param message message.
 	 */
 	public PaymentActionStatus(ActionStatusEnum status, String message) {
 		super(status, message);

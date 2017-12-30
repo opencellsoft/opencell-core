@@ -20,7 +20,7 @@ import org.meveo.api.rest.IBaseRs;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 5:40:20 AM
+ * @since Jun 3, 2016 5:40:20 AM
  *
  */
 @Path("/communication/emailTemplate")

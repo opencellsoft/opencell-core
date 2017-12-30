@@ -16,7 +16,7 @@ import org.meveo.api.dto.CurrencyDto;
 import org.meveo.api.dto.response.GetCurrencyResponse;
 
 /**
- * Web service for managing {@link org.meveo.model.billing.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
+ * Web service for managing {@link org.meveo.model.admin.Currency} and {@link org.meveo.model.billing.TradingCurrency}.
  * 
  * @author Edward P. Legaspi
  *  @deprecated will be renammed to  TradingCurrencyRs
@@ -30,46 +30,50 @@ public interface CurrencyRs extends IBaseRs {
     /**
      * Creates tradingCurrency base on currency code. If the currency code does not exists, a currency record is created
      * 
-     * @param postData
-     * @return
+     * @param postData currency to be created
+     * @return action status
      */
     @POST
     @Path("/")
-    public ActionStatus create(CurrencyDto postData);
+    ActionStatus create(CurrencyDto postData);
 
     /**
      * Search currency with a given currency code.
      * 
-     * @param currencyCode
-     * @return
+     * @param currencyCode currency code
+     * @return currency if exists
      */
     @GET
     @Path("/")
-    public GetCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
+    GetCurrencyResponse find(@QueryParam("currencyCode") String currencyCode);
 
     /**
      * Remove currency with a given currency code.
      * 
-     * @param currencyCode
-     * @return
+     * @param currencyCode currency code
+     * @return action status
      */
     @DELETE
     @Path("/{currencyCode}")
-    public ActionStatus remove(@PathParam("currencyCode") String currencyCode);
+    ActionStatus remove(@PathParam("currencyCode") String currencyCode);
 
     /**
      * Modify a tradingCurrency. Same input parameter as create. The currency and tradingCurrency are created if they don't exists. The operation fails if the tradingCurrency is
      * null
      * 
-     * @param postData
-     * @return
+     * @param postData currency to be updated
+     * @return action status
      */
     @PUT
     @Path("/")
-    public ActionStatus update(CurrencyDto postData);
+    ActionStatus update(CurrencyDto postData);
 
+    /**
+     * @param postData currency to be created or updated
+     * @return action status
+     */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CurrencyDto postData);
+    ActionStatus createOrUpdate(CurrencyDto postData);
 
 }

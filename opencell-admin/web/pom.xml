@@ -4,7 +4,7 @@
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
 		<relativePath>../pom.xml</relativePath>
-		<version>4.7.3</version>
+		<version>4.8</version>
 	</parent>
 	<artifactId>opencell-admin-web</artifactId>
 	<name>Opencell Admin Web Application - Web Module</name>
@@ -389,7 +389,11 @@
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 		</dependency>
-
+		<dependency>
+		    <groupId>org.hibernate.javax.persistence</groupId>
+		    <artifactId>hibernate-jpa-2.1-api</artifactId>
+		    <version>1.0.0.Final</version>
+		</dependency>
 		<!--
 		<dependency>
 			<groupId>meveo</groupId>

@@ -41,6 +41,11 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setOwner(paymentMethod.getOwner());
         setTokenId(paymentMethod.getTokenId());
         setYearExpiration(paymentMethod.getYearExpiration());
+        setInfo1(paymentMethod.getInfo1());
+        setInfo2(paymentMethod.getInfo2());
+        setInfo3(paymentMethod.getInfo3());
+        setInfo4(paymentMethod.getInfo4());
+        setInfo5(paymentMethod.getInfo5());
         setUserId(paymentMethod.getUserId());
     }
 
@@ -59,6 +64,12 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setYearExpiration(paymentMethod.getYearExpiration());
         setTokenId(paymentMethod.getTokenId());
         setOwner(paymentMethod.getOwner());
+        setInfo1(paymentMethod.getInfo1());
+        setInfo2(paymentMethod.getInfo2());
+        setInfo3(paymentMethod.getInfo3());
+        setInfo4(paymentMethod.getInfo4());
+        setInfo5(paymentMethod.getInfo5());
+        setUserId(paymentMethod.getUserId());
     }
 
     public CardPaymentMethod fromDto() {
@@ -75,6 +86,11 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         paymentMethod.setYearExpiration(getYearExpiration());
         paymentMethod.setMonthExpiration(getMonthExpiration());
         paymentMethod.setUserId(getUserId());
+        paymentMethod.setInfo1(getInfo1());
+        paymentMethod.setInfo2(getInfo2());
+        paymentMethod.setInfo3(getInfo3());
+        paymentMethod.setInfo4(getInfo4());
+        paymentMethod.setInfo5(getInfo5());
 
         return paymentMethod;
     }

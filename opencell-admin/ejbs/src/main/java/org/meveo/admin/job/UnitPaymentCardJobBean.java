@@ -35,12 +35,12 @@ public class UnitPaymentCardJobBean {
 
     @Inject
     private PaymentService paymentService;
-    
+
     @Inject
     private RefundService refundService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO,OperationCategoryEnum operationCategory) {
+    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory) {
         log.debug("Running with RecordedInvoice ID={}", aoId);
 
         AccountOperation accountOperation = null;
@@ -52,14 +52,14 @@ public class UnitPaymentCardJobBean {
             List<Long> listAOids = new ArrayList<>();
             listAOids.add(aoId);
             PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
-            if(operationCategory == OperationCategoryEnum.CREDIT) {
+            if (operationCategory == OperationCategoryEnum.CREDIT) {
                 doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
-            }else {
+            } else {
                 doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
             }
-           
+
             if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
                 result.registerSucces();
             }

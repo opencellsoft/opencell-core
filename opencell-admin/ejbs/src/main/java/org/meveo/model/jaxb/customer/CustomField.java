@@ -275,9 +275,9 @@ public class CustomField {
     }
 
     /**
-     * Get a value converted from DTO a propper Map, List, EntityWrapper, Date, Long, Double or String value
+     * Get a value converted from DTO a propper Map, List, EntityWrapper, Date, Long, Double or String value.
      * 
-     * @return
+     * @return converted value.
      */
     public Object getValueConverted() {
         if (mapValue != null && !mapValue.isEmpty()) {

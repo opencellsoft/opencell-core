@@ -35,61 +35,67 @@ import org.meveo.service.base.PersistenceService;
  * 
  */
 @Stateless
-public class DWHAccountOperationService extends
-		PersistenceService<DWHAccountOperation> {
+public class DWHAccountOperationService extends PersistenceService<DWHAccountOperation> {
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public BigDecimal calculateRecordsBetweenDueMonth(
-			Integer from, Integer to, String category) {
-		log.info("calculateRecordsBetweenDueMonth({},{},{})", new Object[] {
-				from, to, category });
-		BigDecimal result = new BigDecimal(0);
-		String queryString = "select sum(unMatchingAmount) from "
-				+ getEntityClass().getSimpleName() + " where category=" + category
-				+ " and (status=0 or status=2)";
-		;
-		if (from != null) {
-			queryString += " and dueMonth >= " + from;
-		}
-		if (to != null) {
-			queryString += " and dueMonth < " + to;
-		}
-		log.debug("calculateRecordsBetweenDueMonth: queryString={}",
-				queryString);
-		Query query = getEntityManager().createQuery(queryString);
-		if (query.getSingleResult() != null) {
-			result = (BigDecimal) query.getSingleResult();
-		}
-		log.info("calculateRecordsBetweenDueMonth: {}", result);
-		return result;
-	}
+    /**
+     * @param from from month
+     * @param to to month
+     * @param category category of dwh
+     * @return records between months
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public BigDecimal calculateRecordsBetweenDueMonth(Integer from, Integer to, String category) {
+        log.info("calculateRecordsBetweenDueMonth({},{},{})", new Object[] {from, to, category });
+        BigDecimal result = new BigDecimal(0);
+        String queryString = "select sum(unMatchingAmount) from " + getEntityClass().getSimpleName() + " where category=" + category + " and (status=0 or status=2)";
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	public int countRecordsBetweenDueMonth(Integer from,
-			Integer to, String category) {
-		log.info("countRecordsBetweenDueMonth({},{},{})", new Object[] { from,
-				to, category });
-		int result = 0;
-		String queryString = "select count(*) from "
-				+ getEntityClass().getSimpleName() + " where category=" + category
-				+ " and (status=0 or status=2)";
-		if (from != null) {
-			queryString += " and dueMonth >= " + from;
-		}
-		if (to != null) {
-			queryString += " and dueMonth < " + to;
-		}
-		log.debug("countRecordsBetweenDueMonth: queryString={}", queryString);
-		Query query = getEntityManager().createQuery(queryString);
-		log.debug("countRecordsBetweenDueMonth: query={}", query);
-		Object queryResult = query.getSingleResult();
-		if (queryResult != null) {
-			result = ((Long) queryResult).intValue();
-		}
-		log.info("countRecordsBetweenDueMonth: {}", result);
-		return result;
-	}
+        if (from != null) {
+            queryString += " and dueMonth >= " + from;
+        }
+        if (to != null) {
+            queryString += " and dueMonth < " + to;
+        }
+        log.debug("calculateRecordsBetweenDueMonth: queryString={}", queryString);
+        Query query = getEntityManager().createQuery(queryString);
+        if (query.getSingleResult() != null) {
+            result = (BigDecimal) query.getSingleResult();
+        }
+        log.info("calculateRecordsBetweenDueMonth: {}", result);
+        return result;
+    }
 
+    /**
+     * @param from from month
+     * @param to to month
+     * @param category category of dwh
+     * @return number of records
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public int countRecordsBetweenDueMonth(Integer from, Integer to, String category) {
+        log.info("countRecordsBetweenDueMonth({},{},{})", new Object[] { from, to, category });
+        int result = 0;
+        String queryString = "select count(*) from " + getEntityClass().getSimpleName() + " where category=" + category + " and (status=0 or status=2)";
+        if (from != null) {
+            queryString += " and dueMonth >= " + from;
+        }
+        if (to != null) {
+            queryString += " and dueMonth < " + to;
+        }
+        log.debug("countRecordsBetweenDueMonth: queryString={}", queryString);
+        Query query = getEntityManager().createQuery(queryString);
+        log.debug("countRecordsBetweenDueMonth: query={}", query);
+        Object queryResult = query.getSingleResult();
+        if (queryResult != null) {
+            result = ((Long) queryResult).intValue();
+        }
+        log.info("countRecordsBetweenDueMonth: {}", result);
+        return result;
+    }
+
+	/**
+	 * @param category category of dwh
+	 * @return total amount of records.
+	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public BigDecimal totalAmount(String category) {
 		log.info("totalAmount({})", category);
@@ -108,6 +114,10 @@ public class DWHAccountOperationService extends
 		return result;
 	}
 
+	/**
+	 * @param category category of dwh
+	 * @return total count.
+	 */
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public int totalCount(String category) {
 		log.info("totalCount({})", category);
@@ -126,6 +136,10 @@ public class DWHAccountOperationService extends
 		return result;
 	}
 
+	/**
+	 * @param endDate ending date
+	 * @return list of dwh account operation.
+	 */
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<DWHAccountOperation> getAccountingDetailRecords(Date endDate) {
@@ -144,6 +158,11 @@ public class DWHAccountOperationService extends
 		return result;
 	}
 
+	/**
+	 * @param startDate starting date
+	 * @param endDate ending date
+	 * @return list of dwh account operation.
+	 */
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<DWHAccountOperation> getAccountingJournalRecords(
@@ -164,6 +183,11 @@ public class DWHAccountOperationService extends
 		return result;
 	}
 
+	/**
+	 * @param endDate ending date
+	 * @param category category
+	 * @return list of accounting summary records
+	 */
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getAccountingSummaryRecords(Date endDate, int category) {
@@ -182,6 +206,11 @@ public class DWHAccountOperationService extends
 		return result;
 	}
 
+	/**
+	 * @param startDate starting date
+	 * @param endDate ending date
+	 * @return list of objects
+	 */
 	@SuppressWarnings("unchecked")
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 	public List<Object> getObjectsForSIMPAC(

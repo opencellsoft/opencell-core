@@ -68,7 +68,7 @@ public class RejectedBillingAccountBean extends BaseBean<RejectedBillingAccount>
 
 	@Override
 	protected String getDefaultSort() {
-		return "billingAccount";
+		return "billingAccount.code";
 	}
 	
 	 /**

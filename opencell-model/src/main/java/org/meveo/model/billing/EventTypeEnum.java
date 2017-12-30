@@ -45,6 +45,8 @@ public enum EventTypeEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id id of event type
+	 * @return event type enum for given id.
 	 */
 	public static EventTypeEnum getValue(Integer id) {
 		if (id != null) {

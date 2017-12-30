@@ -124,10 +124,10 @@ public class LanguageApi extends BaseApi {
     /**
      * Create or update Language based on the trading language code.
      * 
-     * @param postData
+     * @param postData posted data
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(LanguageDto postData) throws MeveoApiException, BusinessException {
         

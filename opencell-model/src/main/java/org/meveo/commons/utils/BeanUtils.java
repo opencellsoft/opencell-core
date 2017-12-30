@@ -17,11 +17,12 @@ import org.slf4j.LoggerFactory;
 public class BeanUtils {
 
     /**
-     * Check that all fields of an object as identical
+     * Check that all fields of an object as identical.
      * 
      * @param one First object
      * @param two Second object
      * @param fieldsToOmmit Fields to ignore
+     * @return true/false
      */
     public static boolean isIdentical(Object one, Object two, String... fieldsToOmmit) {
 

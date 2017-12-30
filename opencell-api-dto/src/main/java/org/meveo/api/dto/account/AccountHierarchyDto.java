@@ -164,6 +164,21 @@ public class AccountHierarchyDto implements Serializable {
      */
     @Deprecated
     private Integer paymentMethod;
+    
+    /**
+     * Job title. Account Entity
+     */
+    private String jobTitle;
+    
+    /**
+     * Registration number. CUST.
+     */
+    private String registrationNo;
+    
+    /**
+     * VAT. CUST.
+     */
+    private String vatNo;
 
     public AccountHierarchyDto() {
 
@@ -460,5 +475,29 @@ public class AccountHierarchyDto implements Serializable {
 
     public void setPaymentMethod(Integer paymentMethod) {
         this.paymentMethod = paymentMethod;
+    }
+
+    public String getJobTitle() {
+        return jobTitle;
+    }
+
+    public void setJobTitle(String jobTitle) {
+        this.jobTitle = jobTitle;
+    }
+
+    public String getRegistrationNo() {
+        return registrationNo;
+    }
+
+    public void setRegistrationNo(String registrationNo) {
+        this.registrationNo = registrationNo;
+    }
+
+    public String getVatNo() {
+        return vatNo;
+    }
+
+    public void setVatNo(String vatNo) {
+        this.vatNo = vatNo;
     }
 }

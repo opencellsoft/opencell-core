@@ -40,35 +40,32 @@ public class EntityToDtoConverter {
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
-        CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
-        if (includeInheritedCF && (customFieldsDto == null || customFieldsDto.getCustomField().isEmpty())) {
-            ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
-            if (parentEntities != null) {
-                for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
-                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
-                    if (inheritedCustomFieldsDto != null) {
-                        if (customFieldsDto == null) {
-                            customFieldsDto = new CustomFieldsDto();
-                        }
-                        customFieldsDto.getCustomField().addAll(inheritedCustomFieldsDto.getCustomField());
-                    }
-                }
-            }
-        }
-        return customFieldsDto;
-
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
+        return getCustomFieldsDTO(entity, false);
     }
 
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity) {
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
+        return getCustomFieldsDTO(entity, includeInheritedCF, false);
+    }
+
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF, boolean mergeMapValues) {
         if (entity.getCfValues() == null) {
             return null;
         }
+
         Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues().getValuesByCode();
-        return getCustomFieldsDTO(entity, cfValuesByCode);
+        return getCustomFieldsDTO(entity, cfValuesByCode, includeInheritedCF, mergeMapValues);
     }
 
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode) {
+    /**
+     * 
+     * @param entity entity
+     * @param cfValuesByCode List of custom field values by code
+     * @param includeInheritedCF If true, also returns the inherited cfs
+     * @param mergeMapValues If true, merged the map values between instance cf and parent. Use to show a single list of values. 
+     * @return custom fields dto
+     */
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
 
         if (cfValuesByCode == null || cfValuesByCode.isEmpty()) {
             return null;
@@ -76,7 +73,7 @@ public class EntityToDtoConverter {
 
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
 
-        CustomFieldsDto dto = new CustomFieldsDto();
+        CustomFieldsDto cfsDto = new CustomFieldsDto();
         for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValuesByCode.entrySet()) {
             String cfCode = cfValueInfo.getKey();
             // Return only those values that have cft
@@ -84,13 +81,60 @@ public class EntityToDtoConverter {
                 continue;
             }
             for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                dto.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                cfsDto.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
             }
         }
-        if (dto.isEmpty()) {
-            return null;
+
+        // add parent cf values if inherited
+        if (includeInheritedCF) {
+            ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
+            if (parentEntities != null) {
+                // get parent entities
+                for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
+                    // get parent entities cf values
+                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
+                    if (inheritedCustomFieldsDto != null) {
+                        for (CustomFieldDto cfDto : cfsDto.getCustomField()) {
+                            for (CustomFieldDto inheritedCfDto : inheritedCustomFieldsDto.getCustomField()) {
+                                // check if cf code is equal to inherited, then we merge
+                                if (cfDto.getCode().equals(inheritedCfDto.getCode())) {
+                                    cfsDto.getInheritedCustomField().add(inheritedCfDto);
+                                }
+                            }
+                        }
+
+                        if (mergeMapValues) {
+                            for (CustomFieldDto inheritedCFDto : inheritedCustomFieldsDto.getCustomField()) {
+                                boolean found = false;
+                                for (CustomFieldDto cfDto : cfsDto.getCustomField()) {
+                                    if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
+                                        found = true;
+
+                                        Map<String, CustomFieldValueDto> mapValue = cfDto.getMapValue();
+                                        Map<String, CustomFieldValueDto> inheritedMapValue = inheritedCFDto.getMapValue();
+                                        if (inheritedMapValue != null) {
+                                            Set<Entry<String, CustomFieldValueDto>> entrySet = inheritedMapValue.entrySet();
+                                            for (Entry<String, CustomFieldValueDto> entry : entrySet) {
+                                                CustomFieldValueDto customFieldValueDto = mapValue.get(entry.getKey());
+                                                if (customFieldValueDto == null) {
+                                                    mapValue.put(entry.getKey(), entry.getValue());
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!found) {
+                                    cfsDto.getCustomField().add(inheritedCFDto);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return dto;
+
+        return cfsDto.isEmpty() ? null : cfsDto;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -199,115 +243,5 @@ public class EntityToDtoConverter {
         }
         return dtos;
     }
-
-    public CustomFieldsDto getCustomFieldsWithInheritedDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
-        CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
-        if (customFieldsDto == null) {
-            customFieldsDto = new CustomFieldsDto();
-        }
-
-        if (!customFieldsDto.isEmpty() && includeInheritedCF) {
-            ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
-            if (parentEntities != null) {
-                for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
-                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
-                    if (inheritedCustomFieldsDto != null) {
-                        for (CustomFieldDto cfDto : customFieldsDto.getCustomField()) {
-                            for (CustomFieldDto inheritedCFDto : inheritedCustomFieldsDto.getCustomField()) {
-                                if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
-                                    customFieldsDto.getInheritedCustomField().add(inheritedCFDto);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if (customFieldsDto.isEmpty()) {
-            return null;
-        }
-
-        return customFieldsDto;
-    }
-
-    /**
-     * @param entity
-     * @param includeInheritedCF
-     * @return
-     */
-    public CustomFieldsDto getMergedCustomFieldsWithInheritedDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
-        CustomFieldsDto customFieldsDto = getCustomFieldsDTO(entity);
-        if (customFieldsDto == null) {
-            customFieldsDto = new CustomFieldsDto();
-        }
-        ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
-
-        List<CustomFieldDto> customFieldList = customFieldsDto.getCustomField();
-        if (!customFieldsDto.isEmpty() && includeInheritedCF) {
-            if (parentEntities != null) {
-                for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
-                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
-                    if (inheritedCustomFieldsDto != null) {
-                        List<CustomFieldDto> inheritedCustomFieldList = inheritedCustomFieldsDto.getCustomField();
-                        for (CustomFieldDto cfDto : customFieldList) {
-
-                            for (CustomFieldDto inheritedCFDto : inheritedCustomFieldList) {
-                                if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
-                                    customFieldsDto.getInheritedCustomField().add(inheritedCFDto);
-                                }
-                            }
-                        }
-
-                        for (CustomFieldDto inheritedCFDto : inheritedCustomFieldList) {
-                            boolean found = false;
-                            for (CustomFieldDto cfDto : customFieldList) {
-                                if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
-                                    found = true;
-
-                                    Map<String, CustomFieldValueDto> mapValue = cfDto.getMapValue();
-                                    Map<String, CustomFieldValueDto> inheritedMapValue = inheritedCFDto.getMapValue();
-                                    if (inheritedMapValue != null) {
-                                        Set<Entry<String, CustomFieldValueDto>> entrySet = inheritedMapValue.entrySet();
-                                        for (Entry<String, CustomFieldValueDto> entry : entrySet) {
-                                            CustomFieldValueDto customFieldValueDto = mapValue.get(entry.getKey());
-                                            if (customFieldValueDto == null) {
-                                                mapValue.put(entry.getKey(), entry.getValue());
-                                            }
-                                        }
-                                    }
-
-                                    /**
-                                     * List<CustomFieldValueDto> listValue = cfDto.getListValue(); List<CustomFieldValueDto> inheritedListValue = inheritedCFDto.getListValue(); for
-                                     * (CustomFieldValueDto customFieldValueDto : inheritedListValue) {
-                                     * 
-                                     * }
-                                     */
-                                }
-                            }
-
-                            if (!found) {
-                                customFieldList.add(inheritedCFDto);
-                            }
-                        }
-
-                    }
-
-                }
-            }
-        } else if (includeInheritedCF && (customFieldsDto == null || customFieldList.isEmpty())) {
-            if (parentEntities != null) {
-                for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
-                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
-                    if (inheritedCustomFieldsDto != null) {
-                        customFieldList.addAll(inheritedCustomFieldsDto.getCustomField());
-                    }
-                }
-            }
-        }
-        if (customFieldsDto.isEmpty()) {
-            return null;
-        }
-
-        return customFieldsDto;
-    }
+    
 }

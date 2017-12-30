@@ -95,10 +95,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Find scripts by source type
+     * Find scripts by source type.
      * 
-     * @param type
-     * @return
+     * @param type script source type
+     * @return list of scripts
      */
     @SuppressWarnings("unchecked")
     protected List<T> findByType(ScriptSourceTypeEnum type) {
@@ -182,7 +182,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Check full class name is existed class path or not
+     * Check full class name is existed class path or not.
+     * @param fullClassName full class name
+     * @return true i class is overridden 
      */
     public static boolean isOverwritesJavaClass(String fullClassName) {
         try {
@@ -238,7 +240,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Build the classpath and compile all scripts
+     * Build the classpath and compile all scripts.
+     * @param scripts list of scripts
      */
     protected void compile(List<T> scripts) {
         try {
@@ -354,7 +357,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param javaSrc Java source to compile
      * @return Compiled class instance
-     * @throws CharSequenceCompilerException
+     * @throws CharSequenceCompilerException char sequence compiler exception.
      */
     protected Class<SI> compileJavaSource(String javaSrc) throws CharSequenceCompilerException {
 
@@ -507,8 +510,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     /**
      * Add a log line for a script
      * 
-     * @param message
-     * @param scriptCode
+     * @param message message to be displayed
+     * @param scriptCode code of script.
      */
     public void addLog(String message, String scriptCode) {
 
@@ -521,8 +524,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     /**
      * Get logs for script
      * 
-     * @param scriptCode
-     * @return
+     * @param scriptCode code of script
+     * @return list logs.
      */
     public List<String> getLogs(String scriptCode) {
 
@@ -533,9 +536,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Clear all logs for a script
+     * Clear all logs for a script.
      * 
-     * @param scriptCode
+     * @param scriptCode script's code
      */
     public void clearLogs(String scriptCode) {
         if (allLogs.containsKey(scriptCode)) {
@@ -544,7 +547,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Find the package name in a source java text
+     * Find the package name in a source java text.
      * 
      * @param src Java source code
      * @return Package name
@@ -580,11 +583,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity
+     * Execute action on an entity.
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return Context parameters. Will not be null even if "context" parameter is null.
      * @throws InvalidPermissionException Insufficient access to run the script
      * @throws ElementNotFoundException Script not found
@@ -596,7 +599,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity
+     * Execute action on an entity.
      * 
      * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
@@ -619,9 +622,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Execute action on an entity
+     * Execute action on an entity.
      * 
-     * @param entity Entity to execute action on
      * @param scriptCode Script to execute, identified by a code
      * @param context Method context
      * 
@@ -662,9 +664,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Parse parameters encoded in URL like style param=value&param=value
+     * Parse parameters encoded in URL like style param=value&amp;param=value.
      * 
-     * @param encodedParameters Parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Parameters encoded in URL like style param=value&amp;param=value
      * @return A map of parameter keys and values
      */
     public static Map<String, Object> parseParameters(String encodedParameters) {

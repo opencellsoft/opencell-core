@@ -90,10 +90,12 @@
             <hftl:searchField label="#{messages['billingAccount.billingAccountPanel']}" id="billingAccountId" field="billingAccount" valueLabelField="code" popup="true" popupId="billingAccountPopup" />
             <hftl:searchField label="#{messages['invoiceSubCategory.title']}" id="invoiceSubCategoryId" field="invoiceSubCategory" valueLabelField="code" listBean="#{invoiceSubCategoryBean}" /> 
             <hftl:searchField label="#{messages['ratedTransaction.pricePlan']}" id="priceplan" field="priceplan" valueLabelField="code" popup="true" popupId="searchPricePlanPopup" />  
-            <hftl:searchField label="#{messages['operation.wallet']}" id="wallet" field="wallet" valueLabelField="code" popup="true" popupId="searchWalletInstancePopup" />   
-           <hftl:searchField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" valueLabelField="invoiceNumber" popup="true" popupId="searchInvoicePopup" /> 			
-            <hftl:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />
-			<hftl:searchField label="#{messages['ratedTransaction.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
+            <hftl:searchField label="#{messages['operation.wallet']}" id="wallet" field="wallet" valueLabelField="code" popup="true" popupId="searchWalletInstancePopup" />
+            <hftl:searchField label="#{messages['ratedTransaction.invoice']}" id="invoice" field="invoice" valueLabelField="invoiceNumber" popup="true" popupId="searchInvoicePopup" />
+            <hftl:searchField label="#{messages['ratedTransaction.unitAmountWithoutTax']}" field="unitAmountWithoutTax" />
+            <hftl:searchField label="#{messages['ratedTransaction.unitAmountWithTax']}" field="unitAmountWithTax" />
+            <hftl:searchField label="#{messages['invoice.amountWithoutTax']}" field="amountWithoutTax" />	
+            <hftl:searchField label="#{messages['invoice.amountWithTax']}" field="amountWithTax" />
 			<hftl:searchField label="#{messages['ratedTransaction.status']}" field="status" />
 			<hftl:searchField label="#{messages['ratedTransaction.param1']}" field="parameter1" />
 			<hftl:searchField label="#{messages['ratedTransaction.param2']}" field="parameter2" />
@@ -112,9 +114,8 @@
 						value="#{ratedTransactionListBean.getWalletOperationCode(entity.walletOperationId)}" />  
 			</p:column>
 			<hftl:column label="#{messages['ratedTransaction.quantity']}" field="quantity"  converterParam="4digits" wrapHeader="true" />
-			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />
-			
-			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" rendered="#{ ! appProvider.entreprise}" />
+			<hftl:column label="#{messages['ratedTransaction.amount1WithoutTax']}" field="amountWithoutTax"  converterParam="4digits" wrapHeader="true" />			
+			<hftl:column label="#{messages['ratedTransaction.amount1WithTax']}" field="amountWithTax"  converterParam="4digits" wrapHeader="true" />
 			<hftl:column label="#{messages['ratedTransaction.usageDate']}" field="usageDate" isDate="true" />
 			<hftl:column label="#{messages['invoice.invoiceNumber']}" field="invoice.invoiceNumber"  /> 
 			<hftl:actionsColumn renderEditLink="true" renderDeleteLink="false" width="60"

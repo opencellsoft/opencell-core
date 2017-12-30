@@ -36,14 +36,15 @@ public class CustomizedEntityService implements Serializable {
      * 
      * @param entityName Optional filter by a name
      * @param customEntityTemplatesOnly Return custom entity templates only
-     * @param includeNonManagedEntities If true, entities that are not managed through the Entity Customization list page will be included.
+     * @param includeNonManagedEntities If true, entities that are not managed through the Entity Customization list page will be included - that is those that
+     *        have @CustomFieldEntity(isManualyManaged=true)
      * @param sortBy Sort by. Valid values are: "description" or null to sort by entity name
      * @param sortOrder Sort order. Valid values are "DESCENDING" or "ASCENDING". By default will sort in Ascending order.
-     * 
+     * @param includeParentClassesOnly true if including parent classes.
      * @return A list of customized/customizable entities
      */
-    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, final String sortBy,
-            final String sortOrder) {
+    public List<CustomizedEntity> getCustomizedEntities(String entityName, boolean customEntityTemplatesOnly, boolean includeNonManagedEntities, boolean includeParentClassesOnly,
+            final String sortBy, final String sortOrder) {
         List<CustomizedEntity> entities = new ArrayList<>();
 
         if (entityName != null) {
@@ -51,7 +52,7 @@ public class CustomizedEntityService implements Serializable {
         }
 
         if (!customEntityTemplatesOnly) {
-            entities.addAll(searchAllCustomFieldEntities(entityName, includeNonManagedEntities));
+            entities.addAll(searchAllCustomFieldEntities(entityName, includeNonManagedEntities, includeParentClassesOnly));
             entities.addAll(searchJobs(entityName));
         }
         entities.addAll(searchCustomEntityTemplates(entityName));
@@ -64,9 +65,10 @@ public class CustomizedEntityService implements Serializable {
      *
      * @param entityName Optional filter by a name
      * @param includeNonManagedEntities If true, will include all entries including those set not to appear in the Custom Entities list.
+     * @param includeParentClassesOnly Include only those classes that have @CustomFieldEntity annotation directly on them. E.g. Will not include all AccountOperation subclasses.
      * @return A list of customized/customizable entities.
      */
-    private List<CustomizedEntity> searchAllCustomFieldEntities(final String entityName, final boolean includeNonManagedEntities) {
+    private List<CustomizedEntity> searchAllCustomFieldEntities(final String entityName, final boolean includeNonManagedEntities, boolean includeParentClassesOnly) {
         List<CustomizedEntity> entities = new ArrayList<>();
         Reflections reflections = new Reflections("org.meveo.model");
         Set<Class<? extends ICustomFieldEntity>> cfClasses = reflections.getSubTypesOf(ICustomFieldEntity.class);
@@ -75,8 +77,13 @@ public class CustomizedEntityService implements Serializable {
         CustomFieldEntity annotation = null;
         for (Class<? extends ICustomFieldEntity> cfClass : cfClasses) {
 
-            annotation = cfClass.getAnnotation(CustomFieldEntity.class);
-            boolean isSkipped = JobInstance.class.isAssignableFrom(cfClass) || Modifier.isAbstract(cfClass.getModifiers())
+            if (includeParentClassesOnly) {
+                annotation = cfClass.getDeclaredAnnotation(CustomFieldEntity.class);
+            } else {
+                annotation = cfClass.getAnnotation(CustomFieldEntity.class);
+            }
+
+            boolean isSkipped = annotation == null || JobInstance.class.isAssignableFrom(cfClass) || Modifier.isAbstract(cfClass.getModifiers())
                     || (entityName != null && !cfClass.getSimpleName().toLowerCase().contains(entityName.toLowerCase()))
                     || (!includeNonManagedEntities && !annotation.isManuallyManaged());
 

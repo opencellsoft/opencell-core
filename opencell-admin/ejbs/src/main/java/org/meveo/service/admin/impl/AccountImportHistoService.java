@@ -29,7 +29,6 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 @Named
-public class AccountImportHistoService extends
-		PersistenceService<AccountImportHisto> {
+public class AccountImportHistoService extends PersistenceService<AccountImportHisto> {
 
 }

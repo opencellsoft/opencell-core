@@ -40,11 +40,6 @@ public class SubscriptionListBean extends BaseBean<Subscription> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link Subscription} service. Extends {@link PersistenceService}
-	 */
 	@Inject
 	private SubscriptionService subscriptionService;
 

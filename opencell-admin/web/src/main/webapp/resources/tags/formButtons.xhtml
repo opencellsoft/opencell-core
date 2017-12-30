@@ -176,7 +176,7 @@
 
         <c:if test="#{! empty customFieldDataEntryBean.getCustomActions(cc.attrs.backingBean.entity)}">
             <ui:repeat var="customAction" value="#{customFieldDataEntryBean.getCustomActions(cc.attrs.backingBean.entity)}">
-                <p:commandButton value="#{customAction.label}" action="#{customFieldDataEntryBean.executeCustomAction(cc.attrs.backingBean.entity, customAction, null)}"
+                <p:commandButton value="#{customAction.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}" action="#{customFieldDataEntryBean.executeCustomAction(cc.attrs.backingBean.entity, customAction, null)}"
                     process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}"
                     partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="@form"
                     rendered="#{exp:evaluateToBoolean(customAction.applicableOnEl,'entity',cc.attrs.backingBean.entity)}" />
@@ -192,17 +192,10 @@
 						PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').show();
 					}
 				}
-
-				function handleDeleteComplete(xhr, status, args) {
-					var result = args.result;
-					if(typeof(result)!="undefined" && !result){
-						PF('#{cc.attrs.formId}confirmCanotDeleteWidget').show();
-					}
-				}
 			//]]>
 		</script>	
 		<p:commandButton id="deletelink" icon="ui-icon-trash" value="#{messages['commons.delete']}" action="#{cc.attrs.backingBean.deleteWithBack}" immediate="true" update="@form"
-			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}" oncomplete="handleDeleteComplete(xhr,status,args)">
+			rendered="#{cc.attrs.showDeleteButton and cc.attrs.backingBean.entity.id!=null and cc.attrs.backingBean.canUserUpdateEntity()}">
             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['commons.confirmDelete']}" icon="ui-icon-alert" />
 		</p:commandButton>
 
@@ -213,17 +206,7 @@
 				<p:commandButton id="cannotUpdateWithMessage" value="#{messages['commons.ok']}"
 					oncomplete="PF('#{cc.attrs.formId}confirmCannotUpdateWithMessageDialog').hide()" update="@this" />
 			</p:panel>
-		</p:confirmDialog>
-		
-		<p:confirmDialog id="confirmCanDeleteDialog" styleClass="confirm-dialog"
-			message="#{messages['commons.confirmCanotDelete']}" header="#{messages['commons.confirmCanotDeleteHeader']}"
-			severity="alert" widgetVar="#{cc.attrs.formId}confirmCanotDeleteWidget" appendTo="@(body)">
-			<p:panel styleClass="confirm-dialog-content">
-				<p:commandButton id="canotdeleteOk" value="#{messages['commons.ok']}"
-					oncomplete="PF('#{cc.attrs.formId}confirmCanotDeleteWidget').hide()" update="@this" />
-			</p:panel>
-		</p:confirmDialog>
-
+		</p:confirmDialog>		
 	</h:panelGroup>
 
 </cc:implementation>

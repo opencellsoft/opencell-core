@@ -25,7 +25,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Aug 1, 2016 9:46:32 PM
+ * @since Aug 1, 2016 9:46:32 PM
  *
  */
 @Stateless
@@ -46,10 +46,10 @@ public class DiscountPlanItemApi extends BaseApi {
     /**
      * creates a discount plan item
      * 
-     * @param postData
+     * @param postData posted data
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void create(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
 
@@ -74,12 +74,12 @@ public class DiscountPlanItemApi extends BaseApi {
     }
 
     /**
-     * updates the description of an existing discount plan item
+     * updates the description of an existing discount plan item.
      * 
-     * @param postData
+     * @param postData posted data to API containing discount plan infos
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void update(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
 
@@ -87,23 +87,23 @@ public class DiscountPlanItemApi extends BaseApi {
             missingParameters.add("discountPlanItemCode");
         }
         handleMissingParameters();
-                
-        DiscountPlanItem discountPlanItem=discountPlanItemService.findByCode(postData.getCode());
-        
-        if(discountPlanItem==null){
+
+        DiscountPlanItem discountPlanItem = discountPlanItemService.findByCode(postData.getCode());
+
+        if (discountPlanItem == null) {
             throw new EntityDoesNotExistsException(DiscountPlanItem.class, postData.getCode());
         }
-        discountPlanItem=fromDto(postData,discountPlanItem);
+        discountPlanItem = fromDto(postData, discountPlanItem);
 
         discountPlanItemService.update(discountPlanItem);
     }
 
     /**
-     * find a discount plan item by code
+     * find a discount plan item by code.
      * 
-     * @param discountPlanCode
-     * @return
-     * @throws MeveoApiException
+     * @param discountPlanItemCode discount plan code
+     * @return discount plan
+     * @throws MeveoApiException meveo api exception.
      */
     public DiscountPlanItemDto find(String discountPlanItemCode) throws MeveoApiException {
 
@@ -121,10 +121,11 @@ public class DiscountPlanItemApi extends BaseApi {
     }
 
     /**
-     * delete a discount plan item by code
+     * delete a discount plan item by code.
      * 
-     * @param discountPlanItemCode
-     * @throws MeveoApiException
+     * @param discountPlanItemCode discount plan item code
+     * @throws MeveoApiException meveo api exception.
+     * @throws BusinessException busines exception.
      */
     public void remove(String discountPlanItemCode) throws MeveoApiException, BusinessException {
 
@@ -141,12 +142,12 @@ public class DiscountPlanItemApi extends BaseApi {
     }
 
     /**
-     * create if the the discount plan item is not existed, updates if exists
+     * create if the the discount plan item is not existed, updates if exists.
      * 
-     * @param postData
+     * @param postData posted data
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.s
      */
     public void createOrUpdate(DiscountPlanItemDto postData) throws MeveoApiException, BusinessException {
 
@@ -164,8 +165,8 @@ public class DiscountPlanItemApi extends BaseApi {
     /**
      * retrieves all discount plan item of the user
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return list of disount plan item 
+     * @throws MeveoApiException meveo api exception.
      */
     public List<DiscountPlanItemDto> list() throws MeveoApiException {
     	List<DiscountPlanItemDto> discountPlanItemDtos = new ArrayList<DiscountPlanItemDto>();

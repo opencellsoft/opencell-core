@@ -24,10 +24,10 @@ public class ChannelApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API containing channel's infos.
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void create(ChannelDto postData) throws MeveoApiException, BusinessException {
 
@@ -51,10 +51,10 @@ public class ChannelApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API containing channel's infos.
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException mevveo api exception
+     * @throws BusinessException  business exception
      */
     public void update(ChannelDto postData) throws MeveoApiException, BusinessException {
 
@@ -77,9 +77,9 @@ public class ChannelApi extends BaseApi {
 
     /**
      * 
-     * @param code
-     * @return
-     * @throws MeveoApiException
+     * @param code channel's code
+     * @return found channel
+     * @throws MeveoApiException meveo api exception.
      */
     public ChannelDto find(String code) throws MeveoApiException {
 
@@ -104,9 +104,9 @@ public class ChannelApi extends BaseApi {
 
     /**
      * 
-     * @param code
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @param code channel's code
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception
      */
     public void remove(String code) throws MeveoApiException, BusinessException {
 
@@ -127,10 +127,10 @@ public class ChannelApi extends BaseApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API containing channel's infos
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void createOrUpdate(ChannelDto postData) throws MeveoApiException, BusinessException {
 
@@ -150,8 +150,8 @@ public class ChannelApi extends BaseApi {
     /**
      * 
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return list of channels
+     * @throws MeveoApiException meveo api exception
      */
     public List<ChannelDto> list() throws MeveoApiException {
         List<ChannelDto> ChannelDtos = new ArrayList<ChannelDto>();
@@ -170,10 +170,10 @@ public class ChannelApi extends BaseApi {
 
     /**
      * 
-     * @param ChannelId
+     * @param ChannelId channel's id
 
-     * @return
-     * @throws MeveoApiException
+     * @return channel for given id
+     * @throws MeveoApiException meveo api exception.
      */
     public ChannelDto findById(String ChannelId) throws MeveoApiException {
         ChannelDto ChannelDto = null;

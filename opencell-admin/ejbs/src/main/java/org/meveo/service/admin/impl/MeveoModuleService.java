@@ -79,12 +79,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
     private MeveoInstanceService meveoInstanceService;
 
     /**
-     * import module from remote meveo instance
+     * import module from remote meveo instance.
      * 
-     * @param meveoInstance
-     * @return
-     * @throws MeveoApiException
-     * @throws RemoteAuthenticationException
+     * @param meveoInstance meveo instance
+     * @return list of meveo module
+     * @throws BusinessException business exception.
+     * @throws RemoteAuthenticationException remote authentication exception.
      */
     public List<MeveoModuleDto> downloadModulesFromMeveoInstance(MeveoInstance meveoInstance) throws BusinessException, RemoteAuthenticationException {
         List<MeveoModuleDto> result = null;
@@ -130,12 +130,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
     }
 
     /**
-     * Publish meveo module with DTO items to remote meveo instance
+     * Publish meveo module with DTO items to remote meveo instance.
      * 
-     * @param module
-     * @param meveoInstance
-     * @throws MeveoApiException
-     * @throws RemoteAuthenticationException
+     * @param module meveo module
+     * @param meveoInstance meveo instance.
+     * @throws BusinessException business exception.
+     * @throws RemoteAuthenticationException remote exception.
      */
     @SuppressWarnings("unchecked")
     public void publishModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance) throws BusinessException, RemoteAuthenticationException {
@@ -205,6 +205,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
+            
+            // check if moduleItem is linked to other module
+            if (isChildOfOtherModule(item.getItemCode())) {
+                continue;
+            }
+            
             loadModuleItem(item);
             BusinessEntity itemEntity = item.getItemEntity();
             if (itemEntity == null) {
@@ -251,6 +257,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             module.getModuleItems().clear();
             return update(module);
         }
+    }
+    
+    public boolean isChildOfOtherModule(String moduleItemCode) {
+        QueryBuilder qb = new QueryBuilder(MeveoModuleItem.class, "i", null);
+        qb.addCriterion("itemCode", "=", moduleItemCode, true);
+        return qb.count(getEntityManager()) > 1 ? true : false;
     }
 
     @SuppressWarnings("unchecked")

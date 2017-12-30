@@ -56,10 +56,13 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
+import org.meveo.model.security.Role;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.admin.impl.RoleService;
 import org.meveo.service.api.EntityToDtoConverter;
+import org.meveo.service.base.BusinessEntityService;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
@@ -105,7 +108,13 @@ public abstract class BaseApi {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
-    protected List<String> missingParameters = new ArrayList<String>();
+    @Inject
+    protected BusinessEntityService businessEntityService;
+    
+    @Inject
+    private RoleService roleService;
+
+    protected List<String> missingParameters = new ArrayList<>();
 
     protected void handleMissingParameters() throws MissingParameterException {
         if (!missingParameters.isEmpty()) {
@@ -116,9 +125,9 @@ public abstract class BaseApi {
     }
 
     /**
-     * Check if any parameters are missing and throw and exception
-     * 
-     * @throws MeveoApiException
+     * Check if any parameters are missing and throw and exception.
+     * @param dto base data transfer object.
+     * @throws MeveoApiException meveo api exception.
      */
     protected void handleMissingParametersAndValidate(BaseDto dto) throws MeveoApiException {
         validate(dto);
@@ -151,27 +160,27 @@ public abstract class BaseApi {
     }
 
     /**
-     * Populate custom field values from DTO
+     * Populate custom field values from DTO.
      * 
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
      * 
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity) throws MeveoApiException {
         populateCustomFields(customFieldsDto, entity, isNewEntity, true);
     }
 
     /**
-     * Populate custom field values from DTO
+     * Populate custom field values from DTO.
      * 
      * @param customFieldsDto Custom field values
      * @param entity Entity
      * @param isNewEntity Is entity a newly saved entity
      * 
      * @param checkCustomField Should a check be made if CF field is required
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     protected void populateCustomFields(CustomFieldsDto customFieldsDto, ICustomFieldEntity entity, boolean isNewEntity, boolean checkCustomField) throws MeveoApiException {
 
@@ -188,7 +197,7 @@ public abstract class BaseApi {
     }
 
     /**
-     * Populate custom field values from DTO
+     * Populate custom field values from DTO.
      * 
      * @param customFieldTemplates Custom field templates
      * @param customFieldDtos Custom field values
@@ -196,8 +205,8 @@ public abstract class BaseApi {
      * @param isNewEntity Is entity a newly saved entity
      * 
      * @param checkCustomFields Should a check be made if CF field is required
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
+     * @throws IllegalArgumentException illegal argument exception
+     * @throws IllegalAccessException illegal access exception
      * @throws MeveoApiException
      */
     @SuppressWarnings("unchecked")
@@ -544,11 +553,11 @@ public abstract class BaseApi {
     }
 
     /**
-     * Validates the DTO based on its constraint annotations
+     * Validates the DTO based on its constraint annotations.
      * 
-     * @param dto
-     * @throws ConstraintViolationException
-     * @throws ValidationException
+     * @param dto data transfer object.
+     * @throws ConstraintViolationException constraint violation exception.
+     * @throws MeveoApiException meveo api exception.
      */
     public void validate(Object dto) throws MeveoApiException {
 
@@ -572,9 +581,9 @@ public abstract class BaseApi {
     }
 
     /**
-     * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value
-     * 
-     * @return
+     * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
+     * @param cfDto cf dto.
+     * @return custom field converted object.
      */
     protected Object getValueConverted(CustomFieldDto cfDto) {
 
@@ -614,7 +623,7 @@ public abstract class BaseApi {
      * @param dto DTO object
      * @param partialUpdate Is this a partial update - fields with null values will be ignored
      * 
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected void convertDtoToEntityWithChildProcessing(Object entityToPopulate, Object dto, boolean partialUpdate) throws MeveoApiException {
@@ -779,8 +788,8 @@ public abstract class BaseApi {
      * 
      * @param objectToEvaluate Dto to evaluate
      * @return True if only code and provider fields contain values
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
+     * @throws IllegalAccessException illegal access exception
+     * @throws IllegalArgumentException illegal argumen exception.
      */
     private boolean isEntityReferenceOnly(Object objectToEvaluate) throws IllegalArgumentException, IllegalAccessException {
 
@@ -813,8 +822,8 @@ public abstract class BaseApi {
      * @param dto DTO object
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws MeveoApiException
-     * @throws ClassNotFoundException
+     * @throws MeveoApiException meveo api exception
+     * @throws ClassNotFoundException class not found exception.
      */
     @SuppressWarnings("rawtypes")
     protected ApiService getApiService(BaseDto dto, boolean throwException) throws MeveoApiException, ClassNotFoundException {
@@ -824,12 +833,12 @@ public abstract class BaseApi {
     }
 
     /**
-     * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
      * 
      * @param classname JPA entity classname
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException class not found exception.
      */
     @SuppressWarnings("rawtypes")
     protected ApiService getApiService(String classname, boolean throwException) throws ClassNotFoundException {
@@ -839,12 +848,12 @@ public abstract class BaseApi {
     }
 
     /**
-     * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * Find API service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
      * 
      * @param entityClass JPA entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws ClassNotFoundException
+     * 
      */
     @SuppressWarnings("rawtypes")
     protected ApiService getApiService(Class entityClass, boolean throwException) {
@@ -861,12 +870,12 @@ public abstract class BaseApi {
     }
 
     /**
-     * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
      * 
      * @param classname JPA entity classname
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException class not found exception.
      */
     @SuppressWarnings("rawtypes")
     protected ApiVersionedService getApiVersionedService(String classname, boolean throwException) throws ClassNotFoundException {
@@ -876,12 +885,12 @@ public abstract class BaseApi {
     }
 
     /**
-     * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * Find API versioned service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
      * 
      * @param entityClass JPA entity class
      * @param throwException Should exception be thrown if API service is not found
      * @return Api service
-     * @throws ClassNotFoundException
+     *
      */
     @SuppressWarnings("rawtypes")
     protected ApiVersionedService getApiVersionedService(Class entityClass, boolean throwException) {
@@ -904,7 +913,7 @@ public abstract class BaseApi {
      * @param dto DTO object
      * @param throwException Should exception be thrown if API service is not found
      * @return Persistence service
-     * @throws ClassNotFoundException
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings("rawtypes")
     protected PersistenceService getPersistenceService(BaseDto dto, boolean throwException) throws MeveoApiException {
@@ -923,12 +932,12 @@ public abstract class BaseApi {
     }
 
     /**
-     * Find Persistence service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses)
+     * Find Persistence service class first trying with JPA entity's classname and then with its super class (a simplified version instead of trying various class superclasses).
      * 
      * @param entityClass JPA Entity class
      * @param throwException Should exception be thrown if API service is not found
-     * @return Persistence service
-     * @throws ClassNotFoundException
+     * @return Persistence service 
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings("rawtypes")
     protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws MeveoApiException {
@@ -981,11 +990,12 @@ public abstract class BaseApi {
     }
 
     /**
-     * Convert multi language field DTO values into a map of values with language code as a key
+     * Convert multi language field DTO values into a map of values with language code as a key.
      * 
      * @param translationInfos Multi langauge field DTO values
+     * @param currentValues map of current values.
      * @return Map of values with language code as a key
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception.
      */
     protected Map<String, String> convertMultiLanguageToMapOfValues(List<LanguageDescriptionDto> translationInfos, Map<String, String> currentValues)
             throws InvalidParameterException {
@@ -1021,14 +1031,15 @@ public abstract class BaseApi {
     }
 
     /**
-     * Convert pagination and filtering DTO to a pagination configuration used in services
+     * Convert pagination and filtering DTO to a pagination configuration used in services.
      * 
      * @param defaultSortBy A default value to sortBy
      * @param defaultSortOrder A default sort order
      * @param fetchFields Fields to fetch
      * @param pagingAndFiltering Paging and filtering criteria
+     * @param targetClass class which is used for pagination.
      * @return Pagination configuration
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception.
      */
     @SuppressWarnings("rawtypes")
     protected PaginationConfiguration toPaginationConfiguration(String defaultSortBy, SortOrder defaultSortOrder, List<String> fetchFields, PagingAndFiltering pagingAndFiltering,
@@ -1083,8 +1094,11 @@ public abstract class BaseApi {
             String fieldName = fieldInfo.length == 1 ? fieldInfo[0] : fieldInfo[1];
 
             // Nothing to convert
-            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)) {
+            if (PersistenceService.SEARCH_ATTR_TYPE_CLASS.equals(fieldName) || PersistenceService.SEARCH_SQL.equals(key)
+                    || (value instanceof String && (PersistenceService.SEARCH_IS_NOT_NULL.equals((String) value) || PersistenceService.SEARCH_IS_NULL.equals((String) value)))) {
                 filters.put(key, value);
+
+                // Filter already contains a special
 
                 // Determine what the target field type is and convert to that data type
             } else {
@@ -1100,7 +1114,7 @@ public abstract class BaseApi {
                     fieldClassType = ReflectionUtils.getFieldGenericsType(field);
                 }
 
-                Object valueConverted = castFilterValue(value, fieldClassType, "inList".equals(condition));
+                Object valueConverted = castFilterValue(value, fieldClassType, (condition!=null && condition.contains("inList")) || "overlapOptionalRange".equals(condition));
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1125,15 +1139,15 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private Object castFilterValue(Object value, Class targetClass, boolean expectedList) throws InvalidParameterException {
 
-        log.error("Casting {} of class {} ", value, value != null ? value.getClass() : null);
+        log.debug("Casting {} of class {} target class {} expected list {} is array {}", value, value != null ? value.getClass() : null, targetClass, expectedList,
+            value != null ? value.getClass().isArray() : null);
         // Nothing to cast - same data type
-        if (targetClass.isAssignableFrom(value.getClass())) {
+        if (targetClass.isAssignableFrom(value.getClass()) && !expectedList) {
             return value;
-        }
 
-        // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
-        if (expectedList) {
-            if (value instanceof List || value instanceof Set) {
+            // A list is expected as value. If value is not a list, parse value as comma separated string and convert each value separately
+        } else if (expectedList) {
+            if (value instanceof List || value instanceof Set || value.getClass().isArray()) {
                 return value;
 
             } else if (value instanceof String) {
@@ -1269,7 +1283,40 @@ public abstract class BaseApi {
                 } else if (stringVal != null) {
                     return new BigDecimal(stringVal);
                 }
+
+            } else if (BusinessEntity.class.isAssignableFrom(targetClass)) {
+
+                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                    return stringVal;
+                }
+
+                businessEntityService.setEntityClass(targetClass);
+
+                if (stringVal != null) {
+                    BusinessEntity businessEntity = businessEntityService.findByCode(stringVal);
+                    if (businessEntity == null) {
+                        // Did not find a way how to pass nonexistant entity to search sql
+                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
+                    }
+                    return businessEntity;
+                }
+                
+            } else if (Role.class.isAssignableFrom(targetClass)) {
+                // special case
+                if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {
+                    return stringVal;
+                }
+
+                if (stringVal != null) {
+                    Role role = roleService.findByName(stringVal);
+                    if (role == null) {
+                        // Did not find a way how to pass nonexistant entity to search sql
+                        throw new InvalidParameterException("Entity of type " + targetClass.getSimpleName() + " with code " + stringVal + " not found");
+                    }
+                    return role;
+                }
             }
+
         } catch (NumberFormatException e) {
             // Swallow - validation will take care of it later
         }

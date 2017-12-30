@@ -5,7 +5,7 @@
 	<parent>
 		<artifactId>opencell-admin</artifactId>
 		<groupId>com.opencellsoft</groupId>
-		<version>4.7.3</version>
+		<version>4.8</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>opencell-admin-ejbs</artifactId>
@@ -582,6 +582,12 @@
    			 <groupId>com.ingenico.connect.gateway</groupId>
   			<artifactId>connect-sdk-java</artifactId>
   			<version>5.5.1</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.keycloak</groupId>
+			<artifactId>keycloak-admin-client</artifactId>
+			<version>${version.keycloak}</version>
 		</dependency>
 
 	</dependencies>

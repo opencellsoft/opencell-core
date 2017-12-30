@@ -8,13 +8,13 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.CustomFieldTemplate.GroupedCustomFieldTreeItemType;
 import org.meveo.model.crm.custom.EntityCustomAction;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -48,7 +48,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private String appliesTo;
 
     /**
-     * Class corresponding to a entityClassName value of CustomEntityTemplate class if null
+     * Class corresponding to a entityClassName value or CustomEntityTemplate class if null
      */
     @SuppressWarnings("rawtypes")
     private Class entityClass = CustomEntityTemplate.class;
@@ -66,6 +66,12 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     private SortedTreeNode groupedFields;
 
     private TreeNode selectedFieldGrouping;
+
+    private TranslatableLabel selectedFieldGroupingLabel = new TranslatableLabel();
+
+    /**
+     * Remember tree nodes before refreshing them - that way tabs and fieldgroups are not lost after refresh if they had no children
+     */
     private List<TreeNode> cachedTreeNodes;
 
     private List<EntityCustomAction> entityActions;
@@ -121,7 +127,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     /**
      * Prepare to show entity customozation for a particular class - To be used from GUI action button/link
      * 
-     * @param clazz Entity class
+     * @param entityClassName Entity class
      */
     public void initCustomization(String entityClassName) {
         customizedEntity = null;
@@ -185,39 +191,41 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
         Map<String, CustomFieldTemplate> fields = customFieldTemplateService.findByAppliesToNoCache(cetPrefix);
 
-        GroupedCustomField groupedCFT = new GroupedCustomField(fields.values(), CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
+        GroupedCustomField groupedCFTAndActions = new GroupedCustomField(fields.values(),
+            CustomEntityTemplate.class.isAssignableFrom(entityClass) ? entity.getName() : "Custom fields", true);
 
-        groupedFields = new SortedTreeNode(groupedCFT.getType(), groupedCFT.getData(), null);
-        groupedFields.setExpanded(true);
+        // Append actions into the hierarchy of tabs and fieldgroups
+        Map<String, EntityCustomAction> customActions = entityActionScriptService.findByAppliesTo(cetPrefix);
+        groupedCFTAndActions.append(customActions.values());
 
-        // Create through tabs
-        for (GroupedCustomField level1 : groupedCFT.getChildren()) {
-            SortedTreeNode level1Node = new SortedTreeNode(level1.getType(), level1.getData(), groupedFields);
-            level1Node.setExpanded(true);
+        groupedFields = new SortedTreeNode(groupedCFTAndActions.getType(), groupedCFTAndActions.getData(), null, true);
+
+        // Create tabs
+        for (GroupedCustomField level1 : groupedCFTAndActions.getChildren()) {
+            SortedTreeNode level1Node = new SortedTreeNode(level1.getType(), level1.getData(), groupedFields, level1.getType() == GroupedCustomFieldTreeItemType.tab);
 
             // Create fields of field groups
             for (GroupedCustomField level2 : level1.getChildren()) {
-                SortedTreeNode level2Node = new SortedTreeNode(level2.getType(), level2.getData(), level1Node);
-                if (level2.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                    level2Node.setExpanded(true);
-                }
+                SortedTreeNode level2Node = new SortedTreeNode(level2.getType(), level2.getData(), level1Node, level2.getType() == GroupedCustomFieldTreeItemType.fieldGroup);
+
                 // Create fields
                 for (GroupedCustomField level3 : level2.getChildren()) {
-                    new SortedTreeNode(level3.getType(), level3.getData(), level2Node);
+                    new SortedTreeNode(level3.getType(), level3.getData(), level2Node, null);
                 }
             }
         }
+
         if (cachedTreeNodes != null && !cachedTreeNodes.isEmpty()) {
             for (TreeNode tabNode : cachedTreeNodes) {// tab
                 TreeNode existedTab = getChildNodeByValue(groupedFields, tabNode.getData().toString());
                 if (existedTab == null) {// check tab
-                    existedTab = new SortedTreeNode(CustomFieldTemplate.POSITION_TAB, tabNode.getData().toString(), groupedFields);
-                    existedTab.setExpanded(true);
+                    existedTab = new SortedTreeNode(GroupedCustomFieldTreeItemType.tab, tabNode.getData(), groupedFields, true);
+
                 }
                 for (TreeNode fieldGroupNode : tabNode.getChildren()) {// field groups of tab
                     TreeNode existedFieldGroup = getChildNodeByValue(existedTab, fieldGroupNode.getData().toString());
                     if (existedFieldGroup == null) {
-                        existedFieldGroup = new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP, fieldGroupNode.getData().toString(), existedTab);
+                        existedFieldGroup = new SortedTreeNode(GroupedCustomFieldTreeItemType.fieldGroup, fieldGroupNode.getData(), existedTab, null);
                     }
                 }
             }
@@ -254,17 +262,23 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         refreshFields();
     }
 
+    /**
+     * Remember the tabs and fieldgroups as they are reconstructed from field and action guiPosition fields. And then clear groupedFields value so it would be reconstructed again
+     * uppon the first reqeust.
+     */
     public void refreshFields() {
         if (groupedFields != null) {
             cachedTreeNodes = new ArrayList<TreeNode>();
-            for (TreeNode tabNode : groupedFields.getChildren()) {
-                SortedTreeNode tab = new SortedTreeNode(CustomFieldTemplate.POSITION_TAB, tabNode.getData(), null);
-                cachedTreeNodes.add(tab);
-                if (tabNode.getChildCount() != 0) {
-                    for (TreeNode fieldGroupNode : tabNode.getChildren()) {// fieldgroup
-                        SortedTreeNode fieldGroup = (SortedTreeNode) fieldGroupNode;
-                        if (fieldGroup.getType().equals(CustomFieldTemplate.POSITION_FIELD_GROUP) && fieldGroupNode.getChildCount() == 0) {
-                            new SortedTreeNode(CustomFieldTemplate.POSITION_FIELD_GROUP, fieldGroupNode.getData(), tab);
+            for (TreeNode rootChildNode : groupedFields.getChildren()) {
+                if (rootChildNode.getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
+                    SortedTreeNode tab = new SortedTreeNode(GroupedCustomFieldTreeItemType.tab, rootChildNode.getData(), null, null);
+                    cachedTreeNodes.add(tab);
+                    if (rootChildNode.getChildCount() != 0) {
+                        for (TreeNode fieldGroupNode : rootChildNode.getChildren()) {// fieldgroup
+                            SortedTreeNode fieldGroup = (SortedTreeNode) fieldGroupNode;
+                            if (fieldGroup.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name()) && fieldGroupNode.getChildCount() == 0) {
+                                new SortedTreeNode(GroupedCustomFieldTreeItemType.fieldGroup, fieldGroupNode.getData(), tab, null);
+                            }
                         }
                     }
                 }
@@ -277,12 +291,26 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         entityActions = null;
     }
 
+    public void editFieldGrouping(TreeNode selectedFieldGrouping) {
+        setSelectedFieldGrouping(selectedFieldGrouping);
+        // this.selectedFieldGroupingLabel = (TranslatableLabel) selectedFieldGrouping.getData();
+    }
+
     public void setSelectedFieldGrouping(TreeNode selectedFieldGrouping) {
         this.selectedFieldGrouping = selectedFieldGrouping;
+        this.selectedFieldGroupingLabel = (TranslatableLabel) selectedFieldGrouping.getData();
     }
 
     public TreeNode getSelectedFieldGrouping() {
         return selectedFieldGrouping;
+    }
+
+    public TranslatableLabel getSelectedFieldGroupingLabel() {
+        return selectedFieldGroupingLabel;
+    }
+
+    public void setSelectedFieldGroupingLabel(TranslatableLabel selectedFieldGroupingLabel) {
+        this.selectedFieldGroupingLabel = selectedFieldGroupingLabel;
     }
 
     public void setSelectedEntityAction(EntityCustomAction selectedEntityAction) {
@@ -323,18 +351,21 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     }
 
     public void newTab() {
-        selectedFieldGrouping = new SortedTreeNode(GroupedCustomField.TYPE_TAB, "", groupedFields);
-        selectedFieldGrouping.setExpanded(true);
+        setSelectedFieldGrouping(new SortedTreeNode(GroupedCustomFieldTreeItemType.tab, new TranslatableLabel(""), groupedFields, true));
+        // this.selectedFieldGroupingLabel = (TranslatableLabel) selectedFieldGrouping.getData();
     }
 
     public void newFieldGroup(TreeNode parentNode) {
-        selectedFieldGrouping = new SortedTreeNode(GroupedCustomField.TYPE_FIELD_GROUP, "", parentNode);
-        selectedFieldGrouping.setExpanded(true);
+        setSelectedFieldGrouping(new SortedTreeNode(GroupedCustomFieldTreeItemType.fieldGroup, new TranslatableLabel(""), parentNode, true));
+        // this.selectedFieldGroupingLabel = (TranslatableLabel) selectedFieldGrouping.getData();
     }
 
     public void saveUpdateFieldGrouping() {
 
         try {
+
+            ((SortedTreeNode) selectedFieldGrouping).setData(selectedFieldGroupingLabel);
+
             updateFieldGuiPositionValue((SortedTreeNode) selectedFieldGrouping);
 
         } catch (BusinessException e) {
@@ -344,7 +375,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     }
 
     public void cancelFieldGrouping() {
-        if (StringUtils.isBlank((String) selectedFieldGrouping.getData())) {
+        if (((TranslatableLabel) selectedFieldGrouping.getData()).isEmpty()) {
             selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
         }
     }
@@ -353,9 +384,9 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
         try {
             for (TreeNode childNode : selectedFieldGrouping.getChildren()) {
-                if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
+                if (childNode.getType().equals(GroupedCustomFieldTreeItemType.field.name())) {
                     customFieldTemplateService.remove(((CustomFieldTemplate) childNode.getData()).getId());
-                } else if (childNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
+                } else if (childNode.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
                     for (TreeNode childChildNode : childNode.getChildren()) {
                         customFieldTemplateService.remove(((CustomFieldTemplate) childChildNode.getData()).getId());
                     }
@@ -363,7 +394,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             }
 
             selectedFieldGrouping.getParent().getChildren().remove(selectedFieldGrouping);
-            
+
         } catch (BusinessException e) {
             log.error("Failed to remove field grouping", e);
         }
@@ -404,24 +435,28 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
         // Move a position down within the same branch
         if (!isLast) {
             TreeNode parent = node.getParent();
-            if (node.getType().equals(GroupedCustomField.TYPE_FIELD)) {
+            boolean moved = false;
+            if (node.getType().equals(GroupedCustomFieldTreeItemType.field.name()) || node.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
                 SortedTreeNode siblingDown = node.getSiblingDown();
-                if (siblingDown != null && !siblingDown.getType().equals(GroupedCustomField.TYPE_FIELD)) {
+                if (siblingDown != null && !(siblingDown.getType().equals(GroupedCustomFieldTreeItemType.field.name())
+                        || siblingDown.getType().equals(GroupedCustomFieldTreeItemType.action.name()))) {
                     parent.getChildren().remove(currentIndex);
                     siblingDown.getChildren().add(0, node);
-                    return;
+                    moved = true;
+                    // return;
                 }
             }
-            parent.getChildren().remove(currentIndex);
-            parent.getChildren().add(currentIndex + 1, node);
-
+            if (!moved) {
+                parent.getChildren().remove(currentIndex);
+                parent.getChildren().add(currentIndex + 1, node);
+            }
             // Move a position down outside the branch
         } else if (isLast && node.canMoveDown()) {
             SortedTreeNode parentSibling = node.getParentSiblingDown();
             if (parentSibling != null) {
                 node.getParent().getChildren().remove(currentIndex);
 
-                if (parentSibling.getType().equals(GroupedCustomField.TYPE_FIELD)) {
+                if (parentSibling.getType().equals(GroupedCustomFieldTreeItemType.field.name()) || parentSibling.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
                     parentSibling.getParent().getChildren().add(parentSibling.getIndexInParent(), node);
                 } else {
                     parentSibling.getChildren().add(0, node);
@@ -442,30 +477,43 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
         // Re-position current and child nodes
         List<TreeNode> nodes = nodeToUpdate.getChildren();
-        if (!nodeToUpdate.getType().equals(GroupedCustomField.TYPE_ROOT)) {
+        if (!nodeToUpdate.getType().equals(GroupedCustomFieldTreeItemType.root.name())) {
             nodes = new ArrayList<TreeNode>();
             nodes.add(nodeToUpdate);
         }
 
         for (TreeNode treeNode : nodes) {
             SortedTreeNode sortedNode = (SortedTreeNode) treeNode;
-
             String currentPosition = null;
-            if (sortedNode.getType().equals(GroupedCustomField.TYPE_TAB)) {
-                currentPosition = CustomFieldTemplate.POSITION_TAB + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
 
-            } else if (sortedNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                if (!sortedNode.getParent().getType().equals(GroupedCustomField.TYPE_ROOT)) {
-                    currentPosition = CustomFieldTemplate.POSITION_TAB + ":" + sortedNode.getParent().getData() + ":"
+            // Only tab, fieldGroup and action can be under root
+            if (sortedNode.getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
+                currentPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
+
+            } else if (sortedNode.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
+                if (!sortedNode.getParent().getType().equals(GroupedCustomFieldTreeItemType.root.name())) {
+                    currentPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + sortedNode.getParent().getData() + ":"
                             + ((SortedTreeNode) sortedNode.getParent()).getIndexInParent() + ";";
                 }
-                currentPosition = currentPosition + CustomFieldTemplate.POSITION_FIELD_GROUP + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
+                currentPosition = currentPosition + GroupedCustomFieldTreeItemType.fieldGroup.positionTag + ":" + sortedNode.getData() + ":" + sortedNode.getIndexInParent();
 
+            } else if (sortedNode.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
+                String guiPosition = GroupedCustomFieldTreeItemType.action.positionTag + ":" + sortedNode.getIndexInParent();
+                EntityCustomAction action = (EntityCustomAction) sortedNode.getData();
+                action = entityActionScriptService.refreshOrRetrieve(action);
+                if (!guiPosition.equals(action.getGuiPosition())) {
+                    action.setGuiPosition(guiPosition);
+                    action = entityActionScriptService.update(action);
+                    sortedNode.setData(action);
+                }
+                // No children under action, so continue
+                continue;
             }
+
             for (TreeNode node : sortedNode.getChildren()) {
                 SortedTreeNode sortedChildNode = (SortedTreeNode) node;
-                if (sortedChildNode.getType().equals(GroupedCustomField.TYPE_FIELD)) {
-                    String guiPosition = currentPosition + ";" + CustomFieldTemplate.POSITION_FIELD + ":" + sortedChildNode.getIndexInParent();
+                if (sortedChildNode.getType().equals(GroupedCustomFieldTreeItemType.field.name())) {
+                    String guiPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.field.positionTag + ":" + sortedChildNode.getIndexInParent();
                     CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildNode.getData();
                     cft = customFieldTemplateService.refreshOrRetrieve(cft);
                     if (!guiPosition.equals(cft.getGuiPosition())) {
@@ -474,18 +522,41 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
                         sortedChildNode.setData(cft);
                     }
 
-                } else if (sortedChildNode.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                    String childGroupPosition = currentPosition + ";" + GroupedCustomField.TYPE_FIELD_GROUP + ":" + sortedChildNode.getData() + ":"
+                } else if (sortedChildNode.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
+                    String guiPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.action.positionTag + ":" + sortedChildNode.getIndexInParent();
+                    EntityCustomAction action = (EntityCustomAction) sortedChildNode.getData();
+                    action = entityActionScriptService.refreshOrRetrieve(action);
+                    if (!guiPosition.equals(action.getGuiPosition())) {
+                        action.setGuiPosition(guiPosition);
+                        action = entityActionScriptService.update(action);
+                        sortedChildNode.setData(action);
+                    }
+
+                } else if (sortedChildNode.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
+                    String childGroupPosition = currentPosition + ";" + GroupedCustomFieldTreeItemType.fieldGroup + ":" + sortedChildNode.getData() + ":"
                             + sortedChildNode.getIndexInParent();
                     for (TreeNode childNode : sortedChildNode.getChildren()) {
                         SortedTreeNode sortedChildChildNode = (SortedTreeNode) childNode;
-                        String guiPosition = childGroupPosition + ";" + CustomFieldTemplate.POSITION_FIELD + ":" + sortedChildChildNode.getIndexInParent();
-                        CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildChildNode.getData();
-                        cft = customFieldTemplateService.refreshOrRetrieve(cft);
-                        if (!guiPosition.equals(cft.getGuiPosition())) {
-                            cft.setGuiPosition(guiPosition);
-                            cft = customFieldTemplateService.update(cft);
-                            sortedChildChildNode.setData(cft);
+
+                        if (sortedChildChildNode.getType().equals(GroupedCustomFieldTreeItemType.field.name())) {
+                            String guiPosition = childGroupPosition + ";" + GroupedCustomFieldTreeItemType.field.positionTag + ":" + sortedChildChildNode.getIndexInParent();
+                            CustomFieldTemplate cft = (CustomFieldTemplate) sortedChildChildNode.getData();
+                            cft = customFieldTemplateService.refreshOrRetrieve(cft);
+                            if (!guiPosition.equals(cft.getGuiPosition())) {
+                                cft.setGuiPosition(guiPosition);
+                                cft = customFieldTemplateService.update(cft);
+                                sortedChildChildNode.setData(cft);
+                            }
+
+                        } else if (sortedChildChildNode.getType().equals(GroupedCustomFieldTreeItemType.action.name())) {
+                            String guiPosition = childGroupPosition + ";" + GroupedCustomFieldTreeItemType.action.positionTag + ":" + sortedChildChildNode.getIndexInParent();
+                            EntityCustomAction action = (EntityCustomAction) sortedChildChildNode.getData();
+                            action = entityActionScriptService.refreshOrRetrieve(action);
+                            if (!guiPosition.equals(action.getGuiPosition())) {
+                                action.setGuiPosition(guiPosition);
+                                action = entityActionScriptService.update(action);
+                                sortedChildChildNode.setData(action);
+                            }
                         }
                     }
                 }
@@ -501,20 +572,43 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
             super();
         }
 
-        public SortedTreeNode(String type, Object data, TreeNode parent) {
-            super(type, data, parent);
+        public SortedTreeNode(GroupedCustomFieldTreeItemType type, Object data, TreeNode parent, Boolean expanded) {
+            super(type.name(), data, parent);
+            if (expanded != null && expanded) {
+                this.setExpanded(true);
+            }
         }
 
         public String getGuiPositionForField() {
 
-            if (getType().equals(GroupedCustomField.TYPE_TAB)) {
-                return CustomFieldTemplate.POSITION_TAB + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";field:" + getChildCount();
+            if (getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
+                return GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";"
+                        + GroupedCustomFieldTreeItemType.field.positionTag + ":" + getChildCount();
 
-            } else if (getType().equals(GroupedCustomField.TYPE_FIELD_GROUP)) {
-                String guiPosition = CustomFieldTemplate.POSITION_FIELD_GROUP + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";field:" + getChildCount();
-                if (getParent().getType().equals(GroupedCustomField.TYPE_TAB)) {
-                    guiPosition = CustomFieldTemplate.POSITION_TAB + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent()) + ";"
-                            + guiPosition;
+            } else if (getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
+                String guiPosition = GroupedCustomFieldTreeItemType.fieldGroup.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";"
+                        + GroupedCustomFieldTreeItemType.field.positionTag + ":" + getChildCount();
+                if (getParent().getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
+                    guiPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent())
+                            + ";" + guiPosition;
+                }
+                return guiPosition;
+            }
+            return null;
+        }
+
+        public String getGuiPositionForAction() {
+
+            if (getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
+                return GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";"
+                        + GroupedCustomFieldTreeItemType.action.positionTag + ":" + getChildCount();
+
+            } else if (getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())) {
+                String guiPosition = GroupedCustomFieldTreeItemType.fieldGroup.positionTag + ":" + getData() + ":" + getParent().getChildren().indexOf(this) + ";"
+                        + GroupedCustomFieldTreeItemType.action.positionTag + ":" + getChildCount();
+                if (getParent().getType().equals(GroupedCustomFieldTreeItemType.tab.name())) {
+                    guiPosition = GroupedCustomFieldTreeItemType.tab.positionTag + ":" + getParent().getData() + ":" + getParent().getParent().getChildren().indexOf(getParent())
+                            + ";" + guiPosition;
                 }
                 return guiPosition;
             }
@@ -523,20 +617,21 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
 
         public boolean canMoveUp() {
             // Can not move if its is a first item in a tree and nowhere to move
-            return !(getIndexInParent() == 0 && (this.getType().equals(GroupedCustomField.TYPE_TAB)
-                    || (this.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP) && ((SortedTreeNode) this.getParent()).getIndexInParent() == 0) || (this.getType().equals(
-                GroupedCustomField.TYPE_FIELD)
-                    && this.getParent().getType().equals(GroupedCustomField.TYPE_TAB) && ((SortedTreeNode) this.getParent()).getIndexInParent() == 0)));
+            return !(getIndexInParent() == 0 && (this.getType().equals(GroupedCustomFieldTreeItemType.tab.name())
+                    || (this.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name()) && ((SortedTreeNode) this.getParent()).getIndexInParent() == 0)
+                    || ((this.getType().equals(GroupedCustomFieldTreeItemType.field.name()) || this.getType().equals(GroupedCustomFieldTreeItemType.action.name()))
+                            && this.getParent().getType().equals(GroupedCustomFieldTreeItemType.tab.name()) && ((SortedTreeNode) this.getParent()).getIndexInParent() == 0)));
 
         }
 
         public boolean canMoveDown() {
 
-            return !(isLast() && (this.getType().equals(GroupedCustomField.TYPE_TAB)
-                    || (this.getType().equals(GroupedCustomField.TYPE_FIELD_GROUP) && ((SortedTreeNode) this.getParent()).isLast())
-                    || (this.getType().equals(GroupedCustomField.TYPE_FIELD) && this.getParent().getType().equals(GroupedCustomField.TYPE_TAB) && ((SortedTreeNode) this
-                        .getParent()).isLast()) || (this.getType().equals(GroupedCustomField.TYPE_FIELD) && this.getParent().getType().equals(GroupedCustomField.TYPE_FIELD_GROUP) && !((SortedTreeNode) this
-                .getParent()).canMoveDown())));
+            return !(isLast() && (this.getType().equals(GroupedCustomFieldTreeItemType.tab.name())
+                    || (this.getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name()) && ((SortedTreeNode) this.getParent()).isLast())
+                    || ((this.getType().equals(GroupedCustomFieldTreeItemType.field.name()) || this.getType().equals(GroupedCustomFieldTreeItemType.action.name()))
+                            && this.getParent().getType().equals(GroupedCustomFieldTreeItemType.tab.name()) && ((SortedTreeNode) this.getParent()).isLast())
+                    || (this.getType().equals(GroupedCustomFieldTreeItemType.field.name()) && this.getParent().getType().equals(GroupedCustomFieldTreeItemType.fieldGroup.name())
+                            && !((SortedTreeNode) this.getParent()).canMoveDown())));
 
         }
 

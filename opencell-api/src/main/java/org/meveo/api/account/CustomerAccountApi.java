@@ -134,15 +134,15 @@ public class CustomerAccountApi extends AccountEntityApi {
             postData.setPaymentMethods(new ArrayList<>());
             PaymentMethodDto paymentMethodDto = null;
             if (postData.getPaymentMethod() != null) {
-            	paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(), null, postData.getMandateIdentification(), postData.getMandateDate());               
+                paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(), null, postData.getMandateIdentification(), postData.getMandateDate());
             } else if (!StringUtils.isBlank(postData.getMandateIdentification())) {
-            	paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.DIRECTDEBIT, null, postData.getMandateIdentification(), postData.getMandateDate());
+                paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.DIRECTDEBIT, null, postData.getMandateIdentification(), postData.getMandateDate());
             } else {
-            	paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.CHECK);
+                paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.CHECK);
             }
             paymentMethodDto.validate();
             postData.getPaymentMethods().add(paymentMethodDto);
-            
+
         }
 
         CustomerAccount customerAccount = new CustomerAccount();
@@ -170,7 +170,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-            	paymentMethodDto.validate();
+                paymentMethodDto.validate();
                 customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount));
             }
         }
@@ -288,15 +288,15 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getDueDateDelayEL())) {
             customerAccount.setDueDateDelayEL(postData.getDueDateDelayEL());
         }
-        
+
         if (!StringUtils.isBlank(postData.isExcludedFromPayment())) {
             customerAccount.setExcludedFromPayment(postData.isExcludedFromPayment());
         }
-        
+
         if (!StringUtils.isBlank(postData.getDunningLevel())) {
-        	customerAccount.setDunningLevel(postData.getDunningLevel());
+            customerAccount.setDunningLevel(postData.getDunningLevel());
         }
-        
+
         // Synchronize payment methods
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             if (customerAccount.getPaymentMethods() == null) {
@@ -370,7 +370,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = CustomerAccount.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
 
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -390,8 +390,11 @@ public class CustomerAccountApi extends AccountEntityApi {
         CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
 
         if (calculateBalances) {
-            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, new Date());
-            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, new Date());
+            Date now = new Date();
+            BigDecimal creditBalance = customerAccountService.computeCreditBalance(customerAccount, false, now, false);
+            BigDecimal balanceDue = customerAccountService.customerAccountBalanceDue(customerAccount, now);
+            BigDecimal totalInvoiceBalance = customerAccountService.customerAccountBalanceExigibleWithoutLitigation(customerAccount, now);
+            BigDecimal accountBalance = customerAccountService.customerAccountBalance(customerAccount, now);
 
             if (balanceDue == null) {
                 throw new BusinessException("Balance due calculation failed.");
@@ -400,13 +403,17 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (totalInvoiceBalance == null) {
                 throw new BusinessException("Total invoice balance calculation failed.");
             }
+            
             customerAccountDto.setBalance(balanceDue);
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
+            customerAccountDto.setCreditBalance(creditBalance);
+            customerAccountDto.setAccountBalance(accountBalance);
         }
 
         return customerAccountDto;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public void remove(String customerAccountCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerAccountCode)) {
@@ -498,10 +505,10 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void updateCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -524,10 +531,10 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdateCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 

@@ -23,7 +23,7 @@ import org.meveo.service.crm.impl.CustomerService;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 7:11:03 AM
+ * @since Jun 3, 2016 7:11:03 AM
  *
  */
 @Stateless

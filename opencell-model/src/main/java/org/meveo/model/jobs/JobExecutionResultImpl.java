@@ -107,6 +107,9 @@ public class JobExecutionResultImpl extends BaseEntity {
         nbItemsProcessedWithError++;
     }
 
+    public synchronized void registerError() {        
+        nbItemsProcessedWithError++;
+    }
     public void close(String report) {
         this.report = report;
         this.endDate = new Date();
@@ -242,7 +245,7 @@ public class JobExecutionResultImpl extends BaseEntity {
 
     public void addReport(String report) {
         if (!StringUtils.isBlank(report)) {
-            this.report = (this.report == null ? "" : (this.report + ", ")) + report;
+            this.report = (this.report == null ? "" : (this.report + " \n ")) + report;
         }
     }
 

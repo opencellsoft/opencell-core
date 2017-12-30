@@ -41,7 +41,6 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -114,6 +113,11 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -152,6 +156,8 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setSubscriptionDate(postData.getSubscriptionDate());
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        billingAccount.setPhone(postData.getPhone());
+
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
             if (discountPlan == null) {
@@ -218,6 +224,11 @@ public class BillingAccountApi extends AccountEntityApi {
         if (StringUtils.isBlank(postData.getLanguage())) {
             missingParameters.add("language");
         }
+        if (postData.getElectronicBilling() != null && postData.getElectronicBilling()) {
+            if (StringUtils.isBlank(postData.getEmail())) {
+                missingParameters.add("email");
+            }
+        }
 
         handleMissingParametersAndValidate(postData);
 
@@ -279,7 +290,7 @@ public class BillingAccountApi extends AccountEntityApi {
         if (!StringUtils.isBlank(postData.getTerminationDate())) {
             billingAccount.setTerminationDate(postData.getTerminationDate());
         }
-        if (!StringUtils.isBlank(postData.getElectronicBilling())) {
+        if (postData.getElectronicBilling() != null) {
             billingAccount.setElectronicBilling(postData.getElectronicBilling());
         }
         if (!StringUtils.isBlank(postData.getEmail())) {
@@ -287,6 +298,9 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         if (postData.getInvoicingThreshold() != null) {
             billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
+        }
+        if (!StringUtils.isBlank(postData.getPhone())) {
+            billingAccount.setPhone(postData.getPhone());
         }
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -326,7 +340,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entity = BillingAccount.class))
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
@@ -340,6 +354,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return accountHierarchyApi.billingAccountToDto(billingAccount);
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public void remove(String billingAccountCode) throws MeveoApiException {
         if (StringUtils.isBlank(billingAccountCode)) {
             missingParameters.add("billingAccountCode");
@@ -402,10 +417,10 @@ public class BillingAccountApi extends AccountEntityApi {
     /**
      * Create or update Billing Account based on Billing Account Code
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(BillingAccountDto postData) throws MeveoApiException, BusinessException {
         if (billingAccountService.findByCode(postData.getCode()) == null) {
@@ -537,7 +552,7 @@ public class BillingAccountApi extends AccountEntityApi {
 
         if (postData.getPaymentMethod() == PaymentMethodEnum.CARD) {
             throw new InvalidParameterException("paymentMethod", "Card");
-        } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT || postData.getPaymentMethod() == PaymentMethodEnum.TIP) {
+        } else if (postData.getPaymentMethod() == PaymentMethodEnum.DIRECTDEBIT) {
             if (postData.getBankCoordinates() == null) {
                 throw new MissingParameterException("bankCoordinates");
             }
@@ -567,18 +582,6 @@ public class BillingAccountApi extends AccountEntityApi {
 
                             if (!BeanUtils.isIdentical(bankCoordinatesFromDto, ((DDPaymentMethod) paymentMethod).getBankCoordinates())) {
                                 ((DDPaymentMethod) paymentMethod).setBankCoordinates(bankCoordinatesFromDto);
-                                updateCA = true;
-                            }
-                            break;
-                        }
-
-                    } else if (postData.getPaymentMethod() == PaymentMethodEnum.TIP) {
-                        if (postData.getBankCoordinates().getIban().equals(((TipPaymentMethod) paymentMethod).getBankCoordinates().getIban())) {
-                            found = true;
-                            BankCoordinates bankCoordinatesFromDto = postData.getBankCoordinates().fromDto();
-
-                            if (!BeanUtils.isIdentical(bankCoordinatesFromDto, ((TipPaymentMethod) paymentMethod).getBankCoordinates())) {
-                                ((TipPaymentMethod) paymentMethod).setBankCoordinates(bankCoordinatesFromDto);
                                 updateCA = true;
                             }
                             break;

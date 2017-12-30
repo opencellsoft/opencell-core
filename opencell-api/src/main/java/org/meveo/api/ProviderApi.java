@@ -164,8 +164,8 @@ public class ProviderApi extends BaseApi {
     public ProviderDto find() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
-        if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true));
+        if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, true));
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -200,12 +200,12 @@ public class ProviderApi extends BaseApi {
      * Return a list of all the countryCode, currencyCode and languageCode of the provider.
      * 
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return GetTradingConfigurationResponseDto
+     * @throws MeveoApiException meveo api exception
      */
     public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
 
-        if (!(currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
+        if (!(currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization")))) {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
 
@@ -239,11 +239,12 @@ public class ProviderApi extends BaseApi {
      * Return a list of all the calendar, tax, invoice categories, invoice subcategories, billingCycle and termination reason of the provider.
      * 
      * 
-     * @return
+     * @return instance of GetInvoicingConfigurationResponseDto
+     * @throws MeveoApiException meveo exception.
      */
     public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() throws MeveoApiException {
 
-        if (!(currentUser.hasRole("superAdminManagement")
+        if (!(currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement")
                 || ((currentUser.hasRole("administrationVisualization") || currentUser.hasRole("billingVisualization") || currentUser.hasRole("catalogVisualization"))))) {
             throw new ActionForbiddenException("User has no permission to access provider");
         }
@@ -262,7 +263,7 @@ public class ProviderApi extends BaseApi {
         List<Tax> taxes = taxService.list();
         if (taxes != null) {
             for (Tax tax : taxes) {
-                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsWithInheritedDTO(tax, true)));
+                result.getTaxes().getTax().add(new TaxDto(tax, entityToDtoConverter.getCustomFieldsDTO(tax, true)));
             }
         }
 
@@ -271,7 +272,7 @@ public class ProviderApi extends BaseApi {
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
                 result.getInvoiceCategories().getInvoiceCategory()
-                    .add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true)));
+                    .add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true)));
             }
         }
 
@@ -280,7 +281,7 @@ public class ProviderApi extends BaseApi {
         if (invoiceSubCategories != null) {
             for (InvoiceSubCategory invoiceSubCategory : invoiceSubCategories) {
                 result.getInvoiceSubCategories().getInvoiceSubCategory()
-                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceSubCategory, true)));
+                    .add(new InvoiceSubCategoryDto(invoiceSubCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceSubCategory, true)));
             }
         }
 
@@ -288,7 +289,7 @@ public class ProviderApi extends BaseApi {
         List<BillingCycle> billingCycles = billingCycleService.list();
         if (billingCycles != null) {
             for (BillingCycle billingCycle : billingCycles) {
-                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsWithInheritedDTO(billingCycle, true)));
+                result.getBillingCycles().getBillingCycle().add(new BillingCycleDto(billingCycle, entityToDtoConverter.getCustomFieldsDTO(billingCycle, true)));
             }
         }
 
@@ -370,8 +371,8 @@ public class ProviderApi extends BaseApi {
     public ProviderDto findProviderCF() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId());
-        if (currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
-            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsWithInheritedDTO(provider, true), false);
+        if (currentUser.hasRole("apiAccess") || currentUser.hasRole("superAdminManagement") || (currentUser.hasRole("administrationVisualization"))) {
+            return new ProviderDto(provider, entityToDtoConverter.getCustomFieldsDTO(provider, true), false);
         } else {
             throw new ActionForbiddenException("User has no permission to access provider");
         }

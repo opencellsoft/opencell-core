@@ -65,7 +65,7 @@ public class ServiceSingleton {
      * @param incrementBy A number to increment by
      * @return An invoice numbering sequence with Sequence.previousInvoiceNb set to previous value of Sequence.currentInvoiceNb and Sequence.currentInvoiceNb incremented by
      *         numberOfInvoices value
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -127,7 +127,7 @@ public class ServiceSingleton {
      * @param numberOfInvoices Number of invoice numbers to reserve for
      * @return An invoice numbering sequence with Sequence.previousInvoiceNb set to previous value of Sequence.currentInvoiceNb and Sequence.currentInvoiceNb incremented by
      *         numberOfInvoices value
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -152,13 +152,13 @@ public class ServiceSingleton {
     }
 
     /**
-     * if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null)
+     * if the sequence not found on cust.seller, we try in seller.parent (until seller.parent=null).
      * 
-     * @param seller
-     * @param cfName
-     * @param date
-     * @param invoiceType
-     * @return
+     * @param seller seller
+     * @param cfName custom field name
+     * @param date date
+     * @param invoiceType type of invoice
+     * @return choosen seller.
      */
     @Lock(LockType.READ)
     public Seller chooseSeller(Seller seller, String cfName, Date date, InvoiceType invoiceType) {
@@ -184,7 +184,7 @@ public class ServiceSingleton {
      * @param invoiceTypeCode Invoice type code
      * @param operationCategory Operation category
      * @return An invoice type entity
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

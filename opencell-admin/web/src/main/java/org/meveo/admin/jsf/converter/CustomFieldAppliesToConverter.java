@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.faces.view.ViewScoped;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -66,9 +66,9 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
         }
 
         String stringValue = appliesToMap.get(obj.toString());
-        if (stringValue == null) {
-        } else {
-        }
+        // if (stringValue == null) {
+        // } else {
+        // }
         return stringValue;
     }
 
@@ -76,15 +76,15 @@ public class CustomFieldAppliesToConverter implements Converter, Serializable {
 
         appliesToMap = new HashMap<String, String>();
 
-        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, null, null);
+        List<CustomizedEntity> entities = customizedEntityService.getCustomizedEntities(null, false, true, true, null, null);
 
         for (CustomizedEntity customizedEntity : entities) {
 
             if (customizedEntity.isStandardEntity()) {
                 appliesToMap.put(EntityCustomizationUtils.getAppliesTo(customizedEntity.getEntityClass(), null), customizedEntity.getClassnameToDisplayHuman());
             } else {
-                appliesToMap
-                    .put(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, customizedEntity.getEntityCode()), customizedEntity.getClassnameToDisplayHuman());
+                appliesToMap.put(EntityCustomizationUtils.getAppliesTo(CustomEntityTemplate.class, customizedEntity.getEntityCode()),
+                    customizedEntity.getClassnameToDisplayHuman());
             }
         }
     }

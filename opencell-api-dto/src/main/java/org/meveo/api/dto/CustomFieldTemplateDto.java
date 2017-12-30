@@ -41,6 +41,8 @@ public class CustomFieldTemplateDto extends BaseDto {
     @XmlAttribute(required = true)
     protected String description;
 
+    private List<LanguageDescriptionDto> languageDescriptions;
+
     /**
      * Value type
      */
@@ -69,7 +71,7 @@ public class CustomFieldTemplateDto extends BaseDto {
      * Shall inherited value be used as default value instead if available
      */
     @XmlElement
-    protected boolean useInheritedAsDefaultValue;
+    protected Boolean useInheritedAsDefaultValue;
 
     /**
      * Value storage type
@@ -81,19 +83,19 @@ public class CustomFieldTemplateDto extends BaseDto {
      * Is value required
      */
     @XmlElement
-    protected boolean valueRequired;
+    protected Boolean valueRequired;
 
     /**
      * Is value versionable
      */
     @XmlElement
-    protected boolean versionable;
+    protected Boolean versionable;
 
     /**
      * Should Period end event be fired when value period is over
      */
     @XmlElement
-    protected boolean triggerEndPeriodEvent;
+    protected Boolean triggerEndPeriodEvent;
 
     /**
      * Calendar associated to value versioning periods
@@ -124,13 +126,13 @@ public class CustomFieldTemplateDto extends BaseDto {
      * Can value be changed when editing a previously saved entity
      */
     @XmlElement
-    protected boolean allowEdit = true;
+    protected Boolean allowEdit = true;
 
     /**
      * Do not show/apply field on new entity creation
      */
     @XmlElement
-    protected boolean hideOnNew;
+    protected Boolean hideOnNew;
 
     /**
      * Maximum value to validate long and double values OR maximum length of string value
@@ -145,7 +147,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected Long minValue;
 
     /**
-     * Regular expression to validate string values
+     * Regular expression to validate string values.
      */
     @XmlElement
     protected String regExp;
@@ -155,19 +157,23 @@ public class CustomFieldTemplateDto extends BaseDto {
      */
     @XmlElement
     @Deprecated
-    protected boolean cacheValue;
+    protected Boolean cacheValue;
 
     /**
-     * Where field should be displayed - concatenated information with tab and fieldset information in a format:
-     * tab:TAB_NAME:TAB_POSITION;fieldGroup:FIELD_SET_NAME:FIELD_SET_POSITION;field:FIELD_POSITION
+     * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
+     * position&gt;;field:&lt;field relative position in fieldgroup
      * 
-     * e.g. tab:First tab:0;fieldGroup:Field set name:0;field:0 or tab:Second tab:1;field:1
+     * 
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
+     * 
+     * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
+     * english:0;field:0 OR tab:Second tab:1;field:1
      */
     @XmlElement
     protected String guiPosition;
 
     /**
-     * Key format of a map for map type fields
+     * Key format of a map for map type fields.
      */
     @XmlElement()
     protected CustomFieldMapKeyEnum mapKeyType;
@@ -179,26 +185,26 @@ public class CustomFieldTemplateDto extends BaseDto {
     protected String applicableOnEl;
 
     /**
-     * A list of columns matrix consists of
+     * A list of columns matrix consists of.
      */
     @XmlElementWrapper(name = "matrixColumns")
     @XmlElement(name = "matrixColumn")
     private List<CustomFieldMatrixColumnDto> matrixColumns;
 
     /**
-     * A list of child entity fields to be displayed in a summary table of child entities
+     * A list of child entity fields to be displayed in a summary table of child entities.
      */
     @XmlElementWrapper(name = "childEntityFieldsForSummary")
     @XmlElement(name = "fieldCode")
     private List<String> childEntityFieldsForSummary;
 
     /**
-     * If and how custom field values should be indexed in Elastic Search
+     * If and how custom field values should be indexed in Elastic Search.
      */
     private CustomFieldIndexTypeEnum indexType;
 
     /**
-     * Tags assigned to custom field template
+     * Tags assigned to custom field template.
      */
     private String tags;
 
@@ -209,6 +215,7 @@ public class CustomFieldTemplateDto extends BaseDto {
     public CustomFieldTemplateDto(CustomFieldTemplate cf) {
         code = cf.getCode();
         description = cf.getDescription();
+        languageDescriptions = LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(cf.getDescriptionI18n());
         fieldType = cf.getFieldType();
         accountLevel = cf.getAppliesTo();
         appliesTo = cf.getAppliesTo();
@@ -299,11 +306,11 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.defaultValue = defaultValue;
     }
 
-    public boolean isUseInheritedAsDefaultValue() {
+    public Boolean isUseInheritedAsDefaultValue() {
         return useInheritedAsDefaultValue;
     }
 
-    public void setUseInheritedAsDefaultValue(boolean useInheritedAsDefaultValue) {
+    public void setUseInheritedAsDefaultValue(Boolean useInheritedAsDefaultValue) {
         this.useInheritedAsDefaultValue = useInheritedAsDefaultValue;
     }
 
@@ -315,19 +322,19 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.storageType = storageType;
     }
 
-    public boolean isVersionable() {
+    public Boolean isVersionable() {
         return versionable;
     }
 
-    public void setVersionable(boolean versionable) {
+    public void setVersionable(Boolean versionable) {
         this.versionable = versionable;
     }
 
-    public boolean isTriggerEndPeriodEvent() {
+    public Boolean isTriggerEndPeriodEvent() {
         return triggerEndPeriodEvent;
     }
 
-    public void setTriggerEndPeriodEvent(boolean triggerEndPeriodEvent) {
+    public void setTriggerEndPeriodEvent(Boolean triggerEndPeriodEvent) {
         this.triggerEndPeriodEvent = triggerEndPeriodEvent;
     }
 
@@ -339,11 +346,11 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.calendar = calendar;
     }
 
-    public boolean isValueRequired() {
+    public Boolean isValueRequired() {
         return valueRequired;
     }
 
-    public void setValueRequired(boolean valueRequired) {
+    public void setValueRequired(Boolean valueRequired) {
         this.valueRequired = valueRequired;
     }
 
@@ -379,19 +386,19 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.listValues = listValues;
     }
 
-    public boolean isAllowEdit() {
+    public Boolean isAllowEdit() {
         return allowEdit;
     }
 
-    public void setAllowEdit(boolean allowEdit) {
+    public void setAllowEdit(Boolean allowEdit) {
         this.allowEdit = allowEdit;
     }
 
-    public boolean isHideOnNew() {
+    public Boolean isHideOnNew() {
         return hideOnNew;
     }
 
-    public void setHideOnNew(boolean hideOnNew) {
+    public void setHideOnNew(Boolean hideOnNew) {
         this.hideOnNew = hideOnNew;
     }
 
@@ -419,11 +426,11 @@ public class CustomFieldTemplateDto extends BaseDto {
         this.regExp = regExp;
     }
 
-    public boolean isCacheValue() {
+    public Boolean isCacheValue() {
         return cacheValue;
     }
 
-    public void setCacheValue(boolean cacheValue) {
+    public void setCacheValue(Boolean cacheValue) {
         this.cacheValue = cacheValue;
     }
 
@@ -492,5 +499,13 @@ public class CustomFieldTemplateDto extends BaseDto {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
+
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
     }
 }

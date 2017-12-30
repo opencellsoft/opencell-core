@@ -56,8 +56,8 @@ public class GetConverter {
 	/**
 	 * Gets converter for type and by parameter.
 	 * 
-	 * @param obj
-	 * @return
+	 * @param param parameter
+	 * @return converter.
 	 */
 	@SuppressWarnings("unchecked")
 	public Converter forParam(String param) {

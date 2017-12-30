@@ -34,8 +34,9 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 @Stateless
 public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> {
 	
+
 	/**
-	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getTerminationChargeTemplates()
+	 * @return list of one shot charge template.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getTerminationChargeTemplates() {
@@ -46,8 +47,9 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 		return query.getResultList();
 	}
 
+	
 	/**
-	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getSubscriptionChargeTemplates()
+	 * @return list of one shot charge template.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {

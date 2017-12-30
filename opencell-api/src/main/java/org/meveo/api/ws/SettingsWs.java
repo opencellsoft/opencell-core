@@ -21,15 +21,18 @@ import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.OccTemplateDto;
 import org.meveo.api.dto.ProviderDto;
 import org.meveo.api.dto.RoleDto;
+import org.meveo.api.dto.RolesDto;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.UserDto;
+import org.meveo.api.dto.UsersDto;
 import org.meveo.api.dto.account.ProviderContactDto;
 import org.meveo.api.dto.billing.InvoiceTypeDto;
 import org.meveo.api.dto.communication.EmailTemplateDto;
 import org.meveo.api.dto.communication.MeveoInstanceDto;
 import org.meveo.api.dto.hierarchy.UserHierarchyLevelDto;
+import org.meveo.api.dto.hierarchy.UserHierarchyLevelsDto;
 import org.meveo.api.dto.response.DescriptionsResponseDto;
 import org.meveo.api.dto.response.GetBillingCycleResponse;
 import org.meveo.api.dto.response.GetCalendarResponse;
@@ -56,6 +59,7 @@ import org.meveo.api.dto.response.GetTerminationReasonResponse;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
@@ -128,6 +132,39 @@ public interface SettingsWs extends IBaseWs {
 
     @WebMethod
     ActionStatus createOrUpdateUser(@WebParam(name = "user") UserDto postData);
+    
+    /**
+     * Creates a user in keycloak and core.
+     * @param postData
+     * @return
+     */
+    @WebMethod
+    ActionStatus createExternalUser(@WebParam(name = "user") UserDto postData);
+    
+    /**
+     * Updates a user in keycloak and core given a username.
+     * @param postData
+     * @return
+     */
+    @WebMethod
+    ActionStatus updateExternalUser(@WebParam(name = "user") UserDto postData);
+    
+    /**
+     * Deletes a user in keycloak and core given a username.
+     * @param username the username of the user to be deleted.
+     * @return
+     */
+    @WebMethod
+    ActionStatus deleteExternalUser(@WebParam(name = "username") String username);
+
+    /**
+     * List users matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
+     * @return A list of users
+     */
+    @WebMethod
+    public UsersDto listUsers(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
     // seller
 
@@ -382,6 +419,22 @@ public interface SettingsWs extends IBaseWs {
     @WebMethod
     ActionStatus createOrUpdateRole(@WebParam(name = "role") RoleDto postData);
 
+    /**
+     * List roles matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "permissions" in fields to include the permissions. Specify "roles" to include child roles.
+     * @return A list of roles
+     */
+    @WebMethod
+    public RolesDto listRoles(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+    
+    /**
+     * List external source such as from keycloak.
+     * @return list of external roles
+     */
+    @WebMethod
+    public RolesDto listExternalRoles();
+
     // Multi Language field value translations
 
     /**
@@ -406,10 +459,10 @@ public interface SettingsWs extends IBaseWs {
     public ActionStatus updateDescriptions(@WebParam(name = "descriptions") CatMessagesDto postData);
 
     /**
-     * Provide translation of multi language field values
+     * Provide translation of multi language field values.
      * 
-     * @param postData Translated field values
-     * @return
+     * @param translations list of category messages.
+     * @return action status.
      */
     @WebMethod
     public ActionStatus updateTranslations(@WebParam(name = "translations") List<CatMessagesDto> translations);
@@ -745,4 +798,24 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     ActionStatus createOrUpdateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
+
+    /**
+     * List user hierarchy levels matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "childLevels" in fields to include the child levels of user hierarchy level.
+     * @return A list of user hierarchy levels
+     */
+    @WebMethod
+    public UserHierarchyLevelsDto listUserHierarchyLevels(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Set configuration (stored in meveo-admin.properties file) property
+     * 
+     * @param property Property key
+     * @param value Value to set
+     * @return
+     */
+    @WebMethod
+    public ActionStatus setConfigurationProperty(@WebParam(name = "property") String property, @WebParam(name = "value") String value);
+
 }

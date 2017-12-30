@@ -283,7 +283,6 @@ public class EntityExportImportBean implements Serializable {
     /**
      * Export entities for a selected export template and given search criteria
      * 
-     * @param exportTemplate Export template
      */
     public void export() {
 

@@ -60,7 +60,7 @@
                 </f:facet>
             </p:cellEditor>
         </p:column>
-        <p:column exportable="true" toggleable="false" width="22%">
+        <p:column exportable="true" toggleable="true" width="22%" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[4]}" >
             <f:facet name="header">
                 <h:outputText value="#{messages['BusinessEntity.description']}"/>
             </f:facet>
@@ -75,7 +75,7 @@
             </p:cellEditor>
         </p:column>
         <p:column exportable="true" toggleable="false" visible="false"/>
-        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[4]}"
+        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[5]}"
                   width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(4)}">
             <f:facet name="header">
                 <h:outputText value="#{messages['pricePlanMatrix.offerCode']}"/>
@@ -95,7 +95,7 @@
             </p:cellEditor>
         </p:column>
 
-        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[5]}"
+        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[6]}"
                   width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(5)}">
             <f:facet name="header">
                 <h:outputText value="#{messages['seller.title']}"/>
@@ -114,72 +114,41 @@
                 </f:facet>
             </p:cellEditor>
         </p:column>
-        <p:column exportable="true" toggleable="#{appProvider.entreprise}"
-                  visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[6]}"
-                  rendered="#{!appProvider.entreprise}"
-                  width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(6)}">
+
+        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[7]}" width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(7)}">
             <f:facet name="header">
-                <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}"/>
+                <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']}" rendered="#{!appProvider.entreprise}" />
+                <h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']}" rendered="#{appProvider.entreprise}" />
             </f:facet>
             <p:cellEditor>
                 <f:facet name="output">
-                    <h:outputText value="#{entity.amountWithTax}"
-                                  converter="bigDecimal4DigitsConverter"/>
+                    <h:outputText value="#{entity.amountWithTax}" converter="bigDecimal4DigitsConverter" rendered="#{!appProvider.entreprise}" />
+                    <h:outputText value="#{entity.amountWithoutTax}" converter="bigDecimal4DigitsConverter" rendered="#{appProvider.entreprise}" />
                 </f:facet>
                 <f:facet name="input">
-                    <p:inputText value="#{entity.amountWithTax}" required="true"
-                                 converter="bigDecimal4DigitsConverter" size="6"/>
-                </f:facet>
-            </p:cellEditor>
-        </p:column>
-        <p:column exportable="true" toggleable="#{!appProvider.entreprise}" width="15%">
-            <f:facet name="header">
-                <h:outputText
-                        value="#{messages['pricePlanMatrix.amountWithoutTax']}"/>
-            </f:facet>
-            <p:cellEditor>
-                <f:facet name="output">
-                    <h:outputText value="#{entity.amountWithoutTax}"
-                                  converter="bigDecimal4DigitsConverter"/>
-                </f:facet>
-                <f:facet name="input">
-                    <p:inputText value="#{entity.amountWithoutTax}" required="true"
-                                 converter="bigDecimal4DigitsConverter" size="6"/>
+                    <p:inputText value="#{entity.amountWithTax}" required="true" converter="bigDecimal4DigitsConverter" size="6" rendered="#{!appProvider.entreprise}" />
+                    <p:inputText value="#{entity.amountWithoutTax}" required="true" converter="bigDecimal4DigitsConverter" size="6" rendered="#{appProvider.entreprise}" />
                 </f:facet>
             </p:cellEditor>
         </p:column>
 
-        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[7]}"
-                  width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(7)}">
+        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[8]}">
             <f:facet name="header">
-                <h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']} EL"/>
+                <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']} EL" rendered="#{!appProvider.entreprise}" />
+                <h:outputText value="#{messages['pricePlanMatrix.amountWithoutTax']} EL" rendered="#{appProvider.entreprise}" />
             </f:facet>
             <p:cellEditor>
                 <f:facet name="output">
-                    <h:outputText value="#{entity.amountWithoutTaxEL}"/>
+                    <h:outputText value="#{entity.amountWithTaxEL}" rendered="#{!appProvider.entreprise}" />
+                    <h:outputText value="#{entity.amountWithoutTaxEL}" rendered="#{appProvider.entreprise}" />
                 </f:facet>
                 <f:facet name="input">
-                    <p:inputText value="#{entity.amountWithoutTaxEL}" size="20"
-                                 maxlength="2000"/>
+                    <p:inputText value="#{entity.amountWithTaxEL}" size="20" maxlength="2000" rendered="#{!appProvider.entreprise}" />
+                    <p:inputText value="#{entity.amountWithoutTaxEL}" size="20" maxlength="2000" rendered="#{appProvider.entreprise}" />
                 </f:facet>
             </p:cellEditor>
         </p:column>
 
-        <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[8]}"
-                  width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(8)}">
-            <f:facet name="header">
-                <h:outputText value="#{messages['pricePlanMatrix.amountWithTax']} EL"/>
-            </f:facet>
-            <p:cellEditor>
-                <f:facet name="output">
-                    <h:outputText value="#{entity.amountWithTaxEL}"/>
-                </f:facet>
-                <f:facet name="input">
-                    <p:inputText value="#{entity.amountWithTaxEL}" size="20"
-                                 maxlength="2000"/>
-                </f:facet>
-            </p:cellEditor>
-        </p:column>
         <p:column exportable="true" visible="#{pricePlanMatrixColumnSelectorBean.columnVisibilitylist[9]}"
                   width="#{pricePlanMatrixColumnSelectorBean.getColumnWidth(9)}">
             <f:facet name="header">

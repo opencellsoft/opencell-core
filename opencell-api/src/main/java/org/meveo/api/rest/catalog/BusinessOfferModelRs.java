@@ -27,7 +27,7 @@ import org.meveo.api.rest.IBaseRs;
 public interface BusinessOfferModelRs extends IBaseRs {
 
     /**
-     * Create a new business offer model
+     * Create a new business offer model.
      * 
      * @param postData The business offer model's data
      * @return Request processing status
@@ -37,7 +37,7 @@ public interface BusinessOfferModelRs extends IBaseRs {
     ActionStatus create(BusinessOfferModelDto postData);
 
     /**
-     * Update an existing business offer model
+     * Update an existing business offer model.
      * 
      * @param postData The business offer model's data
      * @return Request processing status
@@ -47,7 +47,7 @@ public interface BusinessOfferModelRs extends IBaseRs {
     ActionStatus update(BusinessOfferModelDto postData);
 
     /**
-     * Remove an existing business offer model with a given code 
+     * Remove an existing business offer model with a given code.
      * 
      * @param businessOfferModelCode The business offer model's code
      * @return A business offer model
@@ -58,7 +58,7 @@ public interface BusinessOfferModelRs extends IBaseRs {
 
 
     /**
-     * Remove an existing business offer model with a given code 
+     * Remove an existing business offer model with a given code.
      * 
      * @param businessOfferModelCode The business offer model's code
      * @return Request processing status
@@ -68,7 +68,7 @@ public interface BusinessOfferModelRs extends IBaseRs {
     ActionStatus remove(@PathParam("businessOfferModelCode") String businessOfferModelCode);
 
     /**
-     * Create new or update an existing business offer model
+     * Create new or update an existing business offer model.
      * 
      * @param postData The business offer model's data
      * @return Request processing status
@@ -78,20 +78,20 @@ public interface BusinessOfferModelRs extends IBaseRs {
     ActionStatus createOrUpdate(BusinessOfferModelDto postData);
 
     /**
-     * List business offer models
+     * List business offer models.
      * 
      * @return A list of business offer models
      */
     @GET
     @Path("/list")
-    public MeveoModuleDtosResponse list();
+    MeveoModuleDtosResponse list();
 
     /**
-     * Install business offer model module
-     * 
+     * Install business offer model module.
+     * @param moduleDto business offer model
      * @return Request processing status
      */
     @PUT
     @Path("/install")
-    public ActionStatus install(BusinessOfferModelDto moduleDto);
+    ActionStatus install(BusinessOfferModelDto moduleDto);
 }

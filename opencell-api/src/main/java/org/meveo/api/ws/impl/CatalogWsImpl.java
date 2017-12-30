@@ -28,8 +28,11 @@ import org.meveo.api.catalog.UsageChargeTemplateApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BomOfferDto;
+import org.meveo.api.dto.catalog.BpmProductDto;
+import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.BundleTemplateDto;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
+import org.meveo.api.dto.catalog.BusinessProductModelDto;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.dto.catalog.CounterTemplateDto;
@@ -48,10 +51,12 @@ import org.meveo.api.dto.catalog.ServiceTemplateDto;
 import org.meveo.api.dto.catalog.TriggeredEdrTemplateDto;
 import org.meveo.api.dto.catalog.UsageChargeTemplateDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemResponseDto;
 import org.meveo.api.dto.response.catalog.DiscountPlanItemsResponseDto;
 import org.meveo.api.dto.response.catalog.GetBundleTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
+import org.meveo.api.dto.response.catalog.GetBusinessProductModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChannelResponseDto;
 import org.meveo.api.dto.response.catalog.GetChargeTemplateResponseDto;
@@ -78,6 +83,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.module.MeveoModuleApi;
 import org.meveo.api.ws.CatalogWs;
 import org.meveo.model.catalog.BusinessOfferModel;
+import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.shared.DateUtils;
 
@@ -247,20 +253,19 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetListOfferTemplateResponseDto listOfferTemplate(String code, Date validFrom, Date validTo) {
+    public GetListOfferTemplateResponseDto listOfferTemplate(String code, Date validFrom, Date validTo, PagingAndFiltering pagingAndFiltering) {
+
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
 
         try {
-            result.setOfferTemplates(offerTemplateApi.list(code, validFrom, validTo));
-
+            result = offerTemplateApi.list(code, validFrom, validTo, pagingAndFiltering);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
+
         return result;
     }
-    
+
     @Override
     public ActionStatus createOneShotChargeTemplate(OneShotChargeTemplateDto postData) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
@@ -816,7 +821,34 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            result.setMessage("" + businessOfferApi.createOfferFromBOM(postData));
+            result.setMessage("" + businessOfferApi.instantiateBOM(postData));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createServiceFromBSM(BsmServiceDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            result.setMessage("" + businessOfferApi.instantiateBSM(postData));
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public ActionStatus createProductFromBPM(BpmProductDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            result.setMessage("" + businessOfferApi.instantiateBPM(postData));
+            
         } catch (Exception e) {
             processException(e, result);
         }
@@ -1413,13 +1445,11 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetListBundleTemplateResponseDto listBundleTemplate(String code, Date validFrom, Date validTo) {
+    public GetListBundleTemplateResponseDto listBundleTemplate(String code, Date validFrom, Date validTo, PagingAndFiltering pagingAndFiltering) {
         GetListBundleTemplateResponseDto result = new GetListBundleTemplateResponseDto();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
 
         try {
-            result.setBundleTemplates(bundleTemplateApi.list(code, validFrom, validTo));
+            return bundleTemplateApi.list(code, validFrom, validTo, pagingAndFiltering);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -1495,17 +1525,113 @@ public class CatalogWsImpl extends BaseWs implements CatalogWs {
     }
 
     @Override
-    public GetListProductTemplateResponseDto listProductTemplate(String code, Date validFrom, Date validTo) {
+    public GetListProductTemplateResponseDto listProductTemplate(String code, Date validFrom, Date validTo, PagingAndFiltering pagingAndFiltering) {
+
         GetListProductTemplateResponseDto result = new GetListProductTemplateResponseDto();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
 
         try {
-            result.setListProductTemplate(productTemplateApi.list(code, validFrom, validTo));
+            return productTemplateApi.list(code, validFrom, validTo, pagingAndFiltering);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
         return result;
     }
+
+    @Override
+    public ActionStatus createBusinessProductModel(BusinessProductModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.create(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateBusinessProductModel(BusinessProductModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public GetBusinessProductModelResponseDto findBusinessProductModel(String businessProductModelCode) {
+        GetBusinessProductModelResponseDto result = new GetBusinessProductModelResponseDto();
+
+        try {
+            result.setBusinessProductModel((BusinessProductModelDto) moduleApi.find(businessProductModelCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeBusinessProductModel(String businessProductModelCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.delete(businessProductModelCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateBusinessProductModel(BusinessProductModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus installBusinessProductModel(BusinessProductModelDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            moduleApi.install(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public MeveoModuleDtosResponse listBusinessProductModel() {
+        MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
+        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
+        result.getActionStatus().setMessage("");
+        try {
+            List<MeveoModuleDto> dtos = moduleApi.list(BusinessProductModel.class);
+            result.setModules(dtos);
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+    
+    
+   
 }

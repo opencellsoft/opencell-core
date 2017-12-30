@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriInfo;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
@@ -22,6 +23,7 @@ import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceChargeTemplateSubscription;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.tmf.dsmapi.catalog.resource.category.Category;
@@ -39,6 +41,9 @@ public class CatalogApi extends BaseApi {
 
     @Inject
     private PricePlanMatrixService pricePlanMatrixService;
+    
+    @Inject
+    private RatingService ratingService;
 
     public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException {
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
@@ -100,24 +105,18 @@ public class CatalogApi extends BaseApi {
                     pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
-                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-                    if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax()));
-                    }
+
+                    // Nothing to do with WO here, other then reusing an existing method to calculate price amounts based on amountWithoutTax or amountWithTax depending on
+                    // provider.isEnterprise() value
+                    WalletOperation wo = new WalletOperation();
+                    wo.setQuantity(BigDecimal.ONE);
+                    wo.setTaxPercent(price.getTaxRate());
+                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(wo.getUnitAmountWithoutTax()));
+                    price.setTaxIncludedAmount(price.getTaxIncludedAmount().add(wo.getUnitAmountWithTax()));
                 }
             }
-
-            if (appProvider.isEntreprise()) {
-                if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
-                    BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
-                    price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
-                } else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
-                    price.setTaxIncludedAmount(price.getDutyFreeAmount());
-                } else {
-                    price.setTaxIncludedAmount(new BigDecimal(0));
-                }
-            }
-
+            
             ProductOfferingPrice offerPrice = new ProductOfferingPrice();
             offerPrice.setPriceName(serviceTemplate.getCode());
             offerPrice.setPriceType(ProductOfferingPriceType.ONE_TIME);
@@ -153,22 +152,15 @@ public class CatalogApi extends BaseApi {
                     pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
-                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-                    if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(
-                            price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
-                    }
-                }
 
-                if (appProvider.isEntreprise()) {
-                    if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
-                        BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
-                        price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
-                    } else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
-                        price.setTaxIncludedAmount(price.getDutyFreeAmount());
-                    } else {
-                        price.setTaxIncludedAmount(new BigDecimal(0));
-                    }
+                    // Nothing to do with WO here, other then reusing an existing method to calculate price amounts based on amountWithoutTax or amountWithTax depending on
+                    // provider.isEnterprise() value
+                    WalletOperation wo = new WalletOperation();
+                    wo.setQuantity(BigDecimal.ONE);
+                    wo.setTaxPercent(price.getTaxRate());
+                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
+                    price.setTaxIncludedAmount(wo.getUnitAmountWithTax());    
                 }
 
                 String calendarCode = serviceChargeTemplateRecurring.getChargeTemplate().getCalendar().getCode();
@@ -209,22 +201,15 @@ public class CatalogApi extends BaseApi {
                     pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
-                    price.setDutyFreeAmount(price.getDutyFreeAmount().add(pricePlans.get(0).getAmountWithoutTax()));
-                    if (!appProvider.isEntreprise()) {
-                        price.setTaxIncludedAmount(
-                            price.getTaxIncludedAmount().add(pricePlans.get(0).getAmountWithTax() != null ? pricePlans.get(0).getAmountWithTax() : BigDecimal.ZERO));
-                    }
-                }
-
-                if (appProvider.isEntreprise()) {
-                    if (price.getDutyFreeAmount() != null && price.getTaxRate() != null) {
-                        BigDecimal taxRate = price.getTaxRate().divide(new BigDecimal(100)).add(new BigDecimal(1));
-                        price.setTaxIncludedAmount(price.getDutyFreeAmount().multiply(taxRate));
-                    } else if (price.getDutyFreeAmount() != null && price.getTaxRate() == null) {
-                        price.setTaxIncludedAmount(price.getDutyFreeAmount());
-                    } else {
-                        price.setTaxIncludedAmount(new BigDecimal(0));
-                    }
+                    
+                    // Nothing to do with WO here, other then reusing an existing method to calculate price amounts based on amountWithoutTax or amountWithTax depending on
+                    // provider.isEnterprise() value
+                    WalletOperation wo = new WalletOperation();
+                    wo.setQuantity(BigDecimal.ONE);
+                    wo.setTaxPercent(price.getTaxRate());
+                    ratingService.calculateAmounts(wo, pricePlans.get(0).getAmountWithoutTax(), pricePlans.get(0).getAmountWithTax());
+                    price.setDutyFreeAmount(wo.getUnitAmountWithoutTax());
+                    price.setTaxIncludedAmount(wo.getUnitAmountWithTax());                    
                 }
 
                 offerPrice = new ProductOfferingPrice();

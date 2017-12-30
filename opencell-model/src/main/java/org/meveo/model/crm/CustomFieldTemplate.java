@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -40,11 +41,14 @@ import org.meveo.model.catalog.Calendar;
 import org.meveo.model.crm.custom.CustomFieldIndexTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn.CustomFieldColumnUseEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Entity
 @ModuleItem
@@ -59,13 +63,20 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
     private static final long serialVersionUID = -1403961759495272885L;
 
-    public static String POSITION_TAB = "tab";
-    public static String POSITION_FIELD_GROUP = "fieldGroup";
-    public static String POSITION_FIELD = "field";
-
     public static long DEFAULT_MAX_LENGTH_STRING = 50L;
 
     public static String ENTITY_REFERENCE_CLASSNAME_CETCODE_SEPARATOR = " - ";
+
+    public enum GroupedCustomFieldTreeItemType {
+
+        root(null), tab("tab"), fieldGroup("fieldGroup"), field("field"), action("action");
+
+        public String positionTag;
+
+        private GroupedCustomFieldTreeItemType(String tag) {
+            this.positionTag = tag;
+        }
+    }
 
     @Column(name = "field_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -86,15 +97,19 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private Map<String, String> listValues;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @OrderBy("position ASC")
+    @OrderBy("columnUse ASC, position ASC")
     @CollectionTable(name = "crm_custom_field_tmpl_mcols", joinColumns = { @JoinColumn(name = "cft_id") })
     @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", nullable = false, length = 20)),
             @AttributeOverride(name = "label", column = @Column(name = "label", nullable = false, length = 50)),
-            @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)) })
+            @AttributeOverride(name = "keyType", column = @Column(name = "key_type", nullable = false, length = 10)),
+            @AttributeOverride(name = "columnUse", column = @Column(name = "column_use", nullable = false)) })
     private List<CustomFieldMatrixColumn> matrixColumns = new ArrayList<CustomFieldMatrixColumn>();
 
     @Transient
-    private boolean matrixColumnsSorted;
+    private List<CustomFieldMatrixColumn> matrixKeyColumns;
+
+    @Transient
+    private List<CustomFieldMatrixColumn> matrixValueColumns;
 
     @Type(type = "numeric_boolean")
     @Column(name = "versionable")
@@ -116,7 +131,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private boolean useInheritedAsDefaultValue;
 
     /**
-     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
      */
     @Column(name = "entity_clazz", length = 255)
     @Size(max = 255)
@@ -135,8 +150,17 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Column(name = "trigger_end_period_event", nullable = false)
     private boolean triggerEndPeriodEvent;
 
-    @Column(name = "gui_position", length = 100)
-    @Size(max = 100)
+    /**
+     * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
+     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
+     * 
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
+     * 
+     * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
+     * english:0;field:0 OR tab:Second tab:1;field:1
+     */
+    @Column(name = "gui_position", length = 2000)
+    @Size(max = 2000)
     private String guiPosition;
 
     @Type(type = "numeric_boolean")
@@ -188,6 +212,10 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     @Column(name = "tags", length = 2000)
     @Size(max = 2000)
     private String tags;
+
+    @Type(type = "json")
+    @Column(name = "description_i18n", columnDefinition = "text")
+    private Map<String, String> descriptionI18n;
 
     public CustomFieldTypeEnum getFieldType() {
         return fieldType;
@@ -250,20 +278,37 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         this.matrixColumns = matrixColumns;
     }
 
-    public void addMatrixColumn() {
+    public void addMatrixKeyColumn() {
         CustomFieldMatrixColumn column = new CustomFieldMatrixColumn();
-        column.setPosition(matrixColumns.size() + 1);
+        column.setColumnUse(CustomFieldColumnUseEnum.USE_KEY);
+        column.setPosition(getMatrixKeyColumns().size() + 1);
         this.matrixColumns.add(column);
+        matrixKeyColumns = null;
+    }
+
+    public void addMatrixValueColumn() {
+        CustomFieldMatrixColumn column = new CustomFieldMatrixColumn();
+        column.setColumnUse(CustomFieldColumnUseEnum.USE_VALUE);
+        column.setPosition(getMatrixValueColumns().size() + 1);
+        this.matrixColumns.add(column);
+        matrixValueColumns = null;
     }
 
     public void removeMatrixColumn(CustomFieldMatrixColumn columnToRemove) {
         this.matrixColumns.remove(columnToRemove);
+        matrixKeyColumns = null;
+        matrixValueColumns = null;
 
         // Reorder position
-        for (CustomFieldMatrixColumn column : matrixColumns) {
-            if (column.getPosition() > columnToRemove.getPosition()) {
-                column.setPosition(column.getPosition() - 1);
-            }
+        int i = 0;
+        for (CustomFieldMatrixColumn column : getMatrixKeyColumns()) {
+            i++;
+            column.setPosition(i);
+        }
+        i = 0;
+        for (CustomFieldMatrixColumn column : getMatrixValueColumns()) {
+            i++;
+            column.setPosition(i);
         }
     }
 
@@ -281,7 +326,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Extract codes of matrix columns into a sorted list by column index
+     * Extract codes of matrix columns into a sorted list by column index.
      * 
      * @return A list of matrix column codes
      */
@@ -344,8 +389,8 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     /**
      * Retrieve a cet code from classname and code as it is stored in entityClazz field.
      * 
-     * @param entityClazz
-     * @return
+     * @param entityClazz entity class
+     * @return code
      */
     public static String retrieveCetCode(String entityClazz) {
         if (entityClazz == null) {
@@ -430,12 +475,12 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
         for (String position : positions) {
             String[] positionDetails = position.split(":");
-            if (!positionDetails[0].equals(POSITION_FIELD)) {
+            if (!positionDetails[0].equals(GroupedCustomFieldTreeItemType.field.positionTag)) {
                 parsedInfo.put(positionDetails[0] + "_name", positionDetails[1]);
                 if (positionDetails.length == 3) {
                     parsedInfo.put(positionDetails[0] + "_pos", positionDetails[2]);
                 }
-            } else if (positionDetails[0].equals(POSITION_FIELD) && positionDetails.length == 2) {
+            } else if (positionDetails[0].equals(GroupedCustomFieldTreeItemType.field.positionTag) && positionDetails.length == 2) {
                 parsedInfo.put(positionDetails[0] + "_pos", positionDetails[1]);
             }
         }
@@ -574,7 +619,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Instantiate a CustomFieldValue from a template, setting a default value if applicable
+     * Instantiate a CustomFieldValue from a template, setting a default value if applicable.
      *
      * @return CustomFieldValue object
      */
@@ -600,5 +645,182 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
             return new DatePeriod(getCalendar().previousCalendarDate(date), getCalendar().nextCalendarDate(date));
         }
         return null;
+    }
+
+    public Map<String, String> getDescriptionI18n() {
+        return descriptionI18n;
+    }
+
+    public void setDescriptionI18n(Map<String, String> descriptionI18n) {
+        this.descriptionI18n = descriptionI18n;
+    }
+
+    /**
+     * Instantiate descriptionI18n field if it is null. NOTE: do not use this method unless you have an intention to modify it's value, as entity will be marked dirty and record
+     * will be updated in DB
+     * 
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     */
+    public Map<String, String> getDescriptionI18nNullSafe() {
+        if (descriptionI18n == null) {
+            descriptionI18n = new HashMap<>();
+        }
+        return descriptionI18n;
+    }
+
+    public String getDescription(String language) {
+
+        if (language == null || descriptionI18n == null || descriptionI18n.isEmpty()) {
+            return description;
+        }
+
+        language = language.toUpperCase();
+        if (!descriptionI18n.containsKey(language)) {
+            return description;
+        } else {
+            return descriptionI18n.get(language);
+        }
+    }
+
+    /**
+     * Get a list of matrix columns used as key columns
+     * 
+     * @return A list of matrix columns where isKeyColumn = true
+     */
+    public List<CustomFieldMatrixColumn> getMatrixKeyColumns() {
+
+        if (matrixKeyColumns != null) {
+            return matrixKeyColumns;
+        }
+        Logger log = LoggerFactory.getLogger(getClass());
+        log.error("AKK matrixColums are {}", matrixColumns.size());
+        matrixKeyColumns = matrixColumns.stream().filter(elem -> elem.isColumnForKey()).collect(Collectors.toList());
+        log.error("AKK matrixKeyColums are {}", matrixKeyColumns.size());
+        return matrixKeyColumns;
+    }
+
+    /**
+     * Extract codes of matrix columns used as key columns into a sorted list by column index
+     * 
+     * @return A list of matrix column codes
+     */
+    public List<String> getMatrixKeyColumnCodes() {
+
+        List<String> matrixColumnNames = null;
+        if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
+            matrixColumnNames = new ArrayList<>();
+            for (CustomFieldMatrixColumn column : getMatrixKeyColumns()) {
+                matrixColumnNames.add(column.getCode());
+            }
+        }
+        return matrixColumnNames;
+    }
+
+    /**
+     * Get a list of matrix columns used as value columns
+     * 
+     * @return A list of matrix columns where isKeyColumn = false
+     */
+    public List<CustomFieldMatrixColumn> getMatrixValueColumns() {
+
+        if (matrixValueColumns != null) {
+            return matrixValueColumns;
+        }
+
+        matrixValueColumns = matrixColumns.stream().filter(elem -> !elem.isColumnForKey()).collect(Collectors.toList());
+
+        return matrixValueColumns;
+    }
+
+    /**
+     * Extract codes of matrix columns used as value columns into a sorted list by column index
+     * 
+     * @return A list of matrix column codes
+     */
+    public List<String> getMatrixValueColumnCodes() {
+
+        List<String> matrixColumnNames = null;
+        if (storageType == CustomFieldStorageTypeEnum.MATRIX) {
+            matrixColumnNames = new ArrayList<>();
+            for (CustomFieldMatrixColumn column : getMatrixValueColumns()) {
+                matrixColumnNames.add(column.getCode());
+            }
+        }
+        return matrixColumnNames;
+    }
+
+    /**
+     * Parse multi-value value from string to a map of values
+     * 
+     * @param multiValue Multi-value value as string
+     * @param appendToMap Map to append values to. If not provided a new map will be instantiated.
+     * @return Map of values (or same as appendToMap if provided)
+     */
+    public Map<String, Object> deserializeMultiValue(String multiValue, Map<String, Object> appendToMap) {
+
+        // DO NOT REMOVE - Initialize matrixValueColumns field
+        getMatrixValueColumns();
+
+        Map<String, Object> values = appendToMap;
+        if (values == null) {
+            values = new HashMap<>();
+        }
+
+        // Multi-value values are concatenated when stored - split them and set as separate map key/values
+        String[] splitValues = multiValue.split("\\" + CustomFieldValue.MATRIX_KEY_SEPARATOR);
+        for (int i = 0; i < splitValues.length; i++) {
+            CustomFieldMapKeyEnum dataType = matrixValueColumns.get(i).getKeyType();
+            if (dataType == CustomFieldMapKeyEnum.STRING) {
+                values.put(matrixValueColumns.get(i).getCode(), splitValues[i]);
+
+            } else if (!StringUtils.isBlank(splitValues[i])) {
+                try {
+                    if (dataType == CustomFieldMapKeyEnum.LONG) {
+                        values.put(matrixValueColumns.get(i).getCode(), Long.parseLong(splitValues[i]));
+                    } else if (dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                        values.put(matrixValueColumns.get(i).getCode(), Double.parseDouble(splitValues[i]));
+                    }
+                } catch (Exception e) {
+                    // Was not a number - ignore
+                }
+            }
+        }
+
+        return values;
+    }
+
+    /**
+     * Serialize multi-value from a map of values to a string
+     * 
+     * @param mapValues Map of values
+     * @return A string with concatenated values
+     */
+    public String serializeMultiValue(Map<String, Object> mapValues) {
+
+        // DO NOT REMOVE - Initialize matrixValueColumns field
+        getMatrixValueColumns();
+
+        boolean valueSet = false;
+        StringBuilder valBuilder = new StringBuilder();
+        for (CustomFieldMatrixColumn column : matrixValueColumns) {
+            valBuilder.append(valBuilder.length() == 0 ? "" : CustomFieldValue.MATRIX_KEY_SEPARATOR);
+            Object columnValue = mapValues.get(column.getCode());
+            if (StringUtils.isBlank(columnValue)) {
+                continue;
+            }
+            valueSet = true;
+            CustomFieldMapKeyEnum dataType = column.getKeyType();
+            if (dataType == CustomFieldMapKeyEnum.STRING) {
+                valBuilder.append((String) columnValue);
+            } else if (dataType == CustomFieldMapKeyEnum.LONG || dataType == CustomFieldMapKeyEnum.DOUBLE) {
+                valBuilder.append(columnValue.toString());
+            }
+        }
+
+        if (!valueSet) {
+            return null;
+        }
+
+        return valBuilder.toString();
     }
 }

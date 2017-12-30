@@ -80,20 +80,9 @@
 	</page>
 	
 	<page view-id=".+\/admin\/meveoUsers\/.*">
-		<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
-		<constraint>currentUser.hasRole('catalogManagement')</constraint>
-		<constraint>currentUser.hasRole('administrationManagement')</constraint>
-		<constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
-		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
+		<constraint>currentUser.hasRole('userManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('userVisualization')</constraint>
 	</page>
-
-    <page view-id=".+\/admin\/userGroupHierarchy\/.*">
-        <constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
-        <constraint>currentUser.hasRole('catalogManagement')</constraint>
-        <constraint>currentUser.hasRole('administrationManagement')</constraint>
-        <constraint type="READ">currentUser.hasRole('catalogVisualization')</constraint>
-        <constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
-    </page>
 	
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>
@@ -114,8 +103,20 @@
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>
-	
+
+	<page view-id=".+\/billing\/invoices\/createInvoiceDetail">
+		<constraint>currentUser.hasRole('creditNoteManagement')</constraint>
+		<constraint>currentUser.hasRole('accountManagement')</constraint>
+		<constraint>currentUser.hasRole('billingManagement')</constraint>
+		<constraint>currentUser.hasRole('createInvoice')</constraint>
+		<constraint type="READ">currentUser.hasRole('creditNoteVisualization')</constraint>
+		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
+		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
+		<constraint type="READ">currentUser.hasRole('createInvoice')</constraint>
+	</page>	
+
 	<page view-id=".+\/billing\/invoices\/.*">
+		<constraint>currentUser.hasRole('creditNoteManagement')</constraint>
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
@@ -125,6 +126,7 @@
 	<page view-id=".+\/billing\/ratedTransactions\/.*">
 		<constraint>currentUser.hasRole('accountManagement')</constraint>
 		<constraint>currentUser.hasRole('billingManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('creditNoteVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('accountVisualization')</constraint>
 		<constraint type="READ">currentUser.hasRole('billingVisualization')</constraint>
 	</page>

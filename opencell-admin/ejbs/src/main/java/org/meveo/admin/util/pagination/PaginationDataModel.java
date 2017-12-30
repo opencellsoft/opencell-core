@@ -73,8 +73,7 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
      * Constructor.
      * 
      * @param service
-     *            Persistence service for concrete entity implementation. For
-     *            example {@link UsageTypeService}.
+     *            Persistence service for concrete entity implementation.
      */
     @SuppressWarnings("rawtypes")
     public PaginationDataModel(IPersistenceService service) {
@@ -82,7 +81,7 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
     }
 
     /**
-     * @return
+     * @return sort field.
      */
     protected String getSortField() {
         final FacesContext context = FacesContext.getCurrentInstance();
@@ -91,22 +90,21 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
     }
 
     /**
-     * @param filters
+     * @param filters map of filter.
      */
     public void addFilters(Map<String, Object> filters) {
         this.filters = filters;
     }
 
     /**
-     * @param fetch
-     *            fields
+     * @param fetchFields fetch fields.
      */
     public void addFetchFields(List<String> fetchFields) {
         this.fetchFields = fetchFields;
     }
 
     /**
-     * @return
+     * @return sort order.
      */
     private SortOrder getSortOrdering() {
         final FacesContext context = FacesContext.getCurrentInstance();
@@ -121,7 +119,7 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
      * 
      * @param paginatingData
      *            Paginating data.
-     * @return
+     * @return list of entity.
      */
     @SuppressWarnings("unchecked")
     protected List<T> loadData(PaginationConfiguration paginatingData) {
@@ -129,8 +127,8 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
     }
 
     /**
-     * @param paginatingData
-     * @return
+     * @param paginatingData pagination data.
+     * @return number of records.
      */
     protected int countRecords(PaginationConfiguration paginatingData) {
         return (int) service.count(paginatingData);
@@ -168,7 +166,8 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
 //    }
 
     /**
-     * This method return list of filtered entities
+     * This method return list of filtered entities.
+     * @return list of entity.
      */
     public List<T> list() {
         final int numberOfRows = this.getRowCount();
@@ -223,6 +222,7 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
     /**
      * Used by getRowData() method, also if needed to get row data of T type
      * (not as object).
+     * @return entity.
      */
     public T getRowDataT() {
         if (rowKey == null) {
@@ -238,7 +238,8 @@ public class PaginationDataModel<T>extends DataModel<T> implements Serializable 
     }
 
     /**
-     * 
+     * @param currentRow current row.
+     * @return row data.
      */
     public Object getRowData(Serializable currentRow) {
         if (currentRow == null) {

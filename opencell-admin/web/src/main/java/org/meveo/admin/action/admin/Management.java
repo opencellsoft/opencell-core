@@ -118,14 +118,6 @@ public class Management implements Serializable {
 	/**
 	 * Closes connection.
 	 * 
-	 * @param jobName
-	 *            name of Job
-	 * @param jobRepositoryId
-	 *            Job id in repository
-	 * @param executionDate
-	 *            Date of job execution
-	 * @param jobId
-	 *            Job entity id
 	 */
 	public void close() {
 		try {
@@ -143,15 +135,7 @@ public class Management implements Serializable {
 
 	/**
 	 * Checks application status.
-	 * 
-	 * @param jobName
-	 *            Name of Job.
-	 * @param jobRepositoryId
-	 *            Job id in repository.
-	 * @param executionDate
-	 *            Date of job execution.
-	 * @param jobId
-	 *            Job entity id.
+	 * @return true if enabled.
 	 */
 	public boolean isEnabled() {
 		try {

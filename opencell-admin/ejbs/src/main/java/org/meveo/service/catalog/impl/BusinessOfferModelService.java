@@ -6,13 +6,11 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
-import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BusinessOfferModel;
@@ -67,21 +65,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	/**
 	 * Creates an offer given a BusinessOfferModel.
 	 * 
-	 * @param businessOfferModel
-	 * @param customFields
-	 * @param code
-	 * @param name
-	 * @param offerDescription
-	 * @param serviceCodes
-	 * @param channels
-	 * @param bams
-	 * @param offerTemplateCategories
-	 * @param lifeCycleStatusEnum
-	 * @param map
-	 * @return
-	 * @throws BusinessException
+	 * @param bomParams business offer model parameters.
+	 * @return offer template
+	 * @throws BusinessException business exception.
 	 */
-	public OfferTemplate createOfferFromBOM(BOMInstantiationParameters bomParams) throws BusinessException {
+	public OfferTemplate instantiateFromBOM(BOMInstantiationParameters bomParams) throws BusinessException {
 
 		OfferTemplate bomOffer = bomParams.getBusinessOfferModel().getOfferTemplate();
 		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
@@ -151,6 +139,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 		if (bomParams.getOfferTemplateCategories() != null) {
 			newOfferTemplate.getOfferTemplateCategories().addAll(bomParams.getOfferTemplateCategories());
+		} else if (bomOffer.getOfferTemplateCategories() != null){
+		    newOfferTemplate.getOfferTemplateCategories().addAll(bomOffer.getOfferTemplateCategories());
 		}
 		if (bomParams.getChannels() != null) {
 			newOfferTemplate.getChannels().addAll(bomParams.getChannels());
@@ -158,9 +148,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		if (bomParams.getBams() != null) {
 			newOfferTemplate.getBusinessAccountModels().addAll(bomParams.getBams());
 		}
-		newOfferTemplate.setActive(true);
-		newOfferTemplate.setLifeCycleStatus(bomParams.getLifeCycleStatusEnum());		
-
+		newOfferTemplate.setActive(true);				
+		if (bomParams.getLifeCycleStatusEnum() != null) {
+		    newOfferTemplate.setLifeCycleStatus(bomParams.getLifeCycleStatusEnum());	
+		}
+		
+        newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
+        
 		if (bomParams.getOfferCfValue() != null) {
 			newOfferTemplate.getCfValuesNullSafe().setValuesByCode(bomParams.getOfferCfValue());
 		} else {
@@ -172,11 +166,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		String prefix = newOfferTemplate.getId() + "_";
 
 		// 2 create services
-		List<OfferServiceTemplate> newOfferServiceTemplates = getOfferServiceTemplate(prefix, bomOffer,
+		List<OfferServiceTemplate> newOfferServiceTemplates = instantiateServiceTemplate(prefix, bomOffer,
 				newOfferTemplate, bomParams.getServiceCodes(), bomParams.getBusinessOfferModel());
 
 		// 3 create product templates
-		List<OfferProductTemplate> newOfferProductTemplates = getOfferProductTemplate(prefix, bomOffer,
+		List<OfferProductTemplate> newOfferProductTemplates = instantiateProductTemplate(prefix, bomOffer,
 				bomParams.getProductCodes(), bomParams.getBusinessOfferModel());
 
 		// add to offer
@@ -201,7 +195,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return newOfferTemplate;
 	}
 
-	private List<OfferProductTemplate> getOfferProductTemplate(String prefix, OfferTemplate offerTemplateInBom,
+	private List<OfferProductTemplate> instantiateProductTemplate(String prefix, OfferTemplate offerTemplateInBom,
 			List<ServiceConfigurationDto> productConfigurations, BusinessOfferModel businessOfferModel)
 			throws BusinessException {
 
@@ -266,14 +260,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			if (bpm != null && bpm.getScript() != null) {
 				try {
-					productModelScriptService.beforeCreateServiceFromBSM(
+					productModelScriptService.beforeCreate(
 							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
 				} catch (BusinessException e) {
 					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
 				}
 			}
 
-			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateProduct(
+			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateOfferProductTemplate(
 					offerProductTemplate, prefix, matchedProductConfigurationDto, pricePlansInMemory,
 					chargeTemplateInMemory);
 
@@ -281,7 +275,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			if (bpm != null && bpm.getScript() != null) {
 				try {
-					productModelScriptService.afterCreateServiceFromBSM(newOfferProductTemplate.getProductTemplate(),
+					productModelScriptService.afterCreate(newOfferProductTemplate.getProductTemplate(),
 							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
 				} catch (BusinessException e) {
 					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
@@ -292,7 +286,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return newOfferProductTemplates;
 	}
 
-	private List<OfferServiceTemplate> getOfferServiceTemplate(String prefix, OfferTemplate bomOffer,
+	private List<OfferServiceTemplate> instantiateServiceTemplate(String prefix, OfferTemplate bomOffer,
 			OfferTemplate newOfferTemplate, List<ServiceConfigurationDto> serviceCodes,
 			BusinessOfferModel businessOfferModel) throws BusinessException {
 		List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
@@ -402,21 +396,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return newOfferServiceTemplates;
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<BusinessOfferModel> listInstalled() {
-		QueryBuilder qb = new QueryBuilder(BusinessOfferModel.class, "b", null);
-		qb.startOrClause();
-		qb.addCriterion("installed", "=", true, true);
-		qb.addSql("moduleSource is null");
-		qb.endOrClause();
-
-		try {
-			return (List<BusinessOfferModel>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-
+	/**
+	 * @param businessOfferModel business offer model
+	 * @return list of business service modle.
+	 */
 	public List<BusinessServiceModel> getBusinessServiceModels(BusinessOfferModel businessOfferModel) {
 		List<BusinessServiceModel> businessServiceModels = new ArrayList<>();
 		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
@@ -428,6 +411,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return businessServiceModels;
 	}
 
+	/**
+	 * @param businessOfferModel business offer model
+	 * @param serviceTemplate service template
+	 * @return business service model.
+	 */
 	public BusinessServiceModel findBsmFromBom(BusinessOfferModel businessOfferModel, ServiceTemplate serviceTemplate) {
 		BusinessServiceModel bsm = null;
 		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {

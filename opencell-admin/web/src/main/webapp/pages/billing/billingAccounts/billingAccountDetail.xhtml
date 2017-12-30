@@ -119,7 +119,8 @@
 														label="#{messages['accountEntity.primaryContact']}"
 														field="primaryContact" valueLabelField="code" 
 														listBean="#{providerContactBean}" />
-												
+													<hftl:formField label="#{messages['contactInformation.phone']}" field="phone" />
+                                        
 													<hftl:formField
 														label="#{messages['businessEntity.description']}"
 														id="description" field="description" useConverter="false"
@@ -258,37 +259,37 @@
 <!-- 													<hftl:formField id="countryPanel" -->
 <!-- 														label="#{messages['address.country']}" fkToEntity="true" -->
 <!-- 														field="address" childField="country" -->
-<!-- 														valueLabelField="descriptionEn" valueField="countryCode" -->
+<!-- 														valueLabelField="description" valueField="countryCode" -->
 <!-- 														listBean="#{countryBean}"/> -->
 												
 											</p:fieldset>
 
-												<p:fieldset legend="#{messages['billingAccount.contactPreferences']}">
-											
-														<hftl:formField
-															label="#{messages['billingAccount.electronicBilling']}"
-															field="electronicBilling" isMessage="true" />
+											<p:fieldset
+												legend="#{messages['billingAccount.contactPreferences']}">
+		
+												<hftl:formField
+													label="#{messages['billingAccount.electronicBilling']}"
+													field="electronicBilling" isMessage="true" listenerUpdate="emailField" />
+		
+												<h:panelGroup id="emailField">
+													<hftl:decorateFormField fieldId="email_select"
+														label="#{messages['billingAccount.email']}">
+														<p:inputText id="email_select"
+															rendered="#{billingAccountBean.edit}"
+															value="#{billingAccountBean.entity.email}" size="20"
+															maxlength="100" converter="nullableStringConverter"
+															required="#{billingAccountBean.entity.electronicBilling == true}">
+															<o:validator validatorId="javax.faces.RegularExpression"
+																pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
+																message="#{messages['validator.email.invalid']}" />
+														</p:inputText>
+														<h:outputText rendered="#{!billingAccountBean.edit}"
+															id="emailText" value="#{billingAccountBean.entity.email}" />
+													</hftl:decorateFormField>
+												</h:panelGroup>
+											</p:fieldset>
 
-														<h:panelGroup id="emailField">
-                                                           <hftl:decorateFormField fieldId="email_select" label="#{messages['billingAccount.email']}">
-															
-															<p:inputText id="email_select"
-																rendered="#{billingAccountBean.edit}"
-																value="#{billingAccountBean.entity.email}"
-																size="20" maxlength="100"
-																converter="nullableStringConverter">
-																<o:validator validatorId="javax.faces.RegularExpression"
-																	pattern="([^.@]+)(\.[^.@]+)*@([^.@]+\.)+([^.@]+)"
-																	message="#{messages['validator.email.invalid']}" />
-															</p:inputText>
- 															<h:outputText rendered="#{!billingAccountBean.edit}"
- 																id="emailText"
- 																value="#{billingAccountBean.entity.email}" />
-                                                            </hftl:decorateFormField>
-														</h:panelGroup>
-												</p:fieldset>
-
-										</p:tab>
+								</p:tab>
 
                                         <hftl:customFields backingBean="#{billingAccountBean}" messagesId=":parentTab:formId:messages" />
                                         <hftl:displayWorkflowsHistory entity="#{billingAccountBean.entity}" />

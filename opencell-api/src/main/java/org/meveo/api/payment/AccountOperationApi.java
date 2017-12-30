@@ -1,10 +1,8 @@
 package org.meveo.api.payment;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -205,12 +203,7 @@ public class AccountOperationApi extends BaseApi {
 
     /**
      * List.
-     * @param limit 
-     * @param offset 
-     *
-     * @param customerAccountCode the customer account code
-     * @param sortBy the sort by
-     * @param sortOrder the sort order
+     * @param pagingAndFiltering paging and filtering
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
      */
@@ -487,7 +480,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setMatchingStatus(accountOp.getMatchingStatus());
         accountOperationDto.setOccCode(accountOp.getOccCode());
         accountOperationDto.setOccDescription(accountOp.getOccDescription());
-        accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsWithInheritedDTO(accountOp, true));
+        accountOperationDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(accountOp, true));
         accountOperationDto.setBankLot(accountOp.getBankLot());
         accountOperationDto.setBankReference(accountOp.getBankReference());
         accountOperationDto.setDepositDate(accountOp.getDepositDate());

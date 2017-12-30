@@ -23,11 +23,9 @@ public final class LocaleUtils {
      * <p>
      * Converts a String to a Locale.
      * </p>
-     * <p/>
      * <p>
      * This method takes the string format of a locale and creates the locale object from it.
      * </p>
-     * <p/>
      * <pre>
      *   LocaleUtils.toLocale("en")         = new Locale("en", "")
      *   LocaleUtils.toLocale("en_GB")      = new Locale("en", "GB")
@@ -37,7 +35,6 @@ public final class LocaleUtils {
      *   LocaleUtils.toLocale("en__xxx")    = new Locale("en", "", "xxx")     (#)
      *   LocaleUtils.toLocale("en--xxx")    = new Locale("en", "", "xxx")     (#)
      * </pre>
-     * <p/>
      * <p>
      * This method validates the input strictly. The language code must be lowercase. The country code must be uppercase. The
      * separator must be an underscore or hyphen. The length must be correct.

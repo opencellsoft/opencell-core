@@ -56,6 +56,9 @@ public class GenerateImportXmlV2 {
 
 	/***********************************************************************/
 
+	/**
+	 * @param args argurments
+	 */
 	public static void main(String[] args) {
 		new GenerateImportXmlV2();
 	}

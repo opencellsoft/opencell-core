@@ -112,6 +112,9 @@ public enum AccountHierarchyTypeEnum {
 		this.highLevel = highLevel;
 	}
 
+	/**
+	 * @return label
+	 */
 	public String getLabel() {
 		return "enum.AccountHierarchyTypeEnum." + name();
 	}
@@ -120,7 +123,7 @@ public enum AccountHierarchyTypeEnum {
 	 * This will return the class that corresponds to the top entity of the
 	 * hierarchy.
 	 * 
-	 * @return
+	 * @return top class.
 	 */
 	public Class<? extends BusinessEntity> topClass() {
 		switch (highLevel) {
@@ -143,7 +146,7 @@ public enum AccountHierarchyTypeEnum {
 	 * This will return the class that corresponds to the parent of the top
 	 * entity.
 	 * 
-	 * @return
+	 * @return top class
 	 */
 	public Class<? extends BusinessEntity> parentClass() {
 		switch (highLevel) {

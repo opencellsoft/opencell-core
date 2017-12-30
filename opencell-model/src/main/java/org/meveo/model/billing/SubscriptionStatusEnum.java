@@ -46,6 +46,8 @@ public enum SubscriptionStatusEnum  {
 
     /**
      * Gets enum by its id.
+     * @param id id of subscription status
+     * @return subscription status.
      */
     public static SubscriptionStatusEnum getValue(Integer id) {
         if (id != null) {

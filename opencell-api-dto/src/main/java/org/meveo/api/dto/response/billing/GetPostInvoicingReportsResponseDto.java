@@ -9,35 +9,34 @@ import org.meveo.model.billing.PostInvoicingReportsDTO;
 
 @XmlRootElement(name = "GetPostInvoicingReportsResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetPostInvoicingReportsResponseDto  extends BaseResponse{
-	
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private PostInvoicingReportsDTO postInvoicingReportsDTO;
-	
-	public GetPostInvoicingReportsResponseDto(){
-		
-	}
+public class GetPostInvoicingReportsResponseDto extends BaseResponse {
 
-	/**
-	 * @return the PostInvoicingReportsDTO
-	 */
-	public PostInvoicingReportsDTO getPostInvoicingReportsDTO() {
-		return postInvoicingReportsDTO;
-	}
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
+    private PostInvoicingReportsDTO postInvoicingReportsDTO;
 
-	/**
-	 * @param PostInvoicingReportsDTO the PostInvoicingReportsDTO to set
-	 */
-	public void setPostInvoicingReportsDTO(PostInvoicingReportsDTO postInvoicingReportsDTO) {
-		this.postInvoicingReportsDTO = postInvoicingReportsDTO;
-	}
+    public GetPostInvoicingReportsResponseDto() {
 
+    }
 
-	@Override
-	public String toString() {
-		return "GetPostInvoicingReportsResponseDto [PostInvoicingReportsDTO=" + postInvoicingReportsDTO + "]";
-	}
+    /**
+     * @return the PostInvoicingReportsDTO
+     */
+    public PostInvoicingReportsDTO getPostInvoicingReportsDTO() {
+        return postInvoicingReportsDTO;
+    }
+
+    /**
+     * @param postInvoicingReportsDTO the PostInvoicingReportsDTO to set
+     */
+    public void setPostInvoicingReportsDTO(PostInvoicingReportsDTO postInvoicingReportsDTO) {
+        this.postInvoicingReportsDTO = postInvoicingReportsDTO;
+    }
+
+    @Override
+    public String toString() {
+        return "GetPostInvoicingReportsResponseDto [PostInvoicingReportsDTO=" + postInvoicingReportsDTO + "]";
+    }
 }

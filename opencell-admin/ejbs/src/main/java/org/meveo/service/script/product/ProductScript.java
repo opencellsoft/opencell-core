@@ -10,13 +10,19 @@ import org.meveo.service.script.module.ModuleScript;
  */
 public class ProductScript extends ModuleScript implements ProductScriptInterface {
 
+    /**
+     * Called before a new product is created.
+     */
 	@Override
-	public void beforeCreateProductFromPMS(Map<String, Object> methodContext) throws BusinessException {
+	public void beforeCreate(Map<String, Object> methodContext) throws BusinessException {
 
 	}
 
+	/**
+	 * Called after a new product is created.
+	 */
 	@Override
-	public void afterCreateProductFromPMS(Map<String, Object> methodContext) throws BusinessException {
+	public void afterCreate(Map<String, Object> methodContext) throws BusinessException {
 
 	}
 

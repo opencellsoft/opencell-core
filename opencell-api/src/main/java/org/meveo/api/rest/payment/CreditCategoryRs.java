@@ -19,7 +19,7 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * @author Edward P. Legaspi
- * @created 22 Aug 2017
+ * @since 22 Aug 2017
  */
 @Path("/payment/creditCategory")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

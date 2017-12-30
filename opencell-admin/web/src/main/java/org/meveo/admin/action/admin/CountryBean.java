@@ -38,7 +38,7 @@ import org.meveo.service.base.local.IPersistenceService;
  * custom JSF components.
  * 
  * @author Ignas
- * @created 2009.10.13
+ * @since 2009.10.13
  */
 @Named
 @ViewScoped
@@ -68,7 +68,7 @@ public class CountryBean extends BaseBean<Country> {
 
 	@Override
 	protected String getDefaultSort() {
-		return "descriptionEn";
+		return "description";
 	}
 	@Override
 	protected String getListViewName() {

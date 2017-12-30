@@ -23,7 +23,7 @@ package org.meveo.commons.utils;
  * File Format enumeration used in Medina.
  * 
  * @author Donatas Remeika
- * @created Mar 6, 2009
+ * 
  */
 public enum FileFormat {
 

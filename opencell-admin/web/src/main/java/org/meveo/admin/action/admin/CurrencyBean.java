@@ -53,9 +53,7 @@ public class CurrencyBean extends BaseBean<Currency> {
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return currency
 	 */
 	@Override
 	public Currency initEntity() {

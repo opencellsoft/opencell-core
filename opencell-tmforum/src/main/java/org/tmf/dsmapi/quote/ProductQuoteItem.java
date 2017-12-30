@@ -41,22 +41,22 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Le fragment de schéma suivant indique le contenu attendu figurant dans cette classe.
  * 
  * <pre>
- * &lt;complexType name="QuoteItem">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="state" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="attachment" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Attachment" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="relatedParty" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}RelatedParty" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="note" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Note" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="productOffering" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}ProductOffering" minOccurs="0"/>
- *         &lt;element name="product" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Product" minOccurs="0"/>
- *         &lt;element name="itemQuoteProductOfferingPrice" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}QuoteProductOfferingPrice" maxOccurs="unbounded" minOccurs="0"/>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="QuoteItem"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="state" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="attachment" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Attachment" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="relatedParty" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}RelatedParty" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="note" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Note" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *         &lt;element name="productOffering" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}ProductOffering" minOccurs="0"/&gt;
+ *         &lt;element name="product" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}Product" minOccurs="0"/&gt;
+ *         &lt;element name="itemQuoteProductOfferingPrice" type="{http://orange.com/api/quoteManagement/tmf/v1/model/business}QuoteProductOfferingPrice" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -127,9 +127,8 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * Définit la valeur de la propriété state.
      * 
-     * @param value allowed object is {@link StateQuote }
+     * @param value allowed object
      * 
      */
     public void setState(String value) {
@@ -137,7 +136,6 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * Obtient la valeur de la propriété action.
      * 
      * @return possible object is {@link String }
      * 
@@ -147,9 +145,8 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * Définit la valeur de la propriété action.
      * 
-     * @param value allowed object is {@link String }
+     * @param value allowed object
      * 
      */
     public void setAction(String value) {
@@ -193,7 +190,7 @@ public class ProductQuoteItem implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link Attachment }
-     * 
+     * @return list of attachment
      * 
      */
     public Attachment getAttachment() {
@@ -201,7 +198,7 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * 
+     * @param attachment to set.
      * 
      */
     public void setAttachment(Attachment attachment) {
@@ -225,6 +222,7 @@ public class ProductQuoteItem implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link RelatedParty }
+     * @return list of related Party
      * 
      * 
      */
@@ -236,7 +234,7 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * 
+     * @param relatedParty list of related party {@link RelatedParty}
      * 
      */
     public void setRelatedParty(List<RelatedParty> relatedParty) {
@@ -260,6 +258,7 @@ public class ProductQuoteItem implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link Note }
+     * @return list of note.
      * 
      * 
      */
@@ -271,7 +270,7 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * 
+     * @param note list of {@link Note} to be set.
      * 
      */
     public void setNote(List<Note> note) {
@@ -279,7 +278,6 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * Obtient la valeur de la propriété productOffering.
      * 
      * @return possible object is {@link ProductOffering }
      * 
@@ -335,7 +333,7 @@ public class ProductQuoteItem implements Serializable {
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list {@link QuoteProductOfferingPrice }
-     * 
+     * @return list of quote product offering price.
      * 
      */
     public List<QuoteProductOfferingPrice> getItemQuoteProductOfferingPrice() {
@@ -387,12 +385,12 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * Serialize orderItem DTO into a string
+     * Serialize orderItem DTO into a string.
      * 
      * @param productQuoteItem Quote item to serialize
      * @return String in XML format
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public static String serializeQuoteItem(ProductQuoteItem productQuoteItem) throws BusinessException {
         try {
@@ -410,12 +408,12 @@ public class ProductQuoteItem implements Serializable {
     }
 
     /**
-     * Deserialize quote item from a string
+     * Deserialize quote item from a string.
      * 
      * @param quoteItemSource Serialized quoteItem dto
      * @return Quote item object
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public static ProductQuoteItem deserializeQuoteItem(String quoteItemSource) throws BusinessException {
         // Store quoteItem DTO into DB to be retrieved for full information

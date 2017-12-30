@@ -142,7 +142,7 @@
                                         <!-- 												<hftl:formField id="countryPanel" -->
                                         <!-- 													label="#{messages['address.country']}" fkToEntity="true" -->
                                         <!-- 													field="address" childField="country" -->
-                                        <!-- 													valueLabelField="descriptionEn" valueField="countryCode" -->
+                                        <!-- 													valueLabelField="description" valueField="countryCode" -->
                                         <!-- 													listBean="#{countryBean}"/> -->
                                     </p:fieldset>
 
@@ -155,7 +155,7 @@
                                             <p:column headerText="#{messages['paymentMethod.cardNrOrAccountNr']}">
                                                 <h:outputText value="#{entity.hiddenCardNumber} #{entity.expirationMonthAndYear}" rendered="#{entity.paymentType == PaymentMethodEnum.CARD}" />
                                                 <h:outputText value="#{entity.bankCoordinates.bankName} #{entity.bankCoordinates.iban}"
-                                                    rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT or entity.paymentType == PaymentMethodEnum.TIP}" />
+                                                    rendered="#{entity.paymentType == PaymentMethodEnum.DIRECTDEBIT}" />
                                             </p:column>
                                             <hftl:column label="#{messages['paymentMethod.preferred']}" field="preferred" isMessage="true" />
 
@@ -195,7 +195,6 @@
                                                 <p:selectOneMenu id="newPaymentMethodType" value="#{customerAccountBean.newPaymentMethodType}">                                                   
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
-                                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.TIP.label]}" itemValue="#{PaymentMethodEnum.TIP}" />
                                                     <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
                                                     <f:converter converterId="enumConverter" />
                                                     <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
@@ -257,26 +256,6 @@
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
                                                             childField="iban" size="45" required="true" />                                                                                                     
                                                     </c:if>
-                                                    
-                                                    <c:if test="#{customerAccountBean.selectedPaymentMethod.paymentType == PaymentMethodEnum.TIP}">
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
-                                                            childField="bankName" size="55" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankCode']}" id="bankCode"
-                                                            field="bankCoordinates" childField="bankCode" size="5" maxlength="5" validateRib="false" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.branchCode']}" field="bankCoordinates"
-                                                            childField="branchCode" size="5" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountNumber']}"
-                                                            field="bankCoordinates" childField="accountNumber" size="11" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"
-                                                            field="bankCoordinates" childField="accountOwner" size="55" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.key']}" field="bankCoordinates"
-                                                            childField="key" size="2" required="true" />
-                                                        <!-- <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
-                                                            childField="bic" size="15" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
-                                                            childField="iban" size="45" required="true" /> -->                                                            
-                                                    </c:if>
-
                                                 </p:outputPanel>
                                                 <h:panelGroup layout="block" styleClass="form-panel-actions">
                                                     <p:commandButton value="#{messages['paymentMethod.savePaymentMethod']}" action="#{customerAccountBean.savePaymentMethod()}"

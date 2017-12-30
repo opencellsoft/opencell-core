@@ -43,6 +43,9 @@ public class GenerateImportXml {
 
 	/***********************************************************************/
 
+	/**
+	 * @param args argumrents
+	 */
 	public static void main(String[] args) {
 		try {
 			Sellers sellers = new Sellers();

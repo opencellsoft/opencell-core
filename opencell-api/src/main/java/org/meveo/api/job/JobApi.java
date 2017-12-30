@@ -34,12 +34,12 @@ public class JobApi extends BaseApi {
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     /**
-     * Execute job
+     * Execute job.
      * 
      * @param jobExecution Job execution info
      * @return Job execution result identifier
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
@@ -64,11 +64,11 @@ public class JobApi extends BaseApi {
     }
 
     /**
-     * Retrieve job execution result
+     * Retrieve job execution result.
      * 
      * @param id Job execution result identifier
      * @return Job execution result DTO
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception
      */
     public JobExecutionResultDto findJobExecutionResult(Long id) throws MeveoApiException {
         JobExecutionResultDto jobExecutionResultDto = new JobExecutionResultDto();

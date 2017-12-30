@@ -68,14 +68,14 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
 		event.fire(inboundCommunicationEvent);
 	}
 	
-	   /**
-     * export module dto to remote meveo instance
+    /**
+     * export module dto to remote meveo instance.
      * 
-     * @param url
-     * @param meveoInstance
-     * @param dto
-     * @return
-     * @throws MeveoApiException
+     * @param url url
+     * @param meveoInstance meveo instance
+     * @param dto base data transfer object
+     * @return reponses
+     * @throws BusinessException business exception.
      */
     public Response publishDto2MeveoInstance(String url, MeveoInstance meveoInstance, BaseDto dto) throws BusinessException {
         String baseurl = meveoInstance.getUrl().endsWith("/") ? meveoInstance.getUrl() : meveoInstance.getUrl() + "/";
@@ -102,15 +102,15 @@ public class MeveoInstanceService extends BusinessService<MeveoInstance> {
         }
     }
 
-	   /**
-  * call String rest service to remote meveo instance
-  * 
-  * @param url
-  * @param meveoInstance
-  * @param String body
-  * @return
-  * @throws MeveoApiException
-  */
+    /**
+     * call String rest service to remote meveo instance.
+     * 
+     * @param url url
+     * @param meveoInstanceCode meveo instance
+     * @param body body of content to be sent.
+     * @return reponse
+     * @throws BusinessException business exception.
+     */
   public Response callTextServiceMeveoInstance(String url, String meveoInstanceCode, String body) throws BusinessException {
 	  MeveoInstance meveoInstance = findByCode(meveoInstanceCode);
 	  return callTextServiceMeveoInstance(url,meveoInstance,body);

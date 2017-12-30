@@ -26,7 +26,7 @@ import org.meveo.api.dto.response.ScriptInstanceReponseDto;
 public interface ScriptInstanceRs extends IBaseRs {
 
     /**
-     * Create a new script instance
+     * Create a new script instance.
      * 
      * @param postData The script instance's data
      * @return Request processing status
@@ -36,7 +36,7 @@ public interface ScriptInstanceRs extends IBaseRs {
     ScriptInstanceReponseDto create(ScriptInstanceDto postData);
 
     /**
-     * Update an existing script instance
+     * Update an existing script instance.
      * 
      * @param postData The script instance's data
      * @return Request processing status
@@ -46,7 +46,7 @@ public interface ScriptInstanceRs extends IBaseRs {
     ScriptInstanceReponseDto update(ScriptInstanceDto postData);
 
     /**
-     * Remove an existing script instance with a given code 
+     * Remove an existing script instance with a given code .
      * 
      * @param scriptInstanceCode The script instance's code
      * @return Request processing status
@@ -56,17 +56,17 @@ public interface ScriptInstanceRs extends IBaseRs {
     ActionStatus remove(@PathParam("scriptInstanceCode") String scriptInstanceCode);
 
     /**
-     * Find a script instance with a given code 
+     * Find a script instance with a given code.
      * 
      * @param scriptInstanceCode The script instance's code
-     * @return
+     * @return script instance
      */
     @GET
     @Path("/")
     GetScriptInstanceResponseDto find(@QueryParam("scriptInstanceCode") String scriptInstanceCode);
 
     /**
-     * Create new or update an existing script instance with a given code
+     * Create new or update an existing script instance with a given code.
      * 
      * @param postData The script instance's data
      * @return Request processing status

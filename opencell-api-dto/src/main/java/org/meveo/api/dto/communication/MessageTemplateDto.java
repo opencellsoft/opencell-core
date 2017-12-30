@@ -13,7 +13,7 @@ import org.meveo.model.communication.MessageTemplateTypeEnum;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jul 10, 2016 9:18:59 PM
+ * @since Jul 10, 2016 9:18:59 PM
  **/
 @XmlRootElement(name="MessageTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

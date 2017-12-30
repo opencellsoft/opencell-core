@@ -59,7 +59,7 @@ public class EntityCustomActionService extends BusinessService<EntityCustomActio
     /**
      * Find a specific entity action/script by a code
      * 
-     * @param code Entity action/script code. MUST be in a format of <localCode>|<appliesTo>
+     * @param code Entity action/script code. MUST be in a format of &lt;localCode&gt;|&lt;appliesTo&gt;
      * @param entity Entity that entity actions/scripts apply to
 
      * @return Entity action/script
@@ -72,7 +72,7 @@ public class EntityCustomActionService extends BusinessService<EntityCustomActio
     /**
      * Find a specific entity action/script by a code
      * 
-     * @param code Entity action/script code. MUST be in a format of <localCode>|<appliesTo>
+     * @param code Entity action/script code. MUST be in a format of &lt;localCode&gt;|&lt;appliesTo&gt;
      * @param appliesTo Entity (CFT appliesTo code) that entity actions/scripts apply to
 
      * @return Entity action/script

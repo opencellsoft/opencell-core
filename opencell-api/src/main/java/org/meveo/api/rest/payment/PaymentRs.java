@@ -17,6 +17,8 @@ import org.meveo.api.dto.payment.CardPaymentMethodDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
+import org.meveo.api.dto.payment.PaymentGatewayDto;
+import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
@@ -34,8 +36,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Creates automated payment. It also process if a payment is matching or not
      * 
-     * @param postData
-     *            Payment's data
+     * @param postData Payment's data
      * @return payment action status
      */
     @POST
@@ -43,10 +44,10 @@ public interface PaymentRs extends IBaseRs {
     public PaymentActionStatus create(PaymentDto postData);
 
     /**
-     * Returns a list of account operations along with the balance of a customer
+     * Returns a list of account operations along with the balance of a customer.
      * 
-     * @param customerAccountCode
-     * @return
+     * @param customerAccountCode customer account code
+     * @return list of customer's response.
      */
     @GET
     @Path("/customerPayment")
@@ -59,8 +60,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Add a new card payment method. It will be marked as preferred.
      * 
-     * @param cardPaymentMethod
-     *            Card payment method DTO
+     * @param cardPaymentMethod Card payment method DTO
      * @return Token id in payment gateway
      */
     @POST
@@ -70,8 +70,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Update existing card payment method.
      * 
-     * @param cardPaymentMethod
-     *            Card payment method DTO
+     * @param cardPaymentMethod Card payment method DTO
      * @return Action status
      */
     @PUT
@@ -81,8 +80,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Remove card payment method. If it was marked as preferred, some other payment method will be marked as preferred
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return Action status
      */
     @DELETE
@@ -90,24 +88,21 @@ public interface PaymentRs extends IBaseRs {
     public ActionStatus removeCardPaymentMethod(@QueryParam("id") Long id);
 
     /**
-     * List available card payment methods for a given customer account identified either by id or by code
+     * List available card payment methods for a given customer account identified either by id or by code.
      * 
-     * @param customerAccountId
-     *            Customer account id
-     * @param customerAccountCode
-     *            Customer account code
+     * @param customerAccountId Customer account id
+     * @param customerAccountCode Customer account code
      * @return A list of card payment methods
      */
     @GET
     @Path("/cardPaymentMethod/list")
     public CardPaymentMethodTokensDto listCardPaymentMethods(@QueryParam("customerAccountId") Long customerAccountId,
-	    @QueryParam("customerAccountCode") String customerAccountCode);
+            @QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
-     * Retrieve card payment method by its id
+     * Retrieve card payment method by its id.
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return Card payment DTO
      */
     @GET
@@ -120,8 +115,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Add a new payment method. It will be marked as preferred.
      * 
-     * @param paymentMethod
-     *            payment method DTO
+     * @param paymentMethod payment method DTO
      * @return Token id in payment gateway
      */
     @POST
@@ -131,8 +125,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Update existing payment method.
      * 
-     * @param paymentMethod
-     *            payment method DTO
+     * @param ddPaymentMethod payment method DTO
      * @return Action status
      */
     @PUT
@@ -142,8 +135,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Remove payment method. If it was marked as preferred, some other payment method will be marked as preferred
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return Action status
      */
     @DELETE
@@ -153,30 +145,23 @@ public interface PaymentRs extends IBaseRs {
     /**
      * List Payment Methods matching a given criteria
      * 
-     * @param query
-     *            Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
-     * @param fields
-     *            Data retrieval options/fieldnames separated by a comma
-     * @param offset
-     *            Pagination - from record number
-     * @param limit
-     *            Pagination - number of records to retrieve
-     * @param sortBy
-     *            Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
-     * @param sortOrder
-     *            Sorting - sort order.
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
      * @return An payment method list
      */
     @GET
     @Path("/paymentMethod/list")
     public PaymentMethodTokensDto listPaymentMethodGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
-	    @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
      * List Payment Methods matching a given criteria
      * 
-     * @param pagingAndFiltering
-     *            Pagination and filtering criteria
+     * @param pagingAndFiltering Pagination and filtering criteria
      * @return An payment method list
      */
     @POST
@@ -184,13 +169,92 @@ public interface PaymentRs extends IBaseRs {
     public PaymentMethodTokensDto listPaymentMethodPost(PagingAndFiltering pagingAndFiltering);
 
     /**
-     * Retrieve payment method by its id
+     * Retrieve payment method by its id.
      * 
-     * @param id
-     *            Id
+     * @param id Id
      * @return payment DTO
      */
     @GET
     @Path("/paymentMethod")
     public PaymentMethodTokenDto findPaymentMethod(@QueryParam("id") Long id);
+
+    /************************************************************************************************/
+    /**** Payment Gateways ****/
+    /************************************************************************************************/
+    /**
+     * Add a new payment gateway.
+     * 
+     * @param paymentGateway payment gateway DTO
+     * @return the paymentGateway dto created
+     */
+    @POST
+    @Path("/paymentGateway")
+    public PaymentGatewayResponseDto addPaymentGateway(PaymentGatewayDto paymentGateway);
+
+    /**
+     * Update existing payment gateway.
+     * 
+     * @param paymentGateway payment gateway DTO
+     * @return Action status
+     */
+    @PUT
+    @Path("/paymentGateway")
+    public ActionStatus updatePaymentGateway(PaymentGatewayDto paymentGateway);
+
+    /**
+     * Remove payment gateway.
+     * 
+     * @param code payment gateway's code
+     * @return Action status
+     */
+    @DELETE
+    @Path("/paymentGateway")
+    public ActionStatus removePaymentGateway(@QueryParam("code") String code);
+
+    /**
+     * List Payment Gateways matching a given criteria
+     * 
+     * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
+     * @param fields Data retrieval options/fieldnames separated by a comma
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return An payment gateway list
+     */
+    @GET
+    @Path("/paymentGateway/list")
+    public PaymentGatewayResponseDto listPaymentGatewaysGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
+            @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+
+    /**
+     * List Payment Gateways matching a given criteria.
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return An payment gateway list
+     */
+    @POST
+    @Path("/paymentGateway/list")
+    public PaymentGatewayResponseDto listPaymentGatewaysPost(PagingAndFiltering pagingAndFiltering);
+
+    /**
+     * Retrieve payment gateway by its code.
+     * 
+     * @param code payment gateway's code
+     * @return payment DTO
+     */
+    @GET
+    @Path("/paymentGateway")
+    public PaymentGatewayResponseDto findPaymentGateway(@QueryParam("code") String code);
+
+    /**
+     * Create or update payment gateway.
+     * 
+     * @param paymentGateway payment gateway DTO
+     * @return the paymentGateway dto created
+     */
+    @POST
+    @Path("/createOrUpdatePaymentGateway")
+    public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway);
+
 }

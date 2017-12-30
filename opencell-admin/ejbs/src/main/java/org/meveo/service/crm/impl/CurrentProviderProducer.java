@@ -17,9 +17,9 @@ public class CurrentProviderProducer {
     private ProviderService providerService;
 
     /**
-     * Expose application provider
+     * Expose application provider.
      * 
-     * @return
+     * @return provider.
      */
     @Produces
     @ApplicationScoped

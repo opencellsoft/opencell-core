@@ -2,7 +2,6 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
@@ -14,7 +13,6 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
-import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.RefundDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -22,20 +20,16 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
-import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
-import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
 
@@ -60,10 +54,10 @@ public class RefundApi extends BaseApi {
     /**
      * @param refundDto refund object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws NoAllOperationUnmatchedException no all operation unmatched exception
+     * @throws UnbalanceAmountException unbalance amount exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
      */
     public Long createPayment(RefundDto refundDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + refundDto.getAmount() + " paymentMethodEnum:" + refundDto.getPaymentMethod() + " isToMatching:" + refundDto.isToMatching()

@@ -31,10 +31,10 @@ public class DiscountPlanApi extends BaseApi {
     /**
      * creates a discount plan
      * 
-     * @param postData
+     * @param postData posted data to API
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception
      */
     public void create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
@@ -54,12 +54,12 @@ public class DiscountPlanApi extends BaseApi {
     }
 
     /**
-     * updates the description of an existing discount plan
+     * updates the description of an existing discount plan.
      * 
-     * @param postData
+     * @param postData posted data to API
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception
      */
     public void update(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
@@ -82,9 +82,9 @@ public class DiscountPlanApi extends BaseApi {
     /**
      * retrieves a discount plan based on code
      * 
-     * @param discountPlanCode
-     * @return
-     * @throws MeveoApiException
+     * @param discountPlanCode discount plan code
+     * @return discount plan
+     * @throws MeveoApiException meveo api exception
      */
     public DiscountPlanDto find(String discountPlanCode) throws MeveoApiException {
 
@@ -107,11 +107,11 @@ public class DiscountPlanApi extends BaseApi {
     }
 
     /**
-     * deletes a discount plan based on code
+     * deletes a discount plan based on code.
      * 
-     * @param discountPlanCode
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @param discountPlanCode discount plan code
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception 
      */
     public void remove(String discountPlanCode) throws MeveoApiException, BusinessException {
 
@@ -129,12 +129,12 @@ public class DiscountPlanApi extends BaseApi {
     }
 
     /**
-     * creates if the the discount plan code is not existing, updates if exists
+     * creates if the the discount plan code is not existing, updates if exists.
      * 
-     * @param postData
+     * @param postData posted data to API
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception
      */
     public void createOrUpdate(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
@@ -150,10 +150,10 @@ public class DiscountPlanApi extends BaseApi {
     }
 
     /**
-     * retrieves all discount plan of the user
+     * retrieves all discount plan of the user.
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return list of discount plan
+     * @throws MeveoApiException meveo api exception
      */
     public DiscountPlansDto list() throws MeveoApiException {
 

@@ -15,7 +15,6 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.CountryRs;
 
 /**
- * @see {@link org.meveo.api.rest.CountryWs}.
  * 
  * @author Edward P. Legaspi
  * 

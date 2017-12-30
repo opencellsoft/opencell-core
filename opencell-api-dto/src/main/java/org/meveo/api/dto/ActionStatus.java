@@ -7,6 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.MeveoApiErrorCodeEnum;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Determine the status of the MEVEO API web service response.
  * 
@@ -14,6 +17,7 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonInclude(Include.NON_NULL)
 public class ActionStatus {
 
     /**
@@ -23,12 +27,12 @@ public class ActionStatus {
     private ActionStatusEnum status;
 
     /**
-     * An error code
+     * An error code.
      */
     private MeveoApiErrorCodeEnum errorCode;
 
     /**
-     * A detailed error message if applicable
+     * A detailed error message if applicable.
      */
     @XmlElement(required = true)
     private String message;
@@ -40,8 +44,8 @@ public class ActionStatus {
     /**
      * Sets status and message.
      * 
-     * @param status
-     * @param message
+     * @param status action status
+     * @param message message
      */
     public ActionStatus(ActionStatusEnum status, String message) {
         this.status = status;
@@ -51,9 +55,9 @@ public class ActionStatus {
     /**
      * Sets status, error code and message.
      * 
-     * @param status
-     * @param errorCode
-     * @param message
+     * @param status action status
+     * @param errorCode error code
+     * @param message message.
      */
     public ActionStatus(ActionStatusEnum status, MeveoApiErrorCodeEnum errorCode, String message) {
         this.status = status;
@@ -78,7 +82,7 @@ public class ActionStatus {
     }
 
     /**
-     * Error code
+     * Error code.
      * 
      * @return Error code
      */

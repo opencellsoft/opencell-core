@@ -105,7 +105,7 @@ public class InvoiceCategoryApi extends BaseApi {
             throw new EntityDoesNotExistsException(InvoiceCategory.class, code);
         }
 
-        result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsWithInheritedDTO(invoiceCategory, true));
+        result = new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true));
 
         return result;
     }
@@ -128,10 +128,10 @@ public class InvoiceCategoryApi extends BaseApi {
     /**
      * Creates or updates invoice category based on the code. If passed invoice category is not yet existing, it will be created else will be updated.
      * 
-     * @param postData
+     * @param postData posted data.
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(InvoiceCategoryDto postData) throws MeveoApiException, BusinessException {
         InvoiceCategory invoiceCategory = invoiceCategoryService.findByCode(postData.getCode());

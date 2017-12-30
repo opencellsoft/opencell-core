@@ -5,10 +5,10 @@
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
 	xmlns:p="http://primefaces.org/ui">
 
-	<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{currentUser.hasRole('administrationVisualization') or currentUser.hasRole('catalogVisualization')}">
+	<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{currentUser.hasRole('administrationVisualization') or currentUser.hasRole('catalogVisualization') or currentUser.hasRole('userVisualization')}">
 		<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.appConfiguration']}" rendered="#{currentUser.hasRole('administrationManagement') or currentUser.hasRole('superAdminManagement')}" />
 		<p:menuitem id="providerContacts" outcome="providerContacts" value="#{messages['menu.providerContacts']}" />
-		<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" rendered="#{currentUser.hasRole('administrationVisualization')}" />
+		<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" rendered="#{currentUser.hasRole('userVisualization')}" />
 		<p:menuitem id="userRoles" value="#{messages['menu.userRoles']}" outcome="roles" rendered="#{currentUser.hasRole('administrationVisualization')}" />
 		<p:menuitem id="userGroupHierarchy" value="#{messages['menu.userGroupHierarchy']}" outcome="userGroupHierarchy" rendered="#{currentUser.hasRole('administrationVisualization')}" />			
 		<p:menuitem id="sellers" outcome="sellers" value="#{messages['menu.sellers']}" />
@@ -80,7 +80,7 @@
 	</p:submenu>
 	
 	<p:submenu styleClass="mmProductsSM" label="#{messages['menu.marketingManager.products']}"  rendered="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }" >
-		<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates" value="#{messages['menu.marketingManager.productList']}" />
+		<p:menuitem id="mm_products" outcome="mm_products" value="#{messages['menu.marketingManager.productList']}" />
 	</p:submenu>
 	
 	<p:submenu id="crm" label="#{messages['menu.crm']}" rendered="#{currentUser.hasRole('accountVisualization') or currentUser.hasRole('customerSummaryVisualization')}">
@@ -109,26 +109,27 @@
 		<p:menuitem id="importedFiles" outcome="importedFiles" value="#{messages['menu.importedFiles']}" rendered="#{currentUser.hasRole('billingManagement')}" />
 	</p:submenu>
 	
-	<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement') }">
+	<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement')  or currentUser.hasRole('createInvoice')}">
 		<p:submenu id="rating" label="#{messages['menu.rating']}" rendered="#{currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="walletOperations" outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
 		</p:submenu>
-		<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" />
+		<p:menuitem id="ratedTransactions" outcome="ratedTransactions" value="#{messages['menu.ratedTransactions']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
 		<p:submenu id="billingRun" label="#{messages['menu.billingRun']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="billingRuns" outcome="billingRuns" value="#{messages['menu.billingRuns']}" />
 			<p:menuitem id="recurringInvoicing" outcome="recurringInvoicing" rendered="#{currentUser.hasRole('billingManagement')}" value="#{messages['menu.globalExecution']}" />
 			<p:menuitem id="exceptionalInvoicing" outcome="exceptionelInvoicing" value="#{messages['menu.exceptionalInvoicing']}" />
 		</p:submenu>
-		<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">
-			<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" />
-			<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" />
-			<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" />
+		<p:submenu id="invoice" label="#{messages['menu.invoice']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization') or currentUser.hasRole('createInvoice')}">
+			<p:menuitem id="invoices" outcome="invoices" value="#{messages['menu.invoices']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
+			<p:menuitem id="aggregateInvoices" outcome="invoiceAggregatedDetail" value="#{messages['menu.invoice.createAggregated']}" rendered="#{currentUser.hasRole('createInvoice') }" />
+			<p:menuitem id="detailedInvoices" outcome="detailedInvoiceDetail" value="#{messages['menu.invoice.createDetailed']}" rendered="#{currentUser.hasRole('createInvoice') }" />
 		</p:submenu>
 	</p:submenu>
 	
-	<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">			
+	<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">	
+	        <p:menuitem id="paymentGateways" outcome="paymentGateways" value="#{messages['menu.paymentGateways']}" />		
 	  	 	<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />				
-		<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
+		    <p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
 	</p:submenu>
 	
 	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">

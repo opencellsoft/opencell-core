@@ -46,7 +46,6 @@ import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.payments.WirePaymentMethod;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
@@ -102,9 +101,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return customer account 
      */
     @Override
     public CustomerAccount initEntity() {
@@ -152,7 +149,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             throw new ValidationException("CustomerAccount does not have a preferred payment method", "paymentMethod.noPreferredPaymentMethod");
         }
 
-        entity.setCustomer(customerService.refreshOrRetrieve(entity.getCustomer()));
+        entity.setCustomer(customerService.findById(entity.getCustomer().getId()));
 
         String outcome = super.saveOrUpdate(killConversation);
 
@@ -167,8 +164,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     /**
      * Move selected accountOperation from current CustomerAccount to customerAccountTo
      * 
-     * @param customerAccountTo
-     * @return
+     * @return output view
      */
     public String transferAccount() {
         try {
@@ -333,8 +329,6 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
             selectedPaymentMethod = new CardPaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.CHECK) {
             selectedPaymentMethod = new CheckPaymentMethod();
-        } else if (newPaymentMethodType == PaymentMethodEnum.TIP) {
-            selectedPaymentMethod = new TipPaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.WIRETRANSFER) {
             selectedPaymentMethod = new WirePaymentMethod();
         } else if (newPaymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {

@@ -17,7 +17,7 @@ public abstract class PrimitiveFilterProcessor {
      * Checks the {@link PrimitiveFilterCondition} if the processor
      * implementation can process it.
      *
-     * @param condition The {@lsink PrimitiveFilterCondition} to be processed.
+     * @param condition The {@link PrimitiveFilterCondition} to be processed.
      * @return true if the processor matches the condition.
      */
     public abstract boolean canProccessCondition(PrimitiveFilterCondition condition);
@@ -31,7 +31,7 @@ public abstract class PrimitiveFilterProcessor {
      * @param alias        The value of the {@link FilterCondition}'s primarySelector
      *                     property.
      * @param condition    The {@link PrimitiveFilterCondition} that will be processed.
-     * @throws FilterException
+     * @throws FilterException filter exception.
      */
     public abstract void process(FilteredQueryBuilder queryBuilder, String alias, PrimitiveFilterCondition condition)
         throws FilterException;
@@ -66,15 +66,15 @@ public abstract class PrimitiveFilterProcessor {
         return isNumber && isValid;
     }
 
-    protected Map.Entry<CustomFieldTemplate, Object> fetchCustomFieldEntry(Map<CustomFieldTemplate, Object> parameterMap, String operand){
+    protected Map.Entry<CustomFieldTemplate, Object> fetchCustomFieldEntry(Map<CustomFieldTemplate, Object> parameterMap, String operand) {
         Map.Entry<CustomFieldTemplate, Object> customFieldEntry = null;
-        if(parameterMap != null && !parameterMap.isEmpty()) {
+        if (parameterMap != null && !parameterMap.isEmpty()) {
             String fieldName = getFieldName(operand);
-            if(fieldName != null){
+            if (fieldName != null) {
                 CustomFieldTemplate customField = null;
-                for(Map.Entry<CustomFieldTemplate, Object> parameter : parameterMap.entrySet()){
+                for (Map.Entry<CustomFieldTemplate, Object> parameter : parameterMap.entrySet()) {
                     customField = parameter.getKey();
-                    if(fieldName != null && fieldName.equals(customField.getCode())){
+                    if (fieldName != null && fieldName.equals(customField.getCode())) {
                         customFieldEntry = parameter;
                         break;
                     }
@@ -83,14 +83,14 @@ public abstract class PrimitiveFilterProcessor {
         }
         return customFieldEntry;
     }
-    
+
     protected Object fetchCustomFieldParameterValue(Map<String, String> parameters, String key) {
-    	return null;
+        return null;
     }
 
-    private String getFieldName(String operand){
+    private String getFieldName(String operand) {
         String fieldName = null;
-        if(operand != null && operand.contains(":")){
+        if (operand != null && operand.contains(":")) {
             fieldName = operand.substring(operand.indexOf(":") + 1);
         }
         return fieldName;

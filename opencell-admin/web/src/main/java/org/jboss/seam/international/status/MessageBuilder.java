@@ -25,6 +25,7 @@ package org.jboss.seam.international.status;
 public interface MessageBuilder {
     /**
      * Generate a {@link Message} that represents the internal state of this builder.
+     * @return message.
      */
     Message build();
 }

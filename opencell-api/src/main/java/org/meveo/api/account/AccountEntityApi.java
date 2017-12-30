@@ -39,7 +39,7 @@ public class AccountEntityApi extends BaseApi {
             address.setCity(postData.getAddress().getCity());
             if(!StringUtils.isBlank(postData.getAddress().getCountry())){
             	Country country=countryService.findByCode(postData.getAddress().getCountry());
-                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescription():postData.getAddress().getCountry());
                 
             }
             address.setState(postData.getAddress().getState());
@@ -93,7 +93,7 @@ public class AccountEntityApi extends BaseApi {
             }
             if (!StringUtils.isBlank(postData.getAddress().getCountry())) {
             	Country country=countryService.findByCode(postData.getAddress().getCountry());
-                address.setCountry(country!=null?country.getDescriptionEn():postData.getAddress().getCountry());
+                address.setCountry(country!=null?country.getDescription():postData.getAddress().getCountry());
             }
             if (!StringUtils.isBlank(postData.getAddress().getState())) {
                 address.setState(postData.getAddress().getState());

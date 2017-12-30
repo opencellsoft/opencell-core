@@ -1,5 +1,6 @@
 package org.meveo.security.keycloak;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -9,8 +10,11 @@ import java.util.Set;
 import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
+import javax.enterprise.context.ContextNotActiveException;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Instance;
 import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -23,6 +27,7 @@ import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +41,9 @@ public class CurrentUserProvider {
 
     @PersistenceContext(unitName = "MeveoAdmin")
     private EntityManager em;
+    
+    @Inject
+    private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
     private String forcedUserUsername;
 
@@ -98,6 +106,13 @@ public class CurrentUserProvider {
             try {
                 user = em.createNamedQuery("User.getByUsername", User.class).setParameter("username", currentUser.getUserName().toLowerCase()).getSingleResult();
 
+                if (userAuthTimeProducer.get().getAuthTime() != currentUser.getAuthTime()) {
+                    userAuthTimeProducer.get().setAuthTime(currentUser.getAuthTime());
+                    user.setLastLoginDate(new Date());
+                    em.merge(user);
+                    em.flush();
+                }
+
             } catch (NoResultException e) {
 
                 user = new User();
@@ -114,10 +129,14 @@ public class CurrentUserProvider {
                         user.getName().setFirstName(currentUser.getFullName());
                     }
                 }
+                user.setLastLoginDate(new Date());
                 user.updateAudit(currentUser);
                 em.persist(user);
                 em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
+         
+            } catch (ContextNotActiveException e) {
+                log.error("No session context={}", e.getMessage());
             }
 
         } catch (Exception e) {

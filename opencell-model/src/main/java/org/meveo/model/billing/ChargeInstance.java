@@ -52,6 +52,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.admin.Seller;
@@ -69,159 +70,191 @@ import org.slf4j.LoggerFactory;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class ChargeInstance extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
-    
-	/**
-	 * Specifies that charge does not apply to any order
-	 */
-	public static String NO_ORDER_NUMBER ="none";
-    
-	@Enumerated(EnumType.STRING)
-	@Column(name = "status")
-	protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;
+    private static final long serialVersionUID = 1L;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name = "status_date")
-	protected Date statusDate;
+    /**
+     * Specifies that charge does not apply to any order
+     */
+    public static String NO_ORDER_NUMBER = "none";
 
-	@Temporal(TemporalType.DATE)
-	@Column(name = "termination_date")
-	protected Date terminationDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    protected InstanceStatusEnum status = InstanceStatusEnum.ACTIVE;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "charge_template_id")
-	protected ChargeTemplate chargeTemplate;
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "status_date")
+    protected Date statusDate;
 
-	@ManyToOne
-	@JoinColumn(name = "invoicing_calendar_id")
-	private Calendar invoicingCalendar;
-	
-	@Temporal(TemporalType.DATE)
-	@Column(name = "charge_date")
-	protected Date chargeDate;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "termination_date")
+    protected Date terminationDate;
 
-	@Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	protected BigDecimal amountWithoutTax;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "charge_template_id")
+    protected ChargeTemplate chargeTemplate;
 
-	@Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
-	protected BigDecimal amountWithTax;
+    @ManyToOne
+    @JoinColumn(name = "invoicing_calendar_id")
+    protected Calendar invoicingCalendar;
 
-	@Column(name = "criteria_1", length = 255)
-	@Size(max = 255)
-	protected String criteria1;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "charge_date")
+    protected Date chargeDate;
 
-	@Column(name = "criteria_2", length = 255)
+    @Column(name = "amount_without_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal amountWithoutTax;
+
+    @Column(name = "amount_with_tax", precision = NB_PRECISION, scale = NB_DECIMALS)
+    protected BigDecimal amountWithTax;
+
+    @Column(name = "criteria_1", length = 255)
     @Size(max = 255)
-	protected String criteria2;
+    protected String criteria1;
 
-	@Column(name = "criteria_3", length = 255)
+    @Column(name = "criteria_2", length = 255)
     @Size(max = 255)
-	protected String criteria3;
+    protected String criteria2;
 
-	@OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
+    @Column(name = "criteria_3", length = 255)
+    @Size(max = 255)
+    protected String criteria3;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "seller_id")
-	private Seller seller;
+    @OneToMany(mappedBy = "chargeInstance", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    protected Set<WalletOperation> walletOperations = new HashSet<WalletOperation>();
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "user_account_id")
-	protected UserAccount userAccount;
-	
-	///Might be null, for productCharges for instance
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "subscription_id")
-	protected Subscription subscription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "seller_id")
+    protected Seller seller;
 
-	@Column(name = "pr_description", length = 255)
-	@Size(max = 255)
-	protected String prDescription;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    protected UserAccount userAccount;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_currency")
-	private TradingCurrency currency;
+    /// Might be null, for productCharges for instance
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "subscription_id")
+    protected Subscription subscription;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_country")
-	private TradingCountry country;
+    @Column(name = "pr_description", length = 255)
+    @Size(max = 255)
+    protected String prDescription;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
-	@OrderColumn(name = "INDX")
-	private List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
-	
-	@Transient 
-	private List<WalletOperation> sortedWalletOperations;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_currency")
+    protected TradingCurrency currency;
 
-	@Type(type="numeric_boolean")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_country")
+    protected TradingCountry country;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_chrginst_wallet", joinColumns = @JoinColumn(name = "chrg_instance_id"), inverseJoinColumns = @JoinColumn(name = "wallet_instance_id"))
+    @OrderColumn(name = "INDX")
+    protected List<WalletInstance> walletInstances = new ArrayList<WalletInstance>();
+
+    @Transient
+    protected List<WalletOperation> sortedWalletOperations;
+
+    @Type(type = "numeric_boolean")
     @Column(name = "is_prepaid")
-	protected Boolean prepaid=Boolean.FALSE;
+    protected Boolean prepaid = Boolean.FALSE;
 
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
-    private String orderNumber;
-	
-	public String getCriteria1() {
-		return criteria1;
-	}
+    protected String orderNumber;
 
-	public void setCriteria1(String criteria1) {
-		this.criteria1 = criteria1;
-	}
+    public ChargeInstance() {
+    }
 
-	public String getCriteria2() {
-		return criteria2;
-	}
+    public ChargeInstance(BigDecimal amountWithoutTax, BigDecimal amountWithTax, ChargeTemplate chargeTemplate, ServiceInstance serviceInstance, InstanceStatusEnum status) {
 
-	public void setCriteria2(String criteria2) {
-		this.criteria2 = criteria2;
-	}
+        this.code = chargeTemplate.getCode();
+        if (chargeTemplate.getDescriptionI18n() != null) {
+            String languageCode = serviceInstance.getSubscription().getUserAccount().getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+            if (!StringUtils.isBlank(chargeTemplate.getDescriptionI18n().get(languageCode))) {
+                this.description = chargeTemplate.getDescriptionI18n().get(languageCode);
+            }
+        }
+        if (StringUtils.isBlank(this.description)) {
+            this.description = chargeTemplate.getDescription();
+        }
+        this.amountWithoutTax = amountWithoutTax;
+        this.amountWithTax = amountWithTax;
+        this.userAccount = serviceInstance.getSubscription().getUserAccount();
+        this.subscription = serviceInstance.getSubscription();
+        this.seller = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getCustomer().getSeller();
+        this.country = subscription.getUserAccount().getBillingAccount().getTradingCountry();
+        this.currency = subscription.getUserAccount().getBillingAccount().getCustomerAccount().getTradingCurrency();
+        this.chargeTemplate = chargeTemplate;
+        this.orderNumber = serviceInstance.getOrderNumber();
+        this.invoicingCalendar = serviceInstance.getInvoicingCalendar();
+        this.status = status != null ? status : InstanceStatusEnum.ACTIVE;
 
-	public String getCriteria3() {
-		return criteria3;
-	}
+        if (this.status == InstanceStatusEnum.ACTIVE) {
+            this.chargeDate = serviceInstance.getSubscriptionDate();
+        }
+    }
 
-	public void setCriteria3(String criteria3) {
-		this.criteria3 = criteria3;
-	}
+    public String getCriteria1() {
+        return criteria1;
+    }
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
+    public void setCriteria1(String criteria1) {
+        this.criteria1 = criteria1;
+    }
 
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
+    public String getCriteria2() {
+        return criteria2;
+    }
 
-	public InstanceStatusEnum getStatus() {
-		return status;
-	}
+    public void setCriteria2(String criteria2) {
+        this.criteria2 = criteria2;
+    }
 
-	public void setStatus(InstanceStatusEnum status) {
-		this.status = status;
-		this.statusDate = new Date();
-	}
+    public String getCriteria3() {
+        return criteria3;
+    }
 
-	public Date getStatusDate() {
-		return statusDate;
-	}
+    public void setCriteria3(String criteria3) {
+        this.criteria3 = criteria3;
+    }
 
-	public void setStatusDate(Date statusDate) {
-		this.statusDate = statusDate;
-	}
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
 
-	public Date getTerminationDate() {
-		return terminationDate;
-	}
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
 
-	public void setTerminationDate(Date terminationDate) {
-		this.terminationDate = terminationDate;
-	}
+    public InstanceStatusEnum getStatus() {
+        return status;
+    }
 
-	public ChargeTemplate getChargeTemplate() {
-		return chargeTemplate;
-	}
+    public void setStatus(InstanceStatusEnum status) {
+        this.status = status;
+        this.statusDate = new Date();
+    }
+
+    public Date getStatusDate() {
+        return statusDate;
+    }
+
+    public void setStatusDate(Date statusDate) {
+        this.statusDate = statusDate;
+    }
+
+    public Date getTerminationDate() {
+        return terminationDate;
+    }
+
+    public void setTerminationDate(Date terminationDate) {
+        this.terminationDate = terminationDate;
+    }
+
+    public ChargeTemplate getChargeTemplate() {
+        return chargeTemplate;
+    }
 
     public void setChargeTemplate(ChargeTemplate chargeTemplate) {
         this.chargeTemplate = chargeTemplate;
@@ -232,31 +265,31 @@ public class ChargeInstance extends BusinessEntity {
             this.code = chargeTemplate.getCode();
             this.description = chargeTemplate.getDescription();
         }
-	}
+    }
 
-	public Date getChargeDate() {
-		return chargeDate;
-	}
+    public Date getChargeDate() {
+        return chargeDate;
+    }
 
-	public void setChargeDate(Date chargeDate) {
-		this.chargeDate = chargeDate;
-	}
+    public void setChargeDate(Date chargeDate) {
+        this.chargeDate = chargeDate;
+    }
 
-	public Calendar getInvoicingCalendar() {
-		return invoicingCalendar;
-	}
+    public Calendar getInvoicingCalendar() {
+        return invoicingCalendar;
+    }
 
-	public void setInvoicingCalendar(Calendar invoicingCalendar) {
-		this.invoicingCalendar = invoicingCalendar;
-	}
+    public void setInvoicingCalendar(Calendar invoicingCalendar) {
+        this.invoicingCalendar = invoicingCalendar;
+    }
 
-	public Set<WalletOperation> getWalletOperations() {
-		return walletOperations;
-	}
+    public Set<WalletOperation> getWalletOperations() {
+        return walletOperations;
+    }
 
-	public void setWalletOperations(Set<WalletOperation> walletOperations) {
-		this.walletOperations = walletOperations;
-	}
+    public void setWalletOperations(Set<WalletOperation> walletOperations) {
+        this.walletOperations = walletOperations;
+    }
 
     public List<WalletOperation> getWalletOperationsSorted() {
         if (sortedWalletOperations == null) {
@@ -273,88 +306,88 @@ public class ChargeInstance extends BusinessEntity {
 
         return sortedWalletOperations;
     }
-	
-	public String getPrDescription() {
-		return prDescription;
-	}
 
-	public void setPrDescription(String prDescription) {
-		this.prDescription = prDescription;
-	}
+    public String getPrDescription() {
+        return prDescription;
+    }
 
-	public BigDecimal getAmountWithTax() {
-		return amountWithTax;
-	}
+    public void setPrDescription(String prDescription) {
+        this.prDescription = prDescription;
+    }
 
-	public void setAmountWithTax(BigDecimal amountWithTax) {
-		this.amountWithTax = amountWithTax;
-	}
+    public BigDecimal getAmountWithTax() {
+        return amountWithTax;
+    }
 
-	public Seller getSeller() {
-		return seller;
-	}
+    public void setAmountWithTax(BigDecimal amountWithTax) {
+        this.amountWithTax = amountWithTax;
+    }
 
-	public void setSeller(Seller seller) {
-		this.seller = seller;
-	}
+    public Seller getSeller() {
+        return seller;
+    }
 
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
+    public void setSeller(Seller seller) {
+        this.seller = seller;
+    }
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
 
-	public Subscription getSubscription() {
-		return subscription;
-	}
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-		if(subscription.getUserAccount()!=null){
-			this.setUserAccount(subscription.getUserAccount());
-		}
-	}
+    public Subscription getSubscription() {
+        return subscription;
+    }
 
-	public TradingCurrency getCurrency() {
-		return currency;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+        if (subscription.getUserAccount() != null) {
+            this.setUserAccount(subscription.getUserAccount());
+        }
+    }
 
-	public void setCurrency(TradingCurrency currency) {
-		this.currency = currency;
-	}
+    public TradingCurrency getCurrency() {
+        return currency;
+    }
 
-	public TradingCountry getCountry() {
-		return country;
-	}
+    public void setCurrency(TradingCurrency currency) {
+        this.currency = currency;
+    }
 
-	public void setCountry(TradingCountry country) {
-		this.country = country;
-	}
+    public TradingCountry getCountry() {
+        return country;
+    }
 
-	public List<WalletInstance> getWalletInstances() {
-		return walletInstances;
-	}
+    public void setCountry(TradingCountry country) {
+        this.country = country;
+    }
 
-	public void setWalletInstances(List<WalletInstance> walletInstances) {
-		this.walletInstances = walletInstances;
-	}
+    public List<WalletInstance> getWalletInstances() {
+        return walletInstances;
+    }
 
-	public Boolean getPrepaid() {
-		return prepaid;
-	}
+    public void setWalletInstances(List<WalletInstance> walletInstances) {
+        this.walletInstances = walletInstances;
+    }
 
-	public void setPrepaid(Boolean prepaid) {
-		this.prepaid = prepaid;
-	}
+    public Boolean getPrepaid() {
+        return prepaid;
+    }
 
-	public String getOrderNumber() {
-		return orderNumber;
-	}
+    public void setPrepaid(Boolean prepaid) {
+        this.prepaid = prepaid;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
 }

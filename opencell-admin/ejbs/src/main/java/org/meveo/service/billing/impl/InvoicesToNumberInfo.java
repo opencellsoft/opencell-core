@@ -80,7 +80,7 @@ public class InvoicesToNumberInfo {
      * Increment by 1 an return a new invoice number formated to a sequence size
      * 
      * @return New invoice number formated with leading zeros
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public synchronized String nextInvoiceNumber() throws BusinessException {
         lastInvoiceNumber++;

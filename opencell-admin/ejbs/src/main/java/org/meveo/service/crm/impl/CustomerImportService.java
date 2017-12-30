@@ -112,12 +112,13 @@ public class CustomerImportService extends ImportService {
     }
 
     /**
-     * @param customer
-     * @param seller
-     * @param custAcc
-     * @param cust
-     * @param sell
-     * @throws BusinessException
+     * @param customer customer
+     * @param seller seller
+     * @param custAcc customer account
+     * @param cust jaxb customer
+     * @param sell jaxb seller
+     * @return customer account.
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public CustomerAccount createCustomerAccount(Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,

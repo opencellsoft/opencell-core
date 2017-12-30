@@ -77,12 +77,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link UserAccount} service. Extends {@link PersistenceService} .
-     */
-
     @Inject
     private WalletOperationBean walletOperationBean;
 
@@ -142,9 +136,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return user account.
      */
     @Override
     public UserAccount initEntity() {
@@ -176,7 +168,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-        entity.setBillingAccount(billingAccountService.attach(entity.getBillingAccount()));
+        entity.setBillingAccount(billingAccountService.findById(entity.getBillingAccount().getId()));
 
         try {
 
@@ -226,7 +218,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String terminateAccount() {
         log.debug("resiliateAccount userAccountId:" + entity.getId());
         try {
-            entity = userAccountService.attach(entity);
+            entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountTermination(entity, entity.getTerminationDate(), entity.getTerminationReason());
             messages.info(new BundleKey("messages", "resiliation.resiliateSuccessful"));
 
@@ -240,7 +232,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String cancelAccount() {
         log.info("cancelAccount userAccountId:" + entity.getId());
         try {
-            entity = userAccountService.attach(entity);
+            entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountCancellation(entity, new Date());
             messages.info(new BundleKey("messages", "cancellation.cancelSuccessful"));
 
@@ -254,7 +246,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String reactivateAccount() {
         log.info("reactivateAccount userAccountId:" + entity.getId());
         try {
-            entity = userAccountService.attach(entity);
+            entity = userAccountService.refreshOrRetrieve(entity);
             entity = userAccountService.userAccountReactivation(entity, new Date());
             messages.info(new BundleKey("messages", "reactivation.reactivateSuccessful"));
 

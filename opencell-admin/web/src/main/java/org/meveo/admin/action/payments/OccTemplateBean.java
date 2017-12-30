@@ -60,9 +60,8 @@ public class OccTemplateBean extends BaseBean<OCCTemplate> {
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
+	 * @return account operation template
 	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
 	 */
 	@Produces
 	@Named("occTemplate")

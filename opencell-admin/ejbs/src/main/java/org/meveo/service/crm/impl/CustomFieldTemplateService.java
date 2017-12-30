@@ -3,6 +3,7 @@ package org.meveo.service.crm.impl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
+import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
@@ -19,11 +21,16 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.catalog.CalendarDaily;
+import org.meveo.model.catalog.CalendarInterval;
+import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.custom.CustomFieldMatrixColumn;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -220,7 +227,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Calculate custom field template AppliesTo value for a given entity. AppliesTo consist of a prefix and optionally one or more entity fields. e.g. JOB_<jobTemplate>
+     * Calculate custom field template AppliesTo value for a given entity. AppliesTo consist of a prefix and optionally one or more entity fields. e.g. JOB_jobTemplate
      * 
      * @param entity Entity
      * @return A appliesTo value
@@ -249,12 +256,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates) throws BusinessException {
         try {
@@ -267,25 +274,26 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
         return createMissingTemplates(appliesTo, templates, false, false);
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
+     * @param updateExisting true if updating existing templates
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting,
             boolean removeOrphans) throws BusinessException {
@@ -298,13 +306,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
+     * @param updateExisting true when updating missing template.
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans)
             throws BusinessException {
@@ -351,4 +360,64 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
         return allTemplates;
     }
 
+    /**
+     * Copy and associate a given custom field template to a given target entity type.
+     * 
+     * @param cft Custom field template to copy
+     * @param targetAppliesTo Target CFT.appliesTo value associate custom field template with
+     * @return custom field template
+     * @throws BusinessException business exception.
+     */
+    public CustomFieldTemplate copyCustomFieldTemplate(CustomFieldTemplate cft, String targetAppliesTo) throws BusinessException {
+
+        if (findByCodeAndAppliesTo(cft.getCode(), targetAppliesTo) != null) {
+            throw new ValidationException("Custom field template " + cft.getCode() + " already exists in targe entity " + targetAppliesTo,
+                "customFieldTemplate.copyCFT.alreadyExists");
+        }
+
+        cft = refreshOrRetrieve(cft);
+
+        // Load calendar for lazy loading
+        if (cft.getCalendar() != null) {
+            cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));
+            if (cft.getCalendar() instanceof CalendarDaily) {
+                ((CalendarDaily) cft.getCalendar()).setHours(PersistenceUtils.initializeAndUnproxy(((CalendarDaily) cft.getCalendar()).getHours()));
+                ((CalendarDaily) cft.getCalendar()).nextCalendarDate(new Date());
+            } else if (cft.getCalendar() instanceof CalendarYearly) {
+                ((CalendarYearly) cft.getCalendar()).setDays(PersistenceUtils.initializeAndUnproxy(((CalendarYearly) cft.getCalendar()).getDays()));
+                ((CalendarYearly) cft.getCalendar()).nextCalendarDate(new Date());
+            } else if (cft.getCalendar() instanceof CalendarInterval) {
+                ((CalendarInterval) cft.getCalendar()).setIntervals(PersistenceUtils.initializeAndUnproxy(((CalendarInterval) cft.getCalendar()).getIntervals()));
+                ((CalendarInterval) cft.getCalendar()).nextCalendarDate(new Date());
+            }
+        }
+        if (cft.getListValues() != null) {
+            cft.getListValues().values().toArray(new String[] {});
+        }
+
+        if (cft.getMatrixColumns() != null) {
+            cft.getMatrixColumns().toArray(new CustomFieldMatrixColumn[] {});
+        }
+
+        detach(cft);
+
+        CustomFieldTemplate cftCopy = SerializationUtils.clone(cft);
+        cftCopy.setId(null);
+        cftCopy.setVersion(null);
+        cftCopy.setAppliesTo(targetAppliesTo);
+
+        if (cft.getListValues() != null) {
+            cftCopy.setListValues(new HashMap<>());
+            cftCopy.getListValues().putAll(cft.getListValues());
+        }
+
+        if (cft.getMatrixColumns() != null) {
+            cftCopy.setMatrixColumns(new ArrayList<>());
+            cftCopy.getMatrixColumns().addAll(cft.getMatrixColumns());
+        }
+
+        create(cftCopy);
+
+        return cftCopy;
+    }
 }

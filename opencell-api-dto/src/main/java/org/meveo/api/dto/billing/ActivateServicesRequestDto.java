@@ -14,33 +14,42 @@ import org.meveo.api.dto.BaseDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ActivateServicesRequestDto extends BaseDto {
 
-	private static final long serialVersionUID = 1150993171011072506L;
+    private static final long serialVersionUID = 1150993171011072506L;
 
-	@XmlElement(required = true)
-	private String subscription;
+    @XmlElement(required = true)
+    private String subscription;
 
-	@XmlElement
-	private ServicesToActivateDto servicesToActivate = new ServicesToActivateDto();
+    @XmlElement
+    private ServicesToActivateDto servicesToActivate = new ServicesToActivateDto();
 
-	public String getSubscription() {
-		return subscription;
-	}
+    private String orderNumber;
 
-	public void setSubscription(String subscription) {
-		this.subscription = subscription;
-	}
+    public String getSubscription() {
+        return subscription;
+    }
 
-	public ServicesToActivateDto getServicesToActivateDto() {
-		return servicesToActivate;
-	}
+    public void setSubscription(String subscription) {
+        this.subscription = subscription;
+    }
 
-	public void setServicesToActivateDto(ServicesToActivateDto servicesToActivate) {
-		this.servicesToActivate = servicesToActivate;
-	}
+    public ServicesToActivateDto getServicesToActivateDto() {
+        return servicesToActivate;
+    }
 
-	@Override
-	public String toString() {
-		return "ActivateServicesDto [subscription=" + subscription + ", servicesToActivate=" + servicesToActivate + "]";
-	}
+    public void setServicesToActivateDto(ServicesToActivateDto servicesToActivate) {
+        this.servicesToActivate = servicesToActivate;
+    }
 
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "ActivateServicesRequestDto [subscription=" + subscription + ", servicesToActivate=" + servicesToActivate + ", orderNumber=" + orderNumber + "]";
+    }
 }
