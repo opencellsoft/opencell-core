@@ -12,6 +12,7 @@ import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -62,6 +63,28 @@ public class JobApi extends BaseApi {
 
         return findJobExecutionResult(executionId);
     }
+    
+    /**
+     * Stop running job
+     * @param jobInstanceCode job instance code to stop
+     * @throws MeveoApiException
+     */
+    public void stopJob(String jobInstanceCode) throws MeveoApiException {
+        if (StringUtils.isBlank(jobInstanceCode)) {
+            missingParameters.add("jobInstanceCode");
+        }
+        handleMissingParameters();
+        org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode);
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
+        }
+
+        try {
+            jobExecutionService.stopJob(jobInstance);
+        } catch (BusinessException e) {
+            throw new MeveoApiException(e.getMessage());
+        }       
+    }    
 
     /**
      * Retrieve job execution result.

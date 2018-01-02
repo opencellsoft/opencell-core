@@ -305,7 +305,12 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			OfferServiceTemplate tempOfferServiceTemplate = null;
 			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+			    
 				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+				log.info("\n\n\n\n serviceTemplate:"+serviceTemplate.getCode());
+				log.info("\n\n\n\n serviceCode:"+serviceCode);
+				log.info("\n\n\n\n serviceCodeDto.isInstantiatedFromBSM():"+serviceCodeDto.isInstantiatedFromBSM());
+				
 				if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
 					serviceFound = true;
 					break;

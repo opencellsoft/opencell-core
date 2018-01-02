@@ -16,11 +16,17 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class PDFInvoiceGenerationJob generate PDF for all valid invoices that dont have it.
+ */
 @Stateless
 public class PDFInvoiceGenerationJob extends Job {
 
+	/** The pdf invoice generation job bean. */
 	@Inject
 	private PDFInvoiceGenerationJobBean pdfInvoiceGenerationJobBean;
+
 
 	@Override
 	@TransactionAttribute(TransactionAttributeType.NEVER)

@@ -13,6 +13,8 @@ import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.sepa.PaynumFile;
 import org.meveo.admin.sepa.SepaFile;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -23,6 +25,7 @@ import org.meveo.model.payments.DDRequestLotOp;
 import org.meveo.model.payments.DDRequestOpEnum;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 import org.meveo.service.payments.impl.DDRequestLOTService;
 import org.meveo.service.payments.impl.DDRequestLotOpService;
@@ -55,6 +58,9 @@ public class SepaDirectDebitJobBean {
     @Inject
     private SepaFile sepaFile;
 
+    @Inject
+    private JobExecutionService jobExecutionService;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
@@ -72,6 +78,9 @@ public class SepaDirectDebitJobBean {
             }
 
             for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
+                if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                    break;
+                }
                 try {
                     if (ddrequestLotOp.getDdrequestOp() == DDRequestOpEnum.CREATE) {
                         DDRequestLOT ddRequestLOT = ddRequestItemService.createDDRquestLot(ddrequestLotOp.getFromDueDate(), ddrequestLotOp.getToDueDate(),

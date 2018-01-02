@@ -16,7 +16,6 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
-import org.meveo.model.admin.AccountImportHisto;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.Address;
 import org.meveo.model.jaxb.account.BillingAccount;
@@ -28,6 +27,7 @@ import org.meveo.model.jaxb.customer.CustomFields;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -46,13 +46,11 @@ public class ExportAccountsJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
-    BillingAccounts billingAccounts;
-    ParamBean param = ParamBean.getInstance();
+    @Inject
+    private JobExecutionService jobExecutionService;
 
-    int nbBillingAccounts;
-
-    int nbUserAccounts;
-    AccountImportHisto accountImportHisto;
+    private BillingAccounts billingAccounts;
+    private ParamBean param = ParamBean.getInstance();
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -68,7 +66,7 @@ public class ExportAccountsJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.BillingAccount> bas = billingAccountService.list();
-        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
+        billingAccounts = billingAccountsToDto(bas, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
         try {
             JAXBUtils.marshaller(billingAccounts, new File(dir + File.separator + "ACCOUNT_" + timestamp + ".xml"));
         } catch (JAXBException e) {
@@ -77,16 +75,19 @@ public class ExportAccountsJobBean {
 
     }
 
-    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat) {
+    private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, Long jobInstanceId) {
         BillingAccounts dto = new BillingAccounts();
         for (org.meveo.model.billing.BillingAccount ba : bas) {
-            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat);
+            if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+                break;
+            }
+            BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstanceId);
             dto.getBillingAccount().add(billingAcc);
         }
         return dto;
     }
 
-    private BillingAccount billingAccountToDto(org.meveo.model.billing.BillingAccount ba, String dateFormat) {
+    private BillingAccount billingAccountToDto(org.meveo.model.billing.BillingAccount ba, String dateFormat, Long jobInstanceId) {
         BillingAccount dto = new BillingAccount();
         if (ba != null) {
             if (dateFormat == null) {
@@ -109,7 +110,7 @@ public class ExportAccountsJobBean {
             if (ba.getCfValues() != null) {
                 dto.setCustomFields(CustomFields.toDTO(ba.getCfValues().getValuesByCode()));
             }
-            dto.setUserAccounts(userAccountsToDto(ba.getUsersAccounts(), dateFormat));
+            dto.setUserAccounts(userAccountsToDto(ba.getUsersAccounts(), dateFormat, jobInstanceId));
             dto.setCode(ba.getCode() == null ? null : ba.getCode());
             dto.setCustomerAccountId(ba.getCustomerAccount().getCode());
             dto.setBillingCycle(ba.getBillingCycle() == null ? null : ba.getBillingCycle().getCode());
@@ -118,9 +119,12 @@ public class ExportAccountsJobBean {
         return dto;
     }
 
-    private UserAccounts userAccountsToDto(List<org.meveo.model.billing.UserAccount> usersAccounts, String dateFormat) {
+    private UserAccounts userAccountsToDto(List<org.meveo.model.billing.UserAccount> usersAccounts, String dateFormat, Long jobInstanceId) {
         UserAccounts dto = new UserAccounts();
         for (org.meveo.model.billing.UserAccount userAcc : usersAccounts) {
+            if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+                break;
+            }
             dto.getUserAccount().add(userAccountToDto(userAcc, dateFormat));
         }
         return dto;

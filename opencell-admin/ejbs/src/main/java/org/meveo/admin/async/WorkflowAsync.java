@@ -17,6 +17,7 @@ import org.meveo.admin.job.UnitWorkflowJobBean;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.wf.Workflow;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * @author anasseh
@@ -29,11 +30,17 @@ public class WorkflowAsync {
     @Inject
     UnitWorkflowJobBean unitWorkflowJobBean;
 
+    @Inject
+    private JobExecutionService jobExecutionService;
+
     @Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<BusinessEntity> entities,Workflow workflow, JobExecutionResultImpl result) {
-        for (BusinessEntity entity  : entities) {
-        	unitWorkflowJobBean.execute(result, entity,workflow);
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> launchAndForget(List<BusinessEntity> entities, Workflow workflow, JobExecutionResultImpl result) {
+        for (BusinessEntity entity : entities) {
+            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                break;
+            }
+            unitWorkflowJobBean.execute(result, entity, workflow);
         }
         return new AsyncResult<String>("OK");
     }

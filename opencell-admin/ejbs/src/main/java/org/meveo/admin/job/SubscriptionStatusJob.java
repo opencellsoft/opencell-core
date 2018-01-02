@@ -16,6 +16,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * Handles subscription renewal or termination once subscription expires, fire handles renewal notice events
@@ -31,6 +32,9 @@ public class SubscriptionStatusJob extends Job {
 
     @Inject
     private SubscriptionService subscriptionService;
+    
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -41,6 +45,9 @@ public class SubscriptionStatusJob extends Job {
 
             List<Long> subscriptionIds = subscriptionService.getSubscriptionsToRenewOrNotify();
             for (Long subscriptionId : subscriptionIds) {
+                if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+                    break;
+                }
                 subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId);
             }
 

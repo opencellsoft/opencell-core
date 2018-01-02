@@ -73,8 +73,8 @@
 
 				</p:tabView>
 
-				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" backingBean="#{jobInstanceBean}"
-					edit="#{jobInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView" showEnableDisableButton="true"  killConversationOnSave="false"/>
+				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" stop="#{!jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['job.stopJobNow']}"
+				  backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView" showEnableDisableButton="true"  killConversationOnSave="false"/>
 
 
 			</hftl:formPanel>

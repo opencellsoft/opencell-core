@@ -28,5 +28,4 @@ public class ExportSubscriptionsJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.IMPORT_HIERARCHY;
     }
-
 }

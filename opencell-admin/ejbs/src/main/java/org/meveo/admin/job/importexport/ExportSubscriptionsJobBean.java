@@ -26,6 +26,7 @@ import org.meveo.model.jaxb.subscription.Subscriptions;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -44,8 +45,11 @@ public class ExportSubscriptionsJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
-    Subscriptions subscriptions;
-    ParamBean param = ParamBean.getInstance();
+    @Inject
+    private JobExecutionService jobExecutionService;
+
+    private Subscriptions subscriptions;
+    private ParamBean param = ParamBean.getInstance();
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -61,7 +65,7 @@ public class ExportSubscriptionsJobBean {
 
         String timestamp = sdf.format(new Date());
         List<org.meveo.model.billing.Subscription> subs = subscriptionService.list();
-        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"));
+        subscriptions = subscriptionsToDto(subs, param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd"), result.getJobInstance().getId());
         try {
             JAXBUtils.marshaller(subscriptions, new File(dir + File.separator + "SUB_" + timestamp + ".xml"));
         } catch (JAXBException e) {
@@ -70,10 +74,13 @@ public class ExportSubscriptionsJobBean {
 
     }
 
-    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat) {
+    private Subscriptions subscriptionsToDto(List<org.meveo.model.billing.Subscription> subs, String dateFormat, Long jobInstanceId) {
         Subscriptions dto = new Subscriptions();
         if (subs != null) {
             for (org.meveo.model.billing.Subscription sub : subs) {
+                if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+                    break;
+                }
                 dto.getSubscription().add(subscriptionToDto(sub, dateFormat));
             }
         }

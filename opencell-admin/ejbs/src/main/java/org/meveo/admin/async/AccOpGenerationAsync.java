@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitAccountOperationsGenerationJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * @author anasseh
@@ -25,13 +26,19 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 public class AccOpGenerationAsync {
 
     @Inject
-    UnitAccountOperationsGenerationJobBean  unitAccountOperationsGenerationJobBean;
+    UnitAccountOperationsGenerationJobBean unitAccountOperationsGenerationJobBean;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) {
         for (Long id : ids) {
-        	unitAccountOperationsGenerationJobBean.execute(result, id);
+            if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+                break;
+            }
+            unitAccountOperationsGenerationJobBean.execute(result, id);
         }
         return new AsyncResult<String>("OK");
     }
