@@ -122,7 +122,7 @@ public class FtpAdapterJobBean {
             }
 
             for (FileObject fileObject : children) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
                 try {
