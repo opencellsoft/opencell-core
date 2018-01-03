@@ -299,48 +299,50 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		}
 
 		// check if service exists in offer
-		for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
-			boolean serviceFound = false;
-			String serviceCode = serviceCodeDto.getCode();
+        for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
+            boolean serviceFound = false;
+            String serviceCode = serviceCodeDto.getCode();
 
-			OfferServiceTemplate tempOfferServiceTemplate = null;
-			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-				if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
-					serviceFound = true;
-					break;
-				} else {
-					// instantiated from bsm
-					ServiceTemplate stSource = serviceTemplateService.findByCode(serviceCode);
-					if (stSource != null) {
-						// check if exists in bsm or is from offer entity
-						// (meaning not from bsm = non transient)
-						BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, stSource);
-						if (bsm != null) {
-							tempOfferServiceTemplate = new OfferServiceTemplate();
-							tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
-							tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
+            OfferServiceTemplate tempOfferServiceTemplate = null;
+            if (serviceCodeDto.isInstantiatedFromBSM()) {
+                // no need to check in offer, we initialized a new instance and add to the newly created offer
+                // instantiated from bsm
+                ServiceTemplate stSource = serviceTemplateService.findByCode(serviceCode);
+                if (stSource != null) {
+                    // check if exists in bsm or is from offer entity
+                    // (meaning not from bsm = non transient)
+                    BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, stSource);
+                    if (bsm != null) {
+                        tempOfferServiceTemplate = new OfferServiceTemplate();
+                        tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
+                        tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
 
-							ServiceTemplate stTarget = new ServiceTemplate();
-							stTarget.setCode(stSource.getCode());
-							stTarget.setDescription(stSource.getDescription());
-							stTarget.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
-							stTarget.setBusinessServiceModel(bsm);
+                        ServiceTemplate stTarget = new ServiceTemplate();
+                        stTarget.setCode(stSource.getCode());
+                        stTarget.setDescription(stSource.getDescription());
+                        stTarget.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
+                        stTarget.setBusinessServiceModel(bsm);
 
-							tempOfferServiceTemplate.setServiceTemplate(stTarget);
-							offerServiceTemplates.add(tempOfferServiceTemplate);
-							serviceFound = true;
-							break;
-						}
-					}
-				}
-			}
+                        tempOfferServiceTemplate.setServiceTemplate(stTarget);
+                        offerServiceTemplates.add(tempOfferServiceTemplate);
+                        serviceFound = true;
+                    }
+                }
+            } else {
+                for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+                    ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+                    if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
+                        serviceFound = true;
+                        break;
+                    }
+                }
+            }
 
-			if (!serviceFound) {
-				// service is not defined in offer
-				throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
-			}
-		}
+            if (!serviceFound) {
+                // service is not defined in offer
+                throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
+            }
+        }
 
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
 		List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
