@@ -1554,11 +1554,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
         return result;
     }
     
-    public String evaluateBillingTemplateName(Invoice invoice) {
-        
-        InvoiceType invoiceType = invoice.getInvoiceType();
+    public String evaluateBillingTemplateName(String expression, Invoice invoice) {
         String billingTemplateName = null;
-        String expression = invoiceType.getBillingTemplateNameEL();
+        
         if (!StringUtils.isBlank(expression)) {
             Map<Object, Object> contextMap = new HashMap<>();
             contextMap.put("invoice", invoice);
@@ -1592,7 +1590,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         String billingTemplateName = "default";
         if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateNameEL())) {
-            billingTemplateName = evaluateBillingTemplateName(invoice);
+            billingTemplateName = evaluateBillingTemplateName(invoiceType.getBillingTemplateNameEL(), invoice);
+            
+        } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateNameEL())) {
+            billingTemplateName = evaluateBillingTemplateName(billingCycle.getBillingTemplateNameEL(), invoice);
                     
         } else if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
             billingTemplateName = invoiceType.getBillingTemplateName();
@@ -1603,6 +1604,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateName())) {
             billingTemplateName = billingCycle.getBillingTemplateName();
         }
+        
         return billingTemplateName;
     }
 
