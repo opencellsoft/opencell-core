@@ -78,7 +78,7 @@ public class ExportSubscriptionsJobBean {
         Subscriptions dto = new Subscriptions();
         if (subs != null) {
             for (org.meveo.model.billing.Subscription sub : subs) {
-                if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+                if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                     break;
                 }
                 dto.getSubscription().add(subscriptionToDto(sub, dateFormat));

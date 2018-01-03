@@ -36,7 +36,7 @@ public class UsageRatingAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) throws BusinessException {
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             try {

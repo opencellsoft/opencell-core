@@ -97,7 +97,7 @@ public class InternalNotificationJobBean {
             List<Object> results = query.getResultList();
             result.setNbItemsToProcess(results.size());
             for (Object res : results) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
 

@@ -122,7 +122,7 @@ public class ImportCatalogJobBean {
                     }
                     result.setNbItemsToProcess(rowsObj.length - 1);
                     for (int rowIndex = 1; rowIndex < rowsObj.length; rowIndex++) {
-                        if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                        if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                             break;
                         }
                         Row row = (Row) rowsObj[rowIndex];

@@ -57,7 +57,7 @@ public class InvoicingJobBean {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
             for (BillingRun billingRun : billingRuns) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
                 try {

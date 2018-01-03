@@ -11,6 +11,7 @@
 
 	<ui:param name="pageTitle" value="#{messages['job.page.title']}" />
 	<ui:define name="body">
+		<p:importEnum type="org.meveo.cache.JobRunningStatusEnum" var="JobRunningStatusEnum" />
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
 				<p:menuitem value="#{messages['menu.admin']}" disabled="true" />
@@ -73,7 +74,7 @@
 
 				</p:tabView>
 
-				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" stop="#{!jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['job.stopJobNow']}"
+				<hf:formButtons execute="#{jobInstanceBean.isAllowedToExecute(jobInstanceBean.entity)}" stop="#{jobInstanceBean.isTimerRunning(jobInstanceBean.entity)== JobRunningStatusEnum.RUNNING_THIS}" executeLabel="#{messages['job.executeJobNow']}" stopLabel="#{messages['job.stopJobNow']}"
 				  backingBean="#{jobInstanceBean}" edit="#{jobInstanceBean.edit}" ajaxSubmit="true" submitPartialProcess=":formId:tabView" showEnableDisableButton="true"  killConversationOnSave="false"/>
 
 

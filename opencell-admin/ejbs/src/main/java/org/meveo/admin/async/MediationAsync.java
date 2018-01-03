@@ -40,7 +40,7 @@ public class MediationAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<File> files, JobExecutionResultImpl result, String parameter) {
         for (File file : files) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             mediationJobBean.execute(result, parameter, file);

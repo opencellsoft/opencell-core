@@ -78,7 +78,7 @@ public class ExportAccountsJobBean {
     private BillingAccounts billingAccountsToDto(List<org.meveo.model.billing.BillingAccount> bas, String dateFormat, Long jobInstanceId) {
         BillingAccounts dto = new BillingAccounts();
         for (org.meveo.model.billing.BillingAccount ba : bas) {
-            if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             BillingAccount billingAcc = billingAccountToDto(ba, dateFormat, jobInstanceId);
@@ -122,7 +122,7 @@ public class ExportAccountsJobBean {
     private UserAccounts userAccountsToDto(List<org.meveo.model.billing.UserAccount> usersAccounts, String dateFormat, Long jobInstanceId) {
         UserAccounts dto = new UserAccounts();
         for (org.meveo.model.billing.UserAccount userAcc : usersAccounts) {
-            if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             dto.getUserAccount().add(userAccountToDto(userAcc, dateFormat));

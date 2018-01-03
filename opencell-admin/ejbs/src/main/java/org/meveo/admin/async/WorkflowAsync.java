@@ -37,7 +37,7 @@ public class WorkflowAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<BusinessEntity> entities, Workflow workflow, JobExecutionResultImpl result) {
         for (BusinessEntity entity : entities) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitWorkflowJobBean.execute(result, entity, workflow);

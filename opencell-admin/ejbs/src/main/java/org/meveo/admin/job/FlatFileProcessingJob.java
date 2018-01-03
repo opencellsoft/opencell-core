@@ -87,7 +87,7 @@ public class FlatFileProcessingJob extends Job {
                 return;
             }
             for (File file : files) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
                 flatFileProcessingJobBean.execute(result, inputDir, file, mappingConf, scriptInstanceFlowCode, recordVariableName, initContext, originFilename, formatTransfo);

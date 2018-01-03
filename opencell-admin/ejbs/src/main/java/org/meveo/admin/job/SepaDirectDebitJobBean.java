@@ -78,7 +78,7 @@ public class SepaDirectDebitJobBean {
             }
 
             for (DDRequestLotOp ddrequestLotOp : ddrequestOps) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
                 try {

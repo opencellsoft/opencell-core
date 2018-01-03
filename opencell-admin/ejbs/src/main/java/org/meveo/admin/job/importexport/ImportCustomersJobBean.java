@@ -148,7 +148,7 @@ public class ImportCustomersJobBean {
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -274,7 +274,7 @@ public class ImportCustomersJobBean {
 
                 List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
                 for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
-                    if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+                    if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                         break;
                     }
                     if (customerCheckError(sell, cust)) {

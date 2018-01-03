@@ -116,7 +116,7 @@ public class ImportAccountsJobBean {
         log.info("InputFiles job " + numberOfFiles + " to import");
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -215,7 +215,7 @@ public class ImportAccountsJobBean {
         }
 
         for (org.meveo.model.jaxb.account.BillingAccount billingAccountDto : billingAccounts.getBillingAccount()) {
-            if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             i++;

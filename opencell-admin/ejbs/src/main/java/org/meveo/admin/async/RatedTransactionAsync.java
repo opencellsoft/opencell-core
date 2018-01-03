@@ -35,7 +35,7 @@ public class RatedTransactionAsync {
 	@TransactionAttribute(TransactionAttributeType.NEVER)
 	public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) {
 		for (Long walletOperationId : ids) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
 			unitRatedTransactionsJobBean.execute(result, walletOperationId);

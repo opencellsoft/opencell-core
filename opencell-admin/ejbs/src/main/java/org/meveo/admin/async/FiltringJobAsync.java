@@ -37,7 +37,7 @@ public class FiltringJobAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<? extends IEntity> filtredEntities, JobExecutionResultImpl result, ScriptInterface scriptInterface, String recordVariableName) {
 	for (Object filtredEntity : filtredEntities) {
-        if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+        if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
             break;
         }
 	    unitFilteringJobBean.execute(result, filtredEntity, scriptInterface, recordVariableName);

@@ -35,7 +35,7 @@ public class AccOpGenerationAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) {
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             unitAccountOperationsGenerationJobBean.execute(result, id);

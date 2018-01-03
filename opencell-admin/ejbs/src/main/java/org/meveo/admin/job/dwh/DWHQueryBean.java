@@ -93,7 +93,7 @@ public class DWHQueryBean {
         }
         result.setNbItemsToProcess(mqList.size());
         for (MeasurableQuantity mq : mqList) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             if (StringUtils.isBlank(mq.getSqlQuery())) {

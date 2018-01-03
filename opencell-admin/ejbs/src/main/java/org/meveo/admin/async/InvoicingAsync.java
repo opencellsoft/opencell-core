@@ -61,7 +61,7 @@ public class InvoicingAsync {
     public Future<Integer> updateBillingAccountTotalAmountsAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId) throws BusinessException {
         int count = 0;
         for (Long billingAccountId : billingAccountIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
@@ -85,7 +85,7 @@ public class InvoicingAsync {
     public Future<String> createAgregatesAndInvoiceAsync(List<Long> billingAccountIds, BillingRun billingRun, Long jobInstanceId) {
 
         for (Long billingAccountId : billingAccountIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
@@ -110,7 +110,7 @@ public class InvoicingAsync {
     public Future<String> assignInvoiceNumberAndIncrementBAInvoiceDatesAsync(List<Long> invoiceIds, InvoicesToNumberInfo invoicesToNumberInfo, Long jobInstanceId) {
 
         for (Long invoiceId : invoiceIds) {
-            if (jobInstanceId != null && !jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {
@@ -133,7 +133,7 @@ public class InvoicingAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> generatePdfAsync(List<Long> invoiceIds, JobExecutionResultImpl result) {
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             try {
@@ -162,7 +162,7 @@ public class InvoicingAsync {
         boolean allOk = true;
 
         for (Long invoiceId : invoiceIds) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             long startDate = System.currentTimeMillis();

@@ -20,6 +20,7 @@ import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
 import org.meveo.commons.parsers.RecordContext;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
@@ -136,7 +137,7 @@ public class FlatFileProcessingJobBean {
                     FileUtils.moveFile(archiveDir, file, fileName);
                     file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));
                 }
-                currentFile = FileUtils.addExtension(file, ".processing");
+                currentFile = FileUtils.addExtension(file, ".processing_"+EjbUtils.getCurrentClusterNode());
 
                 script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);
 
@@ -160,7 +161,7 @@ public class FlatFileProcessingJobBean {
                 fileParser.setDataName(recordVariableName);
                 fileParser.parsing();
                 boolean continueAfterError = "true".equals(ParamBean.getInstance().getProperty("flatfile.continueOnError", "true"));
-                while (fileParser.hasNext() && jobExecutionService.isJobRunning(result.getJobInstance())) {
+                while (fileParser.hasNext() && jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     RecordContext recordContext = null;
                     cpLines++;
                     try {

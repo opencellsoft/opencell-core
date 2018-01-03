@@ -96,7 +96,7 @@ public class ImportSubscriptionsJobBean {
         log.info("InputFiles job to import={}", numberOfFiles);
 
         for (File file : files) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             File currentFile = null;
@@ -163,7 +163,7 @@ public class ImportSubscriptionsJobBean {
         }
 
         for (org.meveo.model.jaxb.subscription.Subscription jaxbSubscription : jaxbSubscriptions.getSubscription()) {
-            if (!jobExecutionService.isJobRunning(jobInstanceId)) {
+            if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
             try {

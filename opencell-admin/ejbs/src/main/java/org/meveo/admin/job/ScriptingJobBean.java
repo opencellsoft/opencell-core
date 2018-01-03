@@ -57,7 +57,7 @@ public class ScriptingJobBean {
         Future<String> future = scriptingAsync.launchAndForget(result, scriptCode, context);       
         while(!future.isDone()) {     
             //can't stop a running job, Only the job with a sleeping or blocker thread will be stopped
-            if(!jobExecutionService.isJobRunning(result.getJobInstance())) {               
+            if(!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {               
                 future.cancel(true);                
             }
         }

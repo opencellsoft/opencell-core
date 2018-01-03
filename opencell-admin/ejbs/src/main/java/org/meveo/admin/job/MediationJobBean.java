@@ -18,6 +18,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -121,7 +122,7 @@ public class MediationJobBean {
             log.info("InputFiles job {} in progress...", file.getName());
 
             cdrFileName = file.getName();
-            File currentFile = FileUtils.addExtension(file, ".processing");
+            File currentFile = FileUtils.addExtension(file, ".processing_"+EjbUtils.getCurrentClusterNode());
             BufferedReader cdrReader = null;
             try {
                 addReport("File = " + file.getName());
@@ -130,7 +131,7 @@ public class MediationJobBean {
                 String line = null;
                 int processed = 0;               
                 while ((line = cdrReader.readLine()) != null && !wasStoped ) {
-                    wasStoped = !jobExecutionService.isJobRunning(result.getJobInstance());
+                    wasStoped = !jobExecutionService.isJobRunningOnThis(result.getJobInstance());
                     processed++;
                     try {
                         createEdr(line);

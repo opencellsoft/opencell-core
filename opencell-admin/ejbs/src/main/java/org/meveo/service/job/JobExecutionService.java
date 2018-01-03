@@ -321,29 +321,29 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      */
     public void stopJob(JobInstance jobInstance) throws BusinessException {
         log.info("Stop job {}  of type {}  ", jobInstance, jobInstance.getJobTemplate());
-        if (!isJobRunning(jobInstance)) {
-            throw new BusinessException("Job " + jobInstance.getCode() + " currently are not running");
+        if (!isJobRunningOnThis(jobInstance)) {
+            throw new BusinessException("Job " + jobInstance.getCode() + " currently are not running on this node.");
         }
         jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
     }
     
     /**
-     * Check if the job are running.
+     * Check if the job are running on this node.
      * 
      * @param jobInstance job instance to ckeck
      * @return return true if job are running
      */
-    public boolean isJobRunning(JobInstance jobInstance) {
-        return JobRunningStatusEnum.NOT_RUNNING != jobCacheContainerProvider.isJobRunning(jobInstance.getId());
+    public boolean isJobRunningOnThis(JobInstance jobInstance) {
+        return  isJobRunningOnThis(jobInstance.getId());
     }
     
     /**
-     * Check if the job are running.
+     * Check if the job are running on this node.
      * 
      * @param jobInstanceId job instance id to ckeck
      * @return return true if job are running
      */
-    public boolean isJobRunning(Long jobInstanceId) {
-        return JobRunningStatusEnum.NOT_RUNNING != jobCacheContainerProvider.isJobRunning(jobInstanceId);
+    public boolean isJobRunningOnThis(Long jobInstanceId) {
+        return JobRunningStatusEnum.RUNNING_THIS == jobCacheContainerProvider.isJobRunning(jobInstanceId);
     }
 }

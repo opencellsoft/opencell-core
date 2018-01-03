@@ -77,7 +77,7 @@ public class SepaRejectedTransactionsJob extends Job {
             log.info("InputFiles job " + numberOfFiles + " to import");
             result.setNbItemsToProcess(numberOfFiles);
             for (File file : files) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                     break;
                 }
                 File currentFile = null;

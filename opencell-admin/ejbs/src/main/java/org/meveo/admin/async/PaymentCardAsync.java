@@ -45,7 +45,7 @@ public class PaymentCardAsync {
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory) {
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             unitPaymentCardJobBean.execute(result, id, createAO, matchingAO, operationCategory);

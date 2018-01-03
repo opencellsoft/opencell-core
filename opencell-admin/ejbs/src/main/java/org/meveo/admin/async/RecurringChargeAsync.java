@@ -41,7 +41,7 @@ public class RecurringChargeAsync {
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date maxDate) {
 
         for (Long id : ids) {
-            if (!jobExecutionService.isJobRunning(result.getJobInstance().getId())) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
             log.debug("run recurringChargeInstace ID {}", id);

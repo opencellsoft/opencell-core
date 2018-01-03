@@ -45,7 +45,7 @@ public class SubscriptionStatusJob extends Job {
 
             List<Long> subscriptionIds = subscriptionService.getSubscriptionsToRenewOrNotify();
             for (Long subscriptionId : subscriptionIds) {
-                if (!jobExecutionService.isJobRunning(result.getJobInstance())) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     break;
                 }
                 subscriptionStatusJobBean.updateSubscriptionStatus(result, subscriptionId);
