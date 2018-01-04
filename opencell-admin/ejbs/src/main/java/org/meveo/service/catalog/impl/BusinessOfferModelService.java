@@ -293,8 +293,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		// we need this to check in case of non-bsm, non-existing service template
 		List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>(bomOffer.getOfferServiceTemplates());
 
-		if (offerServiceTemplates == null || offerServiceTemplates.isEmpty() || serviceCodes == null
-				|| serviceCodes.isEmpty()) {
+		if (offerServiceTemplates == null || serviceCodes == null || serviceCodes.isEmpty()) {
 			return newOfferServiceTemplates;
 		}
 
