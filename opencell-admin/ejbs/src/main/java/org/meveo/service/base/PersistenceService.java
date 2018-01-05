@@ -73,6 +73,7 @@ import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -97,6 +98,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     @MeveoJpaForJobs
     private EntityManager emfForJobs;
+    
+    
+    @Inject
+    @MeveoJpaForMultiTenancy
+    private EntityManager emForMultitenancy;
 
     @Inject
     private ElasticClient elasticClient;
@@ -132,6 +138,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     
     @Inject
     ProviderRegistry providerRegistry;
+    
+    private EntityManager currentEntityManager;
 
     /**
      * Constructor.
@@ -301,30 +309,34 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        getEntityManager().remove(entity);
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire((BaseEntity) entity);
-        }
-        // getEntityManager().flush();
+        entity = findById((Long)entity.getId());
+        if(entity!=null){
+            getEntityManager().remove(entity);
+            if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityRemovedEventProducer.fire((BaseEntity) entity);
+            }
+            // getEntityManager().flush();
 
-        // Remove entity from Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.remove((BusinessEntity) entity);
-        }
+            // Remove entity from Elastic Search
+            if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
+                elasticClient.remove((BusinessEntity) entity);
+            }
 
-        // Remove custom field values from cache if applicable
-        if (entity instanceof ICustomFieldEntity) {
-            customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
-        }
+            // Remove custom field values from cache if applicable
+            if (entity instanceof ICustomFieldEntity) {
+                customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
+            }
 
-        if (entity instanceof IImageUpload) {
-            try {
-                ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
-                imageUploadEventHandler.deleteImage(entity);
-            } catch (IOException e) {
-                log.error("Failed deleting image file");
+            if (entity instanceof IImageUpload) {
+                try {
+                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file");
+                }
             }
         }
+
 
         log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
     }
@@ -1029,23 +1041,27 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return q.getResultList();
     }
     
-    
+   
     public EntityManager getEntityManager() {
-        final String currentProvider = currentUser.getProviderCode();
-        String isMultiTenancyActive=ParamBean.getInstance().getProperty("meveo.multiTenancy", "false"); 
-
-        final EntityManager target;
-
-        if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
-            log.debug("Returning connection for provider " + currentProvider);
-            target = providerRegistry.getEntityManagerFactory(currentProvider).createEntityManager();
-        } else {
-            target = getDefaultEntityManager();
-        }
-        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{EntityManager.class},
-                (proxy, method, args) -> {
-                    target.joinTransaction();
-                    return method.invoke(target, args);
-                });
+    	final String currentProvider = currentUser.getProviderCode();
+    	String isMultiTenancyActive=ParamBean.getInstance().getProperty("meveo.multiTenancy", "false"); 
+    	if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
+    		log.info("Returning entityManager for provider " +currentProvider);
+    		currentEntityManager = providerRegistry.createEntityManagerForJobs(currentProvider);
+    		if (conversation != null) {
+    			try {
+    				conversation.isTransient();
+    				currentEntityManager =emForMultitenancy;
+    			} catch (Exception e) {
+    			}
+    		}
+    	} else {
+    		currentEntityManager = getDefaultEntityManager();
+    	}
+    	return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{EntityManager.class},
+    			(proxy, method, args) -> {
+    				currentEntityManager.joinTransaction();
+    				return method.invoke(currentEntityManager, args);
+    			});
     }
 }

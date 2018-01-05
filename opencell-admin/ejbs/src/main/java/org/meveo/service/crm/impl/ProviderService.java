@@ -19,9 +19,12 @@
 package org.meveo.service.crm.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -38,6 +41,11 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
+    
+    @Inject
+    private ProviderRegistry providerRegistry;
+    
+    
 
     public Provider getProvider() {
 
@@ -60,9 +68,14 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     @Override
+    public void remove(Provider provider) throws BusinessException {
+        super.remove(provider);
+        providerRegistry.removeEntityManagerFactoryFromCache(provider);
+    }
+    
+    @Override
     public Provider update(Provider provider) throws BusinessException {
         provider = super.update(provider);
-
         // Refresh appProvider application scope variable
         refreshAppProvider(provider);
         clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
@@ -96,4 +109,6 @@ public class ProviderService extends PersistenceService<Provider> {
     public void refreshAppProvider() {
         refreshAppProvider(getProvider());
     }
+    
+
 }

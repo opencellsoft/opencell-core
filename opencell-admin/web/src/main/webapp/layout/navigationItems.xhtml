@@ -6,6 +6,7 @@
 	xmlns:p="http://primefaces.org/ui">
 
 	<p:submenu id="admin" label="#{messages['menu.configuration']}" rendered="#{currentUser.hasRole('administrationVisualization') or currentUser.hasRole('catalogVisualization') or currentUser.hasRole('userVisualization')}">
+		<p:menuitem id="providers" outcome="providers" value="#{messages['menu.providers']}" rendered="#{currentUser.hasRole('administrationManagement') or currentUser.hasRole('superAdminManagement')}" />
 		<p:menuitem id="provider" outcome="providerSelfDetail" value="#{messages['menu.appConfiguration']}" rendered="#{currentUser.hasRole('administrationManagement') or currentUser.hasRole('superAdminManagement')}" />
 		<p:menuitem id="providerContacts" outcome="providerContacts" value="#{messages['menu.providerContacts']}" />
 		<p:menuitem id="users" value="#{messages['menu.users']}" outcome="users" rendered="#{currentUser.hasRole('userVisualization')}" />

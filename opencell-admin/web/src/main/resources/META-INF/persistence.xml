@@ -3,9 +3,8 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 
     <persistence-unit name="MeveoAdmin">
-        <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
-        <!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
-        <jar-file>lib/opencell-model-${project.version}.jar</jar-file>
+        <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source> 
+        <jar-file>lib/opencell-model-4.8-SNAPSHOT.jar</jar-file>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />
@@ -15,11 +14,34 @@
     		<property name="use_sql_comments" value="false"></property>
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
+			<property name="hibernate.default_schema" value="public"/>
             <property name="hibernate.cache.use_minimal_puts" value="true" />
+			 <property name="hibernate.cache.region.factory_class" value="org.jboss.as.jpa.hibernate5.infinispan.SharedInfinispanRegionFactory"/>
 <!--             <property name="hibernate.generate_statistics" value="true" /> -->
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
         </properties>
-    </persistence-unit>
+    </persistence-unit> 
+	
+	 <persistence-unit name="MeveoAdminMultiTenant">
+        <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
+        <!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
+        <jar-file>D:\\Server\\opencell\\wildfly\\standalone\\deployments\\opencell.war\\WEB-INF\\lib\\opencell-model-4.8-SNAPSHOT.jar</jar-file>
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+        <properties>
+            <property name="hibernate.archive.autodetection" value="class" /> 
+            <property name="hibernate.show_sql" value="false" />
+            <property name="format_sql" value="false"></property>
+    		<property name="use_sql_comments" value="false"></property>
+            <property name="hibernate.cache.use_second_level_cache" value="true" />
+            <property name="hibernate.cache.use_query_cache" value="true" />
+			<property name="hibernate.default_schema" value="public"/>
+            <property name="hibernate.cache.use_minimal_puts" value="true" />
+			 <property name="hibernate.cache.region.factory_class" value="org.jboss.as.jpa.hibernate5.infinispan.SharedInfinispanRegionFactory"/>
+<!--             <property name="hibernate.generate_statistics" value="true" /> -->
+            <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
+            <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->
+        </properties>
+    </persistence-unit> 
 
 </persistence>

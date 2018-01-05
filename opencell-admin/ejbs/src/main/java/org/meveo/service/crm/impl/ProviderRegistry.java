@@ -1,27 +1,29 @@
 package org.meveo.service.crm.impl;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import javax.annotation.Resource;
+import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceUnit;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 
+import org.infinispan.Cache;
+import org.infinispan.context.Flag;
+import org.meveo.cache.CacheContainerProvider;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.util.MeveoJpaForMultiTenancy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,67 +36,87 @@ public class ProviderRegistry {
 
     /**
      * Default, container managed EntityManager
-     */
-	@PersistenceUnit(unitName = "MeveoAdmin")
-    private EntityManager entityManager;
+     */ 
+	@Inject
+	private ProviderService providerService;
+	  
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+ 
+    
+    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-multiTenant-cache")
+    private  Cache<String, EntityManagerFactory> entityManagerFactories;
 
-    private final Set<Provider> providers = new HashSet<>();
-    private final Map<String, EntityManagerFactory> entityManagerFactories = new HashMap<>();// to move to infinispan
-
-    private Logger logger = LoggerFactory.getLogger(this.getClass());    
+    private Logger log = LoggerFactory.getLogger(this.getClass());  
+    
+    private static Map<String, EntityManager> entityManagers=new HashMap<>();
 
 
     @PostConstruct
     protected void init() {
-        final List<Provider> providers = loadProvidersFromDB();
-        logger.info("Loaded {} providers from DB.", providers.size());
+        final List<Provider> providers = providerService.list();
+       log.info("Loaded {} providers from DB.", providers.size());
         providers.forEach(provider -> {
-            this.providers.add(provider);
             final EntityManagerFactory emf = createEntityManagerFactory(provider);
-            entityManagerFactories.put(provider.getCode(), emf);
-            logger.info("Provider " + provider.getCode() + " loaded.");
+            addEntityManagerFactoryToCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD),emf,provider);
+            log.info("Provider " + provider.getCode() + " loaded.");
         });
-        this.providers.addAll(providers);
     }
+    
+    @Asynchronous
+    public void addEntityManagerFactoryToCache(String cacheName,EntityManagerFactory entityManagerFactory, Provider provider) {
+        if (cacheName == null || cacheName.equals(entityManagerFactories.getName()) || cacheName.contains(entityManagerFactories.getName())) {
+        	log.info("EntityManagerFactory Processing CacheContainerProvider initializing...");
+        	entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(provider.getCode(), entityManagerFactory);
+        } 
+    } 
+    
+    
+    public void removeEntityManagerFactoryFromCache(Provider provider) {
+    	log.trace("Removing entityManagerFactory for provider {}", provider.getId());
+    	String cacheKey = provider.getCode();
+    	EntityManagerFactory entityManagerFactory = entityManagerFactories.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-    @PreDestroy
-    protected void shutdownProviders() {
-        entityManagerFactories.forEach((providerName, entityManagerFactory) -> entityManagerFactory.close());
-        entityManagerFactories.clear();
-        providers.clear();
+    	if (entityManagerFactory != null) {  
+    		entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
+    	} else {
+    		entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, entityManagerFactory);
+    	}
+    	log.info("Removed entityMangerFactory for provider {}", provider.getId());
     }
+ 
+    
+    private EntityManagerFactory createEntityManagerFactory(Provider provider) {
+        Map<String, String> props = new TreeMap<>();
+       log.info("provider code : "+provider.getCode());
+       
+        props.put("hibernate.default_schema", provider.getCode()); 
+        return Persistence.createEntityManagerFactory("MeveoAdminMultiTenant", props);
+   }
+    
 
-    private List<Provider> loadProvidersFromDB() {
-        final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        final CriteriaQuery<Provider> q = cb.createQuery(Provider.class);
-        final Root<Provider> c = q.from(Provider.class);
-        q.select(c);
-        final TypedQuery<Provider> query = entityManager.createQuery(q);
-        return query.getResultList();
+     
+    @Produces
+    @MeveoJpaForMultiTenancy
+    @RequestScoped
+    public EntityManager createEntityManager(){
+    	String providerCode =currentUser.getProviderCode();
+    	return entityManagerFactories.get(providerCode).createEntityManager();
     }
-
-    /**
-     * Create new {@link EntityManagerFactory} using this provider's schema.
-     * @param provider Provider used to retrieve schema name
-     * @return new EntityManagerFactory
-     */
-    private EntityManagerFactory createEntityManagerFactory(final Provider provider) {
-        final Map<String, String> props = new TreeMap<>();
-        logger.debug("Creating entity manager factory on schema '" + provider.getCode() + "' for provider '" + provider.getDescription() + "'.");
-        props.put("hibernate.default_schema", provider.getCode());
-        return Persistence.createEntityManagerFactory("opencell.admin", props);
+    
+    public EntityManager createEntityManagerForJobs(String providerCode){ 
+    	EntityManager entityManager =null;
+    	if(entityManagers.containsKey(providerCode)){
+    		entityManager=entityManagers.get(providerCode);
+    	}
+    	if(entityManager==null || !entityManager.isOpen()){
+    		entityManager=entityManagerFactories.get(providerCode).createEntityManager();
+    		entityManagers.put(providerCode, entityManager);
+    	}
+    	return entityManager;
     }
-
-    public Optional<Provider> getProvider(final String providerName) {
-        return providers.stream().filter(provider -> provider.getCode().equals(providerName)).findFirst();
-    }
-
-    /**
-     * Returns EntityManagerFactory from the cache. EMF is created during provider registration and initialization.
-     * @see #startupProviders()
-     */
-    public EntityManagerFactory getEntityManagerFactory(final String providerCode) {
-    	logger.info("loaded em :{}",entityManagerFactories.size());
-        return entityManagerFactories.get(providerCode);
-    }
+    
+    
+    
 }
