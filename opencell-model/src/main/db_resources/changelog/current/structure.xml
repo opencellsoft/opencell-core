@@ -1504,5 +1504,14 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
     </changeSet>
+
+	<changeSet id="#2428_20180105" author="EdwardPLegaspi">
+		<addColumn tableName="adm_notif_webhooks">
+			<column name="http_protocol" type="varchar(10)" />
+		</addColumn>
+		<sql>UPDATE adm_notif_webhooks SET http_protocol='HTTP'</sql>
+		<addNotNullConstraint tableName="adm_notif_webhooks"
+			columnName="http_protocol" />
+	</changeSet>
     
 </databaseChangeLog> 
