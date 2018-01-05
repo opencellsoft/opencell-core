@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -74,7 +73,6 @@ import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.job.PdfGeneratorConstants;
-import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
@@ -757,9 +755,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             String pdfFilename = getOrGeneratePdfFilename(invoice);
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
-            if (invoice.getInvoiceNumber() == null) {
-                PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
-            }
+//            if (invoice.getInvoiceNumber() == null) {
+//                PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
+//            }
             invoice.setPdfFilename(pdfFilename);
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
