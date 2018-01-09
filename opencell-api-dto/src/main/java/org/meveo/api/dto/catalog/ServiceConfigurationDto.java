@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -22,9 +23,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  **/
 @XmlRootElement(name = "ServiceConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceConfigurationDto {
+public class ServiceConfigurationDto implements Serializable {
 
-	@NotNull
+    private static final long serialVersionUID = 881323828087615069L;
+
+    @NotNull
 	@XmlAttribute
 	private String code;
 

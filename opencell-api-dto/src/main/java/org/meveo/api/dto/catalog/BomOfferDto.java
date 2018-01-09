@@ -1,5 +1,6 @@
 package org.meveo.api.dto.catalog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -44,15 +45,15 @@ public class BomOfferDto extends BaseDto {
 
 	@XmlElementWrapper(name = "servicesToActivate")
 	@XmlElement(name = "serviceToActivate")
-	private List<ServiceConfigurationDto> servicesToActivate;
+	private List<ServiceConfigurationDto> servicesToActivate = new ArrayList<>();
 	
 	@XmlElementWrapper(name = "productsToActivate")
 	@XmlElement(name = "productToActivate")
-	private List<ServiceConfigurationDto> productsToActivate;
+	private List<ServiceConfigurationDto> productsToActivate = new ArrayList<>();
 	
 	@XmlElementWrapper(name = "businessServiceModels")
 	@XmlElement(name = "businessServiceModel")
-	private List<BSMConfigurationDto> businessServiceModels;
+	private List<BSMConfigurationDto> businessServiceModels = new ArrayList<>();
 	
 	private LifeCycleStatusEnum lifeCycleStatusEnum;
 	
