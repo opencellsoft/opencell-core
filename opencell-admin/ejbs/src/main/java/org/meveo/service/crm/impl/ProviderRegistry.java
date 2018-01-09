@@ -110,7 +110,7 @@ public class ProviderRegistry {
     	if(entityManagers.containsKey(providerCode)){
     		entityManager=entityManagers.get(providerCode);
     	}
-    	if(entityManager==null || !entityManager.isOpen()){
+    	if((entityManager==null || !entityManager.isOpen()) && entityManagerFactories.containsKey(providerCode)){
     		entityManager=entityManagerFactories.get(providerCode).createEntityManager();
     		entityManagers.put(providerCode, entityManager);
     	}
