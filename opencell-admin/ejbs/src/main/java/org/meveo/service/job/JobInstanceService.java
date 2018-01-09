@@ -64,7 +64,9 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private static ParamBean paramBean = ParamBean.getInstance();
 
     /**
-     * Register job class and schedule active job instances
+     * Register job class and schedule active job instances.
+     * 
+     * @param job job to be registered.
      */
     public void registerJob(Job job) {
         synchronized (jobTimers) {
@@ -89,7 +91,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     }
 
     /**
-     * Register timers for applicable job instances of a given job class
+     * Register timers for applicable job instances of a given job class.
      * 
      * @param job
      */
@@ -285,9 +287,9 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     }
 
     /**
-     * Reschedule a job
+     * Reschedule a job.
      * 
-     * @param code Code of job instance to reschedule
+     * @param jobInstanceId id of job instance need to be scheduled.
      */
     public void scheduleUnscheduleJob(Long jobInstanceId) {
 

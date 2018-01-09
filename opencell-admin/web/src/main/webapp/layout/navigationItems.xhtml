@@ -80,7 +80,7 @@
 	</p:submenu>
 	
 	<p:submenu styleClass="mmProductsSM" label="#{messages['menu.marketingManager.products']}"  rendered="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }" >
-		<p:menuitem id="mmProductTemplates" outcome="mm_productTemplates" value="#{messages['menu.marketingManager.productList']}" />
+		<p:menuitem id="mm_products" outcome="mm_products" value="#{messages['menu.marketingManager.productList']}" />
 	</p:submenu>
 	
 	<p:submenu id="crm" label="#{messages['menu.crm']}" rendered="#{currentUser.hasRole('accountVisualization') or currentUser.hasRole('customerSummaryVisualization')}">
@@ -126,9 +126,10 @@
 		</p:submenu>
 	</p:submenu>
 	
-	<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">			
+	<p:submenu id="payment" label="#{messages['menu.Paiements']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">	
+	        <p:menuitem id="paymentGateways" outcome="paymentGateways" value="#{messages['menu.paymentGateways']}" />		
 	  	 	<p:menuitem id="ddrequestLotOps" outcome="ddrequestLotOps" value="#{messages['menu.ddrequestLotOp']}" />				
-		<p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
+		    <p:menuitem id="ddrequestLots" outcome="ddrequestLots" value="#{messages['menu.ddrequestLot']}" />
 	</p:submenu>
 	
 	<p:submenu id="menurecouvrement" label="#{messages['menu.Recouvrement']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}">

@@ -235,8 +235,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @return
-     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long, org.meveo.model.admin.User)
+     * @see org.meveo.service.base.local.IPersistenceService#disable(java.lang.Long)
      */
     @Override
     public E disable(Long id) throws BusinessException {
@@ -265,7 +264,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long, org.meveo.model.admin.User)
+     * @see org.meveo.service.base.local.IPersistenceService#enable(java.lang.Long)
      */
     @Override
     public E enable(Long id) throws BusinessException {
@@ -345,8 +344,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         query.executeUpdate();
     }
 
+   
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#update(org.manaty.model.BaseEntity)
+     * @see org.meveo.service.base.local.IPersistenceService#update(org.meveo.model.IEntity)
      */
     @Override
     public E update(E entity) throws BusinessException {
@@ -393,8 +393,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return true;
     }
 
+ 
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#create(org.manaty.model.BaseEntity)
+     * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
      */
     @Override
     public void create(E entity) throws BusinessException {
@@ -452,9 +453,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
-     * Find entities by code - wild match
+     * Find entities by code - wild match.
      * 
-     * @param code Code to match
+     * @param wildcode code to match
      * @return A list of entities matching code
      */
     @SuppressWarnings("unchecked")
@@ -522,8 +523,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().detach(entity);
     }
 
+
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.BaseEntity)
+     * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.IEntity)
      */
     @Override
     public void refresh(E entity) {
@@ -539,8 +541,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
     }
 
+
     /**
-     * @see org.meveo.service.base.local.IPersistenceService#refreshOrRetrieve(org.meveo.model.BaseEntity)
+     * @see org.meveo.service.base.local.IPersistenceService#refreshOrRetrieve(org.meveo.model.IEntity)
      */
     @Override
     public E refreshOrRetrieve(E entity) {
@@ -605,16 +608,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * <li>&lt;condition&gt; &lt;fieldname1&gt; &lt;fieldname2&gt; ... &lt;fieldnameN&gt;. Value is a value to apply in condition</li>
      * </ul>
      * 
-     * A union between different filter items is AND.<br/>
-     * <br/>
+     * A union between different filter items is AND.
      * 
-     * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.<br/>
-     * <br/>
+     * 
+     * Condition is optional. Number of fieldnames depend on condition used. If no condition is specified an "equals ignoring case" operation is considered.
+     * 
      * 
      * Following conditions are supported:
      * <ul>
-     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value<=field.value. Applies to date and number type fields.</li>
-     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value<=value</li>
+     * <li>fromRange. Ranged search - field value in between from - to values. Specifies "from" part value: e.g value&lt;=fiel.value. Applies to date and number type fields.</li>
+     * <li>toRange. Ranged search - field value in between from - to values. Specifies "to" part value: e.g field.value&lt;=value</li>
      * <li>list. Value is in field's list value. Applies to date and number type fields.</li>
      * <li>inList/not-inList. Field value is [not] in value (list). A comma separated string will be parsed into a list if values. A single value will be considered as a list value
      * of one item</li>
@@ -638,37 +641,37 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * 
      * 
      * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
-     * same in case when quering a customer account: customer.code=aaa OR customer=aaa<br/>
+     * same in case when quering a customer account: customer.code=aaa OR customer=aaa
      * 
      * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
-     * sellers=code1,code2<br/>
-     * <br/>
+     * sellers=code1,code2
      * 
-     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists <br/>
-     * <br/>
      * 
-     * Examples:<br/>
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists 
+     * 
+     * 
+     * Examples:
      * <ul>
-     * <li>invoice number equals "1578AU":<br/>
+     * <li>invoice number equals "1578AU":
      * Filter key: invoiceNumber. Filter value: 1578AU</li>
-     * <li>invoice number is not "1578AU":<br/>
+     * <li>invoice number is not "1578AU":
      * Filter key: ne invoiceNumber. Filter value: 1578AU</li>
-     * <li>invoice number is null:<br/>
+     * <li>invoice number is null:
      * Filter key: invoiceNumber. Filter value: IS_NULL</li>
-     * <li>invoice number is not empty:<br/>
+     * <li>invoice number is not empty:
      * Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
-     * <li>Invoice date is between 2017-05-01 and 2017-06-01:<br/>
-     * Filter key: fromRange invoiceDate. Filter value: 2017-05-01<br/>
+     * <li>Invoice date is between 2017-05-01 and 2017-06-01:
+     * Filter key: fromRange invoiceDate. Filter value: 2017-05-01
      * Filter key: toRange invoiceDate. Filter value: 2017-06-01</li>
-     * <li>Date is between creation and update dates:<br/>
+     * <li>Date is between creation and update dates:
      * Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
-     * <li>invoice number is any of 158AU, 159KU or 189LL:<br/>
+     * <li>invoice number is any of 158AU, 159KU or 189LL:
      * Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
-     * <li>any of param1, param2 or param3 fields contains "energy":<br/>
+     * <li>any of param1, param2 or param3 fields contains "energy":
      * Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
-     * <li>any of param1, param2 or param3 fields start with "energy":<br/>
+     * <li>any of param1, param2 or param3 fields start with "energy":
      * Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
-     * <li>any of param1, param2 or param3 fields is "energy":<br/>
+     * <li>any of param1, param2 or param3 fields is "energy":
      * Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
      * 
@@ -1008,9 +1011,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     /**
      * 
-     * @param query
-     * @param params
-     * @return
+     * @param query query to execute
+     * @param params map of parameter
+     * @return query result.
      */
     public Object executeSelectQuery(String query, Map<String, Object> params) {
         Query q = getEntityManager().createQuery(query);

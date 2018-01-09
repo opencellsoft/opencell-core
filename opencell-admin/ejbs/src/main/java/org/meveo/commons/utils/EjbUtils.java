@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
  * Util class for remote ejb lookups.
  * 
  * @author Ignas Lelys
- * @created Jan 19, 2011
  *
  */
 public class EjbUtils {
@@ -47,11 +46,11 @@ public class EjbUtils {
     }
 
     /**
-     * Obtain interface of an object in JNDI
+     * Obtain interface of an object in JNDI.
      * 
      * @param nameEJB Full JNDI path to an object
-     * @param serverName Server address where to look for an object
      * @return Object instance
+     * @throws NamingException naming exception.
      * 
      */
     public static Object getInterface(String nameEJB) throws NamingException {
@@ -66,11 +65,12 @@ public class EjbUtils {
     }
 
     /**
-     * Obtain remote interface of an object in JNDI
+     * Obtain remote interface of an object in JNDI.
      * 
      * @param nameEJB Full JNDI path to an object
      * @param serverName Server address where to look for an object
      * @return Object instance
+     * @throws NamingException naming exception.
      * 
      */
     public static Object getRemoteInterface(String nameEJB, String serverName) throws NamingException {
@@ -78,6 +78,11 @@ public class EjbUtils {
         return ctx.lookup(nameEJB);
     }
 
+    /**
+     * @param serverName server name
+     * @return initial context
+     * @throws NamingException naming exception.
+     */
     private static InitialContext getInitialContext(String serverName) throws NamingException {
         Properties properties = new Properties();
         properties.put(Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory");
@@ -87,7 +92,7 @@ public class EjbUtils {
     }
 
     /**
-     * Return a service by a service interface name
+     * Return a service by a service interface name.
      * 
      * @param serviceInterfaceName A simple name of a service class (NOT a full classname). E.g. WorkflowService
      * @return Service instance
@@ -104,7 +109,7 @@ public class EjbUtils {
     }
 
     /**
-     * Return a persistence service for a given entity class
+     * Return a persistence service for a given entity class.
      * 
      * @param entityClass Entity class
      * @return Persistence service

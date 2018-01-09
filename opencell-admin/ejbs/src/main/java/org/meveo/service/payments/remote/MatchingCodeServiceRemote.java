@@ -24,7 +24,7 @@ import javax.ejb.Remote;
  * MatchingCode service remote interface.
  * 
  * @author anasseh
- * @created 28.11.2010
+ * @since 28.11.2010
  */
 @Remote
 public interface MatchingCodeServiceRemote extends IMatchingCodeService {

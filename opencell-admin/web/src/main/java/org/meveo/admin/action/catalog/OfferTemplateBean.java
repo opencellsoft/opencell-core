@@ -165,7 +165,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         } else if (duplicateOffer) {
 			// duplicate the offer, detach and set id to null
-            duplicateWOutSave();
+			duplicateAndSave();
             duplicateOffer = false;
 			duplicateOfferFlag = true;
 
@@ -358,7 +358,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 		// Instantiating a new offer from BOM by using the data entered in offer
 		// template that was duplicated in initEntity() method
-        if (businessOfferModel != null) {
+	    if (instantiatedFromBom) {
 			Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
 			CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
 
@@ -411,7 +411,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			bomParams.setLongDescriptionI18n(entity.getLongDescriptionI18n());
 			bomParams.setOfferCfValue(offerCfValues);
 
-			businessOfferModelService.createOfferFromBOM(bomParams);
+			businessOfferModelService.instantiateFromBOM(bomParams);
 
             if (entity.getImagePath() != null) {
                 try {
@@ -720,13 +720,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return true;
     }
 
-    private void duplicateWOutSave() {
+	private void duplicateAndSave() {
 
         if (getObjectId() != null) {
             OfferTemplate offer = offerTemplateService.findById(getObjectId());
             if (offer != null) {
                 try {
-                    entity = offerTemplateService.duplicate(offer, false);
+					entity = offerTemplateService.duplicate(offer, true, true, false);
 					businessOfferModel = entity.getBusinessOfferModel();					
                     setObjectId(null);
 
@@ -753,7 +753,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             entity = offerTemplateService.duplicate(offer, false);
             // Preserve the offer template original code
             entity.setCode(code);
-
+			// the new offer should be in design
+			entity.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
             setObjectId(null);
 
         } catch (BusinessException e) {

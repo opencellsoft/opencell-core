@@ -31,9 +31,9 @@ import org.meveo.api.serialize.RestDateParam;
 public interface BillingAccountRs extends IBaseRs {
 
     /**
-     * Create a new billing account
+     * Create a new billing account.
      * 
-     * @param posteData Billing account data
+     * @param postData Billing account data
      * @return Request processing status
      */
     @POST
@@ -41,9 +41,9 @@ public interface BillingAccountRs extends IBaseRs {
     ActionStatus create(BillingAccountDto postData);
 
     /**
-     * Update existing billing account
+     * Update existing billing account.
      * 
-     * @param posteData Billing account data
+     * @param postData Billing account data
      * @return Request processing status
      */
     @PUT
@@ -53,7 +53,7 @@ public interface BillingAccountRs extends IBaseRs {
     /**
      * Search for a billing account with a given code.
      * 
-     * @param billingAccountCode
+     * @param billingAccountCode billing account code
      * @return Billing account
      */
     @GET
@@ -61,7 +61,7 @@ public interface BillingAccountRs extends IBaseRs {
     GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode);
 
     /**
-     * Remove a billing account with a Billing Account Code
+     * Remove a billing account with a Billing Account Code.
      *
      * @param billingAccountCode Billing account code
      * @return Request processing status
@@ -74,7 +74,7 @@ public interface BillingAccountRs extends IBaseRs {
      * List BillingAccount filter by customerAccountCode.
      * 
      * @param customerAccountCode Customer account code
-     * @return 
+     * @return  list of billing account
      */
     @GET
     @Path("/list")
@@ -91,14 +91,13 @@ public interface BillingAccountRs extends IBaseRs {
     ActionStatus createOrUpdate(BillingAccountDto postData);
     
     /**
-     * filter counters by period date
+     * filter counters by period date.
      *
      * @param billingAccountCode Billing account code
      * @param date Date
-     * @return
+     * @return list of counter instances.
      */
     @GET
     @Path("/filterCountersByPeriod")
-	GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, 
-			@QueryParam("date") @RestDateParam Date date);
+    GetCountersInstancesResponseDto filterBillingAccountCountersByPeriod(@QueryParam("billingAccountCode") String billingAccountCode, @QueryParam("date") @RestDateParam Date date);
 }

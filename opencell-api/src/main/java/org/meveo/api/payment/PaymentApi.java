@@ -57,10 +57,10 @@ public class PaymentApi extends BaseApi {
     /**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
+     * @throws UnbalanceAmountException balance amount exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException opencell api exception
      */
     public Long createPayment(PaymentDto paymentDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + paymentDto.getAmount() + " paymentMethodEnum:" + paymentDto.getPaymentMethod() + " isToMatching:" + paymentDto.isToMatching()
@@ -144,15 +144,16 @@ public class PaymentApi extends BaseApi {
             log.info("no matching created ");
         }
         log.debug("payment created for amount:" + payment.getAmount());
-        
-        if (payment != null) {
-        	return payment.getId();
-        } else {
-        	return null;
-        }
-        
+
+        return payment.getId();
+
     }
 
+    /**
+     * @param customerAccountCode customer account code
+     * @return list of payment dto
+     * @throws Exception exception.
+     */
     public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
         List<PaymentDto> result = new ArrayList<PaymentDto>();
 
@@ -203,6 +204,11 @@ public class PaymentApi extends BaseApi {
         return result;
     }
 
+    /**
+     * @param customerAccountCode customer account code
+     * @return balance for customer account
+     * @throws BusinessException business exception
+     */
     public double getBalance(String customerAccountCode) throws BusinessException {
 
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
@@ -210,6 +216,14 @@ public class PaymentApi extends BaseApi {
         return customerAccountService.customerAccountBalanceDue(customerAccount, new Date()).doubleValue();
     }
 
+    /**
+     * @param cardPaymentRequestDto card payment request
+     * @return payment by card response
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation matched exception
+     * @throws UnbalanceAmountException balance exception
+     * @throws MeveoApiException opencell's api exception
+     */
     public PayByCardResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 

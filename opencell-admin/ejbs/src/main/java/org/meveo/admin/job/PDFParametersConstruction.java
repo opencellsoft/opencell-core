@@ -19,7 +19,6 @@
 package org.meveo.admin.job;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.text.NumberFormat;
@@ -32,16 +31,12 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
-import org.meveo.model.billing.TIP;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.TipPaymentMethod;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -56,10 +51,10 @@ import net.sf.jasperreports.engine.JRParameter;
 public class PDFParametersConstruction {
 
     private Logger log = LoggerFactory.getLogger(PDFParametersConstruction.class);
-        
-	@Inject
-	protected CustomFieldTemplateService customFieldTemplateService;
-    
+
+    @Inject
+    protected CustomFieldTemplateService customFieldTemplateService;
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
@@ -67,126 +62,61 @@ public class PDFParametersConstruction {
     @ApplicationProvider
     private Provider appProvider;
     
-	private  String PDF_DIR_NAME = "pdf";
-	private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
-	
+    @Inject
+    private InvoiceService invoiceService;
 
-	private ClassLoader cl = new URLClassLoader(
-			new URL[] { PDFParametersConstruction.class.getClassLoader()
-					.getResource("reports/fonts.jar") });
+    private String PDF_DIR_NAME = "pdf";
+    private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 
-	public Map<String, Object> constructParameters(Invoice invoice) {
-		
-		try {
-			currencyFormat.setMinimumFractionDigits(2);
-			
-			Map<String, Object> parameters = new HashMap<String, Object>();
-			parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
-			
-			BillingAccount billingAccount = invoice.getBillingAccount();
-			BillingCycle billingCycle = null;
-			if (billingAccount!= null && billingAccount.getBillingCycle()!= null) {
-				billingCycle=billingAccount.getBillingCycle();
-			}	
-			
-            String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
+    private ClassLoader cl = new URLClassLoader(new URL[] { PDFParametersConstruction.class.getClassLoader().getResource("reports/fonts.jar") });
 
-			ParamBean paramBean = ParamBean.getInstance();
-			String meveoDir = paramBean.getProperty("providers.rootDir",
-					"./opencelldata");
-			String resDir = meveoDir + File.separator + appProvider.getCode()
-					+ File.separator + "jasper";
-			String templateDir = new StringBuilder(resDir)
-					.append(File.separator).append(billingTemplateName)
-					.append(File.separator).append(PDF_DIR_NAME).toString();
-			parameters.put(PdfGeneratorConstants.MESSAGE_PATH_KEY, templateDir
-					+ File.separator);
-			parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir
-					+ File.separator);
-			parameters.put(PdfGeneratorConstants.CUSTOMER_ADDRESS_KEY,
-					getCustomerAddress(invoice));
-			parameters.put(PdfGeneratorConstants.SUBREPORT_DIR, templateDir);
-			
-			PaymentMethod preferedPaymentMethod =  billingAccount.getCustomerAccount().getPreferredPaymentMethod();
+    public Map<String, Object> constructParameters(Invoice invoice) {
 
-            if (preferedPaymentMethod != null && preferedPaymentMethod instanceof TipPaymentMethod) {
-				BigDecimal netToPay = invoice.getNetToPay();
-				if (netToPay.signum() != 1) {
-					parameters.put(PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
-							" ");
-					parameters.put(PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
-							" ");
-				} else {
-					BankCoordinates bankCoordinates = ((TipPaymentMethod)preferedPaymentMethod).getBankCoordinates();
-					if (bankCoordinates == null
-							|| bankCoordinates.getBankCode() == null) {
-						BankCoordinates bankCoordinatesEmpty = new BankCoordinates();
-						bankCoordinatesEmpty.setAccountNumber("           ");
-						bankCoordinatesEmpty.setBankCode("     ");
-						bankCoordinatesEmpty.setBranchCode("     ");
-						bankCoordinatesEmpty.setKey("  ");
-						TIP tip = new TIP(appProvider.getInterBankTitle()
-								.getCodeCreancier(), appProvider
-								.getInterBankTitle()
-								.getCodeEtablissementCreancier(), appProvider
-								.getInterBankTitle().getCodeCentre(),
-								bankCoordinatesEmpty, billingAccount
-										.getCustomerAccount().getCode(),
-								invoice.getId(), invoice.getInvoiceDate(),
-								invoice.getDueDate(), netToPay);
-						parameters.put(
-								PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
-								tip.getLigneOptiqueHaute());
-						parameters.put(
-								PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
-								tip.getLigneOptiqueBasse());
-					} else {
-						TIP tip = new TIP(appProvider.getInterBankTitle()
-								.getCodeCreancier(), appProvider
-								.getInterBankTitle()
-								.getCodeEtablissementCreancier(), appProvider
-								.getInterBankTitle().getCodeCentre(),
-								bankCoordinates, billingAccount
-										.getCustomerAccount().getCode(),
-								invoice.getId(), invoice.getInvoiceDate(),
-								invoice.getDueDate(), netToPay);
-						parameters.put(
-								PdfGeneratorConstants.HIGH_OPTICAL_LINE_KEY,
-								tip.getLigneOptiqueHaute());
-						parameters.put(
-								PdfGeneratorConstants.LOW_OPTICAL_LINE_KEY,
-								tip.getLigneOptiqueBasse());
-					}
-				}
-			}
+        try {
+            currencyFormat.setMinimumFractionDigits(2);
 
-			parameters.put(PdfGeneratorConstants.INVOICE_NUMBER_KEY,
-					invoice.getInvoiceNumber());
-			parameters.put(PdfGeneratorConstants.BILLING_TEMPLATE,
-					billingTemplateName);
-			parameters
-					.put(PdfGeneratorConstants.BILLING_ACCOUNT, billingAccount);
-			parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT,
-					billingAccount.getCustomerAccount());
-			parameters.put(PdfGeneratorConstants.INVOICE, invoice);
-			Map<String, String> baCustomFields=getBACustomFields(billingAccount);
-			for(String key:baCustomFields.keySet()){
-				parameters.put(key,baCustomFields.get(key));
-			}
-			
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put(JRParameter.REPORT_CLASS_LOADER, cl);
 
-			return parameters;
-		} catch (Exception e) {
-			log.error("failed to construct parameters ",e);
-			return null;
-		}
-	}
-	
+            BillingAccount billingAccount = invoice.getBillingAccount();
+            BillingCycle billingCycle = null;
+            if (billingAccount != null && billingAccount.getBillingCycle() != null) {
+                billingCycle = billingAccount.getBillingCycle();
+            }
+
+            String billingTemplateName = invoiceService.getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
+
+            ParamBean paramBean = ParamBean.getInstance();
+            String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
+            String resDir = meveoDir + File.separator + appProvider.getCode() + File.separator + "jasper";
+            String templateDir = new StringBuilder(resDir).append(File.separator).append(billingTemplateName).append(File.separator).append(PDF_DIR_NAME).toString();
+            parameters.put(PdfGeneratorConstants.MESSAGE_PATH_KEY, templateDir + File.separator);
+            parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir + File.separator);
+            parameters.put(PdfGeneratorConstants.CUSTOMER_ADDRESS_KEY, getCustomerAddress(invoice));
+            parameters.put(PdfGeneratorConstants.SUBREPORT_DIR, templateDir);
+
+            parameters.put(PdfGeneratorConstants.INVOICE_NUMBER_KEY, invoice.getInvoiceNumber());
+            parameters.put(PdfGeneratorConstants.BILLING_TEMPLATE, billingTemplateName);
+            parameters.put(PdfGeneratorConstants.BILLING_ACCOUNT, billingAccount);
+            parameters.put(PdfGeneratorConstants.CUSTOMER_ACCOUNT, billingAccount.getCustomerAccount());
+            parameters.put(PdfGeneratorConstants.INVOICE, invoice);
+            Map<String, String> baCustomFields = getBACustomFields(billingAccount);
+            for (String key : baCustomFields.keySet()) {
+                parameters.put(key, baCustomFields.get(key));
+            }
+
+            return parameters;
+        } catch (Exception e) {
+            log.error("failed to construct parameters ", e);
+            return null;
+        }
+    }
+
     private Map<String, String> getBACustomFields(BillingAccount billingAccount) {
         Map<String, CustomFieldTemplate> customFieldTemplates = customFieldTemplateService.findByAppliesTo(billingAccount);
-		Map<String, String>  customFields = new HashMap<String, String> ();
-		if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
-			for (String cfCode : customFieldTemplates.keySet()) {
+        Map<String, String> customFields = new HashMap<String, String>();
+        if (customFieldTemplates != null && customFieldTemplates.size() > 0) {
+            for (String cfCode : customFieldTemplates.keySet()) {
 
                 Object cfValue = customFieldInstanceService.getInheritedCFValue(billingAccount, cfCode);
                 if (cfValue != null && cfValue instanceof Date) {
@@ -196,17 +126,16 @@ public class PDFParametersConstruction {
                 }
             }
         }
-		return customFields;
-	}
+        return customFields;
+    }
 
-	public String getCustomerAddress(Invoice invoice) {
+    public String getCustomerAddress(Invoice invoice) {
 
-	    String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
-		CustomerAccount customerAccount = invoice.getBillingAccount()
-				.getCustomerAccount();
-		String name = "";
-		if (customerAccount.getName() != null) {
-		    name="";
+        String billingAccountLanguage = invoice.getBillingAccount().getTradingLanguage().getLanguage().getLanguageCode();
+        CustomerAccount customerAccount = invoice.getBillingAccount().getCustomerAccount();
+        String name = "";
+        if (customerAccount.getName() != null) {
+            name = "";
 
             if (customerAccount.getName().getTitle() != null) {
                 String descTranslated = customerAccount.getName().getTitle().getDescriptionOrCode();
@@ -217,25 +146,18 @@ public class PDFParametersConstruction {
                 name = descTranslated + " ";
             }
 
-			name += customerAccount.getName().getFirstName() == null ? ""
-					: (customerAccount.getName().getFirstName() + " ");
-			name += customerAccount.getName().getLastName() == null ? ""
-					: customerAccount.getName().getLastName();
-		}
-		String address = "";
-		if (customerAccount.getAddress() != null) {
-			address = customerAccount.getAddress().getAddress1() == null ? ""
-					: (customerAccount.getAddress().getAddress1() + "\n");
-			address += customerAccount.getAddress().getAddress2() == null ? ""
-					: (customerAccount.getAddress().getAddress2() + "\n");
-			address += customerAccount.getAddress().getAddress3() == null ? ""
-					: (customerAccount.getAddress().getAddress3() + "\n");
-			address += customerAccount.getAddress().getZipCode() == null ? ""
-					: (customerAccount.getAddress().getZipCode() + " ");
-			address += customerAccount.getAddress().getCity() == null ? ""
-					: (customerAccount.getAddress().getCity());
-		}
-		return (name + "\n" + address);
-	}
+            name += customerAccount.getName().getFirstName() == null ? "" : (customerAccount.getName().getFirstName() + " ");
+            name += customerAccount.getName().getLastName() == null ? "" : customerAccount.getName().getLastName();
+        }
+        String address = "";
+        if (customerAccount.getAddress() != null) {
+            address = customerAccount.getAddress().getAddress1() == null ? "" : (customerAccount.getAddress().getAddress1() + "\n");
+            address += customerAccount.getAddress().getAddress2() == null ? "" : (customerAccount.getAddress().getAddress2() + "\n");
+            address += customerAccount.getAddress().getAddress3() == null ? "" : (customerAccount.getAddress().getAddress3() + "\n");
+            address += customerAccount.getAddress().getZipCode() == null ? "" : (customerAccount.getAddress().getZipCode() + " ");
+            address += customerAccount.getAddress().getCity() == null ? "" : (customerAccount.getAddress().getCity());
+        }
+        return (name + "\n" + address);
+    }
 
 }

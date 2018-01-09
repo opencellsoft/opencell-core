@@ -27,12 +27,22 @@ import org.primefaces.model.UploadedFile;
  **/
 public class ImageUploadEventHandler<T extends IEntity> {
 
+    /**
+     * application provider.
+     */
     private Provider appProvider;
 
+    /**
+     * @param appProvider application provider.
+     */
     public ImageUploadEventHandler(Provider appProvider) {
         this.appProvider = appProvider;
     }
 
+    /**
+     * @param entity entity
+     * @return picture file name path.
+     */
     public String getPicturePath(T entity) {
         if (entity instanceof OfferTemplateCategory) {
             return ModuleUtil.getPicturePath(appProvider.getCode(), "offerCategory");
@@ -48,11 +58,12 @@ public class ImageUploadEventHandler<T extends IEntity> {
     }
 
     /**
-     * Handle image upload from browser by saving uploaded file and persisting filename as an entity field
+     * Handle image upload from browser by saving uploaded file and persisting filename as an entity field.
      * 
      * @param entity Entity to update with uploaded filename
      * @param uploadedFile Uploaded file
-     * @throws IOException
+     * @return uploaded file name.
+     * @throws IOException I/O exception.
      */
     public String handleImageUpload(T entity, UploadedFile uploadedFile) throws IOException {
         if (uploadedFile == null) {
@@ -63,13 +74,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
     }
 
     /**
-     * Save input stream to a file
+     * Save input stream to a file.
      * 
      * @param entity Entity to determine a folder path
      * @param inputStream Input stream of file contents to save
      * @param originalFilename Original filename
      * @return A filename file was saved to
-     * @throws IOException
+     * @throws IOException I/O Exception.
      */
     private String saveToFile(T entity, InputStream inputStream, String originalFilename) throws IOException {
 
@@ -97,9 +108,11 @@ public class ImageUploadEventHandler<T extends IEntity> {
     /**
      * Saves an array of byte as image. Mainly use in API.
      * 
-     * @param entity
-     * @param imageData
-     * @throws IOException
+     * @param entity entity
+     * @param originalFilename original file name.
+     * @param imageData image data.
+     * @return new saved file's name.
+     * @throws IOException I/O Exception.
      */
     public String saveImage(T entity, String originalFilename, byte[] imageData) throws IOException {
 
@@ -112,6 +125,10 @@ public class ImageUploadEventHandler<T extends IEntity> {
         return filename;
     }
 
+    /**
+     * @param entity entity
+     * @throws IOException I/O exception.
+     */
     public void deleteImage(T entity) throws IOException {
 
         String imagePath = ((IImageUpload) entity).getImagePath();
@@ -123,6 +140,12 @@ public class ImageUploadEventHandler<T extends IEntity> {
         }
     }
 
+    /**
+     * @param newEntity new entity
+     * @param sourceFilename source file name
+     * @return name of file
+     * @throws IOException I/O exception.
+     */
     public String duplicateImage(T newEntity, String sourceFilename) throws IOException {
 
         if (StringUtils.isBlank(sourceFilename)) {
@@ -147,7 +170,7 @@ public class ImageUploadEventHandler<T extends IEntity> {
      * Compose a filename for a given entity. Filename is either code or UUID value.
      * 
      * @param entity Entity compose a filename for
-     * @return Filename
+     * @return file name
      */
     private String getFileName(IEntity entity) {
         String filename = null;

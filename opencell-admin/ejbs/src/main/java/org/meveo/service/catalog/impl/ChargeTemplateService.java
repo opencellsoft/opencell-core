@@ -111,10 +111,9 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     }
 
     /**
-     * @param table name of table(cat_serv_usage_charge_template, cat_serv_rec_charge_template, cat_serv_sub_charge_template, cat_serv_trm_charge_template)
      * @param chargeId id of the charge which is used to check
-     * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @return deletion's result
+     * @throws BusinessException business exception.
      */
     public synchronized int deleteCharge(Long chargeId) throws BusinessException {
         int result = 0;
@@ -130,8 +129,8 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
     /**
      * @param table name of table(cat_serv_usage_charge_template, cat_serv_rec_charge_template, cat_serv_sub_charge_template, cat_serv_trm_charge_template)
      * @param chargeId id of the charge which is used to check
-     * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @return deletion's result.
+     * @throws BusinessException business exception.
      */
     private synchronized int removeRelatedCharge(String table, Long chargeId) throws BusinessException {
         int result = 0;
@@ -148,8 +147,8 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 
     /**
      * @param chargeId id of the charge which is used to check
-     * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @return deletion's result
+     * @throws BusinessException business exception.
      */
     public synchronized int removeRelatedChargeUsage(Long chargeId) throws BusinessException {
         return this.removeRelatedCharge("cat_usage_charge_template", chargeId);
@@ -157,8 +156,8 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 
     /**
      * @param chargeId id of the charge which is used to check
-     * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @return deletion's result.
+     * @throws BusinessException business exception
      */
     public synchronized int removeRelatedChargeRecurring(Long chargeId) throws BusinessException {
         return this.removeRelatedCharge("cat_recurring_charge_templ", chargeId);
@@ -166,8 +165,8 @@ public class ChargeTemplateService<P extends ChargeTemplate> extends BusinessSer
 
     /**
      * @param chargeId id of the charge which is used to check
-     * @return list of service's Id linked to charge
-     * @throws BusinessException
+     * @return deletion's result.
+     * @throws BusinessException business exception.
      */
     public synchronized int removeRelatedChargeOneshot(Long chargeId) throws BusinessException {
         return this.removeRelatedCharge("cat_one_shot_charge_templ", chargeId);

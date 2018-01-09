@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Gediminas Ubartas
- * @created 2010.11.09
+ * @since 2010.11.09
  */
 public class XLSFile implements Serializable {
 

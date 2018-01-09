@@ -32,7 +32,7 @@ import org.meveo.admin.util.security.PasswordCheck;
 /**
  * 
  * @author Gediminas Ubartas
- * @created 2010.12.08
+ * @since 2010.12.08
  */
 @FacesValidator("passwordValidator")
 public class PasswordValidator implements Validator {

@@ -69,7 +69,7 @@ public class FileProducer {
      *            Filename of new file
      *@param reportFileName
      *            Report template
-     * @param PDF
+     * @param parameters
      *            template parameters
      */
     public void generatePDFfile(File dataSourceFile, String fileName, String reportFileName,

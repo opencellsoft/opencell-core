@@ -5,7 +5,7 @@ import org.junit.Test;
 
 /**
  * @author Edward P. Legaspi
- * @created 14 Sep 2017
+ * @since 14 Sep 2017
  */
 public class DueDateDelayReferenceDateEnumTest {
 

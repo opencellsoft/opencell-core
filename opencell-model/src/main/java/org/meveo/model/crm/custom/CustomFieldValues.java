@@ -36,10 +36,11 @@ public class CustomFieldValues implements Serializable {
     private static final long serialVersionUID = -1733710622601844949L;
 
     public static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    
     public static SimpleDateFormat xmlsdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     /**
-     * Custom field values (CF value entity) grouped by a custom field code
+     * Custom field values (CF value entity) grouped by a custom field code.
      */
     private Map<String, List<CustomFieldValue>> valuesByCode = new HashMap<>();
 
@@ -57,7 +58,7 @@ public class CustomFieldValues implements Serializable {
     /**
      * Set custom field values as is. Not responsible for validity of what is being set. Only a check is made to mark new versionable custom field value periods as new.
      * 
-     * @param valuesByCode
+     * @param newValuesByCode values by code
      */
     public void setValuesByCode(Map<String, List<CustomFieldValue>> newValuesByCode) {
 
@@ -76,12 +77,15 @@ public class CustomFieldValues implements Serializable {
         this.valuesByCode = newValuesByCode;
     }
 
+    /**
+     * clear values.
+     */
     public void clearValues() {
         valuesByCode = null;
     }
 
     /**
-     * Check if entity has a value for a given custom field
+     * Check if entity has a value for a given custom field.
      * 
      * @param cfCode Custom field code
      * @return True if entity has a value for a given custom field
@@ -113,7 +117,7 @@ public class CustomFieldValues implements Serializable {
     }
 
     /**
-     * Get a single custom field value for a given custom field for a given date
+     * Get a single custom field value for a given custom field for a given date.
      * 
      * @param cfCode Custom field code
      * @param date Date

@@ -27,12 +27,11 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO test
 /**
  * SQL Utility methods.
  * 
  * @author Donatas Remeika
- * @created Mar 13, 2009
+ * 
  */
 public final class SQLUtils {
 
@@ -42,7 +41,8 @@ public final class SQLUtils {
     private SQLUtils() {
 
     }
-
+    
+    /** logger.*/
     private static final Logger logger = LoggerFactory.getLogger(SQLUtils.class);
 
     /**
@@ -51,7 +51,7 @@ public final class SQLUtils {
      * @param rs
      *            ResultSet to get value from.
      * @return String value.
-     * @throws SQLException
+     * @throws SQLException sql exception.
      */
     public static String getStringAndCloseResultSet(ResultSet rs) throws SQLException {
         try {
@@ -69,8 +69,9 @@ public final class SQLUtils {
      * 
      * @param rs
      *            ResultSet to get value from.
-     * @return Object array.
-     * @throws SQLException
+     * @param types class
+     * @return types instance of Class.
+     * @throws SQLException sql exception
      */
     @SuppressWarnings("rawtypes")
     public static Object[] getValuesAndCloseResultSet(ResultSet rs, Class... types) throws SQLException {
@@ -88,7 +89,7 @@ public final class SQLUtils {
                         values[i - 1] = rs.getString(i);
                     } else if (Date.class == type) {
                         values[i - 1] = rs.getDate(i);
-                    } else if (java.util.Date.class == type ) {
+                    } else if (java.util.Date.class == type) {
                         values[i - 1] = rs.getDate(i);
                     } else {
                         values[i - 1] = null;
@@ -105,8 +106,7 @@ public final class SQLUtils {
     /**
      * Get Integer value from ResultSet and close it.
      * 
-     * @param rs
-     *            ResultSet to get value from.
+     * @param rs ResultSet to get value from.
      * @return Integer value.
      */
     public static Integer getIntegerAndCloseResultSet(ResultSet rs) {
@@ -122,12 +122,11 @@ public final class SQLUtils {
         }
         return null;
     }
-    
+
     /**
      * Get Integer value from ResultSet and close it.
      * 
-     * @param rs
-     *            ResultSet to get value from.
+     * @param rs ResultSet to get value from.
      * @return Integer value.
      */
     public static Long getLongAndCloseResultSet(ResultSet rs) {
@@ -143,11 +142,11 @@ public final class SQLUtils {
         }
         return null;
     }
-    
+
     /**
      * Close Statements.
      * 
-     * @param statement
+     * @param statements
      *            Statements to close.
      */
     public static void closeStatements(Statement... statements) {

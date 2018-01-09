@@ -130,9 +130,9 @@ public class ElasticClientConnection {
     }
 
     /**
-     * Is Elastic Search integration turned on
+     * Is Elastic Search integration turned on.
      * 
-     * @return
+     * @return true if enabled
      */
     public boolean isEnabled() {
         return esEnabled;

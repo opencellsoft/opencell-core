@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
  * Utils class for working with strings.
  * 
  * @author Ignas Lelys
- * @created Aug 4, 2010
  */
 public class StringUtils {
 
@@ -83,12 +82,14 @@ public class StringUtils {
 
     public static String concatenate(Object... values) {
         StringBuilder sb = new StringBuilder();
-        for (Object s : values)
+        for (Object s : values) {
             if (!isBlank(s)) {
-                if (sb.length() != 0)
+                if (sb.length() != 0) {
                     sb.append(" ");
+                }
                 sb.append(s);
             }
+        }
         return sb.toString();
     }
 
@@ -106,20 +107,28 @@ public class StringUtils {
         return fileData.toString();
     }
 
+    /**
+     * @param s input string
+     * @param length length of string
+     * @param indicator true/false
+     * @return truncated string.
+     */
     public static String truncate(String s, int length, boolean indicator) {
-        if (isBlank(s) || s.length() <= length)
+        if (isBlank(s) || s.length() <= length) {
             return s;
+        }
 
-        if (indicator)
+        if (indicator) {
             return s.substring(0, length - 3) + "...";
-        else
+        } else {
             return s.substring(0, length);
+        }
     }
 
     /**
-     * @param value
-     * @param nbChar
-     * @return
+     * @param value input string
+     * @param nbChar number of char
+     * @return sub string.
      */
     public static String getStringAsNChar(String value, int nbChar) {
         if (value == null) {
@@ -133,9 +142,9 @@ public class StringUtils {
     }
 
     /**
-     * @param value
-     * @param nbChar
-     * @return
+     * @param value input long value
+     * @param nbChar number of char
+     * @return long as string
      */
     public static String getLongAsNChar(long value, int nbChar) {
         String firstChar = "0";
@@ -164,10 +173,11 @@ public class StringUtils {
 
     public static String concat(Object... values) {
         StringBuilder sb = new StringBuilder();
-        for (Object s : values)
+        for (Object s : values) {
             if (!isBlank(s)) {
                 sb.append(s);
             }
+        }
         return sb.toString();
     }
 

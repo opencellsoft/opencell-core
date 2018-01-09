@@ -11,21 +11,21 @@ import org.meveo.model.crm.custom.CustomFieldValues;
 public interface ICustomFieldEntity {
 
     /**
-     * Get unique identifier
+     * Get unique identifier.
      * 
-     * @return
+     * @return uuid
      */
     public String getUuid();
 
     /**
-     * Set a new UUID value
+     * Set a new UUID value.
      * 
      * @return Old UUID value
      */
     public String clearUuid();
 
     /**
-     * Get an array of parent custom field entity in case custom field values should be inherited from a parent entity
+     * Get an array of parent custom field entity in case custom field values should be inherited from a parent entity.
      * 
      * @return An entity
      */

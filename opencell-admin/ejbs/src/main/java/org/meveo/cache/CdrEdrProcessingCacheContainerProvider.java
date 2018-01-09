@@ -50,13 +50,13 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     private ParamBean paramBean = ParamBean.getInstance();
 
     /**
-     * Contains association between access code and accesses sharing this code. Key format: <Access.accessUserId>, value: List of <Access entity>
+     * Contains association between access code and accesses sharing this code. Key format: &lt;Access.accessUserId&gt;, value: List of &lt;Access entity&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-access-cache")
     private Cache<String, List<Access>> accessCache;
 
     /**
-     * Stores a list of processed EDR's. Key format: <originBatch>_<originRecord>, value: 0 (no meaning, only keys are used)
+     * Stores a list of processed EDR's. Key format: &lt;originBatch&gt;_&lt;originRecord&gt;, value: 0 (no meaning, only keys are used)
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
     private Cache<String, Integer> edrCache;
@@ -79,7 +79,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Populate access cache from db
+     * Populate access cache from db.
      */
     private void populateAccessCache() {
 
@@ -96,7 +96,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Add access to a cache
+     * Add access to a cache.
      * 
      * @param access Access to add
      */
@@ -123,7 +123,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Remove access from cache
+     * Remove access from cache.
      * 
      * @param access Access to remove
      */
@@ -152,7 +152,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Update access in cache
+     * Update access in cache.
      * 
      * @param access Access to update
      */
@@ -162,7 +162,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Get a list of accesses for a given access user id
+     * Get a list of accesses for a given access user id.
      * 
      * @param accessUserId Access user id
      * @return A list of accesses
@@ -174,7 +174,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Populate EDR cache from db
+     * Populate EDR cache from db.
      */
     private void populateEdrCache() {
 
@@ -198,7 +198,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Check if EDR is cached for a given originBatch and originRecord
+     * Check if EDR is cached for a given originBatch and originRecord.
      * 
      * @param originBatch Origin batch
      * @param originRecord Origin record
@@ -210,7 +210,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Add EDR to cache
+     * Add EDR to cache.
      * 
      * @param edr EDR to add to cache
      */
@@ -219,7 +219,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Get a summary of cached information
+     * Get a summary of cached information.
      * 
      * @return A a map containing cache information with cache name as a key and cache as a value
      */

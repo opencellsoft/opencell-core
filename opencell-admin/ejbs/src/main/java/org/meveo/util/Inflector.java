@@ -494,9 +494,9 @@ public class Inflector {
      * <code>&#92;u3</code> would uppercase the 3rd backreference.
      * 
      * 
-     * @param input
-     * @param regex
-     * @param groupNumberToUppercase
+     * @param input input string
+     * @param regex regular expression
+     * @param groupNumberToUppercase group number to uppercase.
      * @return the input string with the appropriate characters converted to upper-case
      */
     protected static String replaceAllWithUppercase( String input,

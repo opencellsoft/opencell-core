@@ -84,9 +84,7 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return account operation 
      */
     @Produces
     @Named("accountOperation")
@@ -288,16 +286,9 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     }
 
     @Override
-    public void deleteInlist() {
-        // accountOperationService.getEntityManager().refresh(entity.getCustomerAccount());
-        super.deleteInlist();
-    }
-
-    @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);
         return null;
     }
-
 }

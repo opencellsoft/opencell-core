@@ -104,10 +104,10 @@ public class ChargeInstanceService<P extends ChargeInstance> extends BusinessSer
     }
 
     /**
-     * workround to find serviceInstance from chargeInstance , to avoid hibernate proxy cast
+     * workround to find serviceInstance from chargeInstance , to avoid hibernate proxy cast.
      * 
-     * @param chargeInstance
-     * @return
+     * @param chargeInstance charge instance
+     * @return service instance.
      */
 
     public ServiceInstance getServiceInstanceFromChargeInstance(ChargeInstance chargeInstance) {

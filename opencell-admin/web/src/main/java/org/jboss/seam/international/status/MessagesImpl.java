@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An implementation of the {@link Messages} interface.
  *
- * @author <a href="mailto:lincolnbaxter@gmail.com>Lincoln Baxter, III</a>
+ * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 @RequestScoped
 public class MessagesImpl implements Messages {

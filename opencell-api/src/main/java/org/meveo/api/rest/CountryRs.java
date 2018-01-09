@@ -31,46 +31,50 @@ public interface CountryRs extends IBaseRs {
     /**
      * Creates a tradingCountry base from the supplied country code. If the country code does not exists, a country and tradingCountry records are created
      * 
-     * @param countryDto
-     * @return
+     * @param countryDto country
+     * @return action status
      */
     @POST
     @Path("/")
-    public ActionStatus create(CountryDto countryDto);
+    ActionStatus create(CountryDto countryDto); 
 
     /**
      * Search country with a given country code.
      * 
-     * @param countryCode
+     * @param countryCode country code
      * @return {@link org.meveo.api.dto.response.GetCountryResponse}.
      */
     @GET
     @Path("/")
-    public GetCountryResponse find(@QueryParam("countryCode") String countryCode);
+    GetCountryResponse find(@QueryParam("countryCode") String countryCode);
 
     /**
      * Does not delete a country but the tradingCountry associated to it.
      * 
-     * @param countryCode
-     * @param currencyCode
-     * @return
+     * @param countryCode country code
+     * @param currencyCode currency code
+     * @return action status
      */
     @DELETE
     @Path("/{countryCode}/{currencyCode}")
-    public ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
+    ActionStatus remove(@PathParam("countryCode") String countryCode, @PathParam("currencyCode") String currencyCode);
 
     /**
      * Modify a country. Same input parameter as create. The country and tradingCountry are created if they don't exists. The operation fails if the tradingCountry is null.
      * 
-     * @param countryDto
-     * @return
+     * @param countryDto country 
+     * @return action status
      */
     @PUT
     @Path("/")
-    public ActionStatus update(CountryDto countryDto);
+    ActionStatus update(CountryDto countryDto);
 
+    /**
+     * @param countryDto country
+     * @return action status
+     */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(CountryDto countryDto);
+    ActionStatus createOrUpdate(CountryDto countryDto);
 
 }

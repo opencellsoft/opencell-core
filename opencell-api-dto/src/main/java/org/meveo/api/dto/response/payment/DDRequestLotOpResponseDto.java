@@ -10,7 +10,7 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jul 11, 2016 7:23:52 PM
+ * @since Jul 11, 2016 7:23:52 PM
  *
  */
 @XmlRootElement(name="DDRequestLotOpResponse")

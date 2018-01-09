@@ -154,7 +154,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 	 *            - class of an entity. eg. org.meveo.catalog.OfferTemplate
 	 * @param entityCode
 	 *            - code of entity
-	 * @return
+	 * @return customer field entity
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public ICustomFieldEntity findByClassAndCode(Class entityClass, String entityCode) {

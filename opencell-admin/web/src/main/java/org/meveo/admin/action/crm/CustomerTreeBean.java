@@ -484,7 +484,6 @@ public class CustomerTreeBean extends BaseBean<AccountEntity> {
         /**
          * Because in customer search any type of customer can appear, this method is used in UI to get link to concrete customer edit page.
          * 
-         * @param type Account type of Customer
          * 
          * @return Edit page url.
          */

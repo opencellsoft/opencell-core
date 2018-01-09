@@ -27,8 +27,8 @@ public interface BillingCycleRs extends IBaseRs {
     /**
      * Create a new billing cycle.
      * 
-     * @param postData
-     * @return
+     * @param postData billing cycle dto
+     * @return action status
      */
     @Path("/")
     @POST
@@ -37,8 +37,8 @@ public interface BillingCycleRs extends IBaseRs {
     /**
      * Update an existing billing cycle.
      * 
-     * @param postData
-     * @return
+     * @param postData billing cycle
+     * @return actioon result
      */
     @Path("/")
     @PUT
@@ -47,8 +47,8 @@ public interface BillingCycleRs extends IBaseRs {
     /**
      * Search for billing cycle with a given code.
      * 
-     * @param billingCycleCode Thre billing cycle's code
-     * @return
+     * @param billingCycleCode The billing cycle's code
+     * @return billing cycle if exists
      */
     @Path("/")
     @GET
@@ -58,7 +58,7 @@ public interface BillingCycleRs extends IBaseRs {
      * Remove an existing billing cycle with a given code.
      * 
      * @param billingCycleCode The billing cycle's code
-     * @return
+     * @return action result
      */
     @Path("/{billingCycleCode}")
     @DELETE

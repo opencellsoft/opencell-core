@@ -118,8 +118,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * Create a shallow duplicate of an offer template (main offer template information and custom fields). A new offer template will have a code with suffix "- Copy"
      * 
      * @param offer Offer template to duplicate
+     * @param persist true if needs to be persisted.
      * @return A persisted duplicated offer template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public synchronized OfferTemplate duplicate(OfferTemplate offer, boolean persist) throws BusinessException {
         return duplicate(offer, false, persist, false);
@@ -131,7 +132,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * 
      * @param offer Offer template to create new version for
      * @return Copy of offer template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public synchronized OfferTemplate instantiateNewVersion(OfferTemplate offer) throws BusinessException {
 
@@ -178,9 +179,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * @param persist Shall new entity be persisted
      * @param preserveCode Shall a code be preserved or a " Copy" be added to a code
      * @return A copy of Offer template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    private synchronized OfferTemplate duplicate(OfferTemplate offerToDuplicate, boolean duplicateHierarchy, boolean persist, boolean preserveCode) throws BusinessException {
+    public synchronized OfferTemplate duplicate(OfferTemplate offerToDuplicate, boolean duplicateHierarchy, boolean persist, boolean preserveCode) throws BusinessException {
 
         offerToDuplicate = refreshOrRetrieve(offerToDuplicate);
 
@@ -270,6 +271,10 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 offer.getSellers().add(seller);
             }
         }
+        
+        if (persist) {
+            create(offer);
+        }
 
         if (duplicateHierarchy) {
             String prefix = offer.getId() + "_";
@@ -317,7 +322,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         }
 
         if (persist) {
-            create(offer);
+            update(offer);
         }
 
         return offer;

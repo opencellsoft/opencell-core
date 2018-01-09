@@ -19,6 +19,8 @@ public class BillingCycleDto extends BusinessDto {
 	private static final long serialVersionUID = 5986901351613880941L;
 
 	private String billingTemplateName;
+	
+	private String billingTemplateNameEL;
 
 	@XmlElement(required = true)
 	private Integer invoiceDateDelay;
@@ -54,6 +56,7 @@ public class BillingCycleDto extends BusinessDto {
 		
 		if(billingCycleEntity != null){			
 			billingTemplateName = billingCycleEntity.getBillingTemplateName();
+			billingTemplateNameEL = billingCycleEntity.getBillingTemplateNameEL();
 			invoiceDateDelay = billingCycleEntity.getInvoiceDateDelay();
 			dueDateDelay = billingCycleEntity.getDueDateDelay();
 			dueDateDelayEL = billingCycleEntity.getDueDateDelayEL();
@@ -174,6 +177,14 @@ public class BillingCycleDto extends BusinessDto {
 	public void setDueDateDelayEL(String dueDateDelayEL) {
 		this.dueDateDelayEL = dueDateDelayEL;
 	}
+
+    public String getBillingTemplateNameEL() {
+        return billingTemplateNameEL;
+    }
+
+    public void setBillingTemplateNameEL(String billingTemplateNameEL) {
+        this.billingTemplateNameEL = billingTemplateNameEL;
+    }
 
 
 

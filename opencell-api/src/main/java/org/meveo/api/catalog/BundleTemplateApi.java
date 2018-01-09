@@ -370,6 +370,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
      * @param validTo Validity range to date.
      * @param pagingAndFiltering Paging and filtering criteria.
      * @return A list of product templates
+     * @throws InvalidParameterException invalid parameter exception.
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "bundleTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })

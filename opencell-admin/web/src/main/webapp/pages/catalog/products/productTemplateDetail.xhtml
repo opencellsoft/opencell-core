@@ -1,9 +1,10 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:c="http://xmlns.jcp.org/jsp/jstl/core" xmlns:p="http://primefaces.org/ui" xmlns:s="http://jboss.org/seam/faces"
     xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:f="http://xmlns.jcp.org/jsf/core" xmlns:h="http://xmlns.jcp.org/jsf/html" xmlns:hftl="http://hftl.org"
-    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" template="/layout/template.xhtml">
+    xmlns:hf="http://xmlns.jcp.org/jsf/composite/tags" xmlns:o="http://omnifaces.org/ui" template="/layout/template.xhtml">
 
     <ui:define name="metadata">
         <f:metadata>
+       	 	<o:viewParam name="bpmId" value="#{productTemplateBean.bpmId}" />
             <f:viewParam name="editMode" value="#{productTemplateBean.editMode}" />
             <f:viewParam name="objectId" value="#{productTemplateBean.objectId}" />
             <f:viewParam name="newVersion" value="#{productTemplateBean.newVersion}" />

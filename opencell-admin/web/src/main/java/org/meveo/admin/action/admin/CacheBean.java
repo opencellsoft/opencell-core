@@ -321,7 +321,8 @@ public class CacheBean implements Serializable {
     /**
      * Extract values of cached object to show in a list. In case of list of items, show only the first 10 items, in case of mapped items - only first 2 entries.
      * 
-     * @param cachedObject Item to convert to string
+     * @param item Item to convert to string
+     * @param returnToStringForSimpleObjects true/false
      * @return A string representation of an item. Preferred way is code (id) or id or a value. For lists, separate items by a comma, for maps: key:[items..]
      */
     @SuppressWarnings("rawtypes")

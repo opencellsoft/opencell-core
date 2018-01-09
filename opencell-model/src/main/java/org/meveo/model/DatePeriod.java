@@ -34,7 +34,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 /**
  * @author Ignas
- * @created 2009.10.20
+ * 
  */
 @Embeddable
 @JsonInclude(JsonInclude.Include.NON_NULL)

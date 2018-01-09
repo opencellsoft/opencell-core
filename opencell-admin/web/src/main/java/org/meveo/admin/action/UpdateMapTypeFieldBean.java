@@ -16,7 +16,7 @@ public abstract class UpdateMapTypeFieldBean<T extends IEntity> extends BaseBean
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	 /** Helper field to enter values for HashMap<String,String> type fields */
+	 /** Helper field to enter values for HashMap&lt;String,String&gt; type fields */
     protected Map<String, List<HashMap<String, String>>> mapTypeFieldValues = new HashMap<String, List<HashMap<String, String>>>();
 
 	

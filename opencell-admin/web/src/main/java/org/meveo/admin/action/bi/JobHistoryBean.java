@@ -59,9 +59,8 @@ public class JobHistoryBean extends BaseBean<JobHistory> {
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
+	 * @return job history.
 	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
 	 */
 	@Produces
 	@Named("jobHistory")

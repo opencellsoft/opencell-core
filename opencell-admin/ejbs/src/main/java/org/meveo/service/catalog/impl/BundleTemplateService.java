@@ -54,8 +54,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
      * Create a shallow duplicate of an Bundle template (main Bundle template information and custom fields). A new Bundle template will have a code with suffix "- Copy"
      * 
      * @param bundle Bundle template to duplicate
-     * @return A persisted duplicated Bundle template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public synchronized void duplicate(BundleTemplate bundle) throws BusinessException {
         duplicate(bundle, true);
@@ -68,7 +67,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
      * 
      * @param bundle Bundle template to create new version for
      * @return A not-persisted copy of Bundle template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public synchronized BundleTemplate instantiateNewVersion(BundleTemplate bundle) throws BusinessException {
 
@@ -100,7 +99,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
      * @param bundle Bundle template to duplicate
      * @param persist Shall new entity be persisted
      * @return A copy of Bundle template
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     private synchronized BundleTemplate duplicate(BundleTemplate bundle, boolean persist) throws BusinessException {
 

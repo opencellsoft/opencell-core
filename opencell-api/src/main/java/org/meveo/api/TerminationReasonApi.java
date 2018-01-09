@@ -24,17 +24,17 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * creates a SubscriptionTerminationReason based on code and description.
      * 
-     * @param postData
+     * @param postData posted data to API.
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception.
+     * @throws BusinessException  business exception.
      */
     public void create(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");            
         }
-        
+
         handleMissingParametersAndValidate(postData);
 
         if (terminationReasonService.findByCode(postData.getCode()) != null) {
@@ -55,10 +55,10 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * updates a SubscriptionTerminationReason based on code.
      * 
-     * @param postData
+     * @param postData posted data.
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void update(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
@@ -85,10 +85,10 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * removes a SubscriptionTerminationReason from db based on code.
      * 
-     * @param code
+     * @param code code of termination reason.
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void remove(String code) throws MeveoApiException, BusinessException {
 
@@ -109,10 +109,10 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * create or updates a SubscriptionTerminationReason.
      * 
-     * @param postData
+     * @param postData posted data
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void createOrUpdate(TerminationReasonDto postData) throws MeveoApiException, BusinessException {
 
@@ -133,10 +133,10 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * Retrieves a SubscriptionTerminationReason based on code.
      * 
-     * @param code
+     * @param code termination code
 
-     * @return
-     * @throws MeveoApiException
+     * @return termiation reason.
+     * @throws MeveoApiException meveo api exception.
      */
     public TerminationReasonDto find(String code) throws MeveoApiException {
         TerminationReasonDto terminationReasonDto = null;
@@ -159,9 +159,8 @@ public class TerminationReasonApi extends BaseApi {
     /**
      * Retrieves all SubscriptionTerminationReason attached to the given provider.
      * 
-     * @param provider
-     * @return
-     * @throws MeveoApiException
+     * @return list of termination reason
+     * @throws MeveoApiException meveo apoi exception.
      */
     public List<TerminationReasonDto> list() throws MeveoApiException {
         List<TerminationReasonDto> terminationReasonDtos = new ArrayList<TerminationReasonDto>();

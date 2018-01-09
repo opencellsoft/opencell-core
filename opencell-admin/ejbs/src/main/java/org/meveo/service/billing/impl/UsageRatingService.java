@@ -526,7 +526,8 @@ public class UsageRatingService implements Serializable {
     /**
      * Rate an EDR using counters if they apply
      * 
-     * @param edr
+     * @param edr edr to be rated.
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void ratePostpaidUsage(EDR edr) throws BusinessException {
@@ -543,7 +544,7 @@ public class UsageRatingService implements Serializable {
      * @param edr EDR
      * @param isVirtual Is this a virtual operation and no real counters or wallets should be affected (applies to quotes)
      * @return A list of wallet operations corresponding to rated EDR
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public List<WalletOperation> rateUsageWithinTransaction(EDR edr, boolean isVirtual) throws BusinessException {
@@ -611,7 +612,6 @@ public class UsageRatingService implements Serializable {
                 WalletOperation walletOperation = new WalletOperation();
                 edrIsRated = rateEDRonChargeAndCounters(walletOperation, edr, charge, isVirtual);
                 walletOperations.add(walletOperation);
-                
                 if (edrIsRated) {
                     edr.setStatus(EDRStatusEnum.RATED);
                     break;
@@ -651,8 +651,8 @@ public class UsageRatingService implements Serializable {
      * @param filter2 Charge filter 2 value
      * @param filter3 Charge filter 3 value
      * @param filter4 Charge filter 4 value
-     * @return
-     * @throws BusinessException
+     * @return true if charge is matched
+     * @throws BusinessException business exception.
      * @throws ChargeWitoutPricePlanException If charge has no price plan associated
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, String chargeCode, String filterExpression, String filter1, String filter2, String filter3,
@@ -688,11 +688,11 @@ public class UsageRatingService implements Serializable {
     }
 
     /**
-     * Rate EDR as reservation
+     * Rate EDR as reservation.
      * 
      * @param edr EDR to rate
      * @return Reservation
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.MANDATORY)
     public Reservation reserveUsageWithinTransaction(EDR edr) throws BusinessException {

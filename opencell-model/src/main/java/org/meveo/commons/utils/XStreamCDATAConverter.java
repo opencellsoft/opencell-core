@@ -12,35 +12,34 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Aug 24, 2016 3:07:56 PM
  **/
 public class XStreamCDATAConverter implements Converter {
-	
-	private Logger log = LoggerFactory.getLogger(this.getClass());
-	 
-	public static final String CDATA_START = "<![CDATA[";
-	public static final String CDATA_END = "]]>";
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public boolean canConvert(Class clazz) {
-		return true;
-	}
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@Override
-	public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
-		log.debug("start marshall...");
-		if (object == null) {
-			writer.setValue("");
-		} else {
-			writer.setValue(CDATA_START+object+CDATA_END);
-		}
+    public static final String CDATA_START = "<![CDATA[";
+    public static final String CDATA_END = "]]>";
 
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public boolean canConvert(Class clazz) {
+        return true;
+    }
 
-	@Override
-	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
-		throw new ConversionException("Not support to unmarshall");
-	}
+    @Override
+    public void marshal(Object object, HierarchicalStreamWriter writer, MarshallingContext context) {
+        log.debug("start marshall...");
+        if (object == null) {
+            writer.setValue("");
+        } else {
+            writer.setValue(CDATA_START + object + CDATA_END);
+        }
+
+    }
+
+    @Override
+    public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+        throw new ConversionException("Not support to unmarshall");
+    }
 
 }

@@ -111,12 +111,12 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     }
 
     /**
-     * Updates JobInstance based on Code
+     * Updates JobInstance based on Code.
      * 
-     * @param jobInstanceDto
-     * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API.
+     * @return job instance
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public JobInstance update(JobInstanceDto postData) throws MeveoApiException, BusinessException {
 
@@ -192,10 +192,10 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     /**
      * Create or update Job Instance based on code.
      * 
-     * @param jobInstanceDto
+     * @param jobInstanceDto job instance dto
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api excepion
+     * @throws BusinessException business exception.
      */
     public JobInstance createOrUpdate(JobInstanceDto jobInstanceDto) throws MeveoApiException, BusinessException {
         if (jobInstanceService.findByCode(jobInstanceDto.getCode()) == null) {
@@ -208,10 +208,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
     /**
      * Retrieves a Job Instance base on the code if it is existing.
      * 
-     * @param code
-     * @param provider
-     * @return
-     * @throws MeveoApiException
+     * @param code job instance code
+     * @return job instance dto
+     * @throws MeveoApiException meveo api exception.
      */
     public JobInstanceDto find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException {
 
@@ -234,10 +233,9 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
      * 
      * Removes a Job Instance base on a code.
      * 
-     * @param code
-     * @param provider
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param code job instance code
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void remove(String code) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(code)) {

@@ -410,8 +410,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     /**
      * Initiate processing of quote
+     * @return output view
      * 
-     * @throws BusinessException
      */
     @ActionMethod
     public String sendToProcess() {

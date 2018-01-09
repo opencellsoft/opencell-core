@@ -19,7 +19,7 @@ import org.meveo.service.communication.impl.EmailTemplateService;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 5:09:27 AM
+ * @since Jun 3, 2016 5:09:27 AM
  *
  */
 @Stateless

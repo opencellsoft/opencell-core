@@ -259,11 +259,12 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
-     * Compute the invoice amount for billingAccount
+     * Compute the invoice amount for billingAccount.
      * 
-     * @param billingAccount
-     * @param lastTransactionDate
-     * @return
+     * @param billingAccount billing account
+     * @param firstTransactionDate first transaction date.
+     * @param lastTransactionDate last transaction date
+     * @return computed billing account's invoice amount.
      */
     public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
         Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount)

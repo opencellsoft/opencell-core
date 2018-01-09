@@ -42,6 +42,8 @@ public enum BillingProcessTypesEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id if of billing process type
+	 * @return billing process type.
 	 */
 	public static BillingProcessTypesEnum getValue(Integer id) {
 		if (id != null) {

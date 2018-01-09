@@ -90,7 +90,6 @@ public class DocumentBean implements Serializable {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	@Produces
 	@Named("documents")

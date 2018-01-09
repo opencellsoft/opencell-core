@@ -94,11 +94,10 @@ public class Role extends BaseEntity {
     }
 
     /**
-     * Check if role as a following permision
+     * Check if role as a following permission.
      * 
-     * @param resource Resource to match
      * @param permission Permission/action to match
-     * @return
+     * @return true if having permission.
      */
     public boolean hasPermission(String permission) {
         for (Permission permissionObj : getPermissions()) {
@@ -114,6 +113,9 @@ public class Role extends BaseEntity {
         return false;
     }
 
+    /**
+     * @return description or name.
+     */
     public String getDescriptionOrName() {
         if (!StringUtils.isBlank(description)) {
             return description;
@@ -124,8 +126,9 @@ public class Role extends BaseEntity {
 
     @Override
     public int hashCode() {
-        if (getId() == null)
+        if (getId() == null) {
             return super.hashCode();
+        }
         return getId().hashCode();
     }
 
@@ -143,8 +146,9 @@ public class Role extends BaseEntity {
         final Role other = (Role) obj;
         if (getId() == null) {
             return false;
-        } else if (!getId().equals(other.getId()))
+        } else if (!getId().equals(other.getId())) {
             return false;
+        }
         return true;
     }
 
@@ -154,7 +158,7 @@ public class Role extends BaseEntity {
     }
 
     /**
-     * Get all permission - the direct ones and the ones inherited via child roles
+     * Get all permission - the direct ones and the ones inherited via child roles.
      * 
      * @return A set of permissions
      */

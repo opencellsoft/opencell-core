@@ -14,7 +14,7 @@ import org.meveo.api.rest.impl.BaseRs;
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * @date Jun 4, 2016 4:08:58 AM
+ * @since Jun 4, 2016 4:08:58 AM
  *
  */
 public class MeveoInstanceRsImpl extends BaseRs implements MeveoInstanceRs {

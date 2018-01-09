@@ -107,7 +107,7 @@ public abstract class Calendar extends BusinessEntity {
     /**
      * Get calendar type by optionally detalizing into a more detailed subtype. Currently applies to JOIN type calendar with subtypes INTERSECT and UNION.
      * 
-     * @return
+     * @return calendar type.
      */
     public String getCalendarTypeWSubtypes() {
         return calendarType;

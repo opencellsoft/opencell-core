@@ -710,11 +710,10 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * <p>
      * If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction with amount=0 don't show up in the XML.
      * </p>
-     * 
-     * @param wallet
-     * @param invoice
-     * @param invoiceSubCategory
-     * @return
+     * @param wallet wallet instance
+     * @param invoice invoice
+     * @param invoiceSubCategory invoice sub category
+     * @return list of rated transaction.
      */
     public List<RatedTransaction> getRatedTransactionsForXmlInvoice(WalletInstance wallet, Invoice invoice, InvoiceSubCategory invoiceSubCategory) {
         long startDate = System.currentTimeMillis();

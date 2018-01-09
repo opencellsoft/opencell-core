@@ -377,10 +377,11 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
     /**
      * clean uploaded picture
+     * @throws BusinessException 
      */
     @ActionMethod
     @Override
-    public void delete() {
+    public void delete() throws BusinessException {
 
         String source = entity.getLogoPicture();
         super.delete();
@@ -391,10 +392,11 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
     /**
      * clean uploaded pictures for multi delete
+     * @throws Exception 
      */
     @ActionMethod
     @Override
-    public void deleteMany() {
+    public void deleteMany() throws Exception {
         List<String> files = new ArrayList<String>();
         String source = null;
         for (MeveoModule entity : getSelectedEntities()) {

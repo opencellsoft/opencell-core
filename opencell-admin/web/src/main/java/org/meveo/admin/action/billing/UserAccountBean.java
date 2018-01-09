@@ -77,12 +77,6 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link UserAccount} service. Extends {@link PersistenceService} .
-     */
-
     @Inject
     private WalletOperationBean walletOperationBean;
 
@@ -142,9 +136,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return user account.
      */
     @Override
     public UserAccount initEntity() {

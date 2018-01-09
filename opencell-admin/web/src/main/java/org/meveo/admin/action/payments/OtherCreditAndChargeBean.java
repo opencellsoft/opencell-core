@@ -121,9 +121,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return other credit and charge 
 	 */
 	public OtherCreditAndCharge initEntity() {
 

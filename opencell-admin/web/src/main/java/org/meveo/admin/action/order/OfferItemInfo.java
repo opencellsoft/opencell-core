@@ -36,8 +36,8 @@ public class OfferItemInfo implements Serializable {
      * @param main Is it a main offering template - in case of OfferTemlate, it has subcomponents: serviceTemplates and productTemplates)
      * @param selected Is item ordered - when creating a new order, all subcomponents of offer are shown, but only those that are desired to be ordered should be shown as selected
      * @param mandatory Is item mandatory for order
-     * @param entityForCFValues An entity corresponding to what offering template will translate to. OfferTemplate>Subscription, serviceTemplate>serviceInstance,
-     *        productTemplate>productInstance
+     * @param entityForCFValues An entity corresponding to what offering template will translate to. OfferTemplate&gt;Subscription, serviceTemplate&gt;serviceInstance,
+     *        productTemplate&gt;productInstance
      */
     public OfferItemInfo(BusinessEntity template, Map<OrderProductCharacteristicEnum, Object> characteristics, boolean main, boolean selected, boolean mandatory,
             BusinessCFEntity entityForCFValues) {

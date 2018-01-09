@@ -24,11 +24,16 @@ import java.util.Map;
 
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Andrius
+ *
+ */
 public class PaginationConfiguration implements Serializable {
 
     private static final long serialVersionUID = -2750287256630146681L;
 
     private Integer firstRow;
+    
     private Integer numberOfRows;
 
     /**
@@ -38,6 +43,7 @@ public class PaginationConfiguration implements Serializable {
 
     /** Search filters (key = field name, value = search pattern or value). */
     private Map<String, Object> filters;
+    
     private Map<String, String> sortOrdering;
 
     /**
@@ -46,6 +52,8 @@ public class PaginationConfiguration implements Serializable {
     private List<String> fetchFields;
 
     private String sortField;
+    
+    
     private SortOrder ordering;
 
     /**
@@ -61,6 +69,7 @@ public class PaginationConfiguration implements Serializable {
      * @param firstRow Number of the first row to retrieve
      * @param numberOfRows Number of rows to retrieve
      * @param filters Search criteria to apply
+     * @param fullTextFilter full text filter
      * @param fetchFields Lazy loaded fields to fetch
      * @param sortField Field to sort by
      * @param sortOrder Sort order
@@ -74,10 +83,11 @@ public class PaginationConfiguration implements Serializable {
      * @param firstRow Number of the first row to retrieve
      * @param numberOfRows Number of rows to retrieve
      * @param filters Search criteria
+     * @param fullTextFilter full text filter.
      * @param fetchFields Lazy loaded fields to fetch
      * @param sortField Field to sort by
      * @param sortOrder Sort order
-     * @param sortOrdering
+     * @param sortOrdering sort ordering.
      */
     public PaginationConfiguration(Integer firstRow, Integer numberOfRows, Map<String, Object> filters, String fullTextFilter, List<String> fetchFields, String sortField,
             SortOrder sortOrder, Map<String, String> sortOrdering) {

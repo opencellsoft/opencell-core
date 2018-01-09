@@ -482,12 +482,12 @@ public class WalletApi extends BaseApi {
     }
 
     /**
-     * Create or update walletTemplate
+     * Create or update walletTemplate.
      * 
-     * @param postData
+     * @param postData wallet template infos
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception/
      */
     public void createOrUpdate(WalletTemplateDto postData) throws MeveoApiException, BusinessException {
         if (walletTemplateService.findByCode(postData.getCode()) == null) {

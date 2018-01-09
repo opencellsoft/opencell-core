@@ -314,6 +314,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
      * @param validTo Validity range to date.
      * @param pagingAndFiltering Paging and filtering criteria.
      * @return A list of product templates
+     * @throws InvalidParameterException invalid parameter exception
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "listProductTemplate", itemPropertiesToFilter = {

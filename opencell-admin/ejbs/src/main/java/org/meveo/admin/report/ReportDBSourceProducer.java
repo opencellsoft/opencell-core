@@ -27,23 +27,22 @@ import javax.ejb.Local;
  * date for report
  * 
  * @author Gediminas Ubartas
- * @created 2010.10.21
  * 
  */
 @Local
 public interface ReportDBSourceProducer {
-    
+
     /**
-     * Generates current XML DS for report
+     * Generates current XML DS for report.
      * 
-     * @param objectList
-     *            list of objects to include in XML DS
+     * @param objectList list of objects to include in XML DS
      * @return String of XML DS
      */
     public String generateXmlString(List<Object> objectList);
 
     /**
-     * Returns query String for current report
+     * Returns query String for current report.
+     * @return query.
      */
     public String getQuery();
 }

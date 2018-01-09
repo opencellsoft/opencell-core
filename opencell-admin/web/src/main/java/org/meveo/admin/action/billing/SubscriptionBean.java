@@ -93,11 +93,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
 
-    /**
-     * Injected
-     * 
-     * @{link Subscription} service. Extends {@link PersistenceService}
-     */
     @Inject
     private SubscriptionService subscriptionService;
 
@@ -188,8 +183,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
      * 
-     * @throws IllegalAccessException
-     * @throws InstantiationExceptionC
+     * @return subscription.
      */
     @Override
     public Subscription initEntity() {
@@ -517,7 +511,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 }
                 serviceInstance.setQuantity(quantity);
-                serviceInstance.setTerminationDate(entity.getTerminationDate());
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
                 serviceTemplates.remove(serviceTemplate);

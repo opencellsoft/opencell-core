@@ -30,7 +30,6 @@ import java.util.Map;
  * Utilities class for working with Lists.
  * 
  * @author Ignas Lelys
- * @created Mar 6, 2009
  */
 public final class ListUtils {
 
@@ -53,8 +52,9 @@ public final class ListUtils {
     }
 
     /**
-     * Sort map by it's values
-     * 
+     * Sort map by it's values.
+     * @param <K> key
+     * @param <V> value
      * @param map Map to sort
      * @return A sorted map
      */

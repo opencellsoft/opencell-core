@@ -42,6 +42,9 @@ public enum AccountStatusEnum {
 
 	/**
 	 * Gets enum by its id.
+	 *
+	 * @param id account status id
+	 * @return account status.
 	 */
 	public static AccountStatusEnum getValue(Integer id) {
 		if (id != null) {

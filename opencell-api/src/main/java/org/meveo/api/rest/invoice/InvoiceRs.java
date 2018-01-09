@@ -55,7 +55,7 @@ public interface InvoiceRs extends IBaseRs {
      * Create invoice. Invoice number depends on invoice type
      * 
      * @param invoiceDto invoice dto
-     * @return
+     * @return created invoice
      */
     @POST
     @Path("/")
@@ -67,110 +67,114 @@ public interface InvoiceRs extends IBaseRs {
      * Deprecated in v.4.7.2, use "list()" instead with criteria "billingAccount.customerAccount.code=xxx"
      * 
      * @param customerAccountCode Customer account code
-     * @return
+     * @return customer invoice.
      */
     @Deprecated
     @GET
     @Path("/listInvoiceByCustomerAccount")
-    public CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
+    CustomerInvoicesResponse find(@QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : <lu>
+     * Launch all the invoicing process for a given billingAccount, that's mean.
+     *  <ul>
      * <li>Create rated transactions
      * <li>Create an exceptional billingRun with given dates
      * <li>Validate the pre-invoicing report
      * <li>Validate the post-invoicing report
-     * <li>Validate the BillingRun </lu>
+     * <li>Validate the BillingRun
+     *  </ul>
      * 
      * @param generateInvoiceRequestDto Contains the code of the billing account, invoicing and last transaction date
-     * @return
+     * @return invoice response
      */
     @POST
     @Path("/generateInvoice")
-    public GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
+    GenerateInvoiceResponseDto generateInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 
     /**
-     * Finds an invoice based on its invoice number and return it as xml string
+     * Finds an invoice based on its invoice number and return it as xml string.
      * 
+     * @param invoiceId invoice's id
      * @param invoiceNumber Invoice number
-     * @return
+     * @return xml invoice
      */
     @POST
     @Path("/getXMLInvoice")
-    public GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId, String invoiceNumber);
+    GetXmlInvoiceResponseDto findXMLInvoice(Long invoiceId, String invoiceNumber);
 
     /**
-     * Finds an invoice based on its invoice number and optionally an invoice type and return it as xml string
+     * Finds an invoice based on its invoice number and optionally an invoice type and return it as xml string.
      *
      * @param xmlInvoiceRequestDto contains invoice number and optionally an invoice type
-     * @return
+     * @return xml invoice
      */
     @POST
     @Path("/fetchXMLInvoice")
-    public GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto);
+    GetXmlInvoiceResponseDto findXMLInvoice(GetXmlInvoiceRequestDto xmlInvoiceRequestDto);
 
     /**
      * Finds an invoice based on invoice number and invoice type. It returns the result as xml string
-     * 
+     * @param invoiceId invoice's id.
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
-     * @return
+     * @return xml invoice
      */
     @POST
     @Path("/getXMLInvoiceWithType")
-    public GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType);
+    GetXmlInvoiceResponseDto findXMLInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType);
 
     /**
      * Finds an invoice based on invoice number and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
+     * @param invoiceId invoice's id
      * @param invoiceNumber Invoice number
-     * @return
+     * @return pdf invoice
      */
     @POST
     @Path("/getPdfInvoice")
-    public GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId, String invoiceNumber);
+    GetPdfInvoiceResponseDto findPdfInvoice(Long invoiceId, String invoiceNumber);
 
     /**
      * Finds an invoice based on invoice number and optionally an invoice type and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database
      * is returned.
      *
      * @param pdfInvoiceRequestDto contains an invoice number and optionally an invoice type
-     * @return
+     * @return pdf invoice
      */
     @POST
     @Path("/fetchPdfInvoice")
-    public GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto);
+    GetPdfInvoiceResponseDto findPdfInvoice(GetPdfInvoiceRequestDto pdfInvoiceRequestDto);
 
     /**
      * Finds an invoice based on invoice number and invoice type and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
-     * 
+     * @param invoiceId invoice's id
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
-     * @return
+     * @return pdf invoice
      */
     @POST
     @Path("/getPdfInvoiceWithType")
-    public GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType);
+    GetPdfInvoiceResponseDto findPdfInvoiceWithType(Long invoiceId, String invoiceNumber, String invoiceType);
 
     /**
-     * Cancel an invoice based on invoice id
+     * Cancel an invoice based on invoice id.
      * 
      * @param invoiceId Invoice id
-     * @return
+     * @return action status.
      */
     @POST
     @Path("/cancel")
-    public ActionStatus cancel(Long invoiceId);
+    ActionStatus cancel(Long invoiceId);
 
     /**
-     * Validate an invoice based on the invoice id
+     * Validate an invoice based on the invoice id.
      * 
      * @param invoiceId Invoice id
-     * @return
+     * @return action status.
      */
     @POST
     @Path("/validate")
-    public ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
+    ActionStatus validate(@FormParam("invoiceId") Long invoiceId);
 
     /**
      * List invoices with account operation for a given customer account
@@ -178,19 +182,20 @@ public interface InvoiceRs extends IBaseRs {
      * Deprecated in v.4.8. Use list() instead with criteria "recordedInvoice=IS_NOT_NULL and billingAccount.customerAccount.code=xxx"
      * 
      * @param customerAccountCode Customer account code
+     * @param includePdf true if we want to generate/include pdf
      * @return List of invoices
      */
     @GET
     @Path("/listPresentInAR")
     @Deprecated
-    public CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode);
+    CustomerInvoicesResponse listPresentInAR(@QueryParam("customerAccountCode") String customerAccountCode, @QueryParam("includePdf") boolean includePdf);
 
     @POST
     @Path("/generateDraftInvoice")
-    public GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
+    GenerateInvoiceResponseDto generateDraftInvoice(GenerateInvoiceRequestDto generateInvoiceRequestDto);
 
     /**
-     * List invoices matching a given criteria
+     * List invoices matching a given criteria.
      * 
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
@@ -202,17 +207,17 @@ public interface InvoiceRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public InvoicesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+    InvoicesDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
-     * List invoices matching a given criteria
+     * List invoices matching a given criteria.
      * 
      * @param pagingAndFiltering Pagination and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return An invoice list
      */
     @POST
     @Path("/list")
-    public InvoicesDto listPost(PagingAndFiltering pagingAndFiltering);
+    InvoicesDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

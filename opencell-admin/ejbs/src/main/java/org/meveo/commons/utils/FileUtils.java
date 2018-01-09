@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * File utilities class.
  * 
  * @author Donatas Remeika
- * @created Mar 4, 2009
+ * 
  */
 public final class FileUtils {
 
@@ -103,9 +103,9 @@ public final class FileUtils {
 
     /**
      * 
-     * @param file
-     * @param newName
-     * @return
+     * @param file instance of File needs to rename
+     * @param newName new file's name
+     * @return file
      */
     public static File renameFile(File file, String newName) {
         if (file.exists()) {
@@ -120,7 +120,7 @@ public final class FileUtils {
     /**
      * Move file to destination directory.
      * 
-     * @param destionation Absolute path to destination directory.
+     * @param destination Absolute path to destination directory.
      * @param file File object to move.
      * @param newFilename New filename for moved file.
      * @return true if operation was successful, false otherwise.
@@ -144,21 +144,25 @@ public final class FileUtils {
      * 
      * @param fromFileName File name that we are copying.
      * @param toFileName File(dir) name where to copy.
-     * @throws IOException
+     * @throws IOException IO exeption.
      */
     public static void copy(String fromFileName, String toFileName) throws IOException {
         File fromFile = new File(fromFileName);
         File toFile = new File(toFileName);
 
-        if (!fromFile.exists())
+        if (!fromFile.exists()) {
             throw new IOException("FileCopy: no such source file: " + fromFileName);
-        if (!fromFile.isFile())
+        }
+        if (!fromFile.isFile()) {
             throw new IOException("FileCopy: can't copy directory: " + fromFileName);
-        if (!fromFile.canRead())
+        }
+        if (!fromFile.canRead()) {
             throw new IOException("FileCopy: source file is unreadable: " + fromFileName);
+        }
 
-        if (toFile.isDirectory())
+        if (toFile.isDirectory()) {
             toFile = new File(toFile, fromFile.getName());
+        }
 
         if (toFile.exists()) {
             if (!toFile.canWrite()) {
@@ -166,15 +170,19 @@ public final class FileUtils {
             }
         } else {
             String parent = toFile.getParent();
-            if (parent == null)
+            if (parent == null) {
                 parent = System.getProperty("user.dir");
+            }
             File dir = new File(parent);
-            if (!dir.exists())
+            if (!dir.exists()) {
                 throw new IOException("FileCopy: destination directory doesn't exist: " + parent);
-            if (dir.isFile())
+            }
+            if (dir.isFile()) {
                 throw new IOException("FileCopy: destination is not a directory: " + parent);
-            if (!dir.canWrite())
+            }
+            if (!dir.canWrite()) {
                 throw new IOException("FileCopy: destination directory is unwriteable: " + parent);
+            }
         }
 
         FileInputStream from = null;
@@ -185,21 +193,24 @@ public final class FileUtils {
             byte[] buffer = new byte[4096];
             int bytesRead;
 
-            while ((bytesRead = from.read(buffer)) != -1)
+            while ((bytesRead = from.read(buffer)) != -1) {
                 to.write(buffer, 0, bytesRead);
+            }
         } finally {
-            if (from != null)
+            if (from != null) {
                 try {
                     from.close();
                 } catch (IOException e) {
                     logger.warn("Failed to close file resource!", e);
                 }
-            if (to != null)
+            }
+            if (to != null) {
                 try {
                     to.close();
                 } catch (IOException e) {
                     logger.warn("Failed to close file resource!", e);
                 }
+            }
         }
     }
 
@@ -245,6 +256,7 @@ public final class FileUtils {
      * Get File representation ready for parsing.
      * 
      * @param sourceDirectory Directory to search inside.
+     * @param extensions list of extensions
      * @return File object.
      */
     public static File getFileForParsing(String sourceDirectory, final List<String> extensions) {
@@ -282,6 +294,11 @@ public final class FileUtils {
         return null;
     }
 
+    /**
+     * @param sourceDirectory source directory
+     * @param extensions list of extensions
+     * @return array of File instance
+     */
     public static File[] getFilesForParsing(String sourceDirectory, final List<String> extensions) {
         File sourceDir = new File(sourceDirectory);
         if (!sourceDir.exists() || !sourceDir.isDirectory()) {
@@ -342,8 +359,8 @@ public final class FileUtils {
     }
 
     /**
-     * @param zipFilename
-     * @param filesToAdd
+     * @param zipFilename zipe file name
+     * @param filesToAdd list of files to add
      */
     public static void createZipArchive(String zipFilename, String... filesToAdd) {
         int BUFFER = 2048;
@@ -372,8 +389,8 @@ public final class FileUtils {
     }
 
     /**
-     * @param c
-     * @return
+     * @param c closable 
+     * @return true/false
      */
     public static boolean closeStream(Closeable c) {
         try {
@@ -390,6 +407,11 @@ public final class FileUtils {
         }
     }
 
+    /**
+     * @param filename file name
+     * @return content of file as string
+     * @throws IOException IO exception
+     */
     public static String getFileAsString(String filename) throws IOException {
         BufferedReader reader = new BufferedReader(new FileReader(filename));
         StringBuffer fileData = new StringBuffer();
@@ -409,11 +431,11 @@ public final class FileUtils {
     }
 
     /**
-     * unzip files into folder
-     * 
-     * @param folder
-     * @param in
-     * @throws Exception
+     * unzip files into folder.
+     *  
+     * @param folder folder name
+     * @param in input stream
+     * @throws Exception exception
      */
     public static void unzipFile(String folder, InputStream in) throws Exception {
         ZipInputStream zis = null;
@@ -459,12 +481,11 @@ public final class FileUtils {
     }
 
     /**
-     * Compress a folder with sub folders and its files into byte array
+     * Compress a folder with sub folders and its files into byte array.
      * 
-     * @param source
-     * @param zos
-     * @param basedir
-     * @throws IOException
+     * @param sourceFolder source folder
+     * @return zip file as byte array
+     * @throws Exception exception. 
      */
     public static byte[] createZipFile(String sourceFolder) throws Exception {
 

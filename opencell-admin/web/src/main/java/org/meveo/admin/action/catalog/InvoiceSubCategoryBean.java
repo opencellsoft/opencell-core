@@ -160,9 +160,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return invoice sub category
      */
     @Override
     public InvoiceSubCategory initEntity() {

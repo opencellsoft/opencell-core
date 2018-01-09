@@ -96,10 +96,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "xml_filename_el", length = 2000)
     @Size(max = 2000)
     private String xmlFilenameEL;
-
-    public InvoiceType() {
-
-    }
+    
+    @Column(name = "billing_template_name_el", length = 2000)
+    @Size(max = 2000)
+    private String billingTemplateNameEL;
 
     public OCCTemplate getOccTemplate() {
         return occTemplate;
@@ -198,5 +198,13 @@ public class InvoiceType extends BusinessEntity {
 
     public void setXmlFilenameEL(String xmlFilenameEL) {
         this.xmlFilenameEL = xmlFilenameEL;
+    }
+
+    public String getBillingTemplateNameEL() {
+        return billingTemplateNameEL;
+    }
+
+    public void setBillingTemplateNameEL(String billingTemplateNameEL) {
+        this.billingTemplateNameEL = billingTemplateNameEL;
     }
 }

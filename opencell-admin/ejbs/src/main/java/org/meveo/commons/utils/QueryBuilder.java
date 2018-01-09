@@ -46,14 +46,19 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
 public class QueryBuilder {
 
     protected StringBuffer q;
+
     protected String alias;
+
     private Map<String, Object> params;
 
     private boolean hasOneOrMoreCriteria;
+
     private boolean inOrClause;
+
     private int nbCriteriaInOrClause;
 
     protected PaginationConfiguration paginationConfiguration;
+
     private String paginationSortAlias;
 
     public enum QueryLikeStyleEnum {
@@ -125,6 +130,13 @@ public class QueryBuilder {
         this(getInitJoinQuery(clazz, alias, fetchFields, joinFields), alias);
     }
 
+    /**
+     * @param clazz name of class
+     * @param alias alias for entity
+     * @param fetchFields list of field need to be fetched.
+     * @param joinFields list of field need to joined
+     * @return SQL query.
+     */
     private static String getInitJoinQuery(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -142,6 +154,12 @@ public class QueryBuilder {
         return query.toString();
     }
 
+    /**
+     * @param clazz name of class
+     * @param alias alias for entity
+     * @param fetchFields list of field need to be fetched.
+     * @return SQL query.
+     */
     private static String getInitQuery(Class<?> clazz, String alias, List<String> fetchFields) {
         StringBuilder query = new StringBuilder("from " + clazz.getName() + " " + alias);
         if (fetchFields != null && !fetchFields.isEmpty()) {
@@ -153,22 +171,25 @@ public class QueryBuilder {
         return query.toString();
     }
 
+    /**
+     * @return string buffer for SQL
+     */
     public StringBuffer getSqlStringBuffer() {
         return q;
     }
 
     /**
-     * @param paginationConfiguration
-     * @return
+     * @param paginationConfiguration pagination configuration
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration) {
         return addPaginationConfiguration(paginationConfiguration, null);
     }
 
     /**
-     * @param paginationConfiguration
-     * @param sortAlias
-     * @return
+     * @param paginationConfiguration pagination configuration
+     * @param sortAlias alias for sort.
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addPaginationConfiguration(PaginationConfiguration paginationConfiguration, String sortAlias) {
         this.paginationSortAlias = sortAlias;
@@ -177,18 +198,18 @@ public class QueryBuilder {
     }
 
     /**
-     * @param sql
-     * @return
+     * @param sql SQL command
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addSql(String sql) {
         return addSqlCriterion(sql, null, null);
     }
 
     /**
-     * @param sql
-     * @param param
-     * @param value
-     * @return
+     * @param sql SQL command
+     * @param param param to pass for query
+     * @param value value of param
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addSqlCriterion(String sql, String param, Object value) {
         if (param != null && StringUtils.isBlank(value)) {
@@ -222,6 +243,11 @@ public class QueryBuilder {
         return this;
     }
 
+    /**
+     * @param sql SQL command
+     * @param multiParams multi params
+     * @return instance of QueryBuilder
+     */
     public QueryBuilder addSqlCriterionMultiple(String sql, Object... multiParams) {
         if (multiParams.length == 0) {
             return this;
@@ -255,24 +281,25 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param value
-     * @return
+     * @param field field name
+     * @param value true/false
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addBooleanCriterion(String field, Boolean value) {
-        if (StringUtils.isBlank(value))
+        if (StringUtils.isBlank(value)) {
             return this;
+        }
 
         addSql(field + (value.booleanValue() ? " is true " : " is false "));
         return this;
     }
 
     /**
-     * @param field
-     * @param operator
-     * @param value
-     * @param caseInsensitive
-     * @return
+     * @param field name of field for entity
+     * @param operator SQL operator
+     * @param value value for field
+     * @param caseInsensitive true/false.
+     * @return instance QueryBuilder
      */
     public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
         if (StringUtils.isBlank(value)){
@@ -297,6 +324,11 @@ public class QueryBuilder {
         return addSqlCriterion(sql.toString(), param, nvalue);
     }
 
+    /**
+     * @param field field name
+     * @param entity entity for given name.
+     * @return instance of QueryBuilder
+     */
     public QueryBuilder addCriterionEntityInList(String field, Object entity) {
         if (entity == null){
             return this;
@@ -308,23 +340,24 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param entity
-     * @return
+     * @param field field name
+     * @param entity entity for given name.
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionEntity(String field, Object entity) {
         return addCriterionEntity(field, entity, " = ");
     }
 
     /**
-     * @param field
-     * @param entity
+     * @param field name of field
+     * @param entity entity of given field to add criterion
      * @param condition Comparison type
-     * @return
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionEntity(String field, Object entity, String condition) {
-        if (entity == null)
+        if (entity == null) {
             return this;
+        }
 
         String param = convertFieldToParam(field);
 
@@ -332,9 +365,9 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param enumValue
-     * @return
+     * @param field field name
+     * @param enumValue value of field
+     * @return instance of QueryBuilder.
      */
     @SuppressWarnings("rawtypes")
     public QueryBuilder addCriterionEnum(String field, Enum enumValue) {
@@ -342,15 +375,16 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param enumValue
+     * @param field field name
+     * @param enumValue value.
      * @param condition Comparison type
-     * @return
+     * @return instance of QueryBuilder.
      */
     @SuppressWarnings("rawtypes")
     public QueryBuilder addCriterionEnum(String field, Enum enumValue, String condition) {
-        if (enumValue == null)
+        if (enumValue == null) {
             return this;
+        }
 
         String param = convertFieldToParam(field);
 
@@ -358,27 +392,27 @@ public class QueryBuilder {
     }
 
     /**
-     * Ajouter un critere like
+     * Ajouter un critere like.
      * 
-     * @param field
-     * @param value
+     * @param field field name
+     * @param value value of field
      * @param style : 0=aucun travail sur la valeur rechercher, 1=Recherche sur dbut du mot, 2=Recherche partout dans le mot
-     * @param caseInsensitive
-     * @return
+     * @param caseInsensitive true/false.
+     * @return instance QueryBuiler.
      */
     public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive) {
         return like(field, value, style, caseInsensitive, false);
     }
 
     /**
-     * Ajouter un critere like
+     * Ajouter un critere like.
      * 
-     * @param field
-     * @param value
+     * @param field field name
+     * @param value value
      * @param style : 0=aucun travail sur la valeur rechercher, 1=Recherche sur dbut du mot, 2=Recherche partout dans le mot
-     * @param caseInsensitive
+     * @param caseInsensitive true/false
      * @param addNot Should NOT be added to comparison
-     * @return
+     * @return instance QueryBuilder
      */
     public QueryBuilder like(String field, String value, QueryLikeStyleEnum style, boolean caseInsensitive, boolean addNot) {
         if (StringUtils.isBlank(value)) {
@@ -398,21 +432,21 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param value
-     * @param caseInsensitive
-     * @return
+     * @param field field name
+     * @param value value.
+     * @param caseInsensitive true/false
+     * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive) {
         return addCriterionWildcard(field, value, caseInsensitive, false);
     }
 
     /**
-     * @param field
-     * @param value
-     * @param caseInsensitive
+     * @param field name of field
+     * @param value value of field
+     * @param caseInsensitive true/false
      * @param addNot Should NOT be added to comparison
-     * @return
+     * @return query instance.
      */
     public QueryBuilder addCriterionWildcard(String field, String value, boolean caseInsensitive, boolean addNot) {
 
@@ -429,27 +463,29 @@ public class QueryBuilder {
     }
 
     /**
-     * add the date field searching support
+     * add the date field searching support.
      * 
-     * @param field
-     * @param value
-     * @return
+     * @param field entity's field
+     * @param value value of date.
+     * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDate(String field, Date value) {
-        if (StringUtils.isBlank(value))
+        if (StringUtils.isBlank(value)) {
             return this;
+        }
         return addCriterion(field, "=", value, false);
 
     }
 
     /**
-     * @param field
-     * @param value
-     * @return
+     * @param field name of entity's field
+     * @param value date value
+     * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateTruncatedToDay(String field, Date value) {
-        if (StringUtils.isBlank(value))
+        if (StringUtils.isBlank(value)) {
             return this;
+        }
         Calendar c = Calendar.getInstance();
         c.setTime(value);
         int year = c.get(Calendar.YEAR);
@@ -467,13 +503,14 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param valueFrom
-     * @return
+     * @param field name of column
+     * @param valueFrom date value
+     * @return instance of QueryBuilder.
      */
     public QueryBuilder addCriterionDateRangeFromTruncatedToDay(String field, Date valueFrom) {
-        if (StringUtils.isBlank(valueFrom))
+        if (StringUtils.isBlank(valueFrom)) {
             return this;
+        }
         Calendar calFrom = Calendar.getInstance();
         calFrom.setTime(valueFrom);
         int yearFrom = calFrom.get(Calendar.YEAR);
@@ -487,13 +524,14 @@ public class QueryBuilder {
     }
 
     /**
-     * @param field
-     * @param valueTo
-     * @return
+     * @param field name of field to add
+     * @param valueTo date value.
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionDateRangeToTruncatedToDay(String field, Date valueTo) {
-        if (StringUtils.isBlank(valueTo))
+        if (StringUtils.isBlank(valueTo)) {
             return this;
+        }
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
         int yearTo = calTo.get(Calendar.YEAR);
@@ -506,6 +544,12 @@ public class QueryBuilder {
         return addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName, end);
     }
 
+    /**
+     * @param startField starting field
+     * @param endField ending field
+     * @param value date value
+     * @return instance of Query builder.
+     */
     public QueryBuilder addCriterionDateInRange(String startField, String endField, Date value) {
         if (StringUtils.isBlank(value))
             return this;
@@ -524,8 +568,8 @@ public class QueryBuilder {
     }
 
     /**
-     * @param orderColumn
-     * @param ascending
+     * @param orderColumn name of column which is used for orderBy
+     * @param ascending true/false
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
         q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
@@ -537,17 +581,20 @@ public class QueryBuilder {
 
     }
 
+    /**
+     * @param groupColumn the name of groupBy column
+     */
     public void addGroupCriterion(String groupColumn) {
         q.append(" GROUP BY " + groupColumn);
 
     }
 
     /**
-     * @param orderColumn
-     * @param ascending
-     * @param orderColumn2
-     * @param ascending2
-     * @return
+     * @param orderColumn orderBy column
+     * @param ascending true/false
+     * @param orderColumn2 orderBy column 2
+     * @param ascending2 true/false
+     * @return instance of QueryBuilder
      */
     public QueryBuilder addOrderDoubleCriterion(String orderColumn, boolean ascending, String orderColumn2, boolean ascending2) {
         q.append(" ORDER BY " + orderColumn);
@@ -566,9 +613,9 @@ public class QueryBuilder {
     }
 
     /**
-     * @param orderColumn
-     * @param ascending
-     * @return
+     * @param orderColumn order column
+     * @param ascending true/false
+     * @return instance of QueryBuilder.
      */
     public QueryBuilder addOrderUniqueCriterion(String orderColumn, boolean ascending) {
         q.append(" ORDER BY " + orderColumn);
@@ -581,7 +628,7 @@ public class QueryBuilder {
     }
 
     /**
-     * @return
+     * @return instance QueryBuilder.
      */
     public QueryBuilder startOrClause() {
         inOrClause = true;
@@ -590,11 +637,12 @@ public class QueryBuilder {
     }
 
     /**
-     * @return
+     * @return instance of QueryBuilder.
      */
     public QueryBuilder endOrClause() {
-        if (nbCriteriaInOrClause != 0)
+        if (nbCriteriaInOrClause != 0) {
             q.append(")");
+        }
 
         inOrClause = false;
         nbCriteriaInOrClause = 0;
@@ -602,8 +650,8 @@ public class QueryBuilder {
     }
 
     /**
-     * @param em
-     * @return
+     * @param em entity manager
+     * @return instance of Query.
      */
     public Query getQuery(EntityManager em) {
         applyPagination(paginationSortAlias);
@@ -618,10 +666,10 @@ public class QueryBuilder {
     }
 
     /**
-     * Return a query to retrive ids
+     * Return a query to retrive ids.
      * 
-     * @param em
-     * @return
+     * @param em entity Manager
+     * @return typed query instance
      */
     public TypedQuery<Long> getIdQuery(EntityManager em) {
         applyPagination(paginationSortAlias);
@@ -639,8 +687,8 @@ public class QueryBuilder {
     }
 
     /**
-     * @param em
-     * @return
+     * @param em entity Manager
+     * @return instance of Query.
      */
     public Query getCountQuery(EntityManager em) {
         String from = "from ";
@@ -673,8 +721,8 @@ public class QueryBuilder {
     }
 
     /**
-     * @param em
-     * @return
+     * @param em entity Manager
+     * @return number of query.
      */
     public Long count(EntityManager em) {
         Query query = getCountQuery(em);
@@ -682,8 +730,8 @@ public class QueryBuilder {
     }
 
     /**
-     * @param em
-     * @return
+     * @param em entity manager
+     * @return list of result
      */
     @SuppressWarnings("rawtypes")
     public List find(EntityManager em) {
@@ -692,8 +740,8 @@ public class QueryBuilder {
     }
 
     /**
-     * @param fieldname
-     * @return
+     * @param fieldname field name
+     * @return convert para.
      */
     public String convertFieldToParam(String fieldname) {
         fieldname = fieldname.replace(".", "_").replace("(", "_").replace(")", "_");
@@ -705,7 +753,7 @@ public class QueryBuilder {
     }
 
     /**
-     * Convert fieldname to a collection member item name
+     * Convert fieldname to a collection member item name.
      * 
      * @param fieldname Fieldname
      * @return Fieldname converted to parameter name with suffix "Item". e.g. for "sellers" it will return sellersItem
@@ -715,16 +763,21 @@ public class QueryBuilder {
     }
 
     /**
-     * @param alias
+     * @param alias alias of column?
      */
     private void applyPagination(String alias) {
-        if (paginationConfiguration == null)
+        if (paginationConfiguration == null) {
             return;
+        }
 
-        if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1)
+        if (paginationConfiguration.isSorted() && q.indexOf("ORDER BY") == -1) {
             addOrderCriterion(((alias != null) ? (alias + ".") : "") + paginationConfiguration.getSortField(), paginationConfiguration.isAscendingSorting());
+        }
     }
 
+    /**
+     * @param query query using for pagination.
+     */
     private void applyPagination(Query query) {
         if (paginationConfiguration == null) {
             return;
@@ -734,7 +787,9 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query
+     * @param query query instance 
+     * @param firstRow the index of first row
+     * @param numberOfRows number of rows shoud return.
      */
     public void applyPagination(Query query, Integer firstRow, Integer numberOfRows) {
         if (firstRow != null) {

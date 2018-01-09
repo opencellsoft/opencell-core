@@ -28,70 +28,64 @@ import org.meveo.api.rest.IBaseRs;
 
 public interface BusinessAccountModelRs extends IBaseRs {
     /**
-     * Create a new business account model
+     * Create a new business account model.
      * 
      * @param postData Business account model data
      * @return Request processing status
      */
     @POST
-    @Path("/")
-    public ActionStatus create(BusinessAccountModelDto postData);
+    @Path("/") ActionStatus create(BusinessAccountModelDto postData);
 
     /**
-     * Update an existing business account model
+     * Update an existing business account model.
      * 
      * @param postData Business account model data
      * @return Request processing status
      */
     @PUT
-    @Path("/")
-    public ActionStatus update(BusinessAccountModelDto postData);
+    @Path("/") ActionStatus update(BusinessAccountModelDto postData);
 
     /**
-     * Search for a business account model
+     * Search for a business account model.
      * 
-     * @param postData Business account model data
-     * @return Request processing status
+     * @param bamCode Business account model code
+     * @return business account model response.
      */
     @GET
-    @Path("/")
-    public BusinessAccountModelResponseDto find(@QueryParam("businessAccountModelCode") String bamCode);
+    @Path("/") BusinessAccountModelResponseDto find(@QueryParam("businessAccountModelCode") String bamCode);
 
     /**
      * Remove business account model with a given business account model code.
      * 
-     * @param businessAccountModelCode Business account model code
+     * @param bamCode Business account model code
      * @return Request processing status
      */
     @DELETE
-    @Path("/{businessAccountModelCode}")
-    public ActionStatus remove(@PathParam("businessAccountModelCode") String bamCode);
+    @Path("/{businessAccountModelCode}") ActionStatus remove(@PathParam("businessAccountModelCode") String bamCode);
 
     /**
-     * Return meveo's modules
+     * Return meveo's modules.
      * 
-     * @return
+     * @return meveo module response
      */
     @GET
-    @Path("/list")
-    public MeveoModuleDtosResponse list();
+    @Path("/list") MeveoModuleDtosResponse list();
 
     
     /**
-     * Install business account module
+     * Install business account module.
      * 
      * @param moduleDto The module
      * @return Request processing status
      */
     @PUT
-    @Path("/install")
-    public ActionStatus install(BusinessAccountModelDto moduleDto);
+    @Path("/install") ActionStatus install(BusinessAccountModelDto moduleDto);
 
     /**
      * Find parent entities based on account hierarchy code.
      *
-     * @param searchDto
-     * @return
+     * @param searchDto CRM type search dto/
+     * @return parent list reponse
      */
     @POST
     @Path("/findParents")

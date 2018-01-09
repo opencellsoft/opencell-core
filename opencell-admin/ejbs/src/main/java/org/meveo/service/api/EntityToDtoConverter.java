@@ -59,11 +59,11 @@ public class EntityToDtoConverter {
 
     /**
      * 
-     * @param entity
+     * @param entity entity
      * @param cfValuesByCode List of custom field values by code
      * @param includeInheritedCF If true, also returns the inherited cfs
      * @param mergeMapValues If true, merged the map values between instance cf and parent. Use to show a single list of values. 
-     * @return
+     * @return custom fields dto
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
 

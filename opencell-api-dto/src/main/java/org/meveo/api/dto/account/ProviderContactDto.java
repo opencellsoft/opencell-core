@@ -11,7 +11,7 @@ import org.meveo.model.crm.ProviderContact;
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 1:28:29 AM
+ *
  *
  */
 @XmlRootElement(name = "ProviderContract")

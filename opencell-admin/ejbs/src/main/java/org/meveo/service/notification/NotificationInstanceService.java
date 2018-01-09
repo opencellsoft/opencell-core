@@ -65,7 +65,7 @@ public abstract class NotificationInstanceService<T extends Notification> extend
      * Instantiate a counter instance if counter template is provided for the first time or has changed. Remove counter instance if counter template was removed
      * 
      * @param entity Entity being saved or updated
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     protected void manageCounterInstantiation(T entity) throws BusinessException {
 

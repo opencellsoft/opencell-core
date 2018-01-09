@@ -68,19 +68,20 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     private CalendarService calendarService;
 
     /**
-     * Contains association between charge code and price plans. Key format: <charge template code, which is pricePlanMatrix.eventCode>, value: List of <PricePlanMatrix entity>
+     * Contains association between charge code and price plans. Key format: &lt;charge template code, which is pricePlanMatrix.eventCode&gt;, value: List of &lt;PricePlanMatrix
+     * entity&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-price-plan")
     private Cache<String, List<PricePlanMatrix>> pricePlanCache;
 
     /**
-     * Contains association between subscription and usage charge instances. Key format: Subscription.id, value: List of <DTO version of UsageChargeInstance>
+     * Contains association between subscription and usage charge instances. Key format: Subscription.id, value: List of &lt;DTO version of UsageChargeInstance&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-charge-instance-cache")
     private Cache<Long, List<CachedUsageChargeInstance>> usageChargeInstanceCache;
 
     /**
-     * Contains association between counter instance ID and cached counter information. Key format: CounterInstance.id, value: <DTO version of CounterInstance>
+     * Contains association between counter instance ID and cached counter information. Key format: CounterInstance.id, value: &lt;DTOversion of CounterInstance&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-counter-cache")
     private Cache<Long, CachedCounterInstance> counterCache;
@@ -171,6 +172,9 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
         log.info("Price plan cache populated with {} price plans", activePricePlans.size());
     }
 
+    /**
+     * @param calendar calendard
+     */
     private void preloadCache(Calendar calendar) {
         if (calendar != null) {
             calendar = calendarService.refreshOrRetrieve(calendar);
@@ -179,7 +183,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Add price plan to a cache
+     * Add price plan to a cache.
      * 
      * @param pricePlan Price plan to add
      */
@@ -462,7 +466,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Are usage charge instances cached for a given subscription
+     * Are usage charge instances cached for a given subscription.
      * 
      * @param subscriptionId Subscription id
      * @return True if usage charge instances cached
@@ -472,7 +476,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Get a list of usage charge instances associated to subscription
+     * Get a list of usage charge instances associated to subscription.
      * 
      * @param subscriptionId Subsription id
      * @return A list of usage charge instances
@@ -482,7 +486,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Get a summary of cached information
+     * Get a summary of cached information.
      * 
      * @return A list of a map containing cache information with cache name as a key and cache as a value
      */
@@ -498,7 +502,7 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Refresh cache by name
+     * Refresh cache by name.
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
@@ -516,10 +520,10 @@ public class RatingCacheContainerProvider implements Serializable { // CacheCont
     }
 
     /**
-     * Add counterPeriodToCache
+     * Add counterPeriodToCache.
      * 
      * @param counterPeriod Counter period
-     * @return
+     * @return cached counter period.
      */
     public CachedCounterPeriod addCounterPeriodToCache(CounterPeriod counterPeriod) {
 

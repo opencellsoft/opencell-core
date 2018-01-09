@@ -42,6 +42,8 @@ public enum LanguageEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id id of language
+	 * @return language enum.
 	 */
 	public static LanguageEnum getValue(Integer id) {
 		if (id != null) {

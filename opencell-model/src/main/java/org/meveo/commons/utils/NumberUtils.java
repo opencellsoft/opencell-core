@@ -27,7 +27,6 @@ import org.meveo.model.catalog.RoundingModeEnum;
 
 /**
  * @author R.AITYAAZZA
- * @created 20 janv. 11
  */
 public class NumberUtils {
 

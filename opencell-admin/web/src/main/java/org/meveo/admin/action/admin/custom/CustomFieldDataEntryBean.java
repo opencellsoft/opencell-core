@@ -597,7 +597,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Get inherited custom field value for a given entity
      * 
-     * @param Entity to get the inherited value for
+     * @param entity to get the inherited value for
      * @param cfCode Custom field code
      * @return Custom field value
      */
@@ -626,7 +626,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Get inherited custom field value for a given entity. A cumulative custom field value is calculated for Map(Matrix) type fields
      * 
-     * @param Entity to get the inherited value for
+     * @param entity to get the inherited value for
      * @param cft Custom field definition
      * @return Custom field value
      */
@@ -795,7 +795,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param entity Entity to execute action on
      * @param action Action to execute
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
     public String executeCustomAction(ICustomFieldEntity entity, EntityCustomAction action, String encodedParameters) {
@@ -836,7 +836,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param parentEntity Parent entity, entity is related to
      * @param childEntity Entity to execute action on
      * @param action Action to execute
-     * @param encodedParameters Additional parameters encoded in URL like style param=value&param=value
+     * @param encodedParameters Additional parameters encoded in URL like style param=value&amp;param=value
      * @return A script execution result value from Script.RESULT_GUI_OUTCOME variable
      */
     public String executeCustomActionOnChildEntity(ICustomFieldEntity parentEntity, ICustomFieldEntity childEntity, EntityCustomAction action, String encodedParameters) {
@@ -1069,7 +1069,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * Remove child entity record from a given field
      * 
      * @param mainEntityCfv Main entity's custom field value containing child entities
-     * @param childEntity Child entity record to remove
+     * @param selectedChildEntity Child entity record to remove
      */
     public void removeChildEntity(CustomFieldValue mainEntityCfv, CustomFieldValueHolder selectedChildEntity) {
 

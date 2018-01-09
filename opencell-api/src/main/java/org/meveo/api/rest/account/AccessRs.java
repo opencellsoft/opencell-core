@@ -81,7 +81,7 @@ public interface AccessRs extends IBaseRs {
     /**
      * Create new or update an existing access
      * 
-     * @param Access data
+     * @param postData data
      * @return Request processing status
      */
     @POST

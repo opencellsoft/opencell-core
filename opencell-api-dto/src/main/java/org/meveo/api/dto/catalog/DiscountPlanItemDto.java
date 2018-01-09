@@ -15,7 +15,7 @@ import org.meveo.model.catalog.DiscountPlanItem;
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * @date Aug 1, 2016 9:34:34 PM
+ * @since Aug 1, 2016 9:34:34 PM
  *
  */
 @XmlRootElement(name = "DiscountPlanItem")

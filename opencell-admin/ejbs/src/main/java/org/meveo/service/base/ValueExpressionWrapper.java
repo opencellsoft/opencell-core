@@ -29,7 +29,9 @@ public class ValueExpressionWrapper {
     static ExpressionFactory expressionFactory = ExpressionFactory.newInstance();
 
     private SimpleELResolver simpleELResolver;
+    
     private ELContext context;
+    
     private ValueExpression ve;
 
     static protected Logger log = LoggerFactory.getLogger(ValueExpressionWrapper.class);
@@ -37,13 +39,13 @@ public class ValueExpressionWrapper {
     static HashMap<String, ValueExpressionWrapper> valueExpressionWrapperMap = new HashMap<String, ValueExpressionWrapper>();
 
     /**
-     * Evaluate expression to a boolean value
+     * Evaluate expression to a boolean value.
      * 
      * @param expression Expression to evaluate
      * @param variableName Variable name to give to a variable in context
      * @param variable Variable to make available in context
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public static boolean evaluateToBoolean(String expression, String variableName, Object variable) throws BusinessException {
        
@@ -69,12 +71,12 @@ public class ValueExpressionWrapper {
     }
 
     /**
-     * Evaluate expression to a boolean value
+     * Evaluate expression to a boolean value.
      * 
      * @param expression Expression to evaluate
      * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public static boolean evaluateToBooleanMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
@@ -97,7 +99,7 @@ public class ValueExpressionWrapper {
     
     
     /**
-     * Evaluate expression to a String value ignoring exceptions. Converting to string if necessary
+     * Evaluate expression to a String value ignoring exceptions. Converting to string if necessary.
      * 
      * @param expression Expression to evaluate
      * @param variableName Variable name to give to a variable in context
@@ -114,12 +116,12 @@ public class ValueExpressionWrapper {
     }
     
     /**
-     * Evaluate expression to a string value, converting to string if necessary
+     * Evaluate expression to a string value, converting to string if necessary.
      * 
      * @param expression Expression to evaluate
      * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException
+     * @throws BusinessException business exception.s
      */
     public static String evaluateToStringMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
         if (StringUtils.isBlank(expression)) {
@@ -143,13 +145,13 @@ public class ValueExpressionWrapper {
     }
 
     /**
-     * Evaluate expression
+     * Evaluate expression.
      * 
      * @param expression Expression to evaluate
      * @param userMap Context of values
      * @param resultClass An expected result class
      * @return A value that expression evaluated to
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public static Object evaluateExpression(String expression, Map<Object, Object> userMap, @SuppressWarnings("rawtypes") Class resultClass) throws BusinessException {
         Object result = null;

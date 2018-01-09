@@ -6,7 +6,7 @@ import javax.enterprise.context.SessionScoped;
 
 /**
  * @author Edward P. Legaspi
- * @created 27 Nov 2017
+ * 
  **/
 @SessionScoped
 public class UserAuthTimeProducer implements Serializable {

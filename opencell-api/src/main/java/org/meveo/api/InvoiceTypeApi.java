@@ -127,6 +127,7 @@ public class InvoiceTypeApi extends BaseApi {
         }
         invoiceType.setMatchingAuto(postData.isMatchingAuto());
         invoiceType.setBillingTemplateName(postData.getBillingTemplateName());
+        invoiceType.setBillingTemplateNameEL(postData.getBillingTemplateNameEL());
         invoiceType.setPdfFilenameEL(postData.getPdfFilenameEL());
         invoiceType.setXmlFilenameEL(postData.getXmlFilenameEL());
         invoiceTypeService.create(invoiceType);
@@ -223,6 +224,9 @@ public class InvoiceTypeApi extends BaseApi {
         }
         if (invoiceTypeDto.getBillingTemplateName() != null) {
             invoiceType.setBillingTemplateName(invoiceTypeDto.getBillingTemplateName());
+        }
+        if (invoiceTypeDto.getBillingTemplateNameEL() != null) {
+            invoiceType.setBillingTemplateNameEL(invoiceTypeDto.getBillingTemplateNameEL());
         }
         if (invoiceTypeDto.getPdfFilenameEL() != null) {
             invoiceType.setPdfFilenameEL(invoiceTypeDto.getPdfFilenameEL());

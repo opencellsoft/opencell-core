@@ -33,26 +33,52 @@ import org.meveo.service.base.local.IPersistenceService;
  * MatchingCode service local interface.
  * 
  * @author anasseh
- * @created 28.11.2010
+ * @since 28.11.2010
  */
 public interface IMatchingCodeService extends IPersistenceService<MatchingCode> {
 
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds,
+    /**
+     * match account operations.
+     * 
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param operationIds list of operation id
+     * @param operationIdForPartialMatching operation id for partila matching
+     * @param user user
+     * @return matching return object.
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation unmatched exception
+     * @throws UnbalanceAmountException un balance amount exception.
+     * @throws Exception exception.
+     */
+	MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds,
 			Long operationIdForPartialMatching,
 			User user) throws BusinessException,
 			NoAllOperationUnmatchedException, UnbalanceAmountException, Exception;
 
-	public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds,
+	/**
+	 * @param customerAccountId customer account id
+	 * @param customerAccountCode customer account code
+	 * @param operationIds list of operation id
+	 * @param operationIdForPartialMatching operation id for partila matching
+	 * @param matchingTypeEnum matching type enum
+	 * @param user user
+	 * @return matching return object.
+	 * @throws BusinessException business exception
+	 * @throws NoAllOperationUnmatchedException no all operation unmatched exception
+	 * @throws UnbalanceAmountException unbalance amount exception.
+	 * @throws Exception exception.
+	 */
+	MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds,
 			Long operationIdForPartialMatching, MatchingTypeEnum matchingTypeEnum,
 			User user) throws BusinessException,
 			NoAllOperationUnmatchedException, UnbalanceAmountException, Exception;
 
 	/**
-	 * Remove machingCode
+	 * Remove machingCode.
 	 * 
-	 * @param idMatchingCode
-	 * @param user
-	 * @throws BusinessException
+	 * @param idMatchingCode matching code
+	 * @throws BusinessException business exception.
 	 */
-	public void unmatching(Long idMatchingCode) throws BusinessException;
+	void unmatching(Long idMatchingCode) throws BusinessException;
 }

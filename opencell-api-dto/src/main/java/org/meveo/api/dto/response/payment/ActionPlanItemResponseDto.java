@@ -10,7 +10,6 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 6:08:59 AM
  *
  */
 @XmlRootElement(name="ActionPlanItemResponse")

@@ -33,7 +33,7 @@ public class MultiLanguageFieldService implements Serializable {
 
             Map<Class, List<String>> entityMapping = new HashMap<>();
 
-            Reflections reflections = new Reflections("org.meveo.model", "org.meveocrm.model");
+            Reflections reflections = new Reflections("org.meveo.model");
             Set<Class<? extends IEntity>> classes = reflections.getSubTypesOf(IEntity.class);
 
             for (Class clazz : classes) {

@@ -96,7 +96,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     ServiceTemplateService serviceTemplateService;
 
     /**
-     * Find a service instance list by subscription entity, service template code and service instance status list
+     * Find a service instance list by subscription entity, service template code and service instance status list.
      * 
      * @param code the service template code
      * @param subscription the subscription entity
@@ -183,7 +183,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @param subscriptionAmount subscription amount
      * @param terminationAmount termination amount
      * @param isVirtual true/false
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
@@ -395,13 +395,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     /**
      * Terminate a service.
      * 
-     * @param serviceInstance
-     * @param terminationDate
-     * @param terminationReason
-     * @param orderNumber
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param serviceInstance service instance
+     * @param terminationDate termination date
+     * @param terminationReason termination reason
+     * @param orderNumber order number
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service exception
+     * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {

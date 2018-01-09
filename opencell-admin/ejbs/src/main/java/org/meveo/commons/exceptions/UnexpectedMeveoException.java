@@ -20,7 +20,7 @@ package org.meveo.commons.exceptions;
 
 /**
  * @author Ignas Lelys
- * @created Dec 21, 2010
+ * @since Dec 21, 2010
  *
  */
 public class UnexpectedMeveoException extends Exception {

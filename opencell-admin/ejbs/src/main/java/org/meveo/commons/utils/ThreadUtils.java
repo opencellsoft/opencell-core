@@ -29,7 +29,6 @@ import java.util.concurrent.TimeoutException;
  * Utils for multithreading.
  * 
  * @author Ignas Lelys
- * @created Apr 12, 2011
  * 
  */
 public class ThreadUtils {
@@ -40,7 +39,7 @@ public class ThreadUtils {
      * Simple helper method to have timed run method (that timeouts if runs too
      * long). Good for long calculations wich has time limit.
      * 
-     * @param <V>
+     * @param <V> timed run method.
      * @param c Callable with calculation logic.
      * @param timeout Time after calculation times out. 
      * @param timeUnit Time metric (seconds, minutes etc).

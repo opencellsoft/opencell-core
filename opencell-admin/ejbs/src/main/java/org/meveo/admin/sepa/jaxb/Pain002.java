@@ -28,277 +28,277 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="CstmrPmtStsRpt">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="GrpHdr">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="MsgId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="CreDtTm" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
- *                             &lt;element name="InitgPty">
- *                               &lt;complexType>
- *                                 &lt;complexContent>
- *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                     &lt;sequence>
- *                                       &lt;element name="Id">
- *                                         &lt;complexType>
- *                                           &lt;complexContent>
- *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                               &lt;sequence>
- *                                                 &lt;element name="OrgId">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                               &lt;/sequence>
- *                                             &lt;/restriction>
- *                                           &lt;/complexContent>
- *                                         &lt;/complexType>
- *                                       &lt;/element>
- *                                     &lt;/sequence>
- *                                   &lt;/restriction>
- *                                 &lt;/complexContent>
- *                               &lt;/complexType>
- *                             &lt;/element>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                   &lt;element name="OrgnlGrpInfAndSts">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="OrgnlMsgId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="OrgnlMsgNmId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="GrpSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="StsRsnInf">
- *                               &lt;complexType>
- *                                 &lt;complexContent>
- *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                     &lt;sequence>
- *                                       &lt;element name="Rsn">
- *                                         &lt;complexType>
- *                                           &lt;complexContent>
- *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                               &lt;sequence>
- *                                                 &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                               &lt;/sequence>
- *                                             &lt;/restriction>
- *                                           &lt;/complexContent>
- *                                         &lt;/complexType>
- *                                       &lt;/element>
- *                                     &lt;/sequence>
- *                                   &lt;/restriction>
- *                                 &lt;/complexContent>
- *                               &lt;/complexType>
- *                             &lt;/element>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                   &lt;element name="OrgnlPmtInfAndSts">
- *                     &lt;complexType>
- *                       &lt;complexContent>
- *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                           &lt;sequence>
- *                             &lt;element name="OrgnlPmtInfId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="OrgnlNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
- *                             &lt;element name="OrgnlCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *                             &lt;element name="PmtInfSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                             &lt;element name="StsRsnInf">
- *                               &lt;complexType>
- *                                 &lt;complexContent>
- *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                     &lt;sequence>
- *                                       &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
- *                                     &lt;/sequence>
- *                                   &lt;/restriction>
- *                                 &lt;/complexContent>
- *                               &lt;/complexType>
- *                             &lt;/element>
- *                             &lt;element name="NbOfTxsPerSts" maxOccurs="unbounded" minOccurs="0">
- *                               &lt;complexType>
- *                                 &lt;complexContent>
- *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                     &lt;sequence>
- *                                       &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
- *                                       &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                       &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
- *                                     &lt;/sequence>
- *                                   &lt;/restriction>
- *                                 &lt;/complexContent>
- *                               &lt;/complexType>
- *                             &lt;/element>
- *                             &lt;element name="TxInfAndSts" maxOccurs="unbounded" minOccurs="0">
- *                               &lt;complexType>
- *                                 &lt;complexContent>
- *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                     &lt;sequence>
- *                                       &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                       &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                       &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                       &lt;element name="StsRsnInf">
- *                                         &lt;complexType>
- *                                           &lt;complexContent>
- *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                               &lt;sequence>
- *                                                 &lt;element name="Rsn">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                               &lt;/sequence>
- *                                             &lt;/restriction>
- *                                           &lt;/complexContent>
- *                                         &lt;/complexType>
- *                                       &lt;/element>
- *                                       &lt;element name="OrgnlTxRef">
- *                                         &lt;complexType>
- *                                           &lt;complexContent>
- *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                               &lt;sequence>
- *                                                 &lt;element name="Amt">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="InstdAmt">
- *                                                             &lt;complexType>
- *                                                               &lt;simpleContent>
- *                                                                 &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
- *                                                                   &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                                                                 &lt;/extension>
- *                                                               &lt;/simpleContent>
- *                                                             &lt;/complexType>
- *                                                           &lt;/element>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                                 &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/>
- *                                                 &lt;element name="PmtTpInf">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="SvcLvl">
- *                                                             &lt;complexType>
- *                                                               &lt;complexContent>
- *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                                   &lt;sequence>
- *                                                                     &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                                   &lt;/sequence>
- *                                                                 &lt;/restriction>
- *                                                               &lt;/complexContent>
- *                                                             &lt;/complexType>
- *                                                           &lt;/element>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                                 &lt;element name="CdtrAgt">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="FinInstnId">
- *                                                             &lt;complexType>
- *                                                               &lt;complexContent>
- *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                                   &lt;sequence>
- *                                                                     &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                                   &lt;/sequence>
- *                                                                 &lt;/restriction>
- *                                                               &lt;/complexContent>
- *                                                             &lt;/complexType>
- *                                                           &lt;/element>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                                 &lt;element name="Cdtr">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                                 &lt;element name="CdtrAcct">
- *                                                   &lt;complexType>
- *                                                     &lt;complexContent>
- *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                         &lt;sequence>
- *                                                           &lt;element name="Id">
- *                                                             &lt;complexType>
- *                                                               &lt;complexContent>
- *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                                                                   &lt;sequence>
- *                                                                     &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *                                                                   &lt;/sequence>
- *                                                                 &lt;/restriction>
- *                                                               &lt;/complexContent>
- *                                                             &lt;/complexType>
- *                                                           &lt;/element>
- *                                                         &lt;/sequence>
- *                                                       &lt;/restriction>
- *                                                     &lt;/complexContent>
- *                                                   &lt;/complexType>
- *                                                 &lt;/element>
- *                                               &lt;/sequence>
- *                                             &lt;/restriction>
- *                                           &lt;/complexContent>
- *                                         &lt;/complexType>
- *                                       &lt;/element>
- *                                     &lt;/sequence>
- *                                   &lt;/restriction>
- *                                 &lt;/complexContent>
- *                               &lt;/complexType>
- *                             &lt;/element>
- *                           &lt;/sequence>
- *                         &lt;/restriction>
- *                       &lt;/complexContent>
- *                     &lt;/complexType>
- *                   &lt;/element>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *       &lt;/sequence>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="CstmrPmtStsRpt"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="GrpHdr"&gt;
+ *                     &lt;complexType&gt;
+ *                       &lt;complexContent&gt;
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                           &lt;sequence&gt;
+ *                             &lt;element name="MsgId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="CreDtTm" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
+ *                             &lt;element name="InitgPty"&gt;
+ *                               &lt;complexType&gt;
+ *                                 &lt;complexContent&gt;
+ *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                     &lt;sequence&gt;
+ *                                       &lt;element name="Id"&gt;
+ *                                         &lt;complexType&gt;
+ *                                           &lt;complexContent&gt;
+ *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                               &lt;sequence&gt;
+ *                                                 &lt;element name="OrgId"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                               &lt;/sequence&gt;
+ *                                             &lt;/restriction&gt;
+ *                                           &lt;/complexContent&gt;
+ *                                         &lt;/complexType&gt;
+ *                                       &lt;/element&gt;
+ *                                     &lt;/sequence&gt;
+ *                                   &lt;/restriction&gt;
+ *                                 &lt;/complexContent&gt;
+ *                               &lt;/complexType&gt;
+ *                             &lt;/element&gt;
+ *                           &lt;/sequence&gt;
+ *                         &lt;/restriction&gt;
+ *                       &lt;/complexContent&gt;
+ *                     &lt;/complexType&gt;
+ *                   &lt;/element&gt;
+ *                   &lt;element name="OrgnlGrpInfAndSts"&gt;
+ *                     &lt;complexType&gt;
+ *                       &lt;complexContent&gt;
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                           &lt;sequence&gt;
+ *                             &lt;element name="OrgnlMsgId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="OrgnlMsgNmId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="GrpSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="StsRsnInf"&gt;
+ *                               &lt;complexType&gt;
+ *                                 &lt;complexContent&gt;
+ *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                     &lt;sequence&gt;
+ *                                       &lt;element name="Rsn"&gt;
+ *                                         &lt;complexType&gt;
+ *                                           &lt;complexContent&gt;
+ *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                               &lt;sequence&gt;
+ *                                                 &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                               &lt;/sequence&gt;
+ *                                             &lt;/restriction&gt;
+ *                                           &lt;/complexContent&gt;
+ *                                         &lt;/complexType&gt;
+ *                                       &lt;/element&gt;
+ *                                     &lt;/sequence&gt;
+ *                                   &lt;/restriction&gt;
+ *                                 &lt;/complexContent&gt;
+ *                               &lt;/complexType&gt;
+ *                             &lt;/element&gt;
+ *                           &lt;/sequence&gt;
+ *                         &lt;/restriction&gt;
+ *                       &lt;/complexContent&gt;
+ *                     &lt;/complexType&gt;
+ *                   &lt;/element&gt;
+ *                   &lt;element name="OrgnlPmtInfAndSts"&gt;
+ *                     &lt;complexType&gt;
+ *                       &lt;complexContent&gt;
+ *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                           &lt;sequence&gt;
+ *                             &lt;element name="OrgnlPmtInfId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="OrgnlNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+ *                             &lt;element name="OrgnlCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+ *                             &lt;element name="PmtInfSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                             &lt;element name="StsRsnInf"&gt;
+ *                               &lt;complexType&gt;
+ *                                 &lt;complexContent&gt;
+ *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                     &lt;sequence&gt;
+ *                                       &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+ *                                     &lt;/sequence&gt;
+ *                                   &lt;/restriction&gt;
+ *                                 &lt;/complexContent&gt;
+ *                               &lt;/complexType&gt;
+ *                             &lt;/element&gt;
+ *                             &lt;element name="NbOfTxsPerSts" maxOccurs="unbounded" minOccurs="0"&gt;
+ *                               &lt;complexType&gt;
+ *                                 &lt;complexContent&gt;
+ *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                     &lt;sequence&gt;
+ *                                       &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+ *                                       &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                       &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+ *                                     &lt;/sequence&gt;
+ *                                   &lt;/restriction&gt;
+ *                                 &lt;/complexContent&gt;
+ *                               &lt;/complexType&gt;
+ *                             &lt;/element&gt;
+ *                             &lt;element name="TxInfAndSts" maxOccurs="unbounded" minOccurs="0"&gt;
+ *                               &lt;complexType&gt;
+ *                                 &lt;complexContent&gt;
+ *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                     &lt;sequence&gt;
+ *                                       &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                       &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                       &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                       &lt;element name="StsRsnInf"&gt;
+ *                                         &lt;complexType&gt;
+ *                                           &lt;complexContent&gt;
+ *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                               &lt;sequence&gt;
+ *                                                 &lt;element name="Rsn"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                               &lt;/sequence&gt;
+ *                                             &lt;/restriction&gt;
+ *                                           &lt;/complexContent&gt;
+ *                                         &lt;/complexType&gt;
+ *                                       &lt;/element&gt;
+ *                                       &lt;element name="OrgnlTxRef"&gt;
+ *                                         &lt;complexType&gt;
+ *                                           &lt;complexContent&gt;
+ *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                               &lt;sequence&gt;
+ *                                                 &lt;element name="Amt"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="InstdAmt"&gt;
+ *                                                             &lt;complexType&gt;
+ *                                                               &lt;simpleContent&gt;
+ *                                                                 &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+ *                                                                   &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                                                                 &lt;/extension&gt;
+ *                                                               &lt;/simpleContent&gt;
+ *                                                             &lt;/complexType&gt;
+ *                                                           &lt;/element&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                                 &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+ *                                                 &lt;element name="PmtTpInf"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="SvcLvl"&gt;
+ *                                                             &lt;complexType&gt;
+ *                                                               &lt;complexContent&gt;
+ *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                                   &lt;sequence&gt;
+ *                                                                     &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                                                   &lt;/sequence&gt;
+ *                                                                 &lt;/restriction&gt;
+ *                                                               &lt;/complexContent&gt;
+ *                                                             &lt;/complexType&gt;
+ *                                                           &lt;/element&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                                 &lt;element name="CdtrAgt"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="FinInstnId"&gt;
+ *                                                             &lt;complexType&gt;
+ *                                                               &lt;complexContent&gt;
+ *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                                   &lt;sequence&gt;
+ *                                                                     &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                                                   &lt;/sequence&gt;
+ *                                                                 &lt;/restriction&gt;
+ *                                                               &lt;/complexContent&gt;
+ *                                                             &lt;/complexType&gt;
+ *                                                           &lt;/element&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                                 &lt;element name="Cdtr"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                                 &lt;element name="CdtrAcct"&gt;
+ *                                                   &lt;complexType&gt;
+ *                                                     &lt;complexContent&gt;
+ *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                         &lt;sequence&gt;
+ *                                                           &lt;element name="Id"&gt;
+ *                                                             &lt;complexType&gt;
+ *                                                               &lt;complexContent&gt;
+ *                                                                 &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                                                                   &lt;sequence&gt;
+ *                                                                     &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+ *                                                                   &lt;/sequence&gt;
+ *                                                                 &lt;/restriction&gt;
+ *                                                               &lt;/complexContent&gt;
+ *                                                             &lt;/complexType&gt;
+ *                                                           &lt;/element&gt;
+ *                                                         &lt;/sequence&gt;
+ *                                                       &lt;/restriction&gt;
+ *                                                     &lt;/complexContent&gt;
+ *                                                   &lt;/complexType&gt;
+ *                                                 &lt;/element&gt;
+ *                                               &lt;/sequence&gt;
+ *                                             &lt;/restriction&gt;
+ *                                           &lt;/complexContent&gt;
+ *                                         &lt;/complexType&gt;
+ *                                       &lt;/element&gt;
+ *                                     &lt;/sequence&gt;
+ *                                   &lt;/restriction&gt;
+ *                                 &lt;/complexContent&gt;
+ *                               &lt;/complexType&gt;
+ *                             &lt;/element&gt;
+ *                           &lt;/sequence&gt;
+ *                         &lt;/restriction&gt;
+ *                       &lt;/complexContent&gt;
+ *                     &lt;/complexType&gt;
+ *                   &lt;/element&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
@@ -344,267 +344,267 @@ public class Pain002 {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="GrpHdr">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence>
-     *                   &lt;element name="MsgId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="CreDtTm" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
-     *                   &lt;element name="InitgPty">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;element name="Id">
-     *                               &lt;complexType>
-     *                                 &lt;complexContent>
-     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                     &lt;sequence>
-     *                                       &lt;element name="OrgId">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                     &lt;/sequence>
-     *                                   &lt;/restriction>
-     *                                 &lt;/complexContent>
-     *                               &lt;/complexType>
-     *                             &lt;/element>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *         &lt;element name="OrgnlGrpInfAndSts">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence>
-     *                   &lt;element name="OrgnlMsgId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="OrgnlMsgNmId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="GrpSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="StsRsnInf">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;element name="Rsn">
-     *                               &lt;complexType>
-     *                                 &lt;complexContent>
-     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                     &lt;sequence>
-     *                                       &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                     &lt;/sequence>
-     *                                   &lt;/restriction>
-     *                                 &lt;/complexContent>
-     *                               &lt;/complexType>
-     *                             &lt;/element>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *         &lt;element name="OrgnlPmtInfAndSts">
-     *           &lt;complexType>
-     *             &lt;complexContent>
-     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                 &lt;sequence>
-     *                   &lt;element name="OrgnlPmtInfId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="OrgnlNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-     *                   &lt;element name="OrgnlCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
-     *                   &lt;element name="PmtInfSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                   &lt;element name="StsRsnInf">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                   &lt;element name="NbOfTxsPerSts" maxOccurs="unbounded" minOccurs="0">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-     *                             &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                             &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                   &lt;element name="TxInfAndSts" maxOccurs="unbounded" minOccurs="0">
-     *                     &lt;complexType>
-     *                       &lt;complexContent>
-     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                           &lt;sequence>
-     *                             &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                             &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                             &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                             &lt;element name="StsRsnInf">
-     *                               &lt;complexType>
-     *                                 &lt;complexContent>
-     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                     &lt;sequence>
-     *                                       &lt;element name="Rsn">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                     &lt;/sequence>
-     *                                   &lt;/restriction>
-     *                                 &lt;/complexContent>
-     *                               &lt;/complexType>
-     *                             &lt;/element>
-     *                             &lt;element name="OrgnlTxRef">
-     *                               &lt;complexType>
-     *                                 &lt;complexContent>
-     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                     &lt;sequence>
-     *                                       &lt;element name="Amt">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="InstdAmt">
-     *                                                   &lt;complexType>
-     *                                                     &lt;simpleContent>
-     *                                                       &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
-     *                                                         &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *                                                       &lt;/extension>
-     *                                                     &lt;/simpleContent>
-     *                                                   &lt;/complexType>
-     *                                                 &lt;/element>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                       &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/>
-     *                                       &lt;element name="PmtTpInf">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="SvcLvl">
-     *                                                   &lt;complexType>
-     *                                                     &lt;complexContent>
-     *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                                         &lt;sequence>
-     *                                                           &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                                         &lt;/sequence>
-     *                                                       &lt;/restriction>
-     *                                                     &lt;/complexContent>
-     *                                                   &lt;/complexType>
-     *                                                 &lt;/element>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                       &lt;element name="CdtrAgt">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="FinInstnId">
-     *                                                   &lt;complexType>
-     *                                                     &lt;complexContent>
-     *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                                         &lt;sequence>
-     *                                                           &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                                         &lt;/sequence>
-     *                                                       &lt;/restriction>
-     *                                                     &lt;/complexContent>
-     *                                                   &lt;/complexType>
-     *                                                 &lt;/element>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                       &lt;element name="Cdtr">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                       &lt;element name="CdtrAcct">
-     *                                         &lt;complexType>
-     *                                           &lt;complexContent>
-     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                               &lt;sequence>
-     *                                                 &lt;element name="Id">
-     *                                                   &lt;complexType>
-     *                                                     &lt;complexContent>
-     *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *                                                         &lt;sequence>
-     *                                                           &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
-     *                                                         &lt;/sequence>
-     *                                                       &lt;/restriction>
-     *                                                     &lt;/complexContent>
-     *                                                   &lt;/complexType>
-     *                                                 &lt;/element>
-     *                                               &lt;/sequence>
-     *                                             &lt;/restriction>
-     *                                           &lt;/complexContent>
-     *                                         &lt;/complexType>
-     *                                       &lt;/element>
-     *                                     &lt;/sequence>
-     *                                   &lt;/restriction>
-     *                                 &lt;/complexContent>
-     *                               &lt;/complexType>
-     *                             &lt;/element>
-     *                           &lt;/sequence>
-     *                         &lt;/restriction>
-     *                       &lt;/complexContent>
-     *                     &lt;/complexType>
-     *                   &lt;/element>
-     *                 &lt;/sequence>
-     *               &lt;/restriction>
-     *             &lt;/complexContent>
-     *           &lt;/complexType>
-     *         &lt;/element>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="GrpHdr"&gt;
+     *           &lt;complexType&gt;
+     *             &lt;complexContent&gt;
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                 &lt;sequence&gt;
+     *                   &lt;element name="MsgId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="CreDtTm" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
+     *                   &lt;element name="InitgPty"&gt;
+     *                     &lt;complexType&gt;
+     *                       &lt;complexContent&gt;
+     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                           &lt;sequence&gt;
+     *                             &lt;element name="Id"&gt;
+     *                               &lt;complexType&gt;
+     *                                 &lt;complexContent&gt;
+     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                     &lt;sequence&gt;
+     *                                       &lt;element name="OrgId"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                     &lt;/sequence&gt;
+     *                                   &lt;/restriction&gt;
+     *                                 &lt;/complexContent&gt;
+     *                               &lt;/complexType&gt;
+     *                             &lt;/element&gt;
+     *                           &lt;/sequence&gt;
+     *                         &lt;/restriction&gt;
+     *                       &lt;/complexContent&gt;
+     *                     &lt;/complexType&gt;
+     *                   &lt;/element&gt;
+     *                 &lt;/sequence&gt;
+     *               &lt;/restriction&gt;
+     *             &lt;/complexContent&gt;
+     *           &lt;/complexType&gt;
+     *         &lt;/element&gt;
+     *         &lt;element name="OrgnlGrpInfAndSts"&gt;
+     *           &lt;complexType&gt;
+     *             &lt;complexContent&gt;
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                 &lt;sequence&gt;
+     *                   &lt;element name="OrgnlMsgId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="OrgnlMsgNmId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="GrpSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="StsRsnInf"&gt;
+     *                     &lt;complexType&gt;
+     *                       &lt;complexContent&gt;
+     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                           &lt;sequence&gt;
+     *                             &lt;element name="Rsn"&gt;
+     *                               &lt;complexType&gt;
+     *                                 &lt;complexContent&gt;
+     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                     &lt;sequence&gt;
+     *                                       &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                     &lt;/sequence&gt;
+     *                                   &lt;/restriction&gt;
+     *                                 &lt;/complexContent&gt;
+     *                               &lt;/complexType&gt;
+     *                             &lt;/element&gt;
+     *                           &lt;/sequence&gt;
+     *                         &lt;/restriction&gt;
+     *                       &lt;/complexContent&gt;
+     *                     &lt;/complexType&gt;
+     *                   &lt;/element&gt;
+     *                 &lt;/sequence&gt;
+     *               &lt;/restriction&gt;
+     *             &lt;/complexContent&gt;
+     *           &lt;/complexType&gt;
+     *         &lt;/element&gt;
+     *         &lt;element name="OrgnlPmtInfAndSts"&gt;
+     *           &lt;complexType&gt;
+     *             &lt;complexContent&gt;
+     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                 &lt;sequence&gt;
+     *                   &lt;element name="OrgnlPmtInfId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="OrgnlNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+     *                   &lt;element name="OrgnlCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+     *                   &lt;element name="PmtInfSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                   &lt;element name="StsRsnInf"&gt;
+     *                     &lt;complexType&gt;
+     *                       &lt;complexContent&gt;
+     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                           &lt;sequence&gt;
+     *                             &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+     *                           &lt;/sequence&gt;
+     *                         &lt;/restriction&gt;
+     *                       &lt;/complexContent&gt;
+     *                     &lt;/complexType&gt;
+     *                   &lt;/element&gt;
+     *                   &lt;element name="NbOfTxsPerSts" maxOccurs="unbounded" minOccurs="0"&gt;
+     *                     &lt;complexType&gt;
+     *                       &lt;complexContent&gt;
+     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                           &lt;sequence&gt;
+     *                             &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+     *                             &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                             &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+     *                           &lt;/sequence&gt;
+     *                         &lt;/restriction&gt;
+     *                       &lt;/complexContent&gt;
+     *                     &lt;/complexType&gt;
+     *                   &lt;/element&gt;
+     *                   &lt;element name="TxInfAndSts" maxOccurs="unbounded" minOccurs="0"&gt;
+     *                     &lt;complexType&gt;
+     *                       &lt;complexContent&gt;
+     *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                           &lt;sequence&gt;
+     *                             &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                             &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                             &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                             &lt;element name="StsRsnInf"&gt;
+     *                               &lt;complexType&gt;
+     *                                 &lt;complexContent&gt;
+     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                     &lt;sequence&gt;
+     *                                       &lt;element name="Rsn"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                     &lt;/sequence&gt;
+     *                                   &lt;/restriction&gt;
+     *                                 &lt;/complexContent&gt;
+     *                               &lt;/complexType&gt;
+     *                             &lt;/element&gt;
+     *                             &lt;element name="OrgnlTxRef"&gt;
+     *                               &lt;complexType&gt;
+     *                                 &lt;complexContent&gt;
+     *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                     &lt;sequence&gt;
+     *                                       &lt;element name="Amt"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="InstdAmt"&gt;
+     *                                                   &lt;complexType&gt;
+     *                                                     &lt;simpleContent&gt;
+     *                                                       &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+     *                                                         &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *                                                       &lt;/extension&gt;
+     *                                                     &lt;/simpleContent&gt;
+     *                                                   &lt;/complexType&gt;
+     *                                                 &lt;/element&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                       &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+     *                                       &lt;element name="PmtTpInf"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="SvcLvl"&gt;
+     *                                                   &lt;complexType&gt;
+     *                                                     &lt;complexContent&gt;
+     *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                                         &lt;sequence&gt;
+     *                                                           &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                                         &lt;/sequence&gt;
+     *                                                       &lt;/restriction&gt;
+     *                                                     &lt;/complexContent&gt;
+     *                                                   &lt;/complexType&gt;
+     *                                                 &lt;/element&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                       &lt;element name="CdtrAgt"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="FinInstnId"&gt;
+     *                                                   &lt;complexType&gt;
+     *                                                     &lt;complexContent&gt;
+     *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                                         &lt;sequence&gt;
+     *                                                           &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                                         &lt;/sequence&gt;
+     *                                                       &lt;/restriction&gt;
+     *                                                     &lt;/complexContent&gt;
+     *                                                   &lt;/complexType&gt;
+     *                                                 &lt;/element&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                       &lt;element name="Cdtr"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                       &lt;element name="CdtrAcct"&gt;
+     *                                         &lt;complexType&gt;
+     *                                           &lt;complexContent&gt;
+     *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                               &lt;sequence&gt;
+     *                                                 &lt;element name="Id"&gt;
+     *                                                   &lt;complexType&gt;
+     *                                                     &lt;complexContent&gt;
+     *                                                       &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *                                                         &lt;sequence&gt;
+     *                                                           &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+     *                                                         &lt;/sequence&gt;
+     *                                                       &lt;/restriction&gt;
+     *                                                     &lt;/complexContent&gt;
+     *                                                   &lt;/complexType&gt;
+     *                                                 &lt;/element&gt;
+     *                                               &lt;/sequence&gt;
+     *                                             &lt;/restriction&gt;
+     *                                           &lt;/complexContent&gt;
+     *                                         &lt;/complexType&gt;
+     *                                       &lt;/element&gt;
+     *                                     &lt;/sequence&gt;
+     *                                   &lt;/restriction&gt;
+     *                                 &lt;/complexContent&gt;
+     *                               &lt;/complexType&gt;
+     *                             &lt;/element&gt;
+     *                           &lt;/sequence&gt;
+     *                         &lt;/restriction&gt;
+     *                       &lt;/complexContent&gt;
+     *                     &lt;/complexType&gt;
+     *                   &lt;/element&gt;
+     *                 &lt;/sequence&gt;
+     *               &lt;/restriction&gt;
+     *             &lt;/complexContent&gt;
+     *           &lt;/complexType&gt;
+     *         &lt;/element&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -703,47 +703,47 @@ public class Pain002 {
          * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence>
-         *         &lt;element name="MsgId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="CreDtTm" type="{http://www.w3.org/2001/XMLSchema}dateTime"/>
-         *         &lt;element name="InitgPty">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;element name="Id">
-         *                     &lt;complexType>
-         *                       &lt;complexContent>
-         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                           &lt;sequence>
-         *                             &lt;element name="OrgId">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                           &lt;/sequence>
-         *                         &lt;/restriction>
-         *                       &lt;/complexContent>
-         *                     &lt;/complexType>
-         *                   &lt;/element>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
+         * &lt;complexType&gt;
+         *   &lt;complexContent&gt;
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *       &lt;sequence&gt;
+         *         &lt;element name="MsgId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="CreDtTm" type="{http://www.w3.org/2001/XMLSchema}dateTime"/&gt;
+         *         &lt;element name="InitgPty"&gt;
+         *           &lt;complexType&gt;
+         *             &lt;complexContent&gt;
+         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                 &lt;sequence&gt;
+         *                   &lt;element name="Id"&gt;
+         *                     &lt;complexType&gt;
+         *                       &lt;complexContent&gt;
+         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                           &lt;sequence&gt;
+         *                             &lt;element name="OrgId"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                           &lt;/sequence&gt;
+         *                         &lt;/restriction&gt;
+         *                       &lt;/complexContent&gt;
+         *                     &lt;/complexType&gt;
+         *                   &lt;/element&gt;
+         *                 &lt;/sequence&gt;
+         *               &lt;/restriction&gt;
+         *             &lt;/complexContent&gt;
+         *           &lt;/complexType&gt;
+         *         &lt;/element&gt;
+         *       &lt;/sequence&gt;
+         *     &lt;/restriction&gt;
+         *   &lt;/complexContent&gt;
+         * &lt;/complexType&gt;
          * </pre>
          * 
          * 
@@ -843,35 +843,35 @@ public class Pain002 {
              * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;element name="Id">
-             *           &lt;complexType>
-             *             &lt;complexContent>
-             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                 &lt;sequence>
-             *                   &lt;element name="OrgId">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                 &lt;/sequence>
-             *               &lt;/restriction>
-             *             &lt;/complexContent>
-             *           &lt;/complexType>
-             *         &lt;/element>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
+             * &lt;complexType&gt;
+             *   &lt;complexContent&gt;
+             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *       &lt;sequence&gt;
+             *         &lt;element name="Id"&gt;
+             *           &lt;complexType&gt;
+             *             &lt;complexContent&gt;
+             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                 &lt;sequence&gt;
+             *                   &lt;element name="OrgId"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                 &lt;/sequence&gt;
+             *               &lt;/restriction&gt;
+             *             &lt;/complexContent&gt;
+             *           &lt;/complexType&gt;
+             *         &lt;/element&gt;
+             *       &lt;/sequence&gt;
+             *     &lt;/restriction&gt;
+             *   &lt;/complexContent&gt;
+             * &lt;/complexType&gt;
              * </pre>
              * 
              * 
@@ -916,25 +916,25 @@ public class Pain002 {
                  * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
-                 * &lt;complexType>
-                 *   &lt;complexContent>
-                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *       &lt;sequence>
-                 *         &lt;element name="OrgId">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *       &lt;/sequence>
-                 *     &lt;/restriction>
-                 *   &lt;/complexContent>
-                 * &lt;/complexType>
+                 * &lt;complexType&gt;
+                 *   &lt;complexContent&gt;
+                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *       &lt;sequence&gt;
+                 *         &lt;element name="OrgId"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *       &lt;/sequence&gt;
+                 *     &lt;/restriction&gt;
+                 *   &lt;/complexContent&gt;
+                 * &lt;/complexType&gt;
                  * </pre>
                  * 
                  * 
@@ -979,15 +979,15 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="BICOrBEI" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 
@@ -1040,38 +1040,38 @@ public class Pain002 {
          * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence>
-         *         &lt;element name="OrgnlMsgId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="OrgnlMsgNmId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="GrpSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="StsRsnInf">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;element name="Rsn">
-         *                     &lt;complexType>
-         *                       &lt;complexContent>
-         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                           &lt;sequence>
-         *                             &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                           &lt;/sequence>
-         *                         &lt;/restriction>
-         *                       &lt;/complexContent>
-         *                     &lt;/complexType>
-         *                   &lt;/element>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
+         * &lt;complexType&gt;
+         *   &lt;complexContent&gt;
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *       &lt;sequence&gt;
+         *         &lt;element name="OrgnlMsgId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="OrgnlMsgNmId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="GrpSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="StsRsnInf"&gt;
+         *           &lt;complexType&gt;
+         *             &lt;complexContent&gt;
+         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                 &lt;sequence&gt;
+         *                   &lt;element name="Rsn"&gt;
+         *                     &lt;complexType&gt;
+         *                       &lt;complexContent&gt;
+         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                           &lt;sequence&gt;
+         *                             &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                           &lt;/sequence&gt;
+         *                         &lt;/restriction&gt;
+         *                       &lt;/complexContent&gt;
+         *                     &lt;/complexType&gt;
+         *                   &lt;/element&gt;
+         *                 &lt;/sequence&gt;
+         *               &lt;/restriction&gt;
+         *             &lt;/complexContent&gt;
+         *           &lt;/complexType&gt;
+         *         &lt;/element&gt;
+         *       &lt;/sequence&gt;
+         *     &lt;/restriction&gt;
+         *   &lt;/complexContent&gt;
+         * &lt;/complexType&gt;
          * </pre>
          * 
          * 
@@ -1197,25 +1197,25 @@ public class Pain002 {
              * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;element name="Rsn">
-             *           &lt;complexType>
-             *             &lt;complexContent>
-             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                 &lt;sequence>
-             *                   &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                 &lt;/sequence>
-             *               &lt;/restriction>
-             *             &lt;/complexContent>
-             *           &lt;/complexType>
-             *         &lt;/element>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
+             * &lt;complexType&gt;
+             *   &lt;complexContent&gt;
+             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *       &lt;sequence&gt;
+             *         &lt;element name="Rsn"&gt;
+             *           &lt;complexType&gt;
+             *             &lt;complexContent&gt;
+             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                 &lt;sequence&gt;
+             *                   &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                 &lt;/sequence&gt;
+             *               &lt;/restriction&gt;
+             *             &lt;/complexContent&gt;
+             *           &lt;/complexType&gt;
+             *         &lt;/element&gt;
+             *       &lt;/sequence&gt;
+             *     &lt;/restriction&gt;
+             *   &lt;/complexContent&gt;
+             * &lt;/complexType&gt;
              * </pre>
              * 
              * 
@@ -1260,15 +1260,15 @@ public class Pain002 {
                  * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
-                 * &lt;complexType>
-                 *   &lt;complexContent>
-                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *       &lt;sequence>
-                 *         &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *       &lt;/sequence>
-                 *     &lt;/restriction>
-                 *   &lt;/complexContent>
-                 * &lt;/complexType>
+                 * &lt;complexType&gt;
+                 *   &lt;complexContent&gt;
+                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *       &lt;sequence&gt;
+                 *         &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *       &lt;/sequence&gt;
+                 *     &lt;/restriction&gt;
+                 *   &lt;/complexContent&gt;
+                 * &lt;/complexType&gt;
                  * </pre>
                  * 
                  * 
@@ -1319,180 +1319,180 @@ public class Pain002 {
          * <p>The following schema fragment specifies the expected content contained within this class.
          * 
          * <pre>
-         * &lt;complexType>
-         *   &lt;complexContent>
-         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *       &lt;sequence>
-         *         &lt;element name="OrgnlPmtInfId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="OrgnlNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-         *         &lt;element name="OrgnlCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
-         *         &lt;element name="PmtInfSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *         &lt;element name="StsRsnInf">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *         &lt;element name="NbOfTxsPerSts" maxOccurs="unbounded" minOccurs="0">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-         *                   &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                   &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *         &lt;element name="TxInfAndSts" maxOccurs="unbounded" minOccurs="0">
-         *           &lt;complexType>
-         *             &lt;complexContent>
-         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                 &lt;sequence>
-         *                   &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                   &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                   &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                   &lt;element name="StsRsnInf">
-         *                     &lt;complexType>
-         *                       &lt;complexContent>
-         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                           &lt;sequence>
-         *                             &lt;element name="Rsn">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                           &lt;/sequence>
-         *                         &lt;/restriction>
-         *                       &lt;/complexContent>
-         *                     &lt;/complexType>
-         *                   &lt;/element>
-         *                   &lt;element name="OrgnlTxRef">
-         *                     &lt;complexType>
-         *                       &lt;complexContent>
-         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                           &lt;sequence>
-         *                             &lt;element name="Amt">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="InstdAmt">
-         *                                         &lt;complexType>
-         *                                           &lt;simpleContent>
-         *                                             &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
-         *                                               &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
-         *                                             &lt;/extension>
-         *                                           &lt;/simpleContent>
-         *                                         &lt;/complexType>
-         *                                       &lt;/element>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                             &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/>
-         *                             &lt;element name="PmtTpInf">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="SvcLvl">
-         *                                         &lt;complexType>
-         *                                           &lt;complexContent>
-         *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                               &lt;sequence>
-         *                                                 &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                                               &lt;/sequence>
-         *                                             &lt;/restriction>
-         *                                           &lt;/complexContent>
-         *                                         &lt;/complexType>
-         *                                       &lt;/element>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                             &lt;element name="CdtrAgt">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="FinInstnId">
-         *                                         &lt;complexType>
-         *                                           &lt;complexContent>
-         *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                               &lt;sequence>
-         *                                                 &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                                               &lt;/sequence>
-         *                                             &lt;/restriction>
-         *                                           &lt;/complexContent>
-         *                                         &lt;/complexType>
-         *                                       &lt;/element>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                             &lt;element name="Cdtr">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                             &lt;element name="CdtrAcct">
-         *                               &lt;complexType>
-         *                                 &lt;complexContent>
-         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                     &lt;sequence>
-         *                                       &lt;element name="Id">
-         *                                         &lt;complexType>
-         *                                           &lt;complexContent>
-         *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-         *                                               &lt;sequence>
-         *                                                 &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
-         *                                               &lt;/sequence>
-         *                                             &lt;/restriction>
-         *                                           &lt;/complexContent>
-         *                                         &lt;/complexType>
-         *                                       &lt;/element>
-         *                                     &lt;/sequence>
-         *                                   &lt;/restriction>
-         *                                 &lt;/complexContent>
-         *                               &lt;/complexType>
-         *                             &lt;/element>
-         *                           &lt;/sequence>
-         *                         &lt;/restriction>
-         *                       &lt;/complexContent>
-         *                     &lt;/complexType>
-         *                   &lt;/element>
-         *                 &lt;/sequence>
-         *               &lt;/restriction>
-         *             &lt;/complexContent>
-         *           &lt;/complexType>
-         *         &lt;/element>
-         *       &lt;/sequence>
-         *     &lt;/restriction>
-         *   &lt;/complexContent>
-         * &lt;/complexType>
+         * &lt;complexType&gt;
+         *   &lt;complexContent&gt;
+         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *       &lt;sequence&gt;
+         *         &lt;element name="OrgnlPmtInfId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="OrgnlNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+         *         &lt;element name="OrgnlCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+         *         &lt;element name="PmtInfSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *         &lt;element name="StsRsnInf"&gt;
+         *           &lt;complexType&gt;
+         *             &lt;complexContent&gt;
+         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                 &lt;sequence&gt;
+         *                   &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+         *                 &lt;/sequence&gt;
+         *               &lt;/restriction&gt;
+         *             &lt;/complexContent&gt;
+         *           &lt;/complexType&gt;
+         *         &lt;/element&gt;
+         *         &lt;element name="NbOfTxsPerSts" maxOccurs="unbounded" minOccurs="0"&gt;
+         *           &lt;complexType&gt;
+         *             &lt;complexContent&gt;
+         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                 &lt;sequence&gt;
+         *                   &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+         *                   &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                   &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+         *                 &lt;/sequence&gt;
+         *               &lt;/restriction&gt;
+         *             &lt;/complexContent&gt;
+         *           &lt;/complexType&gt;
+         *         &lt;/element&gt;
+         *         &lt;element name="TxInfAndSts" maxOccurs="unbounded" minOccurs="0"&gt;
+         *           &lt;complexType&gt;
+         *             &lt;complexContent&gt;
+         *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                 &lt;sequence&gt;
+         *                   &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                   &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                   &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                   &lt;element name="StsRsnInf"&gt;
+         *                     &lt;complexType&gt;
+         *                       &lt;complexContent&gt;
+         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                           &lt;sequence&gt;
+         *                             &lt;element name="Rsn"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                           &lt;/sequence&gt;
+         *                         &lt;/restriction&gt;
+         *                       &lt;/complexContent&gt;
+         *                     &lt;/complexType&gt;
+         *                   &lt;/element&gt;
+         *                   &lt;element name="OrgnlTxRef"&gt;
+         *                     &lt;complexType&gt;
+         *                       &lt;complexContent&gt;
+         *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                           &lt;sequence&gt;
+         *                             &lt;element name="Amt"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="InstdAmt"&gt;
+         *                                         &lt;complexType&gt;
+         *                                           &lt;simpleContent&gt;
+         *                                             &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+         *                                               &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+         *                                             &lt;/extension&gt;
+         *                                           &lt;/simpleContent&gt;
+         *                                         &lt;/complexType&gt;
+         *                                       &lt;/element&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                             &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+         *                             &lt;element name="PmtTpInf"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="SvcLvl"&gt;
+         *                                         &lt;complexType&gt;
+         *                                           &lt;complexContent&gt;
+         *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                               &lt;sequence&gt;
+         *                                                 &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                                               &lt;/sequence&gt;
+         *                                             &lt;/restriction&gt;
+         *                                           &lt;/complexContent&gt;
+         *                                         &lt;/complexType&gt;
+         *                                       &lt;/element&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                             &lt;element name="CdtrAgt"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="FinInstnId"&gt;
+         *                                         &lt;complexType&gt;
+         *                                           &lt;complexContent&gt;
+         *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                               &lt;sequence&gt;
+         *                                                 &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                                               &lt;/sequence&gt;
+         *                                             &lt;/restriction&gt;
+         *                                           &lt;/complexContent&gt;
+         *                                         &lt;/complexType&gt;
+         *                                       &lt;/element&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                             &lt;element name="Cdtr"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                             &lt;element name="CdtrAcct"&gt;
+         *                               &lt;complexType&gt;
+         *                                 &lt;complexContent&gt;
+         *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                     &lt;sequence&gt;
+         *                                       &lt;element name="Id"&gt;
+         *                                         &lt;complexType&gt;
+         *                                           &lt;complexContent&gt;
+         *                                             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+         *                                               &lt;sequence&gt;
+         *                                                 &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+         *                                               &lt;/sequence&gt;
+         *                                             &lt;/restriction&gt;
+         *                                           &lt;/complexContent&gt;
+         *                                         &lt;/complexType&gt;
+         *                                       &lt;/element&gt;
+         *                                     &lt;/sequence&gt;
+         *                                   &lt;/restriction&gt;
+         *                                 &lt;/complexContent&gt;
+         *                               &lt;/complexType&gt;
+         *                             &lt;/element&gt;
+         *                           &lt;/sequence&gt;
+         *                         &lt;/restriction&gt;
+         *                       &lt;/complexContent&gt;
+         *                     &lt;/complexType&gt;
+         *                   &lt;/element&gt;
+         *                 &lt;/sequence&gt;
+         *               &lt;/restriction&gt;
+         *             &lt;/complexContent&gt;
+         *           &lt;/complexType&gt;
+         *         &lt;/element&gt;
+         *       &lt;/sequence&gt;
+         *     &lt;/restriction&gt;
+         *   &lt;/complexContent&gt;
+         * &lt;/complexType&gt;
          * </pre>
          * 
          * 
@@ -1550,6 +1550,7 @@ public class Pain002 {
 
             /**
              * Gets the value of the orgnlNbOfTxs property.
+             * @return return orgnlNbOfTxs property
              * 
              */
             public byte getOrgnlNbOfTxs() {
@@ -1558,6 +1559,7 @@ public class Pain002 {
 
             /**
              * Sets the value of the orgnlNbOfTxs property.
+             * @param value orgnlNbOfTxs property
              * 
              */
             public void setOrgnlNbOfTxs(byte value) {
@@ -1566,6 +1568,7 @@ public class Pain002 {
 
             /**
              * Gets the value of the orgnlCtrlSum property.
+             * @return orgnlCtrlSum property
              * 
              */
             public float getOrgnlCtrlSum() {
@@ -1574,6 +1577,7 @@ public class Pain002 {
 
             /**
              * Sets the value of the orgnlCtrlSum property.
+             * @param value orgnlCtrlSum property
              * 
              */
             public void setOrgnlCtrlSum(float value) {
@@ -1647,7 +1651,7 @@ public class Pain002 {
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.NbOfTxsPerSts }
-             * 
+             * @return nbOfTxsPerSts
              * 
              */
             public List<Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.NbOfTxsPerSts> getNbOfTxsPerSts() {
@@ -1676,7 +1680,7 @@ public class Pain002 {
              * <p>
              * Objects of the following type(s) are allowed in the list
              * {@link Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts }
-             * 
+             * @return txInfAndSts property
              * 
              */
             public List<Pain002.CstmrPmtStsRpt.OrgnlPmtInfAndSts.TxInfAndSts> getTxInfAndSts() {
@@ -1693,17 +1697,17 @@ public class Pain002 {
              * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/>
-             *         &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *         &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
+             * &lt;complexType&gt;
+             *   &lt;complexContent&gt;
+             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *       &lt;sequence&gt;
+             *         &lt;element name="DtldNbOfTxs" type="{http://www.w3.org/2001/XMLSchema}byte"/&gt;
+             *         &lt;element name="DtldSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *         &lt;element name="DtldCtrlSum" type="{http://www.w3.org/2001/XMLSchema}float"/&gt;
+             *       &lt;/sequence&gt;
+             *     &lt;/restriction&gt;
+             *   &lt;/complexContent&gt;
+             * &lt;/complexType&gt;
              * </pre>
              * 
              * 
@@ -1725,7 +1729,7 @@ public class Pain002 {
 
                 /**
                  * Gets the value of the dtldNbOfTxs property.
-                 * 
+                 * @return dtldNbOfTxs
                  */
                 public byte getDtldNbOfTxs() {
                     return dtldNbOfTxs;
@@ -1733,6 +1737,7 @@ public class Pain002 {
 
                 /**
                  * Sets the value of the dtldNbOfTxs property.
+                 * @param value dtldNbOfTxs property
                  * 
                  */
                 public void setDtldNbOfTxs(byte value) {
@@ -1765,6 +1770,7 @@ public class Pain002 {
 
                 /**
                  * Gets the value of the dtldCtrlSum property.
+                 * @return dtldCtrlSum
                  * 
                  */
                 public float getDtldCtrlSum() {
@@ -1773,6 +1779,7 @@ public class Pain002 {
 
                 /**
                  * Sets the value of the dtldCtrlSum property.
+                 * @param value dtldCtrlSum value to set.
                  * 
                  */
                 public void setDtldCtrlSum(float value) {
@@ -1788,15 +1795,15 @@ public class Pain002 {
              * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
+             * &lt;complexType&gt;
+             *   &lt;complexContent&gt;
+             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *       &lt;sequence&gt;
+             *         &lt;element name="AddtlInf" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded" minOccurs="0"/&gt;
+             *       &lt;/sequence&gt;
+             *     &lt;/restriction&gt;
+             *   &lt;/complexContent&gt;
+             * &lt;/complexType&gt;
              * </pre>
              * 
              * 
@@ -1829,6 +1836,7 @@ public class Pain002 {
                  * <p>
                  * Objects of the following type(s) are allowed in the list
                  * {@link String }
+                 * @return addtlInf value
                  * 
                  * 
                  */
@@ -1848,142 +1856,142 @@ public class Pain002 {
              * <p>The following schema fragment specifies the expected content contained within this class.
              * 
              * <pre>
-             * &lt;complexType>
-             *   &lt;complexContent>
-             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *       &lt;sequence>
-             *         &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *         &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *         &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *         &lt;element name="StsRsnInf">
-             *           &lt;complexType>
-             *             &lt;complexContent>
-             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                 &lt;sequence>
-             *                   &lt;element name="Rsn">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                 &lt;/sequence>
-             *               &lt;/restriction>
-             *             &lt;/complexContent>
-             *           &lt;/complexType>
-             *         &lt;/element>
-             *         &lt;element name="OrgnlTxRef">
-             *           &lt;complexType>
-             *             &lt;complexContent>
-             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                 &lt;sequence>
-             *                   &lt;element name="Amt">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="InstdAmt">
-             *                               &lt;complexType>
-             *                                 &lt;simpleContent>
-             *                                   &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
-             *                                     &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
-             *                                   &lt;/extension>
-             *                                 &lt;/simpleContent>
-             *                               &lt;/complexType>
-             *                             &lt;/element>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                   &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/>
-             *                   &lt;element name="PmtTpInf">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="SvcLvl">
-             *                               &lt;complexType>
-             *                                 &lt;complexContent>
-             *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                                     &lt;sequence>
-             *                                       &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                                     &lt;/sequence>
-             *                                   &lt;/restriction>
-             *                                 &lt;/complexContent>
-             *                               &lt;/complexType>
-             *                             &lt;/element>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                   &lt;element name="CdtrAgt">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="FinInstnId">
-             *                               &lt;complexType>
-             *                                 &lt;complexContent>
-             *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                                     &lt;sequence>
-             *                                       &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                                     &lt;/sequence>
-             *                                   &lt;/restriction>
-             *                                 &lt;/complexContent>
-             *                               &lt;/complexType>
-             *                             &lt;/element>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                   &lt;element name="Cdtr">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                   &lt;element name="CdtrAcct">
-             *                     &lt;complexType>
-             *                       &lt;complexContent>
-             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                           &lt;sequence>
-             *                             &lt;element name="Id">
-             *                               &lt;complexType>
-             *                                 &lt;complexContent>
-             *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-             *                                     &lt;sequence>
-             *                                       &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
-             *                                     &lt;/sequence>
-             *                                   &lt;/restriction>
-             *                                 &lt;/complexContent>
-             *                               &lt;/complexType>
-             *                             &lt;/element>
-             *                           &lt;/sequence>
-             *                         &lt;/restriction>
-             *                       &lt;/complexContent>
-             *                     &lt;/complexType>
-             *                   &lt;/element>
-             *                 &lt;/sequence>
-             *               &lt;/restriction>
-             *             &lt;/complexContent>
-             *           &lt;/complexType>
-             *         &lt;/element>
-             *       &lt;/sequence>
-             *     &lt;/restriction>
-             *   &lt;/complexContent>
-             * &lt;/complexType>
+             * &lt;complexType&gt;
+             *   &lt;complexContent&gt;
+             *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *       &lt;sequence&gt;
+             *         &lt;element name="OrgnlInstrId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *         &lt;element name="OrgnlEndToEndId" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *         &lt;element name="TxSts" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *         &lt;element name="StsRsnInf"&gt;
+             *           &lt;complexType&gt;
+             *             &lt;complexContent&gt;
+             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                 &lt;sequence&gt;
+             *                   &lt;element name="Rsn"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                 &lt;/sequence&gt;
+             *               &lt;/restriction&gt;
+             *             &lt;/complexContent&gt;
+             *           &lt;/complexType&gt;
+             *         &lt;/element&gt;
+             *         &lt;element name="OrgnlTxRef"&gt;
+             *           &lt;complexType&gt;
+             *             &lt;complexContent&gt;
+             *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                 &lt;sequence&gt;
+             *                   &lt;element name="Amt"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="InstdAmt"&gt;
+             *                               &lt;complexType&gt;
+             *                                 &lt;simpleContent&gt;
+             *                                   &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+             *                                     &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+             *                                   &lt;/extension&gt;
+             *                                 &lt;/simpleContent&gt;
+             *                               &lt;/complexType&gt;
+             *                             &lt;/element&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                   &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+             *                   &lt;element name="PmtTpInf"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="SvcLvl"&gt;
+             *                               &lt;complexType&gt;
+             *                                 &lt;complexContent&gt;
+             *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                                     &lt;sequence&gt;
+             *                                       &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                                     &lt;/sequence&gt;
+             *                                   &lt;/restriction&gt;
+             *                                 &lt;/complexContent&gt;
+             *                               &lt;/complexType&gt;
+             *                             &lt;/element&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                   &lt;element name="CdtrAgt"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="FinInstnId"&gt;
+             *                               &lt;complexType&gt;
+             *                                 &lt;complexContent&gt;
+             *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                                     &lt;sequence&gt;
+             *                                       &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                                     &lt;/sequence&gt;
+             *                                   &lt;/restriction&gt;
+             *                                 &lt;/complexContent&gt;
+             *                               &lt;/complexType&gt;
+             *                             &lt;/element&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                   &lt;element name="Cdtr"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                   &lt;element name="CdtrAcct"&gt;
+             *                     &lt;complexType&gt;
+             *                       &lt;complexContent&gt;
+             *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                           &lt;sequence&gt;
+             *                             &lt;element name="Id"&gt;
+             *                               &lt;complexType&gt;
+             *                                 &lt;complexContent&gt;
+             *                                   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+             *                                     &lt;sequence&gt;
+             *                                       &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+             *                                     &lt;/sequence&gt;
+             *                                   &lt;/restriction&gt;
+             *                                 &lt;/complexContent&gt;
+             *                               &lt;/complexType&gt;
+             *                             &lt;/element&gt;
+             *                           &lt;/sequence&gt;
+             *                         &lt;/restriction&gt;
+             *                       &lt;/complexContent&gt;
+             *                     &lt;/complexType&gt;
+             *                   &lt;/element&gt;
+             *                 &lt;/sequence&gt;
+             *               &lt;/restriction&gt;
+             *             &lt;/complexContent&gt;
+             *           &lt;/complexType&gt;
+             *         &lt;/element&gt;
+             *       &lt;/sequence&gt;
+             *     &lt;/restriction&gt;
+             *   &lt;/complexContent&gt;
+             * &lt;/complexType&gt;
              * </pre>
              * 
              * 
@@ -2136,108 +2144,108 @@ public class Pain002 {
                  * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
-                 * &lt;complexType>
-                 *   &lt;complexContent>
-                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *       &lt;sequence>
-                 *         &lt;element name="Amt">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="InstdAmt">
-                 *                     &lt;complexType>
-                 *                       &lt;simpleContent>
-                 *                         &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
-                 *                           &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
-                 *                         &lt;/extension>
-                 *                       &lt;/simpleContent>
-                 *                     &lt;/complexType>
-                 *                   &lt;/element>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *         &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/>
-                 *         &lt;element name="PmtTpInf">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="SvcLvl">
-                 *                     &lt;complexType>
-                 *                       &lt;complexContent>
-                 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                           &lt;sequence>
-                 *                             &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *                           &lt;/sequence>
-                 *                         &lt;/restriction>
-                 *                       &lt;/complexContent>
-                 *                     &lt;/complexType>
-                 *                   &lt;/element>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *         &lt;element name="CdtrAgt">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="FinInstnId">
-                 *                     &lt;complexType>
-                 *                       &lt;complexContent>
-                 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                           &lt;sequence>
-                 *                             &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *                           &lt;/sequence>
-                 *                         &lt;/restriction>
-                 *                       &lt;/complexContent>
-                 *                     &lt;/complexType>
-                 *                   &lt;/element>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *         &lt;element name="Cdtr">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *         &lt;element name="CdtrAcct">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="Id">
-                 *                     &lt;complexType>
-                 *                       &lt;complexContent>
-                 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                           &lt;sequence>
-                 *                             &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *                           &lt;/sequence>
-                 *                         &lt;/restriction>
-                 *                       &lt;/complexContent>
-                 *                     &lt;/complexType>
-                 *                   &lt;/element>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *       &lt;/sequence>
-                 *     &lt;/restriction>
-                 *   &lt;/complexContent>
-                 * &lt;/complexType>
+                 * &lt;complexType&gt;
+                 *   &lt;complexContent&gt;
+                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *       &lt;sequence&gt;
+                 *         &lt;element name="Amt"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="InstdAmt"&gt;
+                 *                     &lt;complexType&gt;
+                 *                       &lt;simpleContent&gt;
+                 *                         &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+                 *                           &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+                 *                         &lt;/extension&gt;
+                 *                       &lt;/simpleContent&gt;
+                 *                     &lt;/complexType&gt;
+                 *                   &lt;/element&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *         &lt;element name="ReqdExctnDt" type="{http://www.w3.org/2001/XMLSchema}date"/&gt;
+                 *         &lt;element name="PmtTpInf"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="SvcLvl"&gt;
+                 *                     &lt;complexType&gt;
+                 *                       &lt;complexContent&gt;
+                 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                           &lt;sequence&gt;
+                 *                             &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *                           &lt;/sequence&gt;
+                 *                         &lt;/restriction&gt;
+                 *                       &lt;/complexContent&gt;
+                 *                     &lt;/complexType&gt;
+                 *                   &lt;/element&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *         &lt;element name="CdtrAgt"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="FinInstnId"&gt;
+                 *                     &lt;complexType&gt;
+                 *                       &lt;complexContent&gt;
+                 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                           &lt;sequence&gt;
+                 *                             &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *                           &lt;/sequence&gt;
+                 *                         &lt;/restriction&gt;
+                 *                       &lt;/complexContent&gt;
+                 *                     &lt;/complexType&gt;
+                 *                   &lt;/element&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *         &lt;element name="Cdtr"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *         &lt;element name="CdtrAcct"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="Id"&gt;
+                 *                     &lt;complexType&gt;
+                 *                       &lt;complexContent&gt;
+                 *                         &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                           &lt;sequence&gt;
+                 *                             &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *                           &lt;/sequence&gt;
+                 *                         &lt;/restriction&gt;
+                 *                       &lt;/complexContent&gt;
+                 *                     &lt;/complexType&gt;
+                 *                   &lt;/element&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *       &lt;/sequence&gt;
+                 *     &lt;/restriction&gt;
+                 *   &lt;/complexContent&gt;
+                 * &lt;/complexType&gt;
                  * </pre>
                  * 
                  * 
@@ -2418,23 +2426,23 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="InstdAmt">
-                     *           &lt;complexType>
-                     *             &lt;simpleContent>
-                     *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
-                     *                 &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
-                     *               &lt;/extension>
-                     *             &lt;/simpleContent>
-                     *           &lt;/complexType>
-                     *         &lt;/element>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="InstdAmt"&gt;
+                     *           &lt;complexType&gt;
+                     *             &lt;simpleContent&gt;
+                     *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+                     *                 &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+                     *               &lt;/extension&gt;
+                     *             &lt;/simpleContent&gt;
+                     *           &lt;/complexType&gt;
+                     *         &lt;/element&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 
@@ -2479,13 +2487,13 @@ public class Pain002 {
                          * <p>The following schema fragment specifies the expected content contained within this class.
                          * 
                          * <pre>
-                         * &lt;complexType>
-                         *   &lt;simpleContent>
-                         *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>float">
-                         *       &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" />
-                         *     &lt;/extension>
-                         *   &lt;/simpleContent>
-                         * &lt;/complexType>
+                         * &lt;complexType&gt;
+                         *   &lt;simpleContent&gt;
+                         *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;float"&gt;
+                         *       &lt;attribute name="Ccy" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+                         *     &lt;/extension&gt;
+                         *   &lt;/simpleContent&gt;
+                         * &lt;/complexType&gt;
                          * </pre>
                          * 
                          * 
@@ -2503,6 +2511,7 @@ public class Pain002 {
 
                             /**
                              * Gets the value of the value property.
+                             * @return value of property.
                              * 
                              */
                             public float getValue() {
@@ -2511,6 +2520,7 @@ public class Pain002 {
 
                             /**
                              * Sets the value of the value property.
+                             * @param value to set.
                              * 
                              */
                             public void setValue(float value) {
@@ -2552,15 +2562,15 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="Nm" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 
@@ -2607,25 +2617,25 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="Id">
-                     *           &lt;complexType>
-                     *             &lt;complexContent>
-                     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *                 &lt;sequence>
-                     *                   &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                     *                 &lt;/sequence>
-                     *               &lt;/restriction>
-                     *             &lt;/complexContent>
-                     *           &lt;/complexType>
-                     *         &lt;/element>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="Id"&gt;
+                     *           &lt;complexType&gt;
+                     *             &lt;complexContent&gt;
+                     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *                 &lt;sequence&gt;
+                     *                   &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                     *                 &lt;/sequence&gt;
+                     *               &lt;/restriction&gt;
+                     *             &lt;/complexContent&gt;
+                     *           &lt;/complexType&gt;
+                     *         &lt;/element&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 
@@ -2670,15 +2680,15 @@ public class Pain002 {
                          * <p>The following schema fragment specifies the expected content contained within this class.
                          * 
                          * <pre>
-                         * &lt;complexType>
-                         *   &lt;complexContent>
-                         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                         *       &lt;sequence>
-                         *         &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                         *       &lt;/sequence>
-                         *     &lt;/restriction>
-                         *   &lt;/complexContent>
-                         * &lt;/complexType>
+                         * &lt;complexType&gt;
+                         *   &lt;complexContent&gt;
+                         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                         *       &lt;sequence&gt;
+                         *         &lt;element name="IBAN" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                         *       &lt;/sequence&gt;
+                         *     &lt;/restriction&gt;
+                         *   &lt;/complexContent&gt;
+                         * &lt;/complexType&gt;
                          * </pre>
                          * 
                          * 
@@ -2727,25 +2737,25 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="FinInstnId">
-                     *           &lt;complexType>
-                     *             &lt;complexContent>
-                     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *                 &lt;sequence>
-                     *                   &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                     *                 &lt;/sequence>
-                     *               &lt;/restriction>
-                     *             &lt;/complexContent>
-                     *           &lt;/complexType>
-                     *         &lt;/element>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="FinInstnId"&gt;
+                     *           &lt;complexType&gt;
+                     *             &lt;complexContent&gt;
+                     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *                 &lt;sequence&gt;
+                     *                   &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                     *                 &lt;/sequence&gt;
+                     *               &lt;/restriction&gt;
+                     *             &lt;/complexContent&gt;
+                     *           &lt;/complexType&gt;
+                     *         &lt;/element&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 
@@ -2790,15 +2800,15 @@ public class Pain002 {
                          * <p>The following schema fragment specifies the expected content contained within this class.
                          * 
                          * <pre>
-                         * &lt;complexType>
-                         *   &lt;complexContent>
-                         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                         *       &lt;sequence>
-                         *         &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                         *       &lt;/sequence>
-                         *     &lt;/restriction>
-                         *   &lt;/complexContent>
-                         * &lt;/complexType>
+                         * &lt;complexType&gt;
+                         *   &lt;complexContent&gt;
+                         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                         *       &lt;sequence&gt;
+                         *         &lt;element name="BIC" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                         *       &lt;/sequence&gt;
+                         *     &lt;/restriction&gt;
+                         *   &lt;/complexContent&gt;
+                         * &lt;/complexType&gt;
                          * </pre>
                          * 
                          * 
@@ -2847,25 +2857,25 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="SvcLvl">
-                     *           &lt;complexType>
-                     *             &lt;complexContent>
-                     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *                 &lt;sequence>
-                     *                   &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                     *                 &lt;/sequence>
-                     *               &lt;/restriction>
-                     *             &lt;/complexContent>
-                     *           &lt;/complexType>
-                     *         &lt;/element>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="SvcLvl"&gt;
+                     *           &lt;complexType&gt;
+                     *             &lt;complexContent&gt;
+                     *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *                 &lt;sequence&gt;
+                     *                   &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                     *                 &lt;/sequence&gt;
+                     *               &lt;/restriction&gt;
+                     *             &lt;/complexContent&gt;
+                     *           &lt;/complexType&gt;
+                     *         &lt;/element&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 
@@ -2910,15 +2920,15 @@ public class Pain002 {
                          * <p>The following schema fragment specifies the expected content contained within this class.
                          * 
                          * <pre>
-                         * &lt;complexType>
-                         *   &lt;complexContent>
-                         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                         *       &lt;sequence>
-                         *         &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                         *       &lt;/sequence>
-                         *     &lt;/restriction>
-                         *   &lt;/complexContent>
-                         * &lt;/complexType>
+                         * &lt;complexType&gt;
+                         *   &lt;complexContent&gt;
+                         *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                         *       &lt;sequence&gt;
+                         *         &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                         *       &lt;/sequence&gt;
+                         *     &lt;/restriction&gt;
+                         *   &lt;/complexContent&gt;
+                         * &lt;/complexType&gt;
                          * </pre>
                          * 
                          * 
@@ -2969,25 +2979,25 @@ public class Pain002 {
                  * <p>The following schema fragment specifies the expected content contained within this class.
                  * 
                  * <pre>
-                 * &lt;complexType>
-                 *   &lt;complexContent>
-                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *       &lt;sequence>
-                 *         &lt;element name="Rsn">
-                 *           &lt;complexType>
-                 *             &lt;complexContent>
-                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                 *                 &lt;sequence>
-                 *                   &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                 *                 &lt;/sequence>
-                 *               &lt;/restriction>
-                 *             &lt;/complexContent>
-                 *           &lt;/complexType>
-                 *         &lt;/element>
-                 *       &lt;/sequence>
-                 *     &lt;/restriction>
-                 *   &lt;/complexContent>
-                 * &lt;/complexType>
+                 * &lt;complexType&gt;
+                 *   &lt;complexContent&gt;
+                 *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *       &lt;sequence&gt;
+                 *         &lt;element name="Rsn"&gt;
+                 *           &lt;complexType&gt;
+                 *             &lt;complexContent&gt;
+                 *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                 *                 &lt;sequence&gt;
+                 *                   &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                 *                 &lt;/sequence&gt;
+                 *               &lt;/restriction&gt;
+                 *             &lt;/complexContent&gt;
+                 *           &lt;/complexType&gt;
+                 *         &lt;/element&gt;
+                 *       &lt;/sequence&gt;
+                 *     &lt;/restriction&gt;
+                 *   &lt;/complexContent&gt;
+                 * &lt;/complexType&gt;
                  * </pre>
                  * 
                  * 
@@ -3032,15 +3042,15 @@ public class Pain002 {
                      * <p>The following schema fragment specifies the expected content contained within this class.
                      * 
                      * <pre>
-                     * &lt;complexType>
-                     *   &lt;complexContent>
-                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-                     *       &lt;sequence>
-                     *         &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/>
-                     *       &lt;/sequence>
-                     *     &lt;/restriction>
-                     *   &lt;/complexContent>
-                     * &lt;/complexType>
+                     * &lt;complexType&gt;
+                     *   &lt;complexContent&gt;
+                     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+                     *       &lt;sequence&gt;
+                     *         &lt;element name="Cd" type="{http://www.w3.org/2001/XMLSchema}string"/&gt;
+                     *       &lt;/sequence&gt;
+                     *     &lt;/restriction&gt;
+                     *   &lt;/complexContent&gt;
+                     * &lt;/complexType&gt;
                      * </pre>
                      * 
                      * 

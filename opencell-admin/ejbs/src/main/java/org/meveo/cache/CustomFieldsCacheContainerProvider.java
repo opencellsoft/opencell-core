@@ -59,14 +59,14 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     CustomEntityTemplateService customEntityTemplateService;
 
     /**
-     * Groups custom field templates applicable to the same entity type. Key format: <custom field template appliesTo code>. Value is a map of custom field templates identified by
-     * a template code
+     * Groups custom field templates applicable to the same entity type. Key format: &lt;custom field template appliesTo code&gt;. Value is a map of custom field templates
+     * identified by a template code
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cft-cache")
     private Cache<String, Map<String, CustomFieldTemplate>> cftsByAppliesTo;
 
     /**
-     * Contains custom entity templates.Key format: <CET code>, value: <CustomEntityTemplate>
+     * Contains custom entity templates.Key format: &lt;CET code&gt;, value: &lt;CustomEntityTemplate&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cet-cache")
     private Cache<String, CustomEntityTemplate> cetsByCode;
@@ -88,7 +88,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Populate custom field template cache
+     * Populate custom field template cache.
      */
     private void populateCFTCache() {
 
@@ -143,7 +143,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Populate custom entity template cache
+     * Populate custom entity template cache.
      */
     private void populateCETCache() {
 
@@ -164,7 +164,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Get a summary of cached information
+     * Get a summary of cached information.
      * 
      * @return A map containing cache information with cache name as a key and cache as a value
      */
@@ -179,7 +179,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Refresh cache by name
+     * Refresh cache by name.
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
@@ -196,7 +196,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value
+     * Store mapping between CF code and value storage in cache time period and cache by CFT appliesTo value.
      * 
      * @param cft Custom field template definition
      */
@@ -237,7 +237,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Remove mapping between CF code and value storage in cache time period and remove from cache by CFT appliesTo value
+     * Remove mapping between CF code and value storage in cache time period and remove from cache by CFT appliesTo value.
      * 
      * @param cft Custom field template definition
      */
@@ -265,7 +265,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Store custom entity template to cache
+     * Store custom entity template to cache.
      * 
      * @param cet Custom entity template definition
      */
@@ -281,7 +281,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Remove custom entity template from cache
+     * Remove custom entity template from cache.
      * 
      * @param cet Custom entity template definition
      */
@@ -297,10 +297,9 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * Get custom field templates for a given entity (appliesTo value)
+     * Get custom field templates for a given entity (appliesTo value).
      * 
      * @param appliesTo entity (appliesTo value)
-     * @param provider Provider
      * @return A map of custom field templates with template code as a key
      */
     @Lock(LockType.READ)

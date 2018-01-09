@@ -22,7 +22,6 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.AccountOperationService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -87,7 +86,7 @@ public class PaymentCardJobBean {
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
             while (subListCreator.isHasNext()) {
-                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO,operationCategory));
+                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, operationCategory));
 
                 if (subListCreator.isHasNext()) {
                     try {

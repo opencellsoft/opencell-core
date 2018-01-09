@@ -46,7 +46,7 @@ public class MultiLanguageFieldApi extends BaseApi {
     private TradingLanguageService tradingLanguageService;
 
     /**
-     * Find entity field translations for a particular entity, field (defaults to "description") and a language (optional)
+     * Find entity field translations for a particular entity, field (defaults to "description") and a language (optional).
      * 
      * @param entityClassName Entity class name
      * @param code Entity code
@@ -55,7 +55,7 @@ public class MultiLanguageFieldApi extends BaseApi {
      * @param fieldname Field name. Defaults to "description" if not provided
      * @param languageCode 3 letter language code
      * @return A list of field value translations
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes" })
     public CatMessagesListDto find(String entityClassName, String code, Date validFrom, Date validTo, String fieldname, String languageCode) throws MeveoApiException {
@@ -101,7 +101,7 @@ public class MultiLanguageFieldApi extends BaseApi {
     }
 
     /**
-     * Remove field value translation for a given entity, field (optional) and language (optional)
+     * Remove field value translation for a given entity, field (optional) and language (optional).
      * 
      * @param entityClassName Entity class name
      * @param code Entity code
@@ -109,8 +109,8 @@ public class MultiLanguageFieldApi extends BaseApi {
      * @param validTo Validity dates - to
      * @param fieldname Field name. Optional
      * @param languageCode 3 letter language code. Optional
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void remove(String entityClassName, String code, Date validFrom, Date validTo, String fieldname, String languageCode) throws MeveoApiException, BusinessException {
@@ -166,11 +166,11 @@ public class MultiLanguageFieldApi extends BaseApi {
     }
 
     /**
-     * Set translated entity field values
+     * Set translated entity field values.
      * 
-     * @param translationInfo
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param translationInfos translation.
+     * @throws MeveoApiException meveo api exception.
+     * @throws BusinessException business exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public void update(List<CatMessagesDto> translationInfos) throws MeveoApiException, BusinessException {
@@ -235,7 +235,7 @@ public class MultiLanguageFieldApi extends BaseApi {
      * @param fieldname Field name. Optional
      * @param languageCode 3 letter language code. Optional
      * @return A list of entity field value translations
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public CatMessagesListDto list(String entityClassName, String fieldname, String languageCode) throws MeveoApiException {

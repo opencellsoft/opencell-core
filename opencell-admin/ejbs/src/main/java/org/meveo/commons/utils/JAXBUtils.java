@@ -29,31 +29,40 @@ import javax.xml.bind.Unmarshaller;
  * Utils class for working with jaxb.
  * 
  * @author anasseh
- * @created 23.12.2010
  * 
  */
 public class JAXBUtils {
 
-    
-    @SuppressWarnings( "rawtypes" )
+    @SuppressWarnings("rawtypes")
     public static Object unmarshaller(Class clazz, File file) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(clazz);
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         return unmarshaller.unmarshal(file);
     }
-    
+
+    /**
+     * @param obj object to marshall
+     * @param file file contains the result
+     * @throws JAXBException jaxb exception.
+     */
     public static void marshaller(Object obj, File file) throws JAXBException {
-    	marshaller(obj, file, null);
+        marshaller(obj, file, null);
     }
 
-	public static void marshaller(Object obj, File file, String schemaLocation) throws JAXBException {
+    /**
+     * @param obj object to marshal
+     * @param file file contains the result
+     * @param schemaLocation schema location
+     * @throws JAXBException jaxb exception.
+     */
+    public static void marshaller(Object obj, File file, String schemaLocation) throws JAXBException {
         JAXBContext jc = JAXBContext.newInstance(obj.getClass());
         Marshaller marshaller = jc.createMarshaller();
-        marshaller.setProperty( Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE );
-        if(schemaLocation != null){
-        	 marshaller.setProperty( Marshaller.JAXB_SCHEMA_LOCATION,schemaLocation);        	
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+        if (schemaLocation != null) {
+            marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
         }
         marshaller.marshal(obj, file);
-		
-	}
+
+    }
 }

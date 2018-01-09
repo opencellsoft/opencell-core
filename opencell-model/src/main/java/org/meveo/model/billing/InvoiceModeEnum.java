@@ -42,6 +42,8 @@ public enum InvoiceModeEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id id of invoice code enum
+	 * @return invoice mode.
 	 */
 	public static InvoiceModeEnum getValue(Integer id) {
 		if (id != null) {

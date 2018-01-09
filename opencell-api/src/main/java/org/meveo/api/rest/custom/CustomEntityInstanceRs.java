@@ -26,7 +26,7 @@ import org.meveo.api.rest.IBaseRs;
 public interface CustomEntityInstanceRs extends IBaseRs {
 
     /**
-     * Create a new custom entity instance using a custom entity template
+     * Create a new custom entity instance using a custom entity template.
      *
      * @param dto The custom entity instance's data
      * @param customEntityTemplateCode The custom entity template's code
@@ -59,7 +59,7 @@ public interface CustomEntityInstanceRs extends IBaseRs {
     ActionStatus remove(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     /**
-     * Find a #### with a given (exemple) code 
+     * Find a #### with a given (exemple) code .
      * 
      * @param customEntityTemplateCode The custom entity template's code
      * @param code The custom entity instance's code
@@ -70,7 +70,7 @@ public interface CustomEntityInstanceRs extends IBaseRs {
     CustomEntityInstanceResponseDto find(@PathParam("customEntityTemplateCode") String customEntityTemplateCode, @PathParam("code") String code);
 
     /**
-     * List custom entity instances
+     * List custom entity instances.
      * 
      * @param customEntityTemplateCode The custom entity instance's code
      * @return A list of custom entity instances
@@ -80,10 +80,10 @@ public interface CustomEntityInstanceRs extends IBaseRs {
     CustomEntityInstancesResponseDto list(@PathParam("customEntityTemplateCode") String customEntityTemplateCode);
 
     /**
-     * Create new or update an existing custom entity instance with a given code
+     * Create new or update an existing custom entity instance with a given code.
      * 
      * @param dto The custom entity instance's data
-     * @param postData The custom entity instance's data
+     * @param customEntityTemplateCode code of custome entity template.
      * @return Request processing status
      */
     @POST

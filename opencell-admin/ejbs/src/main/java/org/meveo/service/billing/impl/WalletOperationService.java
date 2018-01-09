@@ -203,17 +203,16 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	/**
 	 * Get wallet operation balance.
 	 * 
-	 * @param em
-	 * @param seller
-	 * @param customer
-	 * @param customerAccount
-	 * @param billingAccount
-	 * @param userAccount
-	 * @param startDate
-	 * @param endDate
-	 * @param amountWithTax
+     * @param seller seller
+     * @param customer customer
+     * @param customerAccount customer account
+     * @param billingAccount billing account
+     * @param userAccount user account
+     * @param startDate start date
+     * @param endDate end date
+     * @param amountWithTax amount with tax
      * @param mode : 1 - current (OPEN or RESERVED), 2 - reserved (RESERVED), 3 - open (OPEN)
-	 * @return
+     * @return balance amount.
 	 */
     public BigDecimal getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
             Date endDate, boolean amountWithTax, int mode) {
@@ -816,14 +815,12 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	/**
 	 * Apply the charge at its nextChargeDate.
 	 * 
-	 * @param em
-	 * @param chargeInstance
-	 * @param reimbursement
-	 * @param recurringChargeTemplate
-	 * @param isVirtual is it a virtual operation
-	 * @param creator
-	 * @return 
-	 * @throws BusinessException
+     * @param chargeInstance charge instance
+     * @param reimbursement true/false
+     * @param recurringChargeTemplate recurring charge template
+     * @param forSchedule true/false
+     * @return list of wallet operation.
+     * @throws BusinessException business exeption.
 	 */
     public List<WalletOperation> applyReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate,
             boolean forSchedule) throws BusinessException {
@@ -927,15 +924,13 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 	}
 
     /**
-     * Create wallet operations for a recurring charges between given dates for Virtual operation
+     * Create wallet operations for a recurring charges between given dates for Virtual operation.
      * 
      * @param chargeInstance Recurring charge instance
-     * @param inputQuantity Quantity as received
-     * @param quantity Quantity as calculated
      * @param fromDate Recurring charge application start
      * @param toDate Recurring charge application end
      * @return Wallet operations
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
 

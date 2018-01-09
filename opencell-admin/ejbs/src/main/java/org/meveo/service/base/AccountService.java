@@ -38,7 +38,7 @@ import org.meveo.model.shared.Name;
 /**
  * @author phung
  *
- * @param <P>
+ * @param <P> extends account entity.
  */
 public abstract class AccountService<P extends AccountEntity> extends BusinessService<P> {
 

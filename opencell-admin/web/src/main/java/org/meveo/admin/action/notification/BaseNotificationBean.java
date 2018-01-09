@@ -27,7 +27,7 @@ import org.meveo.service.notification.DefaultObserver;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Aug 11, 2016 11:02:44 AM
+ * @since Aug 11, 2016 11:02:44 AM
  **/
 public abstract class BaseNotificationBean<T extends Notification>  extends UpdateMapTypeFieldBean<T>{
 

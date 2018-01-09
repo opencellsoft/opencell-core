@@ -505,10 +505,10 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void updateCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -531,10 +531,10 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     /**
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdateCreditCategory(CreditCategoryDto postData) throws MeveoApiException, BusinessException {
 

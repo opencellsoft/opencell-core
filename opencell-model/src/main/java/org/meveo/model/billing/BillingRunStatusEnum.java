@@ -47,6 +47,8 @@ public enum BillingRunStatusEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id id of billing run status
+	 * @return instance of BillingRunStatusEnum
 	 */
 	public static BillingRunStatusEnum getValue(Integer id) {
 		if (id != null) {

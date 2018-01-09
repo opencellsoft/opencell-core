@@ -227,7 +227,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Calculate custom field template AppliesTo value for a given entity. AppliesTo consist of a prefix and optionally one or more entity fields. e.g. JOB_<jobTemplate>
+     * Calculate custom field template AppliesTo value for a given entity. AppliesTo consist of a prefix and optionally one or more entity fields. e.g. JOB_jobTemplate
      * 
      * @param entity Entity
      * @return A appliesTo value
@@ -256,12 +256,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates) throws BusinessException {
         try {
@@ -274,25 +274,26 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates) throws BusinessException {
         return createMissingTemplates(appliesTo, templates, false, false);
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param entity Entity that custom field templates apply to
      * @param templates A list of templates to check
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
+     * @param updateExisting true if updating existing templates
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(ICustomFieldEntity entity, Collection<CustomFieldTemplate> templates, boolean updateExisting,
             boolean removeOrphans) throws BusinessException {
@@ -305,13 +306,14 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Check and create missing templates given a list of templates
+     * Check and create missing templates given a list of templates.
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @param templates A list of templates to check
      * @param removeOrphans When set to true, this will remove custom field templates that are not included in the templates collection.
+     * @param updateExisting true when updating missing template.
      * @return A complete list of templates for a given entity. Mapped by a custom field template key.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Map<String, CustomFieldTemplate> createMissingTemplates(String appliesTo, Collection<CustomFieldTemplate> templates, boolean updateExisting, boolean removeOrphans)
             throws BusinessException {
@@ -359,11 +361,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Copy and associate a given custom field template to a given target entity type
+     * Copy and associate a given custom field template to a given target entity type.
      * 
      * @param cft Custom field template to copy
      * @param targetAppliesTo Target CFT.appliesTo value associate custom field template with
-     * @throws BusinessException
+     * @return custom field template
+     * @throws BusinessException business exception.
      */
     public CustomFieldTemplate copyCustomFieldTemplate(CustomFieldTemplate cft, String targetAppliesTo) throws BusinessException {
 

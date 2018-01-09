@@ -56,9 +56,7 @@ public class WalletTemplateBean extends BaseBean<WalletTemplate> {
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return wallet template.
 	 */
 	@Override
 	public WalletTemplate initEntity() {

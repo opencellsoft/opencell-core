@@ -26,8 +26,9 @@ public class RunTimeLogger implements org.slf4j.Logger {
 
     /**
      * 
-     * @param clazz
-     * @param scriptCode
+     * @param clazz class to log
+     * @param scriptCode code of script
+     * @param scriptServiceName script service name
      */
     public RunTimeLogger(Class<?> clazz, String scriptCode, String scriptServiceName) {
         this.clazz = clazz;
@@ -37,9 +38,9 @@ public class RunTimeLogger implements org.slf4j.Logger {
 
     /**
      * 
-     * @param level
-     * @param message
-     * @param throwable
+     * @param level log's level
+     * @param message message
+     * @param throwable general excpetion.
      */
     public void log(String level, String message, Throwable throwable) {
         log(level, message, throwable.getMessage());
@@ -50,9 +51,9 @@ public class RunTimeLogger implements org.slf4j.Logger {
 
     /**
      * 
-     * @param level
-     * @param message
-     * @param args
+     * @param level log level
+     * @param message message
+     * @param args arguments.
      */
     public void log(String level, String message, Object... args) {
         StringBuffer sb = new StringBuffer();

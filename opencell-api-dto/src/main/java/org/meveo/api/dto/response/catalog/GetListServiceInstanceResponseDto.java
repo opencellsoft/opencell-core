@@ -11,7 +11,6 @@ import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * @author Edward P. Legaspi
- * @created 26 Oct 2017
  */
 @XmlRootElement(name = "GetListServiceInstanceResponse")
 @XmlAccessorType(XmlAccessType.FIELD)

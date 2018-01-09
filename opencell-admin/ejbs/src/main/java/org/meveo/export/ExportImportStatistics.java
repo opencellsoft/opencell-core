@@ -86,9 +86,9 @@ public class ExportImportStatistics {
     }
 
     /**
-     * Merge statistics from two
+     * Merge statistics from two.
      * 
-     * @param stats
+     * @param stats statistics
      */
     @SuppressWarnings("rawtypes")
     public void mergeStatistics(ExportImportStatistics stats) {
@@ -106,7 +106,7 @@ public class ExportImportStatistics {
     }
 
     /**
-     * Add to delete statistics
+     * Add to delete statistics.
      * 
      * @param clazz Class
      * @param entityCount Extra count value
@@ -154,9 +154,9 @@ public class ExportImportStatistics {
     }
 
     /**
-     * Store a collection of fields that were not imported because of difference in model - field no longer exists in current model
+     * Store a collection of fields that were not imported because of difference in model - field no longer exists in current model.
      * 
-     * @param exportTemplate Export template used
+     * @param exportTemplateName Export template used
      * @param fields A collection of field names
      */
     public void addFieldsNotImported(String exportTemplateName, Collection<String> fields) {

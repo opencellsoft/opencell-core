@@ -404,8 +404,7 @@ public class SubscriptionApi extends BaseApi {
                 }
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
-                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
-                serviceInstance.setTerminationDate(subscription.getTerminationDate());
+                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());                
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -788,8 +787,10 @@ public class SubscriptionApi extends BaseApi {
     /**
      * @param userAccountCode user account code
      * @param mergedCF true/false (true if we want the merged CF in return)
+     * @param sortBy name of column to be sorted
+     * @param sortOrder ASC/DESC
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception
      */
     public SubscriptionsDto listByUserAccount(String userAccountCode, boolean mergedCF, String sortBy, SortOrder sortOrder) throws MeveoApiException {
 
@@ -817,11 +818,10 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * @param from first row
-     * @param numberOfRows number of rows
-     * @param mergedCF
+     * @param mergedCF truf if merging inherited CF
+     * @param pagingAndFiltering paging and filtering.
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception
      */
     public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
 
@@ -881,12 +881,12 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * Create or update Subscription based on subscription code
+     * Create or update Subscription based on subscription code.
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(SubscriptionDto postData) throws MeveoApiException, BusinessException {
         if (subscriptionService.findByCode(postData.getCode()) == null) {
@@ -1175,13 +1175,13 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * 
-     * @param subscriptionCode
-     * @param suspensionDate
-     * @throws MissingParameterException
-     * @throws EntityDoesNotExistsException
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
+     * @param subscriptionCode subscription code
+     * @param suspensionDate suspension data
+     * @throws MissingParameterException missiong parameter exeption
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrection service isntance exception
+     * @throws BusinessException business exception.
      */
     public void resumeSubscription(String subscriptionCode, Date suspensionDate)
             throws MissingParameterException, EntityDoesNotExistsException, IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -1197,23 +1197,39 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
+     * @param provisionningServicesRequestDto provisioning service request.
      * 
-     * @param suspendServicesRequestDto
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
      */
     public void suspendServices(OperationServicesRequestDto provisionningServicesRequestDto)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
         suspendOrResumeServices(provisionningServicesRequestDto, true);
     }
 
+    /**
+     * @param provisionningServicesRequestDto provisioning service request.
+     * 
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
+     */
     public void resumeServices(OperationServicesRequestDto provisionningServicesRequestDto)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
         suspendOrResumeServices(provisionningServicesRequestDto, false);
     }
 
+    /**
+     * @param postData operation serivices request
+     * @param isToSuspend  true if it is to be suspended.
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorrect service instance exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
+     */
     private void suspendOrResumeServices(OperationServicesRequestDto postData, boolean isToSuspend)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException, MeveoApiException {
         if (postData == null) {
@@ -1397,14 +1413,14 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * Convert SubscriptionRenewalDto to an entity and validate the data converted
+     * Convert SubscriptionRenewalDto to an entity and validate the data converted.
      * 
      * @param renewalInfo Entity object to populate. Will instantiate a new object if null.
      * @param renewalInfoDto SubscriptionRenewalDto
      * @param subscriptionRenewed is subscription renewed already. If true, allows to update only daysNotifyRenewal, endOfTermAction, extendAgreementPeriod fields.
      * @return Entity object populated or instantiated
-     * @throws InvalidParameterException
-     * @throws MissingParameterException
+     * @throws InvalidParameterException invalid parameter exception
+     * @throws MissingParameterException missing parameter exception
      */
     public SubscriptionRenewal subscriptionRenewalFromDto(SubscriptionRenewal renewalInfo, SubscriptionRenewalDto renewalInfoDto, boolean subscriptionRenewed)
             throws InvalidParameterException, MissingParameterException {

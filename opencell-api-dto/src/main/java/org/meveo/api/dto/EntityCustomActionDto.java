@@ -62,10 +62,10 @@ public class EntityCustomActionDto extends BaseDto {
     private ScriptInstanceDto script;
 
     /**
-     * Where action should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;action:&lt;action relative position in tab&gt;<br/>
-     * <br/>
+     * Where action should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;action:&lt;action relative position in tab&gt;
      * 
-     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * 
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
      * 
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;action:0 OR tab:Second tab:1;action:1

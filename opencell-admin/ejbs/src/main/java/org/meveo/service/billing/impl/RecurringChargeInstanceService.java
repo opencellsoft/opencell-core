@@ -343,12 +343,10 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
      * Apply recurring charges between given dates to a user account for a Virtual operation. Does not create/update/persist any entity.
 	 * 
      * @param chargeInstance Recurring charge instance
-     * @param quantity Quantity as calculated
      * @param fromDate Recurring charge application start
      * @param toDate Recurring charge application end
-     * 
-	 * @return Wallet operations
-	 * @throws BusinessException
+     * @return list of wallet operations
+     * @throws BusinessException business exception.
 	 */
     public List<WalletOperation> applyRecurringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
 

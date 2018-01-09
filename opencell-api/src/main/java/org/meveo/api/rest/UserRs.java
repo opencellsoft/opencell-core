@@ -33,82 +33,82 @@ public interface UserRs extends IBaseRs {
     /**
      * Create user.
      * 
-     * @param postData
-     * @return
+     * @param postData user to be created
+     * @return action status
      */
     @POST
     @Path("/")
-    public ActionStatus create(UserDto postData);
+    ActionStatus create(UserDto postData);
 
     /**
      * Update user.
      * 
-     * @param postData
-     * @return
+     * @param postData user to be updated
+     * @return action status
      */
     @PUT
     @Path("/")
-    public ActionStatus update(UserDto postData);
+    ActionStatus update(UserDto postData);
 
     /**
      * Remove user with a given username.
      * 
-     * @param username
-     * @return
+     * @param username user name
+     * @return action status
      */
     @DELETE
     @Path("/{username}")
-    public ActionStatus remove(@PathParam("username") String username);
+    ActionStatus remove(@PathParam("username") String username);
 
     /**
      * Search user with a given username.
      * 
-     * @param username
-     * @return
+     * @param username user name
+     * @return user
      */
     @GET
     @Path("/")
-    public GetUserResponse find(@QueryParam("username") String username);
+    GetUserResponse find(@QueryParam("username") String username);
 
     /**
-     * Create or update user based on the username
+     * Create or update user based on the username.
      * 
-     * @param postData
-     * @return
+     * @param postData user to be created or updated
+     * @return action status
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(UserDto postData);
+    ActionStatus createOrUpdate(UserDto postData);
     
     /**
      * Creates a user in keycloak and core.
-     * @param postData
-     * @return
+     * @param postData user to be created externally
+     * @return action status
      */
     @POST
     @Path("/external")
-    public ActionStatus createExternalUser(UserDto postData);
+    ActionStatus createExternalUser(UserDto postData);
 
     /**
      * Updates a user in keycloak and core given a username.
-     * @param postData
-     * @return
+     * @param postData user to be updated
+     * @return action status
      */
     @PUT
     @Path("/external/")
-    public ActionStatus updateExternalUser(UserDto postData);
+    ActionStatus updateExternalUser(UserDto postData);
 
     /**
      * Deletes a user in keycloak and core given a username.
      * @param username the username of the user to be deleted.
-     * @return
+     * @return action status
      */
     @DELETE
     @Path("/external/{username}")
-    public ActionStatus deleteExternalUser(@PathParam("username") String username);
+    ActionStatus deleteExternalUser(@PathParam("username") String username);
 
     /**
-     * List users matching a given criteria
+     * List users matching a given criteria.
      * 
      * @param query Search criteria. Query is composed of the following: filterKey1:filterValue1|filterKey2:filterValue2
      * @param fields Data retrieval options/fieldnames separated by a comma. Specify "securedEntities" in fields to include the secured entities.
@@ -120,17 +120,17 @@ public interface UserRs extends IBaseRs {
      */
     @GET
     @Path("/list")
-    public UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
+    UsersDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit,
             @DefaultValue("userName") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
-     * List users matching a given criteria
+     * List users matching a given criteria.
      * 
      * @param pagingAndFiltering Pagination and filtering criteria. Specify "securedEntities" in fields to include the secured entities.
      * @return A list of users
      */
     @POST
     @Path("/list")
-    public UsersDto listPost(PagingAndFiltering pagingAndFiltering);
+    UsersDto listPost(PagingAndFiltering pagingAndFiltering);
 
 }

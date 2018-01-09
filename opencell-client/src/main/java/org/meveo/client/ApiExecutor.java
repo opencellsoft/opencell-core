@@ -17,19 +17,19 @@ public class ApiExecutor {
 
     /**
      * 
-     * @param api
-     * @param url
-     * @param userName
-     * @param password
-     * @param method
-     * @param cotentType
-     * @param headers
-     * @param params
-     * @param body
-     * @param authMode
-     * @param proxyInfos
+     * @param api api to be executed
+     * @param url url to call
+     * @param userName user name
+     * @param password password
+     * @param method method to be invoked
+     * @param cotentType content type
+     * @param headers map of header
+     * @param params map of parametter
+     * @param body body of reponse
+     * @param authMode authentication method
+     * @param proxyInfos proxy infos.
      * @param tlsVersion TLSv1.1 or TLSv1.2 ...
-     * @return
+     * @return http reponse.
      */
 	public HttpResponse executeApi(String api, String url, String userName, String password, HttpMethodsEnum method, CommonContentTypeEnum cotentType, Map<String, String> headers, 
 			Map<String, String> params, String body, AuthentificationModeEnum authMode ,ProxyInfos proxyInfos,String tlsVersion) {

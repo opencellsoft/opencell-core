@@ -118,16 +118,16 @@ public class QuoteApi extends BaseApi {
     private TerminationReasonService terminationReasonService;
 
     /**
-     * Register a quote from TMForumApi
+     * Register a quote from TMForumApi.
      * 
      * @param productQuote Quote
      * 
      * @return Quote updated
-     * @throws MissingParameterException
-     * @throws IncorrectSusbcriptionException
-     * @throws IncorrectServiceInstanceException
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws MissingParameterException missing parameter exception
+     * @throws IncorrectSusbcriptionException incorrect subscription exception
+     * @throws IncorrectServiceInstanceException incorection servicer exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception.
      */
     public ProductQuote createQuote(ProductQuote productQuote) throws MeveoApiException, BusinessException {
     	
@@ -341,9 +341,8 @@ public class QuoteApi extends BaseApi {
      * 
      * @param quote Quote
      * 
-     * @return
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @return worked flow quote
+     * @throws BusinessException business exception
      */
     public Quote initiateWorkflow(Quote quote) throws BusinessException {
         if (workflowService.isWorkflowSetup(Quote.class)) {
@@ -361,12 +360,12 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Process the quote for workflow
+     * Process the quote for workflow.
      * 
-     * @param quote
-     * 
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @param quote processed quote.
+     * @return processed quote.
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception.
      */
     public Quote processQuote(Quote quote) throws BusinessException, MeveoApiException {
 
@@ -394,8 +393,8 @@ public class QuoteApi extends BaseApi {
      * @param quote Quote
      * @param quoteItem Quote item
      * 
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception.
      */
     private void processQuoteItem(Quote quote, QuoteItem quoteItem) throws BusinessException, MeveoApiException {
 
@@ -405,12 +404,11 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Create invoices for the quote
+     * Create invoices for the quote.
      * 
      * @param quote Quote
-     * 
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @return invoiced quote.
+     * @throws BusinessException business exception
      */
     public Quote invoiceQuote(Quote quote) throws BusinessException {
         log.info("Creating invoices for quote {}", quote.getCode());
@@ -449,10 +447,10 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Destroy any temporary entities created for invoicing - remove CF values
+     * Destroy any temporary entities created for invoicing - remove CF values.
      * 
-     * @param quoteInvoiceInfo Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
-     * @throws BusinessException
+     * @param quoteInvoiceInfos Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
+     * @throws BusinessException business exception.
      */
     private void destroyInvoiceQuoteItems(List<QuoteInvoiceInfo> quoteInvoiceInfos) throws BusinessException {
 
@@ -478,14 +476,14 @@ public class QuoteApi extends BaseApi {
     }
 
     /**
-     * Prepare info for invoicing for quote item
+     * Prepare info for invoicing for quote item.
      * 
      * @param quote Quote
      * @param quoteItem Quote item
      * 
      * @return Instantiated product instances and subscriptions and other grouped information of quote item ready for invoicing
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception.
      */
     private QuoteInvoiceInfo preInvoiceQuoteItem(Quote quote, QuoteItem quoteItem) throws BusinessException, MeveoApiException {
 
@@ -940,7 +938,7 @@ public class QuoteApi extends BaseApi {
      * Distinguish bundled products which could be either services or products.
      * @param productQuoteItem Product order item DTO
      * @param quoteItem Order item entity
-     * @return An array of List<Product> elements, first being list of products, and second - list of services
+     * @return An array of List&lt;Product&gt; elements, first being list of products, and second - list of services
      */
     @SuppressWarnings("unchecked")
     public List<Product>[] getProductsAndServices(ProductQuoteItem productQuoteItem, QuoteItem quoteItem) {

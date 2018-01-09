@@ -61,11 +61,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link BillingAccount} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private BillingAccountService billingAccountService;
 
@@ -106,9 +101,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return billing account
      */
     @Override
     public BillingAccount initEntity() {

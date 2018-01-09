@@ -10,7 +10,7 @@ import org.meveo.model.communication.email.EmailTemplate;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 4:49:13 AM
+ * @since Jun 3, 2016 4:49:13 AM
  *
  */
 @XmlRootElement(name = "EmailTemplate")

@@ -114,10 +114,9 @@ public class OneShotChargeTemplateBean extends CustomFieldBean<OneShotChargeTemp
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it. Filters charges of Usage type.
 	 * 
-	 * @return
-	 * @throws BusinessException
+	 * @return outcome view
+	 * @throws BusinessException business exception
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
 	 */
 	// @Produces
 	// @Named("oneShotChargeTemplatesForUsageType")

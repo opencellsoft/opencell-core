@@ -79,11 +79,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link Invoice} service. Extends {@link PersistenceService}.
-	 */
 	@Inject
 	private InvoiceService invoiceService;
 
@@ -305,9 +300,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Recompute agregates
 	 * 
-	 * @param agregateHandler
-	 * @param billingAccount
-	 * @throws BusinessException
+	 * @param billingAccount billing account
+	 * @throws BusinessException business exception
 	 */
 	public void updateAmountsAndLines(BillingAccount billingAccount) throws BusinessException {
 		billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
@@ -331,7 +325,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Called whene a line is deleted from the dataList detailInvoice
 	 * 
-	 * @throws BusinessException
 	 */
 	public void deleteRatedTransactionLine(){
 		try{
@@ -345,7 +338,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	/**
 	 * 
-	 * @throws BusinessException
 	 */
 	public void deleteLinkedInvoiceCategoryDetaild(){		
 		try{
@@ -364,8 +356,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * Called whene quantity or unitAmout are changed in the dataList
 	 * detailInvoice
 	 * 
-	 * @param ratedTx
-	 * @throws BusinessException
+	 * @param ratedTx rated transacion.
 	 */
 	public void reComputeAmountWithoutTax(RatedTransaction ratedTx) {
 		try{
@@ -386,7 +377,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Include original opened ratedTransaction
 	 * 
-	 * @throws BusinessException
 	 */
 
 	public void importOpenedRT(){
@@ -481,7 +471,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Include a copy from linkedIncoice's RatedTransaction
 	 * 
-	 * @throws BusinessException
 	 */
 	public void importFromLinkedInvoices(){
 		try{
@@ -696,8 +685,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * Called whene quantity or unitAmout are changed in the dataList
 	 * detailInvoice
 	 * 
-	 * @param ratedTx
-	 * @throws BusinessException
+	 * @param invSubCat sub category invoice
+	 * @throws BusinessException business exception.
 	 */
 	public void reComputeAmountWithoutTax(SubCategoryInvoiceAgregate invSubCat) throws BusinessException {
 		agregateHandler.reset();

@@ -54,10 +54,10 @@ public class RefundApi extends BaseApi {
     /**
      * @param refundDto refund object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws NoAllOperationUnmatchedException no all operation unmatched exception
+     * @throws UnbalanceAmountException unbalance amount exception
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception
      */
     public Long createPayment(RefundDto refundDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + refundDto.getAmount() + " paymentMethodEnum:" + refundDto.getPaymentMethod() + " isToMatching:" + refundDto.isToMatching()

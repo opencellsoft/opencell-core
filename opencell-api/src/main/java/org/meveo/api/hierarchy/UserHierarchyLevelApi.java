@@ -41,9 +41,9 @@ public class UserHierarchyLevelApi extends BaseApi {
     /**
      * Creates a new User Hierarchy Level entity.
      *
-     * @param postData
-     * @throws org.meveo.api.exception.MeveoApiException
-     * @throws org.meveo.admin.exception.BusinessException
+     * @param postData posted data to API
+     * @throws org.meveo.api.exception.MeveoApiException meveo api exception
+     * @throws org.meveo.admin.exception.BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "parentLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void create(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
@@ -88,10 +88,10 @@ public class UserHierarchyLevelApi extends BaseApi {
     /**
      * Updates a User Hierarchy Level Entity based on title code.
      *
-     * @param postData
+     * @param postData posted data
      * 
-     * @throws org.meveo.api.exception.MeveoApiException
-     * @throws org.meveo.admin.exception.BusinessException
+     * @throws org.meveo.api.exception.MeveoApiException meveo api exception
+     * @throws org.meveo.admin.exception.BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = { @SecureMethodParameter(property = "code", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class),
             @SecureMethodParameter(property = "parentLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class) })
@@ -115,9 +115,9 @@ public class UserHierarchyLevelApi extends BaseApi {
     /**
      * Returns UserHierarchyLevelDto based on hierarchy Level Code.
      *
-     * @param hierarchyLevelCode
-     * @return
-     * @throws org.meveo.api.exception.MeveoApiException
+     * @param hierarchyLevelCode hierarchy level code
+     * @return user hierarchy level
+     * @throws org.meveo.api.exception.MeveoApiException meveo api exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserHierarchyLevel.class))
     public UserHierarchyLevelDto find(String hierarchyLevelCode) throws MeveoApiException {
@@ -138,10 +138,10 @@ public class UserHierarchyLevelApi extends BaseApi {
     /**
      * Removes a User Hierarchy Level based on user hierarchy level code.
      *
-     * @param hierarchyLevelCode
+     * @param hierarchyLevelCode hierarchy level code
      * 
-     * @throws org.meveo.api.exception.MeveoApiException
-     * @throws BusinessException
+     * @throws org.meveo.api.exception.MeveoApiException emveo api exception
+     * @throws BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserHierarchyLevel.class))
     public void remove(String hierarchyLevelCode) throws MeveoApiException, BusinessException {
@@ -167,10 +167,10 @@ public class UserHierarchyLevelApi extends BaseApi {
     /**
      * Create or Update a User Hierarchy Level Entity based on title code.
      *
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws org.meveo.api.exception.MeveoApiException
-     * @throws org.meveo.admin.exception.BusinessException
+     * @throws org.meveo.api.exception.MeveoApiException meveo api exception
+     * @throws org.meveo.admin.exception.BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "parentLevel", entityClass = UserHierarchyLevel.class, parser = ObjectPropertyParser.class))
     public void createOrUpdate(UserHierarchyLevelDto postData) throws MeveoApiException, BusinessException {
@@ -231,12 +231,12 @@ public class UserHierarchyLevelApi extends BaseApi {
     }
 
     /**
-     * List user hierarchy levels matching filtering and query criteria
+     * List user hierarchy levels matching filtering and query criteria.
      * 
      * @param pagingAndFiltering Paging and filtering criteria. Specify "childLevels" in fields to include the child levels of user hierarchy level.
      * @return A list of user hierarchy levels
-     * @throws ActionForbiddenException
-     * @throws InvalidParameterException
+     * @throws ActionForbiddenException action forbidden exception
+     * @throws InvalidParameterException invalid parameter exception
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "userHierarchyLevels", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = UserHierarchyLevel.class) })

@@ -13,7 +13,7 @@ import org.meveo.api.dto.response.BaseResponse;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 4:08:37 AM
+ * @since Jun 3, 2016 4:08:37 AM
  *
  */
 @XmlRootElement(name = "ProviderContactsResponse")
