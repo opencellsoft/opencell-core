@@ -248,7 +248,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         BigDecimal wiretransferAmuont = BigDecimal.ZERO;
         BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
 
-        for (Invoice invoice : billingRun.getInvoices()) {
+        List<Invoice> invoices = getEntityManager()
+        		.createNamedQuery("Invoice.byBr", Invoice.class)
+        		.setParameter("billingRunId", billingRun.getId())
+        		.getResultList();
+        
+        for (Invoice invoice : invoices) {
 
             if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
                 switch (invoice.getPaymentMethod()) {
@@ -303,7 +308,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         }
 
-        postInvoicingReportsDTO.setInvoicesNumber(billingRun.getInvoices().size());
+        postInvoicingReportsDTO.setInvoicesNumber(invoices.size());
         postInvoicingReportsDTO.setCheckAmuont(checkAmuont);
         postInvoicingReportsDTO.setCheckAmuontHT(checkAmuontHT);
         postInvoicingReportsDTO.setCheckInvoicesNumber(checkInvoicesNumber);
