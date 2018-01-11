@@ -99,6 +99,18 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
 
         return getEditViewName();
     }
+    
+    public String stop() {
+        try {
+            jobExecutionService.stopJob(entity);
+            messages.info(new BundleKey("messages", "info.entity.stopped"), entity.getJobTemplate());
+        } catch (Exception e) {
+            messages.error(new BundleKey("messages", "error.execution"));
+            return null;
+        }
+
+        return getEditViewName();
+    }
 
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         super.saveOrUpdate(killConversation);

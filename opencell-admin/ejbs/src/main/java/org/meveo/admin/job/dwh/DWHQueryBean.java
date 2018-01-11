@@ -25,6 +25,7 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.job.JobExecutionService;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -40,9 +41,12 @@ public class DWHQueryBean {
 
     @PersistenceContext(unitName = "MeveoAdmin")
     private EntityManager em;
-    
+
     @Inject
     private Logger log;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     // iso 8601 date and datetime format
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
@@ -89,11 +93,14 @@ public class DWHQueryBean {
         }
         result.setNbItemsToProcess(mqList.size());
         for (MeasurableQuantity mq : mqList) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                break;
+            }
             if (StringUtils.isBlank(mq.getSqlQuery())) {
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
                 log.info("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
                 continue;
-            } 
+            }
 
             try {
                 if (mq.getLastMeasureDate() == null) {

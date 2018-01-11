@@ -28,6 +28,7 @@ import org.meveo.model.jaxb.customer.Customers;
 import org.meveo.model.jaxb.customer.Sellers;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.crm.impl.CustomerService;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -46,12 +47,11 @@ public class ExportCustomersJobBean {
     @ApplicationProvider
     protected Provider appProvider;
 
-    Sellers sellers;
-    ParamBean param = ParamBean.getInstance();
+    @Inject
+    private JobExecutionService jobExecutionService;
 
-    int nbSellers;
-
-    int nbCustomers;
+    private Sellers sellers;
+    private ParamBean param = ParamBean.getInstance();
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -70,6 +70,9 @@ public class ExportCustomersJobBean {
         sellers = new Sellers(sellersInDB);// ,param.getProperty("connectorCRM.dateFormat",
                                            // "yyyy-MM-dd"));
         for (org.meveo.model.jaxb.customer.Seller seller : sellers.getSeller()) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                break;
+            }
             List<Customer> customers = customerService.listBySellerCode(seller.getCode());
             seller.setCustomers(customersToDto(customers));
         }

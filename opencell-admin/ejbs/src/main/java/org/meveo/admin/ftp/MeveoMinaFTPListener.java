@@ -26,7 +26,7 @@ import org.slf4j.Logger;
  * @author Tyshan Shi
  *
  */
-@Startup
+//@Startup
 @Singleton
 public class MeveoMinaFTPListener {
 	@Inject

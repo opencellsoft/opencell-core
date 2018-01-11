@@ -34,47 +34,53 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class RatedTransactionsJob create RatedTransaction for all opened WalletOperations.
+ */
 @Stateless
 public class RatedTransactionsJob extends Job {
 
+    /** The rated transactions job bean. */
     @Inject
     private RatedTransactionsJobBean ratedTransactionsJobBean;
-    
-	@Override
-	@TransactionAttribute(TransactionAttributeType.NEVER)
+
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        ratedTransactionsJobBean.execute(result,jobInstance);
+        ratedTransactionsJobBean.execute(result, jobInstance);
     }
 
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.INVOICING;
     }
-    
-	@Override
-	public Map<String, CustomFieldTemplate> getCustomFields() {
+
+    @Override
+    public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
-		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-		customFieldNbRuns.setCode("nbRuns");
-		customFieldNbRuns.setAppliesTo("JOB_RatedTransactionsJob");
-		customFieldNbRuns.setActive(true);
-		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldNbRuns.setValueRequired(false);
-		customFieldNbRuns.setDefaultValue("1");
-		result.put("nbRuns", customFieldNbRuns);
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setAppliesTo("JOB_RatedTransactionsJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue("1");
+        result.put("nbRuns", customFieldNbRuns);
 
-		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-		customFieldNbWaiting.setCode("waitingMillis");
-		customFieldNbWaiting.setAppliesTo("JOB_RatedTransactionsJob");
-		customFieldNbWaiting.setActive(true);
-		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldNbWaiting.setDefaultValue("0");
-		customFieldNbWaiting.setValueRequired(false);
-		result.put("waitingMillis", customFieldNbWaiting);
+        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setAppliesTo("JOB_RatedTransactionsJob");
+        customFieldNbWaiting.setActive(true);
+        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setValueRequired(false);
+        result.put("waitingMillis", customFieldNbWaiting);
 
-		return result;
-	}
+        return result;
+    }
+
 }
