@@ -29,13 +29,13 @@ public class UnitFilteringJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Object obj, ScriptInterface scriptInterface, String recordVariableName) {
 
-	Map<String, Object> context = new HashMap<String, Object>();
-	context.put(recordVariableName, obj);
-	try {
-	    scriptInterface.execute(context);
-	    result.registerSucces();
-	} catch (BusinessException ex) {
-	    result.registerError(ex.getMessage());
-	}
+        Map<String, Object> context = new HashMap<String, Object>();
+        context.put(recordVariableName, obj);
+        try {
+            scriptInterface.execute(context);
+            result.registerSucces();
+        } catch (BusinessException ex) {
+            result.registerError(ex.getMessage());
+        }
     }
 }

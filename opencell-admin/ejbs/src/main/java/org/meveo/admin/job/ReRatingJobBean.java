@@ -17,6 +17,7 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.RatingService;
 import org.meveo.service.billing.impl.WalletOperationService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -39,6 +40,9 @@ public class ReRatingJobBean implements Serializable {
 	@Inject
 	@Rejected
 	Event<WalletOperation> rejectededOperationProducer;
+	
+    @Inject
+    private JobExecutionService jobExecutionService;
 
 	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
 	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -51,6 +55,9 @@ public class ReRatingJobBean implements Serializable {
 			log.info("rerate with useSamePricePlan={} ,#operations={}", useSamePricePlan,walletOperationIds.size());
 			result.setNbItemsToProcess(walletOperationIds.size());
 			for (Long walletOperationId : walletOperationIds) {
+	            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+	                break;
+	            }
 				try {
 					ratingService.reRate(walletOperationId, useSamePricePlan);
 					result.registerSucces();

@@ -38,7 +38,16 @@ public interface JobRs extends IBaseRs {
     @POST
     @Path("/execute")
     JobExecutionResultResponseDto execute(JobInstanceInfoDto postData);
-
+    
+    /**
+     * Stop a given job instance info 
+     * 
+     * @param jobInstanceCode job instance code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/stop")
+    ActionStatus stop(@PathParam("jobInstanceCode") String jobInstanceCode);
     /**
      * Create a new job instance
      * 

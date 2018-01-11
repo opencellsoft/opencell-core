@@ -20,23 +20,23 @@ import org.slf4j.Logger;
  */
 
 @Stateless
-public class UnitWorkflowJobBean{
+public class UnitWorkflowJobBean {
 
     @Inject
     private Logger log;
-    
+
     @Inject
     private WorkflowService workflowService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, BusinessEntity entity,Workflow workflow) {    	
-    	try {    		
-    		workflowService.executeWorkflow(entity, workflow);
-    		result.registerSucces();
+    public void execute(JobExecutionResultImpl result, BusinessEntity entity, Workflow workflow) {
+        try {
+            workflowService.executeWorkflow(entity, workflow);
+            result.registerSucces();
         } catch (Exception e) {
-            log.error("Failed to unit workflow for {}", entity, e);           
-            result.registerError(entity.getClass().getName()+entity.getId(), e.getMessage());
+            log.error("Failed to unit workflow for {}", entity, e);
+            result.registerError(entity.getClass().getName() + entity.getId(), e.getMessage());
         }
-    }	
+    }
 }
