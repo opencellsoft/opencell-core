@@ -274,9 +274,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
 
         List<Invoice> invoices = getEntityManager()
+<<<<<<< HEAD
                 .createNamedQuery("Invoice.byBr", Invoice.class)
                 .setParameter("billingRunId", billingRun.getId())
                 .getResultList();
+=======
+        		.createNamedQuery("Invoice.byBr", Invoice.class)
+        		.setParameter("billingRunId", billingRun.getId())
+        		.getResultList();
+>>>>>>> branch 'integration' of http://anasseh@git.assembla.com/meveo.git
         
         for (Invoice invoice : invoices) {
 
