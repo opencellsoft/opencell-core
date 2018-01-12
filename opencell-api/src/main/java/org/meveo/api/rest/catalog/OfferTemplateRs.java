@@ -22,6 +22,7 @@ import org.meveo.api.dto.response.catalog.GetListOfferTemplateResponseDto;
 import org.meveo.api.dto.response.catalog.GetOfferTemplateResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * Web service for managing {@link org.meveo.model.catalog.OfferTemplate}.
@@ -65,7 +66,7 @@ public interface OfferTemplateRs extends IBaseRs {
     @Path("/")
     @GET
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
-            @QueryParam("validTo") @RestDateParam Date validTo);
+            @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.
@@ -89,7 +90,8 @@ public interface OfferTemplateRs extends IBaseRs {
     public GetListOfferTemplateResponseDto listGet(@Deprecated @QueryParam("offerTemplateCode") String code, @Deprecated @QueryParam("validFrom") @RestDateParam Date validFrom,
             @Deprecated @QueryParam("validTo") @RestDateParam Date validTo, @QueryParam("query") String query, @QueryParam("fields") String fields,
             @QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
-            @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+            @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List offerTemplates matching a given criteria

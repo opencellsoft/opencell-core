@@ -37,6 +37,7 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.ProductInstanceService;
@@ -186,8 +187,12 @@ public class UserAccountApi extends AccountEntityApi {
         return userAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
     public UserAccountDto find(String userAccountCode) throws MeveoApiException {
+        return find(userAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
+    public UserAccountDto find(String userAccountCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         if (StringUtils.isBlank(userAccountCode)) {
             missingParameters.add("userAccountCode");
@@ -199,7 +204,7 @@ public class UserAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(UserAccount.class, userAccountCode);
         }
 
-        return accountHierarchyApi.userAccountToDto(userAccount);
+        return accountHierarchyApi.userAccountToDto(userAccount, inheritCF);
     }
 
     public void remove(String userAccountCode) throws MeveoApiException, BusinessException {

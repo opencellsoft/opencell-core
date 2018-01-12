@@ -20,6 +20,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
@@ -44,6 +45,12 @@ public class EntityToDtoConverter {
         return getCustomFieldsDTO(entity, false);
     }
 
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, CustomFieldInheritanceEnum inheritCF) {
+        boolean includeInheritedCF = inheritCF != null && CustomFieldInheritanceEnum.INHERIT_NONE != inheritCF;
+        boolean mergeMapValues = CustomFieldInheritanceEnum.INHERIT_MERGED == inheritCF;
+        return getCustomFieldsDTO(entity, includeInheritedCF, mergeMapValues);
+    }
+
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
         return getCustomFieldsDTO(entity, includeInheritedCF, false);
     }
@@ -58,11 +65,11 @@ public class EntityToDtoConverter {
     }
 
     /**
-     * 
+     *
      * @param entity entity
      * @param cfValuesByCode List of custom field values by code
      * @param includeInheritedCF If true, also returns the inherited cfs
-     * @param mergeMapValues If true, merged the map values between instance cf and parent. Use to show a single list of values. 
+     * @param mergeMapValues If true, merged the map values between instance cf and parent. Use to show a single list of values.
      * @return custom fields dto
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
@@ -94,24 +101,16 @@ public class EntityToDtoConverter {
                     // get parent entities cf values
                     CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
                     if (inheritedCustomFieldsDto != null) {
-                        for (CustomFieldDto cfDto : cfsDto.getCustomField()) {
-                            for (CustomFieldDto inheritedCfDto : inheritedCustomFieldsDto.getCustomField()) {
-                                // check if cf code is equal to inherited, then we merge
-                                if (cfDto.getCode().equals(inheritedCfDto.getCode())) {
-                                    cfsDto.getInheritedCustomField().add(inheritedCfDto);
-                                }
-                            }
-                        }
-
-                        if (mergeMapValues) {
-                            for (CustomFieldDto inheritedCFDto : inheritedCustomFieldsDto.getCustomField()) {
+                        for (CustomFieldDto inheritedCfDto : inheritedCustomFieldsDto.getCustomField()) {
+                            cfsDto.getInheritedCustomField().add(inheritedCfDto);
+                            if (mergeMapValues) {
                                 boolean found = false;
                                 for (CustomFieldDto cfDto : cfsDto.getCustomField()) {
-                                    if (cfDto.getCode().equals(inheritedCFDto.getCode())) {
+                                    if (cfDto.getCode().equals(inheritedCfDto.getCode())) {
                                         found = true;
 
                                         Map<String, CustomFieldValueDto> mapValue = cfDto.getMapValue();
-                                        Map<String, CustomFieldValueDto> inheritedMapValue = inheritedCFDto.getMapValue();
+                                        Map<String, CustomFieldValueDto> inheritedMapValue = inheritedCfDto.getMapValue();
                                         if (inheritedMapValue != null) {
                                             Set<Entry<String, CustomFieldValueDto>> entrySet = inheritedMapValue.entrySet();
                                             for (Entry<String, CustomFieldValueDto> entry : entrySet) {
@@ -125,7 +124,7 @@ public class EntityToDtoConverter {
                                 }
 
                                 if (!found) {
-                                    cfsDto.getCustomField().add(inheritedCFDto);
+                                    cfsDto.getCustomField().add(inheritedCfDto);
                                 }
                             }
                         }
@@ -243,5 +242,5 @@ public class EntityToDtoConverter {
         }
         return dtos;
     }
-    
+
 }

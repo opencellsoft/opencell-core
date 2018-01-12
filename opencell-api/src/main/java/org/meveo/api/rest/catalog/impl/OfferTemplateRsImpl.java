@@ -18,6 +18,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.catalog.OfferTemplateRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -56,7 +57,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
     }
 
     @Override
-    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo) {
+    public GetOfferTemplateResponseDto find(String offerTemplateCode, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF) {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
@@ -70,7 +71,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
 
     @Override
     public GetListOfferTemplateResponseDto listGet(@Deprecated String code, @Deprecated @RestDateParam Date validFrom, @Deprecated @RestDateParam Date validTo, String query,
-            String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+            String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
         
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 

@@ -34,6 +34,7 @@ import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CreditCategory;
 import org.meveo.model.payments.CustomerAccount;
@@ -370,8 +371,12 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccount;
     }
 
-    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
+        return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
+    public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF) throws Exception {
 
         if (StringUtils.isBlank(customerAccountCode)) {
             missingParameters.add("customerAccountCode");
@@ -387,7 +392,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, customerAccountCode);
         }
 
-        CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount);
+        CustomerAccountDto customerAccountDto = accountHierarchyApi.customerAccountToDto(customerAccount, inheritCF);
 
         if (calculateBalances) {
             Date now = new Date();
