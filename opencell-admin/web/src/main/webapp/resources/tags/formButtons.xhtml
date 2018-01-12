@@ -67,7 +67,7 @@
 <cc:implementation>
     <o:importFunctions type="org.meveo.service.base.ValueExpressionWrapper" var="exp" />
 
-	<h:panelGroup layout="block" styleClass="form-panel-actions">
+	<h:panelGroup layout="block" styleClass="form-panel-actions" id="formPanelActions">
 		<p:button value="#{messages['commons.edit']}" includeViewParams="true"
 			rendered="#{!cc.attrs.edit and cc.attrs.showEditButton}">
 			<f:param name="edit" value="true" />
@@ -169,7 +169,7 @@
         
 		<cc:insertChildren />
 
-		<hf:clearButton id="resetButton" label="#{messages['action.reset']}"
+		<hf:clearButton id="resetButtonCC" label="#{messages['action.reset']}"
 			edit="#{cc.attrs.edit}" rendered="#{cc.attrs.showEditButton and cc.attrs.backingBean.canUserUpdateEntity()}"
 			resetAction="#{cc.attrs.backingBean.resetFormEntity()}" includeViewParams="true"/>
 
