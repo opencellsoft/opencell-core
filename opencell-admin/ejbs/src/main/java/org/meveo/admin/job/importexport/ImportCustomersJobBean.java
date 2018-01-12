@@ -49,6 +49,7 @@ import org.meveo.service.crm.impl.AccountImportService;
 import org.meveo.service.crm.impl.CustomerImportService;
 import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ImportWarningException;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -56,250 +57,260 @@ import org.slf4j.Logger;
 @Stateless
 public class ImportCustomersJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private TradingCountryService tradingCountryService;
+    @Inject
+    private TradingCountryService tradingCountryService;
 
-	@Inject
-	private TradingCurrencyService tradingCurrencyService;
+    @Inject
+    private TradingCurrencyService tradingCurrencyService;
 
-	@Inject
-	private TradingLanguageService tradingLanguageService;
+    @Inject
+    private TradingLanguageService tradingLanguageService;
 
-	@Inject
-	private CustomerImportHistoService customerImportHistoService;
+    @Inject
+    private CustomerImportHistoService customerImportHistoService;
 
-	@EJB
-	private CustomerImportService customerImportService;
-	
-	@Inject
-	private CustomerAccountService customerAccountService;
-	
-	@Inject
-	private CustomerService customerService;
+    @EJB
+    private CustomerImportService customerImportService;
 
-	@Inject
-	private SellerService sellerService;
+    @Inject
+    private CustomerAccountService customerAccountService;
 
-	@Inject
-	private TitleService titleService;
-	
-	@Inject
-	private AccountImportService accountImportService;
+    @Inject
+    private CustomerService customerService;
+
+    @Inject
+    private SellerService sellerService;
+
+    @Inject
+    private TitleService titleService;
+
+    @Inject
+    private AccountImportService accountImportService;
 
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
-	Sellers sellersWarning;
-	Sellers sellersError;
+    @Inject
+    private JobExecutionService jobExecutionService;
 
-	ParamBean param = ParamBean.getInstance();
+    private Sellers sellersWarning;
+    private Sellers sellersError;
 
-	int nbCustomers;
-	int nbCustomersError;
-	int nbCustomersWarning;
-	int nbCustomersIgnored;
-	int nbCustomersCreated;
+    private ParamBean param = ParamBean.getInstance();
 
-	int nbSellers;
-	int nbSellersError;
-	int nbSellersWarning;
-	int nbSellersIgnored;
-	int nbSellersCreated;
+    private int nbCustomers;
+    private int nbCustomersError;
+    private int nbCustomersWarning;
+    private int nbCustomersIgnored;
+    private int nbCustomersCreated;
 
-	int nbSellersUpdated;
-	int nbCustomersUpdated;
-	int nbCustomerAccountsUpdated;
+    private int nbSellers;
+    private int nbSellersError;
+    private int nbSellersWarning;
+    private int nbSellersIgnored;
+    private int nbSellersCreated;
 
-	int nbCustomerAccounts;
-	int nbCustomerAccountsError;
-	int nbCustomerAccountsWarning;
-	int nbCustomerAccountsIgnored;
-	int nbCustomerAccountsCreated;
-	CustomerImportHisto customerImportHisto;
+    private int nbSellersUpdated;
+    private int nbCustomersUpdated;
+    private int nbCustomerAccountsUpdated;
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	public void execute(JobExecutionResultImpl result) {
+    private int nbCustomerAccounts;
+    private int nbCustomerAccountsError;
+    private int nbCustomerAccountsWarning;
+    private int nbCustomerAccountsIgnored;
+    private int nbCustomerAccountsCreated;
+    private CustomerImportHisto customerImportHisto;
 
-		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
-				+ File.separator;
-		String dirIN = importDir + "input";
-		log.info("dirIN=" + dirIN);
-		String dirOK = importDir + "output";
-		String dirKO = importDir + "reject";
-		String prefix = param.getProperty("connectorCRM.importCustomers.prefix", "CUSTOMER_");
-		String ext = param.getProperty("connectorCRM.importCustomers.extension", "xml");
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    public void execute(JobExecutionResultImpl result) {
 
-		File dir = new File(dirIN);
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
+        String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
+                + "customers" + File.separator;
+        String dirIN = importDir + "input";
+        log.info("dirIN=" + dirIN);
+        String dirOK = importDir + "output";
+        String dirKO = importDir + "reject";
+        String prefix = param.getProperty("connectorCRM.importCustomers.prefix", "CUSTOMER_");
+        String ext = param.getProperty("connectorCRM.importCustomers.extension", "xml");
 
-		List<File> files = getFilesToProcess(dir, prefix, ext);
-		int numberOfFiles = files.size();
-		log.info("InputFiles job " + numberOfFiles + " to import");
+        File dir = new File(dirIN);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
 
-		for (File file : files) {
-			File currentFile = null;
-			try {
-				log.info("InputFiles job " + file.getName() + " in progres");
-				currentFile = FileUtils.addExtension(file, ".processing");
-				importFile(currentFile, file.getName());
-				FileUtils.moveFile(dirOK, currentFile, file.getName());
-				log.info("InputFiles job " + file.getName() + " done");
-			} catch (Exception e) {
-				log.info("InputFiles job " + file.getName() + " failed");
-				FileUtils.moveFile(dirKO, currentFile, file.getName());
-				log.error("failed to import file",e);
-			} finally {
-				if (currentFile != null)
-					currentFile.delete();
-			}
-		}
-		
-		result.setNbItemsToProcess(nbCustomers);
-		result.setNbItemsCorrectlyProcessed(nbCustomersCreated);
-		result.setNbItemsProcessedWithError(nbCustomersError);
-		result.setNbItemsProcessedWithWarning(nbCustomersWarning);
-	}
+        List<File> files = getFilesToProcess(dir, prefix, ext);
+        int numberOfFiles = files.size();
+        log.info("InputFiles job " + numberOfFiles + " to import");
 
-	/**
-	 * @param dir folder
-	 * @param prefix prefix file
-	 * @param ext extension
-	 * @return list of files 
-	 */
-	private synchronized List<File> getFilesToProcess(File dir, String prefix, String ext) {
-		List<File> files = new ArrayList<File>();
-		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
-		File[] listFile = dir.listFiles(filtre);
+        for (File file : files) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                break;
+            }
+            File currentFile = null;
+            try {
+                log.info("InputFiles job " + file.getName() + " in progres");
+                currentFile = FileUtils.addExtension(file, ".processing");
+                importFile(currentFile, file.getName(), result.getJobInstance().getId());
+                FileUtils.moveFile(dirOK, currentFile, file.getName());
+                log.info("InputFiles job " + file.getName() + " done");
+            } catch (Exception e) {
+                log.info("InputFiles job " + file.getName() + " failed");
+                FileUtils.moveFile(dirKO, currentFile, file.getName());
+                log.error("failed to import file", e);
+            } finally {
+                if (currentFile != null)
+                    currentFile.delete();
+            }
+        }
 
-		if (listFile == null) {
-			return files;
-		}
+        result.setNbItemsToProcess(nbCustomers);
+        result.setNbItemsCorrectlyProcessed(nbCustomersCreated);
+        result.setNbItemsProcessedWithError(nbCustomersError);
+        result.setNbItemsProcessedWithWarning(nbCustomersWarning);
+    }
 
-		for (File file : listFile) {
-			if (file.isFile()) {
-				files.add(file);
-				// we just process one file
-				return files;
-			}
-		}
+    /**
+     * @param dir folder
+     * @param prefix prefix file
+     * @param ext extension
+     * @return list of files
+     */
+    private synchronized List<File> getFilesToProcess(File dir, String prefix, String ext) {
+        List<File> files = new ArrayList<File>();
+        ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);
+        File[] listFile = dir.listFiles(filtre);
 
-		return files;
-	}
+        if (listFile == null) {
+            return files;
+        }
 
-	/**
-	 * @param file file to import
-	 * @param fileName file's name
-	 * @throws JAXBException jaxb exception
-	 * @throws Exception exception
-	 */
-	public void importFile(File file, String fileName) throws JAXBException, Exception {
+        for (File file : listFile) {
+            if (file.isFile()) {
+                files.add(file);
+                // we just process one file
+                return files;
+            }
+        }
 
-		log.info("start import file :" + fileName);
+        return files;
+    }
 
-		sellersWarning = new Sellers();
-		sellersError = new Sellers();
+    /**
+     * @param file file to import
+     * @param fileName file's name
+     * @param jobInstanceId the job Instance Id
+     * @throws JAXBException jaxb exception
+     * @throws Exception exception
+     */
+    private void importFile(File file, String fileName, Long jobInstanceId) throws JAXBException, Exception {
 
-		nbSellersUpdated = 0;
-		nbCustomersUpdated = 0;
-		nbCustomerAccountsUpdated = 0;
+        log.info("start import file :" + fileName);
 
-		nbSellers = 0;
-		nbSellersError = 0;
-		nbSellersWarning = 0;
-		nbSellersIgnored = 0;
-		nbSellersCreated = 0;
+        sellersWarning = new Sellers();
+        sellersError = new Sellers();
 
-		nbCustomers = 0;
-		nbCustomersError = 0;
-		nbCustomersWarning = 0;
-		nbCustomersIgnored = 0;
-		nbCustomersCreated = 0;
+        nbSellersUpdated = 0;
+        nbCustomersUpdated = 0;
+        nbCustomerAccountsUpdated = 0;
 
-		nbCustomerAccounts = 0;
-		nbCustomerAccountsError = 0;
-		nbCustomerAccountsWarning = 0;
-		nbCustomerAccountsIgnored = 0;
-		nbCustomerAccountsCreated = 0;
+        nbSellers = 0;
+        nbSellersError = 0;
+        nbSellersWarning = 0;
+        nbSellersIgnored = 0;
+        nbSellersCreated = 0;
 
-		customerImportHisto = new CustomerImportHisto();
+        nbCustomers = 0;
+        nbCustomersError = 0;
+        nbCustomersWarning = 0;
+        nbCustomersIgnored = 0;
+        nbCustomersCreated = 0;
 
-		customerImportHisto.setExecutionDate(new Date());
-		customerImportHisto.setFileName(fileName);
+        nbCustomerAccounts = 0;
+        nbCustomerAccountsError = 0;
+        nbCustomerAccountsWarning = 0;
+        nbCustomerAccountsIgnored = 0;
+        nbCustomerAccountsCreated = 0;
 
-		if (file.length() < 83) {
-			createSellerWarning(null, "File empty");
-			generateReport(fileName);
-			createHistory();
-			return;
-		}
+        customerImportHisto = new CustomerImportHisto();
 
-		Sellers sellers = (Sellers) JAXBUtils.unmarshaller(Sellers.class, file);
-		log.debug("parsing file ok");
-		int i = -1;
+        customerImportHisto.setExecutionDate(new Date());
+        customerImportHisto.setFileName(fileName);
 
-		List<Seller> sellerList = sellers.getSeller();
-		nbSellers = sellerList.size();
-		if (nbSellers == 0) {
-			createSellerWarning(null, "File empty");
-		}
+        if (file.length() < 83) {
+            createSellerWarning(null, "File empty");
+            generateReport(fileName);
+            createHistory();
+            return;
+        }
 
-		for (org.meveo.model.jaxb.customer.Seller sell : sellerList) {
-			i++;
-			org.meveo.model.admin.Seller seller = null;
-			try {
-				log.debug("seller found  code:" + sell.getCode());
+        Sellers sellers = (Sellers) JAXBUtils.unmarshaller(Sellers.class, file);
+        log.debug("parsing file ok");
+        int i = -1;
 
-				if (sellerCheckError(sell)) {
-					nbSellersError++;
-					log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Error");
-					continue;
-				}
+        List<Seller> sellerList = sellers.getSeller();
+        nbSellers = sellerList.size();
+        if (nbSellers == 0) {
+            createSellerWarning(null, "File empty");
+        }
 
-				seller = createSeller(sell, fileName, i);
+        for (org.meveo.model.jaxb.customer.Seller sell : sellerList) {
+            i++;
+            org.meveo.model.admin.Seller seller = null;
+            try {
+                log.debug("seller found  code:" + sell.getCode());
 
-				List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
-				for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
-					if (customerCheckError(sell, cust)) {
-						nbCustomersError++;
-						log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
-						continue;
-					}
+                if (sellerCheckError(sell)) {
+                    nbSellersError++;
+                    log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Error");
+                    continue;
+                }
 
-					nbCustomers++;
-					createCustomer(fileName, seller, sell, cust, i);
-				}
-			} catch (Exception e) {
-				createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
-				nbSellersError++;
-				log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Error");
-				log.error("Failed to import customers job",e);
-			}
-		}
+                seller = createSeller(sell, fileName, i);
 
-		generateReport(fileName);
-		createHistory();
-		log.info("end import file ");
-	}
+                List<org.meveo.model.jaxb.customer.Customer> customerList = sell.getCustomers().getCustomer();
+                for (org.meveo.model.jaxb.customer.Customer cust : customerList) {
+                    if (!jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
+                        break;
+                    }
+                    if (customerCheckError(sell, cust)) {
+                        nbCustomersError++;
+                        log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
+                        continue;
+                    }
 
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private synchronized org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i) throws BusinessException {
-		org.meveo.model.admin.Seller seller = null;
-		try {
-			seller = sellerService.findByCode(sell.getCode());
-		} catch (Exception e) {
-			log.warn("error while getting seller ",e);
-		}
+                    nbCustomers++;
+                    createCustomer(fileName, seller, sell, cust, i);
+                }
+            } catch (Exception e) {
+                createSellerError(sell, ExceptionUtils.getRootCause(e).getMessage());
+                nbSellersError++;
+                log.error("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Error");
+                log.error("Failed to import customers job", e);
+            }
+        }
 
-		if (seller != null) {
-			nbSellersUpdated++;
-			seller.setDescription(sell.getDescription());
+        generateReport(fileName);
+        createHistory();
+        log.info("end import file ");
+    }
+
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    private synchronized org.meveo.model.admin.Seller createSeller(Seller sell, String fileName, int i) throws BusinessException {
+        org.meveo.model.admin.Seller seller = null;
+        try {
+            seller = sellerService.findByCode(sell.getCode());
+        } catch (Exception e) {
+            log.warn("error while getting seller ", e);
+        }
+
+        if (seller != null) {
+            nbSellersUpdated++;
+            seller.setDescription(sell.getDescription());
             if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
                 seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode()));
             } else {
@@ -315,15 +326,15 @@ public class ImportCustomersJobBean {
             } else {
                 seller.setTradingLanguage(null);
             }
-			customerImportService.updateSeller(seller);
-			log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Updated");
-		} else {
-			nbSellersCreated++;
-			log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Created");
+            customerImportService.updateSeller(seller);
+            log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Updated");
+        } else {
+            nbSellersCreated++;
+            log.info("File:" + fileName + ", typeEntity:Seller, index:" + i + ", code:" + sell.getCode() + ", status:Created");
 
-			seller = new org.meveo.model.admin.Seller();
-			seller.setCode(sell.getCode());
-			seller.setDescription(sell.getDescription());
+            seller = new org.meveo.model.admin.Seller();
+            seller.setCode(sell.getCode());
+            seller.setDescription(sell.getDescription());
             if (!StringUtils.isBlank(sell.getTradingCountryCode())) {
                 seller.setTradingCountry(tradingCountryService.findByTradingCountryCode(sell.getTradingCountryCode()));
             }
@@ -333,456 +344,444 @@ public class ImportCustomersJobBean {
             if (!StringUtils.isBlank(sell.getTradingLanguageCode())) {
                 seller.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(sell.getTradingLanguageCode()));
             }
-			customerImportService.createSeller(seller);
-		}
+            customerImportService.createSeller(seller);
+        }
 
-		return seller;
-	}
+        return seller;
+    }
 
-	/**
-	 * @param fileName file's name
-	 * @param seller seller 
-	 * @param sell jaxb seller
-	 * @param cust jaxb customer
-	 * @param i index
-	 */
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createCustomer(String fileName, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.Customer cust, int i) {
-	    
-		nbSellers++;
-		int j = 0;
-		Customer customer = null;
+    /**
+     * @param fileName file's name
+     * @param seller seller
+     * @param sell jaxb seller
+     * @param cust jaxb customer
+     * @param i index
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    private void createCustomer(String fileName, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
+            int i) {
 
-		try {
-			log.debug("customer found code={}", cust.getCode());
-			boolean ignoreCheck = cust.getIgnoreCheck() != null && cust.getIgnoreCheck().booleanValue();
-			try {
-				if (!ignoreCheck) {
-					customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"));
-				}
-				
-			} catch (Exception e) {
-				log.warn("failed to find custom by code and fetch ",e);
-			}
+        nbSellers++;
+        int j = 0;
+        Customer customer = null;
 
-			if (customer != null) {
-				if (!customer.getSeller().getCode().equals(sell.getCode())) {
-					createCustomerError(sell, cust, "The customer already exists but is attached to a different seller.");
-					nbCustomersError++;
-					log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
-					return;
-				}
+        try {
+            log.debug("customer found code={}", cust.getCode());
+            boolean ignoreCheck = cust.getIgnoreCheck() != null && cust.getIgnoreCheck().booleanValue();
+            try {
+                if (!ignoreCheck) {
+                    customer = customerService.findByCodeAndFetch(cust.getCode(), Arrays.asList("seller", "customFields"));
+                }
 
-				nbCustomersUpdated++;
-				customer = customerImportService.updateCustomer(customer, seller, sell, cust);
-				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Updated");
-			} else {
-				customer = customerImportService.createCustomer(seller, sell, cust);
-				nbCustomersCreated++;
-				log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Created");
-			}
+            } catch (Exception e) {
+                log.warn("failed to find custom by code and fetch ", e);
+            }
 
-			for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust.getCustomerAccounts().getCustomerAccount()) {
-				j++;
+            if (customer != null) {
+                if (!customer.getSeller().getCode().equals(sell.getCode())) {
+                    createCustomerError(sell, cust, "The customer already exists but is attached to a different seller.");
+                    nbCustomersError++;
+                    log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
+                    return;
+                }
 
-				if (customerAccountCheckError(cust, sell, custAcc)) {
-					nbCustomerAccountsError++;
-					log.error("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j + " Code:" + custAcc.getCode() + ", status:Error");
-					continue;
-				}
+                nbCustomersUpdated++;
+                customer = customerImportService.updateCustomer(customer, seller, sell, cust);
+                log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Updated");
+            } else {
+                customer = customerImportService.createCustomer(seller, sell, cust);
+                nbCustomersCreated++;
+                log.info("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Created");
+            }
 
-				if (customerAccountCheckWarning(cust, sell, custAcc)) {
-					nbCustomerAccountsWarning++;
-					log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " Code:" + custAcc.getCode() + ", status:Warning");
-				}
+            for (org.meveo.model.jaxb.customer.CustomerAccount custAcc : cust.getCustomerAccounts().getCustomerAccount()) {
+                j++;
 
-				createCustomerAccount(fileName, customer, seller, custAcc, cust, sell, i, j);
-			}
-		} catch (Exception e) {
-			createCustomerError(sell, cust, ExceptionUtils.getRootCause(e).getMessage());
-			nbCustomersError++;
-			log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
-			log.error("failed to create customer",e);
-		}
-	}
+                if (customerAccountCheckError(cust, sell, custAcc)) {
+                    nbCustomerAccountsError++;
+                    log.error("File:" + fileName + ", typeEntity:CustomerAccount, indexCustomer:" + i + ", index:" + j + " Code:" + custAcc.getCode() + ", status:Error");
+                    continue;
+                }
 
-	/**
-	 * @param fileName file's name
-	 * @param customer customer
-	 * @param seller seller
-	 * @param custAcc custom account
-	 * @param cust jaxb customer
-	 * @param sell jaxb seller
-	 * @param i index
-	 * @param j index
-	 * @throws BusinessException business exception
-	 */
-	@TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-	private void createCustomerAccount(String fileName, Customer customer, org.meveo.model.admin.Seller seller,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc, org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
-		nbCustomerAccounts++;
-		CustomerAccount customerAccountTmp = null;
-		boolean ignoreCheck = custAcc.getIgnoreCheck() != null && custAcc.getIgnoreCheck().booleanValue();
-		try {
-			if (!ignoreCheck) {
-				customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), Arrays.asList("customer","customFields"));
-			}
-		} catch (Exception e) {
-			log.error("failed to create customer account",e);
-		}
+                if (customerAccountCheckWarning(cust, sell, custAcc)) {
+                    nbCustomerAccountsWarning++;
+                    log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " Code:" + custAcc.getCode() + ", status:Warning");
+                }
 
-		if (customerAccountTmp != null) {
-			if (!customerAccountTmp.getCustomer().getCode().equals(cust.getCode())) {
-				nbCustomerAccountsError++;
-				createCustomerAccountError(sell, cust, custAcc, "A customer account with same code exists for another customer");
-				return;
-			}
+                createCustomerAccount(fileName, customer, seller, custAcc, cust, sell, i, j);
+            }
+        } catch (Exception e) {
+            createCustomerError(sell, cust, ExceptionUtils.getRootCause(e).getMessage());
+            nbCustomersError++;
+            log.error("File:" + fileName + ", typeEntity:Customer, index:" + i + ", code:" + cust.getCode() + ", status:Error");
+            log.error("failed to create customer", e);
+        }
+    }
 
-			customerImportService.updateCustomerAccount(customerAccountTmp, customer, seller, custAcc, cust, sell);
-			nbCustomerAccountsUpdated++;
-			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Updated");
-			
-		} else {
-			CustomerAccount customerAccount = customerImportService.createCustomerAccount(customer, seller, custAcc, cust, sell);
-			
-			BillingAccounts billingAccounts = custAcc.getBillingAccounts();
-	        
-	        if (billingAccounts != null) {
-	        	List<org.meveo.model.jaxb.account.BillingAccount> billingAccountList = billingAccounts.getBillingAccount();
-	        	
-	        	for (org.meveo.model.jaxb.account.BillingAccount billingAccountJaxb : billingAccountList) {
-	        		BillingAccount billingAccount = null;
-	        		try {
-						billingAccount = accountImportService
-								.importBillingAccount(billingAccountJaxb, customerAccount);
-					} catch (ImportWarningException e) {
-						log.error("Error when importing Billing Account", e);
-					}
-	        		
-	        		for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountJaxb.getUserAccounts().getUserAccount()) {
-	        			try {
-							accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount);
-						} catch (ImportWarningException e) {
-							log.error("Error when importing User Account", e);
-						}
-	        		}
-				}
-	        	
-	        	
-	        }
-			nbCustomerAccountsCreated++;
-			log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Created");
-		}
-	}
+    /**
+     * @param fileName file's name
+     * @param customer customer
+     * @param seller seller
+     * @param custAcc custom account
+     * @param cust jaxb customer
+     * @param sell jaxb seller
+     * @param i index
+     * @param j index
+     * @throws BusinessException business exception
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    private void createCustomerAccount(String fileName, Customer customer, org.meveo.model.admin.Seller seller, org.meveo.model.jaxb.customer.CustomerAccount custAcc,
+            org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell, int i, int j) throws BusinessException {
+        nbCustomerAccounts++;
+        CustomerAccount customerAccountTmp = null;
+        boolean ignoreCheck = custAcc.getIgnoreCheck() != null && custAcc.getIgnoreCheck().booleanValue();
+        try {
+            if (!ignoreCheck) {
+                customerAccountTmp = customerAccountService.findByCode(custAcc.getCode(), Arrays.asList("customer", "customFields"));
+            }
+        } catch (Exception e) {
+            log.error("failed to create customer account", e);
+        }
 
-	/**
-	 * @throws Exception exception
-	 */
-	private void createHistory() throws Exception {
-	    
-		customerImportHisto.setNbCustomerAccounts(nbCustomerAccounts);
-		customerImportHisto.setNbCustomerAccountsCreated(nbCustomerAccountsCreated);
-		customerImportHisto.setNbCustomerAccountsError(nbCustomerAccountsError);
-		customerImportHisto.setNbCustomerAccountsIgnored(nbCustomerAccountsIgnored);
-		customerImportHisto.setNbCustomerAccountsWarning(nbCustomerAccountsWarning);
-		customerImportHisto.setNbCustomers(nbCustomers);
-		customerImportHisto.setNbCustomersCreated(nbCustomersCreated);
-		customerImportHisto.setNbCustomersError(nbCustomersError);
-		customerImportHisto.setNbCustomersIgnored(nbCustomersIgnored);
-		customerImportHisto.setNbCustomersWarning(nbCustomersWarning);
-		customerImportHisto.setNbSellers(nbSellers);
-		customerImportHisto.setNbSellersCreated(nbSellersCreated);
-		customerImportHisto.setNbSellersError(nbSellersError);
-		customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
-		customerImportHisto.setNbSellersWarning(nbSellersWarning);
-		customerImportHistoService.create(customerImportHisto);
-	}
+        if (customerAccountTmp != null) {
+            if (!customerAccountTmp.getCustomer().getCode().equals(cust.getCode())) {
+                nbCustomerAccountsError++;
+                createCustomerAccountError(sell, cust, custAcc, "A customer account with same code exists for another customer");
+                return;
+            }
 
-	/**
-	 * @param fileName file's name
-	 * @throws Exception exception occurs when genering report
-	 */
-	private void generateReport(String fileName) throws Exception {
-		String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator + "customers"
-				+ File.separator;
+            customerImportService.updateCustomerAccount(customerAccountTmp, customer, seller, custAcc, cust, sell);
+            nbCustomerAccountsUpdated++;
+            log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Updated");
 
-		if (sellersWarning.getWarnings() != null) {
-			String warningDir = importDir + "output" + File.separator + "warnings";
-			File dir = new File(warningDir);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-			JAXBUtils.marshaller(sellersWarning, new File(warningDir + File.separator + "WARN_" + fileName));
-		}
+        } else {
+            CustomerAccount customerAccount = customerImportService.createCustomerAccount(customer, seller, custAcc, cust, sell);
 
-		if (sellersError.getErrors() != null) {
-			String errorDir = importDir + "output" + File.separator + "errors";
+            BillingAccounts billingAccounts = custAcc.getBillingAccounts();
 
-			File dir = new File(errorDir);
-			if (!dir.exists()) {
-				dir.mkdirs();
-			}
-			JAXBUtils.marshaller(sellersError, new File(errorDir + File.separator + "ERR_" + fileName));
-		}
-	}
+            if (billingAccounts != null) {
+                List<org.meveo.model.jaxb.account.BillingAccount> billingAccountList = billingAccounts.getBillingAccount();
 
-	/**
-	 * @param sell seller
-	 * @param cause cause of having error
-	 */
-	private void createSellerError(org.meveo.model.jaxb.customer.Seller sell, String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
-		ErrorSeller errorSeller = new ErrorSeller();
-		errorSeller.setCause(cause);
-		errorSeller.setCode(sell.getCode());
+                for (org.meveo.model.jaxb.account.BillingAccount billingAccountJaxb : billingAccountList) {
+                    BillingAccount billingAccount = null;
+                    try {
+                        billingAccount = accountImportService.importBillingAccount(billingAccountJaxb, customerAccount);
+                    } catch (ImportWarningException e) {
+                        log.error("Error when importing Billing Account", e);
+                    }
 
-		if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
-			sellersError.getSeller().add(sell);
-		}
+                    for (org.meveo.model.jaxb.account.UserAccount uAccount : billingAccountJaxb.getUserAccounts().getUserAccount()) {
+                        try {
+                            accountImportService.importUserAccount(billingAccount, billingAccountJaxb, uAccount);
+                        } catch (ImportWarningException e) {
+                            log.error("Error when importing User Account", e);
+                        }
+                    }
+                }
 
-		if (sellersError.getErrors() == null) {
-			sellersError.setErrors(new Errors());
-		}
+            }
+            nbCustomerAccountsCreated++;
+            log.info("File:" + fileName + ", typeEntity:CustomerAccount,  indexCustomer:" + i + ", index:" + j + " code:" + custAcc.getCode() + ", status:Created");
+        }
+    }
 
-		sellersError.getErrors().getErrorSeller().add(errorSeller);
-	}
+    /**
+     * @throws Exception exception
+     */
+    private void createHistory() throws Exception {
 
-	/**
-	 * @param sell seller
-	 * @param cust customer
-	 * @param cause erorr
-	 */
-	private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
-		ErrorCustomer errorCustomer = new ErrorCustomer();
-		errorCustomer.setCause(cause);
-		errorCustomer.setCode(cust.getCode());
+        customerImportHisto.setNbCustomerAccounts(nbCustomerAccounts);
+        customerImportHisto.setNbCustomerAccountsCreated(nbCustomerAccountsCreated);
+        customerImportHisto.setNbCustomerAccountsError(nbCustomerAccountsError);
+        customerImportHisto.setNbCustomerAccountsIgnored(nbCustomerAccountsIgnored);
+        customerImportHisto.setNbCustomerAccountsWarning(nbCustomerAccountsWarning);
+        customerImportHisto.setNbCustomers(nbCustomers);
+        customerImportHisto.setNbCustomersCreated(nbCustomersCreated);
+        customerImportHisto.setNbCustomersError(nbCustomersError);
+        customerImportHisto.setNbCustomersIgnored(nbCustomersIgnored);
+        customerImportHisto.setNbCustomersWarning(nbCustomersWarning);
+        customerImportHisto.setNbSellers(nbSellers);
+        customerImportHisto.setNbSellersCreated(nbSellersCreated);
+        customerImportHisto.setNbSellersError(nbSellersError);
+        customerImportHisto.setNbSellersIgnored(nbSellersIgnored);
+        customerImportHisto.setNbSellersWarning(nbSellersWarning);
+        customerImportHistoService.create(customerImportHisto);
+    }
 
-		if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
-			sellersError.getSeller().add(sell);
-		}
+    /**
+     * @param fileName file's name
+     * @throws Exception exception occurs when genering report
+     */
+    private void generateReport(String fileName) throws Exception {
+        String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
+                + "customers" + File.separator;
 
-		if (sellersError.getErrors() == null) {
-			sellersError.setErrors(new Errors());
-		}
+        if (sellersWarning.getWarnings() != null) {
+            String warningDir = importDir + "output" + File.separator + "warnings";
+            File dir = new File(warningDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            JAXBUtils.marshaller(sellersWarning, new File(warningDir + File.separator + "WARN_" + fileName));
+        }
 
-		sellersError.getErrors().getErrorCustomer().add(errorCustomer);
-	}
+        if (sellersError.getErrors() != null) {
+            String errorDir = importDir + "output" + File.separator + "errors";
 
-	/**
-	 * @param sell seller
-	 * @param cause the reason of having error.
-	 */
-	private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell, String cause) {
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
-		WarningSeller warningSeller = new WarningSeller();
-		warningSeller.setCause(cause);
-		warningSeller.setCode(sell == null ? "" : sell.getCode());
+            File dir = new File(errorDir);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            JAXBUtils.marshaller(sellersError, new File(errorDir + File.separator + "ERR_" + fileName));
+        }
+    }
 
-		if (!sellersWarning.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject) && sell != null) {
-			sellersWarning.getSeller().add(sell);
-		}
+    /**
+     * @param sell seller
+     * @param cause cause of having error
+     */
+    private void createSellerError(org.meveo.model.jaxb.customer.Seller sell, String cause) {
+        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        ErrorSeller errorSeller = new ErrorSeller();
+        errorSeller.setCause(cause);
+        errorSeller.setCode(sell.getCode());
 
-		if (sellersWarning.getWarnings() == null) {
-			sellersWarning.setWarnings(new Warnings());
-		}
+        if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+            sellersError.getSeller().add(sell);
+        }
 
-		sellersWarning.getWarnings().getWarningSeller().add(warningSeller);
-	}
+        if (sellersError.getErrors() == null) {
+            sellersError.setErrors(new Errors());
+        }
 
-	/**
-	 * @param sell seller
-	 * @param cust customer
-	 * @param custAccount customer account
-	 * @param cause cause of error
-	 */
-	private void createCustomerAccountError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
-		log.error("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
-		ErrorCustomerAccount errorCustomerAccount = new ErrorCustomerAccount();
-		errorCustomerAccount.setCause(cause);
-		errorCustomerAccount.setCode(custAccount.getCode());
-		errorCustomerAccount.setCustomerCode(cust.getCode());
+        sellersError.getErrors().getErrorSeller().add(errorSeller);
+    }
 
-		if (sellersError.getErrors() == null) {
-			sellersError.setErrors(new Errors());
-		}
+    /**
+     * @param sell seller
+     * @param cust customer
+     * @param cause erorr
+     */
+    private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, String cause) {
+        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        ErrorCustomer errorCustomer = new ErrorCustomer();
+        errorCustomer.setCause(cause);
+        errorCustomer.setCode(cust.getCode());
 
-		if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
-			sellersError.getSeller().add(sell);
-		}
+        if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+            sellersError.getSeller().add(sell);
+        }
 
-		sellersError.getErrors().getErrorCustomerAccount().add(errorCustomerAccount);
-	}
+        if (sellersError.getErrors() == null) {
+            sellersError.setErrors(new Errors());
+        }
 
-	/**
-	 * @param sell seller
-	 * @param cust customer
-	 * @param custAccount customer account
-	 * @param cause the cause of error
-	 */
-	private void createCustomerAccountWarning(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
-			org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
-		log.warn("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
-		String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
-		WarningCustomerAccount warningCustomerAccount = new WarningCustomerAccount();
-		warningCustomerAccount.setCause(cause);
-		warningCustomerAccount.setCode(custAccount.getCode());
-		warningCustomerAccount.setCustomerCode(cust.getCode());
+        sellersError.getErrors().getErrorCustomer().add(errorCustomer);
+    }
 
-		if (!sellersWarning.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
-			sellersWarning.getSeller().add(sell);
-		}
+    /**
+     * @param sell seller
+     * @param cause the reason of having error.
+     */
+    private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell, String cause) {
+        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        WarningSeller warningSeller = new WarningSeller();
+        warningSeller.setCause(cause);
+        warningSeller.setCode(sell == null ? "" : sell.getCode());
 
-		if (sellersWarning.getWarnings() == null) {
-			sellersWarning.setWarnings(new Warnings());
-		}
+        if (!sellersWarning.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject) && sell != null) {
+            sellersWarning.getSeller().add(sell);
+        }
 
-		sellersWarning.getWarnings().getWarningCustomerAccount().add(warningCustomerAccount);
-	}
+        if (sellersWarning.getWarnings() == null) {
+            sellersWarning.setWarnings(new Warnings());
+        }
 
-	/**
-	 * @param sell seller
-	 * @return true/false
-	 */
-	private boolean sellerCheckError(org.meveo.model.jaxb.customer.Seller sell) {
-		if (StringUtils.isBlank(sell.getCode())) {
-			createSellerError(sell, "Code is null.");
-			return true;
-		}
+        sellersWarning.getWarnings().getWarningSeller().add(warningSeller);
+    }
 
-		if (sell.getCustomers() == null || sell.getCustomers().getCustomer() == null || sell.getCustomers().getCustomer().isEmpty()) {
-			createSellerError(sell, "No customer.");
-			return true;
-		}
+    /**
+     * @param sell seller
+     * @param cust customer
+     * @param custAccount customer account
+     * @param cause cause of error
+     */
+    private void createCustomerAccountError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
+            org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
+        log.error("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
+        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        ErrorCustomerAccount errorCustomerAccount = new ErrorCustomerAccount();
+        errorCustomerAccount.setCause(cause);
+        errorCustomerAccount.setCode(custAccount.getCode());
+        errorCustomerAccount.setCustomerCode(cust.getCode());
 
-		return false;
-	}
+        if (sellersError.getErrors() == null) {
+            sellersError.setErrors(new Errors());
+        }
 
-	/**
-	 * @param sell seller
-	 * @param cust customer
-	 * @return true/false
-	 */
-	private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
+        if (!sellersError.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+            sellersError.getSeller().add(sell);
+        }
 
-		if (StringUtils.isBlank(cust.getCode())) {
-			createCustomerError(sell, cust, "Code is null");
-			return true;
-		}
-		if (StringUtils.isBlank(cust.getDesCustomer())) {
-			createCustomerError(sell, cust, "Description is null");
-			return true;
-		}
-		if (StringUtils.isBlank(cust.getCustomerCategory())) {
-			createCustomerError(sell, cust, "CustomerCategory is null");
-			return true;
-		}
-		if (StringUtils.isBlank(cust.getCustomerBrand())) {
-			createCustomerError(sell, cust, "CustomerBrand is null");
-			return true;
-		}
-		if(cust.getName() == null) {
-			createCustomerError(sell, cust, "name.title and name.lastName is null");
-		}else{
-			if( StringUtils.isBlank(cust.getName().getTitle())) {
-				createCustomerError(sell, cust, "name.title is null");
-			}
-			if(StringUtils.isBlank(cust.getName().getLastName())) {
-				createCustomerError(sell, cust, "name.lastName is null");
-			}
+        sellersError.getErrors().getErrorCustomerAccount().add(errorCustomerAccount);
+    }
 
-			if (titleService.findByCode(cust.getName().getTitle()) == null) {
-				createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
-				return true;
-			}
-		}
-		if (cust.getCustomerAccounts().getCustomerAccount() == null || cust.getCustomerAccounts().getCustomerAccount().isEmpty()) {
-			createCustomerError(sell, cust, "No customer account");
-			return true;
-		}
+    /**
+     * @param sell seller
+     * @param cust customer
+     * @param custAccount customer account
+     * @param cause the cause of error
+     */
+    private void createCustomerAccountWarning(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
+            org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
+        log.warn("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
+        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        WarningCustomerAccount warningCustomerAccount = new WarningCustomerAccount();
+        warningCustomerAccount.setCause(cause);
+        warningCustomerAccount.setCode(custAccount.getCode());
+        warningCustomerAccount.setCustomerCode(cust.getCode());
 
-		return false;
-	}
+        if (!sellersWarning.getSeller().contains(sell) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+            sellersWarning.getSeller().add(sell);
+        }
 
-	/**
-	 * @param cust customer
-	 * @param sell seller
-	 * @param custAcc customer account
-	 * @return true/false
-	 */
-	private boolean customerAccountCheckError(org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
-		if (StringUtils.isBlank(custAcc.getCode())) {
-			createCustomerAccountError(sell, cust, custAcc, "Code is null");
-			return true;
-		}
-		if (StringUtils.isBlank(custAcc.getDescription())) {
-			createCustomerAccountError(sell, cust, custAcc, "Description is null");
-			return true;
-		}
-		if (StringUtils.isBlank(custAcc.getTradingCurrencyCode())) {
-			createCustomerAccountError(sell, cust, custAcc, "Currency is null");
-			return true;
-		}
-		if (StringUtils.isBlank(custAcc.getTradingLanguageCode())) {
-			createCustomerAccountError(sell, cust, custAcc, "Language is null");
-			return true;
-		}
-		if (StringUtils.isBlank(custAcc.getCreditCategory())) {
-			createCustomerAccountError(sell, cust, custAcc, "Credit Category is null");
-			return true;
-		}
-		if (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getLastName())) {
-			createCustomerAccountError(sell, cust, custAcc, "Lastname is null");
-			return true;
-		}
-		/*
-		 * if (StringUtils.isBlank(custAcc.getPaymentMethod()) || ("DIRECTDEBIT"
-		 * + "CHECK" + "TIP" +
-		 * "WIRETRANSFER").indexOf(custAcc.getPaymentMethod()) == -1) {
-		 * createCustomerAccountError(sell,cust, custAcc,
-		 * "PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}"
-		 * ); return true; } if (custAcc.getAddress() == null ||
-		 * StringUtils.isBlank(custAcc.getAddress().getZipCode())) {
-		 * 
-		 * createCustomerAccountError(sell,cust, custAcc, "ZipCode is null");
-		 * return true; } if (custAcc.getAddress() == null ||
-		 * StringUtils.isBlank(custAcc.getAddress().getCity())) {
-		 * createCustomerAccountError(sell,cust, custAcc, "City is null");
-		 * return true; } if (custAcc.getAddress() == null ||
-		 * StringUtils.isBlank(custAcc.getAddress().getCountry())) {
-		 * createCustomerAccountError(sell,cust, custAcc, "Country is null");
-		 * return true; } if (StringUtils.isBlank(custAcc.getExternalRef1())) {
-		 * createCustomerAccountError(sell,cust, custAcc,
-		 * "ExternalRef1 is null"); return true; }
-		 */
-		return false;
-	}
+        if (sellersWarning.getWarnings() == null) {
+            sellersWarning.setWarnings(new Warnings());
+        }
 
-	/**
-	 * @param cust customer
-	 * @param sell seller
-	 * @param custAcc customer account
-	 * @return true/false for warning
-	 */
-	private boolean customerAccountCheckWarning(org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell,
-			org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
-		boolean isWarning = false;
+        sellersWarning.getWarnings().getWarningCustomerAccount().add(warningCustomerAccount);
+    }
 
-		if ("PRO".equals(cust.getCustomerCategory()) && StringUtils.isBlank(custAcc.getCompany())) {
-			createCustomerAccountWarning(sell, cust, custAcc, "Company is null");
-			isWarning = true;
-		}
+    /**
+     * @param sell seller
+     * @return true/false
+     */
+    private boolean sellerCheckError(org.meveo.model.jaxb.customer.Seller sell) {
+        if (StringUtils.isBlank(sell.getCode())) {
+            createSellerError(sell, "Code is null.");
+            return true;
+        }
 
-		if ((cust.getCustomerCategory().startsWith("PART_")) && (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getFirstName()))) {
-			createCustomerAccountWarning(sell, cust, custAcc, "Name is null");
-			isWarning = true;
-		}
+        if (sell.getCustomers() == null || sell.getCustomers().getCustomer() == null || sell.getCustomers().getCustomer().isEmpty()) {
+            createSellerError(sell, "No customer.");
+            return true;
+        }
 
-		return isWarning;
-	}
+        return false;
+    }
+
+    /**
+     * @param sell seller
+     * @param cust customer
+     * @return true/false
+     */
+    private boolean customerCheckError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust) {
+
+        if (StringUtils.isBlank(cust.getCode())) {
+            createCustomerError(sell, cust, "Code is null");
+            return true;
+        }
+        if (StringUtils.isBlank(cust.getDesCustomer())) {
+            createCustomerError(sell, cust, "Description is null");
+            return true;
+        }
+        if (StringUtils.isBlank(cust.getCustomerCategory())) {
+            createCustomerError(sell, cust, "CustomerCategory is null");
+            return true;
+        }
+        if (StringUtils.isBlank(cust.getCustomerBrand())) {
+            createCustomerError(sell, cust, "CustomerBrand is null");
+            return true;
+        }
+        if (cust.getName() == null) {
+            createCustomerError(sell, cust, "name.title and name.lastName is null");
+        } else {
+            if (StringUtils.isBlank(cust.getName().getTitle())) {
+                createCustomerError(sell, cust, "name.title is null");
+            }
+            if (StringUtils.isBlank(cust.getName().getLastName())) {
+                createCustomerError(sell, cust, "name.lastName is null");
+            }
+
+            if (titleService.findByCode(cust.getName().getTitle()) == null) {
+                createCustomerError(sell, cust, "Title with code=" + cust.getName().getTitle() + " does not exists");
+                return true;
+            }
+        }
+        if (cust.getCustomerAccounts().getCustomerAccount() == null || cust.getCustomerAccounts().getCustomerAccount().isEmpty()) {
+            createCustomerError(sell, cust, "No customer account");
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param cust customer
+     * @param sell seller
+     * @param custAcc customer account
+     * @return true/false
+     */
+    private boolean customerAccountCheckError(org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell,
+            org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
+        if (StringUtils.isBlank(custAcc.getCode())) {
+            createCustomerAccountError(sell, cust, custAcc, "Code is null");
+            return true;
+        }
+        if (StringUtils.isBlank(custAcc.getDescription())) {
+            createCustomerAccountError(sell, cust, custAcc, "Description is null");
+            return true;
+        }
+        if (StringUtils.isBlank(custAcc.getTradingCurrencyCode())) {
+            createCustomerAccountError(sell, cust, custAcc, "Currency is null");
+            return true;
+        }
+        if (StringUtils.isBlank(custAcc.getTradingLanguageCode())) {
+            createCustomerAccountError(sell, cust, custAcc, "Language is null");
+            return true;
+        }
+        if (StringUtils.isBlank(custAcc.getCreditCategory())) {
+            createCustomerAccountError(sell, cust, custAcc, "Credit Category is null");
+            return true;
+        }
+        if (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getLastName())) {
+            createCustomerAccountError(sell, cust, custAcc, "Lastname is null");
+            return true;
+        }
+        /*
+         * if (StringUtils.isBlank(custAcc.getPaymentMethod()) || ("DIRECTDEBIT" + "CHECK" + "TIP" + "WIRETRANSFER").indexOf(custAcc.getPaymentMethod()) == -1) {
+         * createCustomerAccountError(sell,cust, custAcc, "PaymentMethod is null,or not in {DIRECTDEBIT,CHECK,TIP,WIRETRANSFER}" ); return true; } if (custAcc.getAddress() == null
+         * || StringUtils.isBlank(custAcc.getAddress().getZipCode())) {
+         * 
+         * createCustomerAccountError(sell,cust, custAcc, "ZipCode is null"); return true; } if (custAcc.getAddress() == null ||
+         * StringUtils.isBlank(custAcc.getAddress().getCity())) { createCustomerAccountError(sell,cust, custAcc, "City is null"); return true; } if (custAcc.getAddress() == null ||
+         * StringUtils.isBlank(custAcc.getAddress().getCountry())) { createCustomerAccountError(sell,cust, custAcc, "Country is null"); return true; } if
+         * (StringUtils.isBlank(custAcc.getExternalRef1())) { createCustomerAccountError(sell,cust, custAcc, "ExternalRef1 is null"); return true; }
+         */
+        return false;
+    }
+
+    /**
+     * @param cust customer
+     * @param sell seller
+     * @param custAcc customer account
+     * @return true/false for warning
+     */
+    private boolean customerAccountCheckWarning(org.meveo.model.jaxb.customer.Customer cust, org.meveo.model.jaxb.customer.Seller sell,
+            org.meveo.model.jaxb.customer.CustomerAccount custAcc) {
+        boolean isWarning = false;
+
+        if ("PRO".equals(cust.getCustomerCategory()) && StringUtils.isBlank(custAcc.getCompany())) {
+            createCustomerAccountWarning(sell, cust, custAcc, "Company is null");
+            isWarning = true;
+        }
+
+        if ((cust.getCustomerCategory().startsWith("PART_")) && (custAcc.getName() == null || StringUtils.isBlank(custAcc.getName().getFirstName()))) {
+            createCustomerAccountWarning(sell, cust, custAcc, "Name is null");
+            isWarning = true;
+        }
+
+        return isWarning;
+    }
 
 }

@@ -191,7 +191,9 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache();
 
         for (String edrCacheKey : edrCacheKeys) {
-            edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edrCacheKey, 0);
+            if (edrCacheKey != null) {
+                edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edrCacheKey, 0);
+            }
         }
 
         log.info("EDR cache populated with {} EDRs", edrCacheKeys.size());
