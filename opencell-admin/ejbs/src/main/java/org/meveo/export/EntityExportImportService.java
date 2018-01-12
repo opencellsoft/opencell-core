@@ -44,7 +44,6 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.enterprise.context.Conversation;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
@@ -103,10 +102,9 @@ import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -148,17 +146,7 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
-
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
+ 
 
     @Inject
     @CurrentUser
@@ -206,6 +194,9 @@ public class EntityExportImportService implements Serializable {
     private EntityExportImportService entityExportImportService;
 
     private Map<String, ExportTemplate> exportImportTemplates;
+    
+    @Inject
+    EntityManagerProvider entityManagerFactory;
 
     @PostConstruct
     private void init() {
@@ -359,23 +350,7 @@ public class EntityExportImportService implements Serializable {
         }
     }
 
-    /**
-     * Obtain entity manager for export operations
-     * 
-     * @return
-     */
-    private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
 
-        return result;
-    }
 
     /**
      * Obtain entity manager for import operations in case want to import to another DB
@@ -384,6 +359,10 @@ public class EntityExportImportService implements Serializable {
      */
     private EntityManager getEntityManagerForImport() {
         return getEntityManager();
+    }
+    
+    public EntityManager getEntityManager() {
+    	return entityManagerFactory.getEntityManager();
     }
 
     /**

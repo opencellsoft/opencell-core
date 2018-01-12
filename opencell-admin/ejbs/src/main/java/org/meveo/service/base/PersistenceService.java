@@ -21,7 +21,6 @@ package org.meveo.service.base;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Proxy;
 import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -71,9 +70,6 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
-import org.meveo.util.MeveoJpaForMultiTenancy;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -91,18 +87,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     private ParamBean paramBean = ParamBean.getInstance();
 
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
 
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
-    
-    
-    @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager emForMultitenancy;
 
     @Inject
     private ElasticClient elasticClient;
@@ -139,7 +124,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Inject
     ProviderRegistry providerRegistry;
     
-    private EntityManager currentEntityManager;
+    
+    @Inject
+    EntityManagerProvider entityManagerProvider; 
 
     /**
      * Constructor.
@@ -1000,20 +987,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-    public EntityManager getDefaultEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
 
-        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-        // em.hashCode());
-        return result;
-    }
 
     public void updateAudit(E e) {
         if (e instanceof IAuditable) {
@@ -1043,25 +1017,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     
    
     public EntityManager getEntityManager() {
-    	final String currentProvider = currentUser.getProviderCode();
-    	String isMultiTenancyActive=ParamBean.getInstance().getProperty("meveo.multiTenancy", "false"); 
-    	if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
-    		log.info("Returning entityManager for provider " +currentProvider);
-    		currentEntityManager = providerRegistry.createEntityManagerForJobs(currentProvider);
-    		if (conversation != null) {
-    			try {
-    				conversation.isTransient();
-    				currentEntityManager =emForMultitenancy;
-    			} catch (Exception e) {
-    			}
-    		}
-    	} else {
-    		currentEntityManager = getDefaultEntityManager();
-    	}
-    	return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{EntityManager.class},
-    			(proxy, method, args) -> {
-    				currentEntityManager.joinTransaction();
-    				return method.invoke(currentEntityManager, args);
-    			});
+    	return entityManagerProvider.getEntityManager();
     }
 }

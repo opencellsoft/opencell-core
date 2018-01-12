@@ -83,7 +83,7 @@ public class ProviderRegistry {
     	} else {
     		entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, entityManagerFactory);
     	}
-    	log.info("Removed entityMangerFactory for provider {}", provider.getId());
+    	log.info("Removed entityMangerFactory for provider {}, entityManagerFactories count={}", provider.getId(),entityManagerFactories.size());
     }
  
     
