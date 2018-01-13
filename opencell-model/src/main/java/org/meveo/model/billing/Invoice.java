@@ -163,11 +163,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "detailed_invoice")
     private boolean isDetailedInvoice = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
@@ -189,7 +189,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<Order>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
 

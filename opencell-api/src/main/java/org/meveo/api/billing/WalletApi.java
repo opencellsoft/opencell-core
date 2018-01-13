@@ -308,7 +308,8 @@ public class WalletApi extends BaseApi {
         walletOperation.setDescription(postData.getDescription());
         walletOperation.setCode(postData.getCode());
         if (subscription != null) {
-            walletOperation.setOfferCode(subscription.getOffer().getCode());
+            // walletOperation.setOfferCode(subscription.getOffer().getCode()); offerCode is set in walletOperation.setOfferTemplate
+            walletOperation.setOfferTemplate(subscription.getOffer());
         }
         walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         walletOperation.setCurrency(currency);

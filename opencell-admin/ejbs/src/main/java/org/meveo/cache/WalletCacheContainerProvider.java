@@ -231,7 +231,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
                 }
             }
 
-        } else if (op.getChargeInstance() instanceof UsageChargeInstance) {
+        } else if (op.getChargeInstance() instanceof UsageChargeInstance && op.getChargeInstance().getPrepaid()) {
             updateCache((UsageChargeInstance) op.getChargeInstance());
         }
     }

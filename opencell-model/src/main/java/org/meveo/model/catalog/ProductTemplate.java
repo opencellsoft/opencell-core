@@ -38,11 +38,11 @@ public class ProductTemplate extends ProductOffering {
     @JoinTable(name = "cat_product_templ_charge_templ", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "product_charge_template_id"))
     private List<ProductChargeTemplate> productChargeTemplates = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_product_model_id")
     private BusinessProductModel businessProductModel;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 

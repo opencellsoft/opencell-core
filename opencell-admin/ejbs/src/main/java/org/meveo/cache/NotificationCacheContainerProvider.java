@@ -62,7 +62,6 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     private void init() {
         try {
             log.debug("NotificationCacheContainerProvider initializing...");
-            // eventNotificationCache = meveoContainer.getCache("meveo-notification-cache");
 
             refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 

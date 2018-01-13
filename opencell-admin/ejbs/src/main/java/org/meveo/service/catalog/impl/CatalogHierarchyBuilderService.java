@@ -308,7 +308,7 @@ public class CatalogHierarchyBuilderService {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
                 // create price plan
                 String chargeTemplateCode = productCharge.getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -441,7 +441,7 @@ public class CatalogHierarchyBuilderService {
             for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
                 // create price plan
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -479,7 +479,7 @@ public class CatalogHierarchyBuilderService {
             for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
                 // create price plan
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -516,7 +516,7 @@ public class CatalogHierarchyBuilderService {
             for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
                 // create price plan
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -552,7 +552,7 @@ public class CatalogHierarchyBuilderService {
         if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
             for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                         String ppCode = prefix + pricePlanMatrix.getCode();
@@ -842,7 +842,7 @@ public class CatalogHierarchyBuilderService {
                         }
                     }
 
-                    List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                    List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                     if (pricePlanMatrixes != null) {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                             if (pricePlanMatrix == null) {

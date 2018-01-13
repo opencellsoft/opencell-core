@@ -6,6 +6,7 @@ import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -48,7 +49,7 @@ public class OfferTemplateCategory extends BusinessCFEntity implements Comparabl
     @NotNull
     private String name;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "offer_template_category_id")
     private OfferTemplateCategory offerTemplateCategory;
 

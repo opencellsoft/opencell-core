@@ -3,6 +3,7 @@ package org.meveo.model.catalog;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,7 +31,7 @@ public class TriggeredEDRTemplate extends BusinessEntity {
     @Size(max = 2000)
     private String subscriptionEl;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meveo_instance_id")
     private MeveoInstance meveoInstance;
 

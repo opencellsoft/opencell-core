@@ -75,7 +75,7 @@ public abstract class AccountEntity extends BusinessCFEntity {
     @Size(max = 255)
     protected String providerContact;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "primary_contact")
     protected ProviderContact primaryContact;
 

@@ -316,8 +316,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             try {
                 isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(customerCategory.getExonerationTaxEl(), userMap, Boolean.class);
             } catch (BusinessException e) {
-                log.error("Error evaluateExpression Exoneration taxes:", e);
-                e.printStackTrace();
+                log.error("Error evaluateExpression Exoneration taxes", e);
             }
             isExonerated = (isExon == null ? false : isExon);
         }

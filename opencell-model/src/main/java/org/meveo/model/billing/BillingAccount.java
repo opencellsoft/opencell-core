@@ -151,7 +151,7 @@ public class BillingAccount extends AccountEntity {
     @OneToMany(mappedBy = "billingAccount", fetch = FetchType.LAZY)
     private List<RatedTransaction> ratedTransactions;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discount_plan_id")
     private DiscountPlan discountPlan;
 

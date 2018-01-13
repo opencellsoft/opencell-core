@@ -1,6 +1,7 @@
 package org.meveo.model.catalog;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -13,7 +14,7 @@ public class BusinessOfferModel extends MeveoModule {
 
     private static final long serialVersionUID = 683873220792653929L;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 

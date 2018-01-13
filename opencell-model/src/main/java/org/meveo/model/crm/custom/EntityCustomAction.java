@@ -6,6 +6,7 @@ import java.util.Map;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -50,7 +51,7 @@ public class EntityCustomAction extends BusinessEntity {
     @Column(name = "label_i18n", columnDefinition = "text")
     private Map<String, String> labelI18n;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
     

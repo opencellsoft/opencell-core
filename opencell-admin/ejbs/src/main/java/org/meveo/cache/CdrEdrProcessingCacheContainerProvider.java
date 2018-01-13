@@ -1,7 +1,6 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +18,8 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.mediation.Access;
 import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
-import org.meveo.service.medina.impl.AccessService;
 import org.slf4j.Logger;
 
 /**
@@ -42,18 +39,9 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     protected Logger log;
 
     @EJB
-    private AccessService accessService;
-
-    @EJB
     private EdrService edrService;
 
     private ParamBean paramBean = ParamBean.getInstance();
-
-    /**
-     * Contains association between access code and accesses sharing this code. Key format: &lt;Access.accessUserId&gt;, value: List of &lt;Access entity&gt;
-     */
-    @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-access-cache")
-    private Cache<String, List<Access>> accessCache;
 
     /**
      * Stores a list of processed EDR's. Key format: &lt;originBatch&gt;_&lt;originRecord&gt;, value: 0 (no meaning, only keys are used)
@@ -76,101 +64,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
             log.error("CdrEdrProcessingCacheContainerProvider init() error", e);
             throw e;
         }
-    }
-
-    /**
-     * Populate access cache from db.
-     */
-    private void populateAccessCache() {
-
-        log.debug("Start to populate access cache");
-
-        List<Access> activeAccesses = accessService.getAccessesForCache();
-        accessCache.clear();
-
-        for (Access access : activeAccesses) {
-            addAccessToCache(access);
-        }
-
-        log.info("Access cache populated with {} accesses", activeAccesses.size());
-    }
-
-    /**
-     * Add access to a cache.
-     * 
-     * @param access Access to add
-     */
-    // @Lock(LockType.WRITE)
-    public void addAccessToCache(Access access) {
-
-        log.trace("Adding access {} to access cache", access.getId());
-
-        // because accessed later, to avoid lazy init
-        access.getSubscription().getId();
-
-        String cacheKey = access.getAccessUserId();
-
-        List<Access> accessesOld = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-
-        List<Access> accesses = new ArrayList<Access>();
-        if (accessesOld != null) {
-            accesses.addAll(accessesOld);
-        }
-        accesses.add(access);
-
-        accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
-
-    }
-
-    /**
-     * Remove access from cache.
-     * 
-     * @param access Access to remove
-     */
-    // @Lock(LockType.WRITE)
-    public void removeAccessFromCache(Access access) {
-
-        log.trace("Removing access {} from access cache", access.getId());
-
-        String cacheKey = access.getAccessUserId();
-        List<Access> accessesOld = accessCache.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
-
-        if (accessesOld != null && !accessesOld.isEmpty()) {
-            List<Access> accesses = new ArrayList<>(accessesOld);
-            boolean removed = accesses.remove(access);
-            if (removed) {
-                // Remove cached value altogether if no value are left in the list
-                if (accesses.isEmpty()) {
-                    accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
-                } else {
-                    accessCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, accesses);
-                }
-
-                log.trace("Removed access {} from access cache", access.getId());
-            }
-        }
-    }
-
-    /**
-     * Update access in cache.
-     * 
-     * @param access Access to update
-     */
-    public void updateAccessInCache(Access access) {
-        removeAccessFromCache(access);
-        addAccessToCache(access);
-    }
-
-    /**
-     * Get a list of accesses for a given access user id.
-     * 
-     * @param accessUserId Access user id
-     * @return A list of accesses
-     */
-    public List<Access> getAccessesByAccessUserId(String accessUserId) {
-
-        String cacheKey = accessUserId;
-        return accessCache.get(cacheKey);
     }
 
     /**
@@ -229,7 +122,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     @SuppressWarnings("rawtypes")
     public Map<String, Cache> getCaches() {
         Map<String, Cache> summaryOfCaches = new HashMap<String, Cache>();
-        summaryOfCaches.put(accessCache.getName(), accessCache);
         summaryOfCaches.put(edrCache.getName(), edrCache);
 
         return summaryOfCaches;
@@ -244,10 +136,6 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     @Asynchronous
     public void refreshCache(String cacheName) {
 
-        if (cacheName == null || cacheName.equals(accessCache.getName()) || cacheName.contains(accessCache.getName())) {
-            populateAccessCache();
-
-        }
         if (cacheName == null || cacheName.equals(edrCache.getName()) || cacheName.contains(edrCache.getName())) {
             populateEdrCache();
         }

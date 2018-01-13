@@ -1444,7 +1444,9 @@
         and billing_user_account.billing_account_id=billing_billing_account.id</sql>
 
         <sql>update billing_charge_instance set trading_currency=ar_customer_account.trading_currency_id from billing_user_account, billing_billing_account, ar_customer_account where billing_charge_instance.trading_currency is null and  billing_charge_instance.user_account_id=billing_user_account.id
-        and billing_user_account.billing_account_id=billing_billing_account.id and billing_billing_account.customer_account_id=ar_customer_account.id</sql>   
+        and billing_user_account.billing_account_id=billing_billing_account.id and billing_billing_account.customer_account_id=ar_customer_account.id</sql>
+        
+        <sql>update ar_customer_account set trading_language_id=(select min(id) from billing_trading_language) where trading_language_id is null</sql>   
     </changeSet>
     
     <changeSet id="#2836_20171019_update_M" author="AndriusKarpavicius" dbms="mysql">
@@ -1455,7 +1457,9 @@
          set trading_country=billing_billing_account.trading_country_id where billing_charge_instance.trading_country is null</sql>
 
         <sql>update billing_charge_instance join billing_user_account on billing_charge_instance.user_account_id=billing_user_account.id join billing_billing_account on billing_user_account.billing_account_id=billing_billing_account.id
-        join ar_customer_account on billing_billing_account.customer_account_id=ar_customer_account.id set trading_currency=ar_customer_account.trading_currency_id where billing_charge_instance.trading_currency is null</sql>  
+        join ar_customer_account on billing_billing_account.customer_account_id=ar_customer_account.id set trading_currency=ar_customer_account.trading_currency_id where billing_charge_instance.trading_currency is null</sql>
+        
+        <sql>update ar_customer_account set trading_language_id=(select min(id) from billing_trading_language) where trading_language_id is null</sql>     
     </changeSet>    
     
     <changeSet id="#2836_20171019_update_end" author="AndriusKarpavicius">
@@ -1532,4 +1536,18 @@
         <sql>update cat_triggered_edr set quantity_el=null where quantity_el=''</sql>
         <sql>update cat_triggered_edr set subscription_el=null where subscription_el=''</sql>
     </changeSet>
+    
+    
+    <changeSet id="#2792_20180110" author="AndriusKarpavicius">  
+        <sql>update cat_price_plan_matrix set criteria_1=null where criteria_1=''</sql>
+        <sql>update cat_price_plan_matrix set criteria_2=null where criteria_2=''</sql>
+        <sql>update cat_price_plan_matrix set criteria_3=null where criteria_3=''</sql>
+        <sql>update cat_price_plan_matrix set criteria_el=null where criteria_el=''</sql>
+        <sql>update cat_price_plan_matrix set amount_without_tax_el=null where amount_without_tax_el=''</sql>
+        <sql>update cat_price_plan_matrix set amount_with_tax_el=null where amount_with_tax_el=''</sql>
+        
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON cat_price_plan_matrix(event_code)</sql>
+        <sql>CREATE INDEX medina_access_user_id_index ON medina_access(acces_user_id)</sql>
+    </changeSet>
+    
 </databaseChangeLog> 

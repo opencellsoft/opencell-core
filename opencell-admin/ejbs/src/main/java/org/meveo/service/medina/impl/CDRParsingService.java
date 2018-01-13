@@ -12,7 +12,6 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.parse.csv.CdrParserProducer;
-import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.event.qualifier.RejectedCDR;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -30,14 +29,14 @@ public class CDRParsingService extends PersistenceService<EDR> {
     private EdrService edrService;
 
     @Inject
+    private AccessService accessService;
+
+    @Inject
     @RejectedCDR
     private Event<Serializable> rejectededCdrEventProducer;
 
     @Inject
     private CdrParserProducer cdrParserProducer;
-
-    @Inject
-    private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
     public static final String CDR_ORIGIN_API = "API";
     public static final String CDR_ORIGIN_JOB = "JOB";
@@ -70,9 +69,9 @@ public class CDRParsingService extends PersistenceService<EDR> {
         Serializable cdr = cdrParser.getCDR(line);
         deduplicate(cdr);
         List<Access> accessPoints = accessPointLookup(cdr);
-        
+
         EDRDAO edrDAO = cdrParser.getEDR(cdr, origin);
-        
+
         boolean foundMatchingAccess = false;
 
         for (Access accessPoint : accessPoints) {
@@ -146,7 +145,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
 
     private List<Access> accessPointLookup(Serializable cdr) throws InvalidAccessException {
         String accessUserId = cdrParser.getAccessUserId(cdr);
-        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(accessUserId);
+        List<Access> accesses = accessService.getActiveAccessByUserId(accessUserId);
         if (accesses == null || accesses.size() == 0) {
             rejectededCdrEventProducer.fire(cdr);
             throw new InvalidAccessException(cdr);
@@ -161,5 +160,4 @@ public class CDRParsingService extends PersistenceService<EDR> {
     public CSVCDRParser getCdrParser() {
         return cdrParser;
     }
-
 }

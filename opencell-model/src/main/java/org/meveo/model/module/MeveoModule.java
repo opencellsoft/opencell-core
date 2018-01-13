@@ -69,7 +69,7 @@ public class MeveoModule extends BusinessEntity implements Serializable {
     @Column(name = "module_source", nullable = false, columnDefinition = "TEXT")
     private String moduleSource;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
 

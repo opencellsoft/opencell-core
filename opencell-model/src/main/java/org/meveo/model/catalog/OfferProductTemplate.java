@@ -34,9 +34,6 @@ import org.meveo.model.IEntity;
         @Parameter(name = "sequence_name", value = "cat_offer_product_template_seq"), })
 public class OfferProductTemplate implements IEntity, Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = -3681938016130405800L;
 
     @Id
@@ -45,7 +42,7 @@ public class OfferProductTemplate implements IEntity, Serializable {
     @Access(AccessType.PROPERTY)
     protected Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "offer_template_id")
     private OfferTemplate offerTemplate;
 

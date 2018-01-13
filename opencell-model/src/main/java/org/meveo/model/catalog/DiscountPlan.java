@@ -6,10 +6,13 @@ import java.util.List;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
@@ -35,7 +38,8 @@ public class DiscountPlan extends BusinessEntity {
     @Column(name = "max_duration")
     private int maxDuration = 99999;
 
-    @OneToMany(mappedBy = "discountPlan")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "discountPlan", fetch=FetchType.EAGER)
     private List<DiscountPlanItem> discountPlanItems=new ArrayList<DiscountPlanItem>();
 
     public int getMinDuration() {

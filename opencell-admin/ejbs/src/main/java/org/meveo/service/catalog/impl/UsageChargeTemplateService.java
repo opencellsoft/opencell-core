@@ -21,11 +21,9 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
 
@@ -36,34 +34,28 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 @Stateless
 public class UsageChargeTemplateService extends ChargeTemplateService<UsageChargeTemplate> {
 
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
-
     @Override
-    public void create(UsageChargeTemplate e) throws BusinessException {
+    public void create(UsageChargeTemplate charge) throws BusinessException {
 
-        e.setFilterExpression(StringUtils.stripToNull(e.getFilterExpression()));
-        e.setFilterParam1(StringUtils.stripToNull(e.getFilterParam1()));
-        e.setFilterParam2(StringUtils.stripToNull(e.getFilterParam2()));
-        e.setFilterParam3(StringUtils.stripToNull(e.getFilterParam3()));
-        e.setFilterParam4(StringUtils.stripToNull(e.getFilterParam4()));
+        charge.setFilterExpression(StringUtils.stripToNull(charge.getFilterExpression()));
+        charge.setFilterParam1(StringUtils.stripToNull(charge.getFilterParam1()));
+        charge.setFilterParam2(StringUtils.stripToNull(charge.getFilterParam2()));
+        charge.setFilterParam3(StringUtils.stripToNull(charge.getFilterParam3()));
+        charge.setFilterParam4(StringUtils.stripToNull(charge.getFilterParam4()));
 
-        super.create(e);
+        super.create(charge);
     }
 
     @Override
-    public UsageChargeTemplate update(UsageChargeTemplate e) throws BusinessException {
+    public UsageChargeTemplate update(UsageChargeTemplate charge) throws BusinessException {
 
-        e.setFilterExpression(StringUtils.stripToNull(e.getFilterExpression()));
-        e.setFilterParam1(StringUtils.stripToNull(e.getFilterParam1()));
-        e.setFilterParam2(StringUtils.stripToNull(e.getFilterParam2()));
-        e.setFilterParam3(StringUtils.stripToNull(e.getFilterParam3()));
-        e.setFilterParam4(StringUtils.stripToNull(e.getFilterParam4()));
+        charge.setFilterExpression(StringUtils.stripToNull(charge.getFilterExpression()));
+        charge.setFilterParam1(StringUtils.stripToNull(charge.getFilterParam1()));
+        charge.setFilterParam2(StringUtils.stripToNull(charge.getFilterParam2()));
+        charge.setFilterParam3(StringUtils.stripToNull(charge.getFilterParam3()));
+        charge.setFilterParam4(StringUtils.stripToNull(charge.getFilterParam4()));
 
-        ratingCacheContainerProvider.updateUsageChargeTemplateInCache(e); // Make sure to update cache before DB, as to not loose if code and priority has changed
-
-        e = super.update(e);
-        return e;
+        return super.update(charge);
     }
 
     public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {

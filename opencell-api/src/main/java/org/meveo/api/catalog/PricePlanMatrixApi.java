@@ -359,7 +359,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             handleMissingParameters();
         }
 
-        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(eventCode);
+        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(eventCode);
         if (pricePlanMatrixes == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, eventCode);
         }

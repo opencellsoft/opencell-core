@@ -104,8 +104,8 @@ public class WalletInstance extends BusinessEntity {
 
     @Override
     public String toString() {
-        return String.format("WalletInstance [%s, walletTemplate=%s, userAccount=%s]", super.toString(), walletTemplate != null ? walletTemplate.getCode() : null,
-            userAccount != null ? userAccount.getCode() : null);
+        return String.format("WalletInstance [%s, walletTemplate=%s, userAccount=%s]", super.toString(), walletTemplate != null ? walletTemplate.getId() : null,
+            userAccount != null ? userAccount.getId() : null);
     }
 
     public UserAccount getUserAccount() {

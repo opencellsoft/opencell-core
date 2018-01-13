@@ -18,16 +18,12 @@
  */
 package org.meveo.service.medina.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -36,18 +32,14 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class AccessService extends PersistenceService<Access> {
 
-    @Inject
-    private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
-
-    @SuppressWarnings("unchecked")
-    public List<Access> findByUserID(String userId) {
-        log.info("findByUserID '" + userId + "'");
-        List<Access> result = new ArrayList<Access>();
-        if (userId != null && userId.length() > 0) {
-            Query query = getEntityManager().createQuery("from Access a where a.accessUserId=:accessUserId " + "and a.disabled=false").setParameter("accessUserId", userId);
-            result = query.getResultList();
-        }
-        return result;
+    /**
+     * Get a list of Accesses matching a given accessUserId value
+     * 
+     * @param accessUserId
+     * @return
+     */
+    public List<Access> getActiveAccessByUserId(String accessUserId) {
+        return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
     }
 
     public boolean isDuplicate(Access access) {
@@ -83,47 +75,5 @@ public class AccessService extends PersistenceService<Access> {
             log.warn("failed to get list Access by subscription", e);
             return null;
         }
-    }
-
-    /**
-     * Get a list of access to populate a cache
-     * 
-     * @return A list of active access
-     */
-    public List<Access> getAccessesForCache() {
-        return getEntityManager().createNamedQuery("Access.getAccessesForCache", Access.class).getResultList();
-    }
-
-    @Override
-    public void create(Access access) throws BusinessException {
-        super.create(access);
-        cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
-    }
-
-    @Override
-    public Access update(Access access) throws BusinessException {
-        access = super.update(access);
-        cdrEdrProcessingCacheContainerProvider.updateAccessInCache(access);
-        return access;
-    }
-
-    @Override
-    public void remove(Access access) throws BusinessException {
-        super.remove(access);
-        cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
-    }
-
-    @Override
-    public Access disable(Access access) throws BusinessException {
-        access = super.disable(access);
-        cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
-        return access;
-    }
-
-    @Override
-    public Access enable(Access access) throws BusinessException {
-        access = super.enable(access);
-        cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
-        return access;
     }
 }

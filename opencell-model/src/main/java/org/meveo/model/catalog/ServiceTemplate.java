@@ -87,11 +87,11 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "business_service_model_id")
     private BusinessServiceModel businessServiceModel;
 

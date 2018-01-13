@@ -51,7 +51,7 @@ import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 public class OfferTemplate extends ProductOffering {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "business_offer_model_id")
     private BusinessOfferModel businessOfferModel;
 

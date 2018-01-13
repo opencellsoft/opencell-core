@@ -195,6 +195,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      */
     public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
             throws BusinessException {
+
         CounterPeriod counterPeriod = new CounterPeriod();
         Calendar cal = counterTemplate.getCalendar();
         cal.setInitDate(initDate);
@@ -480,5 +481,14 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), incrementBy, counterPeriod.getValue());
 
         return counterPeriod.getValue();
+    }
+
+    /**
+     * Get a list of usage type counter instances to populate a cache
+     * 
+     * @return A list of usage type counter instances
+     */
+    public List<CounterInstance> getCounterInstancesForCache() {
+        return getEntityManager().createNamedQuery("CounterInstance.getUsageCountersForCache", CounterInstance.class).getResultList();
     }
 }
