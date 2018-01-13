@@ -21,9 +21,7 @@ public class UnitRatedTransactionsJobBean {
 	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 	public void execute(JobExecutionResultImpl result,Long walletOperationId ) {
 		log.debug("Running with walletOperationId={}", walletOperationId);
-		
 		try {
-			
 			ratedTransactionService.createRatedTransaction(walletOperationId);
 			result.registerSucces();
 		} catch (Exception e) {

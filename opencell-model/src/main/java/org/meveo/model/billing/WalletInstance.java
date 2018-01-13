@@ -47,121 +47,116 @@ import org.meveo.model.catalog.WalletTemplate;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code", "userAccount.code"})
+@ExportIdentifier({ "code", "userAccount.code" })
 @Table(name = "billing_wallet", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "user_account_id" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_wallet_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_wallet_seq"), })
 @NamedQueries({
-	@NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", 
-			query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
-					+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
-	@NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", 
-			query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
-							+ "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE "
-							+ " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) "),
-})
+        @NamedQuery(name = "WalletInstance.listPrepaidActiveWalletIds", query = "SELECT c.id FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
+                + "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE"),
+        @NamedQuery(name = "WalletInstance.listPrepaidWalletsToMatch", query = "SELECT c FROM WalletInstance c where c.walletTemplate.walletType=org.meveo.model.billing.BillingWalletTypeEnum.PREPAID and "
+                + "c.userAccount.status=org.meveo.model.billing.AccountStatusEnum.ACTIVE " + " AND (c.nextMatchingDate IS NULL OR nextMatchingDate <= :matchingDate) "), })
 public class WalletInstance extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "cat_wallet_template_id")
-	private WalletTemplate walletTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cat_wallet_template_id")
+    private WalletTemplate walletTemplate;
 
-	@ManyToOne
-	@JoinColumn(name = "user_account_id")
-	private UserAccount userAccount;
+    @ManyToOne
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
-	@Column(name = "expiry_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date creditExpiryDate;
+    @Column(name = "expiry_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date creditExpiryDate;
 
-	@Column(name = "next_matching_date")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date nextMatchingDate;
+    @Column(name = "next_matching_date")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date nextMatchingDate;
 
     @Column(name = "low_balance_level", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal lowBalanceLevel;
-	
-	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<WalletOperation> operations;
+    private BigDecimal lowBalanceLevel;
 
-	@OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<RatedTransaction> ratedTransactions;
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<WalletOperation> operations;
 
-	public WalletTemplate getWalletTemplate() {
-		return walletTemplate;
-	}
+    @OneToMany(mappedBy = "wallet", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<RatedTransaction> ratedTransactions;
 
-	public void setWalletTemplate(WalletTemplate walletTemplate) {
-		this.walletTemplate = walletTemplate;
-		if (walletTemplate != null) {
-			this.code = walletTemplate.getCode();
-			this.description = walletTemplate.getDescription();
-			this.lowBalanceLevel=walletTemplate.getLowBalanceLevel();
-		} else {
-			this.code = null;
-			this.description = null;
-			this.lowBalanceLevel = null;
-		}
-	}
+    public WalletTemplate getWalletTemplate() {
+        return walletTemplate;
+    }
 
+    public void setWalletTemplate(WalletTemplate walletTemplate) {
+        this.walletTemplate = walletTemplate;
+        if (walletTemplate != null) {
+            this.code = walletTemplate.getCode();
+            this.description = walletTemplate.getDescription();
+            this.lowBalanceLevel = walletTemplate.getLowBalanceLevel();
+        } else {
+            this.code = null;
+            this.description = null;
+            this.lowBalanceLevel = null;
+        }
+    }
 
-
-	@Override
+    @Override
     public String toString() {
         return String.format("WalletInstance [%s, walletTemplate=%s, userAccount=%s]", super.toString(), walletTemplate != null ? walletTemplate.getCode() : null,
             userAccount != null ? userAccount.getCode() : null);
     }
 
     public UserAccount getUserAccount() {
-		return userAccount;
-	}
+        return userAccount;
+    }
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public List<RatedTransaction> getRatedTransactions() {
-		return ratedTransactions;
-	}
+    public List<RatedTransaction> getRatedTransactions() {
+        return ratedTransactions;
+    }
 
-	public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
-		this.ratedTransactions = ratedTransactions;
-	}
+    public void setRatedTransactions(List<RatedTransaction> ratedTransactions) {
+        this.ratedTransactions = ratedTransactions;
+    }
 
-	public List<WalletOperation> getOperations() {
-		return operations;
-	}
+    public List<WalletOperation> getOperations() {
+        return operations;
+    }
 
-	public void setOperations(List<WalletOperation> operations) {
-		this.operations = operations;
-	}
+    public void setOperations(List<WalletOperation> operations) {
+        this.operations = operations;
+    }
 
-	public Set<InvoiceSubCategory> getInvoiceSubCategories() {
-		Set<InvoiceSubCategory> invoiceSubCategories = new HashSet<InvoiceSubCategory>();
-		for (RatedTransaction ratedTransaction : ratedTransactions) {
-			invoiceSubCategories.add(ratedTransaction.getInvoiceSubCategory());
-		}
-		return invoiceSubCategories;
-	}
+    public Set<InvoiceSubCategory> getInvoiceSubCategories() {
+        Set<InvoiceSubCategory> invoiceSubCategories = new HashSet<InvoiceSubCategory>();
+        for (RatedTransaction ratedTransaction : ratedTransactions) {
+            invoiceSubCategories.add(ratedTransaction.getInvoiceSubCategory());
+        }
+        return invoiceSubCategories;
+    }
 
-	public Date getCreditExpiryDate() {
-		return creditExpiryDate;
-	}
+    public Date getCreditExpiryDate() {
+        return creditExpiryDate;
+    }
 
-	public void setCreditExpiryDate(Date creditExpiryDate) {
-		this.creditExpiryDate = creditExpiryDate;
-	}
+    public void setCreditExpiryDate(Date creditExpiryDate) {
+        this.creditExpiryDate = creditExpiryDate;
+    }
 
-	public Date getNextMatchingDate() {
-		return nextMatchingDate;
-	}
+    public Date getNextMatchingDate() {
+        return nextMatchingDate;
+    }
 
-	public void setNextMatchingDate(Date nextMatchingDate) {
-		this.nextMatchingDate = nextMatchingDate;
-	}
+    public void setNextMatchingDate(Date nextMatchingDate) {
+        this.nextMatchingDate = nextMatchingDate;
+    }
 
-	public BigDecimal getLowBalanceLevel() {
+    public BigDecimal getLowBalanceLevel() {
         return lowBalanceLevel;
     }
 
@@ -170,7 +165,7 @@ public class WalletInstance extends BusinessEntity {
     }
 
     public boolean equals(Object obj) {
-                
+
         if (this == obj) {
             return true;
         } else if (obj == null) {

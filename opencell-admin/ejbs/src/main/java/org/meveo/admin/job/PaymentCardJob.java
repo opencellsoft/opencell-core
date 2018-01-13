@@ -16,9 +16,13 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+/**
+ * The Class PaymentCardJob create payment or refund for all opened account operations.
+ */
 @Stateless
 public class PaymentCardJob extends Job {
 
+    /** The payment card job bean. */
     @Inject
     private PaymentCardJobBean paymentCardJobBean;
 
@@ -32,6 +36,7 @@ public class PaymentCardJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
+
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
@@ -64,7 +69,7 @@ public class PaymentCardJob extends Job {
         Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
         lisValuesCreditDebit.put("Credit", "Payment");
         lisValuesCreditDebit.put("Debit", "Refund");
-        
+
         CustomFieldTemplate createAO = new CustomFieldTemplate();
         createAO.setCode("PaymentCardJob_createAO");
         createAO.setAppliesTo("JOB_PaymentCardJob");
@@ -86,7 +91,7 @@ public class PaymentCardJob extends Job {
         matchingAO.setValueRequired(false);
         matchingAO.setListValues(lisValuesYesNo);
         result.put("PaymentCardJob_matchingAO", matchingAO);
-        
+
         CustomFieldTemplate creditOrDebit = new CustomFieldTemplate();
         creditOrDebit.setCode("PaymentCardJob_creditOrDebit");
         creditOrDebit.setAppliesTo("JOB_PaymentCardJob");
@@ -100,4 +105,5 @@ public class PaymentCardJob extends Job {
 
         return result;
     }
+
 }

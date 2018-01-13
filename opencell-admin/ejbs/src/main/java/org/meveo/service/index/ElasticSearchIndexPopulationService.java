@@ -147,7 +147,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return found;
     }
 
-    public EntityManager getEntityManager() {
+    /**
+     * @return entity manager
+     */
+    private EntityManager getEntityManager() {
         EntityManager result = emfForJobs;
         if (conversation != null) {
             try {
@@ -161,7 +164,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed
+     * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed.
      * 
      * @param entity Entity to store in Elastic Search
      * @param cftIndexable Sets to track CFTs that are indexable. Used in massive initial ES population.
@@ -194,7 +197,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                     }
 
                 } else {
-                    String fieldNames[] = fieldNameFrom.split("\\.");
+                    String[] fieldNames = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
@@ -219,7 +222,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                     jsonValueMap.put(fieldNameTo, value);
 
                 } else {
-                    String fieldNames[] = fieldNameTo.split("\\.");
+                    String[] fieldNames = fieldNameTo.split("\\.");
                     String fieldName = null;
                     Map<String, Object> mapEntry = jsonValueMap;
                     int length = fieldNames.length;
@@ -377,7 +380,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Update Elastic Search model with custom entity template definition
+     * Update Elastic Search model with custom entity template definition.
      * 
      * @param cet Custom entity template
      * @throws BusinessException business exception
