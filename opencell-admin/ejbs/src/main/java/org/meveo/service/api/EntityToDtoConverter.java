@@ -2,6 +2,7 @@ package org.meveo.service.api;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,14 +46,6 @@ public class EntityToDtoConverter {
         return getCustomFieldsDTO(entity, false);
     }
 
-    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, CustomFieldInheritanceEnum inheritCF) {
-        if (entity.getCfValues() == null) {
-            return null;
-        }
-        Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues().getValuesByCode();
-        return getCustomFieldsDTO(entity, cfValuesByCode, inheritCF);
-    }
-
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
         return getCustomFieldsDTO(entity, includeInheritedCF, false);
     }
@@ -74,26 +67,32 @@ public class EntityToDtoConverter {
      * @return custom fields dto
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
+        if (cfValuesByCode == null || cfValuesByCode.isEmpty()) {
+            return null;
+        }
         return getCustomFieldsDTO(entity, cfValuesByCode, CustomFieldInheritanceEnum.getInheritCF(includeInheritedCF, mergeMapValues));
+    }
+
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, CustomFieldInheritanceEnum inheritCF) {
+        Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null ? entity.getCfValues().getValuesByCode() : new HashMap<>();
+        return getCustomFieldsDTO(entity, cfValuesByCode, inheritCF);
     }
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, CustomFieldInheritanceEnum inheritCF) {
 
-        if (cfValuesByCode == null || cfValuesByCode.isEmpty()) {
-            return null;
-        }
-
-        Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
-
         CustomFieldsDto cfsDto = new CustomFieldsDto();
-        for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValuesByCode.entrySet()) {
-            String cfCode = cfValueInfo.getKey();
-            // Return only those values that have cft
-            if (!cfts.containsKey(cfCode)) {
-                continue;
-            }
-            for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
-                cfsDto.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+        boolean isValueMapEmpty = cfValuesByCode == null || cfValuesByCode.isEmpty();
+        if (!isValueMapEmpty) {
+            Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
+            for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValuesByCode.entrySet()) {
+                String cfCode = cfValueInfo.getKey();
+                // Return only those values that have cft
+                if (!cfts.containsKey(cfCode)) {
+                    continue;
+                }
+                for (CustomFieldValue cfValue : cfValueInfo.getValue()) {
+                    cfsDto.getCustomField().add(customFieldToDTO(cfCode, cfValue, cfts.get(cfCode)));
+                }
             }
         }
 
