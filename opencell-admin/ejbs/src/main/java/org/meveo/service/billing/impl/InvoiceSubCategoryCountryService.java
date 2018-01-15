@@ -41,89 +41,88 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 @Stateless
-public class InvoiceSubCategoryCountryService extends
-		PersistenceService<InvoiceSubcategoryCountry> {
-	
-	@Inject
-	private InvoiceSubCategoryService invoiceSubCategoryService;
-	
-	@Inject
-	private ResourceBundle resourceBundle;
-	
-	public void create(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
-		invoiceSubcategoryCountry = validateValidityDates(invoiceSubcategoryCountry);
+public class InvoiceSubCategoryCountryService extends PersistenceService<InvoiceSubcategoryCountry> {
 
-		super.create(invoiceSubcategoryCountry);
-	}
-	
-	public InvoiceSubcategoryCountry update(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
-		invoiceSubcategoryCountry = validateValidityDates(invoiceSubcategoryCountry);
+    @Inject
+    private InvoiceSubCategoryService invoiceSubCategoryService;
 
-		return super.update(invoiceSubcategoryCountry);
-	}
-	
-	public InvoiceSubcategoryCountry validateValidityDates(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
-		// validate date
-		// Check that two dates are one after another
-		if (invoiceSubcategoryCountry.getStartValidityDate() != null
-				&& invoiceSubcategoryCountry.getEndValidityDate() != null && invoiceSubcategoryCountry
-						.getStartValidityDate().compareTo(invoiceSubcategoryCountry.getEndValidityDate()) >= 0) {
-			throw new BusinessException(
-					resourceBundle.getString("invoiceSubCategoryCountry.validityDates.intervalIncorrect"));
-		}
+    @Inject
+    private ResourceBundle resourceBundle;
 
-		// compute priority
-		// get all the taxes of an invoice sub category
-		List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = listByInvoiceSubCategoryAndCountryWithValidityDates(
-				invoiceSubcategoryCountry.getInvoiceSubCategory(), invoiceSubcategoryCountry.getTradingCountry(), null,
-				null, null);
-		if (invoiceSubcategoryCountries != null) {
-			InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
-			// check for overlap
-			for (InvoiceSubcategoryCountry invoiceSubcategoryCountryTemp : invoiceSubcategoryCountries) {
-				if (!invoiceSubcategoryCountry.isTransient()
-						&& invoiceSubcategoryCountry.getId().equals(invoiceSubcategoryCountryTemp.getId())) {
-					continue;
-				}
-				if (invoiceSubcategoryCountryTemp.isCorrespondsToValidityDate(
-						invoiceSubcategoryCountry.getStartValidityDate(),
-						invoiceSubcategoryCountry.getEndValidityDate(), false)) {
-					if (invoiceSubcategoryCountryFound == null || invoiceSubcategoryCountryFound
-							.getPriority() < invoiceSubcategoryCountryTemp.getPriority()) {
-						invoiceSubcategoryCountryFound = invoiceSubcategoryCountryTemp;
-					}
-				}
-			}
+    @Override
+    public void create(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
+        invoiceSubcategoryCountry = validateValidityDates(invoiceSubcategoryCountry);
+        super.create(invoiceSubcategoryCountry);
+        // Needed to refresh InvoiceSubCategory as InvoiceSubCategory.invoiceSubcategoryCountries field as it is cached
+        refresh(invoiceSubcategoryCountry.getInvoiceSubCategory());
+    }
 
-			if (invoiceSubcategoryCountryFound != null) {
-				// check if strict
-				if (invoiceSubcategoryCountryFound.isCorrespondsToValidityDate(
-						invoiceSubcategoryCountry.getStartValidityDate(),
-						invoiceSubcategoryCountry.getEndValidityDate(), true)) {
-					invoiceSubcategoryCountry.setStrictMatch(true);
-					invoiceSubcategoryCountry
-							.setStartValidityDateMatch(invoiceSubcategoryCountryFound.getStartValidityDate());
-					invoiceSubcategoryCountry
-							.setEndValidityDateMatch(invoiceSubcategoryCountryFound.getEndValidityDate());
-					
-					throw new BusinessException(
-							resourceBundle.getString("invoiceSubCategoryCountry.validityDates.matchingFound"));
-				} else {
-					invoiceSubcategoryCountry.setStrictMatch(false);
-					invoiceSubcategoryCountry
-							.setStartValidityDateMatch(invoiceSubcategoryCountryFound.getStartValidityDate());
-					invoiceSubcategoryCountry
-							.setEndValidityDateMatch(invoiceSubcategoryCountryFound.getEndValidityDate());
-				}
-			}
+    @Override
+    public InvoiceSubcategoryCountry update(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
+        invoiceSubcategoryCountry = validateValidityDates(invoiceSubcategoryCountry);
+        invoiceSubcategoryCountry = super.update(invoiceSubcategoryCountry);
+        // Needed to refresh InvoiceSubCategory as InvoiceSubCategory.invoiceSubcategoryCountries field as it is cached
+        refresh(invoiceSubcategoryCountry.getInvoiceSubCategory());
+        return invoiceSubcategoryCountry;
+    }
 
-			invoiceSubcategoryCountry.setPriority(getNextPriority(invoiceSubcategoryCountries));
-		}
-		
-		return invoiceSubcategoryCountry;
-	}
-	
-	private int getNextPriority(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
+    @Override
+    public void remove(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
+        super.remove(invoiceSubcategoryCountry);
+        // Needed to remove from InvoiceSubCategory.invoiceSubcategoryCountries field as it is cached
+        invoiceSubcategoryCountry.getInvoiceSubCategory().getInvoiceSubcategoryCountries().remove(invoiceSubcategoryCountry);
+    }
+
+    public InvoiceSubcategoryCountry validateValidityDates(InvoiceSubcategoryCountry invoiceSubcategoryCountry) throws BusinessException {
+        // validate date
+        // Check that two dates are one after another
+        if (invoiceSubcategoryCountry.getStartValidityDate() != null && invoiceSubcategoryCountry.getEndValidityDate() != null
+                && invoiceSubcategoryCountry.getStartValidityDate().compareTo(invoiceSubcategoryCountry.getEndValidityDate()) >= 0) {
+            throw new BusinessException(resourceBundle.getString("invoiceSubCategoryCountry.validityDates.intervalIncorrect"));
+        }
+
+        // compute priority
+        // get all the taxes of an invoice sub category
+        List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubcategoryCountry.getInvoiceSubCategory(),
+            invoiceSubcategoryCountry.getTradingCountry(), null, null, null);
+        if (invoiceSubcategoryCountries != null) {
+            InvoiceSubcategoryCountry invoiceSubcategoryCountryFound = null;
+            // check for overlap
+            for (InvoiceSubcategoryCountry invoiceSubcategoryCountryTemp : invoiceSubcategoryCountries) {
+                if (!invoiceSubcategoryCountry.isTransient() && invoiceSubcategoryCountry.getId().equals(invoiceSubcategoryCountryTemp.getId())) {
+                    continue;
+                }
+                if (invoiceSubcategoryCountryTemp.isCorrespondsToValidityDate(invoiceSubcategoryCountry.getStartValidityDate(), invoiceSubcategoryCountry.getEndValidityDate(),
+                    false)) {
+                    if (invoiceSubcategoryCountryFound == null || invoiceSubcategoryCountryFound.getPriority() < invoiceSubcategoryCountryTemp.getPriority()) {
+                        invoiceSubcategoryCountryFound = invoiceSubcategoryCountryTemp;
+                    }
+                }
+            }
+
+            if (invoiceSubcategoryCountryFound != null) {
+                // check if strict
+                if (invoiceSubcategoryCountryFound.isCorrespondsToValidityDate(invoiceSubcategoryCountry.getStartValidityDate(), invoiceSubcategoryCountry.getEndValidityDate(),
+                    true)) {
+                    invoiceSubcategoryCountry.setStrictMatch(true);
+                    invoiceSubcategoryCountry.setStartValidityDateMatch(invoiceSubcategoryCountryFound.getStartValidityDate());
+                    invoiceSubcategoryCountry.setEndValidityDateMatch(invoiceSubcategoryCountryFound.getEndValidityDate());
+
+                    throw new BusinessException(resourceBundle.getString("invoiceSubCategoryCountry.validityDates.matchingFound"));
+                } else {
+                    invoiceSubcategoryCountry.setStrictMatch(false);
+                    invoiceSubcategoryCountry.setStartValidityDateMatch(invoiceSubcategoryCountryFound.getStartValidityDate());
+                    invoiceSubcategoryCountry.setEndValidityDateMatch(invoiceSubcategoryCountryFound.getEndValidityDate());
+                }
+            }
+
+            invoiceSubcategoryCountry.setPriority(getNextPriority(invoiceSubcategoryCountries));
+        }
+
+        return invoiceSubcategoryCountry;
+    }
+
+    private int getNextPriority(List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries) {
         int maxPriority = 0;
         for (InvoiceSubcategoryCountry invoiceSubcategoryCountry : invoiceSubcategoryCountries) {
             maxPriority = (invoiceSubcategoryCountry.getPriority() > maxPriority ? invoiceSubcategoryCountry.getPriority() : maxPriority);
@@ -149,7 +148,7 @@ public class InvoiceSubCategoryCountryService extends
 
         return null;
     }
-    
+
     @SuppressWarnings("unchecked")
     public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId, Date applicationDate) {
 
@@ -177,46 +176,42 @@ public class InvoiceSubCategoryCountryService extends
      * @param applicationDate application date
      * @return invoice sub category country.
      */
-	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
-			InvoiceSubCategory invoiceSubCategory,
-			TradingCountry tradingCountry, Date applicationDate) {
-		return findByInvoiceSubCategoryAndCountry(invoiceSubCategory,
-				tradingCountry, null, applicationDate);
-	}
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, Date applicationDate) {
+        return findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, null, applicationDate);
+    }
 
-	/**
-	 * Find InvoiceSubCategoryCountry with fetching join entities.
-	 * @param invoiceSubCategory invoice sub category
-	 * @param tradingCountry trading country
-	 * @param fetchFields list of fields to be fetched
-	 * @param applicationDate application date.
-	 * @return invoice sub category.
-	 */
-	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(
-			InvoiceSubCategory invoiceSubCategory,
-			TradingCountry tradingCountry, List<String> fetchFields, Date applicationDate) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class,
-				"ic", fetchFields);
-		qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
-		qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
-		qb.addCriterionDateInRange("startValidityDate", "endValidityDate", applicationDate);
-		qb.addOrderCriterion("priority", false);
-		
-		try {
-			return (InvoiceSubcategoryCountry) qb.getQuery(getEntityManager())
-					.getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-	
-	/**
-	 * Get the tax with the most highest priority='1'.
-	 * @param invoiceSubCategoryId invoice sub categoryId
-	 * @param countryId country id
-	 * @return invoice sub category country.
-	 */
-	@SuppressWarnings("unchecked")
+    /**
+     * Find InvoiceSubCategoryCountry with fetching join entities.
+     * 
+     * @param invoiceSubCategory invoice sub category
+     * @param tradingCountry trading country
+     * @param fetchFields list of fields to be fetched
+     * @param applicationDate application date.
+     * @return invoice sub category.
+     */
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, List<String> fetchFields,
+            Date applicationDate) {
+        QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "ic", fetchFields);
+        qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
+        qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
+        qb.addCriterionDateInRange("startValidityDate", "endValidityDate", applicationDate);
+        qb.addOrderCriterion("priority", false);
+
+        try {
+            return (InvoiceSubcategoryCountry) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get the tax with the most highest priority='1'.
+     * 
+     * @param invoiceSubCategoryId invoice sub categoryId
+     * @param countryId country id
+     * @return invoice sub category country.
+     */
+    @SuppressWarnings("unchecked")
     public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId) {
 
         try {
@@ -224,7 +219,7 @@ public class InvoiceSubCategoryCountryService extends
             qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId, true);
             qb.addCriterion("tradingCountry.id", "=", countryId, true);
             qb.addOrderCriterion("priority", false);
-            
+
             List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
             return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
         } catch (NoResultException ex) {
@@ -233,77 +228,75 @@ public class InvoiceSubCategoryCountryService extends
 
         return null;
     }
-	
-	public Tax isInvoiceSubCategoryTaxValid(InvoiceSubcategoryCountry isc, UserAccount userAccount,
-			BillingAccount billingAccount, Invoice invoice, Date operationDate) throws BusinessException {
-		// check if invoiceSubCategory date is valid
-		if (!DateUtils.isDateWithinPeriod(operationDate, isc.getStartValidityDate(), isc.getEndValidityDate())) {
-			return null;
-		}
 
-		if (StringUtils.isBlank(isc.getTaxCodeEL())) {
-			return isc.getTax();
-		} else {
-			return invoiceSubCategoryService.evaluateTaxCodeEL(isc.getTaxCodeEL(), userAccount, billingAccount,
-					invoice);
-		}
-	}
-	
-	/**
-	 * Find InvoiceSubCategoryCountry with a given range of validity dates. No fetching join entities.
-	 * @param invoiceSubCategory invoice sub category
-	 * @param tradingCountry trading country
-	 * @param startValidityDate start validity date
-	 * @param endValidityDate and validity date
-	 * @return invoice sub category.
-	 */
-	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory,
-			TradingCountry tradingCountry, Date startValidityDate, Date endValidityDate) {
-		return findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, null, startValidityDate, endValidityDate);
-	}
+    public Tax isInvoiceSubCategoryTaxValid(InvoiceSubcategoryCountry isc, UserAccount userAccount, BillingAccount billingAccount, Invoice invoice, Date operationDate)
+            throws BusinessException {
+        // check if invoiceSubCategory date is valid
+        if (!DateUtils.isDateWithinPeriod(operationDate, isc.getStartValidityDate(), isc.getEndValidityDate())) {
+            return null;
+        }
 
-	/**
-	 * Find InvoiceSubCategoryCountry with a given range of validity dates. With fetching join entities.
-	 * @param invoiceSubCategory invoice sub category
-	 * @param tradingCountry trading country
-	 * @param fetchFields list of fields to be fetched
-	 * @param startValidityDate start validity date
-	 * @param endValidityDate and validity date
-	 * @return invoice sub category
-	 */
-	public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(
-			InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, List<String> fetchFields,
-			Date startValidityDate, Date endValidityDate) {
-		List<InvoiceSubcategoryCountry> result = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory,
-				tradingCountry, fetchFields, startValidityDate, endValidityDate);
+        if (StringUtils.isBlank(isc.getTaxCodeEL())) {
+            return isc.getTax();
+        } else {
+            return invoiceSubCategoryService.evaluateTaxCodeEL(isc.getTaxCodeEL(), userAccount, billingAccount, invoice);
+        }
+    }
 
-		if (result != null && !result.isEmpty()) {
-			return result.get(0);
-		}
+    /**
+     * Find InvoiceSubCategoryCountry with a given range of validity dates. No fetching join entities.
+     * 
+     * @param invoiceSubCategory invoice sub category
+     * @param tradingCountry trading country
+     * @param startValidityDate start validity date
+     * @param endValidityDate and validity date
+     * @return invoice sub category.
+     */
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry,
+            Date startValidityDate, Date endValidityDate) {
+        return findByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, null, startValidityDate, endValidityDate);
+    }
 
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<InvoiceSubcategoryCountry> listByInvoiceSubCategoryAndCountryWithValidityDates(
-			InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, List<String> fetchFields,
-			Date startValidityDate, Date endValidityDate) {
-		QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "ic", fetchFields);
-		qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
-		qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
-		if (startValidityDate != null) {
-			qb.addCriterionDate("startValidityDate", startValidityDate);
-		}
-		if (endValidityDate != null) {
-			qb.addCriterionDate("endValidityDate", endValidityDate);
-		}
-		qb.addOrderCriterion("priority", false);
+    /**
+     * Find InvoiceSubCategoryCountry with a given range of validity dates. With fetching join entities.
+     * 
+     * @param invoiceSubCategory invoice sub category
+     * @param tradingCountry trading country
+     * @param fetchFields list of fields to be fetched
+     * @param startValidityDate start validity date
+     * @param endValidityDate and validity date
+     * @return invoice sub category
+     */
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry,
+            List<String> fetchFields, Date startValidityDate, Date endValidityDate) {
+        List<InvoiceSubcategoryCountry> result = listByInvoiceSubCategoryAndCountryWithValidityDates(invoiceSubCategory, tradingCountry, fetchFields, startValidityDate,
+            endValidityDate);
 
-		try {
-			return (List<InvoiceSubcategoryCountry>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
-	
+        if (result != null && !result.isEmpty()) {
+            return result.get(0);
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<InvoiceSubcategoryCountry> listByInvoiceSubCategoryAndCountryWithValidityDates(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry,
+            List<String> fetchFields, Date startValidityDate, Date endValidityDate) {
+        QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "ic", fetchFields);
+        qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
+        qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
+        if (startValidityDate != null) {
+            qb.addCriterionDate("startValidityDate", startValidityDate);
+        }
+        if (endValidityDate != null) {
+            qb.addCriterionDate("endValidityDate", endValidityDate);
+        }
+        qb.addOrderCriterion("priority", false);
+
+        try {
+            return (List<InvoiceSubcategoryCountry>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

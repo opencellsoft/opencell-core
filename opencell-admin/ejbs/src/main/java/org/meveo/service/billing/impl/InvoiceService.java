@@ -511,9 +511,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.error("Error for BA {}", billingAccount.getCode(), e);
             if (billingRun != null) {
                 rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
-            }else {
+            } else {
                 throw e;
-        }
+            }
         }
         return invoice;
     }
@@ -643,16 +643,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
 
-//                    if (!sourceFile.exists()) {
-//
-//                        sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
-//                        sourceFile = new File(sourcePath);
+                    // if (!sourceFile.exists()) {
+                    //
+                    // sourcePath = Thread.currentThread().getContextClassLoader().getResource("./jasper").getPath() + "default/invoice";
+                    // sourceFile = new File(sourcePath);
 
-                        if (!sourceFile.exists()) {
-                            throw new BusinessException("embedded jasper report for invoice is missing..");
-                        }
-//                    }
+                    if (!sourceFile.exists()) {
+                        throw new BusinessException("embedded jasper report for invoice is missing..");
                     }
+                    // }
+                }
                 destDir.mkdirs();
                 FileUtils.copyDirectory(sourceFile, destDir);
             }
@@ -831,13 +831,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * @param invoice invoice to delete
-     * @throws BusinessException business exception 
+     * @throws BusinessException business exception
      */
     public void deleteInvoice(Invoice invoice) throws BusinessException {
         getEntityManager().createNamedQuery("RatedTransaction.deleteInvoice").setParameter("invoice", invoice).executeUpdate();
 
         super.remove(invoice);
-        }
+    }
 
     /**
      * @param prefix prefix of EL expression
@@ -1074,7 +1074,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
             String dir = xmlFilename.substring(0, pos);
             (new File(dir)).mkdirs();
-    }
+        }
 
         return xmlFilename;
     }
@@ -1105,12 +1105,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 if (value == null) {
                 } else if (value instanceof String) {
                     xmlFileName = (String) value;
-        } else {
+                } else {
                     xmlFileName = value.toString();
-        }
+                }
             } catch (BusinessException e) {
                 // Ignore exceptions here - a default XML filename will be used instead. Error is logged in EL evaluation
-    }
+            }
         }
 
         // Default to invoiceDateOrBillingRunId/invoiceNumber.xml or invoiceDateOrBillingRunId/_IA_invoiceNumber.xml for adjustment invoice
@@ -1124,7 +1124,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             xmlFileName = brPath + File.separator + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "")
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
-    }
+        }
 
         if (!xmlFileName.toLowerCase().endsWith(".xml")) {
             xmlFileName = xmlFileName + ".xml";
@@ -1168,7 +1168,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         if (invoice.getPdfFilename() != null) {
             return invoice.getPdfFilename();
-    }
+        }
 
         // Generate a name for pdf file from EL expression
         String pdfFileName = null;
@@ -1185,7 +1185,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     pdfFileName = (String) value;
                 } else {
                     pdfFileName = value.toString();
-        }
+                }
             } catch (BusinessException e) {
                 // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
             }
@@ -1194,7 +1194,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         // Default to invoiceDate_invoiceNumber.pdf or invoiceDate_IA_invoiceNumber.pdf for adjustment invoice
         if (StringUtils.isBlank(pdfFileName)) {
 
-        boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
+            boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 
             pdfFileName = formatInvoiceDate(invoice.getInvoiceDate()) + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "_")
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
@@ -1380,7 +1380,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
 
         if (regenerate || !isInvoiceXmlExist(invoice)) {
-        produceInvoiceXmlNoUpdate(invoice);
+            produceInvoiceXmlNoUpdate(invoice);
         }
         invoice = produceInvoicePdf(invoice);
         return invoice;
@@ -1478,7 +1478,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         // Only added here so invoice changes would be pushed to DB before constructing XML and PDF as those are independent tasks
         commit();
-        
+
         if (produceXml) {
             produceInvoiceXmlNoUpdate(invoice);
         }
@@ -1507,10 +1507,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (invoice.getRecordedInvoice() != null) {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
-        
+
         deleteInvoice(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
-            }
+    }
 
     /**
      * @param expression expression as string
@@ -1547,7 +1547,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     public String evaluateBillingTemplateName(String expression, Invoice invoice) {
         String billingTemplateName = null;
-        
+
         if (!StringUtils.isBlank(expression)) {
             Map<Object, Object> contextMap = new HashMap<>();
             contextMap.put("invoice", invoice);
@@ -1582,10 +1582,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String billingTemplateName = "default";
         if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateNameEL())) {
             billingTemplateName = evaluateBillingTemplateName(invoiceType.getBillingTemplateNameEL(), invoice);
-            
+
         } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateNameEL())) {
             billingTemplateName = evaluateBillingTemplateName(billingCycle.getBillingTemplateNameEL(), invoice);
-                    
+
         } else if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
             billingTemplateName = invoiceType.getBillingTemplateName();
 
@@ -1595,7 +1595,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateName())) {
             billingTemplateName = billingCycle.getBillingTemplateName();
         }
-        
+
         return billingTemplateName;
     }
 
@@ -1634,10 +1634,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return A list of invoice identifiers
      */
     public List<Long> getInvoiceIdsByBRWithNoXml(Long billingRunId) {
-       if(billingRunId == null) {
-	   return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
+        if (billingRunId == null) {
+            return getEntityManager().createNamedQuery("Invoice.validatedNoXml", Long.class).getResultList();
         }
-	return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
+        return getEntityManager().createNamedQuery("Invoice.validatedByBRNoXml", Long.class).setParameter("billingRunId", billingRunId).getResultList();
     }
 
     /**

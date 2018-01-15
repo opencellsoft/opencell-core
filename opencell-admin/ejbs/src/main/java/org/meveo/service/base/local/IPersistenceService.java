@@ -193,6 +193,7 @@ public interface IPersistenceService<E extends IEntity> {
 
     /**
      * Count number of filtered entities in database.
+     * 
      * @param config pagination config.
      * @return Number of filtered entities.
      */
@@ -207,9 +208,10 @@ public interface IPersistenceService<E extends IEntity> {
 
     /**
      * Refresh entity with state from database.
+     * 
      * @param entity entity to refresh.
      */
-    void refresh(E entity);
+    void refresh(IEntity entity);
 
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.

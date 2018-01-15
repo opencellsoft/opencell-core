@@ -255,17 +255,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
 
+            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
+            
             File xmlFile = new File(invoiceService.getFullXmlFilePath(invoice, true));
 
             StreamResult result = new StreamResult(xmlFile);
 
             StringWriter writer = new StringWriter();
             trans.transform(new DOMSource(doc), new StreamResult(writer));
-            log.trace("XML invoice: " + writer.getBuffer().toString().replaceAll("\n|\r", ""));
+            log.trace("XML invoice file '{}'  contents {}", invoice.getXmlFilename(), writer.getBuffer().toString().replaceAll("\n|\r", ""));
 
             trans.transform(source, result);
-
-            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
 
             return xmlFile;
 

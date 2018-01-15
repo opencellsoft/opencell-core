@@ -1,6 +1,5 @@
 package org.meveo.model.catalog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Cacheable;
@@ -40,7 +39,7 @@ public class DiscountPlan extends BusinessEntity {
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "discountPlan", fetch=FetchType.EAGER)
-    private List<DiscountPlanItem> discountPlanItems=new ArrayList<DiscountPlanItem>();
+    private List<DiscountPlanItem> discountPlanItems;
 
     public int getMinDuration() {
         return minDuration;

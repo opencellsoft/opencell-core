@@ -243,12 +243,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     }
 
     /**
-     * @param billingAccount billing account
-     * @param invoice invoice to create from
-     * @param ratedTransactionFilter filter for rated transaction
-     * @param orderNumber order number
-     * @param firstTransactionDate date of first transaction
-     * @param lastTransactionDate date of last transaction
+     * Append invoice aggregates to an invoice. Only one of these should be provided: ratedTransactionFilter, ratedTransactions, orderNumber
+     * 
+     * @param billingAccount Billing Account
+     * @param invoice Invoice to append invoice aggregates to
+     * @param ratedTransactionFilter Filter to use to filter rated transactions.
+     * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
+     * @param orderNumber Order number used to retrieve rated transactions
+     * @param firstTransactionDate First transaction date
+     * @param lastTransactionDate Last transaction date
      * @throws BusinessException business exception
      */
     public void appendInvoiceAgregates(BillingAccount billingAccount, Invoice invoice, Filter ratedTransactionFilter, String orderNumber, Date firstTransactionDate,
@@ -539,8 +542,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                 }
 
                 invoiceAgregateSubcat.getCategoryInvoiceAgregate().addAmountWithoutTax(invoiceAgregateSubcat.getAmountWithoutTax());
-                log.debug(
-                    "  cat " + invoiceAgregateSubcat.getCategoryInvoiceAgregate().getId() + " ht ->" + invoiceAgregateSubcat.getCategoryInvoiceAgregate().getAmountWithoutTax());
+                log.debug("  cat {}  ht -> {}", invoiceAgregateSubcat.getCategoryInvoiceAgregate().getId(),
+                    invoiceAgregateSubcat.getCategoryInvoiceAgregate().getAmountWithoutTax());
+
                 if (invoiceAgregateSubcat.getAmountWithoutTax().compareTo(biggestAmount) > 0) {
                     biggestAmount = invoiceAgregateSubcat.getAmountWithoutTax();
                     biggestSubCat = invoiceAgregateSubcat;
@@ -607,10 +611,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             }
 
             appendInvoiceDiscountAggregates(userAccount, isExonerated, invoice, taxInvoiceAgregateMap, isVirtual);
-
         }
 
-        log.debug("Before  isVirtual:" + (System.currentTimeMillis() - startDate));
+        log.debug("Before  isVirtual: {}", (System.currentTimeMillis() - startDate));
 
         BigDecimal discountAmountWithoutTax = BigDecimal.ZERO;
         BigDecimal discountAmountTax = BigDecimal.ZERO;
@@ -622,7 +625,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             discountAmountWithoutTax = (BigDecimal) object[0];
             discountAmountTax = (BigDecimal) object[1];
             discountAmountWithTax = (BigDecimal) object[2];
-            log.debug("After  invoiceAgregateService:" + (System.currentTimeMillis() - startDate));
+            log.debug("After  invoiceAgregateService {}", (System.currentTimeMillis() - startDate));
+
         } else {
             for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
                 if (invoiceAgregate instanceof SubCategoryInvoiceAgregate && invoiceAgregate.isDiscountAggregate()) {
@@ -710,6 +714,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * <p>
      * If the provider's displayFreeTransacInInvoice of the current invoice is <tt>false</tt>, RatedTransaction with amount=0 don't show up in the XML.
      * </p>
+     * 
      * @param wallet wallet instance
      * @param invoice invoice
      * @param invoiceSubCategory invoice sub category
@@ -1114,9 +1119,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         BillingAccount billingAccount = wallet.getUserAccount().getBillingAccount();
         RatedTransaction ratedTransaction = new RatedTransaction(walletOperation, walletOperation.getOperationDate(), walletOperation.getUnitAmountWithoutTax(), unitAmountWithTax,
             unitAmountTax, walletOperation.getQuantity(), walletOperation.getAmountWithoutTax(), amountWithTax, amountTax, RatedTransactionStatusEnum.OPEN, wallet, billingAccount,
-            invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getParameterExtra(), walletOperation.getOrderNumber(),
-            walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(), walletOperation.getOfferCode(),
-            walletOperation.getEdr(), null, null);
+            invoiceSubCategory, walletOperation.getParameter1(), walletOperation.getParameter2(), walletOperation.getParameter3(), walletOperation.getParameterExtra(),
+            walletOperation.getOrderNumber(), walletOperation.getInputUnitDescription(), walletOperation.getRatingUnitDescription(), walletOperation.getPriceplan(),
+            walletOperation.getOfferCode(), walletOperation.getEdr(), null, null);
 
         walletOperation.setStatus(WalletOperationStatusEnum.TREATED);
 

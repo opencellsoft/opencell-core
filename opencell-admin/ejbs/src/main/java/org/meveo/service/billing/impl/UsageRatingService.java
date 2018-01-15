@@ -421,8 +421,12 @@ public class UsageRatingService implements Serializable {
             return stopEDRRating;
         }
 
-        UsageChargeTemplate chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate(); // em.find(UsageChargeTemplate.class,
-                                                                                                            // chargeInstance.getChargeTemplate().getId());
+        UsageChargeTemplate chargeTemplate = null;
+        if (usageChargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
+            chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+        } else {
+            chargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
+        }
 
         for (TriggeredEDRTemplate triggeredEDR : chargeTemplate.getEdrTemplates()) {
             if (triggeredEDR.getConditionEl() == null || "".equals(triggeredEDR.getConditionEl()) || matchExpression(triggeredEDR.getConditionEl(), edr, walletOperation)) {
@@ -655,7 +659,12 @@ public class UsageRatingService implements Serializable {
      */
     private boolean isChargeMatch(UsageChargeInstance chargeInstance, EDR edr, boolean requirePP) throws BusinessException, ChargeWitoutPricePlanException {
 
-        UsageChargeTemplate chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate(); // em.find(UsageChargeTemplate.class, charge.getChargeTemplate().getId());
+        UsageChargeTemplate chargeTemplate = null;
+        if (chargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
+            chargeTemplate = (UsageChargeTemplate) chargeInstance.getChargeTemplate();
+        } else {
+            chargeTemplate = em.find(UsageChargeTemplate.class, chargeInstance.getChargeTemplate().getId());
+        }
 
         String chargeCode = chargeTemplate.getCode();
         String filterExpression = chargeTemplate.getFilterExpression();

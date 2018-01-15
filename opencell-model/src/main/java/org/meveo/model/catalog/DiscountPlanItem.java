@@ -139,11 +139,16 @@ public class DiscountPlanItem extends EnableEntity {
         }
         
 		DiscountPlanItem other = (DiscountPlanItem) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (code == null) {
+            if (other.getCode() != null) {
+                return false;
+            }
+        } else if (!code.equals(other.getCode())) {
+            return false;
+        }
 		return true;
 	}
 

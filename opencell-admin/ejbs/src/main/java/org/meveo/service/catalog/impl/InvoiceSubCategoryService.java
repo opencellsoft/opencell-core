@@ -139,4 +139,25 @@ public class InvoiceSubCategoryService extends BusinessService<InvoiceSubCategor
         return result;
     }
 
+    @Override
+    public void create(InvoiceSubCategory subCat) throws BusinessException {
+        super.create(subCat);
+        // Needed to refresh InvoiceCategory as InvoiceCategory.invoiceSubCategories field as it is cached
+        refresh(subCat.getInvoiceCategory());
+    }
+
+    @Override
+    public InvoiceSubCategory update(InvoiceSubCategory subCat) throws BusinessException {
+        subCat = super.update(subCat);
+        // Needed to refresh InvoiceCategory as InvoiceCategory.invoiceSubCategories field as it is cached
+        refresh(subCat.getInvoiceCategory());
+        return subCat;
+    }
+
+    @Override
+    public void remove(InvoiceSubCategory subCat) throws BusinessException {
+        super.remove(subCat);
+        // Needed to remove from InvoiceCategory.invoiceSubCategories field as it is cached
+        subCat.getInvoiceCategory().getInvoiceSubCategories().remove(subCat);
+    }
 }
