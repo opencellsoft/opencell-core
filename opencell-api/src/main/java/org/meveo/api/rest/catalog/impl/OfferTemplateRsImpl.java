@@ -61,7 +61,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         GetOfferTemplateResponseDto result = new GetOfferTemplateResponseDto();
 
         try {
-            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo));
+            result.setOfferTemplate(offerTemplateApi.find(offerTemplateCode, validFrom, validTo, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -76,7 +76,7 @@ public class OfferTemplateRsImpl extends BaseRs implements OfferTemplateRs {
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
 
         try {
-            result = (offerTemplateApi.list(code, validFrom, validTo, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder)));
+            result = (offerTemplateApi.list(code, validFrom, validTo, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder), inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

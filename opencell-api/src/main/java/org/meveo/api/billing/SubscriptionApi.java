@@ -881,7 +881,7 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        CustomFieldInheritanceEnum inherit = inheritCF != null ? inheritCF : CustomFieldInheritanceEnum.getInheritCF(true, mergedCF);
+        CustomFieldInheritanceEnum inherit = (inheritCF != null && !mergedCF) ? inheritCF : CustomFieldInheritanceEnum.getInheritCF(true, mergedCF);
 
         result = subscriptionToDto(subscription, inherit);
 

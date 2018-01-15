@@ -46,9 +46,11 @@ public class EntityToDtoConverter {
     }
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, CustomFieldInheritanceEnum inheritCF) {
-        boolean includeInheritedCF = inheritCF != null && CustomFieldInheritanceEnum.INHERIT_NONE != inheritCF;
-        boolean mergeMapValues = CustomFieldInheritanceEnum.INHERIT_MERGED == inheritCF;
-        return getCustomFieldsDTO(entity, includeInheritedCF, mergeMapValues);
+        if (entity.getCfValues() == null) {
+            return null;
+        }
+        Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues().getValuesByCode();
+        return getCustomFieldsDTO(entity, cfValuesByCode, inheritCF);
     }
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF) {
@@ -59,7 +61,6 @@ public class EntityToDtoConverter {
         if (entity.getCfValues() == null) {
             return null;
         }
-
         Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues().getValuesByCode();
         return getCustomFieldsDTO(entity, cfValuesByCode, includeInheritedCF, mergeMapValues);
     }
@@ -73,6 +74,10 @@ public class EntityToDtoConverter {
      * @return custom fields dto
      */
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, boolean includeInheritedCF, boolean mergeMapValues) {
+        return getCustomFieldsDTO(entity, cfValuesByCode, CustomFieldInheritanceEnum.getInheritCF(includeInheritedCF, mergeMapValues));
+    }
+
+    public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValuesByCode, CustomFieldInheritanceEnum inheritCF) {
 
         if (cfValuesByCode == null || cfValuesByCode.isEmpty()) {
             return null;
@@ -92,6 +97,8 @@ public class EntityToDtoConverter {
             }
         }
 
+        boolean mergeMapValues = inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED;
+        boolean includeInheritedCF = mergeMapValues || inheritCF == CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
         // add parent cf values if inherited
         if (includeInheritedCF) {
             ICustomFieldEntity[] parentEntities = entity.getParentCFEntities();
@@ -99,7 +106,7 @@ public class EntityToDtoConverter {
                 // get parent entities
                 for (ICustomFieldEntity iCustomFieldEntity : parentEntities) {
                     // get parent entities cf values
-                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, includeInheritedCF);
+                    CustomFieldsDto inheritedCustomFieldsDto = getCustomFieldsDTO(iCustomFieldEntity, inheritCF);
                     if (inheritedCustomFieldsDto != null) {
                         for (CustomFieldDto inheritedCfDto : inheritedCustomFieldsDto.getCustomField()) {
                             cfsDto.getInheritedCustomField().add(inheritedCfDto);
