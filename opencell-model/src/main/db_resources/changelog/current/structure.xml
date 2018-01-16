@@ -986,7 +986,16 @@
         </addColumn>  
         <sql>update ar_payment_token set disabled = 0 , creator = 'oprncell.admin', created = '2017-09-07 14:17:44.000'  </sql>              
     </changeSet>
-          
+
+    <changeSet id="#2857_02102017_2" author="anasseh" dbms="mysql">
+        <createTable tableName="ar_payment_gateway_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="payment_gateway_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ar_payment_gateway_seq values(1)</sql>
+     </changeSet>
+               
     <changeSet author="anasseh" id="#2857_02102017">
         <createSequence sequenceName="ar_payment_gateway_seq" />
         <createTable tableName="ar_payment_gateway">
@@ -1495,5 +1504,17 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
     </changeSet>
+    
+    <changeSet id="#3112_20171229 Add billingTemplateNameEL to invoiceType" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_invoice_type">
+            <column name="billing_template_name_el" type="varchar(2000)"  />           
+        </addColumn>   
+   	</changeSet>
+   	
+   	 <changeSet id="#3112_20170103 Add billingTemplateNameEL to billing_cycle" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_cycle">
+            <column name="billing_template_name_el" type="varchar(2000)"  />           
+        </addColumn>   
+   	</changeSet>
     
 </databaseChangeLog> 

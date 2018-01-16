@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * @author anasseh
@@ -26,12 +27,18 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 public class UsageRatingAsync {
 
     @Inject
-    UnitUsageRatingJobBean unitUsageRatingJobBean;
+    private UnitUsageRatingJobBean unitUsageRatingJobBean;
+
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) throws BusinessException {
         for (Long id : ids) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                break;
+            }
             try {
                 unitUsageRatingJobBean.execute(result, id);
             } catch (BusinessException be) {

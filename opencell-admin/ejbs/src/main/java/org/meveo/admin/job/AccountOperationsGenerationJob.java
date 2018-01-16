@@ -16,22 +16,30 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class AccountOperationsGenerationJob generate the invoice account operation for all invoices that dont have it yet.
+ */
 @Stateless
 public class AccountOperationsGenerationJob extends Job {
 
+    /** The account operations generation job bean. */
     @Inject
     private AccountOperationsGenerationJobBean accountOperationsGenerationJobBean;
             
+    
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         accountOperationsGenerationJobBean.execute(result, jobInstance );
     }
 
+    
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
+    
     
     @Override
    	public Map<String, CustomFieldTemplate> getCustomFields() {

@@ -17,9 +17,14 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class PurgeJob purge old data for job execution history, counter periods .
+ */
 @Stateless
 public class PurgeJob extends Job {
 
+    /** The purge job bean. */
     @Inject
     private PurgeJobBean purgeJobBean;
 

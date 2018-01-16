@@ -29,7 +29,7 @@ public class ImportAccountsJob extends Job {
 
     @Inject
     private ResourceBundle resourceMessages;
-    
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -46,7 +46,7 @@ public class ImportAccountsJob extends Job {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
             } catch (Exception e) {
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
+                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);
             }
@@ -114,5 +114,4 @@ public class ImportAccountsJob extends Job {
 
         return result;
     }
-
 }
