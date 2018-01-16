@@ -1505,4 +1505,16 @@
 
     </changeSet>
     
+    <changeSet id="#3112_20171229 Add billingTemplateNameEL to invoiceType" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_invoice_type">
+            <column name="billing_template_name_el" type="varchar(2000)"  />           
+        </addColumn>   
+   	</changeSet>
+   	
+   	 <changeSet id="#3112_20170103 Add billingTemplateNameEL to billing_cycle" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_cycle">
+            <column name="billing_template_name_el" type="varchar(2000)"  />           
+        </addColumn>   
+   	</changeSet>
+    
 </databaseChangeLog> 

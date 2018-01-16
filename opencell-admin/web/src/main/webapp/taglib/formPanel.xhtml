@@ -110,7 +110,7 @@
                 </c:if>
             </p:panel>
 
-            <h:panelGroup layout="block" styleClass="form-panel">
+            <h:panelGroup layout="block" styleClass="form-panel" id="formPanel">
                 <c:if test="#{showMessages}">
                     <p:messages id="messages" />
                 </c:if>
@@ -123,7 +123,7 @@
 
                 <p:panel rendered="#{not formButtonsTopRight}">
                     <c:if test="#{showFormButtons}">
-                        <hf:formButtons backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"
+                        <hf:formButtons id="formButtonsCC" backingBean="#{backingBean}" edit="#{formLevelEdit}" ajaxSubmit="#{ajaxSubmit}" submitPartialProcess="#{submitPartialProcess}"
                             submitPartialSubmitFilter="#{submitPartialSubmitFilter}" submitUpdate="#{submitUpdate}" killConversationOnSave="#{killConversationOnSave}"
                             killConversationOnBack="#{killConversationOnBack}" useCustomIdParam="#{useCustomIdParam}" objectIdParamName="#{objectIdParamName}" showBackButton="#{showBackButton}"
                             showEditButton="#{showEditButton}" showEnableDisableButton="#{showEnableDisableButton}" showDeleteButton="#{showDeleteButton}"

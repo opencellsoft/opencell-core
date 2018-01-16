@@ -9,9 +9,13 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+/**
+ * The Class ReRatingJob re rate WalletOperation that have re_rate status.
+ */
 @Stateless
 public class ReRatingJob extends Job {
 
+    /** The re rating job bean. */
     @Inject
     private ReRatingJobBean reRatingJobBean;
 
@@ -24,4 +28,5 @@ public class ReRatingJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.RATING;
     }
+
 }

@@ -16,6 +16,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -29,6 +30,9 @@ public class InvoicingJobBean {
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
+    
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -53,10 +57,12 @@ public class InvoicingJobBean {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
             for (BillingRun billingRun : billingRuns) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                    break;
+                }
                 try {
-
                     billingRunService.detach(billingRun);
-                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue());
+                    billingRunService.validate(billingRun, nbRuns.longValue(), waitingMillis.longValue(),result.getJobInstance().getId());
                     result.registerSucces();
                 } catch (Exception e) {
                     log.error("Failed to run invoicing", e);

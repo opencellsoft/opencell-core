@@ -17,12 +17,18 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class UsageRatingJob rate all opened EDRs.
+ */
 @Stateless
 public class UsageRatingJob extends Job {
 
+    /** The usage rating job bean. */
     @Inject
     private UsageRatingJobBean usageRatingJobBean;
 
+    /** The resource messages. */
     @Inject
     private ResourceBundle resourceMessages;
 
@@ -72,4 +78,5 @@ public class UsageRatingJob extends Job {
 
         return result;
     }
+
 }

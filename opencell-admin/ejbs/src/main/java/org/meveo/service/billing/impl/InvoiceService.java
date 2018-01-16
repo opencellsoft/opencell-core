@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -635,7 +634,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             billingCycle = billingAccount.getBillingCycle();
         }
 
-        String billingTemplateName = InvoiceService.getInvoiceTemplateName(billingCycle, invoice.getInvoiceType());
+        String billingTemplateName = getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
 
         String resDir = meveoDir + "jasper";
 
@@ -1476,7 +1475,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         if (!StringUtils.isBlank(orderNumber)) {
-            if (!ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber)) {
+            if (!ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber, firstTransactionDate, lastTransactionDate)) {
                 throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
             }
         }
@@ -1554,6 +1553,31 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
         return result;
     }
+    
+    public String evaluateBillingTemplateName(String expression, Invoice invoice) {
+        String billingTemplateName = null;
+        
+        if (!StringUtils.isBlank(expression)) {
+            Map<Object, Object> contextMap = new HashMap<>();
+            contextMap.put("invoice", invoice);
+
+            try {
+                Object value = ValueExpressionWrapper.evaluateExpression(expression, contextMap, String.class);
+
+                if (value == null) {
+                } else if (value instanceof String) {
+                    billingTemplateName = (String) value;
+                } else {
+                    billingTemplateName = value.toString();
+                }
+            } catch (BusinessException e) {
+                // Ignore exceptions here - a default pdf filename will be used instead. Error is logged in EL evaluation
+            }
+        }
+
+        billingTemplateName = StringUtils.normalizeFileName(billingTemplateName);
+        return billingTemplateName;
+    }
 
     /**
      * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType &gt; BillingCycle &gt; default.
@@ -1562,10 +1586,16 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @param invoiceType Invoice type
      * @return Invoice template name
      */
-    public static String getInvoiceTemplateName(BillingCycle billingCycle, InvoiceType invoiceType) {
+    public String getInvoiceTemplateName(Invoice invoice, BillingCycle billingCycle, InvoiceType invoiceType) {
 
         String billingTemplateName = "default";
-        if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
+        if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateNameEL())) {
+            billingTemplateName = evaluateBillingTemplateName(invoiceType.getBillingTemplateNameEL(), invoice);
+            
+        } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateNameEL())) {
+            billingTemplateName = evaluateBillingTemplateName(billingCycle.getBillingTemplateNameEL(), invoice);
+                    
+        } else if (invoiceType != null && !StringUtils.isBlank(invoiceType.getBillingTemplateName())) {
             billingTemplateName = invoiceType.getBillingTemplateName();
 
         } else if (billingCycle != null && billingCycle.getInvoiceType() != null && !StringUtils.isBlank(billingCycle.getInvoiceType().getBillingTemplateName())) {
@@ -1574,6 +1604,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         } else if (billingCycle != null && !StringUtils.isBlank(billingCycle.getBillingTemplateName())) {
             billingTemplateName = billingCycle.getBillingTemplateName();
         }
+        
         return billingTemplateName;
     }
 

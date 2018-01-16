@@ -15,43 +15,49 @@ import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.billing.impl.OneShotChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
 public class PrepaidWalletMatchJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private WalletService walletService;
+    @Inject
+    private WalletService walletService;
 
-	@Inject
-	OneShotChargeInstanceService oneShotChargeInstanceService;
+    @Inject
+    private OneShotChargeInstanceService oneShotChargeInstanceService;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(String matchingChargeCode, JobExecutionResultImpl result) {
-		log.debug("Running matchingChargeCode={}", matchingChargeCode);
-		
-		try {
-			List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date());
+    @Inject
+    private JobExecutionService jobExecutionService;
 
-			log.debug("wallets to match {}", wallets.size());
-			result.setNbItemsToProcess(wallets.size());
-			for (WalletInstance wallet : wallets) {
-				log.debug("match wallet={}", wallet.getId());
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(String matchingChargeCode, JobExecutionResultImpl result) {
+        log.debug("Running matchingChargeCode={}", matchingChargeCode);
 
-				try {
-					oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
-					result.registerSucces();
-				} catch (Exception e) {
-				    log.error("Failed to match prepaid wallet {}", wallet.getId(), e);
-					result.registerError(e.getMessage());
-				}
-			}
-		} catch (Exception e) {
-			log.error("Failed to match prepaid wallet ",e);
-		}
-	}
+        try {
+            List<WalletInstance> wallets = walletService.getWalletsToMatch(new Date());
+
+            log.debug("wallets to match {}", wallets.size());
+            result.setNbItemsToProcess(wallets.size());
+            for (WalletInstance wallet : wallets) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                    break;
+                }
+                log.debug("match wallet={}", wallet.getId());
+                try {
+                    oneShotChargeInstanceService.matchPrepaidWallet(wallet, matchingChargeCode);
+                    result.registerSucces();
+                } catch (Exception e) {
+                    log.error("Failed to match prepaid wallet {}", wallet.getId(), e);
+                    result.registerError(e.getMessage());
+                }
+            }
+        } catch (Exception e) {
+            log.error("Failed to match prepaid wallet ", e);
+        }
+    }
 }

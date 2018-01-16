@@ -13,9 +13,13 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.ReservationService;
 import org.meveo.service.job.Job;
 
+/**
+ * The Class WalletReservationJob mark wallet reservation as expired when expiry date is after system date.
+ */
 @Stateless
 public class WalletReservationJob extends Job {
 
+    /** The reservation service. */
     @Inject
     private ReservationService reservationService;
 

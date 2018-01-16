@@ -1069,7 +1069,7 @@ public abstract class BaseApi {
     @SuppressWarnings({ "rawtypes" })
     private Map<String, Object> convertFilters(Class targetClass, Map<String, Object> filtersToConvert) throws InvalidParameterException {
 
-        log.error("Converting filters {}", filtersToConvert);
+        log.debug("Converting filters {}", filtersToConvert);
 
         Map<String, Object> filters = new HashMap<>();
         if (filtersToConvert == null) {
