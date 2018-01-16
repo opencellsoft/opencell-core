@@ -411,6 +411,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
      * @see org.meveo.api.ApiVersionedService#find(java.lang.String)
      */
     @Override
+    @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
+    @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public OfferTemplateDto find(String code, Date validFrom, Date validTo) throws MeveoApiException {
         return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
@@ -523,6 +525,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
      * @return A list of offer templates
      * @throws InvalidParameterException invalid parametter exception.
      */
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "offerTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public GetListOfferTemplateResponseDto list(@Deprecated String code, @Deprecated Date validFrom, @Deprecated Date validTo, PagingAndFiltering pagingAndFiltering)
             throws InvalidParameterException{
         return list(code, validFrom, validTo, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);

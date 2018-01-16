@@ -341,6 +341,7 @@ public class BillingAccountApi extends AccountEntityApi {
         return billingAccount;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = BillingAccount.class))
     public BillingAccountDto find(String billingAccountCode) throws MeveoApiException {
         return find(billingAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }

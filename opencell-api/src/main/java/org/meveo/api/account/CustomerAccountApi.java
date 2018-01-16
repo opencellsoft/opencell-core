@@ -371,6 +371,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         return customerAccount;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = CustomerAccount.class))
     public CustomerAccountDto find(String customerAccountCode, Boolean calculateBalances) throws Exception {
         return find(customerAccountCode, calculateBalances, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }

@@ -262,6 +262,7 @@ public class CustomerApi extends AccountEntityApi {
         return customer;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
         return find(customerCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
@@ -302,6 +303,8 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
         return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }

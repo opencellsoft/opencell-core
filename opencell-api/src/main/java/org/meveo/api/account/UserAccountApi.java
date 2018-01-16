@@ -187,6 +187,7 @@ public class UserAccountApi extends AccountEntityApi {
         return userAccount;
     }
 
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = UserAccount.class))
     public UserAccountDto find(String userAccountCode) throws MeveoApiException {
         return find(userAccountCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
