@@ -62,7 +62,7 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
