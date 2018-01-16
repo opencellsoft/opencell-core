@@ -90,6 +90,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -1320,7 +1321,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 // get periodStartDate and periodEndDate for usages
                                 // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
                                 Date operationDate = walletOperation.getOperationDate();
-                                if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && operationDate != null) {
+                                if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
                                     CounterPeriod counterPeriod = null;
                                     CounterInstance counter = walletOperation.getCounter();
                                     if (!isVirtual) {

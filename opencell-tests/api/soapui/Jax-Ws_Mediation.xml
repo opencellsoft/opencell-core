@@ -1379,10 +1379,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.script.Script;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1391,13 +1391,13 @@ public class Mediation_${#Project#baseEntityPrefix}_RoutingSub extends Script {
 
     private static final Logger log = LoggerFactory.getLogger(Mediation_${#Project#baseEntityPrefix}_RoutingSub.class);
 
-    CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider = (CdrEdrProcessingCacheContainerProvider) getServiceInterface("CdrEdrProcessingCacheContainerProvider");
+    AccessService accessService = (AccessService) getServiceInterface("AccessService");
 
 	@Override
 	public void execute(Map<String, Object> initContext) throws BusinessException {
         log.debug("Execute...");
         String accessUserId = (String) initContext.get("accessUserId");
-        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(accessUserId);
+        List<Access> accesses = accessService.getActiveAccessByUserId(accessUserId);
         initContext.put("accesses", accesses);
         log.info("Execute accesses size:"+((accesses == null)?"null":accesses.size()));
     }

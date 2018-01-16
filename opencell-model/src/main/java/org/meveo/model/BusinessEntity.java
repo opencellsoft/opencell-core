@@ -153,7 +153,7 @@ public class BusinessEntity extends EnableEntity {
 
     @Override
     public String toString() {
-        return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
+        return String.format("%s[%s, code=%s]", this.getClass().getSimpleName(), super.toString(), code);
     }
 
     public void setDescriptionOrCode(String val) {

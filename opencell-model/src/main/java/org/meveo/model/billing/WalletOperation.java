@@ -546,7 +546,7 @@ public class WalletOperation extends BusinessEntity {
 
     public void setOfferTemplate(OfferTemplate offerTemplate) {
         this.offerTemplate = offerTemplate;
-        if (offerTemplate != null && offerCode != null) {
+        if (offerTemplate != null && offerCode == null) {
             offerCode = offerTemplate.getCode();
         }
     }

@@ -339,10 +339,9 @@ public class RatingService extends BusinessService<WalletOperation> {
         String languageCode = billingAccount.getTradingLanguage().getLanguage().getLanguageCode();
 
         Subscription subscription = chargeInstance.getSubscription();
-        WalletOperation walletOperation = prerateChargeApplication(chargeInstance.getChargeTemplate(), subscriptionDate,
-            subscription == null ? null : subscription.getOffer(), chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity,
-            quantityInChargeUnits, tCurrency, countryId, languageCode, taxPercent, discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3,
-            orderNumber, startdate, endDate, mode, chargeInstance.getUserAccount());
+        WalletOperation walletOperation = prerateChargeApplication(chargeInstance.getChargeTemplate(), subscriptionDate, subscription == null ? null : subscription.getOffer(),
+            chargeInstance, applicationType, applicationDate, amountWithoutTax, amountWithTax, inputQuantity, quantityInChargeUnits, tCurrency, countryId, languageCode, taxPercent,
+            discountPercent, nextApplicationDate, invoiceSubCategory, criteria1, criteria2, criteria3, orderNumber, startdate, endDate, mode, chargeInstance.getUserAccount());
 
         chargeInstance.getWalletOperations().add(walletOperation);
 
@@ -516,7 +515,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         } else if (bareWalletOperation.getOfferCode() != null) {
             productOffering = productOfferingService.findByCode(bareWalletOperation.getOfferCode(), Arrays.asList("globalRatingScriptInstance"));
         }
-        
+
         if (productOffering != null && productOffering.getGlobalRatingScriptInstance() != null) {
             log.debug("start to execute script instance for productOffering {}", productOffering);
             executeRatingScript(bareWalletOperation, productOffering.getGlobalRatingScriptInstance().getCode());
@@ -617,7 +616,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             Seller seller = pricePlan.getSeller();
             boolean sellerAreEqual = seller == null || seller.getId().equals(sellerId);
             if (!sellerAreEqual) {
-                log.debug("The seller of the customer " + sellerId + " is not the same as pricePlan seller " + seller.getId());
+                log.debug("The seller of the customer {} is not the same as pricePlan seller {}", sellerId, seller.getId());
                 continue;
             }
             log.error("AKK RS line 532");
@@ -631,8 +630,8 @@ public class RatingService extends BusinessService<WalletOperation> {
             TradingCurrency tradingCurrency = pricePlan.getTradingCurrency();
             boolean currencyAreEqual = tradingCurrency == null || (tcurrency != null && tcurrency.getId().equals(tradingCurrency.getId()));
             if (!currencyAreEqual) {
-                log.debug("The currency of the customer account " + (tcurrency != null ? tcurrency.getCurrencyCode() : "null") + " is not the same as pricePlan currency"
-                        + tradingCurrency.getId());
+                log.debug("The currency of the customer account {} is not the same as pricePlan currency {}", (tcurrency != null ? tcurrency.getCurrencyCode() : "null"),
+                    tradingCurrency.getId());
                 continue;
             }
             log.error("AKK RS line 545");
@@ -643,7 +642,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     || ((startSubscriptionDate == null || subscriptionDate.after(startSubscriptionDate) || subscriptionDate.equals(startSubscriptionDate))
                             && (endSubscriptionDate == null || subscriptionDate.before(endSubscriptionDate)));
             if (!subscriptionDateInPricePlanPeriod) {
-                log.debug("The subscription date " + subscriptionDate + "is not in the priceplan subscription range");
+                log.debug("The subscription date {} is not in the priceplan subscription range {} - {}", subscriptionDate, startSubscriptionDate, endSubscriptionDate);
                 continue;
             }
 
@@ -669,7 +668,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             boolean subscriptionMaxAgeOK = maxSubscriptionAgeInMonth == null || maxSubscriptionAgeInMonth == 0 || subscriptionAge < maxSubscriptionAgeInMonth;
             log.debug("subscriptionMaxAgeOK(" + maxSubscriptionAgeInMonth + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
-                log.debug("The subscription age " + subscriptionAge + " is greater than the priceplan subscription age max :" + maxSubscriptionAgeInMonth);
+                log.debug("The subscription age {} is greater than the priceplan subscription age max {}", subscriptionAge, maxSubscriptionAgeInMonth);
                 continue;
             }
 
@@ -677,74 +676,82 @@ public class RatingService extends BusinessService<WalletOperation> {
             Date endRatingDate = pricePlan.getEndRatingDate();
             boolean applicationDateInPricePlanPeriod = (startRatingDate == null || operationDate.after(startRatingDate) || operationDate.equals(startRatingDate))
                     && (endRatingDate == null || operationDate.before(endRatingDate));
-            log.debug("applicationDateInPricePlanPeriod(" + startRatingDate + " - " + endRatingDate + ")=" + applicationDateInPricePlanPeriod);
+            // log.debug("applicationDateInPricePlanPeriod(" + startRatingDate + " - " + endRatingDate + ")=" + applicationDateInPricePlanPeriod);
             if (!applicationDateInPricePlanPeriod) {
-                log.debug("The application date " + operationDate + " is not in the priceplan application range");
+                log.debug("The application date {} is not in the priceplan application range {} - {}", operationDate, startRatingDate, endRatingDate);
                 continue;
             }
+
             String criteria1Value = pricePlan.getCriteria1Value();
             boolean criteria1SameInPricePlan = criteria1Value == null || criteria1Value.equals(bareOperation.getParameter1());
-            // log.info("criteria1SameInPricePlan(" +
-            // pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
+            // log.info("criteria1SameInPricePlan(" + pricePlan.getCriteria1Value() + ")=" + criteria1SameInPricePlan);
             if (!criteria1SameInPricePlan) {
-                log.debug("The operation param1 " + bareOperation.getParameter1() + " is not compatible with price plan criteria 1: " + criteria1Value);
+                log.debug("The operation param1 {} is not compatible with price plan criteria 1: {}", bareOperation.getParameter1(), criteria1Value);
                 continue;
             }
             String criteria2Value = pricePlan.getCriteria2Value();
             String parameter2 = bareOperation.getParameter2();
             boolean criteria2SameInPricePlan = criteria2Value == null || criteria2Value.equals(parameter2);
-            // log.info("criteria2SameInPricePlan(" +
-            // pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
+            // log.info("criteria2SameInPricePlan(" + pricePlan.getCriteria2Value() + ")=" + criteria2SameInPricePlan);
             if (!criteria2SameInPricePlan) {
-                log.debug("The operation param2 " + parameter2 + " is not compatible with price plan criteria 2: " + criteria2Value);
+                log.debug("The operation param2 {} is not compatible with price plan criteria 2: {}", parameter2, criteria2Value);
                 continue;
             }
             String criteria3Value = pricePlan.getCriteria3Value();
             boolean criteria3SameInPricePlan = criteria3Value == null || criteria3Value.equals(bareOperation.getParameter3());
-            // log.info("criteria3SameInPricePlan(" +
-            // pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
+            // log.info("criteria3SameInPricePlan(" + pricePlan.getCriteria3Value() + ")=" + criteria3SameInPricePlan);
             if (!criteria3SameInPricePlan) {
-                log.debug("The operation param3 " + bareOperation.getParameter3() + " is not compatible with price plan criteria 3: " + criteria3Value);
+                log.debug("The operation param3 {} is not compatible with price plan criteria 3: {}", bareOperation.getParameter3(), criteria3Value);
                 continue;
             }
             if (!StringUtils.isBlank(pricePlan.getCriteriaEL())) {
                 UserAccount ua = bareOperation.getWallet().getUserAccount();
                 if (!matchExpression(pricePlan.getCriteriaEL(), bareOperation, ua, pricePlan)) {
-                    log.debug("The operation is not compatible with price plan criteria EL: " + pricePlan.getCriteriaEL());
+                    log.debug("The operation is not compatible with price plan criteria EL: {}", pricePlan.getCriteriaEL());
                     continue;
                 }
             }
 
-            OfferTemplate offerTemplate = pricePlan.getOfferTemplate();
-            String offerCode = bareOperation.getOfferCode();
-            boolean offerCodeSameInPricePlan = offerTemplate == null || offerTemplate.getCode().equals(offerCode);
-            if (!offerCodeSameInPricePlan) {
-                log.debug("The operation offerCode " + offerCode + " is not compatible with price plan offerCode: " + ((offerTemplate == null) ? "null" : offerTemplate.getCode()));
-                continue;
+            OfferTemplate ppOfferTemplate = pricePlan.getOfferTemplate();
+            if (ppOfferTemplate != null) {
+                boolean offerCodeSameInPricePlan = true;
+
+                if (bareOperation.getOfferTemplate() != null && !bareOperation.getOfferTemplate().equals(ppOfferTemplate)) {
+                    offerCodeSameInPricePlan = false;
+                } else if (bareOperation.getOfferTemplate() == null && !ppOfferTemplate.getCode().equals(bareOperation.getOfferCode())) {
+                    offerCodeSameInPricePlan = false;
+                }
+
+                String offerCode = bareOperation.getOfferCode();
+                if (!offerCodeSameInPricePlan) {
+                    log.debug("The operation offerCode {} is not compatible with price plan offerCode: {}",
+                        bareOperation.getOfferTemplate() != null ? bareOperation.getOfferTemplate() : offerCode, ppOfferTemplate);
+                    continue;
+                }
             }
-            log.debug("offerCodeSameInPricePlan");
+
+            // log.debug("offerCodeSameInPricePlan");
             BigDecimal maxQuantity = pricePlan.getMaxQuantity();
             BigDecimal quantity = bareOperation.getQuantity();
             boolean quantityMaxOk = maxQuantity == null || maxQuantity.compareTo(quantity) > 0;
             if (!quantityMaxOk) {
                 log.debug("the quantity " + quantity + " is strictly greater than " + maxQuantity);
                 continue;
-            } else {
-                log.debug("quantityMaxOkInPricePlan");
             }
+            // log.debug("quantityMaxOkInPricePlan");
+
             BigDecimal minQuantity = pricePlan.getMinQuantity();
             boolean quantityMinOk = minQuantity == null || minQuantity.compareTo(quantity) <= 0;
             if (!quantityMinOk) {
                 log.debug("the quantity " + quantity + " is less than " + minQuantity);
                 continue;
-            } else {
-                log.debug("quantityMinOkInPricePlan");
             }
+            // log.debug("quantityMinOkInPricePlan");
 
             Calendar validityCalendar = pricePlan.getValidityCalendar();
             boolean validityCalendarOK = validityCalendar == null || validityCalendar.previousCalendarDate(operationDate) != null;
             if (validityCalendarOK) {
-                log.debug("validityCalendarOkInPricePlan calendar " + validityCalendar + " operation date " + operationDate);
+                // log.debug("validityCalendarOkInPricePlan calendar " + validityCalendar + " operation date " + operationDate);
                 bareOperation.setPriceplan(pricePlan);
                 return pricePlan;
             } else if (validityCalendar != null) {
@@ -755,8 +762,9 @@ public class RatingService extends BusinessService<WalletOperation> {
         return null;
     }
 
-    // rerate
     /**
+     * Rerate wallet operation
+     * 
      * @param operationToRerateId wallet operation to be rerated
      * @param useSamePricePlan true if same price plan will be used
      * @throws BusinessException business exception

@@ -112,7 +112,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @Type(type = "json")
     @Column(name = "long_description_i18n", columnDefinition = "text")
     private Map<String, String> longDescriptionI18n;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance globalRatingScriptInstance;
@@ -229,7 +229,6 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         this.imagePath = imagePath;
     }
 
-    
     /**
      * @return the globalRatingScriptInstance
      */
@@ -326,15 +325,15 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         }
         return longDescriptionI18n;
     }
-    
+
     public List<Seller> getSellers() {
         return sellers;
     }
-    
+
     public void setSellers(List<Seller> sellers) {
         this.sellers = sellers;
     }
-    
+
     public void addSeller(Seller seller) {
         if (sellers == null) {
             sellers = new ArrayList<>();
@@ -342,5 +341,10 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         if (!sellers.contains(seller)) {
             sellers.add(seller);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[id=%s, code=%s, validity=%s]", this.getClass().getSimpleName(), id, code, validity);
     }
 }

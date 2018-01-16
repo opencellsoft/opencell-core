@@ -309,9 +309,14 @@ public class UsageRatingService implements Serializable {
         }
 
         CounterValueChangeInfo counterValueChangeInfo = null;
-        UsageChargeTemplate chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate(); // em.find(UsageChargeTemplate.class,
-                                                                                                            // cachedCharge.getChargeTemplateId());
-
+        
+        UsageChargeTemplate chargeTemplate = null;
+        if (usageChargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
+            chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
+        } else {
+            chargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
+        }
+        
         synchronized (cachedCounterPeriod) {
             BigDecimal deduceByQuantity = chargeTemplate.getInChargeUnit(edr.getQuantity());
             log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), deduceByQuantity,
