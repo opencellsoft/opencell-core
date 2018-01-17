@@ -984,9 +984,33 @@
         </con:parameters>
         <con:representation type="FAULT">
           <con:mediaType>text/html;charset=UTF-8</con:mediaType>
-          <con:status>404</con:status>
+          <con:status>404 500</con:status>
           <con:params/>
           <con:element>html</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
+        </con:representation>
+        <con:representation type="RESPONSE">
+          <con:mediaType xsi:nil="true"/>
+          <con:status>200</con:status>
+          <con:params/>
+          <con:element>data</con:element>
         </con:representation>
         <con:representation type="RESPONSE">
           <con:mediaType xsi:nil="true"/>
@@ -1202,11 +1226,11 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != 0 ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != 0 ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != 0 ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != 0 ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != 0 ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
+				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
+				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
+				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
+				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -1591,7 +1615,7 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
 		if(directory==null){
 			directory="";
 		} else {
-			directory=directory.replaceAll("..", "").replaceAll("~","");
+			directory=directory.replaceAll("\\.\\.", "").replaceAll("~","");
 		}
 		String fileName = (String) methodContext.get("fileName");
 		if(fileName==null){
@@ -1604,13 +1628,14 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
 		}
 		ParamBean parambean = ParamBean.getInstance();
 		Provider appProvider = ((ProviderService)getServiceInterface("ProviderService")).getProvider();
-		String rootDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
+		String rootDir = parambean.getProperty("providers.rootDir", "./opencelldata") + File.separator + appProvider.getCode() + File.separator;
 		String outputDir = rootDir+directory;
 		File f = new File(outputDir);
 		if (!f.exists()) {
 			log.debug("create directory "+outputDir);
 			f.mkdirs();
 		}
+
 		File outputFile = new File(outputDir+File.separator+fileName);
 		try(OutputStreamWriter out = new OutputStreamWriter(new FileOutputStream(outputFile), charsetName)){
 			out.write(content);
@@ -1800,11 +1825,11 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 				edr.setParameter7(cdr.getParam7());
 				edr.setParameter8(cdr.getParam8());
 				edr.setParameter9(cdr.getParam9());
-				edr.setDateParam1(cdr.getDateParam1() != 0 ? new Date(cdr.getDateParam1()) : null);
-				edr.setDateParam2(cdr.getDateParam2() != 0 ? new Date(cdr.getDateParam2()) : null);
-				edr.setDateParam3(cdr.getDateParam3() != 0 ? new Date(cdr.getDateParam3()) : null);
-				edr.setDateParam4(cdr.getDateParam4() != 0 ? new Date(cdr.getDateParam4()) : null);
-				edr.setDateParam5(cdr.getDateParam5() != 0 ? new Date(cdr.getDateParam5()) : null);
+				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
+				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
+				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
+				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
+				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
 				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
 				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
@@ -1824,7 +1849,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
 						edr.setParameter3("TOPTEN");
 						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParam2())){
 							topTenNumbers.add(cdr.getParam2());
-							cfService.setCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
+							cfService.setCFValue(sub, TOPTEN_CF, topTenNumbers, cdr.getTimestamp());
 						}
 					}
 				}
@@ -2774,6 +2799,11 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="25ee278d-10fb-429d-a4ad-7c182054f83d" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -2808,6 +2838,11 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="e79ab190-1e2a-4152-9f81-075c852174e1" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -2842,6 +2877,11 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <con:endpoint>${#Project#meveoUrl}</con:endpoint>
             <con:request/>
             <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="5841bc09-fb4d-48d7-b748-a7a7c0afa26b" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>200</codes>
+              </con:configuration>
+            </con:assertion>
             <con:credentials>
               <con:preemptive>true</con:preemptive>
               <con:authType>No Authorization</con:authType>
@@ -2873,7 +2913,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
         </con:property>
       </con:properties>
     </con:testCase>
-    <con:testCase id="983ddbfd-30bd-44ca-b209-3ddc596e7d2c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create file from HTTP request" searchProperties="true">
+    <con:testCase id="983ddbfd-30bd-44ca-b209-3ddc596e7d2c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create file from HTTP request - disabled as it shoudl be part of ..from file testsuite?? AK" searchProperties="true" disabled="true">
       <con:settings/>
       <con:testStep type="httprequest" name="Test file sent by HTTP" id="a0e0c396-d489-422b-93a7-8841290f6cf4">
         <con:settings/>
@@ -2899,7 +2939,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:parameters>
             <con:parameter>
               <con:name>directory</con:name>
-              <con:value>/mediation/input/</con:value>
+              <con:value>/mediation/input</con:value>
               <con:style>QUERY</con:style>
               <con:default>toto</con:default>
               <con:path xsi:nil="true"/>
@@ -3153,25 +3193,23 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
 	@Override
-	public void init(Map<String,Object> methodContext,User currentUser)throws BusinessException {
-		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
-		mediation_RoutingSub = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
-		mediation_CreateEdr = javaCompilerManager.getScriptInterface(currentUser.getProvider(), "org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
+	public void init(Map<String,Object> methodContext)throws BusinessException {
+		mediation_DuplicatedCheck = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck");
+		mediation_RoutingSub = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#Project#baseEntityPrefix}_RoutingSub");
+		mediation_CreateEdr = javaCompilerManager.getScriptInterface("org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR");
 	}
 
 	@Override
-	public void execute(Map<String, Object> initContext,User currentUser)throws BusinessException {
+	public void execute(Map<String, Object> initContext)throws BusinessException {
 		log.info("Execute...");
 		CDR cdr = null;
 		if(initContext.get("record")!=null){
 			cdr = (CDR)initContext.get("record");
-			cdr.setProvider(currentUser.getProvider());
 		} else {
 			cdr = new CDR();
 			cdr.setAccess_id((String)initContext.get("accessId"));
 			cdr.setParam1((String)initContext.get("param1"));
 			cdr.setParam2((String)initContext.get("param2"));
-			cdr.setProvider(currentUser.getProvider());
 			cdr.setQuantity(new BigDecimal((String)initContext.get("quantity")));
 			try{
 			cdr.setTimestamp(sdf.parse((String)initContext.get("time")));
@@ -3181,7 +3219,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 			initContext.put("record", cdr);
 		}
 		try {
-               mediation_DuplicatedCheck.newInstance().execute(initContext, currentUser);
+               mediation_DuplicatedCheck.newInstance().execute(initContext);
 			Boolean duplicateFound = (Boolean)initContext.get("duplicateFound");
 			log.info("duplicateFound:"+duplicateFound);
 
@@ -3189,7 +3227,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("DuplicateFound");
 			}
 			initContext.put("accessUserId",cdr.getAccess_id());
-			mediation_RoutingSub.newInstance().execute(initContext, currentUser);
+			mediation_RoutingSub.newInstance().execute(initContext);
 
 			@SuppressWarnings("unchecked")
 			List<Access> accesses = (List<Access>) initContext.get("accesses");
@@ -3197,7 +3235,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 				throw new BusinessException("InvalidAccess");
 			}
 
-			mediation_CreateEdr.newInstance().execute(initContext, currentUser);
+			mediation_CreateEdr.newInstance().execute(initContext);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -3215,6 +3253,153 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <con:assertion type="Simple Contains" id="950b6b3d-f18a-44d8-8038-445dd85d2262" name="Contains">
               <con:configuration>
                 <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="e0660415-6aa8-423a-a6c5-e141afd728e9" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create Mediation_TopTen_File_EDR" id="6b3f5830-518e-4640-8eb5-58b8fac287b5">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>ScriptInstanceWsSoapBinding</con:interface>
+          <con:operation>createOrUpdate</con:operation>
+          <con:request name="Create Mediation_TopTen_File_EDR" id="1f622e8a-6947-46a1-86f6-9f09300ce4d9">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdate>\r
+         <createOrUpdateScriptInstanceRequest code="org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_EDR" description="Mediation TopTen">\r
+            <type>JAVA</type>\r
+            <script><![CDATA[package org.meveo.service.script;
+
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.parse.csv.CDR;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.admin.User;
+import org.meveo.model.billing.Subscription;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.mediation.Access;
+import org.meveo.model.rating.EDR;
+import org.meveo.model.rating.EDRStatusEnum;
+import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.billing.impl.SubscriptionService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
+
+	private static final String TOPTEN_CF = "${#TestSuite#entityPrefix}";
+	private static final Logger log = LoggerFactory.getLogger(Mediation_${#TestSuite#entityPrefix}_EDR.class);
+
+	EdrService edrService = (EdrService) getServiceInterface("EdrService");
+	SubscriptionService subService = (SubscriptionService) getServiceInterface("SubscriptionService");
+     CustomFieldInstanceService cfService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
+
+	@Override
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		log.debug("Execute...");
+		CDR cdr = (CDR) initContext.get("record");
+		String originBatch = (String) initContext.get("originBatch");
+		String originRecord = (String) initContext.get("originRecord");
+
+		@SuppressWarnings("unchecked")
+		List<Access> accesses = (List<Access>) initContext.get("accesses");
+
+		for (Access accessPoint : accesses) {
+			if ((accessPoint.getStartDate() == null || accessPoint.getStartDate().getTime() <= cdr.getTimestamp().getTime()) && (accessPoint.getEndDate() == null || accessPoint.getEndDate().getTime() > cdr.getTimestamp().getTime())) {
+				EDR edr = new EDR();
+				edr.setCreated(new Date());
+				edr.setEventDate(cdr.getTimestamp());
+				edr.setOriginBatch(originBatch);
+				edr.setOriginRecord(originRecord);
+				edr.setParameter1(cdr.getParam1());
+				edr.setParameter2(cdr.getParam2());
+				edr.setParameter3(cdr.getParam3());
+				edr.setParameter4(cdr.getParam4());
+				edr.setParameter5(cdr.getParam5());
+				edr.setParameter6(cdr.getParam6());
+				edr.setParameter7(cdr.getParam7());
+				edr.setParameter8(cdr.getParam8());
+				edr.setParameter9(cdr.getParam9());
+				edr.setDateParam1(cdr.getDateParam1() != null ? new Date(cdr.getDateParam1()) : null);
+				edr.setDateParam2(cdr.getDateParam2() != null ? new Date(cdr.getDateParam2()) : null);
+				edr.setDateParam3(cdr.getDateParam3() != null ? new Date(cdr.getDateParam3()) : null);
+				edr.setDateParam4(cdr.getDateParam4() != null ? new Date(cdr.getDateParam4()) : null);
+				edr.setDateParam5(cdr.getDateParam5() != null ? new Date(cdr.getDateParam5()) : null);
+				edr.setDecimalParam1(cdr.getDecimalParam1() != null ? cdr.getDecimalParam1().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+				edr.setDecimalParam2(cdr.getDecimalParam2() != null ? cdr.getDecimalParam2().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+				edr.setDecimalParam3(cdr.getDecimalParam3() != null ? cdr.getDecimalParam3().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+				edr.setDecimalParam4(cdr.getDecimalParam4() != null ? cdr.getDecimalParam4().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+				edr.setDecimalParam5(cdr.getDecimalParam5() != null ? cdr.getDecimalParam5().setScale(BaseEntity.NB_DECIMALS, RoundingMode.HALF_UP) : null);
+				edr.setAccessCode(accessPoint.getAccessUserId());
+				edr.setQuantity(cdr.getQuantity());
+				edr.setStatus(EDRStatusEnum.OPEN);
+				edr.setSubscription(accessPoint.getSubscription());
+				if("VOICE".equals(cdr.getParam1())){
+				     Subscription sub = subService.findById(accessPoint.getSubscription().getId());
+					List<Object> topTenNumbers = (List)cfService.getCFValue(sub, TOPTEN_CF, cdr.getTimestamp());
+					if(topTenNumbers==null){
+						topTenNumbers = new ArrayList<Object>();
+					}
+					if(topTenNumbers.size()<10 || topTenNumbers.contains(cdr.getParam2())){
+						edr.setParameter3("TOPTEN");
+						if(topTenNumbers.size()<10  && !topTenNumbers.contains(cdr.getParam2())){
+							topTenNumbers.add(cdr.getParam2());
+							cfService.setCFValue(sub, TOPTEN_CF, topTenNumbers, cdr.getTimestamp());
+						}
+					}
+				}
+				edrService.create(edr);
+			}
+			log.info("Created EDR OK");
+		}
+	}
+
+}]]]]>><![CDATA[</script>\r
+         </createOrUpdateScriptInstanceRequest>\r
+      </ws:createOrUpdate>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="c88346ea-5930-4202-a5af-0edf881e5275"/>
+            <con:assertion type="Simple Contains" id="52958a10-4746-456f-b8b9-c6bd9515d1b7" name="Contains">
+              <con:configuration>
+                <token>&lt;status>SUCCESS&lt;/status></token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple NotContains" id="3c34f1cb-2663-473a-9dd8-01a3740198fc" name="Not Contains">
+              <con:configuration>
+                <token>compilationErrors</token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -3260,7 +3445,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
 	          </customField>
                <customField code="FlatFileProcessingJob_mappingConf">
                   <stringValue><![CDATA[
-<?xml version="1.0" encoding="ISO-8859-1"?>
+
 <file-format>
     <converter name="char" class="com.blackbear.flatworm.converters.CoreConverters" method="convertChar" return-type="java.lang.String"/>
     <converter name="date" class="com.blackbear.flatworm.converters.CoreConverters" method="convertDate" return-type="java.util.Date"/>
@@ -3272,11 +3457,11 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
             <bean name="cdr" class="org.meveo.admin.parse.csv.CDR"/>
            <line delimit=";">
                 <record-element length="0" beanref="cdr.timestamp" type="date">
-                    <conversion-option name="format" value="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"/>
-                </record-element>
-                <record-element length="0" beanref="cdr.quantity" type="bigDecimal">
+                    <conversion-option name="format" value="yyyy-MM-dd'T'HH:mm:ss"/>
                 </record-element>
                 <record-element length="0" beanref="cdr.access_id" type="char"/>
+                <record-element length="0" beanref="cdr.quantity" type="bigDecimal">
+                </record-element>
                 <record-element length="0" beanref="cdr.param1" type="char" />
                 <record-element length="0" beanref="cdr.param2" type="char" />
             </line>
@@ -3286,7 +3471,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
                   ]]]]>><![CDATA[</stringValue>
                </customField>
                <customField code="FlatFileProcessingJob_scriptsFlow">
-	            <stringValue>Mediation_${#TestSuite#entityPrefix}_Flow</stringValue>
+	            <stringValue>org.meveo.service.script.Mediation_${#TestSuite#entityPrefix}_Flow</stringValue>
 	          </customField>
 	          <customField code="FlatFileProcessingJob_recordVariableName">
 	            <stringValue>cdr</stringValue>
