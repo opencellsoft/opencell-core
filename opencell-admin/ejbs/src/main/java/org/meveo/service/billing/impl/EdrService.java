@@ -18,7 +18,6 @@
  */
 package org.meveo.service.billing.impl;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -27,6 +26,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
@@ -47,10 +47,12 @@ public class EdrService extends PersistenceService<EDR> {
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
     static boolean useInMemoryDeduplication = true;
+    static boolean inMemoryDeduplicationPrepopulated = false;
 
     @PostConstruct
     private void init() {
         useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
+        inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemoryPrepopulate", "false").equals("true");
     }
 
     /**
@@ -75,19 +77,34 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     /**
+     * Check if EDR exits matching an origin batch and record numbers
+     * 
      * @param originBatch original batch
      * @param originRecord origin record
-     * @return found EDR
+     * @return True if EDR was found
      */
-    public EDR findByBatchAndRecordId(String originBatch, String originRecord) {
-        EDR result = null;
+    public boolean isEDRExistsByBatchAndRecordId(String originBatch, String originRecord) {
+
         try {
-            Query query = getEntityManager().createQuery("from EDR e where e.originBatch=:originBatch and e.originRecord=:originRecord").setParameter("originBatch", originBatch)
-                .setParameter("originRecord", originRecord);
-            result = (EDR) query.getSingleResult();
-        } catch (Exception e) {
+
+            Query query = getEntityManager().createQuery("select e.id from EDR e where " + (originBatch == null ? "e.originBatch is null " : "e.originBatch=:originBatch") + " and "
+                    + (originRecord == null ? "e.originRecord is null " : "e.originRecord=:originRecord"));
+
+            if (originBatch != null) {
+                query.setParameter("originBatch", originBatch);
+            }
+            if (originRecord != null) {
+                query.setParameter("originRecord", originRecord);
+            }
+            query.getSingleResult();
+            return true;
+
+        } catch (NoResultException e) {
+            return false;
+
+        } catch (NonUniqueResultException e) {
+            return true;
         }
-        return result;
     }
 
     /**
@@ -96,20 +113,28 @@ public class EdrService extends PersistenceService<EDR> {
      * @return true/false
      */
     public boolean duplicateFound(String originBatch, String originRecord) {
-        boolean result = false;
+        Boolean isDuplicate = null;
+
         if (useInMemoryDeduplication) {
-            result = cdrEdrProcessingCacheContainerProvider.isEDRCached(originBatch, originRecord);
+            isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
+            if (isDuplicate == null && !inMemoryDeduplicationPrepopulated) {
+                isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
+                // cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(originBatch, originRecord, isDuplicate); // no need to set as it will be added to cache once EDR
+                // is processed
+            } else if (isDuplicate == null) {
+                isDuplicate = false;
+            }
         } else {
-            result = findByBatchAndRecordId(originBatch, originRecord) != null;
+            isDuplicate = isEDRExistsByBatchAndRecordId(originBatch, originRecord);
         }
-        return result;
+        return isDuplicate;
     }
 
     @Override
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
         if (useInMemoryDeduplication) {
-            cdrEdrProcessingCacheContainerProvider.addEdrToCache(edr);
+            cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }
     }
 
@@ -149,16 +174,16 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     /**
-     * Get EDRs that are unprocessed. Sorted in ascending order, limited to a number of items to return as configured in 'mediation.deduplicateCacheSize' setting
+     * Get EDRs that are unprocessed. Sorted in descending order by event date, so older items will be added first and thus expire first from the cache, limited to a number of
+     * items to return as configured in 'mediation.deduplicateCacheSize' setting
      * 
+     * @param from Pagination - a record to retrieve from
+     * @param pageSize Pagination - number of records to retrieve
      * @return A list of EDR identifiers
      */
-    public List<String> getUnprocessedEdrsForCache() {
-        int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
+    public List<String> getUnprocessedEdrsForCache(int from, int pageSize) {
 
-        List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).setMaxResults(maxRecords).getResultList();
-        // Reverse the list, so the latest records, would be later in the list
-        Collections.reverse(edrCacheKeys);
+        List<String> edrCacheKeys = getEntityManager().createNamedQuery("EDR.getEdrsForCache", String.class).setFirstResult(from).setMaxResults(pageSize).getResultList();
 
         return edrCacheKeys;
     }

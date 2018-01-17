@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -18,7 +19,6 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.rating.EDR;
 import org.meveo.service.billing.impl.EdrService;
 import org.slf4j.Logger;
 
@@ -47,7 +47,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * Stores a list of processed EDR's. Key format: &lt;originBatch&gt;_&lt;originRecord&gt;, value: 0 (no meaning, only keys are used)
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
-    private Cache<String, Integer> edrCache;
+    private Cache<String, Boolean> edrCache;
 
     @PostConstruct
     private void init() {
@@ -72,45 +72,62 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     private void populateEdrCache() {
 
         boolean useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-        if (!useInMemoryDeduplication) {
+        boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemoryPrepopulate", "false").equals("true");
+        if (!useInMemoryDeduplication || !prepopulateMemoryDeduplication) {
             log.info("EDR cache population will be skipped");
             return;
         }
 
-        log.debug("Start to populate EDR cache");
+        log.debug("Start to pre-populate EDR cache");
 
         edrCache.clear();
 
-        List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache();
+        int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
+        int pageSize = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCachePageSize", "1000"));
 
-        for (String edrCacheKey : edrCacheKeys) {
-            if (edrCacheKey != null) {
-                edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edrCacheKey, 0);
+        int totalEdrs = 0;
+
+        for (int from = 0; from < maxRecords; from = from + pageSize) {
+
+            List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
+            List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
+            Map<String, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> p, p -> true));
+
+            edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putAll(mappedEdrCacheKeys);
+
+            int retrievedSize = edrCacheKeys.size();
+            totalEdrs = totalEdrs + retrievedSize;
+
+            log.info("EDR cache pre-populated with {} EDRs", retrievedSize);
+
+            if (retrievedSize < pageSize) {
+                break;
             }
         }
 
-        log.info("EDR cache populated with {} EDRs", edrCacheKeys.size());
+        log.info("Finished to pre-populate EDR cache with {}", totalEdrs);
     }
 
     /**
-     * Check if EDR is cached for a given originBatch and originRecord.
+     * Check if EDR exists already for a given originBatch and originRecord.
      * 
      * @param originBatch Origin batch
      * @param originRecord Origin record
      * @return True if EDR is cached
      */
-    public boolean isEDRCached(String originBatch, String originRecord) {
+    public Boolean getEdrDuplicationStatus(String originBatch, String originRecord) {
 
-        return edrCache.containsKey(originBatch + '_' + originRecord);
+        return edrCache.get(originBatch + '_' + originRecord);
     }
 
     /**
-     * Add EDR to cache.
+     * Set to cache that EDR with a given originBatch and originRecord already exists.
      * 
-     * @param edr EDR to add to cache
+     * @param originBatch Origin batch
+     * @param originRecord Origin record
      */
-    public void addEdrToCache(EDR edr) {
-        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(edr.getOriginBatch() + "_" + edr.getOriginRecord(), 0);
+    public void setEdrDuplicationStatus(String originBatch, String originRecord) {
+        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(originBatch + '_' + originRecord, true);
     }
 
     /**
