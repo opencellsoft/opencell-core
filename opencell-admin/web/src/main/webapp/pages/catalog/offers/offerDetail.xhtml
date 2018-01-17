@@ -214,21 +214,21 @@
 				</p:panel>
 			</p:panel>
 
-			<p:panel>
+			<p:panel id="productsPanel">
 				<f:facet name="header">
 					<h:outputText value="#{messages['menu.marketingManager.products']}"
 						styleClass="SubHeader" />
 				</f:facet>
 
 				<p:panel rendered="#{offerTemplateBean.edit}">
-					<p:commandButton
+					<p:commandButton id="btnAddProduct"
 						value="#{messages['offerTemplate.action.addProduct']}"
 						type="button" onclick="PF('selectProduct').show();"
 						update=":selectProduct" />
 				</p:panel>
 
 				<p:panel id="productTemplateList">
-					<p:dataTable var="entity"
+					<p:dataTable var="entity" id="offerProductTemplates"
 						value="#{offerTemplateBean.entity.offerProductTemplates}"
 						paginator="true" rows="5" paginatorPosition="top"
 						paginatorAlwaysVisible="true"
@@ -271,7 +271,7 @@
 						<p:column headerText="#{messages['commons.actions']}"
 							rendered="#{offerTemplateBean.edit}">
 							<h:panelGroup layout="block" styleClass="form-panel-actions">
-								<p:commandButton
+								<p:commandButton id="btnRemoveProduct"
 									value="#{messages['offerTemplate.action.removeProduct']}"
 									immediate="true"
 									action="#{offerTemplateBean.deleteOfferProductTemplate(entity)}"
@@ -468,7 +468,7 @@
 							field="validity.to" isDate="true" />
 
 						<p:column headerText="#{messages['commons.actions']}">
-							<p:commandButton
+							<p:commandButton id="btnSelectProduct"
 								value="#{messages['offerTemplate.action.addProduct']}"
 								action="#{offerTemplateBean.addProductTemplateToOffer(entity)}"
 								update=":offerForm:messages :#{p:component('productTemplateList')}"

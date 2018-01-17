@@ -49,6 +49,17 @@ public class JobWsImpl extends BaseWs implements JobWs {
     }
 
     @Override
+    public ActionStatus stop(String jobInstanceCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+             jobApi.stopJob(jobInstanceCode);           
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
+    
+    @Override
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
@@ -187,4 +198,6 @@ public class JobWsImpl extends BaseWs implements JobWs {
         }
         return result;
     }
+
+
 }

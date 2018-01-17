@@ -20,30 +20,29 @@ import org.slf4j.Logger;
 @Stateless
 public class UnitAccountOperationsGenerationJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private InvoiceService invoiceService;
-	
-	@Inject
-	private RecordedInvoiceService recordedInvoiceService;
-	
+    @Inject
+    private InvoiceService invoiceService;
 
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-	public void execute(JobExecutionResultImpl result, Long id) {
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
 
-		try {
-			Invoice invoice = invoiceService.findById(id);
-			recordedInvoiceService.generateRecordedInvoice(invoice);
-			invoiceService.update(invoice);
-			
-			result.registerSucces();
-			
-		} catch (Exception e) {
-			log.error("Failed to generate acount operations", e);
-			result.registerError(e.getMessage());
-		}
-	}
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public void execute(JobExecutionResultImpl result, Long id) {
+
+        try {
+            Invoice invoice = invoiceService.findById(id);
+            recordedInvoiceService.generateRecordedInvoice(invoice);
+            invoiceService.update(invoice);
+
+            result.registerSucces();
+
+        } catch (Exception e) {
+            log.error("Failed to generate acount operations", e);
+            result.registerError(e.getMessage());
+        }
+    }
 }

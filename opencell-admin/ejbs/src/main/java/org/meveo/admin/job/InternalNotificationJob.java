@@ -33,12 +33,18 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class InternalNotificationJob fire the given notification for each entity returned from the given filter.
+ */
 @Stateless
 public class InternalNotificationJob extends Job {
 
+    /** The internal notification job bean. */
     @Inject
     private InternalNotificationJobBean internalNotificationJobBean;
-    
+
+    /** The custom field instance service. */
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -46,14 +52,15 @@ public class InternalNotificationJob extends Job {
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
         String filterCode = (String) customFieldInstanceService.getCFValue(jobInstance, "InternalNotificationJob_filterCode");
         String notificationCode = (String) customFieldInstanceService.getCFValue(jobInstance, "InternalNotificationJob_notificationCode");
-        internalNotificationJobBean.execute(filterCode,notificationCode,result);
+        internalNotificationJobBean.execute(filterCode, notificationCode, result);
     }
+
 
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.UTILS;
     }
-    
+
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();

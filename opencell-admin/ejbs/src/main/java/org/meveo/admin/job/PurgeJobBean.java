@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -33,7 +34,7 @@ public class PurgeJobBean implements Serializable {
 
     @Inject
     private JobExecutionService jobExecutionService;
-    
+
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 

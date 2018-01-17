@@ -56041,11 +56041,11 @@ rkJggg==
     </con:property>
     <con:property>
       <con:name>CCUsername</con:name>
-      <con:value>DEMO.customercare</con:value>
+      <con:value>opencell.customercare</con:value>
     </con:property>
     <con:property>
       <con:name>CCPassword</con:name>
-      <con:value>DEMO.customercare</con:value>
+      <con:value>opencell.customercare</con:value>
     </con:property>
     <con:property>
       <con:name>SCUsername</con:name>

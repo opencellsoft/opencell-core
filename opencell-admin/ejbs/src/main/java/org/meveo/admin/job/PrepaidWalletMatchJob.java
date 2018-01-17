@@ -25,4 +25,5 @@ public class PrepaidWalletMatchJob extends Job {
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.WALLET;
     }
+
 }
