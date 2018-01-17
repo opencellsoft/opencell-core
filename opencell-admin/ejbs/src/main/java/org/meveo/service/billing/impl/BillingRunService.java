@@ -580,6 +580,53 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
+     * @param billingRun billing run
+     * @param nbRuns nb of runs
+     * @param waitingMillis waiting millis
+     * @param jobInstanceId the job instance id
+     * @param billingAccountIds list of biling acount id
+     * @throws BusinessException business exception.
+     */
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId, List<Long> billingAccountIds) throws BusinessException {
+        SubListCreator subListCreator = null;
+        try {
+            if (billingAccountIds == null) {
+                billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
+                .getResultList();
+            }
+            subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
+        }
+
+        try {
+            subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
+        }
+
+        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId));
+            try {
+                Thread.sleep(waitingMillis);
+            } catch (InterruptedException e) {
+                log.error("Failed to create agregates and invoice waiting for thread", e);
+                throw new BusinessException(e);
+            }
+        }
+        for (Future<String> futureItsNow : asyncReturns) {
+            try {
+                futureItsNow.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to create agregates and invoice getting future", e);
+                throw new BusinessException(e);
+            }
+        }
+    }
+
+    /**
      * Assign invoice number and increment BA invoice dates.
      *
      * @param billingRun the billing run
@@ -710,13 +757,15 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      * @throws Exception the exception
      */
     @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.NEVER)
     public void validate(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws Exception {
         log.debug("validate, billingRun id={} status={}", billingRun.getId(), billingRun.getStatus());
+        
+        List<Long> billingAccountIds = getBillingAccountIds(billingRun);
 
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
-            List<Long> billingAccountIds = getBillingAccountIds(billingRun);
-            log.info("Nb billingAccounts to process={}", (billingAccountIds != null ? billingAccountIds.size() : 0));
 
+            log.info("Nb billingAccounts to process={}", (billingAccountIds != null ? billingAccountIds.size() : 0));
             billingRunExtensionService.updateBRAmounts(billingRun);
 
             if (billingAccountIds != null && billingAccountIds.size() > 0) {
@@ -742,13 +791,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 billingRunExtensionService.updateBillingRun(billingRun, billingAccountIds.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
-                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId);
+                    createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
                     billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
                 }
             }
 
         } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
-            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId);
+            createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
 
         } else if (BillingRunStatusEnum.POSTVALIDATED.equals(billingRun.getStatus())) {
