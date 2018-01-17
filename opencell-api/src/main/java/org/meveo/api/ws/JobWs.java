@@ -19,6 +19,9 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     JobExecutionResultResponseDto execute(@WebParam(name = "jobInstanceInfo") JobInstanceInfoDto postData);
+    
+    @WebMethod
+    public ActionStatus stop(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
     @WebMethod
     public ActionStatus create(@WebParam(name = "jobInstance") JobInstanceDto postData);

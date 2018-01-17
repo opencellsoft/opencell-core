@@ -30,7 +30,7 @@
 
 <cc:implementation>
 
-	<p:commandButton value="#{cc.attrs.label}" process="@this"
+	<p:commandButton id="resetButton" value="#{cc.attrs.label}" process="@this"
 		rendered="#{cc.attrs.edit}" update="@form"
 		action="#{cc.attrs.resetAction}">
 		<f:actionListener

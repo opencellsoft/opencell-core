@@ -31,12 +31,18 @@ import javax.inject.Inject;
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.base.PersistenceService;
 
+
+/**
+ * The Class JobExecutionService.
+ */
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
 
@@ -46,8 +52,13 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Inject
     private JobInstanceService jobInstanceService;
 
+    /** The job cache container provider. */
+    @Inject
+    private JobCacheContainerProvider jobCacheContainerProvider;
+
     /**
      * Persist job execution results.
+     * 
      * @param job Job implementation
      * @param result Execution result
      * @param jobInstance Job instance
@@ -91,6 +102,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /**
      * Execute next job or continue executing same job if more data is left to process (execution in batches). Executed asynchronously. Current user should be already available
      * from earlier context.
+     * 
      * @param job Job implementation
      * @param jobInstance Job instance
      * @param continueSameJob Continue executing same job
@@ -98,9 +110,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob) {
-
         try {
-
             if (continueSameJob) {
                 log.debug("Continue executing job {}", jobInstance);
                 executeJobWithParameters(jobInstance, null);
@@ -110,7 +120,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 log.debug("Executing next job {}", nextJob.getCode());
                 executeJobWithParameters(nextJob, null);
             }
-
         } catch (Exception e) { // FIXME:BusinessException e) {
             log.error("Failed to execute next job or continue same job", e);
         }
@@ -119,18 +128,19 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Execute a given job instance.
+     * 
      * @param jobInstance Job instance to execute
      * @param params Parameters to pass to job execution
      * @throws BusinessException business exception
      */
     private void executeJobWithParameters(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
-
         Job job = jobInstanceService.getJobByName(jobInstance.getJobTemplate());
         job.execute(jobInstance, null);
     }
 
     /**
      * Execute job from GUI. Execution is done asynchronously. Current user is already set by GUI.
+     * 
      * @param jobInstance Job instance to execute
      * @throws BusinessException Any exception
      */
@@ -140,7 +150,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         log.info("Manual execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate());
         try {
             executeJobWithParameters(jobInstance, null);
-
         } catch (Exception e) {
             log.error("Failed to manually execute a job {} of type {}", jobInstance.getCode(), jobInstance.getJobTemplate(), e);
             throw e;
@@ -150,6 +159,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /**
      * Execute job and return job execution result ID to be able to query execution results later. Job execution result is persisted right away, while job is executed
      * asynchronously.
+     * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
      * @return Job execution result ID
@@ -157,7 +167,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      */
     public Long executeJobWithResultId(JobInstance jobInstance, Map<String, String> params) throws BusinessException {
         log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
-
         try {
             JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
             jobExecutionResult.setJobInstance(jobInstance);
@@ -177,17 +186,19 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Execute job and return job execution result ID to be able to query execution results later. Job is executed asynchronously.
+     * 
      * @param jobInstance Job instance to execute.
      * @param params Parameters (currently not used)
      * @throws BusinessException Any exception
      */
     public void executeJob(JobInstance jobInstance, Map<Object, Object> params) throws BusinessException {
         log.info("Execute a job {}  of type {} with parameters {} ", jobInstance, jobInstance.getJobTemplate(), params);
-
         executeJobWithParameters(jobInstance, params);
     }
 
     /**
+     * Gets the find query.
+     *
      * @param jobName job name
      * @param configuration configuration
      * @return querry builder
@@ -205,6 +216,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Count job execution history records which end date is older then a given date.
+     * 
      * @param jobName job name
      * @param date Date to check
      * @return A number of job execution history records which is older then a given date
@@ -225,6 +237,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
 
     /**
      * Remove job execution history older then a given date.
+     * 
      * @param jobName Job name to match
      * @param date Date to check
      * @return A number of records that were removed
@@ -257,6 +270,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
+     * Find JobExecutionResultImpl.
+     *
      * @param jobName job's name
      * @param configuration pagination configuration
      * @return list of job's result.
@@ -267,6 +282,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
+     * Count.
+     *
      * @param jobName job name
      * @param configuration configuration
      * @return number of job
@@ -276,6 +293,8 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
+     * Gets the job instance service.
+     *
      * @return job instance service
      */
     public JobInstanceService getJobInstanceService() {
@@ -283,11 +302,48 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     }
 
     /**
+     * Find by code like.
+     *
+     * @param code the code
      * @return list of job's result
      * @see org.meveo.service.base.PersistenceService#findByCodeLike(java.lang.String)
      */
     @Override
     public List<JobExecutionResultImpl> findByCodeLike(String code) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Stop a running job.
+     *
+     * @param jobInstance job instance to stop
+     * @throws BusinessException the business exception
+     */
+    public void stopJob(JobInstance jobInstance) throws BusinessException {
+        log.info("Stop job {}  of type {}  ", jobInstance, jobInstance.getJobTemplate());
+        if (!isJobRunningOnThis(jobInstance)) {
+            throw new BusinessException("Job " + jobInstance.getCode() + " currently are not running on this node.");
+        }
+        jobCacheContainerProvider.markJobAsNotRunning(jobInstance.getId());
+    }
+    
+    /**
+     * Check if the job are running on this node.
+     * 
+     * @param jobInstance job instance to ckeck
+     * @return return true if job are running
+     */
+    public boolean isJobRunningOnThis(JobInstance jobInstance) {
+        return  isJobRunningOnThis(jobInstance.getId());
+    }
+    
+    /**
+     * Check if the job are running on this node.
+     * 
+     * @param jobInstanceId job instance id to ckeck
+     * @return return true if job are running
+     */
+    public boolean isJobRunningOnThis(Long jobInstanceId) {
+        return JobRunningStatusEnum.RUNNING_THIS == jobCacheContainerProvider.isJobRunning(jobInstanceId);
     }
 }

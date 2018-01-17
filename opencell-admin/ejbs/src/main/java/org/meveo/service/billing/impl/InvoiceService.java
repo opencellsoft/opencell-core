@@ -1476,7 +1476,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
         }
         if (!StringUtils.isBlank(orderNumber)) {
-            if (!ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber)) {
+            if (!ratedTransactionService.isBillingAccountBillable(billingAccount, orderNumber, firstTransactionDate, lastTransactionDate)) {
                 throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));
             }
         }
