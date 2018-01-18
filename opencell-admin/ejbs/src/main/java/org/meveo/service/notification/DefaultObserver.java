@@ -118,7 +118,7 @@ public class DefaultObserver {
         } catch (Exception e) {
             throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
         }
-        return result;
+        return result == null ? false : result;
     }
 
     private void executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
@@ -193,7 +193,7 @@ public class DefaultObserver {
             // thus
             // will not be related to inbound request.
             if (notif instanceof ScriptNotification) {
-                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String)context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
 
                 if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
                     ((InboundRequest) entityOrEvent).add(histo);
@@ -226,7 +226,7 @@ public class DefaultObserver {
                 throw new BusinessException(e1);
             } else {
                 throw (BusinessException) e1;
-        }
+            }
         }
 
         return true;
@@ -300,7 +300,7 @@ public class DefaultObserver {
         log.debug("Defaut observer : Entity {} with id {} rejected", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
     }
-    
+
     public void entityEndOfTerm(@Observes @EndOfTerm BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} end of term", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.END_OF_TERM, e);
