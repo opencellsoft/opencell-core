@@ -631,6 +631,9 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Custom field value
      */
     public CustomFieldValue getInheritedCumulativeCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+        if (cft == null) {
+            return null;
+        }
 
         Object inheritedValue = customFieldInstanceService.getInheritedOnlyCFValueCumulative(entity, cft.getCode());
         if (inheritedValue == null) {
