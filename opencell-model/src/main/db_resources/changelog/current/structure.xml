@@ -1521,6 +1521,12 @@
         </addColumn>   
    	</changeSet>
     
+    <changeSet id="#3091_20180118" author="AndriusKarpavicius">
+        <addColumn tableName="adm_inbound_request">
+            <column name="resp_status" type="int4"  />           
+        </addColumn>   
+    </changeSet>
+    
     <changeSet id="#2792_20170919" author="AndriusKarpavicius">  
         <sql>update cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
         <sql>update cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>
