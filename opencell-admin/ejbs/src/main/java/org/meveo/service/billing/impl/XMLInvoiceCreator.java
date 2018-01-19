@@ -516,7 +516,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             header.appendChild(dueDate);
         }
 
-        PaymentMethodEnum paymentMethodData = invoice.getPaymentMethod();
+        PaymentMethodEnum paymentMethodData = invoice.getPaymentMethodType();
         if (paymentMethodData != null) {
             Element paymentMethod = doc.createElement("paymentMethod");
             paymentMethod.appendChild(doc.createTextNode(paymentMethodData.name()));

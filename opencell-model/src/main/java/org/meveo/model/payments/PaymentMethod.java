@@ -162,4 +162,6 @@ public abstract class PaymentMethod extends EnableEntity {
 	}
 
 	public abstract void updateWith(PaymentMethod otherPaymentMethod);
+	
+	public abstract boolean isExpired();
 }

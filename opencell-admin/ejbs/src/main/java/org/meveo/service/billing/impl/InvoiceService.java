@@ -446,7 +446,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             if (paymentMethod != null) {
-                invoice.setPaymentMethod(paymentMethod.getPaymentType());
+                invoice.setPaymentMethodType(paymentMethod.getPaymentType());
+                invoice.setPaymentMethod(paymentMethod);
             }
 
             Integer delay = billingCycle.getDueDateDelay();
@@ -549,7 +550,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
-            invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+            invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
 
         ratedTransactionService.createInvoiceAndAgregates(billingAccount, invoice, null, ratedTransactions, null, null, null, false, true);

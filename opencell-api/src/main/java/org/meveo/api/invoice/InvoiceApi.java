@@ -146,7 +146,7 @@ public class InvoiceApi extends BaseApi {
 
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
-            invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+            invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
 
         invoice.setInvoiceType(invoiceType);
@@ -824,7 +824,7 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setAmountTax(invoice.getAmountTax());
         invoiceDto.setAmountWithTax(invoice.getAmountWithTax());
         invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-        invoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+        invoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {

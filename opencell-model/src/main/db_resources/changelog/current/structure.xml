@@ -1516,5 +1516,11 @@
             <column name="billing_template_name_el" type="varchar(2000)"  />           
         </addColumn>   
    	</changeSet>
+   	
+   	<changeSet id="#3170_20180119 Add payment method to invoice" author="EdwardPLegaspi">
+    	<addColumn tableName="billing_invoice">
+            <column name="payment_method_id" type="bigint"  />           
+        </addColumn>   
+   	</changeSet>
     
 </databaseChangeLog> 

@@ -284,7 +284,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (Invoice invoice : invoices) {
 
             if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
-                switch (invoice.getPaymentMethod()) {
+                switch (invoice.getPaymentMethodType()) {
                 case CHECK:
                     checkInvoicesNumber++;
                     checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
@@ -301,16 +301,19 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
                     break;
                 case CARD:
-                    creditDebitCardInvoicesNumber++;
-                    creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
-                    creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                    // check if card is expired
+                    if (invoice.getPaymentMethod() != null && invoice.getPaymentMethod().isExpired()) {
+                        npmInvoicesNumber++;
+                        npmAmountHT = npmAmountHT.add(invoice.getAmountWithoutTax());
+                        npmAmount = npmAmount.add(invoice.getAmountWithTax());
+                    } else {
+                        creditDebitCardInvoicesNumber++;
+                        creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
+                        creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                    }
                     break;
 
                 default:
-                    npmInvoicesNumber++;
-                    npmAmountHT = npmAmountHT.add(invoice.getAmountWithoutTax());
-                    npmAmount = npmAmount.add(invoice.getAmountWithTax());
-                    
                     break;
                 }
             }
