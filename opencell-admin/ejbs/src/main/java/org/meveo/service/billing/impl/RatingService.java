@@ -432,23 +432,24 @@ public class RatingService extends BusinessService<WalletOperation> {
         PricePlanMatrix pricePlan = null;
 
         if ((unitPriceWithoutTax == null && appProvider.isEntreprise()) || (unitPriceWithTax == null && !appProvider.isEntreprise())) {
-            log.error("AKK RS line 423");
+
             List<PricePlanMatrix> chargePricePlans = pricePlanMatrixService.getActivePricePlansByChargeCode(bareWalletOperation.getCode());
-            log.error("AKK URS line 425");
+            log.debug("RS line 437 retrieval PPs in: {}", (System.currentTimeMillis() - startDate));
             if (chargePricePlans == null || chargePricePlans.isEmpty()) {
                 throw new BusinessException("No price plan for charge code " + bareWalletOperation.getCode());
             }
+
             pricePlan = ratePrice(chargePricePlans, bareWalletOperation, countryId, tcurrency,
                 bareWalletOperation.getSeller() != null ? bareWalletOperation.getSeller().getId() : null);
             if (pricePlan == null || (pricePlan.getAmountWithoutTax() == null && appProvider.isEntreprise())
                     || (pricePlan.getAmountWithTax() == null && !appProvider.isEntreprise())) {
                 throw new BusinessException("No price plan matched (" + (pricePlan == null) + ") or does not contain amounts for charge code " + bareWalletOperation.getCode());
             }
-            log.debug("found ratePrice {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
+            log.debug("Found ratePrice {} for {}", pricePlan.getId(), bareWalletOperation.getCode());
             if (appProvider.isEntreprise()) {
                 unitPriceWithoutTax = pricePlan.getAmountWithoutTax();
                 if (pricePlan.getAmountWithoutTaxEL() != null) {
-                    unitPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getWallet().getUserAccount(),
+                    unitPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation, bareWalletOperation.getChargeInstance().getUserAccount(),
                         unitPriceWithoutTax);
                     if (unitPriceWithoutTax == null) {
                         throw new BusinessException("Cant get price from EL:" + pricePlan.getAmountWithoutTaxEL());
@@ -609,24 +610,24 @@ public class RatingService extends BusinessService<WalletOperation> {
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId)
             throws BusinessException {
         // FIXME: the price plan properties could be null !
-        log.error("AKK RS line 523");
+        log.debug("AKK RS ratePrice line 613");
         // log.info("ratePrice rate " + bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
-            log.error("AKK RS line 526");
+
             Seller seller = pricePlan.getSeller();
             boolean sellerAreEqual = seller == null || seller.getId().equals(sellerId);
             if (!sellerAreEqual) {
                 log.debug("The seller of the customer {} is not the same as pricePlan seller {}", sellerId, seller.getId());
                 continue;
             }
-            log.error("AKK RS line 532");
+
             TradingCountry tradingCountry = pricePlan.getTradingCountry();
             boolean countryAreEqual = tradingCountry == null || tradingCountry.getId().equals(countryId);
             if (!countryAreEqual) {
                 log.debug("The countryId={} of the billing account is not the same as pricePlan with countryId={}", countryId, tradingCountry.getId());
                 continue;
             }
-            log.error("AKK RS line 538");
+
             TradingCurrency tradingCurrency = pricePlan.getTradingCurrency();
             boolean currencyAreEqual = tradingCurrency == null || (tcurrency != null && tcurrency.getId().equals(tradingCurrency.getId()));
             if (!currencyAreEqual) {
@@ -634,7 +635,6 @@ public class RatingService extends BusinessService<WalletOperation> {
                     tradingCurrency.getId());
                 continue;
             }
-            log.error("AKK RS line 545");
             Date subscriptionDate = bareOperation.getSubscriptionDate();
             Date startSubscriptionDate = pricePlan.getStartSubscriptionDate();
             Date endSubscriptionDate = pricePlan.getEndSubscriptionDate();
@@ -649,24 +649,20 @@ public class RatingService extends BusinessService<WalletOperation> {
             int subscriptionAge = 0;
             Date operationDate = bareOperation.getOperationDate();
             if (subscriptionDate != null && operationDate != null) {
-                // logger.info("subscriptionDate=" +
-                // bareOperation.getSubscriptionDate() + "->" +
-                // DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(),
-                // -1));
+                // logger.info("subscriptionDate=" +bareOperation.getSubscriptionDate() + "->" +DateUtils.addDaysToDate(bareOperation.getSubscriptionDate(),-1));
                 subscriptionAge = DateUtils.monthsBetween(operationDate, DateUtils.addDaysToDate(subscriptionDate, -1));
             }
             // log.info("subscriptionAge=" + subscriptionAge);
+
             boolean subscriptionMinAgeOK = pricePlan.getMinSubscriptionAgeInMonth() == null || subscriptionAge >= pricePlan.getMinSubscriptionAgeInMonth();
-            // log.info("subscriptionMinAgeOK(" +
-            // pricePlan.getMinSubscriptionAgeInMonth() + ")=" +
-            // subscriptionMinAgeOK);
+            // log.info("subscriptionMinAgeOK(" + pricePlan.getMinSubscriptionAgeInMonth() + ")=" +subscriptionMinAgeOK);
             if (!subscriptionMinAgeOK) {
                 log.debug("The subscription age={} is less than the priceplan subscription age min={}", subscriptionAge, pricePlan.getMinSubscriptionAgeInMonth());
                 continue;
             }
             Long maxSubscriptionAgeInMonth = pricePlan.getMaxSubscriptionAgeInMonth();
             boolean subscriptionMaxAgeOK = maxSubscriptionAgeInMonth == null || maxSubscriptionAgeInMonth == 0 || subscriptionAge < maxSubscriptionAgeInMonth;
-            log.debug("subscriptionMaxAgeOK(" + maxSubscriptionAgeInMonth + ")=" + subscriptionMaxAgeOK);
+            // log.debug("subscriptionMaxAgeOK(" + maxSubscriptionAgeInMonth + ")=" + subscriptionMaxAgeOK);
             if (!subscriptionMaxAgeOK) {
                 log.debug("The subscription age {} is greater than the priceplan subscription age max {}", subscriptionAge, maxSubscriptionAgeInMonth);
                 continue;
@@ -716,16 +712,15 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (ppOfferTemplate != null) {
                 boolean offerCodeSameInPricePlan = true;
 
-                if (bareOperation.getOfferTemplate() != null && !bareOperation.getOfferTemplate().equals(ppOfferTemplate)) {
-                    offerCodeSameInPricePlan = false;
-                } else if (bareOperation.getOfferTemplate() == null && !ppOfferTemplate.getCode().equals(bareOperation.getOfferCode())) {
-                    offerCodeSameInPricePlan = false;
+                if (bareOperation.getOfferTemplate() != null) {
+                    offerCodeSameInPricePlan = bareOperation.getOfferTemplate().getId().equals(ppOfferTemplate.getId());
+                } else {
+                    offerCodeSameInPricePlan = ppOfferTemplate.getCode().equals(bareOperation.getOfferCode());
                 }
 
-                String offerCode = bareOperation.getOfferCode();
                 if (!offerCodeSameInPricePlan) {
                     log.debug("The operation offerCode {} is not compatible with price plan offerCode: {}",
-                        bareOperation.getOfferTemplate() != null ? bareOperation.getOfferTemplate() : offerCode, ppOfferTemplate);
+                        bareOperation.getOfferTemplate() != null ? bareOperation.getOfferTemplate() : bareOperation.getOfferCode(), ppOfferTemplate);
                     continue;
                 }
             }
@@ -735,7 +730,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             BigDecimal quantity = bareOperation.getQuantity();
             boolean quantityMaxOk = maxQuantity == null || maxQuantity.compareTo(quantity) > 0;
             if (!quantityMaxOk) {
-                log.debug("the quantity " + quantity + " is strictly greater than " + maxQuantity);
+                log.debug("The quantity " + quantity + " is strictly greater than " + maxQuantity);
                 continue;
             }
             // log.debug("quantityMaxOkInPricePlan");
@@ -743,7 +738,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             BigDecimal minQuantity = pricePlan.getMinQuantity();
             boolean quantityMinOk = minQuantity == null || minQuantity.compareTo(quantity) <= 0;
             if (!quantityMinOk) {
-                log.debug("the quantity " + quantity + " is less than " + minQuantity);
+                log.debug("The quantity " + quantity + " is less than " + minQuantity);
                 continue;
             }
             // log.debug("quantityMinOkInPricePlan");
@@ -755,7 +750,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                 bareOperation.setPriceplan(pricePlan);
                 return pricePlan;
             } else if (validityCalendar != null) {
-                log.debug("the operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
+                log.debug("The operation date " + operationDate + " does not match pricePlan validity calendar " + validityCalendar.getCode() + "period range ");
             }
 
         }
@@ -818,8 +813,8 @@ public class RatingService extends BusinessService<WalletOperation> {
                 ChargeInstance chargeInstance = operationToRerate.getChargeInstance();
                 TradingCountry tradingCountry = chargeInstance.getUserAccount().getBillingAccount().getTradingCountry();
                 ChargeTemplate chargeTemplate = chargeInstance.getChargeTemplate();
-                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(chargeTemplate.getInvoiceSubCategory().getId(),
-                    tradingCountry.getId(), operation.getOperationDate());
+                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
+                    tradingCountry, operation.getOperationDate());
                 if (invoiceSubcategoryCountry == null) {
                     throw new IncorrectChargeTemplateException("reRate: No invoiceSubcategoryCountry exists for invoiceSubCategory code="
                             + chargeTemplate.getInvoiceSubCategory().getCode() + " and trading country=" + tradingCountry.getCountryCode());
@@ -866,7 +861,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount);
 
-        log.error("AKK before evaluating expression");
+        log.debug("AKK before evaluating expression");
         Object res = null;
         try {
             res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);

@@ -302,7 +302,7 @@ public class QueryBuilder {
      * @return instance QueryBuilder
      */
     public QueryBuilder addCriterion(String field, String operator, Object value, boolean caseInsensitive) {
-        if (StringUtils.isBlank(value)){
+        if (StringUtils.isBlank(value)) {
             return this;
         }
 
@@ -330,7 +330,7 @@ public class QueryBuilder {
      * @return instance of QueryBuilder
      */
     public QueryBuilder addCriterionEntityInList(String field, Object entity) {
-        if (entity == null){
+        if (entity == null) {
             return this;
         }
 
@@ -582,6 +582,14 @@ public class QueryBuilder {
     }
 
     /**
+     * @param orderColumn name of column which is used for orderBy
+     * @param ascending true/false
+     */
+    public void addOrderCriterionAsIs(String orderColumn, boolean ascending) {
+        q.append(" ORDER BY ").append(orderColumn).append(ascending ? " ASC " : " DESC ");
+    }
+
+    /**
      * @param groupColumn the name of groupBy column
      */
     public void addGroupCriterion(String groupColumn) {
@@ -787,7 +795,7 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query instance 
+     * @param query query instance
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */

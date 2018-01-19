@@ -72,8 +72,7 @@ public class RealtimeChargingService {
             throw new IncorrectChargeTemplateException("invoiceSubCategory is null for chargeTemplate code=" + chargeTemplate.getCode());
 		}
 
-		Long tradingCountryId = tradingCountry.getId();
-        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), tradingCountryId,
+        InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry,
             subscriptionDate);
 		if (invoiceSubcategoryCountry == null) {
 			throw new IncorrectChargeTemplateException(
@@ -114,7 +113,7 @@ public class RealtimeChargingService {
 		op.setStatus(WalletOperationStatusEnum.OPEN);
 		op.setSeller(seller);
 
-        chargeApplicationRatingService.rateBareWalletOperation(op, null, null, tradingCountryId, currency);
+        chargeApplicationRatingService.rateBareWalletOperation(op, null, null, tradingCountry.getId(), currency);
 
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
 	}

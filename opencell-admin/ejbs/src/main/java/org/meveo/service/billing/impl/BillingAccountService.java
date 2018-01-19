@@ -297,11 +297,15 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @return True if billing account is exonerated from taxes
      */
     public boolean isExonerated(BillingAccount ba) {
+        
         boolean isExonerated = false;
-        if (ba == null || ba.getCustomerAccount().getCustomer().getCustomerCategory() == null) {
+        if (ba == null) {
             return false;
         }
         CustomerCategory customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
+        if (customerCategory == null) {
+            return false;
+        }
         if (customerCategory.getExoneratedFromTaxes()) {
             return true;
         }

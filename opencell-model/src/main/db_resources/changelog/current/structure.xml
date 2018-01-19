@@ -1556,4 +1556,8 @@
         <sql>CREATE INDEX medina_access_user_id_index ON medina_access(acces_user_id)</sql>
     </changeSet>
     
+    <changeSet id="#2792_20180119" author="AndriusKarpavicius">  
+        <sql>CREATE INDEX bc_instance_sub_id ON billing_charge_instance(subscription_id)</sql>
+    </changeSet>
+    
 </databaseChangeLog> 

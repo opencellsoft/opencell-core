@@ -149,25 +149,6 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId, Date applicationDate) {
-
-        try {
-            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
-            qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId, true);
-            qb.addCriterion("tradingCountry.id", "=", countryId, true);
-            qb.addCriterionDateInRange("startValidityDate", "endValidityDate", applicationDate);
-            qb.addOrderCriterion("priority", false);
-
-            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
-            return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
-        } catch (NoResultException ex) {
-            log.warn("failed to find invoice SubCategory Country", ex);
-        }
-
-        return null;
-    }
-
     /**
      * Find InvoiceSubCategoryCountry without fetching join entities.
      * 
@@ -177,7 +158,17 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
      * @return invoice sub category country.
      */
     public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountry(InvoiceSubCategory invoiceSubCategory, TradingCountry tradingCountry, Date applicationDate) {
-        return findByInvoiceSubCategoryAndCountry(invoiceSubCategory, tradingCountry, null, applicationDate);
+
+        try {
+            return getEntityManager().createNamedQuery("InvoiceSubcategoryCountry.findByInvoiceSubCategoryAndCountry", InvoiceSubcategoryCountry.class)
+                .setParameter("invoiceSubCategory", invoiceSubCategory).setParameter("tradingCountry", tradingCountry).setParameter("applicationDate", applicationDate)
+                .setMaxResults(1).getSingleResult();
+
+        } catch (NoResultException ex) {
+            log.warn("failed to find invoice SubCategory Country with parameters {}/{}/{}", invoiceSubCategory.getId(), tradingCountry.getId(), applicationDate);
+        }
+
+        return null;
     }
 
     /**
@@ -195,7 +186,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         qb.addCriterionEntity("ic.tradingCountry", tradingCountry);
         qb.addCriterionEntity("ic.invoiceSubCategory", invoiceSubCategory);
         qb.addCriterionDateInRange("startValidityDate", "endValidityDate", applicationDate);
-        qb.addOrderCriterion("priority", false);
+        qb.addOrderCriterionAsIs("priority", false);
 
         try {
             return (InvoiceSubcategoryCountry) qb.getQuery(getEntityManager()).getSingleResult();

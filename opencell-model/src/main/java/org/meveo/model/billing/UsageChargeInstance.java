@@ -43,8 +43,9 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_usage_charge_inst_seq"), })
 @NamedQueries({ @NamedQuery(name = "UsageChargeInstance.listPrepaid", query = "SELECT c FROM UsageChargeInstance c where c.prepaid=true and  c.status='ACTIVE'"),
-        @NamedQuery(name = "UsageChargeInstance.getActiveUsageChargesBySubscriptionId", query = "SELECT c FROM UsageChargeInstance c left join fetch c.serviceInstance si left join fetch c.chargeTemplate where c.status='ACTIVE' and c.subscription.id=:subscriptionId order by c.chargeTemplate.priority ASC", hints = {
+        @NamedQuery(name = "UsageChargeInstance.getActiveUsageChargesBySubscriptionId", query = "SELECT c FROM UsageChargeInstance c left join fetch c.serviceInstance si join c.chargeTemplate ct where c.status='ACTIVE' and c.subscription.id=:subscriptionId and type(ct)=UsageChargeTemplate order by c.chargeTemplate.priority ASC", hints = {
                 @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
+
 public class UsageChargeInstance extends ChargeInstance {
 
     private static final long serialVersionUID = 1L;
