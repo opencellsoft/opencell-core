@@ -1401,7 +1401,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
             // with wallet cache at all
         } else if (!chargeInstance.getPrepaid()) {
             op.setWallet(userAccount.getWallet());
-            log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet());
+            log.debug("chargeWalletOperation is postpaid, set wallet to {}", op.getWallet().getId());
             result.add(op);
             create(op);
 

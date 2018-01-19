@@ -1558,6 +1558,11 @@
     
     <changeSet id="#2792_20180119" author="AndriusKarpavicius">  
         <sql>CREATE INDEX bc_instance_sub_id ON billing_charge_instance(subscription_id)</sql>
+        <addColumn tableName="billing_usage_charge_inst">
+            <column defaultValueNumeric="1" name="priority" type="int4" />
+        </addColumn>
+        <sql>update billing_usage_charge_inst set priority = cat_usage_charge_template.priority from billing_charge_instance, cat_usage_charge_template where billing_charge_instance.id=billing_usage_charge_inst.id and billing_charge_instance.charge_template_id=cat_usage_charge_template.id</sql>       
     </changeSet>
+    
     
 </databaseChangeLog> 

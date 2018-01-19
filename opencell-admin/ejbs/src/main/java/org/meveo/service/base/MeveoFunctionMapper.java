@@ -629,7 +629,7 @@ public class MeveoFunctionMapper extends FunctionMapper {
 
 
         Logger log = LoggerFactory.getLogger(MeveoFunctionMapper.class);
-        log.error("AKK start getInheritedCFvalue for entity {}", entity.getClass());
+        log.debug("AKK start getInheritedCFvalue for entity {}", entity.getClass());
         Object cfValue = getCustomFieldInstanceService().getInheritedCFValue(entity, code);
         log.trace("Obtained inherited CF value {} for {}/{}", cfValue, entity, code);
 

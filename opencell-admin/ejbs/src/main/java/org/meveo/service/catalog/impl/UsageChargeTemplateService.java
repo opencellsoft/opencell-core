@@ -55,7 +55,17 @@ public class UsageChargeTemplateService extends ChargeTemplateService<UsageCharg
         charge.setFilterParam3(StringUtils.stripToNull(charge.getFilterParam3()));
         charge.setFilterParam4(StringUtils.stripToNull(charge.getFilterParam4()));
 
-        return super.update(charge);
+        boolean priorityChanged = charge.isPriorityChanged();
+
+        charge = super.update(charge);
+
+        // Need to update priority values in usage charge instance entities
+        if (priorityChanged) {
+            getEntityManager().createQuery("update UsageChargeInstance ci set ci.priority=:priority where ci.chargeTemplate=:chargeTemplate")
+                .setParameter("priority", charge.getPriority()).setParameter("chargeTemplate", charge).executeUpdate();
+        }
+
+        return charge;
     }
 
     public List<UsageChargeTemplate> findAssociatedToEDRTemplate(TriggeredEDRTemplate triggeredEDRTemplate) {

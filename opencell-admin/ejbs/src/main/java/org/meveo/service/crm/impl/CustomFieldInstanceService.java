@@ -920,8 +920,6 @@ public class CustomFieldInstanceService extends BaseService {
                 if (parentCfEntity instanceof Provider) {
                     parentCfEntity = providerService.findById(appProvider.getId());
                 } else {
-
-                    log.error("AKK before refresh or retrieve parent entity {} {}", parentCfEntity.getClass(), parentCfEntity.getClass());
                     parentCfEntity = (ICustomFieldEntity) refreshOrRetrieveAny((IEntity) parentCfEntity);
                 }
                 Object cfeValue = getInheritedCFValue(parentCfEntity, cfCode);
