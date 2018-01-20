@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +89,15 @@ public class ExportTest {
 
         ExportTemplate template = new ExportTemplate();
         template.setName("Template One");
+
+        List<String> filterList = new ArrayList<>();
+        filterList.addAll(Arrays.asList("OFFER", "SERVICE", "CHARGE", "OFFER_CATEGORY", "PRODUCT", "BUNDLE", "PRICEPLAN"));
+
+        template.setFilters(new HashMap<>());
+        template.getFilters().put("disabled", false);
+        template.getFilters().put("appliesTo", "OFFER");
+        template.getFilters().put("appliesTo2", filterList);
+
         template.setRelatedEntities(new ArrayList<RelatedEntityToExport>());
         RelatedEntityToExport relent = new RelatedEntityToExport();
         relent.setSelection("select a from b where b=:b");

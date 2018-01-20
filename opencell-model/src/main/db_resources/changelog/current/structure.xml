@@ -1517,4 +1517,10 @@
         </addColumn>   
    	</changeSet>
     
+    <changeSet id="#3091_20180118" author="AndriusKarpavicius">
+        <addColumn tableName="adm_inbound_request">
+            <column name="resp_status" type="int4"  />           
+        </addColumn>   
+    </changeSet>
+    
 </databaseChangeLog> 
