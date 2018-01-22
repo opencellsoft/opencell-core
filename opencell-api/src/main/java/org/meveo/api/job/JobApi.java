@@ -12,7 +12,6 @@ import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -103,6 +102,35 @@ public class JobApi extends BaseApi {
         JobExecutionResultImpl jobExecutionResult = jobExecutionService.findById(id);
         if (jobExecutionResult == null) {
             throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
+        }
+
+        jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
+
+        if (jobExecutionResult.getEndDate() == null) {
+            List<String> nodeNames = jobCacheContainerProvider.getNodesJobIsRuningOn(jobExecutionResult.getJobInstance().getId());
+            if (nodeNames != null && !nodeNames.isEmpty()) {
+                jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", nodeNames));
+            }
+        }
+
+        return jobExecutionResultDto;
+    }
+
+    public JobExecutionResultDto findJobExecutionResultByCode(String jobInstanceCode) throws MeveoApiException {
+        JobExecutionResultDto jobExecutionResultDto;
+        if (StringUtils.isBlank(jobInstanceCode)) {
+            missingParameters.add("jobInstanceCode");
+            handleMissingParameters();
+        }
+        
+        JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode);
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
+        }
+        
+        JobExecutionResultImpl jobExecutionResult = jobExecutionService.findLastExecutionByInstance(jobInstance);
+        if (jobExecutionResult == null) {
+            throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, jobInstanceCode);
         }
 
         jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
