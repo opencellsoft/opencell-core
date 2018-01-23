@@ -158,15 +158,6 @@ public interface JobRs extends IBaseRs {
      */
     @GET
     @Path("/jobReport")
-    JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("id") Long jobExecutionResultId);
+    JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("code") String code, @QueryParam("id") Long jobExecutionResultId);
     
-    /**
-     * Find a job execution result with a given id 
-     * 
-     * @param jobExecutionResultId A jobExecutionResultId
-     * @return
-     */
-    @GET
-    @Path("/jobReportByCode")
-    JobExecutionResultResponseDto findJobExecutionResultByCode(@QueryParam("jobInstanceCode") String jobInstanceCode);
 }

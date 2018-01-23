@@ -60,7 +60,7 @@ public class JobApi extends BaseApi {
 
         Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
 
-        return findJobExecutionResult(executionId);
+        return findJobExecutionResult(null, executionId);
     }
     
     /**
@@ -87,50 +87,35 @@ public class JobApi extends BaseApi {
 
     /**
      * Retrieve job execution result.
+     * @param code 
      * 
      * @param id Job execution result identifier
      * @return Job execution result DTO
      * @throws MeveoApiException meveo api exception
      */
-    public JobExecutionResultDto findJobExecutionResult(Long id) throws MeveoApiException {
-        JobExecutionResultDto jobExecutionResultDto = new JobExecutionResultDto();
-        if (StringUtils.isBlank(id)) {
-            missingParameters.add("id");
-            handleMissingParameters();
-        }
-
-        JobExecutionResultImpl jobExecutionResult = jobExecutionService.findById(id);
-        if (jobExecutionResult == null) {
-            throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
-        }
-
-        jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);
-
-        if (jobExecutionResult.getEndDate() == null) {
-            List<String> nodeNames = jobCacheContainerProvider.getNodesJobIsRuningOn(jobExecutionResult.getJobInstance().getId());
-            if (nodeNames != null && !nodeNames.isEmpty()) {
-                jobExecutionResultDto.setRunningOnNodes(StringUtils.concatenate(",", nodeNames));
-            }
-        }
-
-        return jobExecutionResultDto;
-    }
-
-    public JobExecutionResultDto findJobExecutionResultByCode(String jobInstanceCode) throws MeveoApiException {
+    public JobExecutionResultDto findJobExecutionResult(String code, Long id) throws MeveoApiException {
         JobExecutionResultDto jobExecutionResultDto;
-        if (StringUtils.isBlank(jobInstanceCode)) {
-            missingParameters.add("jobInstanceCode");
+        if (StringUtils.isBlank(code) && StringUtils.isBlank(id)) {
+            missingParameters.add("id or code");
             handleMissingParameters();
         }
-        
-        JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode);
-        if (jobInstance == null) {
-            throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
-        }
-        
-        JobExecutionResultImpl jobExecutionResult = jobExecutionService.findLastExecutionByInstance(jobInstance);
-        if (jobExecutionResult == null) {
-            throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, jobInstanceCode);
+
+        JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
+        if (!StringUtils.isBlank(code)) {
+            JobInstance jobInstance = jobInstanceService.findByCode(code);
+            if (jobInstance == null) {
+                throw new EntityDoesNotExistsException(JobInstance.class, code);
+            }
+
+            jobExecutionResult = jobExecutionService.findLastExecutionByInstance(jobInstance);
+            if (jobExecutionResult == null) {
+                throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, code);
+            }
+        } else if (!StringUtils.isBlank(id)) {
+            jobExecutionResult = jobExecutionService.findById(id);
+            if (jobExecutionResult == null) {
+                throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
+            }
         }
 
         jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);

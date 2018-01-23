@@ -189,21 +189,10 @@ public class JobWsImpl extends BaseWs implements JobWs {
     }
 
     @Override
-    public JobExecutionResultResponseDto findJobExecutionResult(Long jobExecutionResultId) {
+    public JobExecutionResultResponseDto findJobExecutionResult(String code, Long jobExecutionResultId) {
         JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
         try {
-            result.setJobExecutionResultDto(jobApi.findJobExecutionResult(jobExecutionResultId));
-        } catch (Exception e) {
-            processException(e, result.getActionStatus());
-        }
-        return result;
-    }
-
-    @Override
-    public JobExecutionResultResponseDto findJobExecutionResultByCode(String jobInstanceCode) {
-        JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
-        try {
-            result.setJobExecutionResultDto(jobApi.findJobExecutionResultByCode(jobInstanceCode));
+            result.setJobExecutionResultDto(jobApi.findJobExecutionResult(code, jobExecutionResultId));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

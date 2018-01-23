@@ -56,9 +56,6 @@ public interface JobWs extends IBaseWs {
     ActionStatus removeTimer(@WebParam(name = "timerCode") String timerCode);
     
     @WebMethod
-    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
-    
-    @WebMethod
-    JobExecutionResultResponseDto findJobExecutionResultByCode(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
+    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="code") String code, @WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
     
 }
