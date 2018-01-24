@@ -346,4 +346,12 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public boolean isJobRunningOnThis(Long jobInstanceId) {
         return JobRunningStatusEnum.RUNNING_THIS == jobCacheContainerProvider.isJobRunning(jobInstanceId);
     }
+    
+    public JobExecutionResultImpl findLastExecutionByInstance(JobInstance jobInstance) {
+        QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "j");
+        qb.addCriterionEntity("jobInstance", jobInstance);
+        qb.addOrderCriterion("startDate", false);
+        
+        return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
+    }
 }
