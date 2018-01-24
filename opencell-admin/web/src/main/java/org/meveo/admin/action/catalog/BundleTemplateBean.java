@@ -71,6 +71,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
     private DualListModel<Channel> channelDM;
 
     private boolean newVersion;
+    private boolean duplicateBundle;
 
     public BundleTemplateBean() {
         super(BundleTemplate.class);
@@ -89,6 +90,8 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
             instantiateNewVersion();
             setObjectId(entity.getId());
             newVersion = false;
+        } else if(duplicateBundle) {
+            duplicateWithoutSave();
         }
 
         if (entity.getValidity() == null) {
@@ -297,6 +300,17 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
             }
         }
     }
+    
+    @ActionMethod
+    public void duplicateWithoutSave() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                bundleTemplateService.duplicate(entity, false);
+            } catch (BusinessException e) {
+                log.error("Error encountered duplicating product bundle template entity: {}", entity.getCode(), e);
+            }
+        }
+    }
 
     @ActionMethod
     public void instantiateNewVersion() {
@@ -342,5 +356,13 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
     public List<BundleTemplate> listActiveByDate(Date date) {
         return bundleTemplateService.listActiveByDate(date);
+    }
+
+    public boolean isDuplicateBundle() {
+        return duplicateBundle;
+    }
+
+    public void setDuplicateBundle(boolean duplicateBundle) {
+        this.duplicateBundle = duplicateBundle;
     }
 }

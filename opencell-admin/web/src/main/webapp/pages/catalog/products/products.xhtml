@@ -196,8 +196,8 @@
 														styleClass="field-value #{productTemplateBean.displayStatus(prod) ? 'GreenDark' : 'GrayDark'}" />
 												</p:panel>
 											</p:outputPanel>
-											<p:panel styleClass="text-center">
-												<ul class="list-inline" style="width: 135px;">
+											<p:panel styleClass="text-center" style="width: 180px;">
+												<ul class="list-inline">
 													<li><p:link id="viewLink"
 															outcome="#{productTemplateBean.isBundleTemplate(prod)?'mm_bundleTemplateDetail':'mm_productTemplateDetail'}"
 															styleClass="fa fa-search-plus fa-2x no-text-decoration text-blue">
@@ -218,8 +218,8 @@
 															<f:param name="editMode" value="edit" />
 															<f:param name="backView" value="mm_products"></f:param>
 														</p:link></li>
-                                                    <li><p:link id="newVersionLinkProd" title="#{messages['commons.newVersion']}"
-                                                                styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
+													<li><p:link id="newVersionLinkProd" title="#{messages['commons.newVersion']}"
+                                                                styleClass="fa fa-plus no-text-decoration text-blue fa-2x"
                                                                 outcome="mm_productTemplateDetail" rendered="#{not productTemplateBean.isBundleTemplate(prod)}">
                                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                                         <f:param name="objectId" value="#{prod.id}"/>
@@ -229,7 +229,7 @@
                                                         <f:param name="newVersion" value="true" />
                                                         </p:link>
                                                         <p:link id="newVersionLinkBndl" title="#{messages['commons.newVersion']}"
-                                                                styleClass="fa fa-copy no-text-decoration text-blue fa-2x"
+                                                                styleClass="fa fa-plus no-text-decoration text-blue fa-2x"
                                                                 outcome="mm_bundleTemplateDetail" rendered="#{productTemplateBean.isBundleTemplate(prod)}">
                                                         <f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
                                                         <f:param name="objectId" value="#{prod.id}"/>
@@ -237,32 +237,28 @@
                                                         <f:param name="backView" value="mm_products"/>
                                                         <f:param name="tab" value="0"/>                                                        
                                                         <f:param name="newVersion" value="true" />
-                                                        </p:link>
-                                                        </li>
-<!-- 													<li><p:commandLink id="duplicateLinkProd" -->
-<!-- 															rendered="#{not productTemplateBean.isBundleTemplate(prod)}" -->
-<!-- 															styleClass="fa fa-copy fa-2x text-blue" -->
-<!-- 															action="#{productTemplateBean.duplicate()}" -->
-<!-- 															update=":tabView"> -->
-<!-- 															<f:param name="tab" value="0"></f:param> -->
-<!-- 															<f:setPropertyActionListener value="#{prod}" -->
-<!-- 																target="#{productTemplateBean.entity}"></f:setPropertyActionListener> -->
-<!-- 															<f:param name="tab" value="0"></f:param> -->
-<!-- 															<p:confirm header="#{messages['commons.duplicate']}" -->
-<!-- 																message="#{messages['commons.confirmDuplicate']}" /> -->
-<!-- 														</p:commandLink><p:commandLink -->
-<!-- 															id="duplicateLinkBndl" -->
-<!-- 															rendered="#{productTemplateBean.isBundleTemplate(prod)}" -->
-<!-- 															styleClass="fa fa-copy fa-2x text-blue" -->
-<!-- 															action="#{bundleTemplateBean.duplicate()}" -->
-<!-- 															update=":tabView"> -->
-<!-- 															<f:param name="tab" value="0"></f:param> -->
-<!-- 															<f:setPropertyActionListener value="#{prod}" -->
-<!-- 																target="#{bundleTemplateBean.entity}"></f:setPropertyActionListener> -->
-<!-- 															<f:param name="tab" value="0"></f:param> -->
-<!-- 															<p:confirm header="#{messages['commons.duplicate']}" -->
-<!-- 																message="#{messages['commons.confirmDuplicate']}" /> -->
-<!-- 														</p:commandLink></li> -->
+                                                        </p:link></li>
+                                                	<li><p:link id="duplicateLinkBndl"
+															rendered="#{productTemplateBean.isBundleTemplate(prod)}"
+															styleClass="fa fa-copy fa-2x text-blue" outcome="mm_bundleTemplateDetail">
+															<f:param name="tab" value="0"></f:param>
+															<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+	                                                        <f:param name="objectId" value="#{prod.id}"/>
+	                                                        <f:param name="edit" value="true"/>
+	                                                        <f:param name="backView" value="mm_products"/>
+	                                                        <f:param name="tab" value="0"/>                                                        
+	                                                        <f:param name="duplicateBundle" value="true" />
+														</p:link>
+														<p:link id="duplicateLinkProd"
+															rendered="#{not productTemplateBean.isBundleTemplate(prod)}"
+															styleClass="fa fa-copy fa-2x text-blue" outcome="mm_productTemplateDetail">
+														  	<f:param name="cid" value="#{javax.enterprise.context.conversation.id}"/>
+	                                                        <f:param name="objectId" value="#{prod.id}"/>
+	                                                        <f:param name="edit" value="true"/>
+	                                                        <f:param name="backView" value="mm_products"/>
+	                                                        <f:param name="tab" value="0"/>                                                        
+	                                                        <f:param name="duplicateProduct" value="true" />
+														</p:link></li>
 													<li><p:commandLink id="addToExportLink"
 															styleClass="fa fa-share-square-o fa-2x text-blue"
 															action="#{productAndBundleTemplateListBean.addProductTemplateToExport(prod)}"
