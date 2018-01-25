@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
@@ -83,7 +84,7 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromSubscriptionCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
+    private List<ProductOfferingPrice> getProductOfferingPricesFromSubscriptionCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         if (serviceTemplate.getServiceSubscriptionCharges() != null) {
             Price price = new Price();
@@ -128,7 +129,7 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromRecurringCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
+    private List<ProductOfferingPrice> getProductOfferingPricesFromRecurringCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         if (serviceTemplate.getServiceRecurringCharges() != null) {
             ProductOfferingPrice offerPrice = null;
@@ -177,7 +178,7 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ProductTemplate productTemplate) {
+    private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ProductTemplate productTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         if (productTemplate.getProductChargeTemplates() != null) {
             ProductOfferingPrice offerPrice = null;
