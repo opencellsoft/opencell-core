@@ -9,6 +9,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.ws.rs.core.UriInfo;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
@@ -45,7 +46,7 @@ public class CatalogApi extends BaseApi {
     @Inject
     private RatingService ratingService;
 
-    public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException {
+    public ProductOffering findProductOffering(String code, Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws EntityDoesNotExistsException, BusinessException {
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class, code);
@@ -54,7 +55,7 @@ public class CatalogApi extends BaseApi {
         return new ProductOffering(offerTemplate, uriInfo, category, offerPrices);
     }
 
-    public List<ProductOffering> findProductOfferings(Date validFrom, Date validTo, UriInfo uriInfo, Category category) {
+    public List<ProductOffering> findProductOfferings(Date validFrom, Date validTo, UriInfo uriInfo, Category category) throws BusinessException {
         List<ProductOffering> productOfferings = new ArrayList<ProductOffering>();
         List<OfferTemplate> offerTemplates = offerTemplateService.list(null, validFrom, validTo, LifeCycleStatusEnum.ACTIVE);
 
@@ -66,7 +67,7 @@ public class CatalogApi extends BaseApi {
         return productOfferings;
     }
 
-    private List<ProductOfferingPrice> getOfferPrices(OfferTemplate offerTemplate) {
+    private List<ProductOfferingPrice> getOfferPrices(OfferTemplate offerTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         for (OfferServiceTemplate offerServiceTemplate : offerTemplate.getOfferServiceTemplates()) {
             if (!offerServiceTemplate.isMandatory()) {
@@ -83,7 +84,7 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromSubscriptionCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
+    private List<ProductOfferingPrice> getProductOfferingPricesFromSubscriptionCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         if (serviceTemplate.getServiceSubscriptionCharges() != null) {
             Price price = new Price();
@@ -128,7 +129,7 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromRecurringCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) {
+    private List<ProductOfferingPrice> getProductOfferingPricesFromRecurringCharges(OfferTemplate offerTemplate, ServiceTemplate serviceTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         if (serviceTemplate.getServiceRecurringCharges() != null) {
             ProductOfferingPrice offerPrice = null;
@@ -177,7 +178,7 @@ public class CatalogApi extends BaseApi {
         return offerPrices;
     }
 
-    private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ProductTemplate productTemplate) {
+    private List<ProductOfferingPrice> getProductOfferingPricesFromOfferProducts(OfferTemplate offerTemplate, ProductTemplate productTemplate) throws BusinessException {
         List<ProductOfferingPrice> offerPrices = new ArrayList<>();
         if (productTemplate.getProductChargeTemplates() != null) {
             ProductOfferingPrice offerPrice = null;
