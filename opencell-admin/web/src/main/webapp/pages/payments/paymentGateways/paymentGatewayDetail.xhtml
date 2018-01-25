@@ -48,6 +48,10 @@
 					<hftl:formField label="#{messages['currency.codeCurrency']}" field="tradingCurrency"  valueLabelField="currencyCode" id="currencySelectId" listBean="#{tradingCurrencyBean}" componentWidth="10"/>
 					<hftl:formField label="#{messages['paymentGateway.cardType']}" field="cardType" />
 					<hftl:formField label="#{messages['paymentGateway.application_el']}" field="applicationEL" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
+					<hftl:formField label="#{messages['paymentGateway.nbTries']}" field="nbTries" />
+					<hftl:formField label="#{messages['paymentGateway.replayCause']}" field="replayCause" />
+					<hftl:formField label="#{messages['paymentGateway.errorsToReplay']}" field="errorsToReplay" />
+					
 				</p:tab>
 				<hftl:customFields backingBean="#{paymentGatewayBean}" messagesId=":formPaymentGateway:messages" />
 			</p:tabView>								

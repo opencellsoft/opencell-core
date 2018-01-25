@@ -14,6 +14,8 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.job.Job;
 
 @Stateless
@@ -83,6 +85,16 @@ public class PaymentCardJob extends Job {
         matchingAO.setListValues(lisValuesYesNo);
         result.put("PaymentCardJob_matchingAO", matchingAO);
 
+        CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
+        payentGatewayCF.setCode("PaymentCardJob_paymentGateway");
+        payentGatewayCF.setAppliesTo("JOB_PaymentCardJob");
+        payentGatewayCF.setActive(true);
+        payentGatewayCF.setDescription("Payent gateway");
+        payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        payentGatewayCF.setEntityClazz(PaymentGateway.class.getName());
+        payentGatewayCF.setValueRequired(true);
+        result.put("PaymentCardJob_paymentGateway", payentGatewayCF);
+        
         return result;
     }
 }

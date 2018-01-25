@@ -15,6 +15,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitPaymentCardJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.payments.PaymentGateway;
 
 /**
  * @author anasseh
@@ -36,9 +37,9 @@ public class PaymentCardAsync {
      */
     @Asynchronous
 	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO,PaymentGateway paymentGateway) {
 		for (Long id : ids) {
-			unitPaymentCardJobBean.execute(result, id, createAO, matchingAO);
+			unitPaymentCardJobBean.execute(result, id, createAO, matchingAO,paymentGateway);
 		}
         return new AsyncResult<String>("OK");
     }

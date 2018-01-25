@@ -977,5 +977,17 @@
         
     </changeSet>
         
+    <changeSet id="#2875_20171201" author="anasseh">    
+        <addColumn tableName="ar_payment_gateway">
+            <column name="nb_tries" type="int" />
+        </addColumn>  
+        <addColumn tableName="ar_payment_gateway">    
+            <column name="replay_cause" type="varchar(100)" />   
+        </addColumn>    
+
+        <addColumn tableName="ar_payment_gateway">    
+           <column name="errors_to_replay" type="varchar(400)" />   
+       </addColumn>              
+    </changeSet>
     
 </databaseChangeLog> 
