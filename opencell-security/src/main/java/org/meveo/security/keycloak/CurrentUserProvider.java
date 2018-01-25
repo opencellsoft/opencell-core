@@ -112,6 +112,8 @@ public class CurrentUserProvider {
                     em.merge(user);
                     em.flush();
                 }
+                
+                currentUser.setFullName(user.getNameOrUsername());
 
             } catch (NoResultException e) {
 
