@@ -192,13 +192,14 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    public JobExecutionResultResponseDto findJobExecutionResult(Long jobExecutionResultId) {
+    public JobExecutionResultResponseDto findJobExecutionResult(String code, Long jobExecutionResultId) {
         JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
         try {
-            result.setJobExecutionResultDto(jobApi.findJobExecutionResult(jobExecutionResultId));
+            result.setJobExecutionResultDto(jobApi.findJobExecutionResult(code, jobExecutionResultId));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
         return result;
     }
+    
 }

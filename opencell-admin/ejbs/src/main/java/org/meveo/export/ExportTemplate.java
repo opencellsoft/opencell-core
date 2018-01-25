@@ -16,13 +16,32 @@ import org.meveo.model.IEntity;
  */
 public class ExportTemplate {
 
+    /**
+     * Reference to another export/import template
+     */
     private String ref;
 
+    /**
+     * Template name
+     */
     private String name;
 
+    /**
+     * Entity to export
+     */
     private Class<? extends IEntity> entityToExport;
 
+    /**
+     * Parameters shown to a user allows to filter the data to export. Map key is a field name and value is a data type. Data types supported: <br>
+     * dateRange - export method will receive two parameters: fieldname_from and fieldname_to represending a date range search for a given fieldname
+     */
     private Map<String, String> parameters;
+
+    /**
+     * Similar to parameters, but hidden from a user - specifies additional filters to apply in data selection for export. Suffix "_from", "_to" and "_in" can be used to specify a
+     * condition different from "="
+     */
+    private Map<String, Object> filters;
 
     /**
      * Shall all classes be exported with all attributes
@@ -84,6 +103,14 @@ public class ExportTemplate {
 
     public void setParameters(Map<String, String> parameters) {
         this.parameters = parameters;
+    }
+
+    public Map<String, Object> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(Map<String, Object> filters) {
+        this.filters = filters;
     }
 
     public boolean isExportAllClassesAsFull() {
@@ -187,13 +214,13 @@ public class ExportTemplate {
     @Override
     public String toString() {
         final int maxLen = 10;
-        return String
-            .format(
-                "ExportTemplate [ref=%s, name=%s, entityToExport=%s, parameters=%s, exportAllClassesAsFull=%s, classesToExportAsFull=%s, classesToExportAsShort=%s, classesToExportAsId=%s, classesToIgnoreFKNotFound=%s, relatedEntities=%s, groupedTemplates=%s, canDeleteAfterExport=%s]",
-                ref, name, entityToExport, parameters != null ? toString(parameters.entrySet(), maxLen) : null, exportAllClassesAsFull,
-                classesToExportAsFull != null ? toString(classesToExportAsFull, maxLen) : null, classesToExportAsShort != null ? toString(classesToExportAsShort, maxLen) : null,
-                classesToExportAsId != null ? toString(classesToExportAsId, maxLen) : null, classesToIgnoreFKNotFound != null ? toString(classesToIgnoreFKNotFound, maxLen) : null,
-                relatedEntities != null ? toString(relatedEntities, maxLen) : null, groupedTemplates != null ? toString(groupedTemplates, maxLen) : null, canDeleteAfterExport);
+        return String.format(
+            "ExportTemplate [ref=%s, name=%s, entityToExport=%s, parameters=%s, filters=%s, exportAllClassesAsFull=%s, classesToExportAsFull=%s, classesToExportAsShort=%s, classesToExportAsId=%s, classesToIgnoreFKNotFound=%s, relatedEntities=%s, groupedTemplates=%s, canDeleteAfterExport=%s]",
+            ref, name, entityToExport, parameters != null ? toString(parameters.entrySet(), maxLen) : null, parameters != null ? toString(filters.entrySet(), maxLen) : null,
+            exportAllClassesAsFull, classesToExportAsFull != null ? toString(classesToExportAsFull, maxLen) : null,
+            classesToExportAsShort != null ? toString(classesToExportAsShort, maxLen) : null, classesToExportAsId != null ? toString(classesToExportAsId, maxLen) : null,
+            classesToIgnoreFKNotFound != null ? toString(classesToIgnoreFKNotFound, maxLen) : null, relatedEntities != null ? toString(relatedEntities, maxLen) : null,
+            groupedTemplates != null ? toString(groupedTemplates, maxLen) : null, canDeleteAfterExport);
     }
 
     private String toString(Collection<?> collection, int maxLen) {

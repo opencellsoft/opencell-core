@@ -27,345 +27,413 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
-@ExportIdentifier({ "code"})
-@Table(name = "adm_inbound_request", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_inbound_request_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "adm_inbound_request", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_inbound_request_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
 public class InboundRequest extends BusinessEntity {
 
-	private static final long serialVersionUID = 2634877161620665288L;
+    private static final long serialVersionUID = 2634877161620665288L;
 
-	@Column(name="content_length")
-	private int contentLength;
+    /**
+     * Request content length
+     */
+    @Column(name = "content_length")
+    private int contentLength;
 
-	@Column(name="content_type",length=255)
-	@Size(max = 255)
-	private String contentType;
-
-	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="adm_inbound_req_params")
-	private Map<String,String> parameters = new HashMap<String, String>();
-
-	@Column(name="protocol",length=20)
-	@Size(max = 20)
-	private String protocol;
-	
-	@Column(name="scheme",length=20)
-    @Size(max = 20)
-	private String scheme;
-	
-	@Column(name="remote_adrr",length=255)
+    /**
+     * Request content type
+     */
+    @Column(name = "content_type", length = 255)
     @Size(max = 255)
-	private String remoteAddr;
+    private String contentType;
 
-	@Column(name="remote_port")
-	private int remotePort;
-		
-	@Column(name = "body", columnDefinition = "TEXT")
-	private String body;
-	
-	@Column(name="method",length=10)
+    /**
+     * Request parameters
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "adm_inbound_req_params")
+    private Map<String, String> parameters = new HashMap<String, String>();
+
+    /**
+     * Http protocol
+     */
+    @Column(name = "protocol", length = 20)
+    @Size(max = 20)
+    private String protocol;
+
+    /**
+     * Scheme
+     */
+    @Column(name = "scheme", length = 20)
+    @Size(max = 20)
+    private String scheme;
+
+    /**
+     * Client's IP address
+     */
+    @Column(name = "remote_adrr", length = 255)
+    @Size(max = 255)
+    private String remoteAddr;
+
+    /**
+     * Client's port
+     */
+    @Column(name = "remote_port")
+    private int remotePort;
+
+    /**
+     * Request body
+     */
+    @Column(name = "body", columnDefinition = "TEXT")
+    private String body;
+
+    /**
+     * Method
+     */
+    @Column(name = "method", length = 10)
     @Size(max = 10)
-	private String method;
+    private String method;
 
-	@Column(name="auth_type",length=11)
+    /**
+     * Authentication type
+     */
+    @Column(name = "auth_type", length = 11)
     @Size(max = 11)
-	private String authType;
+    private String authType;
 
-	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="adm_inbound_req_cookies")
-	private Map<String,String> coockies = new HashMap<String, String>();
-	
-	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="adm_inbound_req_headers")
+    /**
+     * Request cookies
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "adm_inbound_req_cookies")
+    private Map<String, String> coockies = new HashMap<String, String>();
+
+    /**
+     * Request headers
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "adm_inbound_req_headers")
     @Column(name = "headers", columnDefinition = "TEXT")
     private Map<String, String> headers = new HashMap<String, String>();
 
-	@Column(name="path_info",length=255)
+    /**
+     * Path requested
+     */
+    @Column(name = "path_info", length = 255)
     @Size(max = 255)
-	private String pathInfo;
-	
-	@Column(name="request_uri",length=255)
+    private String pathInfo;
+
+    /**
+     * Url requested
+     */
+    @Column(name = "request_uri", length = 255)
     @Size(max = 255)
-	private String requestURI;
-	
-	//TODO: add parts of a multipart/form-data POST request
-	
-	//response
+    private String requestURI;
 
-	@OneToMany(mappedBy="inboundRequest")
-	private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
+    // TODO: add parts of a multipart/form-data POST request
 
-	@Column(name="resp_content_type",length=255)
+    // Response
+
+    /**
+     * Notifications fired as result of inbound request
+     */
+    @OneToMany(mappedBy = "inboundRequest")
+    private List<NotificationHistory> notificationHistories = new ArrayList<NotificationHistory>();
+
+    /**
+     * Content type to set in response
+     */
+    @Column(name = "resp_content_type", length = 255)
     @Size(max = 255)
-	private String responseContentType;
+    private String responseContentType;
 
-	@Column(name="resp_encoding",length=50)
+    /**
+     * Encoding to set in response
+     */
+    @Column(name = "resp_encoding", length = 50)
     @Size(max = 50)
-	private String responseEncoding;
+    private String responseEncoding;
 
-	transient private String responseBody;
-	
-	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="adm_inbound_resp_cookies")
-	private Map<String,String> responseCoockies = new HashMap<String, String>();
-	
-	@ElementCollection(fetch=FetchType.LAZY)
-	@CollectionTable(name="adm_inbound_resp_headers")
-	private Map<String,String> responseHeaders = new HashMap<String, String>();
+    /**
+     * Body of response
+     */
+    transient private String responseBody;
 
-	
-	@Transient
+    /**
+     * Cookies to set in response
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "adm_inbound_resp_cookies")
+    private Map<String, String> responseCoockies = new HashMap<String, String>();
+
+    /**
+     * Headers to set in response
+     */
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "adm_inbound_resp_headers")
+    private Map<String, String> responseHeaders = new HashMap<String, String>();
+
+    /**
+     * HTTP Status to force for response
+     */
+    @Column(name = "resp_status")
+    private Integer responseStatus;
+
+    @Transient
     private StringBuffer encodedParams = new StringBuffer();
-	
-	@Transient
+
+    @Transient
     private StringBuffer encodedCookies = new StringBuffer();
-   
-	@Transient
+
+    @Transient
     private StringBuffer encodedHeaders = new StringBuffer();
-	
-	@Transient
+
+    @Transient
     private StringBuffer encodedRespCookies = new StringBuffer();
-	
-	@Transient
+
+    @Transient
     private StringBuffer encodedRespHeaders = new StringBuffer();
-	
-	
-	public int getContentLength() {
-		return contentLength;
-	}
 
-	public void setContentLength(int contentLength) {
-		this.contentLength = contentLength;
-	}
+    public int getContentLength() {
+        return contentLength;
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    public void setContentLength(int contentLength) {
+        this.contentLength = contentLength;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public String getContentType() {
+        return contentType;
+    }
 
-	public Map<String,String> getParameters() {
-		return parameters;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public void setParameters(Map<String,String> parameters) {
-		this.parameters = parameters;
-	}
+    public Map<String, String> getParameters() {
+        return parameters;
+    }
 
-	public String getProtocol() {
-		return protocol;
-	}
+    public void setParameters(Map<String, String> parameters) {
+        this.parameters = parameters;
+    }
 
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+    public String getProtocol() {
+        return protocol;
+    }
 
-	public String getScheme() {
-		return scheme;
-	}
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
-	public void setScheme(String scheme) {
-		this.scheme = scheme;
-	}
+    public String getScheme() {
+        return scheme;
+    }
 
-	public String getRemoteAddr() {
-		return remoteAddr;
-	}
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
 
-	public void setRemoteAddr(String remoteAddr) {
-		this.remoteAddr = remoteAddr;
-	}
+    public String getRemoteAddr() {
+        return remoteAddr;
+    }
 
-	public int getRemotePort() {
-		return remotePort;
-	}
+    public void setRemoteAddr(String remoteAddr) {
+        this.remoteAddr = remoteAddr;
+    }
 
-	public void setRemotePort(int i) {
-		this.remotePort = i;
-	}
+    public int getRemotePort() {
+        return remotePort;
+    }
 
-	public String getMethod() {
-		return method;
-	}
+    public void setRemotePort(int i) {
+        this.remotePort = i;
+    }
 
-	public void setMethod(String method) {
-		this.method = method;
-	}
+    public String getMethod() {
+        return method;
+    }
 
-	public String getAuthType() {
-		return authType;
-	}
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
-	public void setAuthType(String authType) {
-		this.authType = authType;
-	}
+    public String getAuthType() {
+        return authType;
+    }
 
-	public Map<String,String> getCoockies() {
-		return coockies;
-	}
+    public void setAuthType(String authType) {
+        this.authType = authType;
+    }
 
-	public void setCoockies(Map<String,String> coockies) {
-		this.coockies = coockies;
-	}
+    public Map<String, String> getCoockies() {
+        return coockies;
+    }
 
-	public Map<String,String> getHeaders() {
-		return headers;
-	}
+    public void setCoockies(Map<String, String> coockies) {
+        this.coockies = coockies;
+    }
 
-	public void setHeaders(Map<String,String> headers) {
-		this.headers = headers;
-	}
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
 
-	public String getPathInfo() {
-		return pathInfo;
-	}
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
 
-	public void setPathInfo(String pathInfo) {
-		this.pathInfo = pathInfo;
-	}
+    public String getPathInfo() {
+        return pathInfo;
+    }
 
-	public String getRequestURI() {
-		return requestURI;
-	}
+    public void setPathInfo(String pathInfo) {
+        this.pathInfo = pathInfo;
+    }
 
-	public void setRequestURI(String requestURI) {
-		this.requestURI = requestURI;
-	}
+    public String getRequestURI() {
+        return requestURI;
+    }
 
-	public String getBody() {
-		return body;
-	}
+    public void setRequestURI(String requestURI) {
+        this.requestURI = requestURI;
+    }
 
-	public void setBody(String body) {
-		this.body = body;
-	}
+    public String getBody() {
+        return body;
+    }
 
-	public List<NotificationHistory> getNotificationHistories() {
-		return notificationHistories;
-	}
+    public void setBody(String body) {
+        this.body = body;
+    }
 
-	public void setNotificationHistories(
-			List<NotificationHistory> notificationHistories) {
-		this.notificationHistories = notificationHistories;
-	}
+    public List<NotificationHistory> getNotificationHistories() {
+        return notificationHistories;
+    }
 
-	public String getResponseContentType() {
-		return responseContentType;
-	}
+    public void setNotificationHistories(List<NotificationHistory> notificationHistories) {
+        this.notificationHistories = notificationHistories;
+    }
 
-	public void setResponseContentType(String responseContentType) {
-		this.responseContentType = responseContentType;
-	}
+    public String getResponseContentType() {
+        return responseContentType;
+    }
 
-	public String getResponseBody() {
-		return responseBody;
-	}
+    public void setResponseContentType(String responseContentType) {
+        this.responseContentType = responseContentType;
+    }
 
-	public void setResponseBody(String responseBody) {
-		this.responseBody = responseBody;
-	}
+    public String getResponseBody() {
+        return responseBody;
+    }
 
-	public Map<String, String> getResponseCoockies() {
-		return responseCoockies;
-	}
+    public void setResponseBody(String responseBody) {
+        this.responseBody = responseBody;
+    }
 
-	public void setResponseCoockies(Map<String, String> responseCoockies) {
-		this.responseCoockies = responseCoockies;
-	}
+    public Map<String, String> getResponseCoockies() {
+        return responseCoockies;
+    }
 
-	public Map<String, String> getResponseHeaders() {
-		return responseHeaders;
-	}
+    public void setResponseCoockies(Map<String, String> responseCoockies) {
+        this.responseCoockies = responseCoockies;
+    }
 
-	public void setResponseHeaders(Map<String, String> responseHeaders) {
-		this.responseHeaders = responseHeaders;
-	}
-	
-	public void add(NotificationHistory notificationHistory){
-		this.notificationHistories.add(notificationHistory);
-		if(notificationHistory.getInboundRequest() != this){
-			notificationHistory.setInboundRequest(this);
-		}
-	}
+    public Map<String, String> getResponseHeaders() {
+        return responseHeaders;
+    }
 
-	public String getResponseEncoding() {
-		return responseEncoding;
-	}
+    public void setResponseHeaders(Map<String, String> responseHeaders) {
+        this.responseHeaders = responseHeaders;
+    }
 
-	public void setResponseEncoding(String responseEncoding) {
+    public void add(NotificationHistory notificationHistory) {
+        this.notificationHistories.add(notificationHistory);
+        if (notificationHistory.getInboundRequest() != this) {
+            notificationHistory.setInboundRequest(this);
+        }
+    }
+
+    public String getResponseEncoding() {
+        return responseEncoding;
+    }
+
+    public void setResponseEncoding(String responseEncoding) {
         this.responseEncoding = responseEncoding;
     }
-	public StringBuffer getEncodedParams() {
-		StringBuffer params=new StringBuffer();
-		if(getHeaders()!=null){
-			String sep="";
-		for(String key:getParameters().keySet()){
-			String valueParams=getParameters().get(key);
-			params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
-			sep="|";
-			}	
-			}
-		return params;
-	}
-	
-	public StringBuffer getEncodedCookies() {
-		StringBuffer cookies=new StringBuffer();
-		if(getHeaders()!=null){
-			String sep="";
-		for(String key:getCoockies().keySet()){
-			String valueCookies=getCoockies().get(key);
-			cookies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueCookies.getBytes()));
-			sep="|";
-			}	
-			}
-		return cookies;
-	}
-	
-	public StringBuffer getEncodedHeaders() {
-		StringBuffer headers=new StringBuffer();
-		if(getHeaders()!=null){
-			String sep="";
-		for(String key:getHeaders().keySet()){
-			String valueHeaders=getHeaders().get(key);
-			headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
-			sep="|";
-			}
-		}
-		return headers;
-	}
-	
-	public StringBuffer getEncodedRespCookies() {
-		 StringBuffer responseCoockies=new StringBuffer();
-		if(getResponseCoockies()!=null){
-	        String sep="";
-		for(String key:getResponseCoockies().keySet()){
-			String valueRespCookies=getResponseCoockies().get(key);
-			responseCoockies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespCookies.getBytes()));
-			sep="|";
-			}
-	      }
-		return responseCoockies;
-	}
-	
-	public StringBuffer getEncodedRespHeaders() {
-	 StringBuffer responseHeaders=new StringBuffer(); 
-	  if(getResponseHeaders()!=null){
-	    String sep="";
-		for(String key:getResponseHeaders().keySet()){
-			String valueRespHeaders=getResponseHeaders().get(key);
-			responseHeaders.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespHeaders.getBytes()));
-			sep="|";
-			}
-		   }
-		return responseHeaders;
-	}
-	
-	
-	
-	
-	
-}
 
+    public Integer getResponseStatus() {
+        return responseStatus;
+    }
+
+    public void setResponseStatus(Integer responseStatus) {
+        this.responseStatus = responseStatus;
+    }
+
+    public StringBuffer getEncodedParams() {
+        StringBuffer params = new StringBuffer();
+        if (getHeaders() != null) {
+            String sep = "";
+            for (String key : getParameters().keySet()) {
+                String valueParams = getParameters().get(key);
+                params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
+                sep = "|";
+            }
+        }
+        return params;
+    }
+
+    public StringBuffer getEncodedCookies() {
+        StringBuffer cookies = new StringBuffer();
+        if (getHeaders() != null) {
+            String sep = "";
+            for (String key : getCoockies().keySet()) {
+                String valueCookies = getCoockies().get(key);
+                cookies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueCookies.getBytes()));
+                sep = "|";
+            }
+        }
+        return cookies;
+    }
+
+    public StringBuffer getEncodedHeaders() {
+        StringBuffer headers = new StringBuffer();
+        if (getHeaders() != null) {
+            String sep = "";
+            for (String key : getHeaders().keySet()) {
+                String valueHeaders = getHeaders().get(key);
+                headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
+                sep = "|";
+            }
+        }
+        return headers;
+    }
+
+    public StringBuffer getEncodedRespCookies() {
+        StringBuffer responseCoockies = new StringBuffer();
+        if (getResponseCoockies() != null) {
+            String sep = "";
+            for (String key : getResponseCoockies().keySet()) {
+                String valueRespCookies = getResponseCoockies().get(key);
+                responseCoockies.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespCookies.getBytes()));
+                sep = "|";
+            }
+        }
+        return responseCoockies;
+    }
+
+    public StringBuffer getEncodedRespHeaders() {
+        StringBuffer responseHeaders = new StringBuffer();
+        if (getResponseHeaders() != null) {
+            String sep = "";
+            for (String key : getResponseHeaders().keySet()) {
+                String valueRespHeaders = getResponseHeaders().get(key);
+                responseHeaders.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueRespHeaders.getBytes()));
+                sep = "|";
+            }
+        }
+        return responseHeaders;
+    }
+
+}

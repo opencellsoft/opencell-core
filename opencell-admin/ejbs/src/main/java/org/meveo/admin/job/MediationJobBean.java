@@ -16,8 +16,6 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;

@@ -138,7 +138,7 @@ public interface JobRs extends IBaseRs {
      */
     @GET
     @Path("/timer/")
-    public TimerEntityResponseDto findTimer(@QueryParam("timerCode") String timerCode);
+    TimerEntityResponseDto findTimer(@QueryParam("timerCode") String timerCode);
 
     /**
      * Remove an existing timer with a given code 
@@ -148,7 +148,7 @@ public interface JobRs extends IBaseRs {
      */
     @DELETE
     @Path("/timer/{timerCode}")
-    public ActionStatus removeTimer(@PathParam("timerCode") String timerCode);
+    ActionStatus removeTimer(@PathParam("timerCode") String timerCode);
     
     /**
      * Find a job execution result with a given id 
@@ -158,5 +158,6 @@ public interface JobRs extends IBaseRs {
      */
     @GET
     @Path("/jobReport")
-    public JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("id") Long jobExecutionResultId);
+    JobExecutionResultResponseDto findJobExecutionResult(@QueryParam("code") String code, @QueryParam("id") Long jobExecutionResultId);
+    
 }

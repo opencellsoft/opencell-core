@@ -101,7 +101,7 @@ public class BundleTemplateService extends GenericProductOfferingService<BundleT
      * @return A copy of Bundle template
      * @throws BusinessException business exception.
      */
-    private synchronized BundleTemplate duplicate(BundleTemplate bundle, boolean persist) throws BusinessException {
+    public synchronized BundleTemplate duplicate(BundleTemplate bundle, boolean persist) throws BusinessException {
 
         bundle = refreshOrRetrieve(bundle);
 

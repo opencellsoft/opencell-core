@@ -12,10 +12,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.beanio.BeanReader;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
 import org.meveo.commons.parsers.IFileParser;
@@ -31,7 +28,6 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
-
 
 /**
  * The Class FlatFileProcessingJobBean.
@@ -53,28 +49,28 @@ public class FlatFileProcessingJobBean {
 
     /** The file name. */
     String fileName;
-    
+
     /** The input dir. */
     String inputDir;
-    
+
     /** The output dir. */
     String outputDir;
-    
+
     /** The output file writer. */
     PrintWriter outputFileWriter;
-    
+
     /** The reject dir. */
     String rejectDir;
-    
+
     /** The archive dir. */
     String archiveDir;
-    
+
     /** The reject file writer. */
     PrintWriter rejectFileWriter;
-    
+
     /** The report. */
     String report;
-    
+
     /** The username. */
     String username;
 
@@ -125,7 +121,7 @@ public class FlatFileProcessingJobBean {
         if (file != null) {
             fileName = file.getName();
             ScriptInterface script = null;
-            BeanReader beanReader = null;
+            IFileParser fileParser = null;
             File currentFile = null;
             boolean isCsvFromExcel = false;
             try {
@@ -137,14 +133,13 @@ public class FlatFileProcessingJobBean {
                     FileUtils.moveFile(archiveDir, file, fileName);
                     file = new File(inputDir + File.separator + fileName.replaceAll(".xlsx", ".csv").replaceAll(".xls", ".csv"));
                 }
-                currentFile = FileUtils.addExtension(file, ".processing_"+EjbUtils.getCurrentClusterNode());
+                currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
 
                 script = scriptInstanceService.getScriptInstance(scriptInstanceFlowCode);
 
                 script.init(context);
 
                 FileParsers parserUsed = getParserType(mappingConf);
-                IFileParser fileParser = null;
 
                 if (parserUsed == FileParsers.FLATWORM) {
                     fileParser = new FileParserFlatworm();
@@ -173,6 +168,7 @@ public class FlatFileProcessingJobBean {
                         script.execute(executeParams);
                         outputRecord(recordContext);
                         result.registerSucces();
+                        
                     } catch (Throwable e) {
                         String erreur = (recordContext == null || recordContext.getReason() == null) ? e.getMessage() : recordContext.getReason();
                         log.warn("error on reject record ", e);
@@ -189,15 +185,24 @@ public class FlatFileProcessingJobBean {
                 }
 
                 log.info("InputFiles job {} done.", fileName);
+
             } catch (Exception e) {
                 report += "\r\n " + e.getMessage();
                 log.error("Failed to process Record file {}", fileName, e);
                 result.registerError(e.getMessage());
                 FileUtils.moveFile(rejectDir, currentFile, fileName);
+
             } finally {
                 try {
-                    if (beanReader != null) {
-                        beanReader.close();
+                    if (fileParser != null) {
+                        fileParser.close();
+                    }
+                } catch (Exception e) {
+                    log.error("Failed to close file parser");
+                }
+                try {
+                    if (fileParser != null) {
+                        fileParser.close();
                     }
                     if (script != null) {
                         script.finalize(context);

@@ -546,6 +546,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         invoice.setInvoiceType(invoiceType);
         invoice.setBillingAccount(billingAccount);
         invoice.setInvoiceDate(new Date());
+        assignInvoiceNumber(invoice);
 
         PaymentMethod preferedPaymentMethod = invoice.getBillingAccount().getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {

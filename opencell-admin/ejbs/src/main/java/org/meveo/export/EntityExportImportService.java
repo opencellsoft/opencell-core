@@ -488,10 +488,11 @@ public class EntityExportImportService implements Serializable {
             writer.addAttribute("version", this.currentExportModelVersionChangeset);
 
             // Export from a provided data model applies only in cases on non-grouped templates as it has a single entity type
-            if (exportTemplate.getGroupedTemplates() == null || exportTemplate.getGroupedTemplates().isEmpty()) {
+            if (exportTemplate.getEntityToExport() != null) {
                 entityExportImportService.serializeEntities(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, exportStats, writer);
+            }
 
-            } else {
+            if (exportTemplate.getGroupedTemplates() != null && !exportTemplate.getGroupedTemplates().isEmpty()) {
                 for (ExportTemplate groupedExportTemplate : exportTemplate.getGroupedTemplates()) {
                     entityExportImportService.serializeEntities(groupedExportTemplate, parameters, null, null, exportStats, writer);
                 }
@@ -1764,7 +1765,7 @@ public class EntityExportImportService implements Serializable {
      * @param exportTemplate Export template
      * @param from Starting record index
      * @param pageSize Page size
-     * @param parameters Filter parameters to retrieve entities from DB
+     * @param parameters Filter parameters, as entered in GUI, to retrieve entities from DB
      * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
      *        selectedEntitiesToExport are mutually exclusive.
      * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
@@ -1813,8 +1814,18 @@ public class EntityExportImportService implements Serializable {
             // related entities (e.g. exporting provider and related info and some provider is search criteria, but also it matches the top entity)
             StringBuilder sql = new StringBuilder("select e from " + exportTemplate.getEntityToExport().getName() + " e  ");
             boolean firstWhere = true;
+
+            // Combine parameters received from GUI and filters hardcoded in an export template definition
+            Map<String, Object> parametersAndFilters = new HashMap<String, Object>();
+            if (parameters != null) {
+                parametersAndFilters.putAll(parameters);
+            }
+            if (exportTemplate.getFilters() != null) {
+                parametersAndFilters.putAll(exportTemplate.getFilters());
+            }
+
             Map<String, Object> parametersToApply = new HashMap<String, Object>();
-            for (Entry<String, Object> param : parameters.entrySet()) {
+            for (Entry<String, Object> param : parametersAndFilters.entrySet()) {
                 String paramName = param.getKey();
                 Object paramValue = param.getValue();
 
@@ -1829,13 +1840,15 @@ public class EntityExportImportService implements Serializable {
                     firstWhere = false;
                     parametersToApply.put("id", ((IEntity) paramValue).getId());
 
+                    // By default parameters use condition of "=", but other conditions can be specified by suffixing fieldname with "_from", "_to", "_in"
                 } else {
+
                     String fieldName = paramName;
                     String fieldCondition = "=";
                     if (fieldName.contains("_")) {
                         String[] paramInfo = fieldName.split("_");
                         fieldName = paramInfo[0];
-                        fieldCondition = "from".equals(paramInfo[1]) ? ">" : "to".equals(paramInfo[1]) ? "<" : "=";
+                        fieldCondition = "from".equals(paramInfo[1]) ? ">" : "to".equals(paramInfo[1]) ? "<" : "in".equals(paramInfo[1]) ? " in " : "=";
                     }
 
                     Field field = FieldUtils.getField(exportTemplate.getEntityToExport(), fieldName, true);
