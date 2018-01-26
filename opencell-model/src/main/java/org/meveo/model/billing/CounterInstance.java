@@ -26,8 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -41,8 +39,6 @@ import org.meveo.model.shared.DateUtils;
 @Table(name = "billing_counter")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
-@NamedQueries({ @NamedQuery(name = "CounterInstance.getUsageCountersForCache", query = "SELECT c FROM CounterInstance c LEFT JOIN fetch c.counterTemplate LEFT JOIN fetch c.counterPeriods as period where c.counterTemplate.counterType='USAGE'") })
-
 public class CounterInstance extends BusinessEntity {
     private static final long serialVersionUID = -4924601467998738157L;
 

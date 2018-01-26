@@ -36,7 +36,6 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.CounterValueChangeInfo;
@@ -70,9 +69,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
     @EJB
     private UsageChargeInstanceService usageChargeInstanceService;
-
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     public CounterInstance counterInstanciation(UserAccount userAccount, CounterTemplate counterTemplate, boolean isVirtual) throws BusinessException {
         CounterInstance result = null;
@@ -162,6 +158,16 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         return counterInstance;
     }
 
+    /**
+     * Instantiate AND persist counter period for a given date
+     * 
+     * @param counterInstance Counter instance
+     * @param chargeDate Charge date - to match the period validity dates
+     * @param initDate Initial date, used for period start/end date calculation
+     * @param usageChargeInstance Usage charge instance to associate counter with
+     * @return CounterPeriod instance
+     * @throws BusinessException
+     */
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
     public CounterPeriod createPeriod(CounterInstance counterInstance, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
@@ -174,11 +180,6 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
 
         counterInstance.getCounterPeriods().add(counterPeriod);
         counterInstance.updateAudit(currentUser);
-
-        // Add usage type counter period to cache
-        if (counterTemplate.getCounterType() == CounterTypeEnum.USAGE) {
-            ratingCacheContainerProvider.addCounterPeriodToCache(counterPeriod);
-        }
 
         return counterPeriod;
     }
@@ -231,10 +232,11 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param counterInstance Counter instance
      * @param date Date to match
      * @param initDate initial date.
+     * @param usageChargeInstance Usage charge instance to associate counter with
      * @return Found or created counter period
      * @throws BusinessException business exception
      */
-    public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date, Date initDate) throws BusinessException {
+    public CounterPeriod getOrCreateCounterPeriod(CounterInstance counterInstance, Date date, Date initDate, UsageChargeInstance usageChargeInstance) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);
         query.setParameter("date", date, TemporalType.TIMESTAMP);
@@ -242,7 +244,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         try {
             return (CounterPeriod) query.getSingleResult();
         } catch (NoResultException e) {
-            return createPeriod(counterInstance, date, initDate, null);
+            return createPeriod(counterInstance, date, initDate, usageChargeInstance);
         }
     }
 
@@ -278,7 +280,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     // }
 
     /**
-     * Deduce a given value from a counter.
+     * Deduce a given value from a counter. Will instantiate a counter period if one was not created yet matching the given date
      * 
      * @param counterInstance Counter instance
      * @param date Date of event
@@ -290,7 +292,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      */
     public BigDecimal deduceCounterValue(CounterInstance counterInstance, Date date, Date initDate, BigDecimal value) throws CounterValueInsufficientException, BusinessException {
 
-        CounterPeriod counterPeriod = getCounterPeriod(counterInstance, date, initDate);
+        CounterPeriod counterPeriod = getOrCreateCounterPeriod(counterInstance, date, initDate, null);
 
         if (counterPeriod == null || counterPeriod.getValue().compareTo(value) < 0) {
             throw new CounterValueInsufficientException();
@@ -303,74 +305,53 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
-     * Decrease counter period by a given value. If given amount exceeds current value, only partial amount will be deduced. In case of usage type counter, cache is also updated.
+     * Decrease counter period by a given value. If given amount exceeds current value, only partial amount will be deduced. NOTE: counterPeriod passed to the method will become
+     * stale if it happens to be updated in this method
      * 
-     * @param counterInstanceId Counter instance identifier
-     * @param periodId Counter period identifier
+     * @param CounterPeriod Counter period
      * @param deduceBy Amount to decrease by
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
      * @return Previous, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
      * @throws BusinessException business exception
      */
-    public CounterValueChangeInfo deduceCounterValue(Long counterInstanceId, Long periodId, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {
+    public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {
 
         CounterValueChangeInfo counterValueInfo = null;
 
-        // Virtual operation is only for Usage type counters and involves cache only
-        if (isVirtual) {
-            counterValueInfo = ratingCacheContainerProvider.deduceCounterValue(counterInstanceId, periodId, deduceBy);
-            return counterValueInfo;
+        BigDecimal deducedQuantity = null;
+        BigDecimal previousValue = counterPeriod.getValue();
+
+        // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update
+        if (counterPeriod.getLevel() == null) {
+            if (!isVirtual) {
+                counterPeriodService.detach(counterPeriod);
+            }
+            return null;
+
+            // Previous value is Zero and deduction is not negative (really its an addition)
+        } else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
+            return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
 
         } else {
-            CounterPeriod counterPeriod = counterPeriodService.findById(periodId);
-            if (counterPeriod == null) {
-                return null;
-            }
-
-            // For Usage type counter also need to update caches values
-            if (counterPeriod.getCounterType() == CounterTypeEnum.USAGE) {
-
-                counterValueInfo = ratingCacheContainerProvider.deduceCounterValue(counterInstanceId, periodId, deduceBy);
-                // Value is not tracked
-                if (counterValueInfo == null) {
-                    counterPeriodService.detach(counterPeriod);
-                    return null;
-
-                } else {
-                    counterPeriod.setValue(counterValueInfo.getNewValue());
-                }
+            if (previousValue.compareTo(deduceBy) < 0) {
+                deducedQuantity = counterPeriod.getValue();
+                counterPeriod.setValue(BigDecimal.ZERO);
 
             } else {
-
-                BigDecimal deducedQuantity = null;
-                BigDecimal previousValue = counterPeriod.getValue();
-
-                // No initial value, so no need to track present value (will always be able to deduce by any amount) and thus no need to update
-                if (counterPeriod.getLevel() == null) {
-                    counterPeriodService.detach(counterPeriod);
-                    return null;
-
-                    // Previous value is Zero, but deduction value is negative (really an addition)
-                } else if (previousValue.compareTo(BigDecimal.ZERO) == 0 && deduceBy.compareTo(BigDecimal.ZERO) > 0) {
-                    return new CounterValueChangeInfo(BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
-
-                } else if (previousValue.compareTo(deduceBy) < 0) {
-                    deducedQuantity = counterPeriod.getValue();
-                    counterPeriod.setValue(BigDecimal.ZERO);
-
-                } else {
-                    deducedQuantity = deduceBy;
-                    counterPeriod.setValue(counterPeriod.getValue().subtract(deduceBy));
-                }
-
-                counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
+                deducedQuantity = deduceBy;
+                counterPeriod.setValue(counterPeriod.getValue().subtract(deduceBy));
             }
-            counterPeriod = counterPeriodService.update(counterPeriod);
 
-            log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
+            counterValueInfo = new CounterValueChangeInfo(previousValue, deducedQuantity, counterPeriod.getValue());
 
-            return counterValueInfo;
+            if (!isVirtual) {
+                counterPeriod = counterPeriodService.update(counterPeriod);
+            }
         }
+
+        log.debug("Counter period {} was changed {}", counterPeriod.getId(), counterValueInfo);
+
+        return counterValueInfo;
     }
 
     @SuppressWarnings("unchecked")
@@ -462,33 +443,22 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
         if (counterPeriod == null) {
             return null;
         }
+
         if (counterPeriod.getCounterType() == CounterTypeEnum.USAGE) {
 
-            CounterValueChangeInfo counterValueChangeInfo = ratingCacheContainerProvider.deduceCounterValue(counterPeriod.getCounterInstance().getId(), periodId,
-                incrementBy.negate());
+            CounterValueChangeInfo counterValueChangeInfo = deduceCounterValue(counterPeriod, incrementBy.negate(), false);
             // Value is not tracked
             if (counterValueChangeInfo == null) {
                 return null;
             } else {
-                counterPeriod.setValue(counterValueChangeInfo.getNewValue());
+                return counterValueChangeInfo.getNewValue();
             }
 
         } else {
             counterPeriod.setValue(counterPeriod.getValue().add(incrementBy));
+            counterPeriod = counterPeriodService.update(counterPeriod);
+            log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), incrementBy, counterPeriod.getValue());
+            return counterPeriod.getValue();
         }
-        counterPeriodService.update(counterPeriod);
-
-        log.debug("Counter period {} was incremented by {} to {}", counterPeriod.getId(), incrementBy, counterPeriod.getValue());
-
-        return counterPeriod.getValue();
-    }
-
-    /**
-     * Get a list of usage type counter instances to populate a cache
-     * 
-     * @return A list of usage type counter instances
-     */
-    public List<CounterInstance> getCounterInstancesForCache() {
-        return getEntityManager().createNamedQuery("CounterInstance.getUsageCountersForCache", CounterInstance.class).getResultList();
     }
 }

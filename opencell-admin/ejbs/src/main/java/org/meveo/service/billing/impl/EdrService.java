@@ -52,7 +52,7 @@ public class EdrService extends PersistenceService<EDR> {
     @PostConstruct
     private void init() {
         useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-        inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemoryPrepopulate", "false").equals("true");
+        inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
     }
 
     /**
@@ -108,11 +108,13 @@ public class EdrService extends PersistenceService<EDR> {
     }
 
     /**
+     * Check if EDR, identified by batch and a record, was processed already
+     * 
      * @param originBatch original batch
      * @param originRecord original record
      * @return true/false
      */
-    public boolean duplicateFound(String originBatch, String originRecord) {
+    public boolean isDuplicateFound(String originBatch, String originRecord) {
         Boolean isDuplicate = null;
 
         if (useInMemoryDeduplication) {

@@ -130,25 +130,6 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         return maxPriority + 1;
     }
 
-    @SuppressWarnings("unchecked")
-    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(String invoiceSubCategoryCode, Long countryId, Date applicationDate) {
-
-        try {
-            QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
-            qb.addCriterion("invoiceSubCategory.code", "=", invoiceSubCategoryCode, true);
-            qb.addCriterion("tradingCountry.id", "=", countryId, true);
-            qb.addCriterionDateInRange("startValidityDate", "endValidityDate", applicationDate);
-            qb.addOrderCriterion("priority", false);
-
-            List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
-            return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
-        } catch (NoResultException ex) {
-            log.warn("failed to find invoice SubCategory Country", ex);
-        }
-
-        return null;
-    }
-
     /**
      * Find InvoiceSubCategoryCountry without fetching join entities.
      * 
@@ -203,13 +184,13 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
      * @return invoice sub category country.
      */
     @SuppressWarnings("unchecked")
-    public InvoiceSubcategoryCountry findInvoiceSubCategoryCountry(Long invoiceSubCategoryId, Long countryId) {
+    public InvoiceSubcategoryCountry findByInvoiceSubCategoryAndCountryWithHighestPriority(Long invoiceSubCategoryId, Long countryId) {
 
         try {
             QueryBuilder qb = new QueryBuilder(InvoiceSubcategoryCountry.class, "i");
             qb.addCriterion("invoiceSubCategory.id", "=", invoiceSubCategoryId, true);
             qb.addCriterion("tradingCountry.id", "=", countryId, true);
-            qb.addOrderCriterion("priority", false);
+            qb.addOrderCriterionAsIs("priority", false);
 
             List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = qb.getQuery(getEntityManager()).getResultList();
             return invoiceSubcategoryCountries.size() > 0 ? invoiceSubcategoryCountries.get(0) : null;
@@ -282,7 +263,7 @@ public class InvoiceSubCategoryCountryService extends PersistenceService<Invoice
         if (endValidityDate != null) {
             qb.addCriterionDate("endValidityDate", endValidityDate);
         }
-        qb.addOrderCriterion("priority", false);
+        qb.addOrderCriterionAsIs("priority", false);
 
         try {
             return (List<InvoiceSubcategoryCountry>) qb.getQuery(getEntityManager()).getResultList();

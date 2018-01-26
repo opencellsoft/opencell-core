@@ -72,18 +72,23 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     private void populateEdrCache() {
 
         boolean useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-        boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemoryPrepopulate", "false").equals("true");
-        if (!useInMemoryDeduplication || !prepopulateMemoryDeduplication) {
-            log.info("EDR cache population will be skipped");
+        if (!useInMemoryDeduplication) {
+            log.info("EDR cache population will be skipped as cache will not be used");
+            return;
+        }
+
+        edrCache.clear();
+
+        boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
+        if (!prepopulateMemoryDeduplication) {
+            log.info("EDR cache pre-population will be skipped");
             return;
         }
 
         log.debug("Start to pre-populate EDR cache");
 
-        edrCache.clear();
-
-        int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCacheSize", "100000"));
-        int pageSize = Integer.parseInt(paramBean.getProperty("mediation.deduplicateCachePageSize", "1000"));
+        int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateInMemory.size", "100000"));
+        int pageSize = Integer.parseInt(paramBean.getProperty("mediation.deduplicateInMemory.pageSize", "1000"));
 
         int totalEdrs = 0;
 

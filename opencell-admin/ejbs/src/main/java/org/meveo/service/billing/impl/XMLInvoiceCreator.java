@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -257,16 +256,12 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             DOMSource source = new DOMSource(doc);
 
             invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
-            
+
             File xmlFile = new File(invoiceService.getFullXmlFilePath(invoice, true));
-
             StreamResult result = new StreamResult(xmlFile);
-
-            StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(doc), new StreamResult(writer));
-            log.trace("XML invoice file '{}'  contents {}", invoice.getXmlFilename(), writer.getBuffer().toString().replaceAll("\n|\r", ""));
-
             trans.transform(source, result);
+
+            log.info("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
 
             return xmlFile;
 

@@ -65,6 +65,9 @@ public class UsageChargeInstance extends ChargeInstance {
     @Column(name = "last_update")
     private Date lastUpdate;
 
+    /**
+     * The lower number, the higher the priority is. Value is a copy from UsageChargeTemplate.priority field and is synchronized when UsageChargeTemplate.priority value change.
+     */
     @Column(name = "priority", columnDefinition = "int default 1")
     private int priority = 1;
 

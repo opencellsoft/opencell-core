@@ -324,7 +324,7 @@ public class WorkflowService extends BusinessService<Workflow> {
             userMap.put("entity", object);
         }
 
-        return ValueExpressionWrapper.evaluateToBoolean(expression, "entity", object);
+        return ValueExpressionWrapper.evaluateToBooleanOneVariable(expression, "entity", object);
 
     }
 

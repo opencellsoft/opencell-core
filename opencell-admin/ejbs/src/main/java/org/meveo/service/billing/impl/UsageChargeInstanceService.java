@@ -79,11 +79,8 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
 
         if (!isVirtual) {
             create(usageChargeInstance);
-
-            if (usageChargeInstance.getPrepaid()) {
-                walletCacheContainerProvider.updateCache(usageChargeInstance);
-            }
         }
+        
         if (serviceUsageChargeTemplate.getCounterTemplate() != null) {
             CounterInstance counterInstance = counterInstanceService.counterInstanciation(serviceInstance.getSubscription().getUserAccount(),
                 serviceUsageChargeTemplate.getCounterTemplate(), isVirtual);
@@ -97,29 +94,37 @@ public class UsageChargeInstanceService extends BusinessService<UsageChargeInsta
         return usageChargeInstance;
     }
 
-    public void activateUsageChargeInstance(UsageChargeInstance usageChargeInstance) throws BusinessException {
+    public UsageChargeInstance activateUsageChargeInstance(UsageChargeInstance usageChargeInstance) throws BusinessException {
         usageChargeInstance.setChargeDate(usageChargeInstance.getServiceInstance().getSubscriptionDate());
         usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-        update(usageChargeInstance);
+        usageChargeInstance = update(usageChargeInstance);
+
+        if (usageChargeInstance.getPrepaid()) {
+            walletCacheContainerProvider.addUsageChargeInstance(usageChargeInstance);
+        }
+        return usageChargeInstance;
     }
 
-    public void terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) throws BusinessException {
+    public UsageChargeInstance terminateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date terminationDate) throws BusinessException {
         usageChargeInstance.setTerminationDate(terminationDate);
         usageChargeInstance.setStatus(InstanceStatusEnum.TERMINATED);
-        update(usageChargeInstance);
+        usageChargeInstance = update(usageChargeInstance);
+        return usageChargeInstance;
     }
 
-    public void suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) throws BusinessException {
+    public UsageChargeInstance suspendUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date suspensionDate) throws BusinessException {
         usageChargeInstance.setTerminationDate(suspensionDate);
         usageChargeInstance.setStatus(InstanceStatusEnum.SUSPENDED);
-        update(usageChargeInstance);
+        usageChargeInstance = update(usageChargeInstance);
+        return usageChargeInstance;
     }
 
-    public void reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) throws BusinessException {
+    public UsageChargeInstance reactivateUsageChargeInstance(UsageChargeInstance usageChargeInstance, Date reactivationDate) throws BusinessException {
         usageChargeInstance.setChargeDate(reactivationDate);
         usageChargeInstance.setTerminationDate(null);
         usageChargeInstance.setStatus(InstanceStatusEnum.ACTIVE);
-        update(usageChargeInstance);
+        usageChargeInstance = update(usageChargeInstance);
+        return usageChargeInstance;
     }
 
     @SuppressWarnings("unchecked")

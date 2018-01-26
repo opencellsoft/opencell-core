@@ -23,13 +23,10 @@ import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
-import org.meveo.cache.CachedCounterPeriod;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.NumberUtils;
 import org.meveo.event.CounterPeriodEvent;
 import org.meveo.model.CounterValueChangeInfo;
 import org.meveo.model.billing.BillingAccount;
-import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.CounterPeriod;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.billing.Reservation;
@@ -45,7 +42,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.ChargeTemplate;
-import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.catalog.UsageChargeTemplate;
@@ -55,7 +51,6 @@ import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
@@ -85,9 +80,6 @@ public class UsageRatingService implements Serializable {
     private CounterInstanceService counterInstanceService;
 
     @Inject
-    private CounterTemplateService counterTemplateService;
-
-    @Inject
     private RatingService ratingService;
 
     @Inject
@@ -100,16 +92,10 @@ public class UsageRatingService implements Serializable {
     private SubscriptionService subscriptionService;
 
     @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
-
-    @Inject
     private BillingAccountService billingAccountService;
 
     @Inject
     private MeveoInstanceService meveoInstanceService;
-
-    @Inject
-    private CounterPeriodService counterPeriodService;
 
     @Inject
     private Event<CounterPeriodEvent> counterPeriodEvent;
@@ -259,7 +245,7 @@ public class UsageRatingService implements Serializable {
 
         log.debug("AKK URS line 261 offer id is {}", subscription.getOffer().getId());
         ratingService.rateBareWalletOperation(walletOperation, usageChargeInstance.getAmountWithoutTax(), usageChargeInstance.getAmountWithTax(), tradingCountry.getId(), currency);
-        log.error("AKK URS line 263");
+        log.debug("AKK URS line 263");
     }
 
     /**
@@ -274,36 +260,21 @@ public class UsageRatingService implements Serializable {
      */
     private BigDecimal deduceCounter(EDR edr, UsageChargeInstance usageChargeInstance, Reservation reservation, boolean isVirtual) throws BusinessException {
 
-        log.info("Deduce counter for counter instance {} ", usageChargeInstance.getCounter().getId());
+        log.info("Deduce counter for counter instance {} ", isVirtual ? usageChargeInstance.getCounter().getCode() : usageChargeInstance.getCounter().getId());
 
+        CounterPeriod counterPeriod = null;
         BigDecimal deducedQuantityInEDRUnit = BigDecimal.ZERO;
 
-        CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
+        // In case of virtual operation only instantiate a counter period, don't create it
+        if (isVirtual) {
+            counterPeriod = counterInstanceService.instantiateCounterPeriod(usageChargeInstance.getCounter().getCounterTemplate(), edr.getEventDate(),
+                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance);
 
-        if (cachedCounterPeriod != null) {
-            log.info("Found counter period in cache: {}", cachedCounterPeriod);
-
-            // Need to create a counter period first
         } else {
-
-            CounterPeriod counterPeriod = null;
-            if (isVirtual) {
-                // TODO This part is not finished as cachedCounterPeriod will always be null and return with ZERO few lines later
-                CounterTemplate counterTemplate = counterTemplateService.findByCode(usageChargeInstance.getCounter().getCode());
-                counterPeriod = counterInstanceService.instantiateCounterPeriod(counterTemplate, edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(),
-                    null);
-
-            } else {
-                CounterInstance counterInstance = usageChargeInstance.getCounter();
-                counterPeriod = counterInstanceService.createPeriod(counterInstance, edr.getEventDate(), usageChargeInstance.getServiceInstance().getSubscriptionDate(),
-                    usageChargeInstance);
-                cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), counterPeriod.getId());
-            }
+            counterPeriod = counterInstanceService.getOrCreateCounterPeriod(usageChargeInstance.getCounter(), edr.getEventDate(),
+                usageChargeInstance.getServiceInstance().getSubscriptionDate(), usageChargeInstance);
         }
-
-        if (cachedCounterPeriod == null) {
-            return BigDecimal.ZERO;
-        }
+        // CachedCounterPeriod cachedCounterPeriod = ratingCacheContainerProvider.getCounterPeriod(usageChargeInstance.getCounter().getId(), edr.getEventDate());
 
         CounterValueChangeInfo counterValueChangeInfo = null;
 
@@ -314,12 +285,11 @@ public class UsageRatingService implements Serializable {
             chargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
 
-        synchronized (cachedCounterPeriod) {
+        synchronized (this) {// cachedCounterPeriod) { TODO how to ensure one at a time update?
             BigDecimal deduceByQuantity = chargeTemplate.getInChargeUnit(edr.getQuantity());
-            log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), deduceByQuantity,
-                cachedCounterPeriod.getValue());
+            log.debug("value to deduce {} * {} = {} from current value {}", edr.getQuantity(), chargeTemplate.getUnitMultiplicator(), deduceByQuantity, counterPeriod.getValue());
 
-            counterValueChangeInfo = counterInstanceService.deduceCounterValue(usageChargeInstance.getCounter().getId(), cachedCounterPeriod.getId(), deduceByQuantity, isVirtual);
+            counterValueChangeInfo = counterInstanceService.deduceCounterValue(counterPeriod, deduceByQuantity, isVirtual);
 
             // Quantity is not tracked in counter (no initial value)
             if (counterValueChangeInfo == null) {
@@ -337,7 +307,7 @@ public class UsageRatingService implements Serializable {
                     deducedQuantityInEDRUnit = edr.getQuantity();
                 }
                 if (reservation != null) {
-                    reservation.getCounterPeriodValues().put(cachedCounterPeriod.getId(), deducedQuantity);
+                    reservation.getCounterPeriodValues().put(counterPeriod.getId(), deducedQuantity);
                 }
             }
 
@@ -345,12 +315,13 @@ public class UsageRatingService implements Serializable {
         }
 
         // Fire notifications if counter value matches trigger value and counter value is tracked
-        if (counterValueChangeInfo != null) {
-            List<Entry<String, BigDecimal>> counterPeriodEventLevels = cachedCounterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(),
+        if (counterValueChangeInfo != null && counterPeriod.getNotificationLevels() != null) {
+            // Need to refresh counterPeriod as it is stale object if it was updated in counterInstanceService.deduceCounterValue()
+            counterPeriod = em.find(CounterPeriod.class, counterPeriod.getId());
+            List<Entry<String, BigDecimal>> counterPeriodEventLevels = counterPeriod.getMatchedNotificationLevels(counterValueChangeInfo.getPreviousValue(),
                 counterValueChangeInfo.getNewValue());
 
             if (counterPeriodEventLevels != null && !counterPeriodEventLevels.isEmpty()) {
-                CounterPeriod counterPeriod = counterPeriodService.findById(cachedCounterPeriod.getId());
                 triggerCounterPeriodEvent(counterPeriod, counterPeriodEventLevels);
             }
         }
@@ -794,7 +765,7 @@ public class UsageRatingService implements Serializable {
         Map<Object, Object> userMap = new HashMap<Object, Object>();
         userMap.put("edr", edr);
         userMap.put("ci", ci);
-        return (Boolean) ValueExpressionWrapper.evaluateExpression(expression, userMap, Boolean.class);
+        return ValueExpressionWrapper.evaluateToBoolean(expression, userMap);
     }
 
     private boolean matchExpression(String expression, EDR edr, WalletOperation walletOperation) throws BusinessException {

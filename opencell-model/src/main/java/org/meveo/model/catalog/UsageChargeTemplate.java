@@ -80,6 +80,9 @@ public class UsageChargeTemplate extends ChargeTemplate {
     @Size(max = 2000)
     private String filterExpression = null;
 
+    /**
+     * The lower number, the higher the priority is
+     */
     @Column(name = "priority", columnDefinition = "int default 1")
     private int priority = 1;
 

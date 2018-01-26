@@ -281,7 +281,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.CANCELED);
-			walletCacheContainerProvider.updateBalanceCache(op);
+			walletCacheContainerProvider.updateBalance(op);
 		}
 
         // restore all counters values
@@ -304,7 +304,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.OPEN);
-			walletCacheContainerProvider.updateBalanceCache(op);
+			walletCacheContainerProvider.updateBalance(op);
 		}
 		reservation.setStatus(ReservationStatus.CONFIRMED);
 	}

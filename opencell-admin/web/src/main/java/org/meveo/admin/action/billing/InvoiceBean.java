@@ -57,7 +57,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -374,7 +373,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isXmlInvoiceAlreadyGenerated() {
-        if (xmlGenerated == null) {
+        if (entity.getXmlFilename() == null) {
+            return false;
+
+        } else if (xmlGenerated == null) {
             xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
         }
         return xmlGenerated;

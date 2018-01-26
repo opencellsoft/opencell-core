@@ -138,7 +138,7 @@ public class CDRParsingService extends PersistenceService<EDR> {
     }
 
     private void deduplicate(Serializable cdr) throws DuplicateException {
-        if (edrService.duplicateFound(cdrParser.getOriginBatch().get(CDR_ORIGIN_JOB), cdrParser.getOriginRecord(cdr, CDR_ORIGIN_JOB))) {
+        if (edrService.isDuplicateFound(cdrParser.getOriginBatch().get(CDR_ORIGIN_JOB), cdrParser.getOriginRecord(cdr, CDR_ORIGIN_JOB))) {
             throw new DuplicateException(cdr);
         }
     }

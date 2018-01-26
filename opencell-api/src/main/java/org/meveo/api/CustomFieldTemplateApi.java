@@ -164,7 +164,6 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("childEntityFieldsForSummary");
         }
 
-        log.error("AKK in update CFT {} has {} translations", cft.getCode(), cft.getDescriptionI18n());
         cft = fromDTO(postData, appliesTo, cft);
 
         customFieldTemplateService.update(cft);

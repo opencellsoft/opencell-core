@@ -281,7 +281,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {
         QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
         qb.addCriterionEntity("customerAccount", customerAccount);
-        qb.addOrderCriterion("c.id", true);
+        qb.addOrderCriterionAsIs("c.id", true);
         try {
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
@@ -316,15 +316,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
             if (customerCategory.getExonerationTaxEl().indexOf("ba.") > -1) {
                 userMap.put("ba", ba);
             }
-            Boolean isExon = Boolean.FALSE;
-            try {
-                isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(customerCategory.getExonerationTaxEl(), userMap, Boolean.class);
-            } catch (BusinessException e) {
-                log.error("Error evaluateExpression Exoneration taxes", e);
-            }
-            isExonerated = (isExon == null ? false : isExon);
+
+            isExonerated =  ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(customerCategory.getExonerationTaxEl(), userMap);
         }
         return isExonerated;
     }
-
 }

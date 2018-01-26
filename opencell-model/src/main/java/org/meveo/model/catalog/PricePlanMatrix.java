@@ -147,6 +147,9 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @JoinColumn(name = "trading_country_id")
     private TradingCountry tradingCountry;
 
+    /**
+     * The lower number, the higher the priority is
+     */
     @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
 

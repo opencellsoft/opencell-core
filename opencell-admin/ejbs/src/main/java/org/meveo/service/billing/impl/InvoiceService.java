@@ -72,7 +72,6 @@ import org.meveo.admin.exception.InvoiceExistException;
 import org.meveo.admin.exception.InvoiceJasperNotFoundException;
 import org.meveo.admin.exception.InvoiceXmlNotFoundException;
 import org.meveo.admin.job.PDFParametersConstruction;
-import org.meveo.admin.job.PdfGeneratorConstants;
 import org.meveo.admin.util.PdfWaterMark;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
@@ -601,12 +600,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
+        
+        log.debug("Creating pdf for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
+        
         long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
-
-        log.info("PDFInvoiceGenerationJob is invoice key exists=" + ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + "" : "parameters is null"));
 
         String INVOICE_TAG_NAME = "invoice";
 
@@ -627,6 +627,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String billingTemplateName = getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
 
         String resDir = meveoDir + "jasper";
+
+        String pdfFilename = getOrGeneratePdfFilename(invoice);
+        invoice.setPdfFilename(pdfFilename);        
+        String pdfFullFilename = getFullPdfFilePath(invoice, true);
 
         try {
             File destDir = new File(resDir + File.separator + billingTemplateName + File.separator + "pdf");
@@ -716,7 +720,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
             StringWriter writer = new StringWriter();
             trans.transform(new DOMSource(xmlDocument), new StreamResult(writer));
-            log.debug(writer.getBuffer().toString().replaceAll("\n|\r", ""));
 
             XPath xPath = XPathFactory.newInstance().newXPath();
             XPathExpression expr = xPath.compile("/invoice");
@@ -742,20 +745,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             log.debug("After jasperPrint:" + (System.currentTimeMillis() - startDate));
 
-            String pdfFullFilename = getFullPdfFilePath(invoice, true);
-            String pdfFilename = getOrGeneratePdfFilename(invoice);
-
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
             if (invoice.getInvoiceNumber() == null) {
                 PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
             }
-            invoice.setPdfFilename(pdfFilename);
+            
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
 
             log.debug("After setPdfGenerated:" + (System.currentTimeMillis() - startDate));
 
         } catch (IOException | JRException | XPathExpressionException | TransformerException | ParserConfigurationException | SAXException e) {
-            throw new BusinessException("Failed to generate a PDF file for " + getOrGeneratePdfFilename(invoice), e);
+            throw new BusinessException("Failed to generate a PDF file for " + pdfFilename, e);
         }
     }
 
@@ -1380,7 +1380,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public Invoice generateXmlAndPdfInvoice(Invoice invoice, boolean regenerate) throws BusinessException {
 
-        if (regenerate || !isInvoiceXmlExist(invoice)) {
+        if (regenerate || invoice.getXmlFilename() == null || !isInvoiceXmlExist(invoice)) {
             produceInvoiceXmlNoUpdate(invoice);
         }
         invoice = produceInvoicePdf(invoice);

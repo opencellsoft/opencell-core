@@ -1296,7 +1296,7 @@ public class CustomFieldInstanceService extends BaseService {
             return entity;
 
         } else {
-            log.error("AKK entity will be retrieved by ID");
+            log.trace("Find {}/{} by id", entity.getClass().getSimpleName(), entity.getId());
             entity = getEntityManager().find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId());
             return entity;
         }
@@ -2292,7 +2292,6 @@ public class CustomFieldInstanceService extends BaseService {
             try {
                 conversation.isTransient();
                 result = em;
-                log.error("AKK em in use");
             } catch (Exception e) {
             }
         }

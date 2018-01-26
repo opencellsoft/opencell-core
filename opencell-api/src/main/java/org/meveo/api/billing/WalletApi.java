@@ -387,10 +387,8 @@ public class WalletApi extends BaseApi {
         result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-        log.error("AKK total found = {} {} {}", totalCount, totalCount > 0, totalCount.intValue() > 0);
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
-            log.error("AKK list is {}", walletOperations.size());
             for (WalletOperation wo : walletOperations) {
                 result.getWalletOperations().add(new WalletOperationDto(wo));
             }

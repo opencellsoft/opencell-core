@@ -19,7 +19,6 @@ import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.event.CounterPeriodEvent;
@@ -93,7 +92,7 @@ public class DefaultObserver {
     private CounterInstanceService counterInstanceService;
 
     @Inject
-    private NotificationCacheContainerProvider notificationCacheContainerProvider;
+    private GenericNotificationService genericNotificationService;
 
     // @Inject
     // private RemoteInstanceNotifier remoteInstanceNotifier;
@@ -255,7 +254,7 @@ public class DefaultObserver {
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
-        for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entityOrEvent)) {
+        for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
             result = fireNotification(notif, entityOrEvent) || result;
         }
         return result;
@@ -308,7 +307,7 @@ public class DefaultObserver {
 
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {
         log.debug("Defaut observer : cdr {} rejected", cdr);
-        for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
+        for (Notification notif : genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             fireCdrNotification(notif, cdr);
         }
     }

@@ -350,7 +350,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public JobExecutionResultImpl findLastExecutionByInstance(JobInstance jobInstance) {
         QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "j");
         qb.addCriterionEntity("jobInstance", jobInstance);
-        qb.addOrderCriterion("startDate", false);
+        qb.addOrderCriterionAsIs("startDate", false);
         
         return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
     }

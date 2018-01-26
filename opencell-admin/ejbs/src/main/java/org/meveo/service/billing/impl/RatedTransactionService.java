@@ -732,7 +732,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
         }
 
-        qb.addOrderCriterion("c.usageDate", true);
+        qb.addOrderCriterionAsIs("c.usageDate", true);
 
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
@@ -758,7 +758,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             qb.addCriterion("c.amountWithoutTax", "<>", BigDecimal.ZERO, false);
         }
 
-        qb.addOrderCriterion("c.usageDate", true);
+        qb.addOrderCriterionAsIs("c.usageDate", true);
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();
 
@@ -781,7 +781,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         qb.addCriterionEntity("c.wallet", wallet);
         qb.addCriterionEntity("c.invoice", invoice);
         qb.addCriterionEntity("c.invoiceSubCategory", invoiceSubCategory);
-        qb.addOrderCriterion("c.usageDate", true);
+        qb.addOrderCriterionAsIs("c.usageDate", true);
 
         @SuppressWarnings("unchecked")
         List<RatedTransaction> ratedTransactions = qb.getQuery(getEntityManager()).getResultList();

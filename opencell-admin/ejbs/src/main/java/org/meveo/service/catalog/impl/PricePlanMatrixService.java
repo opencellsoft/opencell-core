@@ -502,7 +502,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     public List<PricePlanMatrix> listByChargeCode(String chargeCode) {
         QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null);
         qb.addCriterion("eventCode", "=", chargeCode, true);
-        qb.addOrderCriterion("priority", true);
+        qb.addOrderCriterionAsIs("priority", true);
 
         try {
             return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();

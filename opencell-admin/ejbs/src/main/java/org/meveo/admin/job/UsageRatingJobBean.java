@@ -23,6 +23,7 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -44,11 +45,22 @@ public class UsageRatingJobBean {
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
+    @Inject
+    private JobExecutionService jobExecutionService;
+
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
+
+        long startDate = System.currentTimeMillis();
+        for (int i = 0; i < 300000; i++) {
+            jobExecutionService.isJobRunningOnThis(result.getJobInstance());
+        }
+
+        log.debug("Finished cache check: {}", (System.currentTimeMillis() - startDate));
+
         try {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
