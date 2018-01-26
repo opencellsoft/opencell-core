@@ -260,18 +260,21 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Integer tipInvoicesNumber = 0;
         Integer wiretransferInvoicesNumber = 0;
         Integer creditDebitCardInvoicesNumber = 0;
+        Integer npmInvoicesNumber = 0;
 
         BigDecimal checkAmuontHT = BigDecimal.ZERO;
         BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
         BigDecimal tipAmuontHT = BigDecimal.ZERO;
         BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
         BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
+        BigDecimal npmAmountHT = BigDecimal.ZERO;
 
         BigDecimal checkAmuont = BigDecimal.ZERO;
         BigDecimal directDebitAmuont = BigDecimal.ZERO;
         BigDecimal tipAmuont = BigDecimal.ZERO;
         BigDecimal wiretransferAmuont = BigDecimal.ZERO;
         BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
+        BigDecimal npmAmount = BigDecimal.ZERO;
 
         List<Invoice> invoices = getEntityManager()
                 .createNamedQuery("Invoice.byBr", Invoice.class)
@@ -281,7 +284,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         for (Invoice invoice : invoices) {
 
             if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
-                switch (invoice.getPaymentMethod()) {
+                switch (invoice.getPaymentMethodType()) {
                 case CHECK:
                     checkInvoicesNumber++;
                     checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
@@ -298,9 +301,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
                     break;
                 case CARD:
-                    creditDebitCardInvoicesNumber++;
-                    creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
-                    creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                    // check if card is expired
+                    if (invoice.getPaymentMethod() != null && invoice.getPaymentMethod().isExpired()) {
+                        npmInvoicesNumber++;
+                        npmAmountHT = npmAmountHT.add(invoice.getAmountWithoutTax());
+                        npmAmount = npmAmount.add(invoice.getAmountWithTax());
+                    } else {
+                        creditDebitCardInvoicesNumber++;
+                        creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
+                        creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                    }
                     break;
 
                 default:
@@ -356,6 +366,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         postInvoicingReportsDTO.setTipAmuont(tipAmuont);
         postInvoicingReportsDTO.setTipAmuontHT(tipAmuontHT);
         postInvoicingReportsDTO.setTipInvoicesNumber(tipInvoicesNumber);
+        
         postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
         postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
         postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
@@ -363,6 +374,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         postInvoicingReportsDTO.setCreditDebitCardAmount(creditDebitCardAmount);
         postInvoicingReportsDTO.setCreditDebitCardAmountHT(creditDebitCardAmountHT);
         postInvoicingReportsDTO.setCreditDebitCardInvoicesNumber(creditDebitCardInvoicesNumber);
+        
+        postInvoicingReportsDTO.setNpmAmount(npmAmount);
+        postInvoicingReportsDTO.setNpmAmountHT(npmAmountHT);
+        postInvoicingReportsDTO.setNpmInvoicesNumber(npmInvoicesNumber);        
+        
         postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
 
         return postInvoicingReportsDTO;

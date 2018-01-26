@@ -40,7 +40,6 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.PostInvoicingReportsDTO;
 import org.meveo.model.billing.PreInvoicingReportsDTO;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.omnifaces.cdi.Param;
