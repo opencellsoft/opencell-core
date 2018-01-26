@@ -375,21 +375,33 @@ public class UsageRatingService {
      */
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, CachedUsageChargeInstance cachedCharge, boolean isVirtual) throws BusinessException {
         boolean stopEDRRating = false;
+        boolean stopAfterApplication = false;
         BigDecimal deducedQuantity = null;
 
         if (cachedCharge.getCounterInstanceId() != null) {
-            // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
-            // If decremented partially or none - proceed with another charge
-            deducedQuantity = deduceCounter(edr, cachedCharge, null, isVirtual);
-            if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
-                stopEDRRating = true;
+            
+            // apply to the first charge and create the wallet operation
+            if (edr.getQuantity().compareTo(BigDecimal.ZERO) == 0) {
+                deducedQuantity = deduceCounter(edr, cachedCharge, null, isVirtual);
+                stopEDRRating = false;
+                stopAfterApplication = true;
+            } else {
+                // if the charge is associated to a counter, we decrement it. If decremented by the full quantity, rating is finished.
+                // If decremented partially or none - proceed with another charge
+                deducedQuantity = deduceCounter(edr, cachedCharge, null, isVirtual);
+                if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
+                    stopEDRRating = true;
+                }
             }
+            
         } else {
             stopEDRRating = true;
         }
-        if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
+        
+        if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0 && !stopAfterApplication) {
             //we continue the rating  to  have a WO that its needed in pricePlan.script
-            log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");           
+            log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");
+            return stopEDRRating;
         }
 
         BigDecimal quantityToCharge = null;
@@ -460,6 +472,11 @@ public class UsageRatingService {
                     }
                 }
             }
+        }
+        
+        // will only happen if edr.quantity = 0
+        if(stopAfterApplication) {
+            stopEDRRating = true;
         }
 
         return stopEDRRating;
