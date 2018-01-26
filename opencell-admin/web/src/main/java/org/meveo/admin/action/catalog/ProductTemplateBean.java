@@ -92,6 +92,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     private String editMode;
     private boolean newVersion;
     private Long bpmId;
+    private boolean duplicateProduct;
 
     public ProductTemplateBean() {
         super(ProductTemplate.class);
@@ -110,6 +111,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
                 instantiateNewVersion();
                 setObjectId(entity.getId());
                 newVersion = false;
+            } else if(duplicateProduct) {
+                duplicateWithoutSave();
             }
 
             if (entity.getValidity() == null) {
@@ -155,6 +158,17 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             } catch (BusinessException e) {
                 log.error("Error encountered duplicating product template entity: {}", entity.getCode(), e);
                 messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+            }
+        }
+    }
+    
+    @ActionMethod
+    public void duplicateWithoutSave() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                productTemplateService.duplicate(entity, false);
+            } catch (BusinessException e) {
+                log.error("Error encountered duplicating product template entity: {}", entity.getCode(), e);
             }
         }
     }
@@ -488,5 +502,13 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     public void setBpmId(Long bpmId) {
         this.bpmId = bpmId;
+    }
+
+    public boolean isDuplicateProduct() {
+        return duplicateProduct;
+    }
+
+    public void setDuplicateProduct(boolean duplicateProduct) {
+        this.duplicateProduct = duplicateProduct;
     }
 }

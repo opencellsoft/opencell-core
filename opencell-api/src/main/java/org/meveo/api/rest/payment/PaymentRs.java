@@ -254,7 +254,7 @@ public interface PaymentRs extends IBaseRs {
      * @return the paymentGateway dto created
      */
     @POST
-    @Path("/createOrUpdatePaymentGateway")
+    @Path("/paymentGateway/createOrUpdate")
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway);
 
 }

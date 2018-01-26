@@ -5,6 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
+	<version>4.8.1.1</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -801,5 +802,4 @@
 			</dependencies>
 		</profile>
 	</profiles>
-	<version>5.0-SNAPSHOT</version>
 </project>

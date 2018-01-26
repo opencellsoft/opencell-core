@@ -133,4 +133,8 @@ public abstract class MeveoUser implements Serializable {
     public void setAuthTime(int authTime) {
         this.authTime = authTime;
     }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 }

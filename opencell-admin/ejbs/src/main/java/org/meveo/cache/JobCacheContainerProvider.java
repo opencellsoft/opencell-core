@@ -98,7 +98,9 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @return Is Job currently running and if on this or another node
      */
     public JobRunningStatusEnum isJobRunning(Long jobInstanceId) {
-
+        if (jobInstanceId == null) {
+            return JobRunningStatusEnum.NOT_RUNNING; 
+        }
         List<String> runningInNodes = runningJobsCache.get(jobInstanceId);
         if (runningInNodes == null || runningInNodes.isEmpty()) {
             return JobRunningStatusEnum.NOT_RUNNING;

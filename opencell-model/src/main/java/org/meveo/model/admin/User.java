@@ -266,8 +266,8 @@ public class User extends EnableEntity implements ICustomFieldEntity {
     }
 
     public String getNameOrUsername() {
-        if (name != null && name.toString().length() > 0) {
-            return name.toString();
+        if (name != null && name.getFullName().length() > 0) {
+            return name.getFullName();
         }
 
         return userName;
