@@ -559,12 +559,15 @@ public class QueryBuilder {
         int month = cal.get(Calendar.MONTH);
         int date = cal.get(Calendar.DATE);
         cal.set(year, month, date, 0, 0, 0);
-        value = cal.getTime();
-
-        String sql = "((PARAM_START_DATE<='PARAM_VALUE' AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_START_DATE IS NULL AND PARAM_END_DATE IS NULL) OR (PARAM_START_DATE IS NULL AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_END_DATE IS NULL AND PARAM_START_DATE<='PARAM_VALUE'))";
-        sql = sql.replaceAll("PARAM_START_DATE", startField).replaceAll("PARAM_END_DATE", endField).replaceAll("PARAM_VALUE", value.toString());
-
-        return addSql(sql);
+        Date start = cal.getTime();
+        cal.set(year, month, date, 23, 59, 59);
+        Date end = cal.getTime();
+        
+        String startDateParameterName = "start" + startField.replace(".", "");
+        String endDateParameterName = "end" + endField.replace(".", "");
+        
+        return addSqlCriterion("(" +startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
+                .addSqlCriterion("(" +endField + "<=:" + endDateParameterName  + " OR " + endField + " IS NULL )", endDateParameterName, end);
     }
 
     /**
