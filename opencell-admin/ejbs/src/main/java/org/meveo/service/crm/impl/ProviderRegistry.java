@@ -30,6 +30,7 @@ import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoJpaForMultiTenancy;
 import org.meveo.util.MeveoJpaForTarget;
+import org.meveo.util.MeveoJpaMultiTenancyForJobs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ public class ProviderRegistry {
     @Produces
     @PersistenceContext(unitName = "MeveoAdmin")
     @MeveoJpaForJobs
-    private EntityManager emfForJobs;
+    static EntityManager emfForJobs;
 
     @Produces
     @PersistenceContext(unitName = "MeveoAdmin")
@@ -136,7 +137,10 @@ public class ProviderRegistry {
     	return entityManagerFactories.get(providerCode).createEntityManager();
     }
     
-    public EntityManager createEntityManagerForJobs(String providerCode){ 
+    @Produces
+    @MeveoJpaMultiTenancyForJobs
+    public EntityManager createEntityManagerForJobs(){ 
+    	String providerCode =currentUser.getProviderCode();
     	EntityManager entityManager =null;
     	if(entityManagers.containsKey(providerCode)){
     		entityManager=entityManagers.get(providerCode);

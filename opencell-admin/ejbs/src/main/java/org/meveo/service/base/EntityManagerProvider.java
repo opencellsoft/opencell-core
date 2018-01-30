@@ -32,6 +32,7 @@ import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaMultiTenancyForJobs;
 
 @Stateless
 public class EntityManagerProvider{
@@ -47,6 +48,11 @@ public class EntityManagerProvider{
     @Inject
     @MeveoJpaForMultiTenancy
     private EntityManager emForMultitenancy;
+    
+    
+    @Inject
+    @MeveoJpaMultiTenancyForJobs
+    private EntityManager emMultitenancyForJobs;
     
 
     @Inject
@@ -75,7 +81,7 @@ public class EntityManagerProvider{
     			} catch (Exception e) {
     			}
     		}else{
-    			currentEntityManager = providerRegistry.createEntityManagerForJobs(currentProvider);
+    			currentEntityManager = emMultitenancyForJobs;
     		}
     	}
     	return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{EntityManager.class},
