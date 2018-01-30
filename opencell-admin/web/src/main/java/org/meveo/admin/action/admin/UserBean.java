@@ -451,6 +451,7 @@ public class UserBean extends CustomFieldBean<User> {
             if (this.isAutoUnzipped()) {
                 if (!filename.endsWith(".zip")) {
                     messages.info(filename + " isn't a valid zip file!");
+                    copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
                 } else {
                     copyUnZippedFile(event.getFile().getInputstream());
                 }
