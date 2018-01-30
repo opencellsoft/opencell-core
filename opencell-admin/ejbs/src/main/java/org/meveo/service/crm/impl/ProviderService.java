@@ -19,18 +19,22 @@
 package org.meveo.service.crm.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
+import javax.inject.Named;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
 import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -44,6 +48,12 @@ public class ProviderService extends PersistenceService<Provider> {
     
     @Inject
     private ProviderRegistry providerRegistry;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
+    @Inject
+    EntityManagerProvider entityManagerProvider;
     
     
 
@@ -109,6 +119,17 @@ public class ProviderService extends PersistenceService<Provider> {
     public void refreshAppProvider() {
         refreshAppProvider(getProvider());
     }
+    /** produce a current user
+     * @return
+     */
+    @Produces
+    @RequestScoped
+    @Named("currentUser")
+    @CurrentUser
+    public MeveoUser getCurrentUser() {
+    	MeveoUser meveoUser =currentUserProvider.getCurrentUser(entityManagerProvider.getEntityManager());
+    	return meveoUser;
+    }
     
-
+   
 }

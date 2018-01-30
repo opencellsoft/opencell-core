@@ -11,11 +11,14 @@ import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Disposes;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceUnit;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
@@ -23,7 +26,10 @@ import org.meveo.cache.CacheContainerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
+import org.meveo.util.MeveoJpa;
+import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForTarget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +40,7 @@ import org.slf4j.LoggerFactory;
 @Startup
 public class ProviderRegistry {
 
-    /**
-     * Default, container managed EntityManager
-     */ 
+   
 	@Inject
 	private ProviderService providerService;
 	  
@@ -51,6 +55,33 @@ public class ProviderRegistry {
     private Logger log = LoggerFactory.getLogger(this.getClass());  
     
     private static Map<String, EntityManager> entityManagers=new HashMap<>();
+    
+    @PersistenceUnit(unitName = "MeveoAdmin")
+    private EntityManagerFactory emf;
+
+    @Produces
+    @MeveoJpa
+    @RequestScoped
+    public EntityManager create() {
+        return this.emf.createEntityManager();
+    }
+
+    public void dispose(@Disposes @MeveoJpa EntityManager entityManager) {
+        if (entityManager.isOpen()) {
+            entityManager.close();
+        }
+    }
+
+ 
+    @Produces
+    @PersistenceContext(unitName = "MeveoAdmin")
+    @MeveoJpaForJobs
+    private EntityManager emfForJobs;
+
+    @Produces
+    @PersistenceContext(unitName = "MeveoAdmin")
+    @MeveoJpaForTarget
+    static EntityManager emfForTarget;
 
 
     @PostConstruct

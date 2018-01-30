@@ -12,8 +12,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -25,6 +23,7 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.base.EntityManagerProvider;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -38,8 +37,8 @@ public class DWHQueryBean {
     @Inject
     private MeasuredValueService mvService;
 
-    @PersistenceContext(unitName = "MeveoAdmin")
-    private EntityManager em;
+    @Inject
+    private EntityManagerProvider entityManagerProvider;
     
     @Inject
     private Logger log;
@@ -106,7 +105,7 @@ public class DWHQueryBean {
                     queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getNextMeasureDate()));
                     queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getNextMeasureDate()));
                     log.debug("execute query:{}", queryStr);
-                    Query query = em.createNativeQuery(queryStr);
+                    Query query = entityManagerProvider.getEntityManager().createNativeQuery(queryStr);
                     @SuppressWarnings("unchecked")
                     List<Object> results = query.getResultList();
                     for (Object res : results) {
@@ -147,7 +146,7 @@ public class DWHQueryBean {
                             value = new BigDecimal("" + res);
                         }
                         date = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
-                        MeasuredValue mv = mvService.getByDate(em, date, mve, mq);
+                        MeasuredValue mv = mvService.getByDate(entityManagerProvider.getEntityManager(), date, mve, mq);
                         if (mv == null) {
                             mv = new MeasuredValue();
                         }

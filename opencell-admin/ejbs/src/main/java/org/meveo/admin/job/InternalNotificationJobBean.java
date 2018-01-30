@@ -22,6 +22,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
+import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -37,8 +38,6 @@ public class InternalNotificationJobBean {
 	SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
 	SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:hh");
 
-	@PersistenceContext(unitName = "MeveoAdmin")
-	private EntityManager em;
 
 	@Inject
 	private BeanManager manager;
@@ -48,6 +47,9 @@ public class InternalNotificationJobBean {
 
 	@Inject
 	ScriptInstanceService scriptInstanceService;
+	
+	@Inject
+	EntityManagerProvider entityManagerProvider;
 
 	@SuppressWarnings("rawtypes")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -69,7 +71,7 @@ public class InternalNotificationJobBean {
 			String queryStr = filterCode.replaceAll("#\\{date\\}", df.format(new Date()));
 			queryStr = queryStr.replaceAll("#\\{dateTime\\}", tf.format(new Date()));
 			log.debug("execute query:{}", queryStr);
-			Query query = em.createNativeQuery(queryStr);
+			Query query = entityManagerProvider.getEntityManager().createNativeQuery(queryStr);
 			@SuppressWarnings("unchecked")
 			List<Object> results = query.getResultList();
 			result.setNbItemsToProcess(results.size());

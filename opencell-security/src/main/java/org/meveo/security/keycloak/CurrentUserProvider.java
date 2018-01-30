@@ -38,9 +38,6 @@ public class CurrentUserProvider {
 
     @Resource
     private SessionContext ctx;
-
-    @PersistenceContext(unitName = "MeveoAdmin")
-    private EntityManager em;
     
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
@@ -60,15 +57,11 @@ public class CurrentUserProvider {
     }
 
     /**
-     * Produce a current user from JAAS security context
+     * return a current user from JAAS security context
      * 
      * @return Current user implementation
      */
-    @Produces
-    @RequestScoped
-    @Named("currentUser")
-    @CurrentUser
-    public MeveoUser getCurrentUser() {
+    public MeveoUser getCurrentUser(EntityManager em) {
 
         String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername);
 
@@ -76,13 +69,13 @@ public class CurrentUserProvider {
 
         // User was forced authenticated, so need to lookup the rest of user information
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, getAdditionalRoles(username), getRoleToPermissionMapping());
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, getAdditionalRoles(username), getRoleToPermissionMapping());
+            user = new MeveoUserKeyCloakImpl(ctx, null, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
         }
-
-        supplementOrCreateUserInApp(user);
+        log.info("getCurrentUser username={},em={},providerCode={}",username,em,user!=null?user.getProviderCode():null);
+        supplementOrCreateUserInApp(user,em);
 
         log.trace("Current user is {}", user);
         return user;
@@ -93,7 +86,7 @@ public class CurrentUserProvider {
      * 
      * @param currentUser Authenticated current user
      */
-    private void supplementOrCreateUserInApp(MeveoUser currentUser) {
+    private void supplementOrCreateUserInApp(MeveoUser currentUser,EntityManager em) {
 
         // Takes care of anonymous users
         if (currentUser.getUserName() == null) {
@@ -150,7 +143,7 @@ public class CurrentUserProvider {
      * 
      * @return A mapping between roles and permissions
      */
-    private Map<String, Set<String>> getRoleToPermissionMapping() {
+    private Map<String, Set<String>> getRoleToPermissionMapping(EntityManager em) {
 
         synchronized (this) {
             if (CurrentUserProvider.roleToPermissionMapping == null) {
@@ -190,7 +183,7 @@ public class CurrentUserProvider {
      * @param username Username to check
      * @return A set of role names that given username has in application
      */
-    private Set<String> getAdditionalRoles(String username) {
+    private Set<String> getAdditionalRoles(String username,EntityManager em) {
 
         // Takes care of anonymous users
         if (username == null) {

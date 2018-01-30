@@ -32,7 +32,6 @@ import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
-import org.meveo.util.Resources;
 
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentCollectionConverter;
 import com.thoughtworks.xstream.hibernate.converter.HibernatePersistentMapConverter;
@@ -73,7 +72,7 @@ public class BaseFilterTest {
 		result.addAsLibraries(apacheCommonsValidator);
 
 		// producers
-		result = result.addClasses(Resources.class, LoggerProducer.class, MeveoJpa.class, MeveoJpaForJobs.class,
+		result = result.addClasses(LoggerProducer.class, MeveoJpa.class, MeveoJpaForJobs.class,
 				ComponentResources.class, MeveoUser.class);
 
 		// common classes

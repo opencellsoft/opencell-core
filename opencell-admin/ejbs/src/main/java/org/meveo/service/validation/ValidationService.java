@@ -19,11 +19,13 @@
 package org.meveo.service.validation;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.service.base.EntityManagerProvider;
 
 /**
  * @author Ignas Lelys
@@ -33,8 +35,9 @@ import org.meveo.commons.utils.ReflectionUtils;
 @Stateless 
 public class ValidationService {
 
-	@PersistenceContext(unitName = "MeveoAdmin")
-	private EntityManager em;
+	@Inject
+	EntityManagerProvider entityManagerProvider;
+	
 
 	/**
 	 * @see org.meveo.service.validation.ValidationServiceLocal#validateUniqueField(java.lang.String,
@@ -52,7 +55,7 @@ public class ValidationService {
             queryString = String.format("select count(*) from %s where lower(%s)='%s' and id != %s", className, fieldName,
                 (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, id);
         }
-        Query query = em.createQuery(queryString);
+        Query query = entityManagerProvider.getEntityManager().createQuery(queryString);
 		long count = (Long) query.getSingleResult();
 		return count == 0L;
 	}

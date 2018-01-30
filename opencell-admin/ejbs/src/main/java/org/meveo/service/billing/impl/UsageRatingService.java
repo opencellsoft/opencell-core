@@ -13,8 +13,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,15 +60,11 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpa;
 import org.slf4j.Logger;
 
 @Stateless
 public class UsageRatingService {
 
-    @PersistenceContext(unitName = "MeveoAdmin")
-    @MeveoJpa
-    protected EntityManager em;
 
     @Inject
     protected Logger log;
