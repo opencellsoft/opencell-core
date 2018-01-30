@@ -133,6 +133,8 @@ public class UserBean extends CustomFieldBean<User> {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
     private boolean autoUnzipped;
+    
+    final private String ZIP_FILE_EXTENSION = ".zip";
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -444,25 +446,26 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void handleFileUpload(FileUploadEvent event) {
-        log.debug("upload file={},autoUnziped {}", event.getFile().getFileName(), autoUnzipped);
+        UploadedFile file = event.getFile();
+        String filename = file.getFileName();
+        log.debug("upload file={},autoUnziped {}", filename, autoUnzipped);
         // FIXME: use resource bundle
         try {
-            String filename = event.getFile().getFileName();
+            InputStream fileInputStream = file.getInputstream();
             if (this.isAutoUnzipped()) {
-                if (!filename.endsWith(".zip")) {
+                if (!filename.endsWith(ZIP_FILE_EXTENSION)) {
                     messages.info(filename + " isn't a valid zip file!");
-                    copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+                    copyFile(filename, fileInputStream);
                 } else {
-                    copyUnZippedFile(event.getFile().getInputstream());
+                    copyUnZippedFile(fileInputStream);
                 }
             } else {
-                copyFile(event.getFile().getFileName(), event.getFile().getInputstream());
+                copyFile(filename, fileInputStream);
             }
-
-            messages.info(event.getFile().getFileName() + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
+            messages.info(filename + " is uploaded to " + ((selectedFolder != null) ? selectedFolder : "Home"));
         } catch (IOException e) {
-            log.error("Failed to upload a file {}", event.getFile().getFileName(), e);
-            messages.error("Error while uploading " + event.getFile().getFileName());
+            log.error("Failed to upload a file {}", filename, e);
+            messages.error("Error while uploading " + filename);
         }
     }
 
