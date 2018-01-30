@@ -56,33 +56,6 @@ public class ProviderRegistry {
     private Logger log = LoggerFactory.getLogger(this.getClass());  
     
     private static Map<String, EntityManager> entityManagers=new HashMap<>();
-    
-    @PersistenceUnit(unitName = "MeveoAdmin")
-    private EntityManagerFactory emf;
-
-    @Produces
-    @MeveoJpa
-    @RequestScoped
-    public EntityManager create() {
-        return this.emf.createEntityManager();
-    }
-
-    public void dispose(@Disposes @MeveoJpa EntityManager entityManager) {
-        if (entityManager.isOpen()) {
-            entityManager.close();
-        }
-    }
-
- 
-    @Produces
-    @PersistenceContext(unitName = "MeveoAdmin")
-    @MeveoJpaForJobs
-    static EntityManager emfForJobs;
-
-    @Produces
-    @PersistenceContext(unitName = "MeveoAdmin")
-    @MeveoJpaForTarget
-    static EntityManager emfForTarget;
 
 
     @PostConstruct
@@ -138,9 +111,7 @@ public class ProviderRegistry {
     }
     
     @Produces
-    @MeveoJpaMultiTenancyForJobs
-    public EntityManager createEntityManagerForJobs(){ 
-    	String providerCode =currentUser.getProviderCode();
+    public EntityManager createEntityManagerForJobs(String providerCode){ 
     	EntityManager entityManager =null;
     	if(entityManagers.containsKey(providerCode)){
     		entityManager=entityManagers.get(providerCode);
