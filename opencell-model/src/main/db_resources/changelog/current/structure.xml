@@ -1564,9 +1564,12 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="customer_account_id" type="bigint" >
+            <column name="customer_account_code" type="varchar(255)" >
                  <constraints nullable="false" />
             </column>
+            <column name="customer_account_name" type="varchar(255)" />
+            <column name="seller_code" type="varchar(255)" />
+            
             <column name="operation_date" type="datetime">
                 <constraints nullable="false" />
             </column>
@@ -1578,6 +1581,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="async_status" type="varchar(50)" />
+             <column name="status" type="varchar(50)" />
             <column name="external_payment_id" type="varchar(255)" />
             <column name="error_code" type="varchar(255)" />
             <column name="error_message" type="varchar(2000)" />
@@ -1585,28 +1589,15 @@
             <column name="operation_category" type="varchar(50)" >
                 <constraints nullable="false" />
             </column>
-            <column name="payment_gateway_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
-            <column name="payment_method_id" type="bigint" >
-                <constraints nullable="false" />
-            </column>
+            <column name="payment_gateway_code" type="varchar(255)" />
+            <column name="payment_method_type" type="varchar(50)" />
+            <column name="payment_method_name" type="varchar(50)" />            
             <column name="payment_id" type="bigint" />
             <column name="refund_id" type="bigint" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
         </createTable>
-        
-       
-        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ca" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
-            
-        <addForeignKeyConstraint baseColumnNames="payment_gateway_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_gateway" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_gateway" />
-            
-        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_pm" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />  
-   
+               
         <addForeignKeyConstraint baseColumnNames="payment_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_pay" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />   
      

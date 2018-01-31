@@ -13,16 +13,13 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
-import org.meveo.api.account.AccountHierarchyApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
-import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
-import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -70,9 +67,6 @@ public class PaymentApi extends BaseApi {
 
     @Inject
     private PaymentHistoryService paymentHistoryService;
-
-    @Inject
-    private AccountHierarchyApi accountHierarchyApi;
 
     @Inject
     private AccountOperationApi accountOperationApi;
@@ -359,7 +353,9 @@ public class PaymentApi extends BaseApi {
      */
     public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {
         PaymentHistoryDto paymentHistoryDto = new PaymentHistoryDto();
-        paymentHistoryDto.setCustomerAccount(accountHierarchyApi.customerAccountToDto(paymentHistory.getCustomerAccount()));
+        paymentHistoryDto.setCustomerAccountCode(paymentHistory.getCustomerAccountCode());
+        paymentHistoryDto.setCustomerAccountName(paymentHistory.getCustomerAccountName());
+        paymentHistoryDto.setSellerCode(paymentHistory.getSellerCode());
         paymentHistoryDto.setAmountCts(paymentHistory.getAmountCts());
         paymentHistoryDto.setAsyncStatus(paymentHistory.getAsyncStatus());
         paymentHistoryDto.setErrorCode(paymentHistory.getErrorCode());
@@ -368,11 +364,13 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setExternalPaymentId(paymentHistory.getExternalPaymentId());
         paymentHistoryDto.setOperationCategory(paymentHistory.getOperationCategory());
         paymentHistoryDto.setOperationDate(paymentHistory.getOperationDate());
-        paymentHistoryDto.setPaymentGateway(new PaymentGatewayDto(paymentHistory.getPaymentGateway()));
-        paymentHistoryDto.setPaymentMethod(new PaymentMethodDto(paymentHistory.getPaymentMethod()));
+        paymentHistoryDto.setPaymentGatewayCode(paymentHistory.getPaymentGatewayCode());
+        paymentHistoryDto.setPaymentMethodName(paymentHistory.getPaymentMethodName());
+        paymentHistoryDto.setPaymentMethodType(paymentHistory.getPaymentMethodType());
         paymentHistoryDto.setRefund(accountOperationApi.accountOperationToDto(paymentHistory.getRefund()));
         paymentHistoryDto.setPayment(accountOperationApi.accountOperationToDto(paymentHistory.getPayment()));
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
+        paymentHistoryDto.setStatus(paymentHistory.getStatus());
         paymentHistoryDto.setUpdatedStatusDate(paymentHistory.getUpdatedStatusDate());
         AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
         accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));

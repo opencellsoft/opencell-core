@@ -92,49 +92,45 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws BusinessException business exception
      * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
-     */   
-    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,PaymentGateway paymentGateway)
-            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-
-        if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
-            throw new BusinessException("There no payment token for customerAccount:" + customerAccount.getCode());
-        }
-
-        PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
-        if (preferredMethod == null) {
-            throw new BusinessException("There is no payment method for customerAccount:" + customerAccount.getCode());
-
-        } else if (!(preferredMethod instanceof CardPaymentMethod)) {
-            throw new BusinessException("Can not process payment as prefered payment method is " + preferredMethod.getPaymentType());
-        }
-
-        // If card payment method is currently not valid, find a valid one and mark it as preferred or throw an exception
-        if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
-            preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
-            if (preferredMethod != null) {
-                customerAccount = customerAccountService.update(customerAccount);
-            } else {
-                throw new BusinessException("There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
-            }
-        }
-
-        CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        if(paymentGateway == null) {
-            paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
-        }
-        
-        if (paymentGateway == null) {
-            throw new BusinessException("No payment gateway");
-        }
-        try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
-        }
-
+     */
+    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
+            PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         PayByCardResponseDto doPaymentResponseDto = null;
+        CardPaymentMethod cardPaymentMethod = null;
         try {
+            if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
+                throw new BusinessException("There no payment token for customerAccount:" + customerAccount.getCode());
+            }
+
+            PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
+            if (preferredMethod == null) {
+                throw new BusinessException("There is no payment method for customerAccount:" + customerAccount.getCode());
+
+            } else if (!(preferredMethod instanceof CardPaymentMethod)) {
+                throw new BusinessException("Can not process payment as prefered payment method is " + preferredMethod.getPaymentType());
+            }
+
+            // If card payment method is currently not valid, find a valid one and mark it as preferred or throw an exception
+            if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
+                preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
+                if (preferredMethod != null) {
+                    customerAccount = customerAccountService.update(customerAccount);
+                } else {
+                    throw new BusinessException("There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
+                }
+            }
+
+            cardPaymentMethod = (CardPaymentMethod) preferredMethod;
+            GatewayPaymentInterface gatewayPaymentInterface = null;
+            if (paymentGateway == null) {
+                paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
+            }
+
+            if (paymentGateway == null) {
+                throw new BusinessException("No payment gateway");
+            }
+
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
             doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
             Long aoPaymentId = null;
             PaymentErrorTypeEnum errorType = null;
@@ -167,13 +163,13 @@ public class PaymentService extends PersistenceService<Payment> {
                 log.warn("Payment by card {} was not successfull. Status: {}", cardPaymentMethod.getTokenId(), doPaymentResponseDto.getPaymentStatus());
             }
 
-            paymentHistoryService.addHistory(customerAccount,findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto, errorType, OperationCategoryEnum.CREDIT, paymentGateway,
-                cardPaymentMethod);
+            paymentHistoryService.addHistory(customerAccount, findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
+                errorType, OperationCategoryEnum.CREDIT, paymentGateway, cardPaymentMethod);
 
         } catch (Exception e) {
-            paymentHistoryService.addHistory(customerAccount,null, ctsAmount, PaymentStatusEnum.ERROR, null, PaymentErrorTypeEnum.ERROR, OperationCategoryEnum.CREDIT, paymentGateway,
-                cardPaymentMethod);
-            throw new BusinessException(e.getMessage());
+            log.error("Error during payment AO:", e);
+            paymentHistoryService.addHistory(customerAccount, null, ctsAmount, PaymentStatusEnum.ERROR, null, e.getMessage(), PaymentErrorTypeEnum.ERROR,
+                OperationCategoryEnum.CREDIT, paymentGateway, cardPaymentMethod);
         }
         return doPaymentResponseDto;
     }

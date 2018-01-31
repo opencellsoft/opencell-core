@@ -10,11 +10,11 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.api.dto.payment.PayByCardResponseDto;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RefundService;
@@ -60,10 +60,12 @@ public class UnitPaymentCardJobBean {
             } else {
                 doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO,paymentGateway);
-
-                if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
-                    result.registerSucces();
-                }
+            }
+            if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()) {
+                result.registerSucces();
+            } else {
+                result.registerError(aoId, doPaymentResponseDto.getErrorMessage());
+                result.addReport("AccountOperation id : " + aoId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
             }
 
         } catch (Exception e) {

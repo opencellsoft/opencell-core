@@ -4,7 +4,6 @@
 package org.meveo.model.payments;
 
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,10 +11,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -38,11 +35,18 @@ public class PaymentHistory extends EnableEntity{
      */
     private static final long serialVersionUID = 4319694328397367053L;
 
-    /** The payment method. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_account_id")
+    /** The customer Account Code. */
+    @Column(name = "customer_account_code")
     @NotNull
-    private CustomerAccount customerAccount;
+    private String customerAccountCode;
+    
+    /** The customer Account Name. */
+    @Column(name = "customer_account_name")
+    private String customerAccountName;
+    
+    /** The seller Code. */
+    @Column(name = "seller_code")
+    private String sellerCode;
     
     /** The operation date. */
     @Column(name = "operation_date")
@@ -69,6 +73,11 @@ public class PaymentHistory extends EnableEntity{
     @Enumerated(EnumType.STRING)
     private PaymentStatusEnum asyncStatus;
     
+    /** The status. */
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private PaymentStatusEnum status;
+    
     /** The external payment id. */
     @Column(name = "external_payment_id")
     private String externalPaymentId;
@@ -87,16 +96,17 @@ public class PaymentHistory extends EnableEntity{
     private PaymentErrorTypeEnum errorType;
     
     /** The payment gateway. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_gateway_id")
-    @NotNull
-    private PaymentGateway paymentGateway;
+    @Column(name = "payment_gateway_code")
+    private String paymentGatewayCode;
     
-    /** The payment method. */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_method_id")
-    @NotNull
-    private PaymentMethod paymentMethod;
+    /** The payment method type. */
+    @Column(name = "payment_method_type")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethodType;
+    
+    /** The payment method name: card number or mandat. */
+    @Column(name = "payment_method_name")
+    private String paymentMethodName;
     
     /** The operation category, credit for payment or debit for refund. */
     @Column(name = "operation_category")
@@ -111,6 +121,22 @@ public class PaymentHistory extends EnableEntity{
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "refund_id")
     private Refund refund;
+    
+    
+
+    /**
+     * @return the sellerCode
+     */
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode the sellerCode to set
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
 
     /**
      * @return the operationDate
@@ -166,6 +192,7 @@ public class PaymentHistory extends EnableEntity{
      */
     public void setSyncStatus(PaymentStatusEnum syncStatus) {
         this.syncStatus = syncStatus;
+        this.status = syncStatus;
     }
 
     /**
@@ -180,6 +207,7 @@ public class PaymentHistory extends EnableEntity{
      */
     public void setAsyncStatus(PaymentStatusEnum asyncStatus) {
         this.asyncStatus = asyncStatus;
+        this.status = asyncStatus;
     }
 
     /**
@@ -238,32 +266,90 @@ public class PaymentHistory extends EnableEntity{
         this.errorType = errorType;
     }
 
+  
+
     /**
-     * @return the paymentGateway
+     * @return the customerAccountCode
      */
-    public PaymentGateway getPaymentGateway() {
-        return paymentGateway;
+    public String getCustomerAccountCode() {
+        return customerAccountCode;
     }
 
     /**
-     * @param paymentGateway the paymentGateway to set
+     * @param customerAccountCode the customerAccountCode to set
      */
-    public void setPaymentGateway(PaymentGateway paymentGateway) {
-        this.paymentGateway = paymentGateway;
+    public void setCustomerAccountCode(String customerAccountCode) {
+        this.customerAccountCode = customerAccountCode;
     }
 
     /**
-     * @return the paymentMethod
+     * @return the customerAccountName
      */
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+    public String getCustomerAccountName() {
+        return customerAccountName;
     }
 
     /**
-     * @param paymentMethod the paymentMethod to set
+     * @param customerAccountName the customerAccountName to set
      */
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setCustomerAccountName(String customerAccountName) {
+        this.customerAccountName = customerAccountName;
+    }
+
+    /**
+     * @return the status
+     */
+    public PaymentStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(PaymentStatusEnum status) {
+        this.status = status;
+    }
+
+    /**
+     * @return the paymentGatewayCode
+     */
+    public String getPaymentGatewayCode() {
+        return paymentGatewayCode;
+    }
+
+    /**
+     * @param paymentGatewayCode the paymentGatewayCode to set
+     */
+    public void setPaymentGatewayCode(String paymentGatewayCode) {
+        this.paymentGatewayCode = paymentGatewayCode;
+    }
+
+    /**
+     * @return the paymentMethodType
+     */
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
+    }
+
+    /**
+     * @param paymentMethodType the paymentMethodType to set
+     */
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
+        this.paymentMethodType = paymentMethodType;
+    }
+
+    /**
+     * @return the paymentMethodName
+     */
+    public String getPaymentMethodName() {
+        return paymentMethodName;
+    }
+
+    /**
+     * @param paymentMethodName the paymentMethodName to set
+     */
+    public void setPaymentMethodName(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
     }
 
     /**
@@ -309,18 +395,4 @@ public class PaymentHistory extends EnableEntity{
     }
     
 
-    /**
-     * @return the customerAccount
-     */
-    public CustomerAccount getCustomerAccount() {
-        return customerAccount;
-    }
-
-    /**
-     * @param customerAccount the customerAccount to set
-     */
-    public void setCustomerAccount(CustomerAccount customerAccount) {
-        this.customerAccount = customerAccount;
-    }
-    
 }

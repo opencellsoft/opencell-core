@@ -10,9 +10,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 
 
@@ -31,7 +31,14 @@ public class PaymentHistoryDto extends BaseDto {
      */
     private static final long serialVersionUID = 1L;
     
-    private CustomerAccountDto customerAccount;
+    /** The customer Account Code. */
+    private String customerAccountCode;
+    
+    /** The seller Code. */
+    private String sellerCode;
+    
+    /** The customer Account Name. */
+    private String customerAccountName;
 
     /** The operation date. */
     private Date operationDate;
@@ -48,6 +55,9 @@ public class PaymentHistoryDto extends BaseDto {
     /** The asynchrone status. */
     private PaymentStatusEnum asyncStatus;
     
+    /** The  status. */
+    private PaymentStatusEnum status;    
+    
     /** The external payment id. */
     private String externalPaymentId;
     
@@ -61,10 +71,13 @@ public class PaymentHistoryDto extends BaseDto {
     private PaymentErrorTypeEnum errorType;
     
     /** The payment gateway. */
-    private PaymentGatewayDto paymentGateway;
+    private String paymentGatewayCode;
     
     /** The payment method. */
-    private PaymentMethodDto paymentMethod;
+    private PaymentMethodEnum paymentMethodType;
+    
+    /** The payment method name: card number or mandat. */    
+    private String paymentMethodName;
     
     /** The operation category, credit for payment or debit for refund. */
     private OperationCategoryEnum operationCategory;
@@ -76,17 +89,45 @@ public class PaymentHistoryDto extends BaseDto {
     private AccountOperationsDto listAoPaid ;
 
     /**
-     * @return the customerAccount
+     * @return the customerAccountCode
      */
-    public CustomerAccountDto getCustomerAccount() {
-        return customerAccount;
+    public String getCustomerAccountCode() {
+        return customerAccountCode;
     }
 
     /**
-     * @param customerAccount the customerAccount to set
+     * @return the sellerCode
      */
-    public void setCustomerAccount(CustomerAccountDto customerAccount) {
-        this.customerAccount = customerAccount;
+    public String getSellerCode() {
+        return sellerCode;
+    }
+
+    /**
+     * @param sellerCode the sellerCode to set
+     */
+    public void setSellerCode(String sellerCode) {
+        this.sellerCode = sellerCode;
+    }
+
+    /**
+     * @param customerAccountCode the customerAccountCode to set
+     */
+    public void setCustomerAccountCode(String customerAccountCode) {
+        this.customerAccountCode = customerAccountCode;
+    }
+
+    /**
+     * @return the customerAccountName
+     */
+    public String getCustomerAccountName() {
+        return customerAccountName;
+    }
+
+    /**
+     * @param customerAccountName the customerAccountName to set
+     */
+    public void setCustomerAccountName(String customerAccountName) {
+        this.customerAccountName = customerAccountName;
     }
 
     /**
@@ -160,6 +201,20 @@ public class PaymentHistoryDto extends BaseDto {
     }
 
     /**
+     * @return the status
+     */
+    public PaymentStatusEnum getStatus() {
+        return status;
+    }
+
+    /**
+     * @param status the status to set
+     */
+    public void setStatus(PaymentStatusEnum status) {
+        this.status = status;
+    }
+
+    /**
      * @return the externalPaymentId
      */
     public String getExternalPaymentId() {
@@ -215,33 +270,46 @@ public class PaymentHistoryDto extends BaseDto {
         this.errorType = errorType;
     }
 
-
     /**
-     * @return the paymentGateway
+     * @return the paymentGatewayCode
      */
-    public PaymentGatewayDto getPaymentGateway() {
-        return paymentGateway;
+    public String getPaymentGatewayCode() {
+        return paymentGatewayCode;
     }
 
     /**
-     * @param paymentGateway the paymentGateway to set
+     * @param paymentGatewayCode the paymentGatewayCode to set
      */
-    public void setPaymentGateway(PaymentGatewayDto paymentGateway) {
-        this.paymentGateway = paymentGateway;
+    public void setPaymentGatewayCode(String paymentGatewayCode) {
+        this.paymentGatewayCode = paymentGatewayCode;
     }
 
     /**
-     * @return the paymentMethod
+     * @return the paymentMethodType
      */
-    public PaymentMethodDto getPaymentMethod() {
-        return paymentMethod;
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
     }
 
     /**
-     * @param paymentMethod the paymentMethod to set
+     * @param paymentMethodType the paymentMethodType to set
      */
-    public void setPaymentMethod(PaymentMethodDto paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
+        this.paymentMethodType = paymentMethodType;
+    }
+
+    /**
+     * @return the paymentMethodName
+     */
+    public String getPaymentMethodName() {
+        return paymentMethodName;
+    }
+
+    /**
+     * @param paymentMethodName the paymentMethodName to set
+     */
+    public void setPaymentMethodName(String paymentMethodName) {
+        this.paymentMethodName = paymentMethodName;
     }
 
     /**
@@ -257,8 +325,6 @@ public class PaymentHistoryDto extends BaseDto {
     public void setOperationCategory(OperationCategoryEnum operationCategory) {
         this.operationCategory = operationCategory;
     }
-
-    
 
     /**
      * @return the payment
@@ -301,5 +367,14 @@ public class PaymentHistoryDto extends BaseDto {
     public void setListAoPaid(AccountOperationsDto listAoPaid) {
         this.listAoPaid = listAoPaid;
     }
-    
+
+    @Override
+    public String toString() {
+        return "PaymentHistoryDto [customerAccountCode=" + customerAccountCode + ", customerAccountName=" + customerAccountName + ", operationDate=" + operationDate
+                + ", updatedStatusDate=" + updatedStatusDate + ", amountCts=" + amountCts + ", syncStatus=" + syncStatus + ", asyncStatus=" + asyncStatus + ", status=" + status
+                + ", externalPaymentId=" + externalPaymentId + ", errorCode=" + errorCode + ", errorMessage=" + errorMessage + ", errorType=" + errorType + ", paymentGatewayCode="
+                + paymentGatewayCode + ", paymentMethodType=" + paymentMethodType + ", paymentMethodName=" + paymentMethodName + ", operationCategory=" + operationCategory
+                + ", payment=" + payment + ", refund=" + refund + ", listAoPaid=" + listAoPaid + "]";
+    }
+  
 }

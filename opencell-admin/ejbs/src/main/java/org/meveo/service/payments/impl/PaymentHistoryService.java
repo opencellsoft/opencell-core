@@ -9,8 +9,9 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
@@ -27,22 +28,34 @@ import org.meveo.service.base.PersistenceService;
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void addHistory(CustomerAccount customerAccount,Payment payment, Long amountCts, PaymentStatusEnum status, PayByCardResponseDto doPaymentResponseDto, PaymentErrorTypeEnum errorType,
-            OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethod paymentMethod) throws BusinessException {
+    public void addHistory(CustomerAccount customerAccount, Payment payment, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
+            PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethod paymentMethod) throws BusinessException {
         PaymentHistory paymentHistory = new PaymentHistory();
-        paymentHistory.setCustomerAccount(customerAccount);
+        paymentHistory.setCustomerAccountCode(customerAccount.getCode());
+        paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
+        paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
         paymentHistory.setPayment(payment);
         paymentHistory.setOperationDate(new Date());
         paymentHistory.setAmountCts(amountCts);
-        paymentHistory.setErrorCode(doPaymentResponseDto != null ? doPaymentResponseDto.getErrorCode() : null);
-        paymentHistory.setErrorMessage(doPaymentResponseDto != null ? doPaymentResponseDto.getErrorMessage() : null);
+        paymentHistory.setErrorCode(errorCode);
+        paymentHistory.setErrorMessage(errorMessage);
         paymentHistory.setErrorType(errorType);
         paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : null);
         paymentHistory.setOperationCategory(operationCategory);
         paymentHistory.setSyncStatus(status);
-        paymentHistory.setPaymentGateway(paymentGateway);
-        paymentHistory.setPaymentMethod(paymentMethod);
-        create(paymentHistory);
+        paymentHistory.setPaymentGatewayCode(paymentGateway == null ? null : paymentGateway.getCode());
+        if (paymentMethod != null) {
+            paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
+            String pmVal = null;
+            if (paymentMethod instanceof DDPaymentMethod) {
+                pmVal = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
+            }
+            if (paymentMethod instanceof CardPaymentMethod) {
+                pmVal = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
+            }
+            paymentHistory.setPaymentMethodName(pmVal);
+        }
+        super.create(paymentHistory);
 
     }
 }
