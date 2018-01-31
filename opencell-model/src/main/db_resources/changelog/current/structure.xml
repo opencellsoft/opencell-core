@@ -1496,4 +1496,10 @@
 
     </changeSet>
     
+      <changeSet id="#multitenant_20170105" author="Mbarek">
+        <addColumn tableName="meveo_job_instance">
+            <column name="provider" type="varchar(255)"></column>
+        </addColumn>
+         </changeSet>
+    
 </databaseChangeLog> 

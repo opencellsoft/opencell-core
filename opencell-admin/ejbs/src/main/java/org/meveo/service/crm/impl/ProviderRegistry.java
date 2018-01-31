@@ -45,9 +45,6 @@ public class ProviderRegistry {
 	@Inject
 	private ProviderService providerService;
 	  
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
  
     
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-multiTenant-cache")
@@ -101,12 +98,7 @@ public class ProviderRegistry {
    }
     
 
-     
-    @Produces
-    @MeveoJpaForMultiTenancy
-    @RequestScoped
-    public EntityManager createEntityManager(){
-    	String providerCode =currentUser.getProviderCode();
+    public EntityManager createEntityManager(String providerCode){
     	return entityManagerFactories.get(providerCode).createEntityManager();
     }
     

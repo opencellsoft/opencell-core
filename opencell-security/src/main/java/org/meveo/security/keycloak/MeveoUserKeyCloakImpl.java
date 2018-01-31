@@ -46,7 +46,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * @param roleToPermissionMapping Role to permission mapping
      */
     @SuppressWarnings("rawtypes")
-    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
+    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName,String forcedProvider, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
 
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
@@ -92,7 +92,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
 
             if (forcedUserName != null) {
                 this.userName = forcedUserName;
-
+                this.providerCode=forcedProvider;
                 forcedAuthentication = true;
                 authenticated = true;
             }

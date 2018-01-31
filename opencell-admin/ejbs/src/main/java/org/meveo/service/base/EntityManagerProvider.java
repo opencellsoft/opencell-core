@@ -31,7 +31,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
-import org.meveo.util.MeveoJpaForMultiTenancy;
 
 @Stateless
 public class EntityManagerProvider{
@@ -42,12 +41,6 @@ public class EntityManagerProvider{
     @Inject
     @MeveoJpaForJobs
     private EntityManager emfForJobs;
-    
-    
-    @Inject
-    @MeveoJpaForMultiTenancy
-    private EntityManager emForMultitenancy;
-    
 
     @Inject
     private Conversation conversation;
@@ -75,7 +68,7 @@ public class EntityManagerProvider{
     		if (conversation != null) {
     			try {
     				conversation.isTransient();
-    				currentEntityManager =emForMultitenancy;
+    				currentEntityManager =providerRegistry.createEntityManager(currentProvider);
     			} catch (Exception e) {
     			}
     		}else{

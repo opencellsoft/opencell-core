@@ -11,21 +11,16 @@ import javax.annotation.Resource;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ContextNotActiveException;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Instance;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.PersistenceContext;
 
 import org.keycloak.KeycloakPrincipal;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
-import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
@@ -43,21 +38,31 @@ public class CurrentUserProvider {
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
     private String forcedUserUsername;
+    private String forcedProvider;
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    public void forceAuthentication(String currentUserUserName) {
-
+    public void forceAuthentication(String currentUserUserName,String providerCode) {
+      log.debug("forceAuthentication currentUserUserName={},forcedProvider={}",currentUserUserName,providerCode);
+      this.forcedProvider = providerCode;
         // Current user is already authenticated, can't overwrite it
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal || this.forcedUserUsername != null) {
-            log.debug("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
+        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal ) {
+            log.info("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
         this.forcedUserUsername = currentUserUserName;
+       
     }
     
     public String getCurrentUserProviderCode() {
-    	return MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+    	String providerCode=null;
+    	 if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedProvider != null) {
+    		 providerCode= forcedProvider;
+    	  }else{
+    		  providerCode=  MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+    	  }
+    	 log.debug("getCurrentUserProviderCode providerCode={},forcedUserUsername={}",providerCode,forcedUserUsername);
+    	return providerCode;
     	
     	
     }
@@ -75,12 +80,12 @@ public class CurrentUserProvider {
 
         // User was forced authenticated, so need to lookup the rest of user information
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername,forcedProvider, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
+            user = new MeveoUserKeyCloakImpl(ctx, null,null, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
         }
-        log.info("getCurrentUser username={},em={},providerCode={}",username,em,user!=null?user.getProviderCode():null);
+        log.info("getCurrentUser username={},forcedUserUsername={},providerCode={},em={}",username,forcedUserUsername,user!=null?user.getProviderCode():null,em);
         supplementOrCreateUserInApp(user,em);
 
         log.trace("Current user is {}", user);
