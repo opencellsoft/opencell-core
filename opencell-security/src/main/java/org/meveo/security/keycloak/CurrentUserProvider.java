@@ -48,7 +48,7 @@ public class CurrentUserProvider {
     private Logger log = LoggerFactory.getLogger(getClass());
 
     public void forceAuthentication(String currentUserUserName,String providerCode) {
-      log.info("forceAuthentication currentUserUserName={},forcedProvider={}",currentUserUserName,providerCode);
+      log.debug("forceAuthentication currentUserUserName={},forcedProvider={}",currentUserUserName,providerCode);
       this.forcedProvider = providerCode;
         // Current user is already authenticated, can't overwrite it
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal ) {
@@ -66,7 +66,7 @@ public class CurrentUserProvider {
     	  }else{
     		  providerCode=  MeveoUserKeyCloakImpl.extractProviderCode(ctx);
     	  }
-    	 log.info("getCurrentUserProviderCode providerCode={},forcedUserUsername={}",providerCode,forcedUserUsername);
+    	 log.debug("getCurrentUserProviderCode providerCode={},forcedUserUsername={}",providerCode,forcedUserUsername);
     	return providerCode;
     	
     	
