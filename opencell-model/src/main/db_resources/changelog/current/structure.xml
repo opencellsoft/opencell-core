@@ -1054,6 +1054,18 @@
         
     </changeSet>
         
+    <changeSet id="#2875_20171201" author="anasseh">    
+        <addColumn tableName="ar_payment_gateway">
+            <column name="nb_tries" type="int" />
+        </addColumn>  
+        <addColumn tableName="ar_payment_gateway">    
+            <column name="replay_cause" type="varchar(100)" />   
+        </addColumn>    
+
+        <addColumn tableName="ar_payment_gateway">    
+           <column name="errors_to_replay" type="varchar(400)" />   
+       </addColumn>              
+    </changeSet>
     
     <changeSet id="#2879_20171002" author="AndriusKarpavicius"> 
         <modifyDataType tableName="account_entity" columnName="address_1" newDataType="varchar(255)"/>   
@@ -1527,6 +1539,79 @@
         <addColumn tableName="adm_inbound_request">
             <column name="resp_status" type="int4"  />           
         </addColumn>   
+    </changeSet>
+    
+    <changeSet id="#3190_26012018_2" author="anasseh" dbms="mysql">
+        <createTable tableName="ar_payment_history_seq">
+            <column name="next_val" type="BIGINT">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="payment_history_seq_pk" />
+            </column>
+        </createTable>
+        <sql>insert into ar_payment_history_seq values(1)</sql>
+     </changeSet>
+     
+    <changeSet author="anasseh" id="#3190_26012018">
+        <createSequence sequenceName="ar_payment_history_seq" />
+        <createTable tableName="ar_payment_history">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_history_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="customer_account_id" type="bigint" >
+                 <constraints nullable="false" />
+            </column>
+            <column name="operation_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated_status_date" type="datetime" />
+            <column name="amount_cts" type="bigint" >
+                <constraints nullable="false" />
+            </column>            		
+            <column name="sync_status" type="varchar(50)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="async_status" type="varchar(50)" />
+            <column name="external_payment_id" type="varchar(255)" />
+            <column name="error_code" type="varchar(255)" />
+            <column name="error_message" type="varchar(2000)" />
+            <column name="error_type" type="varchar(50)" />
+            <column name="operation_category" type="varchar(50)" >
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_gateway_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_method_id" type="bigint" >
+                <constraints nullable="false" />
+            </column>
+            <column name="payment_id" type="bigint" />
+            <column name="refund_id" type="bigint" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+        </createTable>
+        
+       
+        <addForeignKeyConstraint baseColumnNames="customer_account_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ca" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_customer_account" />
+            
+        <addForeignKeyConstraint baseColumnNames="payment_gateway_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_gateway" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_gateway" />
+            
+        <addForeignKeyConstraint baseColumnNames="payment_method_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_pm" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_payment_token" />  
+   
+        <addForeignKeyConstraint baseColumnNames="payment_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_pay" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />   
+     
+        <addForeignKeyConstraint baseColumnNames="refund_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_refund" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                    
     </changeSet>
     
 </databaseChangeLog> 

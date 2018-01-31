@@ -233,7 +233,7 @@ public class RefundApi extends BaseApi {
                 cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());
         } else {
             doPaymentResponseDto = refundService.refundByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
-                cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());
+                cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(),null);
         }
 
         return doPaymentResponseDto;

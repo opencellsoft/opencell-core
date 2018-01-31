@@ -86,6 +86,18 @@ public class PaymentGateway extends BusinessCFEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "card_type")
     private CreditCardTypeEnum cardType;
+    
+    /** The nb tries. */
+    @Column(name = "nb_tries")
+    private Integer nbTries;
+    
+    /** The replay cause. */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "replay_cause")
+    private PaymentReplayCauseEnum replayCause;
+    
+    @Column(name = "errors_to_replay")
+    private String errorsToReplay ;
 
     public PaymentGateway() {
 
@@ -201,6 +213,50 @@ public class PaymentGateway extends BusinessCFEntity {
      */
     public void setPaymentMethodType(PaymentMethodEnum paymentMethodType) {
         this.paymentMethodType = paymentMethodType;
+    }
+    
+    
+
+    /**
+     * @return the nbTries
+     */
+    public Integer getNbTries() {
+        return nbTries;
+    }
+
+    /**
+     * @param nbTries the nbTries to set
+     */
+    public void setNbTries(Integer nbTries) {
+        this.nbTries = nbTries;
+    }
+
+    /**
+     * @return the replayCause
+     */
+    public PaymentReplayCauseEnum getReplayCause() {
+        return replayCause;
+    }
+
+    /**
+     * @param replayCause the replayCause to set
+     */
+    public void setReplayCause(PaymentReplayCauseEnum replayCause) {
+        this.replayCause = replayCause;
+    }
+
+    /**
+     * @return the errorsToReplay
+     */
+    public String getErrorsToReplay() {
+        return errorsToReplay;
+    }
+
+    /**
+     * @param errorsToReplay the errorsToReplay to set
+     */
+    public void setErrorsToReplay(String errorsToReplay) {
+        this.errorsToReplay = errorsToReplay;
     }
 
     @Override

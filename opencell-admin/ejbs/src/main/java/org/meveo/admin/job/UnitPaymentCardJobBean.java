@@ -14,6 +14,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RefundService;
@@ -26,7 +27,7 @@ import org.slf4j.Logger;
 
 @Stateless
 public class UnitPaymentCardJobBean {
-
+    
     @Inject
     private Logger log;
 
@@ -40,7 +41,8 @@ public class UnitPaymentCardJobBean {
     private RefundService refundService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory) {
+
+    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway) {
         log.debug("Running with RecordedInvoice ID={}", aoId);
 
         AccountOperation accountOperation = null;
@@ -54,14 +56,14 @@ public class UnitPaymentCardJobBean {
             PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
             if (operationCategory == OperationCategoryEnum.CREDIT) {
                 doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
-                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO,paymentGateway);
             } else {
                 doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
-                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
-            }
+                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO,paymentGateway);
 
-            if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
-                result.registerSucces();
+                if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
+                    result.registerSucces();
+                }
             }
 
         } catch (Exception e) {
@@ -69,5 +71,6 @@ public class UnitPaymentCardJobBean {
             result.registerError(aoId, e.getMessage());
             result.addReport("AccountOperation id : " + aoId + " RejectReason : " + e.getMessage());
         }
+        
     }
 }

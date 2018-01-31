@@ -37,6 +37,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.model.payments.Refund;
@@ -62,6 +63,9 @@ public class RefundService extends PersistenceService<Refund> {
 
     @Inject
     private CustomerAccountService customerAccountService;
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
 
     @MeveoAudit
     @Override
@@ -78,12 +82,13 @@ public class RefundService extends PersistenceService<Refund> {
      * @param aoIdsToRefund list of account operations ids to be refund
      * @param createAO true if wanting to create account operation
      * @param matchingAO true if matching account operation.
+     * @param paymentGateway  if set, this paymentGateway will be used
      * @return payment by card response dto
      * @throws BusinessException business exception
      * @throws NoAllOperationUnmatchedException no all operation un matched exception
      * @throws UnbalanceAmountException un balance amount exception.
      */
-    public PayByCardResponseDto refundByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO)
+    public PayByCardResponseDto refundByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO,PaymentGateway paymentGateway)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
@@ -110,8 +115,12 @@ public class RefundService extends PersistenceService<Refund> {
 
         CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        if(paymentGateway == null) {
+            paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
+        }
+        
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
@@ -173,8 +182,9 @@ public class RefundService extends PersistenceService<Refund> {
         String coutryCode = null;// TODO : waiting #2830
 
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, null);
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, null);
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
             log.error("Cant find payment gateway");
             throw new BusinessException(e.getMessage());

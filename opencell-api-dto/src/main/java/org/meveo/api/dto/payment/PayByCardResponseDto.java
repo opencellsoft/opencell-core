@@ -16,6 +16,7 @@ public class PayByCardResponseDto extends BaseResponse{
 	private String transactionId;
 	private PaymentStatusEnum paymentStatus;
 	private String tokenId;
+	private String errorCode;
 	private String errorMessage;
 	private boolean isNewToken;
 	private boolean isAoCreated = false;
@@ -112,20 +113,32 @@ public class PayByCardResponseDto extends BaseResponse{
 	public String getBankRefenrence() {
 		return bankRefenrence;
 	}
+	
+	
 
-	public void setBankRefenrence(String bankRefenrence) {
+	/**
+     * @return the errorCode
+     */
+    public String getErrorCode() {
+        return errorCode;
+    }
+
+    /**
+     * @param errorCode the errorCode to set
+     */
+    public void setErrorCode(String errorCode) {
+        this.errorCode = errorCode;
+    }
+
+    public void setBankRefenrence(String bankRefenrence) {
 		this.bankRefenrence = bankRefenrence;
 	}
 
-	@Override
-	public String toString() {
-		return "DoPaymentResponseDto [paymentID=" + paymentID + ", transactionId=" + transactionId + ", paymentStatus="
-				+ paymentStatus + ", tokenId=" + tokenId + ", errorMessage=" + errorMessage + ", isNewToken="
-				+ isNewToken + ", isAoCreated=" + isAoCreated + ", isMatchingCreated=" + isMatchingCreated
-				+ ", codeClientSide=" + codeClientSide + ", paymentBrand=" + paymentBrand + ", bankRefenrence="
-				+ bankRefenrence + "]";
-	}
-
-	
+    @Override
+    public String toString() {
+        return "PayByCardResponseDto [paymentID=" + paymentID + ", transactionId=" + transactionId + ", paymentStatus=" + paymentStatus + ", tokenId=" + tokenId + ", errorCode="
+                + errorCode + ", errorMessage=" + errorMessage + ", isNewToken=" + isNewToken + ", isAoCreated=" + isAoCreated + ", isMatchingCreated=" + isMatchingCreated
+                + ", codeClientSide=" + codeClientSide + ", paymentBrand=" + paymentBrand + ", bankRefenrence=" + bankRefenrence + "]";
+    }
 
 }

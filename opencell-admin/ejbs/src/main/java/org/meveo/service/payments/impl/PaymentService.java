@@ -37,7 +37,10 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
+import org.meveo.model.payments.PaymentErrorTypeEnum;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.base.PersistenceService;
@@ -63,6 +66,12 @@ public class PaymentService extends PersistenceService<Payment> {
     @Inject
     private CustomerAccountService customerAccountService;
 
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
+
+    @Inject
+    private PaymentHistoryService paymentHistoryService;
+
     @MeveoAudit
     @Override
     public void create(Payment entity) throws BusinessException {
@@ -78,12 +87,13 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param aoIdsToPay list of account operations's id
      * @param createAO true if need to create account operation
      * @param matchingAO true if matching operation.
+     * @param paymentGateway if set, this paymentGateway will be used
      * @return instance of PayByCardResponseDto
      * @throws BusinessException business exception
      * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
-     */
-    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO)
+     */   
+    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,PaymentGateway paymentGateway)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
         if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
@@ -110,41 +120,61 @@ public class PaymentService extends PersistenceService<Payment> {
 
         CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        if(paymentGateway == null) {
+            paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
+        }
+        
+        if (paymentGateway == null) {
+            throw new BusinessException("No payment gateway");
+        }
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
 
-        PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
-
-        if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
-            // log.error("AKK updating card payment with user id {} {}", cardPaymentMethod.getAlias(), doPaymentResponseDto.getCodeClientSide());
-            cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
-            cardPaymentMethod = (CardPaymentMethod) paymentMethodService.update(cardPaymentMethod);
+        PayByCardResponseDto doPaymentResponseDto = null;
+        try {
+            doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
             Long aoPaymentId = null;
-            if (createAO) {
-                try {
-                    aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
-                    doPaymentResponseDto.setAoCreated(true);
-                } catch (Exception e) {
-                    log.warn("Cant create Account operation payment :", e);
-                }
-                if (matchingAO) {
+            PaymentErrorTypeEnum errorType = null;
+            PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus();
+            if (PaymentStatusEnum.ACCEPTED == status || PaymentStatusEnum.PENDING == status) {
+                // log.error("AKK updating card payment with user id {} {}", cardPaymentMethod.getAlias(), doPaymentResponseDto.getCodeClientSide());
+                cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
+                cardPaymentMethod = (CardPaymentMethod) paymentMethodService.update(cardPaymentMethod);
+
+                if (createAO) {
                     try {
-                        List<Long> aoIdsToMatch = aoIdsToPay;
-                        aoIdsToMatch.add(aoPaymentId);
-                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
-                        doPaymentResponseDto.setMatchingCreated(true);
+                        aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
+                        doPaymentResponseDto.setAoCreated(true);
                     } catch (Exception e) {
-                        log.warn("Cant create matching :", e);
+                        log.warn("Cant create Account operation payment :", e);
+                    }
+                    if (matchingAO) {
+                        try {
+                            List<Long> aoIdsToMatch = aoIdsToPay;
+                            aoIdsToMatch.add(aoPaymentId);
+                            matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
+                            doPaymentResponseDto.setMatchingCreated(true);
+                        } catch (Exception e) {
+                            log.warn("Cant create matching :", e);
+                        }
                     }
                 }
+            } else {
+                errorType = PaymentErrorTypeEnum.REJECT;
+                log.warn("Payment by card {} was not successfull. Status: {}", cardPaymentMethod.getTokenId(), doPaymentResponseDto.getPaymentStatus());
             }
-        } else {
-            log.warn("Payment by card {} was not successfull. Status: {}", cardPaymentMethod.getTokenId(), doPaymentResponseDto.getPaymentStatus());
-        }
 
+            paymentHistoryService.addHistory(customerAccount,findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto, errorType, OperationCategoryEnum.CREDIT, paymentGateway,
+                cardPaymentMethod);
+
+        } catch (Exception e) {
+            paymentHistoryService.addHistory(customerAccount,null, ctsAmount, PaymentStatusEnum.ERROR, null, PaymentErrorTypeEnum.ERROR, OperationCategoryEnum.CREDIT, paymentGateway,
+                cardPaymentMethod);
+            throw new BusinessException(e.getMessage());
+        }
         return doPaymentResponseDto;
     }
 
@@ -173,8 +203,12 @@ public class PaymentService extends PersistenceService<Payment> {
         String coutryCode = null;// TODO : waiting #2830
 
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, null);
+        if (paymentGateway == null) {
+            throw new BusinessException("No payment gateway");
+        }
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, null);
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
             log.warn("Cant find payment gateway");
         }

@@ -464,7 +464,10 @@ public class AccountOperationApi extends BaseApi {
      * @param accountOp the account op
      * @return the account operation dto
      */
-    private AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
+    public AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
+        if(accountOp == null) {
+            return null;
+        }
         AccountOperationDto accountOperationDto = new AccountOperationDto();
         accountOperationDto.setId(accountOp.getId());
         accountOperationDto.setDueDate(accountOp.getDueDate());

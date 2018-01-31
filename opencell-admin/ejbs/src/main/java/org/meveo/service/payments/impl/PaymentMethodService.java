@@ -29,6 +29,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.base.PersistenceService;
 
@@ -40,6 +41,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
 
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
@@ -116,8 +120,9 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
         String coutryCode = null; // TODO : waiting #2830
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
             // Create the card even if there no payment gateway
             log.warn("Cant find payment gateway");
