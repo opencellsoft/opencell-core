@@ -1523,4 +1523,10 @@
         </addColumn>   
     </changeSet>
     
+    
+    <changeSet id="#3196_20180131" author="AndriusKarpavicius">
+        <modifyDataType tableName="billing_charge_instance" columnName="termination_date" newDataType="datetime"/>
+        <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime"/>
+    </changeSet>
+    
 </databaseChangeLog> 
