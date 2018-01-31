@@ -1,0 +1,17 @@
+package org.meveo.service.script.finance;
+
+import org.meveo.service.script.Script;
+
+/**
+ * @author Edward P. Legaspi
+ * @created 31 Jan 2018
+ **/
+public class ReportExtractScript extends Script {
+
+    public static final String START_DATE = "START_DATE";
+    public static final String END_DATE = "END_DATE";
+    public static final String DIR = "DIR";
+    public static final String FILENAME = "FILENAME";
+    public static final String REPORTS_DIR = "reports";
+
+}

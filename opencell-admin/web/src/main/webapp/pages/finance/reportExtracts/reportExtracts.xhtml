@@ -25,13 +25,40 @@
 		<hftl:dataList backingBean="#{reportExtractListBean}" label="#{messages['reportExtract']}" sortBy="code">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['reportExtract.title']}" field="title" />
 			<hftl:column label="#{messages['reportExtract.category']}" field="category" />
-			<hftl:column label="#{messages['reportExtract.scriptType']}" field="scriptType" />
 			<hftl:column label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
-			<hftl:actionsColumn width="10%" renderEnableLink="true"></hftl:actionsColumn>
+			<hftl:column label="#{messages['reportExtract.scriptType']}" field="scriptType" />
+			<hftl:actionsColumn width="10%">
+				<p:commandButton id="runReport" icon="fa fa-fw fa-play" onclick="PF('dlgRunReport').show();" >
+		            <f:setPropertyActionListener target="#{reportExtractBean.entity}" value="#{entity}" />
+		        </p:commandButton>
+		        <p:tooltip for="runReport" value="#{messages['action.run']}" showEffect="slide" hideEffect="slide" />
+			</hftl:actionsColumn>
 		</hftl:dataList>
 
+		<h:form>
+			<p:dialog header="Run Report" widgetVar="dlgRunReport">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-4">
+						<p:outputLabel for="startDate" value="#{messages['reportExtract.startDate']}"></p:outputLabel>
+					</div>
+					<div class="ui-g-8">
+						<p:calendar id="startDate" value="#{reportExtractBean.entity.startDate}" pattern="#{paramBean.dateFormat}" />
+					</div>
+					<div class="ui-g-4">
+						<p:outputLabel for="endDate" value="#{messages['reportExtract.endDate']}"></p:outputLabel>
+					</div>
+					<div class="ui-g-8">
+						<p:calendar id="endDate" value="#{reportExtractBean.entity.endDate}" pattern="#{paramBean.dateFormat}" />
+					</div>
+					<div class="ui-g-8"></div>
+					<div class="ui-g-4">
+		    			<p:commandButton id="runReport" value="#{messages['action.run']}" action="#{reportExtractBean.runReport()}" update=":results_panel">
+		        		</p:commandButton>
+	        		</div>
+		        </div>
+			</p:dialog>
+		</h:form>
 	</ui:define>
 
 </ui:composition>

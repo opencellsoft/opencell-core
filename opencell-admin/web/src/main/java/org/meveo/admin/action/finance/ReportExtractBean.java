@@ -1,16 +1,21 @@
 package org.meveo.admin.action.finance;
 
+import java.util.Calendar;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.meveo.admin.action.BaseBean;
+import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.finance.ReportExtractService;
+import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
  * @author Edward P. Legaspi
@@ -18,7 +23,7 @@ import org.meveo.service.finance.ReportExtractService;
  **/
 @Named
 @ViewScoped
-public class ReportExtractBean extends BaseBean<ReportExtract> {
+public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
 
     private static final long serialVersionUID = -3817116164208834748L;
 
@@ -27,6 +32,22 @@ public class ReportExtractBean extends BaseBean<ReportExtract> {
 
     public ReportExtractBean() {
         super(ReportExtract.class);
+    }
+
+    @Override
+    public ReportExtract initEntity() {
+        entity = super.initEntity();
+
+        if (entity.isTransient()) {
+            Calendar cal = Calendar.getInstance();
+            entity.getParams().put(ReportExtractScript.START_DATE, DateUtils.formatDateWithPattern(cal.getTime(), ParamBean.getInstance().getDateFormat()));
+            cal.add(Calendar.MONTH, 1);
+            entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(cal.getTime(), ParamBean.getInstance().getDateFormat()));
+        }
+
+        extractMapTypeFieldFromEntity(entity.getParams(), "params");
+
+        return entity;
     }
 
     @Override
@@ -43,6 +64,16 @@ public class ReportExtractBean extends BaseBean<ReportExtract> {
             entity.setSqlQuery(null);
         }
         return super.saveOrUpdate(killConversation);
+    }
+
+    @ActionMethod
+    public void runReport() {
+        try {
+            reportExtractService.runReport(entity);
+        } catch (BusinessException e) {
+            log.error("Failed running report: {}", e.getMessage());
+            messages.error(e.getMessage());
+        }
     }
 
 }

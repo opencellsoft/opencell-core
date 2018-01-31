@@ -39,20 +39,25 @@
 		<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" >
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:formField label="#{messages['reportExtract.title']}" field="title" />
+			<hftl:formField label="#{messages['reportExtract.scriptType']}" field="scriptType" listenerUpdate="scriptTypeJava scriptTypeSQL" />
+			<p:outputPanel id="scriptTypeJava">
+				<hftl:formField id="scriptInstanceSelectId" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.JAVA}"
+					label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
+					valueLabelField="code" required="true" popup="true"
+					popupId="scriptInstancePopup" />
+			</p:outputPanel>
 			<hftl:formField label="#{messages['reportExtract.category']}" field="category" />
-			<hftl:formField label="#{messages['reportExtract.scriptType']}" field="scriptType" listenerUpdate="@(form)" />
-			<hftl:formField id="scriptInstanceSelectId" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.JAVA}"
-				label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
-				valueLabelField="code" required="true" popup="true"
-				popupId="scriptInstancePopup" />
 			<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
-			
-			<hftl:formField label="#{messages['reportExtract.sqlQuery']}" field="sqlQuery" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}"/>
-			
-			<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
-                <pe:codeMirror id="sqlQuery" theme="eclipse" mode="text/x-sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
-            </hftl:decorateFormField>
+			<p:outputPanel id="scriptTypeSQL">			
+				<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
+	                <pe:codeMirror id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
+	            </hftl:decorateFormField>
+            </p:outputPanel>
+            <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+            	<p:commandButton id="runReport" icon="fa fa-fw fa-play" value="#{messages['action.execute']}" action="#{reportExtractBean.runReport}"></p:commandButton>
+            </ui:define>
 		</hftl:formPanel>
 	</ui:define>
 

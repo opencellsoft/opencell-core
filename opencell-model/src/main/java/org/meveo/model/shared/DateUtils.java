@@ -18,6 +18,7 @@
  */
 package org.meveo.model.shared;
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -63,6 +64,13 @@ public class DateUtils {
         }
 
         return result;
+    }
+    
+    public static String evaluteDateFormat(String input) {
+        String dateFormatStr = input.substring(input.indexOf("{") + 1, input.lastIndexOf("}"));
+        DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
+        Calendar cal = Calendar.getInstance();
+        return input.substring(0, input.indexOf("{")) + dateFormat.format(cal.getTime()) + input.substring(input.lastIndexOf("}") + 1);
     }
 
     public static Date setTimeToZero(Date date) {
