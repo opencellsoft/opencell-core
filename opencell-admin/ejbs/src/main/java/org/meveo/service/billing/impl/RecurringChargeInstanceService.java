@@ -82,7 +82,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
         return chargeInstance;
     }
 
-    public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate, boolean isToTruncatedToDate) {
+    public List<Long> findIdsByStatus(InstanceStatusEnum status, Date maxChargeDate, boolean truncateToDay) {
         List<Long> ids = new ArrayList<Long>();
         try {
             log.debug("start of find RecurringChargeInstance --IDS---  by status {} and date {}", status, maxChargeDate);
@@ -90,7 +90,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
             qb.addCriterionEnum("c.status", status);
 
-            if (isToTruncatedToDate) {
+            if (truncateToDay) {
                 qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
             } else {
                 qb.addCriterion("c.nextChargeDate", "<", maxChargeDate, false);
@@ -101,24 +101,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
             log.error("findIdsByStatus error={} ", e.getMessage(), e);
         }
         return ids;
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<RecurringChargeInstance> findByStatus(InstanceStatusEnum status, Date maxChargeDate) {
-        List<RecurringChargeInstance> recurringChargeInstances = new ArrayList<RecurringChargeInstance>();
-        try {
-            log.debug("start of find RecurringChargeInstance by status {} and date {}", status, maxChargeDate);
-            QueryBuilder qb = new QueryBuilder(RecurringChargeInstance.class, "c");
-            qb.addCriterion("c.status", "=", status, true);
-            qb.addCriterionDateRangeToTruncatedToDay("c.nextChargeDate", maxChargeDate);
-            recurringChargeInstances = qb.getQuery(getEntityManager()).getResultList();
-            log.debug("end of find {} by status (status={}). Result size found={}.",
-                new Object[] { "RecurringChargeInstance", status, recurringChargeInstances != null ? recurringChargeInstances.size() : 0 });
-
-        } catch (Exception e) {
-            log.error("findByStatus error={} ", e);
-        }
-        return recurringChargeInstances;
     }
 
     @SuppressWarnings("unchecked")
