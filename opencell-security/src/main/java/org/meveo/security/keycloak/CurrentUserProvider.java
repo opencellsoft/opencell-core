@@ -55,6 +55,12 @@ public class CurrentUserProvider {
         }
         this.forcedUserUsername = currentUserUserName;
     }
+    
+    public String getCurrentUserProviderCode() {
+    	return MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+    	
+    	
+    }
 
     /**
      * return a current user from JAAS security context

@@ -110,7 +110,7 @@ public class ProviderRegistry {
     	return entityManagerFactories.get(providerCode).createEntityManager();
     }
     
-    @Produces
+   
     public EntityManager createEntityManagerForJobs(String providerCode){ 
     	EntityManager entityManager =null;
     	if(entityManagers.containsKey(providerCode)){

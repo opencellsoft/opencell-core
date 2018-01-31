@@ -25,6 +25,7 @@ import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
@@ -127,7 +128,9 @@ public class ProviderService extends PersistenceService<Provider> {
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
-    	MeveoUser meveoUser =currentUserProvider.getCurrentUser(entityManagerProvider.getEntityManager());
+    	String providerCode=currentUserProvider.getCurrentUserProviderCode();
+    	EntityManager em=entityManagerProvider.getEntityManager(providerCode);
+    	MeveoUser meveoUser =currentUserProvider.getCurrentUser(em);
     	return meveoUser;
     }
     

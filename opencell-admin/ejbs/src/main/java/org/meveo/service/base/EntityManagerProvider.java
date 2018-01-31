@@ -57,13 +57,17 @@ public class EntityManagerProvider{
     
     @Inject
     @CurrentUser
-    protected MeveoUser currentUser;
+    MeveoUser currentUser;
+    
     
     private EntityManager currentEntityManager;
     
-    
     public EntityManager getEntityManager() {
     	final String currentProvider = currentUser!=null?currentUser.getProviderCode():null;
+    	return getEntityManager(currentProvider);
+    }
+    
+    public EntityManager getEntityManager(String currentProvider) {
     	String isMultiTenancyActive=ParamBean.getInstance().getProperty("meveo.multiTenancy", "false"); 
     	currentEntityManager = getDefaultEntityManager();
     	if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {

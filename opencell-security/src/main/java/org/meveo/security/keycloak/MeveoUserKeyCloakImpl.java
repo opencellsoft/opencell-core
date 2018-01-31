@@ -146,4 +146,18 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             return forcedUserName;
         }
     }
+    
+    @SuppressWarnings("rawtypes")
+    protected static String extractProviderCode(SessionContext securityContext) {
+
+        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            if (keycloakSecurityContext.getToken().getOtherClaims() != null) {
+                return (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
+            }
+
+        }
+        return null;
+    }
 }
