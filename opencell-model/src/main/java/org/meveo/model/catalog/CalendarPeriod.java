@@ -101,6 +101,7 @@ public class CalendarPeriod extends Calendar {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
+                truncateDateTime(calendar);
                 return calendar.getTime();
             }
 
@@ -129,10 +130,6 @@ public class CalendarPeriod extends Calendar {
             nbPeriods = 0;
         }
 
-        // Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
-        // GregorianCalendar calendar = new GregorianCalendar();
-        // calendar.setTime(cleanDate);
-
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(getInitDate());
 
@@ -141,7 +138,7 @@ public class CalendarPeriod extends Calendar {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
-                return oldDate;
+                return truncateDateTime(oldDate);
             }
 
             i++;
@@ -165,5 +162,43 @@ public class CalendarPeriod extends Calendar {
 
     public static boolean isValidPeriodUnit(Integer unit) {
         return VALID_PERIOD_UNITS.contains(unit);
+    }
+
+    @Override
+    public Date truncateDateTime(Date dateToTruncate) {
+
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(dateToTruncate);
+        truncateDateTime(calendar);
+
+        return calendar.getTime();
+    }
+
+    /**
+     * Truncates day and time portion of a date based on calendar granularity
+     * 
+     * @param calendar Date as calendar to truncate
+     */
+    private void truncateDateTime(GregorianCalendar calendar) {
+        calendar.set(java.util.Calendar.MILLISECOND, 0);
+
+        if (periodUnit.intValue() == java.util.Calendar.MONTH || periodUnit.intValue() == java.util.Calendar.DAY_OF_MONTH) {
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        }
+        if (periodUnit.intValue() == java.util.Calendar.MONTH || periodUnit.intValue() == java.util.Calendar.DAY_OF_MONTH
+                || periodUnit.intValue() == java.util.Calendar.HOUR_OF_DAY) {
+
+            calendar.set(java.util.Calendar.MINUTE, 0);
+        }
+        if (periodUnit.intValue() == java.util.Calendar.MONTH || periodUnit.intValue() == java.util.Calendar.DAY_OF_MONTH || periodUnit.intValue() == java.util.Calendar.HOUR_OF_DAY
+                || periodUnit.intValue() == java.util.Calendar.MINUTE) {
+            calendar.set(java.util.Calendar.SECOND, 0);
+        }
+
+    }
+
+    @Override
+    public void setInitDate(Date startDate) {
+        super.setInitDate(truncateDateTime(startDate));
     }
 }
