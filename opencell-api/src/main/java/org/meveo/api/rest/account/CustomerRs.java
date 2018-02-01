@@ -20,6 +20,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
@@ -164,6 +165,16 @@ public interface CustomerRs extends IBaseRs {
     @PUT
     @Path("/updateCategory")
     ActionStatus updateCategory(CustomerCategoryDto postData);
+    
+    /**
+     * Search for a customer category with a given code
+     * 
+     * @param categoryCode The customer category's code
+     * @return The customer category's data
+     */
+    @GET
+    @Path("/category/{categoryCode}")
+    GetCustomerCategoryResponseDto findCategory(@PathParam("categoryCode") String categoryCode);
 
     /**
      * Create new or update an existing customer category
