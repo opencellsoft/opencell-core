@@ -53,7 +53,7 @@ public class CalendarPeriod extends Calendar {
      * The last date/time unit to preserve when truncating the date. E.g. setting to DAY_OF_MONTH will set time to 0. Setting it to SECOND will not truncate date at all.
      */
     @Transient
-    private Integer lastUnitInDateTruncate = null;
+    private Integer lastUnitInDateTruncate = java.util.Calendar.SECOND;
 
     public Integer getPeriodLength() {
         return periodLength;
