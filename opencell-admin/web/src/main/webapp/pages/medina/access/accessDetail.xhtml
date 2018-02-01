@@ -77,7 +77,7 @@
 
 				</p:tabView>
 				<hf:formButtons ajaxSubmit="true" edit="false" backingBean="#{accessBean}" showEnableDisableButton="false" showDeleteButton="false" 
-					showEditButton="false" showBackButton="false" rendered="#{not empty accessBean.subscriptionId}">
+					showEditButton="true" showBackButton="false" rendered="#{not empty accessBean.subscriptionId}">
 						<p:commandButton value="#{messages['commons.disable']}"
 							rendered="#{backingBean.entity.active}"
 							action="#{backingBean.disable}" update="@form" >
