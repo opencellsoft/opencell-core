@@ -50,7 +50,7 @@
 			<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
 			<p:outputPanel id="scriptTypeSQL">			
 				<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
-	                <pe:codeMirror id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
+	                <pe:codeMirror required="true" id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
 	            </hftl:decorateFormField>
             </p:outputPanel>
             <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />

@@ -1,11 +1,13 @@
 package org.meveo.admin.action.finance;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.UpdateMapTypeFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -63,17 +65,50 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         } else {
             entity.setSqlQuery(null);
         }
+        updateMapTypeFieldInEntity(entity.getParams(), "params");
+
         return super.saveOrUpdate(killConversation);
     }
 
     @ActionMethod
-    public void runReport() {
+    public String runReport() {
+        String result = null;
         try {
             reportExtractService.runReport(entity);
+            result = saveOrUpdate(true);
+            messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
         } catch (BusinessException e) {
             log.error("Failed running report: {}", e.getMessage());
             messages.error(e.getMessage());
         }
+
+        return result;
+    }
+
+    @ActionMethod
+    public String runReportFromList() {
+        String result = null;
+        Date startDate = entity.getStartDate();
+        Date endDate = entity.getEndDate();
+        entity = getPersistenceService().refreshOrRetrieve(entity);
+
+        if (startDate != null) {
+            entity.getParams().put(ReportExtractScript.START_DATE, DateUtils.formatDateWithPattern(startDate, paramBean.getDateFormat()));
+        }
+        if (endDate != null) {
+            entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(endDate, paramBean.getDateFormat()));
+        }
+
+        try {
+            reportExtractService.runReport(entity);
+            result = saveOrUpdate(true);
+            messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
+        } catch (BusinessException e) {
+            log.error("Failed running report: {}", e.getMessage());
+            messages.error(e.getMessage());
+        }
+
+        return result;
     }
 
 }

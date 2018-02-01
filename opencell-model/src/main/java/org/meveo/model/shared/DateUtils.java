@@ -65,8 +65,11 @@ public class DateUtils {
 
         return result;
     }
-    
+
     public static String evaluteDateFormat(String input) {
+        if (!(input.contains("{") && input.contains("}"))) {
+            return input;
+        }
         String dateFormatStr = input.substring(input.indexOf("{") + 1, input.lastIndexOf("}"));
         DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
         Calendar cal = Calendar.getInstance();
