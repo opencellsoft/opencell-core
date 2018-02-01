@@ -65,7 +65,7 @@ public class RecurringRatingJobBean implements Serializable {
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUtilDate");
+                rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUntilDate");
             } catch (Exception e) {
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);
