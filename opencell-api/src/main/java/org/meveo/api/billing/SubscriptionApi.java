@@ -140,6 +140,8 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
+    
+    private ParamBean paramBean = ParamBean.getInstance();
 
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
@@ -170,7 +172,7 @@ public class SubscriptionApi extends BaseApi {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
-                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBean.getDateTimeFormat()));
         }
 
         if (offerTemplate.isDisabled()) {
@@ -252,7 +254,7 @@ public class SubscriptionApi extends BaseApi {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
             if (offerTemplate == null) {
                 throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBean.getDateTimeFormat()));
 
             } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
                 throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
@@ -341,7 +343,7 @@ public class SubscriptionApi extends BaseApi {
 
             ServiceInstance serviceInstance = null;
 
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
                     InstanceStatusEnum.INACTIVE);
                 if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
@@ -525,7 +527,7 @@ public class SubscriptionApi extends BaseApi {
 
             ServiceInstance serviceInstance = null;
 
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
                     InstanceStatusEnum.INACTIVE);
                 if (!subscriptionServiceInstances.isEmpty()) {

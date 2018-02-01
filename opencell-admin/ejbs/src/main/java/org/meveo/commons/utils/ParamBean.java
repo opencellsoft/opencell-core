@@ -46,12 +46,6 @@ public class ParamBean {
     private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
     
     private String _propertyFile;
-
-
-    /**
-     * true if it allows multi service instance.
-     */
-    public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
     
     /**
      * Save properties imported from the file.
@@ -438,5 +432,13 @@ public class ParamBean {
      */
     public String getDateTimeFormat() {
         return getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
+    }
+    
+    /**
+     * Check whether service multi instantiation is allowed
+     * @return is allowed.
+     */
+    public boolean isServiceMultiInstantiation() {
+        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));
     }
 }

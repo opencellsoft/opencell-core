@@ -94,6 +94,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     @Inject
     ServiceTemplateService serviceTemplateService;
+    
+    
+    ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -198,7 +201,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("Subscription is not active");
         }
         if (!isVirtual) {
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
                     throw new IncorrectServiceInstanceException(
@@ -310,7 +313,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("Can not activate a ServiceInstance that is " + serviceInstance.getStatus());
         }
 
-        if (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+        if (!paramBean.isServiceMultiInstantiation()) {
             List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceInstance.getCode(), subscription, InstanceStatusEnum.ACTIVE);
             if (serviceInstances != null && !serviceInstances.isEmpty()) {
                 throw new IncorrectServiceInstanceException(
