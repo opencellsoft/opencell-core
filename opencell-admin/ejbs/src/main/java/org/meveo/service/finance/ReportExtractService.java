@@ -38,10 +38,12 @@ public class ReportExtractService extends PersistenceService<ReportExtract> {
             Iterator it = entity.getParams().entrySet().iterator();
             while (it.hasNext()) {
                 Map.Entry pair = (Map.Entry) it.next();
-                if (pair.getKey().toString().endsWith("_DATE") && pair.getValue() != null) {
-                    context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
-                } else {
-                    context.put(pair.getKey().toString(), pair.getValue());
+                if (!StringUtils.isBlank(pair.getValue())) {
+                    if (pair.getKey().toString().endsWith("_DATE")) {
+                        context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
+                    } else {
+                        context.put(pair.getKey().toString(), pair.getValue());
+                    }
                 }
             }
         }
@@ -62,7 +64,7 @@ public class ReportExtractService extends PersistenceService<ReportExtract> {
             StringBuilder line = new StringBuilder("");
             if (resultList != null && !resultList.isEmpty()) {
                 log.debug("{} record/s found", resultList.size());
-                
+
                 try {
                     File dir = new File(sbDir.toString());
                     if (!dir.exists()) {

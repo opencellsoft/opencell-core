@@ -74,8 +74,8 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
     public String runReport() {
         String result = null;
         try {
-            reportExtractService.runReport(entity);
             result = saveOrUpdate(true);
+            reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
         } catch (BusinessException e) {
             log.error("Failed running report: {}", e.getMessage());
@@ -100,8 +100,8 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         }
 
         try {
-            reportExtractService.runReport(entity);
             result = saveOrUpdate(true);
+            reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
         } catch (BusinessException e) {
             log.error("Failed running report: {}", e.getMessage());
