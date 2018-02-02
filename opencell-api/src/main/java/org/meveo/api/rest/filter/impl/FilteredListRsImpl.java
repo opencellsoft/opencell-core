@@ -140,4 +140,28 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
         log.debug("RESPONSE={}", response.getEntity());
         return response;
     }
+
+    @Override
+    public Response fullSearch(String query, String category, Integer from, Integer size) {
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            String searchResults = fullTextSearchApi.fullSearch(query, category, from, size);
+            FilteredListResponseDto result = new FilteredListResponseDto();
+            result.setSearchResults(searchResults);
+            responseBuilder = Response.status(Response.Status.OK).entity(result);
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
+                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
 }

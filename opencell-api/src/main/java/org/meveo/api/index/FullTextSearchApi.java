@@ -11,6 +11,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.AccessDeniedException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ElasticSearchClassInfo;
 import org.meveo.service.index.ReindexingStatistics;
@@ -47,7 +48,7 @@ public class FullTextSearchApi extends BaseApi {
 
         List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(query, from, size, null, null, null, classInfo);
+        return elasticClient.search(query, null, from, size, null, null, null, classInfo);
     }
 
     public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,
@@ -62,5 +63,20 @@ public class FullTextSearchApi extends BaseApi {
         List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
         return elasticClient.search(queryValues, from, size, null, null, null, classInfo);
+    }
+
+    public String fullSearch(String query, String category, Integer from, Integer size) throws MissingParameterException, BusinessException {
+
+        boolean noCategory = StringUtils.isBlank(category);
+        boolean noQuery = StringUtils.isBlank(query);
+
+        if (noCategory && noQuery) {
+            missingParameters.add("category");
+            missingParameters.add("query");
+        }
+
+        handleMissingParameters();
+
+        return elasticClient.search(query, category, from, size, null, null, null, null);
     }
 }

@@ -16,7 +16,8 @@ import javax.ejb.Singleton;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.BaseEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -157,7 +158,7 @@ public class ElasticSearchConfiguration implements Serializable {
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return Index property name
      */
-    public String getIndex(BusinessEntity entity) {
+    public String getIndex(ISearchable entity) {
         return getIndex(entity.getClass());
     }
 
@@ -168,10 +169,10 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return Index property name
      */
     @SuppressWarnings("rawtypes")
-    public String getIndex(Class<? extends BusinessEntity> clazzToConvert) {
+    public String getIndex(Class<? extends ISearchable> clazzToConvert) {
 
         Class clazz = clazzToConvert;
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (!ISearchable.class.equals(clazz)) {
             if (indexMap.containsKey(clazz.getSimpleName())) {
                 return indexMap.get(clazz.getSimpleName());
             }
@@ -217,7 +218,7 @@ public class ElasticSearchConfiguration implements Serializable {
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return Type property name
      */
-    public String getType(BusinessEntity entity) {
+    public String getType(ISearchable entity) {
         String cetCode = null;
         if (entity instanceof CustomEntityInstance) {
             cetCode = ((CustomEntityInstance) entity).getCetCode();
@@ -233,10 +234,10 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return Type property name
      */
     @SuppressWarnings("rawtypes")
-    public String getType(Class<? extends BusinessEntity> clazzToConvert, String cetCode) {
+    public String getType(Class<? extends ISearchable> clazzToConvert, String cetCode) {
 
         Class clazz = clazzToConvert;
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (!ISearchable.class.equals(clazz)) {
             if (typeMap.containsKey(clazz.getSimpleName())) {
                 String type = typeMap.get(clazz.getSimpleName());
 
@@ -278,11 +279,11 @@ public class ElasticSearchConfiguration implements Serializable {
      * @return True if upsert should be used
      */
     @SuppressWarnings("rawtypes")
-    public boolean isDoUpsert(BusinessEntity entity) {
+    public boolean isDoUpsert(ISearchable entity) {
 
         Class clazz = entity.getClass();
 
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (!ISearchable.class.equals(clazz)) {
             if (upsertMap.contains(clazz.getSimpleName())) {
                 return true;
             }
@@ -300,7 +301,7 @@ public class ElasticSearchConfiguration implements Serializable {
      *         "company.address.street"
      */
     @SuppressWarnings("rawtypes")
-    public Map<String, String> getFields(BusinessEntity entity) {
+    public Map<String, String> getFields(ISearchable entity) {
 
         Class clazz = entity.getClass();
 
@@ -310,7 +311,7 @@ public class ElasticSearchConfiguration implements Serializable {
             fields.putAll(fieldMap.get(DEFAULT));
         }
 
-        while (!BusinessEntity.class.equals(clazz)) {
+        while (!BaseEntity.class.equals(clazz)) {
             if (fieldMap.containsKey(clazz.getSimpleName())) {
                 fields.putAll(fieldMap.get(clazz.getSimpleName()));
             }

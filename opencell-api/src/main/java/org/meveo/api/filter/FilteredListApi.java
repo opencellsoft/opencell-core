@@ -94,7 +94,7 @@ public class FilteredListApi extends BaseApi {
 
         List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(query, from, size, null, null, null, classInfo);
+        return elasticClient.search(query, null, from, size, null, null, null, classInfo);
     }
 
     public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,

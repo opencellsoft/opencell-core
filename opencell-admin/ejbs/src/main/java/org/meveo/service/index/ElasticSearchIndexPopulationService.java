@@ -38,6 +38,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.ISearchable;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -121,10 +122,14 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
 
         // Convert entities to map of values and supplement it with custom field values if applicable and add to a bulk request
-        for (BusinessEntity entity : entities) {
+        for (ISearchable entity : entities) {
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            if(entity instanceof BusinessEntity) {
+                id = ElasticClient.cleanUpCode(entity.getCode());
+            } else {
+                id = ElasticClient.cleanUpCode(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()) + entity.getId());
+            }
 
             Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable);
 
@@ -157,7 +162,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 conversation.isTransient();
                 result = em;
             } catch (Exception e) {
-                log.error("Error happene:", e);
+                log.error("Error occurred: ", e);
             }
         }
 
@@ -173,7 +178,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * @return A map of values
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> convertEntityToJson(BusinessEntity entity, Set<String> cftIndexable, Set<String> cftNotIndexable) {
+    public Map<String, Object> convertEntityToJson(ISearchable entity, Set<String> cftIndexable, Set<String> cftNotIndexable) {
 
         Map<String, Object> jsonValueMap = new HashMap<String, Object>();
 
@@ -182,36 +187,45 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         String fieldNameTo = null;
         String fieldNameFrom = null;
 
+        log.debug("############################################");
+        log.debug("Processing entity: {}", entity);
+
         for (Entry<String, String> fieldInfo : fields.entrySet()) {
 
             fieldNameTo = fieldInfo.getKey();
             fieldNameFrom = fieldInfo.getValue();
 
+            log.debug("Mapping {} to {}", fieldNameFrom, fieldNameTo);
+
             Object value = null;
             try {
                 // Obtain field value from entity
                 if (!fieldNameFrom.contains(".")) {
+                    log.debug("Fetching value of property {}", fieldNameFrom);
                     if (fieldNameFrom.endsWith("()")) {
-                        value = MethodUtils.invokeMethod(value, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
+                        value = MethodUtils.invokeMethod(entity, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
                     } else {
                         value = FieldUtils.readField(entity, fieldNameFrom, true);
                     }
-
+                    log.debug("Value retrieved: {}", value);
                 } else {
                     String[] fieldNames = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
+                        log.debug("Fetching value of property {}", fieldName);
                         if (fieldName.endsWith("()")) {
                             fieldValue = MethodUtils.invokeMethod(fieldValue, fieldName.substring(0, fieldName.length() - 2));
                         } else {
                             fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
                         }
+                        log.debug("Value retrieved: {}", fieldValue);
                         if (fieldValue == null) {
                             break;
                         }
                     }
                     value = fieldValue;
+                    log.debug("Final value retrieved, {}: {}", fieldNameFrom, value);
                 }
 
                 if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
@@ -281,6 +295,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 }
             }
         }
+        log.debug("############################################");
         return jsonValueMap;
     }
 

@@ -306,8 +306,8 @@ public class ElasticClient {
             return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
                 returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         } else {
-            return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
-                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+            return search(paginationConfig.getFullTextFilter(), null, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(),
+                    sortOrder, returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         }
     }
 
@@ -324,8 +324,8 @@ public class ElasticClient {
      * @return Json result
      * @throws BusinessException business exception
      */
-    public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, List<ElasticSearchClassInfo> classInfo)
-            throws BusinessException {
+    public String search(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
+                         List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return "{}";
@@ -360,7 +360,10 @@ public class ElasticClient {
 
         SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
 
-        if (types != null) {
+        if (!StringUtils.isBlank(category)){
+            String[] categories = new String[]{category};
+            reqBuilder.setTypes(categories);
+        } else if (types != null) {
             reqBuilder.setTypes(types.toArray(new String[0]));
         }
 

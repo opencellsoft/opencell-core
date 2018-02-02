@@ -41,6 +41,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BaseEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.rating.EDR;
@@ -91,7 +92,7 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
                 + "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice"),
         @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)") })
-public class RatedTransaction extends BaseEntity {
+public class RatedTransaction extends BaseEntity implements ISearchable {
 
     private static final long serialVersionUID = 1L;
 

@@ -67,4 +67,16 @@ public interface FilteredListRs extends IBaseRs {
     @Path("/reindex")
     @GET
     public Response reindex();
+
+    /**
+     * Execute a search in Elastic Search on all fields (_all field) and all entity types
+     *
+     * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param from Pagination - starting record
+     * @param size Pagination - number of records per page
+     * @return
+     */
+    @Path("/fullSearch")
+    @GET
+    public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
 }

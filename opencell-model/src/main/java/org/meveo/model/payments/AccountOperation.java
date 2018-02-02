@@ -41,6 +41,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -50,6 +51,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
@@ -76,7 +78,7 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
     @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
             + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
             + " and pm.preferred is true and ao.unMatchingAmount <> 0")})
-public class AccountOperation extends EnableEntity implements ICustomFieldEntity {
+public class AccountOperation extends EnableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
 
@@ -168,6 +170,12 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
+
+    @Transient
+    private String code;
+
+    @Transient
+    private String description;
 
     public Date getDueDate() {
         return dueDate;
@@ -411,5 +419,21 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     public void setBankCollectionDate(Date bankCollectionDate) {
         this.bankCollectionDate = bankCollectionDate;
+    }
+
+    public String getCode() {
+        return occCode;
+    }
+
+    public void setCode(String code) {
+        this.occCode = code;
+    }
+
+    public String getDescription() {
+        return occDescription;
+    }
+
+    public void setDescription(String description) {
+        this.occDescription = description;
     }
 }
