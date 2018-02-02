@@ -13,6 +13,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
@@ -33,6 +35,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Table(name = "dwh_report_extract", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "dwh_report_extract_seq"), })
+@NamedQueries(@NamedQuery(name = "ReportExtract.listIds", query = "select re.id from ReportExtract re"))
 public class ReportExtract extends BusinessEntity {
 
     private static final long serialVersionUID = 879663935811446632L;

@@ -3,6 +3,7 @@ package org.meveo.service.finance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,18 +32,27 @@ public class ReportExtractService extends PersistenceService<ReportExtract> {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    @SuppressWarnings("rawtypes")
     public void runReport(ReportExtract entity) throws BusinessException {
+        runReport(entity, null, null);
+    }
+
+    @SuppressWarnings("rawtypes")
+    public void runReport(ReportExtract entity, Date startDate, Date endDate) throws BusinessException {
         Map<String, Object> context = new HashMap<>();
-        if (entity.getParams() != null) {
-            Iterator it = entity.getParams().entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry pair = (Map.Entry) it.next();
-                if (!StringUtils.isBlank(pair.getValue())) {
-                    if (pair.getKey().toString().endsWith("_DATE")) {
-                        context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
-                    } else {
-                        context.put(pair.getKey().toString(), pair.getValue());
+        if (startDate != null || endDate != null) {
+            context.put(ReportExtractScript.START_DATE, startDate);
+            context.put(ReportExtractScript.END_DATE, endDate);
+        } else {
+            if (entity.getParams() != null) {
+                Iterator it = entity.getParams().entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry) it.next();
+                    if (!StringUtils.isBlank(pair.getValue())) {
+                        if (pair.getKey().toString().endsWith("_DATE")) {
+                            context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
+                        } else {
+                            context.put(pair.getKey().toString(), pair.getValue());
+                        }
                     }
                 }
             }
@@ -118,6 +128,11 @@ public class ReportExtractService extends PersistenceService<ReportExtract> {
 
             scriptInstanceService.execute(entity.getScriptInstance().getCode(), context);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<Long> listIds() {
+        return (List<Long>) getEntityManager().createNamedQuery("ReportExtract.listIds").getResultList();
     }
 
 }
