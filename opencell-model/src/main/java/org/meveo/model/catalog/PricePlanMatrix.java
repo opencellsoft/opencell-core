@@ -175,6 +175,10 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "wo_description_el", length = 2000)
     @Size(max = 2000)
     private String woDescriptionEL;
+    
+    @Column(name = "rating_el", length = 2000)
+    @Size(max = 2000)
+    private String ratingEL;
 
     public String getEventCode() {
         return eventCode;
@@ -530,5 +534,13 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 
     public void setWoDescriptionEL(String woDescriptionEL) {
         this.woDescriptionEL = woDescriptionEL;
+    }
+
+    public String getRatingEL() {
+        return ratingEL;
+    }
+
+    public void setRatingEL(String ratingEL) {
+        this.ratingEL = ratingEL;
     }
 }

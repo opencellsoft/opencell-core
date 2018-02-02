@@ -158,7 +158,7 @@ public class Invoice4_2Api extends BaseApi {
 
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
-            invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+            invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
         invoice.setAmountTax(invoiceDTO.getAmountTax());
         invoice.setAmountWithoutTax(invoiceDTO.getAmountWithoutTax());
@@ -319,7 +319,7 @@ public class Invoice4_2Api extends BaseApi {
                 customerInvoiceDto.setAmountTax(invoice.getAmountTax());
                 customerInvoiceDto.setAmountWithTax(invoice.getAmountWithTax());
                 customerInvoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-                customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+                customerInvoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
                 customerInvoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
                 if (invoiceService.isInvoicePdfExist(invoice)) {
@@ -521,7 +521,7 @@ public class Invoice4_2Api extends BaseApi {
         invoiceDto.setAmountTax(invoice.getAmountTax());
         invoiceDto.setAmountWithTax(invoice.getAmountWithTax());
         invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-        invoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+        invoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
         if (invoiceService.isInvoicePdfExist(invoice)) {

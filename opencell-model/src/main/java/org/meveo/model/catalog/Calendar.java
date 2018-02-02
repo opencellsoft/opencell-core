@@ -44,7 +44,8 @@ import org.meveo.model.ObservableEntity;
 @Table(name = "cat_calendar", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "cal_type")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_calendar_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_calendar_seq"), })
 public abstract class Calendar extends BusinessEntity {
 
     private static final long serialVersionUID = 1L;
@@ -88,14 +89,6 @@ public abstract class Calendar extends BusinessEntity {
      */
     public abstract Date nextPeriodStartDate(Date date);
 
-    /**
-     * 
-     * @return true if the dates used in meveo should have time set to 00:00:00 with this calendar
-     */
-    public boolean truncDateTime() {
-        return true;
-    }
-
     public void setCalendarType(String calendarType) {
         this.calendarType = calendarType;
     }
@@ -119,5 +112,16 @@ public abstract class Calendar extends BusinessEntity {
 
     public void setInitDate(Date startDate) {
         this.initDate = startDate;
+    }
+
+    /**
+     * Truncate day and time portion of a date as calendar considers it to be required.<br>
+     * Note: default implementation does not truncate anything
+     * 
+     * @param dateToTruncate Date to be truncated
+     * @return Truncated date
+     */
+    public Date truncateDateTime(Date dateToTruncate) {
+        return dateToTruncate;
     }
 }

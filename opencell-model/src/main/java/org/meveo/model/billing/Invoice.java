@@ -55,6 +55,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
@@ -130,7 +131,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
+    private PaymentMethodEnum paymentMethodType;
 
     @Column(name = "iban", length = 255)
     @Size(max = 255)
@@ -206,6 +207,10 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "pdf_filename", length = 255)
     @Size(max = 255)
     private String pdfFilename;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -293,12 +298,12 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
     }
 
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethod) {
+        this.paymentMethodType = paymentMethod;
     }
 
     public String getIban() {
@@ -663,6 +668,14 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
             return xmlFilename.substring(pos + 1);
         }
         return xmlFilename;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
     public void assignTemporaryInvoiceNumber() {
 

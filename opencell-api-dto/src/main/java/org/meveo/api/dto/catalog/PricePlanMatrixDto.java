@@ -60,6 +60,7 @@ public class PricePlanMatrixDto extends BusinessDto {
     private List<LanguageDescriptionDto> languageDescriptions;
 
     private String woDescriptionEL;
+    private String ratingEL;
 
     public PricePlanMatrixDto() {
 
@@ -109,6 +110,7 @@ public class PricePlanMatrixDto extends BusinessDto {
         customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
         woDescriptionEL = pricePlan.getWoDescriptionEL();
+        ratingEL = pricePlan.getRatingEL();
     }
 
     public String getEventCode() {
@@ -343,5 +345,13 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     public void setWoDescriptionEL(String woDescriptionEL) {
         this.woDescriptionEL = woDescriptionEL;
+    }
+
+    public String getRatingEL() {
+        return ratingEL;
+    }
+
+    public void setRatingEL(String ratingEL) {
+        this.ratingEL = ratingEL;
     }
 }

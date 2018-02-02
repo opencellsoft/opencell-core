@@ -180,7 +180,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         }
 
-        for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
+        List<BillingAccount> listBA = getEntityManager()
+        		.createNamedQuery("BillingAccount.PreInv", BillingAccount.class)
+        		.setParameter("billingRunId", billingRun.getId())
+        		.getResultList();
+        
+        for (BillingAccount billingAccount : listBA) {
             PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
             if (preferedPaymentMethod != null) {
@@ -260,25 +265,28 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         Integer tipInvoicesNumber = 0;
         Integer wiretransferInvoicesNumber = 0;
         Integer creditDebitCardInvoicesNumber = 0;
+        Integer npmInvoicesNumber = 0;
 
         BigDecimal checkAmuontHT = BigDecimal.ZERO;
         BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
         BigDecimal tipAmuontHT = BigDecimal.ZERO;
         BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
         BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
+        BigDecimal npmAmountHT = BigDecimal.ZERO;
 
         BigDecimal checkAmuont = BigDecimal.ZERO;
         BigDecimal directDebitAmuont = BigDecimal.ZERO;
         BigDecimal tipAmuont = BigDecimal.ZERO;
         BigDecimal wiretransferAmuont = BigDecimal.ZERO;
         BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
+        BigDecimal npmAmount = BigDecimal.ZERO;
 
         List<Invoice> invoices = getEntityManager().createNamedQuery("Invoice.byBr", Invoice.class).setParameter("billingRunId", billingRun.getId()).getResultList();
 
         for (Invoice invoice : invoices) {
 
             if (invoice.getAmountWithoutTax() != null && invoice.getAmountWithTax() != null) {
-                switch (invoice.getPaymentMethod()) {
+                switch (invoice.getPaymentMethodType()) {
                 case CHECK:
                     checkInvoicesNumber++;
                     checkAmuontHT = checkAmuontHT.add(invoice.getAmountWithoutTax());
@@ -295,9 +303,16 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                     wiretransferAmuont = wiretransferAmuont.add(invoice.getAmountWithTax());
                     break;
                 case CARD:
+                    // check if card is expired
+                    if (invoice.getPaymentMethod() != null && invoice.getPaymentMethod().isExpired()) {
+                        npmInvoicesNumber++;
+                        npmAmountHT = npmAmountHT.add(invoice.getAmountWithoutTax());
+                        npmAmount = npmAmount.add(invoice.getAmountWithTax());
+                    } else {
                     creditDebitCardInvoicesNumber++;
                     creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
                     creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                    }
                     break;
 
                 default:
@@ -353,6 +368,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         postInvoicingReportsDTO.setTipAmuont(tipAmuont);
         postInvoicingReportsDTO.setTipAmuontHT(tipAmuontHT);
         postInvoicingReportsDTO.setTipInvoicesNumber(tipInvoicesNumber);
+        
         postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
         postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
         postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
@@ -360,6 +376,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         postInvoicingReportsDTO.setCreditDebitCardAmount(creditDebitCardAmount);
         postInvoicingReportsDTO.setCreditDebitCardAmountHT(creditDebitCardAmountHT);
         postInvoicingReportsDTO.setCreditDebitCardInvoicesNumber(creditDebitCardInvoicesNumber);
+        
+        postInvoicingReportsDTO.setNpmAmount(npmAmount);
+        postInvoicingReportsDTO.setNpmAmountHT(npmAmountHT);
+        postInvoicingReportsDTO.setNpmInvoicesNumber(npmInvoicesNumber);        
+        
         postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
 
         return postInvoicingReportsDTO;
@@ -536,6 +557,50 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /**
      * Creates the agregates and invoice.
      * 
+     * @param billingRun the billing run
+     * @param nbRuns the nb runs
+     * @param waitingMillis the waiting millis
+     * @param jobInstanceId the job instance id
+     * @throws BusinessException the business exception
+     */
+    @SuppressWarnings("unchecked")
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {    	
+        //List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
+        //    .getResultList();
+    	
+    	List<Long> billingAccountIds = getBillingAccountIds(billingRun);
+    	
+        SubListCreator subListCreator = null;
+
+        try {
+            subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
+        } catch (Exception e1) {
+            throw new BusinessException("cannot create  agregates and invoice with nbRuns=" + nbRuns);
+        }
+
+        List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        while (subListCreator.isHasNext()) {
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId));
+            try {
+                Thread.sleep(waitingMillis);
+            } catch (InterruptedException e) {
+                log.error("Failed to create agregates and invoice waiting for thread", e);
+                throw new BusinessException(e);
+            }
+        }
+        for (Future<String> futureItsNow : asyncReturns) {
+            try {
+                futureItsNow.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to create agregates and invoice getting future", e);
+                throw new BusinessException(e);
+            }
+        }
+
+    }
+
+    /**
      * @param billingRun billing run
      * @param nbRuns nb of runs
      * @param waitingMillis waiting millis

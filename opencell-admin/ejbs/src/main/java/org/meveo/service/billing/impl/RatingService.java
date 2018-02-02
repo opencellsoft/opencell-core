@@ -331,7 +331,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         Date subscriptionDate = null;
 
         if (chargeInstance instanceof RecurringChargeInstance) {
-            subscriptionDate = ((RecurringChargeInstance) chargeInstance).getServiceInstance().getSubscriptionDate();
+            subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
         }
 
         UserAccount ua = chargeInstance.getUserAccount();
@@ -383,9 +383,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     if (sub != null) {
                         newEdr.setSubscription(sub);
                         log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-                        if (chargeInstance.getAuditable() == null) {
-                            log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-                        } else {
+                        if (chargeInstance.getAuditable() != null) {
                             edrService.create(newEdr);
                         }
                     } else {
@@ -534,8 +532,9 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param walletOperation Wallet operation
      * @param unitPriceWithoutTax Unit price without tax. Used in B2B (provider.isEnterise=true) as base to calculate taxes and price/amount with tax.
      * @param unitPriceWithTax Unit price with tax. Used in B2C (provider.isEnterise=false) as base to calculate taxes and price/amount without tax.
+     * @throws BusinessException 
      */
-    public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) {
+    public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) throws BusinessException {
 
         BigDecimal unitAmountTax = BigDecimal.ZERO;
         BigDecimal amountTax = BigDecimal.ZERO;
@@ -549,8 +548,14 @@ public class RatingService extends BusinessService<WalletOperation> {
         // [B2B] amountWithTax = round(amountWithoutTax) + round(amountTax)
         // Unit prices and taxes are not rounded
         if (appProvider.isEntreprise()) {
-
+            
             priceWithoutTax = walletOperation.getQuantity().multiply(unitPriceWithoutTax);
+            
+            // process ratingEL here
+            if (!StringUtils.isBlank(walletOperation.getPriceplan().getRatingEL())) {
+                priceWithoutTax = new BigDecimal(evaluateDoubleExpression(walletOperation.getPriceplan().getRatingEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
+            }
+            
             if (rounding != null && rounding > 0) {
                 priceWithoutTax = NumberUtils.round(priceWithoutTax, rounding);
             }

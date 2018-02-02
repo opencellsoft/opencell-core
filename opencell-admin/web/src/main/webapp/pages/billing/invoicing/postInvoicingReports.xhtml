@@ -79,68 +79,84 @@
 
 
 
-			<p:fieldset legend="#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}" styleClass="clearLeft">
+			<p:fieldset legend="#{messages['postInvoicingReport.invoicesNumberPerPaymentMode']}" styleClass="clearLeft">				
 
 				<hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
 					field="postInvoicingReports" childField="checkInvoicesNumber"
-					popup="false" displayOneLine="true" />
+					popup="false" displayOneLine="true" componentWidth="20" />
 
 				<hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"
 					field="postInvoicingReports" childField="directDebitInvoicesNumber"
-					popup="false" displayOneLine="true" />
+					popup="false" displayOneLine="true" componentWidth="20" />
 
 				<hftl:formField
 					label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
 					field="postInvoicingReports"
-					childField="wiretransferInvoicesNumber" popup="false" displayOneLine="true" />
+					childField="wiretransferInvoicesNumber" popup="false" displayOneLine="true" componentWidth="20" />
 					
 				<hftl:formField
 					label="#{messages['PaymentMethodEnum.CARD']}"
 					field="postInvoicingReports"
-					childField="creditDebitCardInvoicesNumber" popup="false" displayOneLine="true" />
+					childField="creditDebitCardInvoicesNumber" popup="false" displayOneLine="true" componentWidth="20" />	
 					
-				 </p:fieldset>	 
+				<hftl:formField label="#{messages['PaymentMethodEnum.NO_VALID']}"
+					field="postInvoicingReports" childField="npmInvoicesNumber"
+					popup="false" displayOneLine="true" componentWidth="20" />			
+					
+			 </p:fieldset>	 
 			
-			<p:fieldset legend="#{messages['postInvoicingReport.amoutHtPerPaymentMode']}" styleClass="clearLeft">
+			<p:fieldset legend="#{messages['postInvoicingReport.amoutHtPerPaymentMode']}" styleClass="clearLeft">	
 
 				<hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
 					field="postInvoicingReports" childField="checkAmuontHT"
-					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" />
+					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 
 				<hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"
 					field="postInvoicingReports" childField="directDebitAmuontHT"
-					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" />
+					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 
 				<hftl:formField
 					label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
 					field="postInvoicingReports" childField="wiretransferAmuontHT"
-					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" />
+					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 					
 				<hftl:formField
 					label="#{messages['PaymentMethodEnum.CARD']}"
 					field="postInvoicingReports" childField="creditDebitCardAmountHT"
-					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" />	
+					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
+					
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.NO_VALID']}"
+					field="postInvoicingReports" childField="npmAmountHT"
+					popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />	
 
              </p:fieldset>
+             
 			 <p:fieldset legend="#{messages['postInvoicingReport.amoutTtcPerPaymentMode']}" styleClass="clearLeft">
+					
 				<hftl:formField label="#{messages['PaymentMethodEnum.CHECK']}"
-					field="postInvoicingReports" childField="checkAmuont" popup="false" converter="bigDecimal4DigitsConverter" displayOneLine="true" />
+					field="postInvoicingReports" childField="checkAmuont" popup="false" 
+					converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 
 				<hftl:formField label="#{messages['PaymentMethodEnum.DIRECTDEBIT']}"
 					field="postInvoicingReports" childField="directDebitAmuont"
-					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true"/>
-
+					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 
 				<hftl:formField
 					label="#{messages['PaymentMethodEnum.WIRETRANSFER']}"
 					field="postInvoicingReports" childField="wiretransferAmuont"
-					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true"/>
+					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 					
 				<hftl:formField
 					label="#{messages['PaymentMethodEnum.CARD']}"
 					field="postInvoicingReports" childField="creditDebitCardAmount"
-					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true"/>	
+					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
 					
+				<hftl:formField
+					label="#{messages['PaymentMethodEnum.NO_VALID']}"
+					field="postInvoicingReports" childField="npmAmount"
+					popup="false"  converter="bigDecimal4DigitsConverter" displayOneLine="true" componentWidth="20" />
+										
             </p:fieldset>
 
 		</hftl:formPanel>

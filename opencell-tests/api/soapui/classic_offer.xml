@@ -39626,10 +39626,10 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
 				<emailFrom>bot@opencellsoft.com</emailFrom> 
 				<subject>Create Selfcare account</subject>
 				<emailToEl>#{event.email}</emailToEl>
-				<body>Bonjour, \n
-				Text modifiable\n
-				user name  :  #{event.userName}\n
-				access url :  http://i.meveo.info/meveo/frontend/DEMO/index.html
+				<body>Hello,
+                Your login has been created:
+                user name :  #{event.userName}
+                access url : http://integration.i.opencellsoft.com/opencell/frontend/DEMO/cc/index.html
 				</body> 
 			</emailNotif>
          <notification code="SelfcareRegistration">
