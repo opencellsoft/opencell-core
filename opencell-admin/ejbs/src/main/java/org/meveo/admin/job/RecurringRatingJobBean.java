@@ -22,7 +22,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -60,28 +59,26 @@ public class RecurringRatingJobBean implements Serializable {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
             Date rateUntilDate = null;
-            boolean isToTruncatedToDate = true;
             try {
                 nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUtilDate");
+                rateUntilDate = (Date) customFieldInstanceService.getCFValue(jobInstance, "rateUntilDate");
             } catch (Exception e) {
                 nbRuns = new Long(1);
                 waitingMillis = new Long(0);
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
             if (rateUntilDate == null) {
-                rateUntilDate = DateUtils.addDaysToDate(new Date(), 1);
-            } else {
-                isToTruncatedToDate = false;
+                rateUntilDate = new Date();
             }
-            List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate, isToTruncatedToDate);
+            
+            List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate, false);
             int inputSize = ids.size();
             result.setNbItemsToProcess(inputSize);
-            log.info("in job - charges to rate={}", inputSize);
+            log.info("RecurringRatingJob - charges to rate={}", inputSize);
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());

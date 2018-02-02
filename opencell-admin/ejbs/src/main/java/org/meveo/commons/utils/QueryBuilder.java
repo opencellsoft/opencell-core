@@ -488,17 +488,19 @@ public class QueryBuilder {
         }
         Calendar c = Calendar.getInstance();
         c.setTime(value);
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int date = c.get(Calendar.DATE);
-        c.set(year, month, date, 0, 0, 0);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        
         Date start = c.getTime();
-        c.set(year, month, date, 23, 59, 59);
+        
+        c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
         String endDateParameterName = "end" + field.replace(".", "");
-        return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName,
+        return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName,
             end);
     }
 
@@ -513,10 +515,11 @@ public class QueryBuilder {
         }
         Calendar calFrom = Calendar.getInstance();
         calFrom.setTime(valueFrom);
-        int yearFrom = calFrom.get(Calendar.YEAR);
-        int monthFrom = calFrom.get(Calendar.MONTH);
-        int dateFrom = calFrom.get(Calendar.DATE);
-        calFrom.set(yearFrom, monthFrom, dateFrom, 0, 0, 0);
+        calFrom.set(Calendar.HOUR_OF_DAY, 0);
+        calFrom.set(Calendar.MINUTE, 0);
+        calFrom.set(Calendar.SECOND, 0);
+        calFrom.set(Calendar.MILLISECOND, 0);
+        
         Date start = calFrom.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
@@ -534,14 +537,16 @@ public class QueryBuilder {
         }
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
-        int yearTo = calTo.get(Calendar.YEAR);
-        int monthTo = calTo.get(Calendar.MONTH);
-        int dateTo = calTo.get(Calendar.DATE);
-        calTo.set(yearTo, monthTo, dateTo, 23, 59, 59);
+        calTo.add(Calendar.DATE, 1);
+        calTo.set(Calendar.HOUR_OF_DAY, 0);
+        calTo.set(Calendar.MINUTE, 0);
+        calTo.set(Calendar.SECOND, 0);
+        calTo.set(Calendar.MILLISECOND, 0);
+        
         Date end = calTo.getTime();
 
         String endDateParameterName = "end" + field.replace(".", "");
-        return addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName, end);
+        return addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName, end);
     }
 
     /**

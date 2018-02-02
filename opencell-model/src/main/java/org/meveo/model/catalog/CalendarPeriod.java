@@ -26,6 +26,7 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Transient;
 
 @Entity
 @DiscriminatorValue("PERIOD")
@@ -47,6 +48,12 @@ public class CalendarPeriod extends Calendar {
 
     @Column(name = "nb_periods")
     private Integer nbPeriods = 0;
+
+    /**
+     * The last date/time unit to preserve when truncating the date. E.g. setting to DAY_OF_MONTH will set time to 0. Setting it to SECOND will not truncate date at all.
+     */
+    @Transient
+    private Integer lastUnitInDateTruncate = java.util.Calendar.SECOND;
 
     public Integer getPeriodLength() {
         return periodLength;
@@ -70,6 +77,14 @@ public class CalendarPeriod extends Calendar {
 
     public void setNbPeriods(Integer nbPeriods) {
         this.nbPeriods = nbPeriods;
+    }
+
+    public Integer getLastUnitInDateTruncate() {
+        return lastUnitInDateTruncate;
+    }
+
+    public void setLastUnitInDateTruncate(Integer lastUnitInDateTruncate) {
+        this.lastUnitInDateTruncate = lastUnitInDateTruncate;
     }
 
     /**
@@ -101,6 +116,7 @@ public class CalendarPeriod extends Calendar {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
+                truncateDateTime(calendar);
                 return calendar.getTime();
             }
 
@@ -129,10 +145,6 @@ public class CalendarPeriod extends Calendar {
             nbPeriods = 0;
         }
 
-        // Date cleanDate = DateUtils.truncate(getInitDate(), java.util.Calendar.DAY_OF_MONTH);
-        // GregorianCalendar calendar = new GregorianCalendar();
-        // calendar.setTime(cleanDate);
-
         GregorianCalendar calendar = new GregorianCalendar();
         calendar.setTime(getInitDate());
 
@@ -141,7 +153,7 @@ public class CalendarPeriod extends Calendar {
             Date oldDate = calendar.getTime();
             calendar.add(periodUnit, periodLength);
             if (date.compareTo(oldDate) >= 0 && date.compareTo(calendar.getTime()) < 0) {
-                return oldDate;
+                return truncateDateTime(oldDate);
             }
 
             i++;
@@ -165,5 +177,74 @@ public class CalendarPeriod extends Calendar {
 
     public static boolean isValidPeriodUnit(Integer unit) {
         return VALID_PERIOD_UNITS.contains(unit);
+    }
+
+    @Override
+    public Date truncateDateTime(Date dateToTruncate) {
+
+        // No truncation is needed
+        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.SECOND) {
+            return dateToTruncate;
+        }
+
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(dateToTruncate);
+        truncateDateTime(calendar);
+
+        return calendar.getTime();
+    }
+
+    /**
+     * Truncates day and time portion of a date based on truncation unit set
+     * 
+     * @param calendar Date as calendar to truncate
+     */
+    private void truncateDateTime(GregorianCalendar calendar) {
+
+        // No truncation is needed
+        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.SECOND) {
+            return;
+        }
+
+        calendar.set(java.util.Calendar.MILLISECOND, 0);
+
+        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.DAY_OF_MONTH) {
+            calendar.set(java.util.Calendar.HOUR_OF_DAY, 0);
+        }
+        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.DAY_OF_MONTH || lastUnitInDateTruncate.intValue() == java.util.Calendar.HOUR_OF_DAY) {
+
+            calendar.set(java.util.Calendar.MINUTE, 0);
+        }
+        if (lastUnitInDateTruncate.intValue() == java.util.Calendar.DAY_OF_MONTH || lastUnitInDateTruncate.intValue() == java.util.Calendar.HOUR_OF_DAY
+                || lastUnitInDateTruncate.intValue() == java.util.Calendar.MINUTE) {
+            calendar.set(java.util.Calendar.SECOND, 0);
+        }
+
+    }
+
+    @Override
+    public void setInitDate(Date startDate) {
+        initializeTruncateDateToUnit();
+        super.setInitDate(truncateDateTime(startDate));
+    }
+
+    /**
+     * Initialize truncate date to unit value based on granularity of period
+     */
+    private void initializeTruncateDateToUnit() {
+        if (lastUnitInDateTruncate == null) {
+            if (periodUnit.intValue() == java.util.Calendar.MONTH || periodUnit.intValue() == java.util.Calendar.DAY_OF_MONTH) {
+                lastUnitInDateTruncate = java.util.Calendar.DAY_OF_MONTH;
+
+            } else if (periodUnit.intValue() == java.util.Calendar.HOUR_OF_DAY) {
+                lastUnitInDateTruncate = java.util.Calendar.HOUR_OF_DAY;
+
+            } else if (periodUnit.intValue() == java.util.Calendar.MINUTE) {
+                lastUnitInDateTruncate = java.util.Calendar.MINUTE;
+
+            } else if (periodUnit.intValue() == java.util.Calendar.SECOND) {
+                lastUnitInDateTruncate = java.util.Calendar.SECOND;
+            }
+        }
     }
 }
