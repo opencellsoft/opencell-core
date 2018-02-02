@@ -177,7 +177,7 @@ public class PaymentApi extends BaseApi {
                 paymentDto.setPaymentMethod(p.getPaymentMethod());
                 paymentDto.setReference(p.getReference());
                 paymentDto.setTransactionDate(p.getTransactionDate());
-                paymentDto.setPaymentOrder(p.getOrderNumber());
+                paymentDto.setPaymentOrder(p.getPaymentOrder());
                 paymentDto.setFees(p.getFees());
                 paymentDto.setComment(p.getComment());
                 paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
