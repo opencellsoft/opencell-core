@@ -1529,4 +1529,10 @@
         </addColumn>   
     </changeSet>
     
+    <changeSet id="#2449_20180125" author="">
+    	<addColumn tableName="cat_price_plan_matrix">
+            <column name="rating_el" type="varchar(2000)"  />           
+        </addColumn>
+	</changeSet>
+    
 </databaseChangeLog> 
