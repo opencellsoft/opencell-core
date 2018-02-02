@@ -180,7 +180,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         }
 
-        for (BillingAccount billingAccount : billingRun.getBillableBillingAccounts()) {
+        List<BillingAccount> listBA = getEntityManager()
+        		.createNamedQuery("BillingAccount.PreInv", BillingAccount.class)
+        		.setParameter("billingRunId", billingRun.getId())
+        		.getResultList();
+        
+        for (BillingAccount billingAccount : listBA) {
             PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
             if (preferedPaymentMethod != null) {
@@ -563,9 +568,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
-        List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
-            .getResultList();
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis) throws BusinessException {    	
+        //List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
+        //    .getResultList();
+    	
+    	List<Long> billingAccountIds = getBillingAccountIds(billingRun);
+    	
         SubListCreator subListCreator = null;
 
         try {
