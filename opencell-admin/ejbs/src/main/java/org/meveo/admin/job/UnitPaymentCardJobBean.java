@@ -43,8 +43,7 @@ public class UnitPaymentCardJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
 
     public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway) {
-        log.debug("Running with RecordedInvoice ID={}", aoId);
-
+        log.debug("Running with RecordedInvoice ID={}", aoId);       
         AccountOperation accountOperation = null;
         try {
             accountOperation = accountOperationService.findById(aoId);
@@ -54,18 +53,19 @@ public class UnitPaymentCardJobBean {
             List<Long> listAOids = new ArrayList<>();
             listAOids.add(aoId);
             PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
-            if (operationCategory == OperationCategoryEnum.CREDIT) {
+            if (operationCategory == OperationCategoryEnum.CREDIT) {               
                 doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO,paymentGateway);
-            } else {
+            } else {                
                 doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
                     accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO,paymentGateway);
             }
-            if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.PENDING == doPaymentResponseDto.getPaymentStatus()) {
-                result.registerSucces();
-            } else {
+            if ( PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
                 result.registerError(aoId, doPaymentResponseDto.getErrorMessage());
                 result.addReport("AccountOperation id : " + aoId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
+            } else {
+                result.registerSucces();
+
             }
 
         } catch (Exception e) {

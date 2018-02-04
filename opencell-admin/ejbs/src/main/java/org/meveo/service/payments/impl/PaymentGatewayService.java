@@ -30,6 +30,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      * @throws BusinessException the business exception
      */
     // TODO paymentRun return gateway by CA, EL, Priority,.....
+    @SuppressWarnings("unchecked")
     public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod) throws BusinessException {
         PaymentGateway paymentGateway = null;
         if (paymentMethod == null) {

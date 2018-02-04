@@ -19,19 +19,12 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
-
 import org.meveo.model.payments.OperationCategoryEnum;
-
 import org.meveo.model.payments.PaymentGateway;
-
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-
 import org.meveo.service.payments.impl.AccountOperationService;
-
 import org.meveo.service.payments.impl.PaymentGatewayService;
-import org.meveo.service.payments.impl.RecordedInvoiceService;
-
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
@@ -76,6 +69,7 @@ public class PaymentCardJobBean {
                 paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_paymentGateway")).getCode());
             }
             try {
+                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_creditOrDebit")).toUpperCase());
                 nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
@@ -92,10 +86,10 @@ public class PaymentCardJobBean {
 
 
             List<Long> ids = new ArrayList<Long>();
-            if (OperationCategoryEnum.CREDIT == operationCategory) {
-                ids = accountOperationService.getAOidsToPay(PaymentMethodEnum.CARD);
-            } else {
-                ids = accountOperationService.getAOidsToRefund(PaymentMethodEnum.CARD);
+            if (OperationCategoryEnum.CREDIT == operationCategory) {                
+                ids = accountOperationService.getAOidsToPay(PaymentMethodEnum.CARD);               
+            } else {               
+                ids = accountOperationService.getAOidsToRefund(PaymentMethodEnum.CARD);                               
             }
 
             log.debug("AO to pay:" + ids.size());
