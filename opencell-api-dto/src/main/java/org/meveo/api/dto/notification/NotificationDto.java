@@ -36,6 +36,7 @@ public class NotificationDto extends BusinessDto {
     private Map<String,String> scriptParams = new HashMap<String,String>();
 	private String counterTemplate;
 	private int priority;
+	private Boolean active = null;
 
 	public NotificationDto() {
 
@@ -131,5 +132,13 @@ public class NotificationDto extends BusinessDto {
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
+
+    public Boolean isActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 
 }

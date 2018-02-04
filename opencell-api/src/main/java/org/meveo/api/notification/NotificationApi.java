@@ -98,7 +98,12 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
         notif.setPriority(postData.getPriority());
-
+        if(postData.isActive() != null) {
+            notif.setActive(postData.isActive());
+        } else {
+            notif.setActive(true);
+        }
+        
         notificationService.create(notif);
 
         return notif;
@@ -175,6 +180,9 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
         notif.setPriority(postData.getPriority());
+        if(postData.isActive() != null) {
+            notif.setActive(postData.isActive());
+        }
 
         notif = notificationService.update(notif);
 
