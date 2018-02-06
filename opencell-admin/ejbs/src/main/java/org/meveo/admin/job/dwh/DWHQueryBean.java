@@ -12,6 +12,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -98,6 +99,7 @@ public class DWHQueryBean {
                 if (mq.getLastMeasureDate() == null) {
                     mq.setLastMeasureDate(mq.getPreviousDate(toDate));
                 }
+                EntityManager em=entityManagerProvider.getEntityManager();
                 while (mq.getNextMeasureDate().before(toDate)) {
                     log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}", mq.getSqlQuery(), mq.getNextMeasureDate(), mq.getLastMeasureDate());
                     String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getLastMeasureDate()));
@@ -105,7 +107,7 @@ public class DWHQueryBean {
                     queryStr = queryStr.replaceAll("#\\{nextDate\\}", df.format(mq.getNextMeasureDate()));
                     queryStr = queryStr.replaceAll("#\\{nextDateTime\\}", tf.format(mq.getNextMeasureDate()));
                     log.debug("execute query:{}", queryStr);
-                    Query query = entityManagerProvider.getEntityManager().createNativeQuery(queryStr);
+                    Query query = em.createNativeQuery(queryStr);
                     @SuppressWarnings("unchecked")
                     List<Object> results = query.getResultList();
                     for (Object res : results) {
