@@ -84,8 +84,7 @@ public class JobInstance extends BusinessCFEntity {
     @Column(name = "run_on_nodes", length = 255)
     @Size(max = 255)
     private String runOnNodes;
-    
-    
+
     @Column(name = "provider", length = 255)
     @Size(max = 255)
     private String provider;
@@ -231,13 +230,12 @@ public class JobInstance extends BusinessCFEntity {
             jobCategoryEnum, timerEntity, followingJob != null ? followingJob.getCode() : null);
     }
 
-	public String getProvider() {
-		return provider;
-	}
+    public String getProvider() {
+        return provider;
+    }
 
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
-    
-    
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
 }

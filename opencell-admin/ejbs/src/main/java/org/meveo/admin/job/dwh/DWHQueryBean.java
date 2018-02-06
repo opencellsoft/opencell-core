@@ -39,7 +39,7 @@ public class DWHQueryBean {
 
     @Inject
     private EntityManagerProvider entityManagerProvider;
-    
+
     @Inject
     private Logger log;
 
@@ -92,7 +92,7 @@ public class DWHQueryBean {
                 result.registerError("Measurable quantity with code " + measurableQuantityCode + " has no SQL query set.");
                 log.info("Measurable quantity with code {} has no SQL query set.", measurableQuantityCode);
                 continue;
-            } 
+            }
 
             try {
                 if (mq.getLastMeasureDate() == null) {

@@ -33,7 +33,7 @@ public class CurrentUserProvider {
 
     @Resource
     private SessionContext ctx;
-    
+
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
@@ -42,29 +42,28 @@ public class CurrentUserProvider {
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    public void forceAuthentication(String currentUserUserName,String providerCode) {
-      log.debug("forceAuthentication currentUserUserName={},forcedProvider={}",currentUserUserName,providerCode);
-      this.forcedProvider = providerCode;
+    public void forceAuthentication(String currentUserUserName, String providerCode) {
+        log.debug("forceAuthentication currentUserUserName={},forcedProvider={}", currentUserUserName, providerCode);
+        this.forcedProvider = providerCode;
         // Current user is already authenticated, can't overwrite it
-        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal ) {
+        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             log.info("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
         this.forcedUserUsername = currentUserUserName;
-       
+
     }
-    
+
     public String getCurrentUserProviderCode() {
-    	String providerCode=null;
-    	 if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedProvider != null) {
-    		 providerCode= forcedProvider;
-    	  }else{
-    		  providerCode=  MeveoUserKeyCloakImpl.extractProviderCode(ctx);
-    	  }
-    	 log.debug("getCurrentUserProviderCode providerCode={},forcedUserUsername={}",providerCode,forcedUserUsername);
-    	return providerCode;
-    	
-    	
+        String providerCode = null;
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedProvider != null) {
+            providerCode = forcedProvider;
+        } else {
+            providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+        }
+        log.debug("getCurrentUserProviderCode providerCode={},forcedUserUsername={}", providerCode, forcedUserUsername);
+        return providerCode;
+
     }
 
     /**
@@ -80,13 +79,13 @@ public class CurrentUserProvider {
 
         // User was forced authenticated, so need to lookup the rest of user information
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername,forcedProvider, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, forcedProvider, getAdditionalRoles(username, em), getRoleToPermissionMapping(em));
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null,null, getAdditionalRoles(username,em), getRoleToPermissionMapping(em));
+            user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(em));
         }
-        log.info("getCurrentUser username={},forcedUserUsername={},providerCode={},em={}",username,forcedUserUsername,user!=null?user.getProviderCode():null,em);
-        supplementOrCreateUserInApp(user,em);
+        log.info("getCurrentUser username={},forcedUserUsername={},providerCode={},em={}", username, forcedUserUsername, user != null ? user.getProviderCode() : null, em);
+        supplementOrCreateUserInApp(user, em);
 
         log.trace("Current user is {}", user);
         return user;
@@ -97,7 +96,7 @@ public class CurrentUserProvider {
      * 
      * @param currentUser Authenticated current user
      */
-    private void supplementOrCreateUserInApp(MeveoUser currentUser,EntityManager em) {
+    private void supplementOrCreateUserInApp(MeveoUser currentUser, EntityManager em) {
 
         // Takes care of anonymous users
         if (currentUser.getUserName() == null) {
@@ -138,7 +137,7 @@ public class CurrentUserProvider {
                 em.persist(user);
                 em.flush();
                 log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
-         
+
             } catch (ContextNotActiveException e) {
                 log.error("No session context={}", e.getMessage());
             }
@@ -194,7 +193,7 @@ public class CurrentUserProvider {
      * @param username Username to check
      * @return A set of role names that given username has in application
      */
-    private Set<String> getAdditionalRoles(String username,EntityManager em) {
+    private Set<String> getAdditionalRoles(String username, EntityManager em) {
 
         // Takes care of anonymous users
         if (username == null) {

@@ -87,8 +87,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     private ParamBean paramBean = ParamBean.getInstance();
 
-
-
     @Inject
     private ElasticClient elasticClient;
 
@@ -120,13 +118,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
-    
+
     @Inject
     ProviderRegistry providerRegistry;
-    
-    
+
     @Inject
-    EntityManagerProvider entityManagerProvider; 
+    EntityManagerProvider entityManagerProvider;
 
     /**
      * Constructor.
@@ -296,8 +293,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        entity = findById((Long)entity.getId());
-        if(entity!=null){
+        entity = findById((Long) entity.getId());
+        if (entity != null) {
             getEntityManager().remove(entity);
             if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
                 entityRemovedEventProducer.fire((BaseEntity) entity);
@@ -323,7 +320,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
                 }
             }
         }
-
 
         log.trace("end of remove {} entity (id={}).", getEntityClass().getSimpleName(), entity.getId());
     }
@@ -549,10 +545,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public E refreshOrRetrieve(E entity) {
 
-        if (entity == null){
+        if (entity == null) {
             return null;
         }
-        
+
         if (getEntityManager().contains(entity)) {
             log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);
@@ -987,8 +983,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-
-
     public void updateAudit(E e) {
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
@@ -1014,9 +1008,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
         return q.getResultList();
     }
-    
-   
+
     public EntityManager getEntityManager() {
-    	return entityManagerProvider.getEntityManager();
+        return entityManagerProvider.getEntityManager();
     }
 }

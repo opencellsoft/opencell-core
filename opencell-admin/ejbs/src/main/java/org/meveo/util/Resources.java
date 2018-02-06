@@ -28,11 +28,11 @@ import javax.persistence.PersistenceUnit;
 
 public class Resources {
 
-//    @ExtensionManaged
-//    @RequestScoped
-//    @Produces
+    // @ExtensionManaged
+    // @RequestScoped
+    // @Produces
     @PersistenceUnit(unitName = "MeveoAdmin")
-//    @MeveoJpa
+    // @MeveoJpa
     private EntityManagerFactory emf;
 
     @Produces

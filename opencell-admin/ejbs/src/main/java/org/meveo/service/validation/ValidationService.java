@@ -20,8 +20,6 @@ package org.meveo.service.validation;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
@@ -32,18 +30,16 @@ import org.meveo.service.base.EntityManagerProvider;
  * @created Jan 5, 2011
  * 
  */
-@Stateless 
+@Stateless
 public class ValidationService {
 
-	@Inject
-	EntityManagerProvider entityManagerProvider;
-	
+    @Inject
+    EntityManagerProvider entityManagerProvider;
 
-	/**
-	 * @see org.meveo.service.validation.ValidationServiceLocal#validateUniqueField(java.lang.String,
-	 *      java.lang.String, java.lang.String, java.lang.Object)
-	 */
-	public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
+    /**
+     * @see org.meveo.service.validation.ValidationServiceLocal#validateUniqueField(java.lang.String, java.lang.String, java.lang.String, java.lang.Object)
+     */
+    public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
 
         className = ReflectionUtils.getCleanClassName(className);
 
@@ -56,8 +52,8 @@ public class ValidationService {
                 (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, id);
         }
         Query query = entityManagerProvider.getEntityManager().createQuery(queryString);
-		long count = (Long) query.getSingleResult();
-		return count == 0L;
-	}
+        long count = (Long) query.getSingleResult();
+        return count == 0L;
+    }
 
 }

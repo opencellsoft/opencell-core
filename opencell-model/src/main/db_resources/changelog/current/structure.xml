@@ -1496,7 +1496,7 @@
 
     </changeSet>
     
-      <changeSet id="#multitenant_20170105" author="Mbarek">
+      <changeSet id="#2894_20180129" author="smichea">
         <addColumn tableName="meveo_job_instance">
             <column name="provider" type="varchar(255)"></column>
         </addColumn>

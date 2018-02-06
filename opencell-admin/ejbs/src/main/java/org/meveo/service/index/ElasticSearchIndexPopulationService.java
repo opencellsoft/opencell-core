@@ -58,7 +58,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     private static final long serialVersionUID = 6177817839276664632L;
 
- 
     @Inject
     private EntityManagerProvider entityManagerProvider;
 
@@ -138,12 +137,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return found;
     }
 
- 
-    
-    
-	    public EntityManager getEntityManager() {
-	    return entityManagerProvider.getEntityManager();
-	    }
+    public EntityManager getEntityManager() {
+        return entityManagerProvider.getEntityManager();
+    }
 
     /**
      * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed
@@ -227,10 +223,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         }
 
         // Set custom field values if applicable
-        if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues()!=null) {
+        if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null) {
 
             ICustomFieldEntity cfEntity = (ICustomFieldEntity) entity;
-            
+
             for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfEntity.getCfValues().getValuesByCode().entrySet()) {
 
                 if (cfValueInfo.getValue().isEmpty()) {
