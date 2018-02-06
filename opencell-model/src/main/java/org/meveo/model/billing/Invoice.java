@@ -636,10 +636,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
      * @return PDF file name without any subdirectories it might contain.
      */
     public String getPdfFilenameOnly() {
-
-        int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
-        if (pos > -1) {
-            return pdfFilename.substring(pos + 1);
+        if (pdfFilename != null) {
+            int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
+            if (pos > -1) {
+                return pdfFilename.substring(pos + 1);
+            }
         }
         return pdfFilename;
     }
@@ -662,10 +663,12 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
      * 
      * @return XML file name without any subdirectories it might contain.
      */
-    public String getXmlFilenameOnly() {	
-        int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
-        if (pos > -1) {
-            return xmlFilename.substring(pos + 1);
+    public String getXmlFilenameOnly() {
+        if (xmlFilename != null) {
+            int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
+            if (pos > -1) {
+                return xmlFilename.substring(pos + 1);
+            }
         }
         return xmlFilename;
     }
