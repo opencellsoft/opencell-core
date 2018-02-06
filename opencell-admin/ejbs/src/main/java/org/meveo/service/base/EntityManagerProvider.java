@@ -33,7 +33,7 @@ import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 
 @Stateless
-public class EntityManagerProvider{
+public class EntityManagerProvider {
     @Inject
     @MeveoJpa
     private EntityManager em;
@@ -44,44 +44,42 @@ public class EntityManagerProvider{
 
     @Inject
     private Conversation conversation;
-    
+
     @Inject
     ProviderRegistry providerRegistry;
-    
+
     @Inject
     @CurrentUser
     MeveoUser currentUser;
-    
-    
+
     private EntityManager currentEntityManager;
-    
+
     public EntityManager getEntityManager() {
-    	final String currentProvider = currentUser!=null?currentUser.getProviderCode():null;
-    	return getEntityManager(currentProvider);
+        final String currentProvider = currentUser != null ? currentUser.getProviderCode() : null;
+        return getEntityManager(currentProvider);
     }
-    
+
     public EntityManager getEntityManager(String currentProvider) {
-    	String isMultiTenancyActive=ParamBean.getInstance().getProperty("meveo.multiTenancy", "false"); 
-    	currentEntityManager = getDefaultEntityManager();
-    	if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
-    		
-    		if (conversation != null) {
-    			try {
-    				conversation.isTransient();
-    				currentEntityManager =providerRegistry.createEntityManager(currentProvider);
-    			} catch (Exception e) {
-    			}
-    		}else{
-    			currentEntityManager = providerRegistry.createEntityManagerForJobs(currentProvider);
-    		}
-    	}
-    	return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[]{EntityManager.class},
-    			(proxy, method, args) -> {
-    				currentEntityManager.joinTransaction();
-    				return method.invoke(currentEntityManager, args);
-    			});
+        String isMultiTenancyActive = ParamBean.getInstance().getProperty("meveo.multiTenancy", "false");
+        currentEntityManager = getDefaultEntityManager();
+        if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
+
+            if (conversation != null) {
+                try {
+                    conversation.isTransient();
+                    currentEntityManager = providerRegistry.createEntityManager(currentProvider);
+                } catch (Exception e) {
+                }
+            } else {
+                currentEntityManager = providerRegistry.createEntityManagerForJobs(currentProvider);
+            }
+        }
+        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+            currentEntityManager.joinTransaction();
+            return method.invoke(currentEntityManager, args);
+        });
     }
-    
+
     private EntityManager getDefaultEntityManager() {
         EntityManager result = emfForJobs;
         if (conversation != null) {

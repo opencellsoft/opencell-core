@@ -41,80 +41,70 @@ import org.slf4j.LoggerFactory;
 @Startup
 public class ProviderRegistry {
 
-   
-	@Inject
-	private ProviderService providerService;
-	  
- 
-    
+    @Inject
+    private ProviderService providerService;
+
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-multiTenant-cache")
-    private  Cache<String, EntityManagerFactory> entityManagerFactories;
+    private Cache<String, EntityManagerFactory> entityManagerFactories;
 
-    private Logger log = LoggerFactory.getLogger(this.getClass());  
-    
-    private static Map<String, EntityManager> entityManagers=new HashMap<>();
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static Map<String, EntityManager> entityManagers = new HashMap<>();
 
     @PostConstruct
     protected void init() {
         final List<Provider> providers = providerService.list();
-       log.info("Loaded {} providers from DB.", providers.size());
+        log.info("Loaded {} providers from DB.", providers.size());
         providers.forEach(provider -> {
             final EntityManagerFactory emf = createEntityManagerFactory(provider);
-            addEntityManagerFactoryToCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD),emf,provider);
+            addEntityManagerFactoryToCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD), emf, provider);
             log.info("Provider " + provider.getCode() + " loaded.");
         });
     }
-    
-    @Asynchronous
-    public void addEntityManagerFactoryToCache(String cacheName,EntityManagerFactory entityManagerFactory, Provider provider) {
-        if (cacheName == null || cacheName.equals(entityManagerFactories.getName()) || cacheName.contains(entityManagerFactories.getName())) {
-        	log.info("EntityManagerFactory Processing CacheContainerProvider initializing...");
-        	entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(provider.getCode(), entityManagerFactory);
-        } 
-    } 
-    
-    
-    public void removeEntityManagerFactoryFromCache(Provider provider) {
-    	log.trace("Removing entityManagerFactory for provider {}", provider.getId());
-    	String cacheKey = provider.getCode();
-    	EntityManagerFactory entityManagerFactory = entityManagerFactories.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
 
-    	if (entityManagerFactory != null) {  
-    		entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
-    	} else {
-    		entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, entityManagerFactory);
-    	}
-    	log.info("Removed entityMangerFactory for provider {}, entityManagerFactories count={}", provider.getId(),entityManagerFactories.size());
+    @Asynchronous
+    public void addEntityManagerFactoryToCache(String cacheName, EntityManagerFactory entityManagerFactory, Provider provider) {
+        if (cacheName == null || cacheName.equals(entityManagerFactories.getName()) || cacheName.contains(entityManagerFactories.getName())) {
+            log.info("EntityManagerFactory Processing CacheContainerProvider initializing...");
+            entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(provider.getCode(), entityManagerFactory);
+        }
     }
- 
-    
+
+    public void removeEntityManagerFactoryFromCache(Provider provider) {
+        log.trace("Removing entityManagerFactory for provider {}", provider.getId());
+        String cacheKey = provider.getCode();
+        EntityManagerFactory entityManagerFactory = entityManagerFactories.getAdvancedCache().withFlags(Flag.FORCE_WRITE_LOCK).get(cacheKey);
+
+        if (entityManagerFactory != null) {
+            entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(cacheKey);
+        } else {
+            entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, entityManagerFactory);
+        }
+        log.info("Removed entityMangerFactory for provider {}, entityManagerFactories count={}", provider.getId(), entityManagerFactories.size());
+    }
+
     private EntityManagerFactory createEntityManagerFactory(Provider provider) {
         Map<String, String> props = new TreeMap<>();
-       log.info("provider code : "+provider.getCode());
-       
-        props.put("hibernate.default_schema", provider.getCode()); 
-        return Persistence.createEntityManagerFactory("MeveoAdminMultiTenant", props);
-   }
-    
+        log.info("provider code : " + provider.getCode());
 
-    public EntityManager createEntityManager(String providerCode){
-    	return entityManagerFactories.get(providerCode).createEntityManager();
+        props.put("hibernate.default_schema", provider.getCode());
+        return Persistence.createEntityManagerFactory("MeveoAdminMultiTenant", props);
     }
-    
-   
-    public EntityManager createEntityManagerForJobs(String providerCode){ 
-    	EntityManager entityManager =null;
-    	if(entityManagers.containsKey(providerCode)){
-    		entityManager=entityManagers.get(providerCode);
-    	}
-    	if((entityManager==null || !entityManager.isOpen()) && entityManagerFactories.containsKey(providerCode)){
-    		entityManager=entityManagerFactories.get(providerCode).createEntityManager();
-    		entityManagers.put(providerCode, entityManager);
-    	}
-    	return entityManager;
+
+    public EntityManager createEntityManager(String providerCode) {
+        return entityManagerFactories.get(providerCode).createEntityManager();
     }
-    
-    
-    
+
+    public EntityManager createEntityManagerForJobs(String providerCode) {
+        EntityManager entityManager = null;
+        if (entityManagers.containsKey(providerCode)) {
+            entityManager = entityManagers.get(providerCode);
+        }
+        if ((entityManager == null || !entityManager.isOpen()) && entityManagerFactories.containsKey(providerCode)) {
+            entityManager = entityManagerFactories.get(providerCode).createEntityManager();
+            entityManagers.put(providerCode, entityManager);
+        }
+        return entityManager;
+    }
+
 }

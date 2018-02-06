@@ -21,7 +21,6 @@ package org.meveo.service.crm.impl;
 import java.lang.reflect.InvocationTargetException;
 
 import javax.ejb.Stateless;
-import javax.enterprise.context.RequestScoped;
 import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
@@ -47,17 +46,15 @@ public class ProviderService extends PersistenceService<Provider> {
 
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
-    
+
     @Inject
     private ProviderRegistry providerRegistry;
-    
+
     @Inject
     private CurrentUserProvider currentUserProvider;
-    
+
     @Inject
     EntityManagerProvider entityManagerProvider;
-    
-    
 
     public Provider getProvider() {
 
@@ -84,7 +81,7 @@ public class ProviderService extends PersistenceService<Provider> {
         super.remove(provider);
         providerRegistry.removeEntityManagerFactoryFromCache(provider);
     }
-    
+
     @Override
     public Provider update(Provider provider) throws BusinessException {
         provider = super.update(provider);
@@ -121,7 +118,10 @@ public class ProviderService extends PersistenceService<Provider> {
     public void refreshAppProvider() {
         refreshAppProvider(getProvider());
     }
-    /** produce a current user
+
+    /**
+     * produce a current user
+     * 
      * @return
      */
     @Produces
@@ -129,11 +129,10 @@ public class ProviderService extends PersistenceService<Provider> {
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
-    	String providerCode=currentUserProvider.getCurrentUserProviderCode();
-    	EntityManager em=entityManagerProvider.getEntityManager(providerCode);
-    	MeveoUser meveoUser =currentUserProvider.getCurrentUser(em);
-    	return meveoUser;
+        String providerCode = currentUserProvider.getCurrentUserProviderCode();
+        EntityManager em = entityManagerProvider.getEntityManager(providerCode);
+        MeveoUser meveoUser = currentUserProvider.getCurrentUser(em);
+        return meveoUser;
     }
-    
-   
+
 }

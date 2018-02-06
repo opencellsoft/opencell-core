@@ -159,7 +159,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     @Override
     public void create(JobInstance jobInstance) throws BusinessException {
-    	jobInstance.setProvider(currentUser.getProviderCode());
+        jobInstance.setProvider(currentUser.getProviderCode());
         super.create(jobInstance);
         jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
         scheduleJob(jobInstance, null);
@@ -169,7 +169,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     @Override
     public JobInstance update(JobInstance jobInstance) throws BusinessException {
-    	jobInstance.setProvider(currentUser.getProviderCode());
+        jobInstance.setProvider(currentUser.getProviderCode());
         super.update(jobInstance);
         jobCacheContainerProvider.addUpdateJobInstance(jobInstance.getId());
         scheduleUnscheduleJob(jobInstance);

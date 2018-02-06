@@ -146,7 +146,6 @@ public class EntityExportImportService implements Serializable {
     // How many pages of PAGE_SIZE to group into one export chunk
     private static final int EXPORT_PAGE_SIZE = 5;
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
- 
 
     @Inject
     @CurrentUser
@@ -194,7 +193,7 @@ public class EntityExportImportService implements Serializable {
     private EntityExportImportService entityExportImportService;
 
     private Map<String, ExportTemplate> exportImportTemplates;
-    
+
     @Inject
     EntityManagerProvider entityManagerFactory;
 
@@ -350,8 +349,6 @@ public class EntityExportImportService implements Serializable {
         }
     }
 
-
-
     /**
      * Obtain entity manager for import operations in case want to import to another DB
      * 
@@ -360,9 +357,9 @@ public class EntityExportImportService implements Serializable {
     private EntityManager getEntityManagerForImport() {
         return getEntityManager();
     }
-    
+
     public EntityManager getEntityManager() {
-    	return entityManagerFactory.getEntityManager();
+        return entityManagerFactory.getEntityManager();
     }
 
     /**

@@ -61,9 +61,9 @@ public class CustomFieldInstanceService extends BaseService {
 
     @Inject
     private ProviderService providerService;
-    
+
     @Inject
-    EntityManagerProvider entityManagerProvider;  
+    EntityManagerProvider entityManagerProvider;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -2248,9 +2248,8 @@ public class CustomFieldInstanceService extends BaseService {
             }
         }
     }
- 
-    
+
     public EntityManager getEntityManager() {
-    return entityManagerProvider.getEntityManager();
+        return entityManagerProvider.getEntityManager();
     }
 }

@@ -65,7 +65,6 @@ import org.slf4j.Logger;
 @Stateless
 public class UsageRatingService {
 
-
     @Inject
     protected Logger log;
 
@@ -382,8 +381,8 @@ public class UsageRatingService {
             stopEDRRating = true;
         }
         if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
-            //we continue the rating  to  have a WO that its needed in pricePlan.script
-            log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");           
+            // we continue the rating to have a WO that its needed in pricePlan.script
+            log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");
         }
 
         BigDecimal quantityToCharge = null;
