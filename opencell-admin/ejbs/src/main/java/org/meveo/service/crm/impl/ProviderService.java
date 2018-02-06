@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -124,7 +125,7 @@ public class ProviderService extends PersistenceService<Provider> {
      * @return
      */
     @Produces
-    @RequestScoped
+    @SessionScoped
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
