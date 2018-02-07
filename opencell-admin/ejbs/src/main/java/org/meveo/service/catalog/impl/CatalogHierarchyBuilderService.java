@@ -17,8 +17,6 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
@@ -760,7 +758,7 @@ public class CatalogHierarchyBuilderService {
             for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
                 if (offerServiceTemplate != null) {
                     ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-                    List<ServiceTemplate> servicesWithNotOffer = this.serviceTemplateService.getServicesWithNotOffer();
+                    List<ServiceTemplate> servicesWithNotOffer = serviceTemplateService.getServicesWithNotOffer();
                     if (servicesWithNotOffer != null) {
                         for (ServiceTemplate serviceTemplateWithoutOffer : servicesWithNotOffer) {
                             if (serviceTemplateWithoutOffer == null) {

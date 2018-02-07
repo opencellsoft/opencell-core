@@ -428,7 +428,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
             throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
-        serviceInstance = refreshOrRetrieve(serviceInstance);
 
         // execute termination script
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {

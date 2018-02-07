@@ -505,7 +505,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
                 }
             }
             productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity));
-            productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+            productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate()));
 
             try {
                 // productInstanceService.create(productInstance);

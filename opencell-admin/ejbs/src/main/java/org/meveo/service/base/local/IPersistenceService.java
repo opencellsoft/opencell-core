@@ -216,22 +216,54 @@ public interface IPersistenceService<E extends IEntity> {
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
      * 
-     * @param entity Entity to refresh
-     * @return refreshed entity.
+     * @param entity Entity to refresh/retrieve
+     * @return Refreshed/retrieved entity.
      */
     E refreshOrRetrieve(E entity);
 
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
      * 
-     * @param entities A list of entities to refresh
-     * @return list of refreshed entities.
+     * @param entities A list of entities to refresh/retrieve
+     * @return A list of refreshed/retrieved entities.
      */
     List<E> refreshOrRetrieve(List<E> entities);
+    
+    /**
+     * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
+     * 
+     * @param entities A set of entities to refresh/retrieve
+     * @return A set of refreshed/retrieved entities
+     */
+    Set<E> refreshOrRetrieve(Set<E> entities);
+    
 
+    /**
+     * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
+     * 
+     * @param entity Entity to retrieve
+     * @return Retrieved entity.
+     */
+    E retrieveIfNotManaged(E entity);
+
+    /**
+     * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
+     * 
+     * @param entities A list of entities to refresh/retrieve
+     * @return List of retrieved entities.
+     */
+    List<E> retrieveIfNotManaged(List<E> entities);
+
+    /**
+     * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
+     * 
+     * @param entities A set of entities to refresh/retrieve
+     * @return Set of retrieved entities
+     */
+    Set<E> retrieveIfNotManaged(Set<E> entities);
+    
     void commit();
 
     EntityManager getEntityManager();
 
-    Set<E> refreshOrRetrieve(Set<E> entities);
 }

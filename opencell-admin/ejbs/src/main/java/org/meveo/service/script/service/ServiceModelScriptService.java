@@ -73,7 +73,7 @@ public class ServiceModelScriptService implements Serializable {
         scriptInterface.terminateServiceInstance(scriptContext);
     }
 
-    public void beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public ServiceScriptInterface beforeCreateServiceFromBSM(List<CustomFieldDto> customFields, String scriptCode) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         if (customFields != null) {
@@ -82,11 +82,11 @@ public class ServiceModelScriptService implements Serializable {
             scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, new ArrayList<CustomFieldDto>());
         }
         scriptInterface.beforeCreateServiceFromBSM(scriptContext);
+        return scriptInterface;
     }
 
-    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, String scriptCode)
+    public void afterCreateServiceFromBSM(ServiceTemplate entity, List<CustomFieldDto> customFields, ServiceScriptInterface scriptInterface)
             throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ServiceScriptInterface scriptInterface = (ServiceScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         if (customFields != null) {

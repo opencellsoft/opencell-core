@@ -399,8 +399,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
                 "customFieldTemplate.copyCFT.alreadyExists");
         }
 
-        cft = refreshOrRetrieve(cft);
-
         // Load calendar for lazy loading
         if (cft.getCalendar() != null) {
             cft.setCalendar(PersistenceUtils.initializeAndUnproxy(cft.getCalendar()));

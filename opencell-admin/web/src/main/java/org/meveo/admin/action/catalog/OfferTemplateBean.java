@@ -264,6 +264,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         if (!this.isUsedInSubscription(entity)) {
             if (entity != null && entity.getId() != null) {
                 try {
+                    entity = offerTemplateService.refreshOrRetrieve(entity);
                     offerTemplateService.delete(entity);
                     messages.info(new BundleKey("messages", "delete.successful"));
                 } catch (BusinessException e) {
@@ -356,7 +357,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		// Instantiating a new offer from BOM by using the data entered in offer
+		// Instantiating a new offer from BOM by using the data (only the data) entered in offer
 		// template that was duplicated in initEntity() method
 	    if (instantiatedFromBom) {
 			Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
@@ -391,7 +392,10 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                 productsConfigurations.add(serviceConfigurationDto);
             }
 
+            businessOfferModel = businessOfferModelService.refreshOrRetrieve(businessOfferModel);
+            
 			BOMInstantiationParameters bomParams = new BOMInstantiationParameters();
+			
 			bomParams.setBusinessOfferModel(businessOfferModel);
 			bomParams.setCustomFields(offerCfs != null ? offerCfs.getCustomField() : null);
 			bomParams.setCode(entity.getCode());

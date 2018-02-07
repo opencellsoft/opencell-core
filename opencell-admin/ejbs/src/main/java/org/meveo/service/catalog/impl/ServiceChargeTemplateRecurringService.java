@@ -23,7 +23,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceTemplate;
@@ -45,10 +44,10 @@ public class ServiceChargeTemplateRecurringService extends PersistenceService<Se
         qb.addCriterionEntity("walletTemplate", walletTemplate);
         return qb.find(getEntityManager());
     }
-
-    @Override
-    public void remove(ServiceChargeTemplateRecurring e) throws BusinessException {
-        refreshOrRetrieve(e);
-        super.remove(e);
-    }
+    //
+    // @Override
+    // public void remove(ServiceChargeTemplateRecurring e) throws BusinessException {
+    // refreshOrRetrieve(e);
+    // super.remove(e);
+    // }
 }

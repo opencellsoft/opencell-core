@@ -15,6 +15,7 @@
     		<property name="use_sql_comments" value="false"></property>
             <property name="hibernate.cache.use_second_level_cache" value="true" />
             <property name="hibernate.cache.use_query_cache" value="true" />
+            <property name="hibernate.cache.default_cache_concurrency_strategy" value="read-write" />
             <property name="hibernate.generate_statistics" value="false" />
             <property name="hibernate.discriminator.ignore_explicit_for_joined" value="true" />
             <property name="hibernate.ejb.event.flush" value="org.meveo.jpa.event.FlushEventListener" /> <!-- Needed for ES -->

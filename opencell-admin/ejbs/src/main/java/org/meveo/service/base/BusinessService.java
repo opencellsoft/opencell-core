@@ -20,7 +20,6 @@ package org.meveo.service.base;
 
 import java.util.List;
 
-import javax.persistence.Cacheable;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
@@ -52,9 +51,9 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
         TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where upper(code)=:code", entityClass)
             .setParameter("code", code.toUpperCase()).setMaxResults(1);
 
-        if (entityClass.isAnnotationPresent(Cacheable.class)) {
-            query.setHint("org.hibernate.cacheable", true);
-        }
+        // if (entityClass.isAnnotationPresent(Cacheable.class)) {
+        // query.setHint("org.hibernate.cacheable", true);
+        // }
 
         try {
             return query.getSingleResult();

@@ -102,7 +102,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.order.OrderService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
@@ -150,9 +149,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
-
-    @Inject
-    private CustomerService customerService;
 
     @Inject
     private ResourceBundle resourceMessages;
@@ -289,12 +285,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void assignInvoiceNumber(Invoice invoice) throws BusinessException {
         String cfName = invoiceTypeService.getCustomFieldCode(invoice.getInvoiceType());
-        Customer cust = customerService.refreshOrRetrieve(invoice.getBillingAccount().getCustomerAccount().getCustomer());
+        Customer cust = invoice.getBillingAccount().getCustomerAccount().getCustomer();
 
-        InvoiceType invoiceType = invoiceTypeService.refreshOrRetrieve(invoice.getInvoiceType());
+        InvoiceType invoiceType = invoice.getInvoiceType();
         Seller seller = serviceSingleton.chooseSeller(cust.getSeller(), cfName, invoice.getInvoiceDate(), invoiceType);
 
-        Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoice.getInvoiceType().getId(), seller, cfName, 1);
+        Sequence sequence = serviceSingleton.incrementInvoiceNumberSequence(invoice.getInvoiceDate(), invoiceType.getId(), seller, cfName, 1);
 
         String prefix = sequence.getPrefixEL();
         int sequenceSize = sequence.getSequenceSize();

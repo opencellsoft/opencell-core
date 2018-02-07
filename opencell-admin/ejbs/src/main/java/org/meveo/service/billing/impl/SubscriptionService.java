@@ -194,8 +194,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
             terminationDate = new Date();
         }
 
-        subscription = refreshOrRetrieve(subscription);
-
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {

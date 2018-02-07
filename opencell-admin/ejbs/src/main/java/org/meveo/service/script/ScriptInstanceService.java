@@ -193,4 +193,23 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
             }
         }
     }
+
+    /**
+     * Get all script interfaces with compiling those that are not compiled yet
+     * 
+     * @return the allScriptInterfaces
+     */
+    public Map<String, Class<ScriptInterface>> getAllScriptInterfacesWCompile() {
+
+        List<ScriptInstance> scriptInstances = findByType(ScriptSourceTypeEnum.JAVA);
+        for (ScriptInstance scriptInstance : scriptInstances) {
+            try {
+                getScriptInterfaceWCompile(scriptInstance.getCode());
+            } catch (ElementNotFoundException | InvalidScriptException e) {
+                // Ignore errors here as they were logged in a call before
+            }
+        }
+
+        return allScriptInterfaces;
+    } 
 }

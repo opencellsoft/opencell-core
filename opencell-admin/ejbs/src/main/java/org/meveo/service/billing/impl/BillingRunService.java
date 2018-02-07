@@ -601,6 +601,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     }
 
     /**
+     * Creates the agregates and invoice.
      * @param billingRun billing run
      * @param nbRuns nb of runs
      * @param waitingMillis waiting millis

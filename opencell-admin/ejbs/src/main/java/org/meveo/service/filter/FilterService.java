@@ -212,7 +212,6 @@ public class FilterService extends BusinessService<Filter> {
     @SuppressWarnings("unchecked")
     public List<? extends IEntity> filteredListAsObjects(Filter filter) throws BusinessException {
 
-        filter = refreshOrRetrieve(filter);
         FilteredQueryBuilder fqb = getFilteredQueryBuilder(filter);
 
         Query query = fqb.getQuery(getEntityManager());

@@ -855,7 +855,7 @@ public class QuoteApi extends BaseApi {
 
         // TODO Need to initiate workflow if there is one
 
-        quote = quoteService.refreshOrRetrieve(quote);
+        quote = quoteService.update(quote);
 
         return quoteToDto(quote);
 

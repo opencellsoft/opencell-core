@@ -109,7 +109,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                 }
             }
         }
-        Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces();
+        Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfacesWCompile();
 
         if (mmap != null) {
             for (Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()) {

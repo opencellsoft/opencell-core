@@ -591,6 +591,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     /**
+     * Retrieve an entity if it is not managed by EM
+     * 
+     * @param entity Entity to retrieve
+     * @return New instance of an entity
+     */
+    @Override
+    public E retrieveIfNotManaged(E entity) {
+
+        if (entity.isTransient()) {
+            return entity;
+        }
+
+        // Entity is managed already
+        if (getEntityManager().contains(entity)) {
+            return entity;
+
+        } else {
+            return findById((Long) entity.getId());
+        }
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#retrieveIfNotManaged(java.util.List)
+     */
+    @Override
+    public List<E> retrieveIfNotManaged(List<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        List<E> refreshedEntities = new ArrayList<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(retrieveIfNotManaged(entity));
+        }
+
+        return refreshedEntities;
+    }
+
+    @Override
+    public Set<E> retrieveIfNotManaged(Set<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        Set<E> refreshedEntities = new HashSet<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(retrieveIfNotManaged(entity));
+        }
+
+        return refreshedEntities;
+    }
+    
+    /**
      * Creates query to filter entities according data provided in pagination configuration.
      * 
      * Search filters (key = Filter key, value = search pattern or value).

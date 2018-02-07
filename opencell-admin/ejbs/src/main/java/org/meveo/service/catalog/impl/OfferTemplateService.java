@@ -40,7 +40,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -161,7 +160,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * @throws BusinessException exception when error happens
      */
     public synchronized void delete(OfferTemplate entity) throws BusinessException {
-        entity = refreshOrRetrieve(entity);
 
         if (entity == null || entity.isTransient() || subscriptionService.hasSubscriptions(entity)) {
             return;

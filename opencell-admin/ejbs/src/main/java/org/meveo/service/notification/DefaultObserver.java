@@ -42,7 +42,6 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -167,8 +166,7 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    CounterInstance counterInstance = counterInstanceService.refreshOrRetrieve(notif.getCounterInstance());
-                    counterInstanceService.deduceCounterValue(counterInstance, new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
+                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }
