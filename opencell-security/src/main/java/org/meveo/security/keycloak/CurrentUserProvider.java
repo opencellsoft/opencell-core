@@ -29,7 +29,10 @@ import org.slf4j.LoggerFactory;
 @Stateless
 public class CurrentUserProvider {
 
-    private static Map<String, Set<String>> roleToPermissionMapping;
+    /**
+     * Map<providerCode, Map<roleName, rolePermissions>>
+     */
+    private static Map<String, Map<String, Set<String>>>  roleToPermissionMapping;
 
     @Resource
     private SessionContext ctx;
@@ -71,7 +74,7 @@ public class CurrentUserProvider {
      * 
      * @return Current user implementation
      */
-    public MeveoUser getCurrentUser(EntityManager em) {
+    public MeveoUser getCurrentUser(String providerCode,EntityManager em) {
 
         String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername);
 
@@ -79,10 +82,10 @@ public class CurrentUserProvider {
 
         // User was forced authenticated, so need to lookup the rest of user information
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, forcedProvider, getAdditionalRoles(username, em), getRoleToPermissionMapping(em));
+            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, forcedProvider, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode,em));
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(em));
+            user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode,em));
         }
         log.info("getCurrentUser username={},forcedUserUsername={},providerCode={},em={}", username, forcedUserUsername, user != null ? user.getProviderCode() : null, em);
         supplementOrCreateUserInApp(user, em);
@@ -153,30 +156,30 @@ public class CurrentUserProvider {
      * 
      * @return A mapping between roles and permissions
      */
-    private Map<String, Set<String>> getRoleToPermissionMapping(EntityManager em) {
+    private Map<String, Set<String>> getRoleToPermissionMapping(String providerCode,EntityManager em) {
 
         synchronized (this) {
-            if (CurrentUserProvider.roleToPermissionMapping == null) {
+            if (CurrentUserProvider.roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode)!=null) {
                 CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
-
+                    Map<String, Set<String>>  roleToPermissionMappingForProvider=new HashMap<>();;
                     for (Role role : userRoles) {
                         Set<String> rolePermissions = new HashSet<>();
                         for (Permission permission : role.getAllPermissions()) {
                             rolePermissions.add(permission.getPermission());
                         }
 
-                        CurrentUserProvider.roleToPermissionMapping.put(role.getName(), rolePermissions);
+                        roleToPermissionMappingForProvider.put(role.getName(), rolePermissions);
                     }
-
+                    CurrentUserProvider.roleToPermissionMapping.put(providerCode, roleToPermissionMappingForProvider);
                 } catch (Exception e) {
                     log.error("Failed to construct role to permission mapping", e);
                 }
             }
 
-            return CurrentUserProvider.roleToPermissionMapping;
+            return CurrentUserProvider.roleToPermissionMapping.get(providerCode);
         }
     }
 

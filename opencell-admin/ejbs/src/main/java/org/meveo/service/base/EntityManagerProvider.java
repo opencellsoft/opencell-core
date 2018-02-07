@@ -22,6 +22,9 @@ import java.lang.reflect.Proxy;
 
 import javax.ejb.Stateless;
 import javax.enterprise.context.Conversation;
+import javax.enterprise.context.RequestScoped;
+import javax.enterprise.inject.Disposes;
+import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 
@@ -31,6 +34,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
 
 @Stateless
 public class EntityManagerProvider {
@@ -54,9 +58,18 @@ public class EntityManagerProvider {
 
     private EntityManager currentEntityManager;
 
+    @Produces
+    @RequestScoped
+    @MeveoJpaForMultiTenancy
     public EntityManager getEntityManager() {
         final String currentProvider = currentUser != null ? currentUser.getProviderCode() : null;
         return getEntityManager(currentProvider);
+    }
+    
+    public void dispose(@Disposes @MeveoJpaForMultiTenancy EntityManager entityManager) {
+        if (conversation != null && entityManager.isOpen()) {
+            entityManager.close();
+        }
     }
 
     public EntityManager getEntityManager(String currentProvider) {

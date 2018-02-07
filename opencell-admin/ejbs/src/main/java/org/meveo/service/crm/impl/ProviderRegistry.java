@@ -10,27 +10,15 @@ import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.enterprise.context.RequestScoped;
-import javax.enterprise.inject.Disposes;
-import javax.enterprise.inject.Produces;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceUnit;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.cache.CacheContainerProvider;
 import org.meveo.model.crm.Provider;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
-import org.meveo.util.MeveoJpaForMultiTenancy;
-import org.meveo.util.MeveoJpaForTarget;
-import org.meveo.util.MeveoJpaMultiTenancyForJobs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
