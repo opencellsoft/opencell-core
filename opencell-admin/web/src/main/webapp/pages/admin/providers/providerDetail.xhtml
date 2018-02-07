@@ -5,6 +5,7 @@
         <f:metadata>
             <f:viewParam name="objectId" value="#{providerBean.objectId}" />
             <f:viewParam name="tab" value="#{providerBean.activeTab}" />
+			<f:event type="preRenderView" listener="#{providerBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
@@ -53,6 +54,8 @@
                     <hftl:formField label="#{messages['provider.email']}" field="email" id="email" />
 
 					<hftl:formField label="#{messages['provider.recognizeRevenue']}" field="recognizeRevenue" id="recognizeRevenue" />
+					<hftl:formField label="#{messages['provider.paymentMethods']}" field="paymentMethods" listType="pickUpList" valueLabelField="label" dualListModel="#{providerBean.paymentMethodsModel}" newLine="true"/>
+                  
                     <!--
                     <p:fieldset legend="#{messages['provider.invoicing.title']}" styleClass="clearLeft">
                         <hftl:formField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" id="invoicePrefix" textArea="true" rows="1" maxlength="2000" />

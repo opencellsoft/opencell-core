@@ -159,7 +159,7 @@ public class CurrentUserProvider {
     private Map<String, Set<String>> getRoleToPermissionMapping(String providerCode,EntityManager em) {
 
         synchronized (this) {
-            if (CurrentUserProvider.roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode)!=null) {
+            if (CurrentUserProvider.roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode)==null) {
                 CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {

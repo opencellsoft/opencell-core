@@ -70,9 +70,10 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         return "code";
     }
 
+    
+    
     @Override
     public Provider initEntity() {
-        setObjectId(appProvider.getId());
         super.initEntity();
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
@@ -98,7 +99,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         boolean isNew = entity.isTransient();
         if (isNew) {
             entity.getInvoiceConfiguration().setProvider(entity);
-        }
+        }  
         entity = super.saveOrUpdate(entity);
         return entity;
     }
