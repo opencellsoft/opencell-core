@@ -547,7 +547,7 @@ public class RatingService extends BusinessService<WalletOperation> {
             priceWithoutTax = walletOperation.getQuantity().multiply(unitPriceWithoutTax);
             
             // process ratingEL here
-            if (!StringUtils.isBlank(walletOperation.getPriceplan().getRatingEL())) {
+            if (walletOperation.getPriceplan() != null && !StringUtils.isBlank(walletOperation.getPriceplan().getRatingEL())) {
                 priceWithoutTax = new BigDecimal(evaluateDoubleExpression(walletOperation.getPriceplan().getRatingEL(), walletOperation, walletOperation.getWallet().getUserAccount()));
             }
             
