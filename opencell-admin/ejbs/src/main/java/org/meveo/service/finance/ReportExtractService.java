@@ -3,7 +3,6 @@ package org.meveo.service.finance;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -18,7 +17,7 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
+import org.meveo.service.base.BusinessService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.finance.ReportExtractScript;
 
@@ -27,33 +26,35 @@ import org.meveo.service.script.finance.ReportExtractScript;
  * @created 29 Jan 2018
  **/
 @Stateless
-public class ReportExtractService extends PersistenceService<ReportExtract> {
+public class ReportExtractService extends BusinessService<ReportExtract> {
 
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
     public void runReport(ReportExtract entity) throws BusinessException {
-        runReport(entity, null, null);
+        runReport(entity, null);
     }
 
     @SuppressWarnings("rawtypes")
-    public void runReport(ReportExtract entity, Date startDate, Date endDate) throws BusinessException {
+    public void runReport(ReportExtract entity, Map<String, String> mapParams) throws BusinessException {
         Map<String, Object> context = new HashMap<>();
-        if (startDate != null || endDate != null) {
-            context.put(ReportExtractScript.START_DATE, startDate);
-            context.put(ReportExtractScript.END_DATE, endDate);
-        } else {
-            if (entity.getParams() != null) {
-                Iterator it = entity.getParams().entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry pair = (Map.Entry) it.next();
-                    if (!StringUtils.isBlank(pair.getValue())) {
-                        if (pair.getKey().toString().endsWith("_DATE")) {
-                            context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
-                        } else {
-                            context.put(pair.getKey().toString(), pair.getValue());
-                        }
-                    }
+
+        // use params parameter if set, otherwise use the set from entity
+        Map<String, String> params = new HashMap<>();
+        if (mapParams != null && !mapParams.isEmpty()) {
+            params = mapParams;
+        } else if (entity.getParams() != null) {
+            params = entity.getParams();
+        }
+
+        Iterator it = params.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            if (!StringUtils.isBlank(pair.getValue())) {
+                if (pair.getKey().toString().endsWith("_DATE")) {
+                    context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
+                } else {
+                    context.put(pair.getKey().toString(), pair.getValue());
                 }
             }
         }

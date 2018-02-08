@@ -98,9 +98,15 @@ public class ReportExtractBean extends UpdateMapTypeFieldBean<ReportExtract> {
         if (endDate != null) {
             entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(endDate, paramBean.getDateFormat()));
         }
+        
+        if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
+            entity.setScriptInstance(null);
+        } else {
+            entity.setSqlQuery(null);
+        }
 
         try {
-            result = saveOrUpdate(true);
+            super.saveOrUpdate(false);
             reportExtractService.runReport(entity);
             messages.info(new BundleKey("messages", "reportExtract.message.generate.ok"));
         } catch (BusinessException e) {
