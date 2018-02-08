@@ -599,7 +599,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public E retrieveIfNotManaged(E entity) {
 
-        if (entity.isTransient()) {
+        if (entity.getId() == null) {
             return entity;
         }
 
