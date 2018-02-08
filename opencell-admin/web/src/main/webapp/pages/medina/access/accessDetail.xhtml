@@ -76,8 +76,8 @@
 					<hftl:customFields backingBean="#{accessBean}" messagesId=":formId:messages"/>
 
 				</p:tabView>
-				<hf:formButtons ajaxSubmit="true" edit="false" backingBean="#{accessBean}" showEnableDisableButton="false" showDeleteButton="false" 
-					showEditButton="true" showBackButton="false" rendered="#{not empty accessBean.subscriptionId}">
+				<hf:formButtons ajaxSubmit="true" edit="true" backingBean="#{accessBean}" showEnableDisableButton="false" showDeleteButton="false"
+					 showBackButton="false" rendered="#{not empty accessBean.subscriptionId}">
 						<p:commandButton value="#{messages['commons.disable']}"
 							rendered="#{backingBean.entity.active}"
 							action="#{backingBean.disable}" update="@form" >
@@ -87,13 +87,15 @@
 							action="#{backingBean.enable}" update="@form" rendered="#{not backingBean.entity.active}">
 							<f:param name="subscriptionId" value="#{accessBean.subscriptionId}"/>
 						</p:commandButton>
+						<!-- 
 						<p:commandButton id="saveAccessBackSubDetail"
-							value="#{messages['action.save']} "
+							value="#{messages['action.save']}"
 							action="#{accessBean.saveOrUpdate(false)}"
 							icon="ui-icon-check" update="@form">
 							<f:param name="subscriptionId" value="#{accessBean.subscriptionId}"/>
 							<f:setPropertyActionListener value="5" target="#{subscriptionBean.activeMainTab}"/>
 						</p:commandButton>
+						 -->
 						<p:button id="backSubFromAccessDetail" value="#{messages['action.back']}"
 							outcome="#{backingBean.back()}" includeViewParams="true">
 								<f:param name="mainTab" value="5"/>
