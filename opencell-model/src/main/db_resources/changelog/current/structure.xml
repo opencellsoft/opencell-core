@@ -1605,4 +1605,9 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                    
     </changeSet>
     
+    <changeSet author="anasseh" id="#3136_07022018">
+     <sql>update meveo_job_instance set cf_values = replace (cf_values, 'PaymentCardJob_','PaymentJob_'), job_template = replace(job_template,'PaymentCardJob','PaymentJob') </sql>
+      <sql>update crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to =  replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
+    </changeSet>
+    
 </databaseChangeLog> 

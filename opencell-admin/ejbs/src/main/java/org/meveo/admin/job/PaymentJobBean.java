@@ -29,7 +29,7 @@ import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
-public class PaymentCardJobBean {
+public class PaymentJobBean {
 
     @Inject
     private Logger log;
@@ -64,19 +64,22 @@ public class PaymentCardJobBean {
             boolean matchingAO = true;
 
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
+            PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
+            
             PaymentGateway paymentGateway = null;
-            if((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_paymentGateway") != null) {
-                paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_paymentGateway")).getCode());
+            if((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
+                paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_creditOrDebit")).toUpperCase());
+                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
+                paymentMethodType = PaymentMethodEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
                 nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
                 if (nbRuns == -1) {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
-                createAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_createAO"));
-                matchingAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentCardJob_createAO"));
+                createAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_createAO"));
+                matchingAO = "YES".equals((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_createAO"));
 
             } catch (Exception e) {
                 nbRuns = new Long(1);
@@ -87,9 +90,9 @@ public class PaymentCardJobBean {
 
             List<Long> ids = new ArrayList<Long>();
             if (OperationCategoryEnum.CREDIT == operationCategory) {                
-                ids = accountOperationService.getAOidsToPay(PaymentMethodEnum.CARD);               
+                ids = accountOperationService.getAOidsToPay(paymentMethodType);               
             } else {               
-                ids = accountOperationService.getAOidsToRefund(PaymentMethodEnum.CARD);                               
+                ids = accountOperationService.getAOidsToRefund(paymentMethodType);                               
             }
 
             log.debug("AO to pay:" + ids.size());
@@ -100,7 +103,7 @@ public class PaymentCardJobBean {
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
             while (subListCreator.isHasNext()) {
-                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO,paymentGateway,operationCategory));
+                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO,paymentGateway,operationCategory,paymentMethodType));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());
