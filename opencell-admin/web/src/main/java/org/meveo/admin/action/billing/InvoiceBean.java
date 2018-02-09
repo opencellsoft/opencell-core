@@ -578,6 +578,18 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         return adjustedInvoiceIdParam;
     }
+    
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+      
+        String outcome = super.saveOrUpdate(killConversation);
+        
+        if (outcome == null) {
+            return getViewAfterSave();
+        }
+        
+        return outcome;
+    }
+            
 
     public String saveOrUpdateInvoiceAdjustment() throws Exception {
         if (entity.isTransient()) {
