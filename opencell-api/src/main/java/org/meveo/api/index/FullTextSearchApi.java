@@ -7,6 +7,7 @@ import java.util.concurrent.Future;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.exception.AccessDeniedException;
@@ -65,7 +66,7 @@ public class FullTextSearchApi extends BaseApi {
         return elasticClient.search(queryValues, from, size, null, null, null, classInfo);
     }
 
-    public String fullSearch(String query, String category, Integer from, Integer size) throws MissingParameterException, BusinessException {
+    public String fullSearch(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder) throws MissingParameterException, BusinessException {
 
         boolean noCategory = StringUtils.isBlank(category);
         boolean noQuery = StringUtils.isBlank(query);
@@ -77,6 +78,6 @@ public class FullTextSearchApi extends BaseApi {
 
         handleMissingParameters();
 
-        return elasticClient.search(query, category, from, size, null, null, null, null);
+        return elasticClient.search(query, category, from, size, sortField, sortOrder, null, null);
     }
 }

@@ -84,6 +84,7 @@
 			"userAccount.name.lastName": "getUserAccount().getName().lastName",
 			"userAccount.name.title": "getUserAccount().getName().title.description",
 			"userAccount.description": "getUserAccount().getDescription()",
+			"userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
 			"offer.code": "getOffer().getCode()",
 			"offer.description": "getOffer().getDescription()"
 		},
@@ -92,9 +93,11 @@
 			"occDescription": "occDescription",
 			"type": "type",
 			"amount": "amount",
+			"transactionCategory": "transactionCategory",
 			"matchingStatus": "matchingStatus",
 			"reference": "reference",
 			"customerAccount.code": "getCustomerAccount().getCode()",
+			"customerAccount.customer": "getCustomerAccount().getCustomer().getCode()",
 			"customerAccount.name.firstName": "getCustomerAccount().getName().firstName",
 			"customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
 			"customerAccount.name.title": "getCustomerAccount().getName().title.description",
@@ -110,7 +113,11 @@
 			"invoiceSubCategory.code": "getInvoiceSubCategory().getCode()",
 			"invoiceSubCategory.description": "getInvoiceSubCategory().getDescription()",
 			"invoice": "getInvoice().getInvoiceNumber()",
-			"status": "status"
+			"status": "status",
+			"usageDate": "usageDate",
+			"amountWithoutTax": "amountWithoutTax",
+			"amountTax": "amountTax",
+			"amountWithTax": "amountWithTax"
 		}
 	},
 	"customFieldTemplates": {
@@ -184,6 +191,9 @@
 									"type": "string"
 								},
 								"description": {
+									"type": "string"
+								},
+								"billingAccount": {
 									"type": "string"
 								},
 								"name": {
@@ -605,11 +615,14 @@
 						"occDescription": {
 							"type": "string"
 						},
+						"transactionCategory": {
+							"type": "string"
+						},
 						"type": {
 							"type": "string"
 						},
 						"amount": {
-							"type": "string"
+							"type": "double"
 						},
 						"matchingStatus": {
 							"type": "string"
@@ -623,6 +636,9 @@
 									"type": "string"
 								},
 								"description": {
+									"type": "string"
+								},
+								"customer": {
 									"type": "string"
 								},
 								"name": {
@@ -658,6 +674,18 @@
 						},
 						"status": {
 							"type": "string"
+						},
+						"amountWithoutTax": {
+							"type": "double"
+						},
+						"amountTax": {
+							"type": "double"
+						},
+						"amountWithTax": {
+							"type": "double"
+						},
+						"usageDate": {
+							"type": "date"
 						},
 						"invoiceSubCategory": {
 							"properties": {

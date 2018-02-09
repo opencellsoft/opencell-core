@@ -11,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.api.dto.FilterDto;
 import org.meveo.api.rest.IBaseRs;
 
@@ -22,7 +23,7 @@ public interface FilteredListRs extends IBaseRs {
 
 	/**
      * Execute a filter to retrieve a list of entities
-     * 
+     *
      * @param filter - if the code is set we lookup the filter in DB, else we parse the inputXml to create a transient filter
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
@@ -34,7 +35,7 @@ public interface FilteredListRs extends IBaseRs {
 
     /**
      * Execute a search in Elastic Search on all fields (_all field)
-     * 
+     *
      * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
@@ -48,7 +49,7 @@ public interface FilteredListRs extends IBaseRs {
 
     /**
      * Execute a search in Elastic Search on given fields for given values. Query values by field are passed in extra query parameters in a form of fieldName=valueToMatch
-     * 
+     *
      * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
@@ -61,7 +62,7 @@ public interface FilteredListRs extends IBaseRs {
 
     /**
      * Clean and reindex Elastic Search repository
-     * 
+     *
      * @return
      */
     @Path("/reindex")
@@ -78,5 +79,6 @@ public interface FilteredListRs extends IBaseRs {
      */
     @Path("/fullSearch")
     @GET
-    public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size);
+    public Response fullSearch(@QueryParam("query") String query, @QueryParam("category") String category, @QueryParam("from") Integer from, @QueryParam("size") Integer size,
+                               @QueryParam("sortField") String sortField,  @QueryParam("sortOrder") SortOrder sortOrder);
 }
