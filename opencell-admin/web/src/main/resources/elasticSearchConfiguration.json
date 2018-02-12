@@ -55,7 +55,8 @@
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
-			"paymentMethods": "getPaymentMethods()"
+			"paymentMethods": "getPaymentMethods()",
+			"customer": "getCustomer().getCode()"
 		},
 		"BillingAccount": {
 			"address": "address",
@@ -67,7 +68,8 @@
 			"address": "address",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
-			"name.title": "name.title.code"
+			"name.title": "name.title.code",
+			"billingAccount": "getBillingAccount().getCode()"
 		},
 		"ChargeTemplate": {
 			"chargeType": "getClass().getSimpleName()"
@@ -433,6 +435,9 @@
 						"description": {
 							"type": "string"
 						},
+						"customer": {
+							"type": "string"
+						},
 						"address": {
 							"properties": {
 								"address1": {
@@ -524,6 +529,9 @@
 							"type": "string"
 						},
 						"description": {
+							"type": "string"
+						},
+						"billingAccount": {
 							"type": "string"
 						},
 						"address": {
