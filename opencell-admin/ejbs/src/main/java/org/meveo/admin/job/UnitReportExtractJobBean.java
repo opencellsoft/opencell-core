@@ -9,10 +9,13 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.model.shared.DateUtils;
 import org.meveo.service.finance.ReportExtractService;
+import org.meveo.service.script.finance.ReportExtractScript;
 import org.slf4j.Logger;
 
 /**
@@ -21,6 +24,8 @@ import org.slf4j.Logger;
  **/
 @Stateless
 public class UnitReportExtractJobBean {
+    
+    private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     private Logger log;
@@ -34,7 +39,15 @@ public class UnitReportExtractJobBean {
 
         try {
             ReportExtract entity = reportExtractService.findById(id);
-            reportExtractService.runReport(entity, startDate, endDate);
+            
+            if (startDate != null) {
+                entity.getParams().put(ReportExtractScript.START_DATE, DateUtils.formatDateWithPattern(startDate, paramBean.getDateFormat()));
+            }
+            if (endDate != null) {
+                entity.getParams().put(ReportExtractScript.END_DATE, DateUtils.formatDateWithPattern(endDate, paramBean.getDateFormat()));
+            }
+            
+            reportExtractService.runReport(entity);
 
             result.registerSucces();
 
