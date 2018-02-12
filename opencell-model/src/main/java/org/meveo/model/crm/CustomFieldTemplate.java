@@ -675,7 +675,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         }
 
         language = language.toUpperCase();
-        if (!descriptionI18n.containsKey(language)) {
+        if (StringUtils.isBlank(descriptionI18n.get(language))) {
             return description;
         } else {
             return descriptionI18n.get(language);
