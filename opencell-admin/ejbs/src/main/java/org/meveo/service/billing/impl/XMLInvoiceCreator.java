@@ -393,6 +393,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String externalRef1 = customer.getExternalRef1();
         String externalRef2 = customer.getExternalRef2();
+        String vatNo = customer.getVatNo();
+        String registrationNo = customer.getRegistrationNo();
         CustomerBrand customerBrand = customer.getCustomerBrand();
         Seller seller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
@@ -404,6 +406,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.setAttribute("sellerCode", seller.getCode() != null ? seller.getCode() : "");
         customerTag.setAttribute("brand", customerBrand != null ? customerBrand.getCode() : "");
         customerTag.setAttribute("category", customerCategory != null ? customerCategory.getCode() : "");
+        customerTag.setAttribute("vatNo", vatNo != null ? vatNo : "");
+        customerTag.setAttribute("registrationNo", registrationNo != null ? registrationNo : "");
 
         PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
 
@@ -416,6 +420,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addCustomFields(customer, doc, customerTag);
 
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
+        header.appendChild(customerTag);
 
         // log.debug("creating ca");
         // CustomerAccount customerAccount = customerAccount;
