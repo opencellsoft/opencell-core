@@ -172,6 +172,14 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "rating_el", length = 2000)
     @Size(max = 2000)
     private String ratingEL;
+    
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl ;
+    
+    @Column(name = "raw_amount", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmount;
 
     public String getEventCode() {
         return eventCode;
@@ -535,5 +543,21 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
 
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
+    }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public BigDecimal getRawAmount() {
+        return rawAmount;
+    }
+
+    public void setRawAmount(BigDecimal rawAmount) {
+        this.rawAmount = rawAmount;
     }
 }

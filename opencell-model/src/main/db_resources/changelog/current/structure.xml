@@ -1541,4 +1541,13 @@
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime"/>
     </changeSet>
     
+    <changeSet id="#3029_20180213 - Rating minimum on priceplan" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_price_plan_matrix">
+    		<column name="minimum_amount_el" type="varchar(2000)">
+                <constraints nullable="true" />
+            </column>
+            <column name="raw_amount" type="numeric(23, 12)" />
+    	</addColumn>
+    </changeSet>
+    
 </databaseChangeLog> 
