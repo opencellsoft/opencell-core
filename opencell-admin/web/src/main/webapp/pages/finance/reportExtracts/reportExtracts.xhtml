@@ -28,7 +28,7 @@
 			<hftl:column label="#{messages['reportExtract.category']}" field="category" />
 			<hftl:column label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
 			<hftl:column label="#{messages['reportExtract.scriptType']}" field="scriptType" />
-			<hftl:actionsColumn width="10%">
+			<hftl:actionsColumn width="10%" renderEnableLink="true">
 				<p:commandButton id="runReport" icon="fa fa-fw fa-play" onclick="PF('dlgRunReport').show();" >
 		            <f:setPropertyActionListener target="#{reportExtractBean.entity}" value="#{entity}" />
 		        </p:commandButton>

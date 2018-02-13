@@ -36,7 +36,7 @@
 			</p:breadCrumb>
 		</h:form>
 	
-		<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" >
+		<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" showEnableDisableButton="true">
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
 			<hftl:formField label="#{messages['reportExtract.scriptType']}" field="scriptType" listenerUpdate="scriptTypeJava scriptTypeSQL" />
