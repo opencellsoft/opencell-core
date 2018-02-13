@@ -39,7 +39,8 @@ import org.primefaces.model.CroppedImage;
 public class ModuleUtil {
 
 	public static String getRootPicturePath(String providerCode){
-		String path = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata")+File.separator+providerCode
+		// To be checked carefully
+		String path = ParamBean.getInstance().getChrootDir(providerCode)
 			+File.separator+"media";
 		return getPath(path);
 	}

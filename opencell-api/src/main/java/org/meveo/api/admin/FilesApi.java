@@ -34,7 +34,7 @@ public class FilesApi extends BaseApi {
 
 	public String getProviderRootDir() {
 		if (StringUtils.isBlank(providerRootDir)) {
-			providerRootDir = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator + appProvider.getCode();
+			providerRootDir = paramBean.getChrootDir(currentUser.getProviderCode());
 		}
 
 		return providerRootDir;

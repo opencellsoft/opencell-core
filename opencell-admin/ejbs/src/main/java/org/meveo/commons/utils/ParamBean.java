@@ -31,13 +31,20 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
+import org.jboss.resteasy.spi.ProviderFactoryDelegate;
+import org.meveo.security.CurrentUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * @author anasseh
+ */
+/**
+ * @author Wassim Drira
+ *
  */
 public class ParamBean {
 
@@ -63,7 +70,13 @@ public class ParamBean {
      * instance unique
      */
     private static ParamBean instance = null;
-
+    
+    
+    private static boolean isMultiTenancyActive = false; 
+    private static Map<String, ParamBean> multiTenancyParams = new HashMap<String, ParamBean>(); 
+    private static boolean inheritance = true;
+    private boolean isSubTenant = false;
+    
     private static boolean reload = false;
 
     public ParamBean() {
@@ -112,6 +125,8 @@ public class ParamBean {
      */
     public static ParamBean getInstance() {
         try {
+        	ParamBean pBean = getInstance("meveo-admin.properties");
+        	isMultiTenancyActive = Boolean.valueOf(pBean.getProperty("meveo.multiTenancy", "false"));
             return getInstance("meveo-admin.properties");
         } catch (Exception e) {
             log.error("Failed to initialize meveo-admin.properties file.", e);
@@ -119,11 +134,46 @@ public class ParamBean {
         }
     }
 
-    /*
-     * Mis ï¿½ jour de l'instance de ParamBean.
+    /**
+     * Return a ParamBean of the specific provider, if it does not exists, it will be created
+     * By the default the file name is <providerCode.properties>  
      * 
-     * @param newInstance ParamBean
+     * @param provider
+     * @return param bean.
      */
+    public static ParamBean getInstanceByProvider(String provider) {
+        try {
+        	if(!isMultiTenancyActive || "".equals(provider)) return getInstance();
+        	
+        	if(multiTenancyParams.containsKey(provider)) 
+        		return multiTenancyParams.get(provider);
+        	
+        	ParamBean providerParamBean = new ParamBean(provider+".properties");
+        	providerParamBean.isSubTenant = true;
+        	multiTenancyParams.put(provider, providerParamBean);
+            return providerParamBean;            
+        } catch (Exception e) {
+            log.error("Failed to initialize "+provider+".properties file.", e);
+            return null;
+        }
+    } 
+    
+    /**
+     * @param provider
+     * @return
+     */
+    public String getChrootDir(String provider) {
+    	if(!isMultiTenancyActive || "".equals(provider) || provider==null) 
+    		return getInstance().getProperty("providers.rootDir", "./opencelldata") +
+    				File.separator +
+    				instance.getProperty("provider.rootDir", "default");
+    	String dir;
+    	dir = getInstance().getProperty("providers.rootDir", "./opencelldata");
+    	dir += File.separator;
+    	dir += getInstanceByProvider(provider).getProperty("provider.rootDir", provider);
+    	return dir;
+    }
+    
     /**
      * 
      * @param newInstance instance of ParamBean
