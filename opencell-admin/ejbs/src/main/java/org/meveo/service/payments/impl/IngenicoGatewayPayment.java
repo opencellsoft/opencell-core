@@ -3,11 +3,13 @@ package org.meveo.service.payments.impl;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.util.PaymentGatewayClass;
@@ -29,6 +31,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRespons
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
@@ -126,34 +129,40 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return doPayment(null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType, countryCode, additionalParams);
     }
 
-    private PayByCardResponseDto doPayment(CardPaymentMethod paymentToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber, String ownerName, String cvv,
+    public PayByCardResponseDto doPayment(CardPaymentMethod paymentToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber, String ownerName, String cvv,
             String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
 
         AmountOfMoney amountOfMoney = new AmountOfMoney();
         amountOfMoney.setAmount(ctsAmount);
-        amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+        amountOfMoney.setCurrencyCode("EUR"/*customerAccount.getTradingCurrency().getCurrencyCode()*/);
 
         Order order = new Order();
         order.setAmountOfMoney(amountOfMoney);
 
         CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
-        if (paymentToken != null) {
-            cardPaymentMethodSpecificInput.setToken(paymentToken.getTokenId());
-        } else {
-            Card card = new Card();
-            card.setCardNumber(cardNumber);
-            card.setCardholderName(ownerName);
-            card.setCvv(cvv);
-            card.setExpiryDate(expirayDate);
-            cardPaymentMethodSpecificInput.setCard(card);
-            cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
-            Customer customer = new Customer();
-            customer.setBillingAddress(getBillingAddress(customerAccount, countryCode));
-            order.setCustomer(customer);
-
-        }
+        SepaDirectDebitPaymentMethodSpecificInput sepaPmInput = new SepaDirectDebitPaymentMethodSpecificInput();
+        sepaPmInput.setPaymentProductId(770);
+        sepaPmInput.setToken("25f097f102e145239d55702f7d234fcb");
+        sepaPmInput.setDirectDebitText("?");
+        
+//        if (paymentToken != null) {
+//            cardPaymentMethodSpecificInput.setToken(paymentToken.getTokenId());
+//        } else {
+//            Card card = new Card();
+//            card.setCardNumber(cardNumber);
+//            card.setCardholderName(ownerName);
+//            card.setCvv(cvv);
+//            card.setExpiryDate(expirayDate);
+//            cardPaymentMethodSpecificInput.setCard(card);
+//            cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
+//            Customer customer = new Customer();
+//            customer.setBillingAddress(getBillingAddress(customerAccount, countryCode));
+//            order.setCustomer(customer);
+//
+//        }
         CreatePaymentRequest body = new CreatePaymentRequest();
-        body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
+       // body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
+        body.setSepaDirectDebitPaymentMethodSpecificInput(sepaPmInput);
         body.setOrder(order);
 
         try {
@@ -236,5 +245,19 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
 
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doPaymentSepa(org.meveo.model.payments.DDPaymentMethod, java.lang.Long, java.util.Map)
+     */
+    @Override
+    public PayByCardResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+        throw new UnsupportedOperationException();
     }
 }

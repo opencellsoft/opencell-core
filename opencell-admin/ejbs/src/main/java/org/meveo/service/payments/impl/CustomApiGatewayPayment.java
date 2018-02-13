@@ -4,10 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.script.payment.PaymentScript;
@@ -128,6 +130,24 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
         doPaymentResponseDto.setTokenId((String) scriptContext.get(PaymentScript.RESULT_TOKEN_ID));
         return doPaymentResponseDto;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doPaymentSepa(org.meveo.model.payments.DDPaymentMethod, java.lang.Long, java.util.Map)
+     */
+    @Override
+    public PayByCardResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#checkMandat(java.lang.String)
+     */
+    @Override
+    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

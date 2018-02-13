@@ -60,16 +60,16 @@ public class UnitPaymentCardJobBean {
                     doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
                         accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                    doPaymentResponseDto = paymentService.payByMandat(accountOperation.getCustomerAccount(),
-                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                   // doPaymentResponseDto = paymentService.payByMandat(accountOperation.getCustomerAccount(),
+                     //   accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             } else {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
                     doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
                         accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                    doPaymentResponseDto = refundService.refundByMandat(accountOperation.getCustomerAccount(),
-                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                   // doPaymentResponseDto = refundService.refundByMandat(accountOperation.getCustomerAccount(),
+                       // accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             }
             if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {

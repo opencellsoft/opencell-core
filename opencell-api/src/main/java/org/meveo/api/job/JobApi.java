@@ -44,28 +44,26 @@ public class JobApi extends BaseApi {
      * @throws BusinessException business exception
      */
     public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
-        SlimpayGatewayPayment slipay = new SlimpayGatewayPayment();
-        slipay.doSepaPayment("opencelldev", "SLMP004165418", "FACT_001", 350L, "EUR", "SEPA.DIRECT_DEBIT.CORE", "Pay Fact 001", null);
-        return null;
-//        if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
-//            missingParameters.add("timerName or code");
-//        }
-//        handleMissingParameters();
-//
-//        String code = jobExecution.getCode() != null ? jobExecution.getCode() : jobExecution.getTimerName();
-//
-//        org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(code);
-//        if (jobInstance == null) {
-//            throw new EntityDoesNotExistsException(JobInstance.class, code);
-//        }
-//
-//        if (jobExecution.isForceExecution()) {
-//            jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
-//        }
-//
-//        Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
-//
-//        return findJobExecutionResult(null, executionId);
+
+                if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
+                    missingParameters.add("timerName or code");
+                }
+                handleMissingParameters();
+        
+                String code = jobExecution.getCode() != null ? jobExecution.getCode() : jobExecution.getTimerName();
+        
+                org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(code);
+                if (jobInstance == null) {
+                    throw new EntityDoesNotExistsException(JobInstance.class, code);
+                }
+        
+                if (jobExecution.isForceExecution()) {
+                    jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
+                }
+        
+                Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
+        
+                return findJobExecutionResult(null, executionId);
     }
     
     /**

@@ -8,11 +8,13 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PayByCardResponseDto;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.service.payments.impl.GatewayPaymentInterface;
@@ -167,6 +169,24 @@ public class PaynumFile implements GatewayPaymentInterface {
     public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doPaymentSepa(org.meveo.model.payments.DDPaymentMethod, java.lang.Long, java.util.Map)
+     */
+    @Override
+    public PayByCardResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#checkMandat(java.lang.String)
+     */
+    @Override
+    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }
