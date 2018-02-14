@@ -173,13 +173,21 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Size(max = 2000)
     private String ratingEL;
     
-    @Column(name = "minimum_amount_el", length = 2000)
+    @Column(name = "minimum_amount_without_tax_el", length = 2000)
     @Size(max = 2000)
-    private String minimumAmountEl ;
+    private String minimumAmountWithoutTaxEl ;
     
-    @Column(name = "raw_amount", precision = 23, scale = 12)
+    @Column(name = "minimum_amount_with_tax_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountWithTaxEl ;
+    
+    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
     @Digits(integer = 23, fraction = 12)
-    private BigDecimal rawAmount;
+    private BigDecimal rawAmountWithoutTax;
+    
+    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithTax;
 
     public String getEventCode() {
         return eventCode;
@@ -544,20 +552,36 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
     }
-
-    public String getMinimumAmountEl() {
-        return minimumAmountEl;
+    
+    public String getMinimumAmountWithoutTaxEl() {
+        return minimumAmountWithoutTaxEl;
     }
 
-    public void setMinimumAmountEl(String minimumAmountEl) {
-        this.minimumAmountEl = minimumAmountEl;
+    public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
+        this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
     }
 
-    public BigDecimal getRawAmount() {
-        return rawAmount;
+    public String getMinimumAmountWithTaxEl() {
+        return minimumAmountWithTaxEl;
     }
 
-    public void setRawAmount(BigDecimal rawAmount) {
-        this.rawAmount = rawAmount;
+    public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
+        this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
+    }
+
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
     }
 }

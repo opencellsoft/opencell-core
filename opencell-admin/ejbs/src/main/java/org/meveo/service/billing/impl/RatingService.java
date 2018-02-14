@@ -489,6 +489,16 @@ public class RatingService extends BusinessService<WalletOperation> {
         log.debug("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
+        
+        if (pricePlan != null) {
+            if (appProvider.isEntreprise() && !StringUtils.isBlank(pricePlan.getMinimumAmountWithoutTaxEl())) {
+                pricePlan.setRawAmountWithoutTax(
+                    new BigDecimal(evaluateDoubleExpression(pricePlan.getMinimumAmountWithoutTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount())));
+            } else if (!StringUtils.isBlank(pricePlan.getMinimumAmountWithTaxEl())) {
+                pricePlan.setRawAmountWithTax(
+                    new BigDecimal(evaluateDoubleExpression(pricePlan.getMinimumAmountWithTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount())));
+            }
+        }
 
         // calculate WO description based on EL from Price plan
         if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {
