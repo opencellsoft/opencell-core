@@ -61,6 +61,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
@@ -101,6 +102,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
 	@Inject
 	private EntityExportImportService entityExportImportService;
+	
+	@Inject
+	private ProductTemplateService productTemplateService;
 	
 	private Long bomId;
 
@@ -145,13 +149,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 		// offer instantiation
 		if (bomId != null) {
 			duplicateFromBom();
-
-			productTemplatesLookup = new ArrayList<>();
-			if (entity.getOfferProductTemplates() != null && !entity.getOfferProductTemplates().isEmpty()) {
-				for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
-					productTemplatesLookup.add(opt.getProductTemplate());
-				}
-			}
+	
 			bomId = null;
 			visibleServiceCheckbox = true;
 			instantiatedFromBom = true;
@@ -173,19 +171,23 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 			// creates new entity
 			super.initEntity();
 		}
-
+		
 		// lazy loading service templates
-		for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
-			offerServiceTemplate.getServiceTemplate().getCode();
-			for (ServiceTemplate serviceTemplate : offerServiceTemplate.getIncompatibleServices()) {
+		for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+			ost.getServiceTemplate().getCode();
+			for (ServiceTemplate serviceTemplate : ost.getIncompatibleServices()) {
 				serviceTemplate.getCode();
 			}
 		}
 
 		// lazy loading product templates
-		for (OfferProductTemplate offerProductTemplate : entity.getOfferProductTemplates()) {
-			offerProductTemplate.getProductTemplate();
-		}
+        List<ProductTemplate> productTemplates = new ArrayList<>();
+        for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+            productTemplates.add(opt.getProductTemplate());
+        }
+
+        productTemplatesLookup = productTemplateService.list();
+        productTemplatesLookup.removeAll(productTemplates);
 
 		if (entity.getValidity() == null) {
 			entity.setValidity(new DatePeriod());

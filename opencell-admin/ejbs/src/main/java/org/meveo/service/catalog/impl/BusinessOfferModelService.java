@@ -201,43 +201,48 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 		List<OfferProductTemplate> newOfferProductTemplates = new ArrayList<>();
 
-		if (offerTemplateInBom.getOfferProductTemplates() == null
-				|| offerTemplateInBom.getOfferProductTemplates().isEmpty() || productConfigurations == null
-				|| productConfigurations.isEmpty()) {
-			return newOfferProductTemplates;
-		}
+        if (productConfigurations == null || productConfigurations.isEmpty()) {
+            return newOfferProductTemplates;
+        }
 
+        List<OfferProductTemplate> offerProductTemplatesToInstantiate = offerTemplateInBom.getOfferProductTemplates();
+        
 		// Validate that product configurations are valid
 		for (ServiceConfigurationDto productConfiguration : productConfigurations) {
 			boolean productFound = false;
 			String productCode = productConfiguration.getCode();
 
 			for (OfferProductTemplate offerProductTemplate : offerTemplateInBom.getOfferProductTemplates()) {
-				ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
+			    ProductTemplate productTemplate = offerProductTemplate.getProductTemplate();
 				if (productCode.equals(productTemplate.getCode())) {
 					productFound = true;
 					break;
 				}
 			}
 
-			if (!productFound) {
-				throw new BusinessException(
-						"ProductTemplate with code=" + productCode + " is not defined in the offer");
-			}
+            if (!productFound) {
+                ProductTemplate pt = productTemplateService.findByCode(productConfiguration.getCode());
+                if (pt == null) {
+                    throw new BusinessException("Product template with code=" + productConfiguration.getCode() + " not found.");
+                }
+                OfferProductTemplate opt = new OfferProductTemplate();
+                opt.setProductTemplate(pt);
+                offerProductTemplatesToInstantiate.add(opt);
+            }
 		}
 
 		// Instantiate products
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
 		List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
-		for (OfferProductTemplate offerProductTemplate : offerTemplateInBom.getOfferProductTemplates()) {
+		for (OfferProductTemplate offerProductTemplate : offerProductTemplatesToInstantiate) {
 			ProductTemplate productTemplate = productTemplateService
 					.findById(offerProductTemplate.getProductTemplate().getId());
 
 			boolean productFound = false;
 			ServiceConfigurationDto matchedProductConfigurationDto = null;
 			for (ServiceConfigurationDto productConfiguration : productConfigurations) {
-				String serviceCode = productConfiguration.getCode();
-				if (serviceCode.equals(productTemplate.getCode())) {
+				String productCode = productConfiguration.getCode();
+				if (productCode.equals(productTemplate.getCode())) {
 					matchedProductConfigurationDto = productConfiguration;
 					productFound = true;
 					break;
