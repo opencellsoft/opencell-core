@@ -180,7 +180,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Map<String, Boolean> writeAccessMap;
 
     protected ParamBean paramBean = ParamBean.getInstance();
-    protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
+    //protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
 
     private UploadedFile uploadedFile;
 
