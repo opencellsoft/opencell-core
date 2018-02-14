@@ -96,7 +96,7 @@ public class WebHookNotifier {
             } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
                 bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
                 log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
-                if (StringUtils.isBlank(bodyEL_evaluated)) {
+                if (!StringUtils.isBlank(bodyEL_evaluated)) {
                     paramQuery += "&" + bodyEL_evaluated;
                 }
             }
