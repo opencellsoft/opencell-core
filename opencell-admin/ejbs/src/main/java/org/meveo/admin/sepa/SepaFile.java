@@ -48,6 +48,8 @@ import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.payments.impl.GatewayPaymentInterface;
 import org.meveo.util.ApplicationProvider;
 import org.meveo.util.PaymentGatewayClass;
@@ -61,15 +63,19 @@ public class SepaFile implements GatewayPaymentInterface {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
+    
+    @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
 
     public String getDDFileName(DDRequestLOT ddRequestLot) {
         String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
         fileName = fileName + "_" + appProvider.getCode();
         fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
 
-        String outputDir = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata");
+        String outputDir = ParamBean.getInstance().getChrootDir(currentUser.getProviderCode());
 
-        outputDir = outputDir + File.separator + appProvider.getCode() + File.separator + ArConfig.getDDRequestOutputDirectory();
+        outputDir = outputDir + File.separator + ArConfig.getDDRequestOutputDirectory();
         outputDir = outputDir.replaceAll("\\..", "");
 
         log.info("DDRequest output directory=" + outputDir);

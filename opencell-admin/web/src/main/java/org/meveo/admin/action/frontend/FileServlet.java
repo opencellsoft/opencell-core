@@ -19,6 +19,8 @@ import org.apache.commons.io.IOUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.util.ApplicationProvider;
 
 /**
@@ -34,6 +36,10 @@ public class FileServlet extends HttpServlet {
 	@Inject
 	@ApplicationProvider
 	private Provider appProvider;
+	
+	@Inject
+	@CurrentUser
+	private MeveoUser currentUser;
 
 	private String basePath;
 
@@ -45,8 +51,7 @@ public class FileServlet extends HttpServlet {
 	public void init() throws ServletException {
 
 		// Get base path (path to get all resources from) as init parameter.
-		this.basePath = paramBean.getProperty("providers.rootDir", "./opencelldata") + File.separator
-				+ appProvider.getCode();
+		this.basePath = paramBean.getChrootDir(currentUser.getProviderCode());
 
 		// Validate base path.
 		if (this.basePath == null) {

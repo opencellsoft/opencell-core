@@ -116,7 +116,7 @@ public class UserBean extends CustomFieldBean<User> {
     private TreeNode userGroupSelectedNode;
 
     private ParamBean param = ParamBean.getInstance();
-    private String providerFilePath = param.getProperty("providers.rootDir", "./opencelldata/");
+    private String providerFilePath;
     private String selectedFolder;
     private boolean currentDirEmpty;
     private String selectedFileName;
@@ -143,6 +143,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @PostConstruct
     public void init() {
+    	this.providerFilePath = param.getChrootDir(currentUser.getProviderCode());
         if (conversation.isTransient()) {
             conversation.begin();
             createMissingDirectories();
@@ -153,6 +154,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @Override
     public User initEntity() {
+    	log.info("initEntity()");
         super.initEntity();
 
         if (entity.getName() == null) {
@@ -163,6 +165,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public TreeNode getUserGroupRootNode() {
+    	log.info("getUserGroupRootNode()");
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
             List<UserHierarchyLevel> roots;
@@ -272,7 +275,8 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public String getFilePath() {
-        return providerFilePath + File.separator + appProvider.getCode();
+        return providerFilePath;
+        
     }
 
     private String getFilePath(String name) {
@@ -284,6 +288,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void createMissingDirectories() {
+    	log.info("createMissingDirectories() * ");
         // log.info("Creating required dirs in "+getFilePath());
         String importDir = getFilePath() + File.separator + "imports" + File.separator + "customers" + File.separator;
         String customerDirIN = importDir + "input";

@@ -39,7 +39,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     ParamBean param = ParamBean.getInstance();
 
-    String importDir =  param.getProperty("providers.rootDir", "./opencelldata");
+    String importDir;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
@@ -48,11 +48,12 @@ public class SepaRejectedTransactionsJob extends Job {
         String defaultPrefix = "PAYNUM".equalsIgnoreCase(fileFormat) ? "*":"Pain002_";
         String defaultExtension =  "PAYNUM".equalsIgnoreCase(fileFormat) ? "csv":"xml";
         
-       
-        String dirIN = importDir + File.separator + appProvider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "input";
+        importDir =  param.getChrootDir(currentUser.getProviderCode());
+        
+        String dirIN = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "input";
         log.info("dirIN=" + dirIN);
-        String dirOK = importDir + File.separator + appProvider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "output";
-        String dirKO = importDir + File.separator + appProvider.getCode() + File.separator + "rejectedSepaTransactions" + File.separator + "reject";
+        String dirOK = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "output";
+        String dirKO = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "reject";
         String prefix = param.getProperty(fileFormat.toLowerCase()+"RejectedTransactionsJob.file.prefix", defaultPrefix );
         String ext = param.getProperty(fileFormat.toLowerCase()+"RejectedTransactionsJob.file.extension", defaultExtension);
 

@@ -64,7 +64,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
 
     ParamBean paramBean = ParamBean.getInstance();
     CsvBuilder csv = null;
-    private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
+    private String providerDir;
     private String existingEntitiesCsvFile = null;
 
     CsvReader csvReader = null;
@@ -162,7 +162,8 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
         csvReader.readHeaders();
 
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+        providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
+        File dir = new File(providerDir + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "InstantMessagingNotifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();

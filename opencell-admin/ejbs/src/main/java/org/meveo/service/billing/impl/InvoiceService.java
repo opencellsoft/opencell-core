@@ -615,7 +615,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
-        Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice);
+        Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice, currentUser.getProviderCode());
 
         log.info("PDFInvoiceGenerationJob is invoice key exists=" + ((parameters != null) ? parameters.containsKey(PdfGeneratorConstants.INVOICE) + "" : "parameters is null"));
 
