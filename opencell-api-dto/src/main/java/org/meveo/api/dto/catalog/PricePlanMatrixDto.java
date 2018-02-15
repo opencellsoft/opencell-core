@@ -43,6 +43,11 @@ public class PricePlanMatrixDto extends BusinessDto {
     private BigDecimal amountWithTax;
     private String amountWithoutTaxEL;
     private String amountWithTaxEL;
+    
+    private String minimumAmountWithoutTaxEl ;
+    private String minimumAmountWithTaxEl ;
+    private BigDecimal rawAmountWithoutTax;
+    private BigDecimal rawAmountWithTax;
 
     private int priority;
 
@@ -111,6 +116,10 @@ public class PricePlanMatrixDto extends BusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
         woDescriptionEL = pricePlan.getWoDescriptionEL();
         ratingEL = pricePlan.getRatingEL();
+        minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
+        minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
+        rawAmountWithoutTax = pricePlan.getRawAmountWithoutTax();
+        rawAmountWithTax = pricePlan.getRawAmountWithTax();
     }
 
     public String getEventCode() {
@@ -353,5 +362,37 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
+    }
+
+    public String getMinimumAmountWithoutTaxEl() {
+        return minimumAmountWithoutTaxEl;
+    }
+
+    public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
+        this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
+    }
+
+    public String getMinimumAmountWithTaxEl() {
+        return minimumAmountWithTaxEl;
+    }
+
+    public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
+        this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
+    }
+
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
     }
 }
