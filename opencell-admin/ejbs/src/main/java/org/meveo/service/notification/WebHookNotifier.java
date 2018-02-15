@@ -72,7 +72,7 @@ public class WebHookNotifier {
         String result = "";
 
         try {
-            String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
+            String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + webHook.getHost().replace("http://", "");
             if (webHook.getPort() != null) {
                 url += ":" + webHook.getPort();
             }
