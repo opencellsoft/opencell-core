@@ -46,8 +46,8 @@ public class PaymentHistoryDto extends BaseDto {
     /** The updated status date. */
     private Date updatedStatusDate;
     
-    /** The last Update Status. */
-    private Date lastUpdateStatus;
+    /** The last Update Date. */
+    private Date lastUpdateDate;
     
     /** The amount in cts. */
     private Long amountCts;
@@ -373,17 +373,17 @@ public class PaymentHistoryDto extends BaseDto {
     
 
     /**
-     * @return the lastUpdateStatus
+     * @return the lastUpdateDate
      */
-    public Date getLastUpdateStatus() {
-        return lastUpdateStatus;
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
     }
 
     /**
-     * @param lastUpdateStatus the lastUpdateStatus to set
+     * @param lastUpdateDate the lastUpdateDate to set
      */
-    public void setLastUpdateStatus(Date lastUpdateStatus) {
-        this.lastUpdateStatus = lastUpdateStatus;
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
 
     @Override
