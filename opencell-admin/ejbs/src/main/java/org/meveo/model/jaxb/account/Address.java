@@ -96,7 +96,7 @@ public class Address {
 			zipCode=address.getZipCode();
 			city=address.getCity();
 			state=address.getState();
-			country=address.getCountry();
+			country=address.getCountry() != null ? address.getCountry().getCountryCode() : null;
     	}
 	}
 

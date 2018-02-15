@@ -1606,8 +1606,56 @@
     </changeSet>
     
     <changeSet author="anasseh" id="#3136_07022018">
-     <sql>update meveo_job_instance set cf_values = replace (cf_values, 'PaymentCardJob_','PaymentJob_'), job_template = replace(job_template,'PaymentCardJob','PaymentJob') </sql>
-      <sql>update crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to =  replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
+        <sql>update meveo_job_instance set cf_values = replace (cf_values, 'PaymentCardJob_','PaymentJob_'), job_template = replace(job_template,'PaymentCardJob','PaymentJob') </sql>
+        <sql>update crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to =  replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
+    </changeSet>
+    
+    <changeSet author="anasseh" id="#2830_15022018">
+    <!-- migration old data -->
+        <dropColumn tableName="account_entity" columnName="address_country" /> 
+        	<addColumn tableName="account_entity">
+    			<column name="address_country_id" type="bigint" />
+    		</addColumn>
+    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+       
+        <dropColumn tableName="com_sender_config" columnName="address_country" /> 
+        	<addColumn tableName="com_sender_config">
+    			<column name="address_country_id" type="bigint" />
+    		</addColumn>
+    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />     
+            
+          
+        <dropColumn tableName="crm_provider_contact" columnName="address_country" /> 
+        	<addColumn tableName="crm_provider_contact">
+    			<column name="address_country_id" type="bigint" />
+    		</addColumn>
+    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />     
+     
+      <dropColumn tableName="crm_provider" columnName="address_country" /> 
+        	<addColumn tableName="crm_provider">
+    			<column name="address_country_id" type="bigint" />
+    		</addColumn>
+    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />              
+            
+                 
+      <dropColumn tableName="crm_seller" columnName="address_country" /> 
+        	<addColumn tableName="crm_seller">
+    			<column name="address_country_id" type="bigint" />
+    		</addColumn>
+    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />    
+            
+      <dropColumn tableName="ord_order_item" columnName="address_country" /> 
+        	<addColumn tableName="ord_order_item">
+    			<column name="address_country_id" type="bigint" />
+    		</addColumn>
+    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />                       
+               
     </changeSet>
     
 </databaseChangeLog> 

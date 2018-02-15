@@ -34,7 +34,7 @@ public class AddressDto implements Serializable {
 			address3 = e.getAddress3();
 			zipCode = e.getZipCode();
 			city = e.getCity();
-			country = e.getCountry();
+			country = e.getCountry() == null ? null : e.getCountry().getCountryCode();
 			state = e.getState();
 		}
 	}

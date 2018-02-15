@@ -974,19 +974,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "");
+            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
 
-            Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
+            Country countryEntity = account.getAddress().getCountry();
             Text countryNameTxt;
-            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
+            if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
-            } else if (countrybyCode != null) {
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
+                countryNameTxt = doc.createTextNode(countryEntity.getDescriptionI18n().get(languageCode));
             } else {
-                countryNameTxt = doc.createTextNode("");
-            }
+                countryNameTxt = doc.createTextNode(countryEntity.getDescription());
+            } 
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);

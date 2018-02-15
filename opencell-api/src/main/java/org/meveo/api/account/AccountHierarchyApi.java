@@ -75,6 +75,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -169,6 +170,9 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private BusinessAccountModelService businessAccountModelService;
+    
+    @Inject
+    private  CountryService countryService;
 
     @Inject
     @MeveoParamBean
@@ -838,7 +842,7 @@ public class AccountHierarchyApi extends BaseApi {
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
             address.setCity(postData.getAddress().getCity());
-            address.setCountry(postData.getAddress().getCountry());
+            address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
             address.setState(postData.getAddress().getState());
             address.setZipCode(postData.getAddress().getZipCode());
         }
