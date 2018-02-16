@@ -186,7 +186,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             productTemplates.add(opt.getProductTemplate());
         }
 
-        productTemplatesLookup = productTemplateService.list();
+        productTemplatesLookup = productTemplateService.listByLifeCycleStatus(LifeCycleStatusEnum.ACTIVE);
         productTemplatesLookup.removeAll(productTemplates);
 
 		if (entity.getValidity() == null) {
