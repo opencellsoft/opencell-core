@@ -17,6 +17,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.service.admin.impl.GenericModuleService;
 import org.meveo.service.script.product.ProductModelScriptService;
+import org.meveo.service.script.product.ProductScriptInterface;
 
 /**
  * @author Edward P. Legaspi
@@ -63,9 +64,11 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
      * @throws BusinessException business exception.
      */
     public ProductTemplate instantiateBPM(String prefix, ProductTemplate productTemplate, BusinessProductModel bpm, List<CustomFieldDto> customFields) throws BusinessException {
+        
+        ProductScriptInterface productScript = null;
         if (bpm.getScript() != null) {
             try {
-                productModelScriptService.beforeCreate(customFields, bpm.getScript().getCode());
+                productScript = productModelScriptService.beforeCreate(customFields, bpm.getScript().getCode());
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
             }
@@ -74,8 +77,6 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
         // 2 - instantiate
         List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
         List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
-
-        bpm = refreshOrRetrieve(bpm);
         
         if (productTemplate == null) {
             productTemplate = bpm.getProductTemplate();
@@ -84,9 +85,9 @@ public class BusinessProductModelService extends GenericModuleService<BusinessPr
         ProductTemplate newProductTemplate = new ProductTemplate();
         catalogHierarchyBuilderService.duplicateProductTemplate(prefix, null, productTemplate, newProductTemplate, pricePlansInMemory, chargeTemplateInMemory, null);
 
-        if (bpm.getScript() != null) {
+        if (productScript != null) {
             try {
-                productModelScriptService.afterCreate(productTemplate, customFields, bpm.getScript().getCode());
+                productModelScriptService.afterCreate(productTemplate, customFields, productScript);
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
             }

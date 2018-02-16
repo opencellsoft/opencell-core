@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.keycloak.common.util.KeycloakUriBuilder;
 import org.keycloak.constants.ServiceUrlConstants;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Named
 public class AuthenticationProvider {
@@ -15,8 +16,7 @@ public class AuthenticationProvider {
     @Inject
     private HttpServletRequest httpRequest;
 
-    @Inject
-    private Logger log;
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
     public String logout() {
         try {

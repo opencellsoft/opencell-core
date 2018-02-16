@@ -1,5 +1,6 @@
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -21,6 +22,7 @@ import org.meveo.model.ExportIdentifier;
  * 
  */
 @Entity
+@Cacheable
 @ExportIdentifier({  "calendar.code", "intervalBegin", "intervalEnd" })
 @Table(name = "cat_calendar_interval")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_calendar_interval_seq"), })

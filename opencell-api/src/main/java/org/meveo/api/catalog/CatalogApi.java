@@ -101,9 +101,9 @@ public class CatalogApi extends BaseApi {
 
                 chargeCode = serviceChargeTemplateSubscription.getChargeTemplate().getCode();
 
-                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
-                    pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
+                    pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
 
@@ -148,9 +148,9 @@ public class CatalogApi extends BaseApi {
                     price.setTaxRate(serviceChargeTemplateRecurring.getChargeTemplate().getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
                 }
 
-                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
-                    pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
+                    pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
 
@@ -197,9 +197,9 @@ public class CatalogApi extends BaseApi {
                     price.setTaxRate(productChargeTemplate.getInvoiceSubCategory().getInvoiceSubcategoryCountries().get(0).getTax().getPercent());
                 }
 
-                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(offerTemplate.getCode(), chargeCode);
+                List<PricePlanMatrix> pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(offerTemplate.getCode(), chargeCode);
                 if (pricePlans == null || pricePlans.isEmpty()) {
-                    pricePlans = pricePlanMatrixService.findByOfferTemplateAndEventCode(null, chargeCode);
+                    pricePlans = pricePlanMatrixService.getActivePricePlansByOfferAndChargeCode(null, chargeCode);
                 }
                 if (pricePlans != null && !pricePlans.isEmpty()) {
                     

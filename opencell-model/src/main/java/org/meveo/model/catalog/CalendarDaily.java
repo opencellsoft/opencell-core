@@ -31,12 +31,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OrderBy;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 @Entity
 @DiscriminatorValue("DAILY")
 public class CalendarDaily extends Calendar {
 
     private static final long serialVersionUID = 1L;
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(name = "cat_calendar_hours", joinColumns = @JoinColumn(name = "calendar_id"), inverseJoinColumns = @JoinColumn(name = "hour_id"))
     @OrderBy("hour, minute")

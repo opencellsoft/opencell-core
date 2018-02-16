@@ -162,11 +162,13 @@
         <c:if test="#{! empty(width)}">
             <f:attribute name="width" value="#{width}" />
         </c:if>
-        <c:if test="#{sort and field}">
+		
+        <c:if test="#{sort and !empty(field)}">
             <f:attribute name="field" value="#{field}" />
             <f:attribute name="sortable" value="#{true}" />
             <f:attribute name="sortBy" value="#{valueField}" />
         </c:if>
+        
         <c:if test="#{! empty(styleClasss)}">
             <f:attribute name="styleClasss" value="#{styleClasss}" />
         </c:if>

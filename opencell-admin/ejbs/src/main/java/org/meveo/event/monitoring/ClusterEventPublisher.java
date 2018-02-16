@@ -40,7 +40,7 @@ public class ClusterEventPublisher implements Serializable {
 
         try {
             String code = entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : null;
-            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action);
+            ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action, EjbUtils.getCurrentClusterNode());
             log.trace("Publishing data synchronization between cluster nodes event {}", eventDto);
 
             context.createProducer().send(topic, eventDto);

@@ -387,11 +387,11 @@ public class WalletOperation extends BusinessEntity {
     public void setParameter3(String parameter3) {
         this.parameter3 = parameter3;
     }
-    
+
     public String getParameterExtra() {
         return parameterExtra;
     }
-    
+
     public void setParameterExtra(String parameterExtra) {
         this.parameterExtra = parameterExtra;
     }
@@ -546,6 +546,9 @@ public class WalletOperation extends BusinessEntity {
 
     public void setOfferTemplate(OfferTemplate offerTemplate) {
         this.offerTemplate = offerTemplate;
+        if (offerTemplate != null && offerCode == null) {
+            offerCode = offerTemplate.getCode();
+        }
     }
 
     public String getInputUnitDescription() {

@@ -36,29 +36,29 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class ProductChargeInstanceService extends BusinessService<ProductChargeInstance> {
 
-    @EJB
-    private WalletService walletService;
+	@EJB
+	private WalletService walletService;
 
-    @EJB
-    private WalletOperationService walletOperationService;
-
-    public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
-        ProductChargeInstance productChargeInstance = null;
-        try {
+	@EJB
+	private WalletOperationService walletOperationService;
+	
+	public ProductChargeInstance findByCodeAndSubsription(String code, Long userAccountId) {
+		ProductChargeInstance productChargeInstance = null;
+		try {
             log.debug("start of find {} by code (code={}, userAccountId={}) ..", new Object[] { "ProductChargeInstance", code, userAccountId });
-            QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
-            qb.addCriterion("c.code", "=", code, true);
-            qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
-            productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
+			QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c");
+			qb.addCriterion("c.code", "=", code, true);
+			qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+			productChargeInstance = (ProductChargeInstance) qb.getQuery(getEntityManager()).getSingleResult();
             log.debug("end of find {} by code (code={}, userAccountId={}). Result found={}.",
                 new Object[] { "ProductChargeInstance", code, userAccountId, productChargeInstance != null });
-        } catch (NoResultException nre) {
-            log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
-        } catch (Exception e) {
-            log.error("failed to find productChargeInstance by Code and subsription", e);
-        }
-        return productChargeInstance;
-    }
+		} catch (NoResultException nre) {
+			log.debug("findByCodeAndSubsription : aucune charge ponctuelle n'a ete trouvee");
+		} catch (Exception e) {
+			log.error("failed to find productChargeInstance by Code and subsription",e);
+		}
+		return productChargeInstance;
+	}
 
     public List<WalletOperation> applyProductChargeInstance(ProductChargeInstance productChargeInstance, boolean isVirtual) throws BusinessException {
 
@@ -79,19 +79,19 @@ public class ProductChargeInstanceService extends BusinessService<ProductChargeI
         }
         return walletOperations;
     }
+	
+	@SuppressWarnings("unchecked")
+	public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
+		qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 
-    @SuppressWarnings("unchecked")
-    public List<ProductChargeInstance> findBySubscriptionId(Long subscriptionId) {
-        QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
-        qb.addCriterion("c.subscription.id", "=", subscriptionId, true);
-        return qb.getQuery(getEntityManager()).getResultList();
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
-        QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
-        qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
-        qb.addSql("c.subscription is null");
-        return qb.getQuery(getEntityManager()).getResultList();
-    }
+	@SuppressWarnings("unchecked")
+	public List<ProductChargeInstance> findByUserAccountId(Long userAccountId) {
+		QueryBuilder qb = new QueryBuilder(ProductChargeInstance.class, "c", Arrays.asList("chargeTemplate"));
+		qb.addCriterion("c.userAccount.id", "=", userAccountId, true);
+		qb.addSql("c.subscription is null");
+		return qb.getQuery(getEntityManager()).getResultList();
+	}
 }

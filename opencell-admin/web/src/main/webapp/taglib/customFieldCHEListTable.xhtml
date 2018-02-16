@@ -112,7 +112,7 @@
                         <p:commandButton value="#{customAction.label}"
                             action="#{customFieldDataEntryBean.executeCustomActionOnChildEntity(cfValueHolder.entity,cfValueHolder.selectedChildEntity.entity, customAction, null)}"
                             process="@this :#{clientGuiId}:#{fieldPrefix}dlg_childEntityForm:tabView" partialSubmit="true" partialSubmitFilter=":not([name*='omitFromSubmit'])"
-                            update="@form" rendered="#{edit and !disabled and exp:evaluateToBoolean(customAction.applicableOnEl,'entity',cfValueHolder.selectedChildEntity.entity)}">
+                            update="@form" rendered="#{edit and !disabled and exp:evaluateToBooleanOneVariable(customAction.applicableOnEl,'entity',cfValueHolder.selectedChildEntity.entity)}">
                             <p:confirm header="#{messages['commons.confirmationHeader']}" message="#{messages['customFieldInstance.childEntity.customAction.confirmExecute']}" />
                         </p:commandButton>
                     </ui:repeat>

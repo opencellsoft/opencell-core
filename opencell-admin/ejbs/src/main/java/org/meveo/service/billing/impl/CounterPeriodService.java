@@ -33,6 +33,14 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class CounterPeriodService extends PersistenceService<CounterPeriod> {
 
+    /**
+     * Find an existing counter period matching a given date
+     * 
+     * @param counterInstance Counter instance
+     * @param date Date to match
+     * @return Counter period
+     * @throws BusinessException
+     */
     public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");
         query.setParameter("counterInstance", counterInstance);

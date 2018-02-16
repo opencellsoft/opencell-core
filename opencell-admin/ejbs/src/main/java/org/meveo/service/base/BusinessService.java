@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
@@ -42,7 +43,24 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
      * @return A single entity matching code
      */
     public P findByCode(String code) {
-        return findByCode(code, null);
+
+        if (code == null) {
+            return null;
+        }
+
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where upper(code)=:code", entityClass)
+            .setParameter("code", code.toUpperCase()).setMaxResults(1);
+
+        // if (entityClass.isAnnotationPresent(Cacheable.class)) {
+        // query.setHint("org.hibernate.cacheable", true);
+        // }
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+            return null;
+        }
     }
 
     /**
@@ -80,6 +98,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
 
         try {
             return (P) qb.getQuery(getEntityManager()).getSingleResult();
+
         } catch (NoResultException e) {
             log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
             return null;

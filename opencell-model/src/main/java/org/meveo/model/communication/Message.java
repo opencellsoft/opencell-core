@@ -24,6 +24,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -49,11 +50,11 @@ public class Message extends BaseEntity {
 	@OneToMany(mappedBy = "message")
 	private List<MessageVariableValue> parameters;
 
-	@ManyToOne
-	@JoinColumn(name = "campaign_id")
-	private Campaign campaign;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "campaign_id")
+    private Campaign campaign;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "contact_id")
 	private Contact contact;
 

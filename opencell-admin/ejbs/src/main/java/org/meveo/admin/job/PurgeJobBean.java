@@ -10,8 +10,6 @@ import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -25,9 +23,6 @@ import org.slf4j.Logger;
 public class PurgeJobBean implements Serializable {
 
     private static final long serialVersionUID = 2226065462536318643L;
-
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     @Inject
     private CounterInstanceService counterInstanceService;
@@ -75,7 +70,6 @@ public class PurgeJobBean implements Serializable {
                     result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
                         result.addReport("Purged " + nbSuccess + " counter periods");
-                        ratingCacheContainerProvider.refreshCache(RatingCacheContainerProvider.COUNTER_CACHE);
                     }
                 }
             }

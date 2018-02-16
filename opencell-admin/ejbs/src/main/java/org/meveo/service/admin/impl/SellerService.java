@@ -20,7 +20,6 @@ package org.meveo.service.admin.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -32,29 +31,29 @@ import org.meveo.service.billing.impl.InvoiceTypeService;
 
 @Stateless
 public class SellerService extends BusinessService<Seller> {
-	
-	@Inject
-	private InvoiceTypeService invoiceTypeService;
 
-	public boolean hasChildren(EntityManager em, Seller seller) {
-		QueryBuilder qb = new QueryBuilder(Seller.class, "s");
-		
-		qb.addCriterionEntity("seller", seller);
+    @Inject
+    private InvoiceTypeService invoiceTypeService;
 
-		try {
-			return ((Long) qb.getCountQuery(em).getSingleResult()) > 0;
-		} catch (NoResultException e) {
-			return false;
-		}
-	}
-	
-	@Override
-    public void create(Seller seller) throws BusinessException{
+    public boolean hasChildren(Seller seller) {
+        QueryBuilder qb = new QueryBuilder(Seller.class, "s");
+
+        qb.addCriterionEntity("seller", seller);
+
+        try {
+            return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult()) > 0;
+        } catch (NoResultException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public void create(Seller seller) throws BusinessException {
         log.info("start of create seller");
         super.create(seller);
         InvoiceType commType = invoiceTypeService.getDefaultCommertial();
-        log.debug("InvoiceTypeCode for commercial bill :"+(commType==null?null:commType.getCode()));
+        log.debug("InvoiceTypeCode for commercial bill :" + (commType == null ? null : commType.getCode()));
         InvoiceType adjType = invoiceTypeService.getDefaultAdjustement();
-        log.debug("InvoiceTypeCode for adjustement bill :"+(adjType==null?null:adjType.getCode()));
+        log.debug("InvoiceTypeCode for adjustement bill :" + (adjType == null ? null : adjType.getCode()));
     }
 }

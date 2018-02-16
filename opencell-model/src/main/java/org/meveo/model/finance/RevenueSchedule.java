@@ -21,9 +21,6 @@ import org.meveo.model.billing.ChargeInstance;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_revenue_schedule_seq"), })
 public class RevenueSchedule extends BaseEntity {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 7793758853731725829L;
 
 	@ManyToOne(optional=false)

@@ -17,8 +17,6 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.ChargeInstance;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.CounterTemplate;
@@ -308,7 +306,7 @@ public class CatalogHierarchyBuilderService {
             for (ProductChargeTemplate productCharge : productTemplate.getProductChargeTemplates()) {
                 // create price plan
                 String chargeTemplateCode = productCharge.getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -441,7 +439,7 @@ public class CatalogHierarchyBuilderService {
             for (ServiceChargeTemplateRecurring serviceCharge : serviceTemplate.getServiceRecurringCharges()) {
                 // create price plan
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -479,7 +477,7 @@ public class CatalogHierarchyBuilderService {
             for (ServiceChargeTemplateSubscription serviceCharge : serviceTemplate.getServiceSubscriptionCharges()) {
                 // create price plan
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -516,7 +514,7 @@ public class CatalogHierarchyBuilderService {
             for (ServiceChargeTemplateTermination serviceCharge : serviceTemplate.getServiceTerminationCharges()) {
                 // create price plan
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     try {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
@@ -552,7 +550,7 @@ public class CatalogHierarchyBuilderService {
         if (serviceTemplate.getServiceUsageCharges() != null && !serviceTemplate.getServiceUsageCharges().isEmpty()) {
             for (ServiceChargeTemplateUsage serviceCharge : serviceTemplate.getServiceUsageCharges()) {
                 String chargeTemplateCode = serviceCharge.getChargeTemplate().getCode();
-                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                 if (pricePlanMatrixes != null) {
                     for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                         String ppCode = prefix + pricePlanMatrix.getCode();
@@ -732,7 +730,6 @@ public class CatalogHierarchyBuilderService {
         targetTemplate.setCode(prefix + sourceChargeTemplate.getCode());
         targetTemplate.clearUuid();
         targetTemplate.setVersion(0);
-        targetTemplate.setChargeInstances(new ArrayList<ChargeInstance>());
         targetTemplate.setEdrTemplates(new ArrayList<TriggeredEDRTemplate>());
     }
 
@@ -752,35 +749,34 @@ public class CatalogHierarchyBuilderService {
      * @throws BusinessException exception when deletion causes some errors
      */
     public synchronized void delete(OfferTemplate entity) throws BusinessException {
-        List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
-        if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
-            List<OfferServiceTemplate> offerServiceTemplates = entity.getOfferServiceTemplates();
-            if (offerServiceTemplates != null) {
-                for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-                    if (offerServiceTemplate != null) {
-                        ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-                        List<ServiceTemplate> servicesWithNotOffer = this.serviceTemplateService.getServicesWithNotOffer();
-                        if (servicesWithNotOffer != null) {
-                            for (ServiceTemplate serviceTemplateWithoutOffer : servicesWithNotOffer) {
-                                if (serviceTemplateWithoutOffer == null) {
-                                    continue;
-                                }
-
-                                String serviceCode = serviceTemplateWithoutOffer.getCode();
-                                if (serviceCode != null && serviceCode.equals(serviceTemplate.getCode())) {
-                                    this.deleteServiceAndCharge(serviceTemplate);
-                                    break;
-                                }
+        
+        if (entity == null || entity.isTransient() || subscriptionService.hasSubscriptions(entity)) {
+            return;
+        }
+        List<OfferServiceTemplate> offerServiceTemplates = entity.getOfferServiceTemplates();
+        if (offerServiceTemplates != null) {
+            for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+                if (offerServiceTemplate != null) {
+                    ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+                    List<ServiceTemplate> servicesWithNotOffer = serviceTemplateService.getServicesWithNotOffer();
+                    if (servicesWithNotOffer != null) {
+                        for (ServiceTemplate serviceTemplateWithoutOffer : servicesWithNotOffer) {
+                            if (serviceTemplateWithoutOffer == null) {
+                                continue;
                             }
 
+                            String serviceCode = serviceTemplateWithoutOffer.getCode();
+                            if (serviceCode != null && serviceCode.equals(serviceTemplate.getCode())) {
+                                this.deleteServiceAndCharge(serviceTemplate);
+                                break;
+                            }
                         }
 
                     }
+
                 }
             }
-
         }
-
     }
 
     /**
@@ -844,7 +840,7 @@ public class CatalogHierarchyBuilderService {
                         }
                     }
 
-                    List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByEventCode(chargeTemplateCode);
+                    List<PricePlanMatrix> pricePlanMatrixes = this.pricePlanMatrixService.listByChargeCode(chargeTemplateCode);
                     if (pricePlanMatrixes != null) {
                         for (PricePlanMatrix pricePlanMatrix : pricePlanMatrixes) {
                             if (pricePlanMatrix == null) {

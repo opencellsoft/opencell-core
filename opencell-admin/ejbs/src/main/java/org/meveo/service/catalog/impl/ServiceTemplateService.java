@@ -23,9 +23,7 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
@@ -64,12 +62,6 @@ public class ServiceTemplateService extends BusinessService<ServiceTemplate> {
     public ServiceTemplate update(ServiceTemplate serviceTemplate) throws BusinessException {
         ServiceTemplate result = super.update(serviceTemplate);
         return result;
-    }
-
-    public void removeByCode(EntityManager em, String code) {
-        Query query = em.createQuery("DELETE ServiceTemplate t WHERE t.code=:code ");
-        query.setParameter("code", code);
-        query.executeUpdate();
     }
 
     public int getNbServiceWithNotOffer() {

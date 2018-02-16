@@ -67,9 +67,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     private Map<String, List<String>> allLogs = new HashMap<String, List<String>>();
 
-    private Map<String, Class<SI>> allScriptInterfaces = new HashMap<String, Class<SI>>();
+    protected Map<String, Class<SI>> allScriptInterfaces = new HashMap<String, Class<SI>>();
 
-    private Map<String, SI> allScriptInstances = new HashMap<String, SI>();
+    private Map<String, SI> cachedScriptInstances = new HashMap<String, SI>();
 
     private CharSequenceCompiler<SI> compiler;
 
@@ -312,7 +312,6 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
             if (!testCompile && isActive) {
 
                 allScriptInterfaces.put(scriptCode, compiledScript);
-                allScriptInstances.put(scriptCode, compiledScript.newInstance());
 
                 log.debug("Compiled script {} added to compiled interface map", scriptCode);
             }
@@ -446,14 +445,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws ElementNotFoundException Script not found
      */
     @Lock(LockType.WRITE)
-    private Class<SI> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
+    protected Class<SI> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
         
-        try {
-            Thread.sleep(30000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
 
         result = allScriptInterfaces.get(scriptCode);
 
@@ -501,9 +495,22 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
         }
     }
 
+    /**
+     * Get a the same/single/cached instance of compiled script class. A subsequent call to this method will retun the same instance of scipt.
+     * 
+     * @param scriptCode Script code
+     * @return A compiled script class
+     * @throws ElementNotFoundException
+     * @throws InvalidScriptException
+     */
     public SI getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         SI script = null;
-        script = allScriptInstances.get(scriptCode);
+        script = cachedScriptInstances.get(scriptCode);
+        if (script == null){
+            script = getScriptInstance(scriptCode);
+
+            cachedScriptInstances.put(scriptCode, script);
+        }
         return script;
     }
 
@@ -689,16 +696,12 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Get all script interfaces *
+     * Remove compiled script, its logs and cached instances for given script code
      * 
-     * @return the allScriptInterfaces
+     * @param scriptCode Script code
      */
-    public Map<String, Class<SI>> getAllScriptInterfaces() {
-        return allScriptInterfaces;
-    }
-
-    private void clearCompiledScripts(String scriptCode) {
-        allScriptInstances.remove(scriptCode);
+    public void clearCompiledScripts(String scriptCode) {
+        cachedScriptInstances.remove(scriptCode);
         allScriptInterfaces.remove(scriptCode);
         allLogs.remove(scriptCode);
     }
