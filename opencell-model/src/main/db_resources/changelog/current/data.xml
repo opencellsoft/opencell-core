@@ -186,4 +186,25 @@
 			<column name="payment_method" value="NONE" />			
 		</insert>			
 	</changeSet>
+	
+	<changeSet author="AbdelmounaimAkadid" id="#3224_16022018">
+		<insert tableName="adm_role">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="role_description" value="Customer care user" />
+			<column name="role_name" value="CUSTOMER_CARE_USER" />
+		</insert>
+		<insert tableName="adm_role_role">
+			<column name="role_id" valueNumeric="-6" />
+			<column name="child_role_id" valueNumeric="-3" />
+		</insert>
+		<insert tableName="adm_role_permission">
+			<column name="role_id" valueNumeric="-6" />
+			<column name="permission_id" valueNumeric="14" />
+		</insert>
+		<insert tableName="adm_role_permission">
+			<column name="role_id" valueNumeric="-6" />
+			<column name="permission_id" valueNumeric="1" />
+		</insert>
+	</changeSet>
 </databaseChangeLog>
