@@ -94,7 +94,7 @@ public class OrderService extends BusinessService<Order> {
 
         // Obtain card payment method token id from a payment gateway
         if (order.getPaymentMethod() != null && order.getPaymentMethod() instanceof CardPaymentMethod && ((CardPaymentMethod) order.getPaymentMethod()).getTokenId() == null) {
-            UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
+            UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
 		if (order.getPaymentMethod() != null) {
@@ -113,7 +113,7 @@ public class OrderService extends BusinessService<Order> {
 
         // Obtain card payment method token id from a payment gateway
         if (order.getPaymentMethod() != null && order.getPaymentMethod() instanceof CardPaymentMethod && ((CardPaymentMethod) order.getPaymentMethod()).getTokenId() == null) {
-            UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
+            UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
         if (order.getPaymentMethod() != null) {

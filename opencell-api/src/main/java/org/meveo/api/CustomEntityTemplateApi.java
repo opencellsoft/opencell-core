@@ -366,7 +366,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 		// evaluate the CFT againsts the entity
 		List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
 		for (CustomFieldTemplateDto cft : result.getFields()) {
-			if (ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entityInstance)) {
+			if (ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entityInstance)) {
 				evaluatedCFTDto.add(cft);
 			}
 		}

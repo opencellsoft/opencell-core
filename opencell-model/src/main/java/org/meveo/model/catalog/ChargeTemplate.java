@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -35,12 +36,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
@@ -50,7 +53,6 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
-import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.OperationTypeEnum;
 import org.meveo.model.finance.RevenueRecognitionRule;
@@ -58,6 +60,7 @@ import org.meveo.model.finance.RevenueRecognitionRule;
 @Entity
 @ModuleItem
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "CHARGE")
 @ExportIdentifier({ "code" })
 @Table(name = "cat_charge_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
@@ -73,49 +76,57 @@ public class ChargeTemplate extends BusinessCFEntity {
     }
 
     @Column(name = "credit_debit_flag")
-    private OperationTypeEnum type;
+    protected OperationTypeEnum type;
 
     @Type(type = "numeric_boolean")
     @Column(name = "amount_editable")
-    private Boolean amountEditable;
+    protected Boolean amountEditable;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_sub_category", nullable = false)
     @NotNull
-    private InvoiceSubCategory invoiceSubCategory;
+    protected InvoiceSubCategory invoiceSubCategory;
 
-    @OneToMany(mappedBy = "chargeTemplate", fetch = FetchType.LAZY)
-    private List<ChargeInstance> chargeInstances = new ArrayList<ChargeInstance>();
-
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "cat_chrg_edr", joinColumns = @JoinColumn(name = "charge_tmpl_id"), inverseJoinColumns = @JoinColumn(name = "trigg_edr_id"))
-    private List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
+    protected List<TriggeredEDRTemplate> edrTemplates = new ArrayList<TriggeredEDRTemplate>();
 
     @Column(name = "input_unit_description", length = 20)
     @Size(max = 20)
-    private String inputUnitDescription;
+    protected String inputUnitDescription;
 
     @Column(name = "rating_unit_description", length = 20)
     @Size(max = 20)
-    private String ratingUnitDescription;
+    protected String ratingUnitDescription;
 
     @Column(name = "unit_multiplicator", precision = BaseEntity.NB_PRECISION, scale = BaseEntity.NB_DECIMALS)
-    private BigDecimal unitMultiplicator;
+    protected BigDecimal unitMultiplicator;
 
     @Column(name = "unit_nb_decimal")
-    private int unitNbDecimal = BaseEntity.NB_DECIMALS;
+    protected int unitNbDecimal = BaseEntity.NB_DECIMALS;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "rounding_mode")
-    private RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
+    protected RoundingModeEnum roundingMode = RoundingModeEnum.NEAREST;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "revenue_recog_rule_id")
-    private RevenueRecognitionRule revenueRecognitionRule;
+    protected RevenueRecognitionRule revenueRecognitionRule;
 
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
-    private Map<String, String> descriptionI18n;
+    protected Map<String, String> descriptionI18n;
+
+    // Calculated values
+    @Transient
+    private boolean roundingValuesComputed;
+
+    @Transient
+    private int roundingUnityNbDecimal = 2;
+
+    @Transient
+    private int roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
 
     public OperationTypeEnum getType() {
         return type;
@@ -141,13 +152,6 @@ public class ChargeTemplate extends BusinessCFEntity {
         this.invoiceSubCategory = invoiceSubCategory;
     }
 
-    public List<ChargeInstance> getChargeInstances() {
-        return chargeInstances;
-    }
-
-    public void setChargeInstances(List<ChargeInstance> chargeInstances) {
-        this.chargeInstances = chargeInstances;
-    }
 
     public List<TriggeredEDRTemplate> getEdrTemplates() {
         return edrTemplates;
@@ -234,5 +238,33 @@ public class ChargeTemplate extends BusinessCFEntity {
             descriptionI18n = new HashMap<>();
         }
         return descriptionI18n;
+    }
+
+    private void computeRoundingValues() {
+        if (roundingValuesComputed) {
+            return;
+        }
+        try {
+            if (unitNbDecimal >= BaseEntity.NB_DECIMALS) {
+                roundingUnityNbDecimal = BaseEntity.NB_DECIMALS;
+            } else {
+                roundingUnityNbDecimal = unitNbDecimal;
+                roundingEdrNbDecimal = (int) Math.round(roundingUnityNbDecimal + Math.floor(Math.log10(unitMultiplicator.doubleValue())));
+                if (roundingEdrNbDecimal > BaseEntity.NB_DECIMALS) {
+                    roundingEdrNbDecimal = BaseEntity.NB_DECIMALS;
+                }
+            }
+        } catch (Exception e) {
+        }
+    }
+
+    protected int getRoundingEdrNbDecimal() {
+        computeRoundingValues();// See if this can be computed only once upon entity load or upon value change
+        return roundingEdrNbDecimal;
+    }
+
+    protected int getRoundingUnityNbDecimal() {
+        computeRoundingValues(); // See if this can be computed only once upon entity load or upon value change
+        return roundingUnityNbDecimal;
     }
 }

@@ -50,7 +50,6 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateHandler;
@@ -270,7 +269,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				return;
 			}
 
-			selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
+			selectInvoiceSubCat = invoiceSubCategoryService.retrieveIfNotManaged(selectInvoiceSubCat);
 
 			RatedTransaction ratedTransaction = new RatedTransaction();
 			ratedTransaction.setUsageDate(usageDate);
@@ -589,14 +588,15 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			throw new BusinessException("BillingAccount is required.");
 		}
-		return billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+		return billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 	}
 
 	private UserAccount getFreshUA() throws BusinessException {
-		if (getFreshBA().getUsersAccounts() == null || getFreshBA().getUsersAccounts().isEmpty()) {
+	    BillingAccount ba = getFreshBA();
+		if (ba.getUsersAccounts() == null || ba.getUsersAccounts().isEmpty()) {
 			throw new BusinessException("BillingAccount with code=" + getFreshBA().getCode() + " has no userAccount.");
 		}
-		return userAccountService.refreshOrRetrieve(getFreshBA().getUsersAccounts().get(0));
+		return userAccountService.retrieveIfNotManaged(ba.getUsersAccounts().get(0));
 	}
 
 	public List<CategoryInvoiceAgregate> getCategoryInvoiceAggregates() {
@@ -675,7 +675,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			return;
 		}
 
-		selectedInvoiceSubCategory = invoiceSubCategoryService.refreshOrRetrieve(selectedInvoiceSubCategory);		
+		selectedInvoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(selectedInvoiceSubCategory);		
 
 		agregateHandler.addInvoiceSubCategory(selectedInvoiceSubCategory, getFreshBA(), getFreshUA(),description, amountWithoutTax);
 		updateAmountsAndLines(getFreshBA());
@@ -707,7 +707,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 */
 	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
 		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
-			BillingAccount ba = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+			BillingAccount ba = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 			filters.put("billingAccount", ba);
 		}
 		if (entity.getInvoiceType() != null) {

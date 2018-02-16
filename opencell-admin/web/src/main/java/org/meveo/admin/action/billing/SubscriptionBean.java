@@ -403,7 +403,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         if (oneShotChargeInstance != null && oneShotChargeInstance.getChargeTemplate() != null) {
             if(oneShotChargeInstance.getDescription() != null && oneShotChargeInstance.getDescription().equals(oneShotChargeInstance.getChargeTemplate().getDescription())) {
             if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
-                String languageCode = tradingLanguageService.refreshOrRetrieve(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage().getLanguageCode();
+                String languageCode = tradingLanguageService.retrieveIfNotManaged(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage().getLanguageCode();
                 if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
                     oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode));
                 }
@@ -592,10 +592,10 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                 productInstance.setApplicationDate(new Date());
             }
 
-            entity = getPersistenceService().refreshOrRetrieve(entity);
+            entity = getPersistenceService().retrieveIfNotManaged(entity);
             productInstance.setSubscription(entity);
             productInstance.setUserAccount(entity.getUserAccount());
-            productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+            productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate()));
 
             try {
                 // productInstanceService.create(productInstance);
@@ -972,7 +972,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         List<ProductTemplate> result = new ArrayList<>();
 
         if (entity != null && entity.getOffer() != null) {
-            for (OfferProductTemplate offerProductTemplate : offerTemplateService.refreshOrRetrieve(entity.getOffer()).getOfferProductTemplates()) {
+            for (OfferProductTemplate offerProductTemplate : offerTemplateService.retrieveIfNotManaged(entity.getOffer()).getOfferProductTemplates()) {
                 if (offerProductTemplate.getProductTemplate().getValidity() == null || offerProductTemplate.getProductTemplate().getValidity().isCorrespondsToPeriod(date)) {
                     result.add(offerProductTemplate.getProductTemplate());
                 }

@@ -20,11 +20,14 @@ package org.meveo.model.billing;
 
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,114 +45,119 @@ import org.meveo.model.shared.DateUtils;
  * InvoiceSubcategoryCountry entity.
  */
 @Entity
-@ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code", "startValidityDate", "endValidityDate"})
-@Table(name = "billing_inv_sub_cat_country", uniqueConstraints = @UniqueConstraint(columnNames = {"invoice_sub_category_id", "selling_country_id", "trading_country_id", "start_validity_date", "end_validity_date"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_inv_sub_cat_country_seq"), })
+@Cacheable
+@ExportIdentifier({ "invoiceSubCategory.code", "tradingCountry.country.countryCode", "tax.code", "startValidityDate", "endValidityDate" })
+@Table(name = "billing_inv_sub_cat_country", uniqueConstraints = @UniqueConstraint(columnNames = { "invoice_sub_category_id", "selling_country_id", "trading_country_id",
+        "start_validity_date", "end_validity_date" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_inv_sub_cat_country_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "InvoiceSubcategoryCountry.findByInvoiceSubCategoryAndCountry", query = "select i from InvoiceSubcategoryCountry i where i.invoiceSubCategory=:invoiceSubCategory and i.tradingCountry=:tradingCountry and ((i.startValidityDate<=:applicationDate AND :applicationDate<=i.endValidityDate) OR (i.startValidityDate IS NULL AND i.endValidityDate IS NULL) OR (i.startValidityDate IS NULL AND :applicationDate<=i.endValidityDate) OR (i.endValidityDate IS NULL AND i.startValidityDate<=:applicationDate)) ORDER BY priority DESC") })
 public class InvoiceSubcategoryCountry extends EnableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoice_sub_category_id")
-	private InvoiceSubCategory invoiceSubCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoice_sub_category_id")
+    private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "selling_country_id")
-	private TradingCountry sellingCountry;
-	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "trading_country_id")
-	private TradingCountry tradingCountry;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "selling_country_id")
+    private TradingCountry sellingCountry;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "tax_id")
-	private Tax tax;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "trading_country_id")
+    private TradingCountry tradingCountry;
 
-	@Column(name = "filter_el", length = 2000)
-	@Size(max = 2000)
-	private String filterEL;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tax_id")
+    private Tax tax;
 
-	@Column(name = "tax_code_el", length = 2000)
-	@Size(max = 2000)
-	private String taxCodeEL;
-	
-	@Column(name = "start_validity_date")
-	@Temporal(TemporalType.DATE)
-	private Date startValidityDate;
+    @Column(name = "filter_el", length = 2000)
+    @Size(max = 2000)
+    private String filterEL;
 
-	@Column(name = "end_validity_date")
-	@Temporal(TemporalType.DATE)
-	private Date endValidityDate;
-	
-	@Column(name = "priority")
+    @Column(name = "tax_code_el", length = 2000)
+    @Size(max = 2000)
+    private String taxCodeEL;
+
+    @Column(name = "start_validity_date")
+    @Temporal(TemporalType.DATE)
+    private Date startValidityDate;
+
+    @Column(name = "end_validity_date")
+    @Temporal(TemporalType.DATE)
+    private Date endValidityDate;
+
+    @Column(name = "priority")
     private int priority;
-	
-	@Transient
-	private Boolean strictMatch;
-	
-	@Transient
-	private Date startValidityDateMatch;
-	
-	@Transient
-	private Date endValidityDateMatch;
 
-	public InvoiceSubCategory getInvoiceSubCategory() {
-		return invoiceSubCategory;
-	}
+    @Transient
+    private Boolean strictMatch;
 
-	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
-		this.invoiceSubCategory = invoiceSubCategory;
-	}
+    @Transient
+    private Date startValidityDateMatch;
 
-	public TradingCountry getSellingCountry() {
-		return sellingCountry;
-	}
+    @Transient
+    private Date endValidityDateMatch;
 
-	public void setSellingCountry(TradingCountry sellingCountry) {
-		this.sellingCountry = sellingCountry;
-	}
+    public InvoiceSubCategory getInvoiceSubCategory() {
+        return invoiceSubCategory;
+    }
 
-	public TradingCountry getTradingCountry() {
-		return tradingCountry;
-	}
+    public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+        this.invoiceSubCategory = invoiceSubCategory;
+    }
 
-	public void setTradingCountry(TradingCountry tradingCountry) {
-		this.tradingCountry = tradingCountry;
-	}
+    public TradingCountry getSellingCountry() {
+        return sellingCountry;
+    }
 
-	public Tax getTax() {
-		return tax;
-	}
+    public void setSellingCountry(TradingCountry sellingCountry) {
+        this.sellingCountry = sellingCountry;
+    }
 
-	public void setTax(Tax tax) {
-		this.tax = tax;
-	}
-	
-	public String getTaxCodeEL() {
-		return taxCodeEL;
-	}
+    public TradingCountry getTradingCountry() {
+        return tradingCountry;
+    }
 
-	public void setTaxCodeEL(String taxCodeEL) {
-		this.taxCodeEL = taxCodeEL;
-	}
+    public void setTradingCountry(TradingCountry tradingCountry) {
+        this.tradingCountry = tradingCountry;
+    }
 
-	public String getFilterEL() {
-		return filterEL;
-	}
+    public Tax getTax() {
+        return tax;
+    }
 
-	public void setFilterEL(String filterEL) {
-		this.filterEL = filterEL;
-	}
+    public void setTax(Tax tax) {
+        this.tax = tax;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    public String getTaxCodeEL() {
+        return taxCodeEL;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    public void setTaxCodeEL(String taxCodeEL) {
+        this.taxCodeEL = taxCodeEL;
+    }
+
+    public String getFilterEL() {
+        return filterEL;
+    }
+
+    public void setFilterEL(String filterEL) {
+        this.filterEL = filterEL;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -157,76 +165,75 @@ public class InvoiceSubcategoryCountry extends EnableEntity {
         } else if (!(obj instanceof InvoiceSubcategoryCountry)) {
             return false;
         }
-        
+
         InvoiceSubcategoryCountry other = (InvoiceSubcategoryCountry) obj;
         if (getId() == null) {
             if (other.getId() != null) {
                 return false;
             }
-        } else if (!getId().equals(other.getId())){
+        } else if (!getId().equals(other.getId())) {
             return false;
         }
         return true;
     }
 
-	public Date getStartValidityDate() {
-		return startValidityDate;
-	}
+    public Date getStartValidityDate() {
+        return startValidityDate;
+    }
 
-	public void setStartValidityDate(Date startValidityDate) {
-		this.startValidityDate = startValidityDate;
-	}
+    public void setStartValidityDate(Date startValidityDate) {
+        this.startValidityDate = startValidityDate;
+    }
 
-	public Date getEndValidityDate() {
-		return endValidityDate;
-	}
+    public Date getEndValidityDate() {
+        return endValidityDate;
+    }
 
-	public void setEndValidityDate(Date endValidityDate) {
-		this.endValidityDate = endValidityDate;
-	}
+    public void setEndValidityDate(Date endValidityDate) {
+        this.endValidityDate = endValidityDate;
+    }
 
-	public int getPriority() {
-		return priority;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	public boolean isCorrespondsToValidityDate(Date startValidityDate, Date endValidityDate, boolean strictMatch) {
-		if (strictMatch) {
-			boolean match = (startValidityDate == null && this.startValidityDate == null) || (startValidityDate != null
-					&& this.startValidityDate != null && startValidityDate.equals(this.startValidityDate));
-			match = match && ((endValidityDate == null && this.endValidityDate == null) || (endValidityDate != null
-					&& this.endValidityDate != null && endValidityDate.equals(this.endValidityDate)));
-			return match;
-		}
-		
-		return DateUtils.isPeriodsOverlap(this.startValidityDate, this.endValidityDate, startValidityDate,
-				endValidityDate);
-	}
+    public boolean isCorrespondsToValidityDate(Date startValidityDate, Date endValidityDate, boolean strictMatch) {
+        if (strictMatch) {
+            boolean match = (startValidityDate == null && this.startValidityDate == null)
+                    || (startValidityDate != null && this.startValidityDate != null && startValidityDate.equals(this.startValidityDate));
+            match = match && ((endValidityDate == null && this.endValidityDate == null)
+                    || (endValidityDate != null && this.endValidityDate != null && endValidityDate.equals(this.endValidityDate)));
+            return match;
+        }
 
-	public Date getStartValidityDateMatch() {
-		return startValidityDateMatch;
-	}
+        return DateUtils.isPeriodsOverlap(this.startValidityDate, this.endValidityDate, startValidityDate, endValidityDate);
+    }
 
-	public void setStartValidityDateMatch(Date startValidityDateMatch) {
-		this.startValidityDateMatch = startValidityDateMatch;
-	}
+    public Date getStartValidityDateMatch() {
+        return startValidityDateMatch;
+    }
 
-	public Date getEndValidityDateMatch() {
-		return endValidityDateMatch;
-	}
+    public void setStartValidityDateMatch(Date startValidityDateMatch) {
+        this.startValidityDateMatch = startValidityDateMatch;
+    }
 
-	public void setEndValidityDateMatch(Date endValidityDateMatch) {
-		this.endValidityDateMatch = endValidityDateMatch;
-	}
+    public Date getEndValidityDateMatch() {
+        return endValidityDateMatch;
+    }
 
-	public Boolean isStrictMatch() {
-		return strictMatch;
-	}
+    public void setEndValidityDateMatch(Date endValidityDateMatch) {
+        this.endValidityDateMatch = endValidityDateMatch;
+    }
 
-	public void setStrictMatch(Boolean strictMatch) {
-		this.strictMatch = strictMatch;
-	}
+    public Boolean isStrictMatch() {
+        return strictMatch;
+    }
+
+    public void setStrictMatch(Boolean strictMatch) {
+        this.strictMatch = strictMatch;
+    }
 }

@@ -21,6 +21,7 @@ package org.meveo.model.catalog;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -35,6 +36,8 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
@@ -47,60 +50,63 @@ import org.meveo.model.annotation.ImageType;
 @Entity
 @ModuleItem
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "SERVICE")
-@ExportIdentifier({ "code"})
-@Table(name = "cat_service_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_service_template_seq"), })
-@NamedQueries({			
-@NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", 
-	           query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
-@NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", 
-	           query = "from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
-@NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate",
-	           query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate")
-//@NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate", 
-//				query = "from ServiceTemplate s left join s.serviceSubscriptionCharges c where c.chargeTemplate=:chargeTemplate"),
-//@NamedQuery(name = "serviceTemplate.getServicesWithTerminationsByChargeTemplate", 
-//				query = "from ServiceTemplate s left join s.serviceTerminationCharges c where c.chargeTemplate=:chargeTemplate"),
-//@NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate", 
-//				query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
+@ExportIdentifier({ "code" })
+@Table(name = "cat_service_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_service_template_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "serviceTemplate.getNbServiceWithNotOffer", query = "select count(*) from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
+        @NamedQuery(name = "serviceTemplate.getServicesWithNotOffer", query = "from ServiceTemplate s where s.id not in (select serv.serviceTemplate.id from OfferTemplate o join o.offerServiceTemplates serv)"),
+        @NamedQuery(name = "serviceTemplate.getServicesWithRecurringsByChargeTemplate", query = "from ServiceTemplate s left join s.serviceRecurringCharges c where c.chargeTemplate=:chargeTemplate")
+        // @NamedQuery(name = "serviceTemplate.getServicesWithSubscriptionsByChargeTemplate",
+        // query = "from ServiceTemplate s left join s.serviceSubscriptionCharges c where c.chargeTemplate=:chargeTemplate"),
+        // @NamedQuery(name = "serviceTemplate.getServicesWithTerminationsByChargeTemplate",
+        // query = "from ServiceTemplate s left join s.serviceTerminationCharges c where c.chargeTemplate=:chargeTemplate"),
+        // @NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate",
+        // query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
 })
 public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
 
-	@OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY,cascade=CascadeType.ALL)
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
-	@ManyToOne
-	@JoinColumn(name = "invoicing_calendar_id")
-	private Calendar invoicingCalendar;
-	
-	@ManyToOne
-	@JoinColumn(name = "business_service_model_id")
-	private BusinessServiceModel businessServiceModel;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoicing_calendar_id")
+    private Calendar invoicingCalendar;
 
-	@Size(max = 2000)
-	@Column(name = "long_description", columnDefinition = "TEXT")
-	private String longDescription;
-	
-	@ImageType
-	@Column(name = "image_path", length = 100)
-	@Size(max = 100)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "business_service_model_id")
+    private BusinessServiceModel businessServiceModel;
+
+    @Size(max = 2000)
+    @Column(name = "long_description", columnDefinition = "TEXT")
+    private String longDescription;
+
+    @ImageType
+    @Column(name = "image_path", length = 100)
+    @Size(max = 100)
     private String imagePath;
-	
-	@Transient
-	private boolean selected;
-	
+
+    @Transient
+    private boolean selected;
+
 	/**
 	 * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
 	 */
@@ -110,84 +116,84 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	@Transient
 	private String descriptionOverride;
 
-	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
-		ServiceChargeTemplateRecurring result = null;
-		for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
-			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-				result = sctr;
-				break;
-			}
-		}
-		return result;
-	}
+    public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
+        ServiceChargeTemplateRecurring result = null;
+        for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
+            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+                result = sctr;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
-		return serviceRecurringCharges;
-	}
+    public List<ServiceChargeTemplateRecurring> getServiceRecurringCharges() {
+        return serviceRecurringCharges;
+    }
 
-	public void setServiceRecurringCharges(List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
-		this.serviceRecurringCharges = serviceRecurringCharges;
-	}
+    public void setServiceRecurringCharges(List<ServiceChargeTemplateRecurring> serviceRecurringCharges) {
+        this.serviceRecurringCharges = serviceRecurringCharges;
+    }
 
-	public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode) {
-		ServiceChargeTemplateSubscription result = null;
-		for (ServiceChargeTemplateSubscription sctr : serviceSubscriptionCharges) {
-			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-				result = sctr;
-				break;
-			}
-		}
-		return result;
-	}
+    public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscriptionByChargeCode(String chargeCode) {
+        ServiceChargeTemplateSubscription result = null;
+        for (ServiceChargeTemplateSubscription sctr : serviceSubscriptionCharges) {
+            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+                result = sctr;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
-		return serviceSubscriptionCharges;
-	}
+    public List<ServiceChargeTemplateSubscription> getServiceSubscriptionCharges() {
+        return serviceSubscriptionCharges;
+    }
 
-	public void setServiceSubscriptionCharges(List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
-		this.serviceSubscriptionCharges = serviceSubscriptionCharges;
-	}
+    public void setServiceSubscriptionCharges(List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges) {
+        this.serviceSubscriptionCharges = serviceSubscriptionCharges;
+    }
 
-	public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode) {
-		ServiceChargeTemplateTermination result = null;
-		for (ServiceChargeTemplateTermination sctr : serviceTerminationCharges) {
-			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-				result = sctr;
-				break;
-			}
-		}
-		return result;
-	}
+    public ServiceChargeTemplateTermination getServiceChargeTemplateTerminationByChargeCode(String chargeCode) {
+        ServiceChargeTemplateTermination result = null;
+        for (ServiceChargeTemplateTermination sctr : serviceTerminationCharges) {
+            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+                result = sctr;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
-		return serviceTerminationCharges;
-	}
+    public List<ServiceChargeTemplateTermination> getServiceTerminationCharges() {
+        return serviceTerminationCharges;
+    }
 
-	public void setServiceTerminationCharges(List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
-		this.serviceTerminationCharges = serviceTerminationCharges;
-	}
+    public void setServiceTerminationCharges(List<ServiceChargeTemplateTermination> serviceTerminationCharges) {
+        this.serviceTerminationCharges = serviceTerminationCharges;
+    }
 
-	public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode) {
-		ServiceChargeTemplateUsage result = null;
-		for (ServiceChargeTemplateUsage sctr : serviceUsageCharges) {
-			if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
-				result = sctr;
-				break;
-			}
-		}
-		return result;
-	}
+    public ServiceChargeTemplateUsage getServiceChargeTemplateUsageByChargeCode(String chargeCode) {
+        ServiceChargeTemplateUsage result = null;
+        for (ServiceChargeTemplateUsage sctr : serviceUsageCharges) {
+            if (sctr.getChargeTemplate().getCode().equals(chargeCode)) {
+                result = sctr;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
-		return serviceUsageCharges;
-	}
+    public List<ServiceChargeTemplateUsage> getServiceUsageCharges() {
+        return serviceUsageCharges;
+    }
 
-	public void setServiceUsageCharges(List<ServiceChargeTemplateUsage> serviceUsageCharges) {
-		this.serviceUsageCharges = serviceUsageCharges;
-	}
+    public void setServiceUsageCharges(List<ServiceChargeTemplateUsage> serviceUsageCharges) {
+        this.serviceUsageCharges = serviceUsageCharges;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -196,55 +202,55 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
         } else if (!(obj instanceof ServiceTemplate)) {
             return false;
         }
-        
+
         ServiceTemplate other = (ServiceTemplate) obj;
-		if (code == null) {
-			if (other.getCode() != null)
-				return false;
-		} else if (!code.equals(other.getCode()))
-			return false;
-		return true;
-	}
+        if (code == null) {
+            if (other.getCode() != null)
+                return false;
+        } else if (!code.equals(other.getCode()))
+            return false;
+        return true;
+    }
 
-	public Calendar getInvoicingCalendar() {
-		return invoicingCalendar;
-	}
+    public Calendar getInvoicingCalendar() {
+        return invoicingCalendar;
+    }
 
-	public void setInvoicingCalendar(Calendar invoicingCalendar) {
-		this.invoicingCalendar = invoicingCalendar;
-	}
+    public void setInvoicingCalendar(Calendar invoicingCalendar) {
+        this.invoicingCalendar = invoicingCalendar;
+    }
 
-	public BusinessServiceModel getBusinessServiceModel() {
-		return businessServiceModel;
-	}
+    public BusinessServiceModel getBusinessServiceModel() {
+        return businessServiceModel;
+    }
 
-	public void setBusinessServiceModel(BusinessServiceModel businessServiceModel) {
-		this.businessServiceModel = businessServiceModel;
-	}
+    public void setBusinessServiceModel(BusinessServiceModel businessServiceModel) {
+        this.businessServiceModel = businessServiceModel;
+    }
 
-	public String getLongDescription() {
-		return longDescription;
-	}
-    
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
-	}
+    public String getLongDescription() {
+        return longDescription;
+    }
 
-	public boolean isSelected() {
-		return selected;
-	}
+    public void setLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+    }
 
-	public void setSelected(boolean selected) {
-		this.selected = selected;
-	}
+    public boolean isSelected() {
+        return selected;
+    }
 
-	public String getImagePath() {
-		return imagePath;
-	}
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
 
-	public void setImagePath(String imagePath) {
-		this.imagePath = imagePath;
-	}
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
 	public boolean isInstantiatedFromBSM() {
 		return instantiatedFromBSM;

@@ -33,13 +33,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ServiceChargeTemplateSubscriptionService extends PersistenceService<ServiceChargeTemplateSubscription> {
 
-    // public void removeByPrefix(EntityManager em, String prefix) {
-    // Query query = em.createQuery("DELETE ServiceChargeTemplateSubscription t WHERE t.chargeTemplate.code LIKE '"
-    // + prefix + "%' ");
-    // query;
-    // query.executeUpdate();
-    // }
-
     @SuppressWarnings("unchecked")
     public List<ServiceChargeTemplateSubscription> findBySubscriptionChargeTemplate(OneShotChargeTemplate chargeTemplate) {
 

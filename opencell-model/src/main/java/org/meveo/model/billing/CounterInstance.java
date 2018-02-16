@@ -37,71 +37,72 @@ import org.meveo.model.shared.DateUtils;
 
 @Entity
 @Table(name = "billing_counter")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_counter_instance_seq"), })
 public class CounterInstance extends BusinessEntity {
-	private static final long serialVersionUID = -4924601467998738157L;
+    private static final long serialVersionUID = -4924601467998738157L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "counter_template_id")
-	private CounterTemplate counterTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_template_id")
+    private CounterTemplate counterTemplate;
 
-	@ManyToOne
-	@JoinColumn(name = "user_account_id")
-	private UserAccount userAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_account_id")
+    private UserAccount userAccount;
 
-	@ManyToOne
-	@JoinColumn(name = "billing_account_id")
-	private BillingAccount billingAccount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "billing_account_id")
+    private BillingAccount billingAccount;
 
-	@OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
-	private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
+    @OneToMany(mappedBy = "counterInstance", fetch = FetchType.LAZY)
+    private List<CounterPeriod> counterPeriods = new ArrayList<CounterPeriod>();
 
-	public CounterTemplate getCounterTemplate() {
-		return counterTemplate;
-	}
+    public CounterTemplate getCounterTemplate() {
+        return counterTemplate;
+    }
 
-	public void setCounterTemplate(CounterTemplate counterTemplate) {
-		this.counterTemplate = counterTemplate;
-		if (counterTemplate != null) {
-			this.code = counterTemplate.getCode();
-			this.description = counterTemplate.getDescription();
-		} else {
-			this.code = null;
-			this.description = null;
-		}
-	}
+    public void setCounterTemplate(CounterTemplate counterTemplate) {
+        this.counterTemplate = counterTemplate;
+        if (counterTemplate != null) {
+            this.code = counterTemplate.getCode();
+            this.description = counterTemplate.getDescription();
+        } else {
+            this.code = null;
+            this.description = null;
+        }
+    }
 
-	public UserAccount getUserAccount() {
-		return userAccount;
-	}
+    public UserAccount getUserAccount() {
+        return userAccount;
+    }
 
-	public void setUserAccount(UserAccount userAccount) {
-		this.userAccount = userAccount;
-	}
+    public void setUserAccount(UserAccount userAccount) {
+        this.userAccount = userAccount;
+    }
 
-	public List<CounterPeriod> getCounterPeriods() {
-		return counterPeriods;
-	}
+    public List<CounterPeriod> getCounterPeriods() {
+        return counterPeriods;
+    }
 
-	public void setCounterPeriods(List<CounterPeriod> counterPeriods) {
-		this.counterPeriods = counterPeriods;
-	}
+    public void setCounterPeriods(List<CounterPeriod> counterPeriods) {
+        this.counterPeriods = counterPeriods;
+    }
 
-	public BillingAccount getBillingAccount() {
-		return billingAccount;
-	}
+    public BillingAccount getBillingAccount() {
+        return billingAccount;
+    }
 
-	public void setBillingAccount(BillingAccount billingAccount) {
-		this.billingAccount = billingAccount;
-	}
+    public void setBillingAccount(BillingAccount billingAccount) {
+        this.billingAccount = billingAccount;
+    }
 
-	public CounterPeriod getCounterPeriod(Date date){
-	    for (CounterPeriod counterPeriod : counterPeriods) {
-            if (DateUtils.isDateTimeWithinPeriod(date, counterPeriod.getPeriodStartDate(), counterPeriod.getPeriodEndDate())){
+    public CounterPeriod getCounterPeriod(Date date) {
+        for (CounterPeriod counterPeriod : counterPeriods) {
+            if (DateUtils.isDateTimeWithinPeriod(date, counterPeriod.getPeriodStartDate(), counterPeriod.getPeriodEndDate())) {
                 return counterPeriod;
             }
         }
-	    return null;
-	}
+        return null;
+    }
 
 }

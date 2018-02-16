@@ -227,14 +227,13 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmounts(Long billingAccountId, BillingRun billingRun) throws BusinessException {
         log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
-        BillingAccount billingAccount = findById(billingAccountId, true);
+        BillingAccount billingAccount = findById(billingAccountId);
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, new Date(0), billingRun.getLastTransactionDate());
-        
+
         if (invoiceAmount != null) {
             BillingCycle billingCycle = billingRun.getBillingCycle();
-			BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
+            BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
 
-            log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
             if (invoicingThreshold != null) {
                 if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
                     log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
@@ -251,11 +250,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
             log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
         }
-        
+
         billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
-        
+
         updateNoCheck(billingAccount);
-        
+
         return true;
     }
 
@@ -267,25 +266,22 @@ public class BillingAccountService extends AccountService<BillingAccount> {
      * @param lastTransactionDate last transaction date
      * @return computed billing account's invoice amount.
      */
-	public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount, Date firstTransactionDate,
-			Date lastTransactionDate) {
-		Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount")
-				.setParameter("billingAccount", billingAccount)
-				.setParameter("firstTransactionDate", firstTransactionDate)
-				.setParameter("lastTransactionDate", lastTransactionDate);
-		BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();
-		if (sumAmountWithouttax == null) {
-			sumAmountWithouttax = BigDecimal.ZERO;
-		}
-		
-		return sumAmountWithouttax;
-	}
+    public BigDecimal computeBaInvoiceAmount(BillingAccount billingAccount, Date firstTransactionDate, Date lastTransactionDate) {
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumBillingAccount").setParameter("billingAccount", billingAccount)
+            .setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate);
+        BigDecimal sumAmountWithouttax = (BigDecimal) q.getSingleResult();
+        if (sumAmountWithouttax == null) {
+            sumAmountWithouttax = BigDecimal.ZERO;
+        }
+
+        return sumAmountWithouttax;
+    }
 
     @SuppressWarnings("unchecked")
     public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {
         QueryBuilder qb = new QueryBuilder(BillingAccount.class, "c");
         qb.addCriterionEntity("customerAccount", customerAccount);
-        qb.addOrderCriterion("c.id", true);
+        qb.addOrderCriterionAsIs("c.id", true);
         try {
             return (List<BillingAccount>) qb.getQuery(getEntityManager()).getResultList();
         } catch (NoResultException e) {
@@ -295,36 +291,34 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     }
 
     /**
-     * Evatuate the exoneration Taxes EL.
+     * Determine if billing account is exonerated from taxes - check either a flag or EL expressions in customer's customerCategory
      * 
      * @param ba The BillingAccount
-     * @return true if it is exonerated.
+     * @return True if billing account is exonerated from taxes
      */
     public boolean isExonerated(BillingAccount ba) {
+        
         boolean isExonerated = false;
-        CustomerCategory customerCategory = null;
-        if (ba == null || ba.getCustomerAccount().getCustomer().getCustomerCategory() == null) {
+        if (ba == null) {
             return false;
         }
-        customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
+        CustomerCategory customerCategory = ba.getCustomerAccount().getCustomer().getCustomerCategory();
+        if (customerCategory == null) {
+            return false;
+        }
         if (customerCategory.getExoneratedFromTaxes()) {
             return true;
         }
-        Map<Object, Object> userMap = new HashMap<Object, Object>();
+
         if (!StringUtils.isBlank(customerCategory.getExonerationTaxEl())) {
+
+            Map<Object, Object> userMap = new HashMap<Object, Object>();
             if (customerCategory.getExonerationTaxEl().indexOf("ba.") > -1) {
                 userMap.put("ba", ba);
             }
-            Boolean isExon = Boolean.FALSE;
-            try {
-                isExon = (Boolean) ValueExpressionWrapper.evaluateExpression(customerCategory.getExonerationTaxEl(), userMap, Boolean.class);
-            } catch (BusinessException e) {
-                log.error("Error evaluateExpression Exoneration taxes:", e);
-                e.printStackTrace();
-            }
-            isExonerated = (isExon == null ? false : isExon);
+
+            isExonerated =  ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(customerCategory.getExonerationTaxEl(), userMap);
         }
         return isExonerated;
     }
-
 }

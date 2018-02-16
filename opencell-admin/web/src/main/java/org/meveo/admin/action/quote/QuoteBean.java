@@ -65,7 +65,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
-import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
@@ -122,9 +121,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     @Inject
     private UserAccountService userAccountService;
-
-    @Inject
-    private BillingAccountService billingAccountService;
 
     @Inject
     private UserService userService;
@@ -341,7 +337,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
             }
 
             // set billingAccount
-            UserAccount quoteUa = userAccountService.refreshOrRetrieve(selectedQuoteItem.getUserAccount());
+            UserAccount quoteUa = userAccountService.retrieveIfNotManaged(selectedQuoteItem.getUserAccount());
             quoteItemDto.addBillingAccount(quoteUa.getCode());
 
             selectedQuoteItem.setQuoteItemDto(quoteItemDto);
@@ -384,8 +380,8 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         // Validate that user accounts belong to the same billing account as quote level account (if quote level account is specified)
         BillingAccount billingAccount = null;
         if (entity.getUserAccount() != null) {
-            UserAccount baUserAccount = userAccountService.refreshOrRetrieve(entity.getUserAccount());
-            billingAccount = billingAccountService.refreshOrRetrieve(baUserAccount.getBillingAccount());
+            entity.setUserAccount(userAccountService.retrieveIfNotManaged(entity.getUserAccount()));
+            billingAccount = entity.getUserAccount().getBillingAccount();
         }
 
         if (entity.getQuoteItems() != null) {
@@ -394,7 +390,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
                     quoteItem.setUserAccount(entity.getUserAccount());
                 }
 
-                UserAccount itemUa = userAccountService.refreshOrRetrieve(quoteItem.getUserAccount());
+                UserAccount itemUa = userAccountService.retrieveIfNotManaged(quoteItem.getUserAccount());
                 if (billingAccount != null && !billingAccount.equals(itemUa.getBillingAccount())) {
                     messages.error(new BundleKey("messages", "quote.billingAccountMissmatch"));
                     FacesContext.getCurrentInstance().validationFailed();
@@ -450,7 +446,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         TreeNode root = new DefaultTreeNode("Offer details", null);
         root.setExpanded(true);
 
-        ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedQuoteItem.getMainOffering());
+        ProductOffering mainOffering = productOfferingService.retrieveIfNotManaged(this.selectedQuoteItem.getMainOffering());
 
         // Take offer characteristics from DTO or default them from offer
         Map<OrderProductCharacteristicEnum, Object> mainOfferCharacteristics = new HashMap<>();
@@ -837,7 +833,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
         boolean editable = isValidationFailed() || entity.getStatus() == QuoteStatusEnum.IN_PROGRESS || entity.getStatus() == QuoteStatusEnum.PENDING;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
+            UserHierarchyLevel userGroup = userHierarchyLevelService.retrieveIfNotManaged(entity.getRoutedToUserGroup());
             User user = userService.findByUsername(currentUser.getUserName());
             editable = userGroup.isUserBelongsHereOrHigher(user);
         }

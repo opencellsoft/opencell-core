@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -34,6 +35,7 @@ import org.meveo.model.ExportIdentifier;
 
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
 @Table(name = "cat_serv_rec_charge_template")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_recchrg_templt_seq"), })

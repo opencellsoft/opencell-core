@@ -175,8 +175,6 @@ public class BusinessOfferApi extends BaseApi {
             }
         }
 
-        bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
-
         // populate offer custom fields
         if (newOfferTemplate != null && postData.getCustomFields() != null) {
             try {

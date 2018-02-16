@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,6 +45,7 @@ import org.meveo.model.catalog.Calendar;
  * Billing cycle.
  */
 @Entity
+@Cacheable
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
 @Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))

@@ -23,6 +23,8 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import org.meveo.model.catalog.RoundingModeEnum;
+
 /**
  * @author R.AITYAAZZA
  */
@@ -50,16 +52,51 @@ public class NumberUtils {
         return value;
     }
 
-    public static BigDecimal subtract(BigDecimal minuend, BigDecimal subtrahend) {
-        if (minuend == null) {
-            return new BigDecimal(0);
+	public static BigDecimal subtract(BigDecimal minuend, BigDecimal subtrahend) {
+		if (minuend == null) {
+			return new BigDecimal(0);
+		}
+
+
+
+
+
+
+		if (subtrahend == null) {
+			return minuend;
+
+		}
+
+
+		return minuend.subtract(subtrahend);
+	}
+
+    public static BigDecimal getInChargeUnit(BigDecimal unitValue, BigDecimal unitMultiplicator, Integer unitNbDecimal, RoundingModeEnum roundingModeEnum) {        
+        if (unitMultiplicator == null){
+            unitMultiplicator = BigDecimal.ONE;
+        }   
+        if (unitNbDecimal == null){
+            unitNbDecimal = new Integer(2);
         }
 
-        if (subtrahend == null) {
-            return minuend;
-        }
-
-        return minuend.subtract(subtrahend);
+        BigDecimal result = unitValue.multiply(unitMultiplicator);          
+        result = result.setScale(unitNbDecimal, getRoundingMode(roundingModeEnum));
+        return result;
     }
-
+    
+    public static RoundingMode getRoundingMode(RoundingModeEnum roundingModeEnum){
+        if (roundingModeEnum == null){
+            return RoundingMode.HALF_UP;
+        }
+        
+        if (RoundingModeEnum.DOWN.name().equals(roundingModeEnum.name())) {
+            return RoundingMode.FLOOR;
+        } 
+        
+        if (RoundingModeEnum.UP.name().equals(roundingModeEnum.name())) {
+            return RoundingMode.CEILING;
+        } 
+            
+        return RoundingMode.HALF_UP;        
+    }
 }
