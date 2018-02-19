@@ -1514,8 +1514,7 @@
 			<column name="http_protocol" type="varchar(10)" />
 		</addColumn>
 		<sql>UPDATE adm_notif_webhooks SET http_protocol='HTTP'</sql>
-		<addNotNullConstraint tableName="adm_notif_webhooks"
-			columnName="http_protocol" />
+		<addNotNullConstraint tableName="adm_notif_webhooks" columnName="http_protocol" columnDataType="varchar(10)" />
 	</changeSet>
     
     <changeSet id="#3112_20171229 Add billingTemplateNameEL to invoiceType" author="EdwardPLegaspi">
