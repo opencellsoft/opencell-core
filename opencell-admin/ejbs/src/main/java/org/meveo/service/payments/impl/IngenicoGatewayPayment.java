@@ -4,8 +4,9 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.MandatInfoDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -32,6 +33,7 @@ import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaym
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentMethodSpecificInput;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.SepaDirectDebitPaymentProduct771SpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.token.CreateTokenResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.CustomerToken;
@@ -64,7 +66,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            CreditCardTypeEnum cardType, String countryCode) throws BusinessException {
+            CreditCardTypeEnum cardType) throws BusinessException {
         try {
             CompanyInformation companyInformation = new CompanyInformation();
             companyInformation.setName(customerAccount.getCode());
@@ -80,7 +82,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             personalInformation.setName(name);
 
             CustomerToken customerToken = new CustomerToken();
-            customerToken.setBillingAddress(getBillingAddress(customerAccount, countryCode));
+            customerToken.setBillingAddress(getBillingAddress(customerAccount));
             customerToken.setCompanyInformation(companyInformation);
             customerToken.setMerchantCustomerId(customerAccount.getCode());
             customerToken.setPersonalInformation(personalInformation);
@@ -118,69 +120,64 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public PayByCardResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-
-        return doPayment(paymentToken, ctsAmount, paymentToken.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
+    public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentCardToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        return doPayment(null, paymentCardToken, ctsAmount, paymentCardToken.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
     }
 
     @Override
-    public PayByCardResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    public PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
-        return doPayment(null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType, countryCode, additionalParams);
+        return doPayment(null, null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType, countryCode, additionalParams);
     }
 
-    public PayByCardResponseDto doPayment(CardPaymentMethod paymentToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber, String ownerName, String cvv,
-            String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
+    public PaymentResponseDto doPaymentSepa(DDPaymentMethod ddPaymentMethod, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        return doPayment(ddPaymentMethod, null, ctsAmount, ddPaymentMethod.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
+    }
 
-        AmountOfMoney amountOfMoney = new AmountOfMoney();
-        amountOfMoney.setAmount(ctsAmount);
-        amountOfMoney.setCurrencyCode("EUR"/*customerAccount.getTradingCurrency().getCurrencyCode()*/);
-
-        Order order = new Order();
-        order.setAmountOfMoney(amountOfMoney);
-
-        CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
-        SepaDirectDebitPaymentMethodSpecificInput sepaPmInput = new SepaDirectDebitPaymentMethodSpecificInput();
-        sepaPmInput.setPaymentProductId(770);
-        sepaPmInput.setToken("25f097f102e145239d55702f7d234fcb");
-        sepaPmInput.setDirectDebitText("?");
-        
-//        if (paymentToken != null) {
-//            cardPaymentMethodSpecificInput.setToken(paymentToken.getTokenId());
-//        } else {
-//            Card card = new Card();
-//            card.setCardNumber(cardNumber);
-//            card.setCardholderName(ownerName);
-//            card.setCvv(cvv);
-//            card.setExpiryDate(expirayDate);
-//            cardPaymentMethodSpecificInput.setCard(card);
-//            cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
-//            Customer customer = new Customer();
-//            customer.setBillingAddress(getBillingAddress(customerAccount, countryCode));
-//            order.setCustomer(customer);
-//
-//        }
-        CreatePaymentRequest body = new CreatePaymentRequest();
-       // body.setCardPaymentMethodSpecificInput(cardPaymentMethodSpecificInput);
-        body.setSepaDirectDebitPaymentMethodSpecificInput(sepaPmInput);
-        body.setOrder(order);
-
+    private PaymentResponseDto doPayment(DDPaymentMethod ddPaymentMethod, CardPaymentMethod paymentCardToken, Long ctsAmount, CustomerAccount customerAccount, String cardNumber,
+            String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         try {
+            AmountOfMoney amountOfMoney = new AmountOfMoney();
+            amountOfMoney.setAmount(ctsAmount);
+            amountOfMoney.setCurrencyCode(customerAccount.getTradingCurrency().getCurrencyCode());
+
+            Customer customer = new Customer();
+            customer.setBillingAddress(getBillingAddress(customerAccount));
+
+            Order order = new Order();
+            order.setAmountOfMoney(amountOfMoney);
+            order.setCustomer(customer);
+
+            CreatePaymentRequest body = new CreatePaymentRequest();
+            if (ddPaymentMethod != null) {
+                body.setSepaDirectDebitPaymentMethodSpecificInput(getSepaInput(ddPaymentMethod));
+            }
+            if (paymentCardToken != null) {
+                body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
+            }
+            if (StringUtils.isBlank(cardNumber)) {
+                body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
+            }
+
+            body.setOrder(order);
+
             CreatePaymentResponse response = getClient().merchant(merchantId).payments().create(body);
             if (response != null) {
-                PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+                PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
                 doPaymentResponseDto.setPaymentID(response.getPayment().getId());
                 doPaymentResponseDto.setPaymentStatus(mappingStaus(response.getPayment().getStatus()));
-                doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
-                doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
-                doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+                if (response.getCreationOutput() != null) {
+                    doPaymentResponseDto.setTransactionId(response.getCreationOutput().getExternalReference());
+                    doPaymentResponseDto.setTokenId(response.getCreationOutput().getToken());
+                    doPaymentResponseDto.setNewToken(response.getCreationOutput().getIsNewToken());
+                }
                 if (response.getPayment() != null && response.getPayment().getStatusOutput() != null && response.getPayment().getStatusOutput().getErrors() != null) {
                     doPaymentResponseDto.setErrorMessage(response.getPayment().getStatusOutput().getErrors().toString());
                 }
 
                 return doPaymentResponseDto;
             } else {
-                throw new BusinessException("Gateway response is nulla");
+                throw new BusinessException("Gateway response is null");
             }
         } catch (DeclinedPaymentException e) {
             throw new BusinessException(e.getResponseBody());
@@ -198,12 +195,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
     }
 
-    private Address getBillingAddress(CustomerAccount customerAccount, String countryCode) {
+    private Address getBillingAddress(CustomerAccount customerAccount) {
         Address billingAddress = new Address();
         if (customerAccount.getAddress() != null) {
             billingAddress.setAdditionalInfo(customerAccount.getAddress().getAddress3());
             billingAddress.setCity(customerAccount.getAddress().getCity());
-            billingAddress.setCountryCode(countryCode);
+            billingAddress.setCountryCode(customerAccount.getAddress().getCountry() == null ? null : customerAccount.getAddress().getCountry().getCountryCode());
             billingAddress.setHouseNumber(customerAccount.getAddress().getAddress1());
             billingAddress.setState(customerAccount.getAddress().getState());
             billingAddress.setStreet(customerAccount.getAddress().getAddress2());
@@ -225,13 +222,40 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         return PaymentStatusEnum.REJECTED;
     }
 
+    private CardPaymentMethodSpecificInput getCardInput(String cardNumber, String ownerName, String cvv, String expirayDate, CreditCardTypeEnum cardType) {
+        CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
+        Card card = new Card();
+        card.setCardNumber(cardNumber);
+        card.setCardholderName(ownerName);
+        card.setCvv(cvv);
+        card.setExpiryDate(expirayDate);
+        cardPaymentMethodSpecificInput.setCard(card);
+        cardPaymentMethodSpecificInput.setPaymentProductId(cardType.getId());
+        return cardPaymentMethodSpecificInput;
+    }
+
+    private CardPaymentMethodSpecificInput getCardTokenInput(CardPaymentMethod cardPaymentMethod) {
+        CardPaymentMethodSpecificInput cardPaymentMethodSpecificInput = new CardPaymentMethodSpecificInput();
+        cardPaymentMethodSpecificInput.setToken(cardPaymentMethod.getTokenId());
+        return cardPaymentMethodSpecificInput;
+    }
+
+    private SepaDirectDebitPaymentMethodSpecificInput getSepaInput(DDPaymentMethod ddPaymentMethod) {
+        SepaDirectDebitPaymentMethodSpecificInput sepaPmInput = new SepaDirectDebitPaymentMethodSpecificInput();
+        sepaPmInput.setPaymentProductId(771);
+        SepaDirectDebitPaymentProduct771SpecificInput sepaDirectDebitPaymentProduct771SpecificInput = new SepaDirectDebitPaymentProduct771SpecificInput();
+        sepaDirectDebitPaymentProduct771SpecificInput.setMandateReference(ddPaymentMethod.getMandateIdentification());
+        sepaPmInput.setPaymentProduct771SpecificInput(sepaDirectDebitPaymentProduct771SpecificInput);
+        return sepaPmInput;
+    }
+
     @Override
-    public PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+    public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
@@ -245,15 +269,6 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
 
-    }
-
-    /* (non-Javadoc)
-     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doPaymentSepa(org.meveo.model.payments.DDPaymentMethod, java.lang.Long, java.util.Map)
-     */
-    @Override
-    public PayByCardResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        // TODO Auto-generated method stub
-        return null;
     }
 
     @Override

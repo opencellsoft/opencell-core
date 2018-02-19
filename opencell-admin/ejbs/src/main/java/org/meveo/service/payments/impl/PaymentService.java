@@ -28,13 +28,14 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -43,6 +44,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
@@ -94,9 +96,9 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
      */
-    public PayByCardResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
+    public PaymentResponseDto payByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true);
+        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true,PaymentMethodEnum.CARD);
     }
 
     /**
@@ -117,46 +119,31 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
      * @throws UnbalanceAmountException balance amount exception.
      */
-    public PayByCardResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
+    public PaymentResponseDto payByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
             CreditCardTypeEnum cardType, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, true);
+        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, true,PaymentMethodEnum.CARD);
     }
-
+    
     /**
-     * 
-     * @param customerAccount customer account
-     * @param ctsAmount amount in cent.
-     * @param doPaymentResponseDto payment responsse dto
-     * @return the AO id created
-     * @throws BusinessException business exception.
+     * @param customerAccount
+     * @param longValue
+     * @param listAOids
+     * @param createAO
+     * @param matchingAO
+     * @param paymentGateway
+     * @return
+     * @throws UnbalanceAmountException 
+     * @throws NoAllOperationUnmatchedException 
+     * @throws BusinessException 
      */
-    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
-        if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
-        }
-        Payment payment = new Payment();
-        payment.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());
-        payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
-        payment.setUnMatchingAmount(payment.getAmount());
-        payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setAccountCode(occTemplate.getAccountCode());
-        payment.setOccCode(occTemplate.getCode());
-        payment.setOccDescription(occTemplate.getDescription());
-        payment.setType(doPaymentResponseDto.getPaymentBrand());
-        payment.setTransactionCategory(occTemplate.getOccCategory());
-        payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
-        payment.setCustomerAccount(customerAccount);
-        payment.setReference(doPaymentResponseDto.getPaymentID());
-        payment.setTransactionDate(new Date());
-        payment.setMatchingStatus(MatchingStatusEnum.O);
-        payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
-        create(payment);
-        return payment.getId();
-
+    public PaymentResponseDto payByMandat(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
+            PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true,PaymentMethodEnum.DIRECTDEBIT);
     }
+
+    
 
     /**
      * Do payment or refund by token or card
@@ -178,15 +165,15 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws NoAllOperationUnmatchedException
      * @throws UnbalanceAmountException
      */
-    public PayByCardResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
-            PaymentGateway paymentGateway, String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment)
+    public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
+            PaymentGateway paymentGateway, String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment,PaymentMethodEnum paymentMethodType)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
 
-        PayByCardResponseDto doPaymentResponseDto = null;
+        PaymentResponseDto doPaymentResponseDto = null;
         CardPaymentMethod cardPaymentMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         try {
-            boolean isWithToken = StringUtils.isBlank(cardNumber);
+            boolean isNewCard = !StringUtils.isBlank(cardNumber);
 
             GatewayPaymentInterface gatewayPaymentInterface = null;
             if (paymentGateway == null) {
@@ -197,17 +184,36 @@ public class PaymentService extends PersistenceService<Payment> {
             }
 
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-            if (isWithToken) {
+            
+            if(!isNewCard) {
                 if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
-                    throw new BusinessException("There no payment token for customerAccount:" + customerAccount.getCode());
-                }
+                    throw new BusinessException("There no payment method for customerAccount:" + customerAccount.getCode());
+                } 
+            }
+            
+            
+            if(PaymentMethodEnum.CARD == paymentMethodType) {
+                
+                
+            }
+            if(PaymentMethodEnum.DIRECTDEBIT == paymentMethodType) {
+                
+            }
+            
+            
+            
+            if (/*isWithToken*/true) {
+
                 PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
                 if (preferredMethod == null) {
                     throw new BusinessException("There is no payment method for customerAccount:" + customerAccount.getCode());
 
-                } else if (!(preferredMethod instanceof CardPaymentMethod)) {
-                    throw new BusinessException("Can not process payment as prefered payment method is " + preferredMethod.getPaymentType());
+                } else if (!(preferredMethod instanceof CardPaymentMethod) && paymentMethodType == PaymentMethodEnum.CARD) {
+                    throw new BusinessException("Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
+                }else if (!(preferredMethod instanceof DDPaymentMethod) && paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+                    throw new BusinessException("Can not process payment sepa as prefered payment method is " + preferredMethod.getPaymentType());
                 }
+                
                 // If card payment method is currently not valid, find a valid one and mark it as preferred or throw an exception
                 if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
                     preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
@@ -218,6 +224,8 @@ public class PaymentService extends PersistenceService<Payment> {
                     }
                 }
                 cardPaymentMethod = (CardPaymentMethod) preferredMethod;
+                
+                
                 if (isPayment) {
                     doPaymentResponseDto = gatewayPaymentInterface.doPaymentToken(cardPaymentMethod, ctsAmount, null);
                 } else {
@@ -235,7 +243,7 @@ public class PaymentService extends PersistenceService<Payment> {
             PaymentErrorTypeEnum errorType = null;
             PaymentStatusEnum status = doPaymentResponseDto.getPaymentStatus();
             if (PaymentStatusEnum.ACCEPTED == status || PaymentStatusEnum.PENDING == status) {
-                if (!isWithToken) {
+                if (!/*isWithToken*/true) {
                     cardPaymentMethod = addCardFromPayment(doPaymentResponseDto.getTokenId(), customerAccount, cardNumber, cardType, ownerName, cvv, expiryDate);
                 }
                 cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
@@ -273,7 +281,7 @@ public class PaymentService extends PersistenceService<Payment> {
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
             if (doPaymentResponseDto == null) {
-                doPaymentResponseDto = new PayByCardResponseDto();
+                doPaymentResponseDto = new PaymentResponseDto();
             }
             doPaymentResponseDto.setErrorMessage(e.getMessage());
             doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
@@ -283,6 +291,39 @@ public class PaymentService extends PersistenceService<Payment> {
         return doPaymentResponseDto;
     }
 
+    /**
+     * 
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent.
+     * @param doPaymentResponseDto payment responsse dto
+     * @return the AO id created
+     * @throws BusinessException business exception.
+     */
+    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto) throws BusinessException {
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
+        if (occTemplate == null) {
+            throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
+        }
+        Payment payment = new Payment();
+        payment.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());
+        payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
+        payment.setUnMatchingAmount(payment.getAmount());
+        payment.setMatchingAmount(BigDecimal.ZERO);
+        payment.setAccountCode(occTemplate.getAccountCode());
+        payment.setOccCode(occTemplate.getCode());
+        payment.setOccDescription(occTemplate.getDescription());
+        payment.setType(doPaymentResponseDto.getPaymentBrand());
+        payment.setTransactionCategory(occTemplate.getOccCategory());
+        payment.setAccountCodeClientSide(doPaymentResponseDto.getCodeClientSide());
+        payment.setCustomerAccount(customerAccount);
+        payment.setReference(doPaymentResponseDto.getPaymentID());
+        payment.setTransactionDate(new Date());
+        payment.setMatchingStatus(MatchingStatusEnum.O);
+        payment.setBankReference(doPaymentResponseDto.getBankRefenrence());
+        create(payment);
+        return payment.getId();
+
+    }
     /**
      * Create a card as CardPaymentMethod from initial payment
      * 
@@ -311,4 +352,5 @@ public class PaymentService extends PersistenceService<Payment> {
         paymentMethodService.create(paymentMethod);
         return paymentMethod;
     }
+
 }

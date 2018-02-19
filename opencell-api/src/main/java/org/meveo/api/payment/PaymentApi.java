@@ -16,7 +16,7 @@ import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.AccountOperationsDto;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentHistoryDto;
@@ -241,7 +241,7 @@ public class PaymentApi extends BaseApi {
      * @throws UnbalanceAmountException balance exception
      * @throws MeveoApiException opencell's api exception
      */
-    public PayByCardResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
+    public PaymentResponseDto payByCard(PayByCardDto cardPaymentRequestDto)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 
         if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -289,7 +289,7 @@ public class PaymentApi extends BaseApi {
             throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
         }
 
-        PayByCardResponseDto doPaymentResponseDto = null;
+        PaymentResponseDto doPaymentResponseDto = null;
         if (useCard) {
 
             doPaymentResponseDto = paymentService.payByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),

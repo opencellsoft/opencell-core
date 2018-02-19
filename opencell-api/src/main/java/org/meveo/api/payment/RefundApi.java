@@ -12,7 +12,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.RefundDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -177,7 +177,7 @@ public class RefundApi extends BaseApi {
         return result;
     }
 
-    public PayByCardResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
+    public PaymentResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 
         if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -225,7 +225,7 @@ public class RefundApi extends BaseApi {
             throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
         }
 
-        PayByCardResponseDto doPaymentResponseDto = null;
+        PaymentResponseDto doPaymentResponseDto = null;
         if (useCard) {
 
             doPaymentResponseDto = refundService.refundByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),

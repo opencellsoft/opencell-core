@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.MandatInfoDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
@@ -28,12 +28,11 @@ public interface GatewayPaymentInterface {
      * @param expirayDate Expiry date of the card Format: MMYY ,Required for Create and Update token.
      * @param issueNumber Issue number on the card (if applicable)
      * @param cardType ( Visa | American Express | MasterCard)
-     * @param countryCode country code.
      * @return cart token.
      * @throws BusinessException business exception
      */
     String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            CreditCardTypeEnum cardType, String countryCode) throws BusinessException;
+            CreditCardTypeEnum cardType) throws BusinessException;
 
     /**
      * Initiate a payment with token.
@@ -44,7 +43,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card dto
      * @throws BusinessException business exception.
      */
-    PayByCardResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    PaymentResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
      * Initiate a payment with card and save the token for this card.
@@ -61,7 +60,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card response dtO
      * @throws BusinessException business exception.
      */
-    PayByCardResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
@@ -73,7 +72,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card dto
      * @throws BusinessException business exception.
      */
-    PayByCardResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
      * This makes it impossible to process the payment any further and will also try to reverse an authorization on a card.
@@ -104,7 +103,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card response dto
      * @throws BusinessException business exception.
      */
-    PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
      * 
@@ -120,7 +119,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card
      * @throws BusinessException business exception.
      */
-    PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
 
     /**

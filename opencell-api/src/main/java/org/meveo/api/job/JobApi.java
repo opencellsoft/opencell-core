@@ -9,6 +9,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -17,8 +18,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.payments.impl.IngenicoGatewayPayment;
 import org.meveo.service.payments.impl.SlimpayGatewayPayment;
-
 
 /**
  * @author Edward P. Legaspi
@@ -45,29 +46,30 @@ public class JobApi extends BaseApi {
      */
     public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
 
-                if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
-                    missingParameters.add("timerName or code");
-                }
-                handleMissingParameters();
-        
-                String code = jobExecution.getCode() != null ? jobExecution.getCode() : jobExecution.getTimerName();
-        
-                org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(code);
-                if (jobInstance == null) {
-                    throw new EntityDoesNotExistsException(JobInstance.class, code);
-                }
-        
-                if (jobExecution.isForceExecution()) {
-                    jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
-                }
-        
-                Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
-        
-                return findJobExecutionResult(null, executionId);
+        if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
+            missingParameters.add("timerName or code");
+        }
+        handleMissingParameters();
+
+        String code = jobExecution.getCode() != null ? jobExecution.getCode() : jobExecution.getTimerName();
+
+        org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(code);
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, code);
+        }
+
+        if (jobExecution.isForceExecution()) {
+            jobCacheContainerProvider.resetJobRunningStatus(jobInstance.getId());
+        }
+
+        Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
+
+        return findJobExecutionResult(null, executionId);
     }
-    
+
     /**
      * Stop running job
+     * 
      * @param jobInstanceCode job instance code to stop
      * @throws MeveoApiException
      */
@@ -85,12 +87,13 @@ public class JobApi extends BaseApi {
             jobExecutionService.stopJob(jobInstance);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
-        }       
-    }    
+        }
+    }
 
     /**
      * Retrieve job execution result.
-     * @param code 
+     * 
+     * @param code
      * 
      * @param id Job execution result identifier
      * @return Job execution result DTO

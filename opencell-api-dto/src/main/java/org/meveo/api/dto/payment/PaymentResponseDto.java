@@ -7,9 +7,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.payments.PaymentStatusEnum;
 
-@XmlRootElement(name = "PayByCardResponse")
+@XmlRootElement(name = "PaymentResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PayByCardResponseDto extends BaseResponse{
+public class PaymentResponseDto extends BaseResponse{
 
 	private static final long serialVersionUID = 1L;
 	private String paymentID;
@@ -26,7 +26,7 @@ public class PayByCardResponseDto extends BaseResponse{
 	private String bankRefenrence;
 	
 	
-	public PayByCardResponseDto(){}
+	public PaymentResponseDto(){}
 
 	public String getTransactionId() {
 		return transactionId;

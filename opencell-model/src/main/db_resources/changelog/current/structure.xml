@@ -1611,51 +1611,59 @@
     </changeSet>
     
     <changeSet author="anasseh" id="#2830_15022018">
-    <!-- migration old data -->
-        <dropColumn tableName="account_entity" columnName="address_country" /> 
+    <!-- account_entity -->         
         	<addColumn tableName="account_entity">
     			<column name="address_country_id" type="bigint" />
     		</addColumn>
     		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />       
+        <sql>update account_entity ae set address_country_id = (select ac.id from adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>
+        <dropColumn tableName="account_entity" columnName="address_country" />
        
-        <dropColumn tableName="com_sender_config" columnName="address_country" /> 
+    <!-- com_sender_config -->                
         	<addColumn tableName="com_sender_config">
     			<column name="address_country_id" type="bigint" />
     		</addColumn>
     		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />     
-            
+         <sql>update com_sender_config ae set address_country_id = (select ac.id from adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>   
+         <dropColumn tableName="com_sender_config" columnName="address_country" />
           
-        <dropColumn tableName="crm_provider_contact" columnName="address_country" /> 
+    <!-- crm_provider_contact -->                              
         	<addColumn tableName="crm_provider_contact">
     			<column name="address_country_id" type="bigint" />
     		</addColumn>
     		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />     
-     
-      <dropColumn tableName="crm_provider" columnName="address_country" /> 
-        	<addColumn tableName="crm_provider">
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" /> 
+        <sql>update crm_provider_contact ae set address_country_id = (select ac.id from adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>        
+        <dropColumn tableName="crm_provider_contact" columnName="address_country" />
+        
+    <!-- crm_provider -->        
+       	<addColumn tableName="crm_provider">
     			<column name="address_country_id" type="bigint" />
     		</addColumn>
     		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />              
-            
-                 
-      <dropColumn tableName="crm_seller" columnName="address_country" /> 
+        <sql>update crm_provider ae set address_country_id = (select ac.id from adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql> 
+        <dropColumn tableName="crm_provider" columnName="address_country" />
+          
+    <!-- crm_seller -->                    
         	<addColumn tableName="crm_seller">
     			<column name="address_country_id" type="bigint" />
     		</addColumn>
     		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />    
+         <sql>update crm_seller ae set address_country_id = (select ac.id from adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>
+        <dropColumn tableName="crm_seller" columnName="address_country" />    
             
-      <dropColumn tableName="ord_order_item" columnName="address_country" /> 
+    <!-- ord_order_item -->            
         	<addColumn tableName="ord_order_item">
     			<column name="address_country_id" type="bigint" />
     		</addColumn>
     		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />                       
-               
+        <sql>update ord_order_item ae set address_country_id = (select ac.id from adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>   
+        <dropColumn tableName="ord_order_item" columnName="address_country" />      
     </changeSet>
     
 </databaseChangeLog> 

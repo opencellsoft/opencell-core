@@ -8,7 +8,7 @@ import javax.json.JsonObjectBuilder;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.MandatInfoDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -32,17 +32,22 @@ import com.slimpay.hapiclient.http.Method;
 import com.slimpay.hapiclient.http.auth.Oauth2BasicAuthentication;
 import com.slimpay.hapiclient.util.EntityConverter;
 
+/**
+ * 
+ * @author anasseh
+ *
+ */
 @PaymentGatewayClass
 public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     protected Logger log = LoggerFactory.getLogger(SlimpayGatewayPayment.class);
-    private String API_URL = ParamBean.getInstance().getProperty("slimPay.apiURL", "https://api.preprod.slimpay.com");
-    private String PROFILE = ParamBean.getInstance().getProperty("slimPay.profile", "https://api.slimpay.net/alps/v1");
+    private String API_URL = ParamBean.getInstance().getProperty("slimPay.apiURL", null);
+    private String PROFILE = ParamBean.getInstance().getProperty("slimPay.profile",null);
     private String TOKEN_END_POINT = ParamBean.getInstance().getProperty("slimPay.tokenEndPoint", "/oauth/token");
-    private String USER_ID = ParamBean.getInstance().getProperty("slimPay.userId", "opencelldev");
-    private String SECRET_KEY = ParamBean.getInstance().getProperty("slimPay.secretKey", "OSpPCH4jYWfg7SRT53d5OTNCIcodepvfpfKHULQi");
+    private String USER_ID = ParamBean.getInstance().getProperty("slimPay.userId", null);
+    private String SECRET_KEY = ParamBean.getInstance().getProperty("slimPay.secretKey", null);
     private String SCOPE = ParamBean.getInstance().getProperty("slimPay.scope", "api");
-    private String RELNS = ParamBean.getInstance().getProperty("slimPay.relns", "https://api.slimpay.net/alps#");
+    private String RELNS = ParamBean.getInstance().getProperty("slimPay.relns", null);
     private boolean isCheckMandatBeforePayment = "true".equals(ParamBean.getInstance().getProperty("slimPay.checkMandatBeforePayment", "true"));
     private String SCHEME = ParamBean.getInstance().getProperty("slimPay.scheme", "SEPA.DIRECT_DEBIT.CORE");
 
@@ -54,19 +59,19 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     private HapiClient getClient() {
-       // if (client == null) {
-            connect();
-       // }
+        // if (client == null) {
+        connect();
+        // }
         return client;
     }
 
     @Override
-    public PayByCardResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+    public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
         try {
             String label = additionalParams != null ? (String) additionalParams.get("invoiceNumber") : null;
             log.trace("doPaymentSepa request:" + (getSepaPaymentRequest(USER_ID, paymentToken.getMandateIdentification(), ctsAmount,
-                "EUR"/* paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode() */, SCHEME, label).toString()));
+                paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), SCHEME, label).toString()));
 
             if (isCheckMandatBeforePayment) {
                 MandatInfoDto mandatInfo = checkMandat(paymentToken.getMandateIdentification());
@@ -79,7 +84,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
             Follow follow = new Follow.Builder(new CustomRel(RELNS + "create-payins")).setMethod(Method.POST)
                 .setMessageBody(EntityConverter.jsonToStringEntity(getSepaPaymentRequest(USER_ID, paymentToken.getMandateIdentification(), ctsAmount,
-                    "EUR"/* paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode() */, SCHEME, label)))
+                    paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), SCHEME, label)))
                 .build();
 
             try {
@@ -97,7 +102,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
             doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
             doPaymentResponseDto.setErrorMessage(e.getMessage());
         }
-        log.trace("doPaymentSepa response:"+doPaymentResponseDto.toString());
+        log.trace("doPaymentSepa response:" + doPaymentResponseDto.toString());
         return doPaymentResponseDto;
     }
 
@@ -198,18 +203,17 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
-            CreditCardTypeEnum cardType, String countryCode) throws BusinessException {
+            CreditCardTypeEnum cardType) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PayByCardResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-
+    public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PayByCardResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    public PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
@@ -220,12 +224,12 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public PayByCardResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+    public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PayByCardResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
@@ -238,7 +242,5 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     @Override
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
         throw new UnsupportedOperationException();
-
     }
-
 }

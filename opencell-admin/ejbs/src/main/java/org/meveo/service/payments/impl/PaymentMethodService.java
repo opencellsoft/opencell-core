@@ -116,9 +116,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-        String cardNumber = cardPaymentMethod.getCardNumber();
-
-        String coutryCode = null; // TODO : waiting #2830
+        String cardNumber = cardPaymentMethod.getCardNumber();       
         GatewayPaymentInterface gatewayPaymentInterface = null;
         PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod);
         try {
@@ -131,7 +129,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (gatewayPaymentInterface != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
                 StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType(), coutryCode);
+                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
 
             cardPaymentMethod.setTokenId(tockenID);
         } else {

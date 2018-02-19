@@ -9,7 +9,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
@@ -42,7 +42,6 @@ public class UnitPaymentCardJobBean {
     private RefundService refundService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-
     public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway,
             PaymentMethodEnum paymentMethodType) {
         log.debug("Running with RecordedInvoice ID={}", aoId);
@@ -54,14 +53,14 @@ public class UnitPaymentCardJobBean {
             }
             List<Long> listAOids = new ArrayList<>();
             listAOids.add(aoId);
-            PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+            PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
             if (operationCategory == OperationCategoryEnum.CREDIT) {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
                     doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
                         accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                   // doPaymentResponseDto = paymentService.payByMandat(accountOperation.getCustomerAccount(),
-                     //   accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                   doPaymentResponseDto = paymentService.payByMandat(accountOperation.getCustomerAccount(),
+                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             } else {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
