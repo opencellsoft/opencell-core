@@ -308,10 +308,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * Decrease counter period by a given value. If given amount exceeds current value, only partial amount will be deduced. NOTE: counterPeriod passed to the method will become
      * stale if it happens to be updated in this method
      * 
-     * @param CounterPeriod Counter period
+     * @param counterPeriod Counter period
      * @param deduceBy Amount to decrease by
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
-     * @return Previous, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
+     * @return CounterValueChangeInfo, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
      * @throws BusinessException business exception
      */
     public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {

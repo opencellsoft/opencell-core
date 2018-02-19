@@ -353,8 +353,8 @@ public class KeycloakAdminClientService {
     
     /**
      * As the search function from keycloack doesn't perform exact search, we need to browse results to pick the exact username
-     * @param UsersResource usersResource
-     * @param String username
+     * @param usersResource
+     * @param username
      * @throws BusinessException business exception.
      */
     public UserRepresentation getUserRepresentationByUsername(UsersResource usersResource, String username) throws BusinessException {

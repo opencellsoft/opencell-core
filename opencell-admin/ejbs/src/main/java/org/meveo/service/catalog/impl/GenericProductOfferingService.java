@@ -289,7 +289,6 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
      * Find a particular product offering version by a code. A current date will be used to select a valid version.
      * 
      * @param code Product offering code
-     * @param fetchFields Additional fields to fetch
      * @return Product offering
      */
     @Override
