@@ -32,6 +32,8 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
 import org.meveo.model.billing.Sequence;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
@@ -64,6 +66,18 @@ public class SellerBean extends CustomFieldBean<Seller> {
      */
     public SellerBean() {
         super(Seller.class);
+    }
+    
+    @Override
+    public Seller initEntity() {
+        super.initEntity();
+        if (entity.getAddress() == null) {
+            entity.setAddress(new Address());
+        }
+        if (entity.getContactInformation() == null) {
+            entity.setContactInformation(new ContactInformation());
+        }
+        return entity;
     }
 
     /**
