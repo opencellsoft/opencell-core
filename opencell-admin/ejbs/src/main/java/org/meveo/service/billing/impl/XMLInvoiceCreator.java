@@ -416,6 +416,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addCustomFields(customer, doc, customerTag);
 
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
+        
+        Element sellerTag = doc.createElement("seller");
+        sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
+        sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
+        addCustomFields(seller, doc, sellerTag);
+        addAdress(seller, doc, sellerTag, billingAccountLanguage);
+        header.appendChild(sellerTag);
+        
         header.appendChild(customerTag);
 
         // log.debug("creating ca");
@@ -885,6 +893,77 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 parent.setAttribute("customFields", json);
             }
         }
+    }
+    
+    /**
+     * @param seller instance of entity
+     * @param doc document
+     * @param parent parent node
+     * @param languageCode code of language
+     */
+    public void addAdress(Seller seller, Document doc, Element parent, String languageCode) {
+        log.debug("add address to seller");
+
+        Element addressTag = doc.createElement("address");
+        Element address1 = doc.createElement("address1");
+        if (seller.getAddress() != null && seller.getAddress().getAddress1() != null) {
+            Text adress1Txt = doc.createTextNode(seller.getAddress().getAddress1());
+            address1.appendChild(adress1Txt);
+        }
+        addressTag.appendChild(address1);
+
+        Element address2 = doc.createElement("address2");
+        if (seller.getAddress() != null && seller.getAddress().getAddress2() != null) {
+            Text adress2Txt = doc.createTextNode(seller.getAddress().getAddress2());
+            address2.appendChild(adress2Txt);
+        }
+        addressTag.appendChild(address2);
+
+        Element address3 = doc.createElement("address3");
+        if (seller.getAddress() != null && seller.getAddress().getAddress3() != null) {
+            Text adress3Txt = doc.createTextNode(seller.getAddress().getAddress3() != null ? seller.getAddress().getAddress3() : "");
+            address3.appendChild(adress3Txt);
+        }
+        addressTag.appendChild(address3);
+
+        Element city = doc.createElement("city");
+        if (seller.getAddress() != null && seller.getAddress().getCity() != null) {
+            Text cityTxt = doc.createTextNode(seller.getAddress().getCity() != null ? seller.getAddress().getCity() : "");
+            city.appendChild(cityTxt);
+        }
+        addressTag.appendChild(city);
+
+        Element postalCode = doc.createElement("postalCode");
+        if (seller.getAddress() != null && seller.getAddress().getZipCode() != null) {
+            Text postalCodeTxt = doc.createTextNode(seller.getAddress().getZipCode() != null ? seller.getAddress().getZipCode() : "");
+            postalCode.appendChild(postalCodeTxt);
+        }
+        addressTag.appendChild(postalCode);
+
+        Element state = doc.createElement("state");
+        addressTag.appendChild(state);
+
+        Element country = doc.createElement("country");
+        Element countryName = doc.createElement("countryName");
+        if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
+            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry() : "");
+            country.appendChild(countryTxt);
+
+            Country countrybyCode = countryService.findByCode(seller.getAddress().getCountry());
+            Text countryNameTxt;
+            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
+                // get country description by language code
+                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
+            } else if (countrybyCode != null) {
+                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
+            } else {
+                countryNameTxt = doc.createTextNode("");
+            }
+            countryName.appendChild(countryNameTxt);
+        }
+        addressTag.appendChild(country);
+        addressTag.appendChild(countryName);
+        parent.appendChild(addressTag);
     }
 
     /**
