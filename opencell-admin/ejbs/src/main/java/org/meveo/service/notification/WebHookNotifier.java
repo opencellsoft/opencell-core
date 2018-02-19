@@ -15,7 +15,6 @@ import java.util.Map;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.admin.exception.BusinessException;
@@ -25,17 +24,12 @@ import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
-import org.meveo.util.MeveoJpaForJobs;
 import org.primefaces.json.JSONException;
 import org.primefaces.json.JSONObject;
 import org.slf4j.Logger;
 
 @Stateless
 public class WebHookNotifier {
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager em;
 
     @Inject
     Logger log;
@@ -72,7 +66,7 @@ public class WebHookNotifier {
         String result = "";
 
         try {
-            String url = webHook.getHost().startsWith("http") ? webHook.getHost() : "http://" + webHook.getHost();
+            String url = webHook.getHttpProtocol().name().toLowerCase() + "://" + webHook.getHost().replace("http://", "");
             if (webHook.getPort() != null) {
                 url += ":" + webHook.getPort();
             }
@@ -96,7 +90,7 @@ public class WebHookNotifier {
             } else if (WebHookMethodEnum.HTTP_POST == webHook.getHttpMethod()) {
                 bodyEL_evaluated = evaluate(webHook.getBodyEL(), entityOrEvent, context);
                 log.debug("Evaluated BodyEL={}", bodyEL_evaluated);
-                if (StringUtils.isBlank(bodyEL_evaluated)) {
+                if (!StringUtils.isBlank(bodyEL_evaluated)) {
                     paramQuery += "&" + bodyEL_evaluated;
                 }
             }

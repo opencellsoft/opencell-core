@@ -116,7 +116,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 executeJobWithParameters(jobInstance, null);
 
             } else if (jobInstance.getFollowingJob() != null) {
-                JobInstance nextJob = jobInstanceService.refreshOrRetrieve(jobInstance.getFollowingJob());
+                JobInstance nextJob = jobInstanceService.retrieveIfNotManaged(jobInstance.getFollowingJob());
                 log.debug("Executing next job {}", nextJob.getCode());
                 executeJobWithParameters(nextJob, null);
             }
@@ -350,7 +350,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     public JobExecutionResultImpl findLastExecutionByInstance(JobInstance jobInstance) {
         QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "j");
         qb.addCriterionEntity("jobInstance", jobInstance);
-        qb.addOrderCriterion("startDate", false);
+        qb.addOrderCriterionAsIs("startDate", false);
         
         return (JobExecutionResultImpl) qb.getQuery(getEntityManager()).setMaxResults(1).getResultList().get(0);
     }

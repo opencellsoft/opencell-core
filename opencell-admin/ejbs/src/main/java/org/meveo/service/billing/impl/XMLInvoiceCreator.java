@@ -21,7 +21,6 @@ package org.meveo.service.billing.impl;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -90,6 +89,7 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.catalog.UsageChargeTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
@@ -171,7 +171,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     /** list of service's id, order's id, price plan's id. */
     private List<Long> serviceIds = null, offerIds = null, priceplanIds = null;
 
-    /** description map . */
+    /** description translation map . */
     private Map<String, String> descriptionMap = new HashMap<String, String>();
 
     /** default date format. */
@@ -255,17 +255,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             // create string from xml tree
             DOMSource source = new DOMSource(doc);
 
+            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
+
             File xmlFile = new File(invoiceService.getFullXmlFilePath(invoice, true));
-
             StreamResult result = new StreamResult(xmlFile);
-
-            StringWriter writer = new StringWriter();
-            trans.transform(new DOMSource(doc), new StreamResult(writer));
-            log.trace("XML invoice: " + writer.getBuffer().toString().replaceAll("\n|\r", ""));
-
             trans.transform(source, result);
 
-            invoice.setXmlFilename(invoiceService.getOrGenerateXmlFilename(invoice));
+            log.info("XML file '{}' produced for invoice {}", invoice.getXmlFilename(), invoice.getInvoiceNumberOrTemporaryNumber());
 
             return xmlFile;
 
@@ -393,6 +389,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         String externalRef1 = customer.getExternalRef1();
         String externalRef2 = customer.getExternalRef2();
+        String vatNo = customer.getVatNo();
+        String registrationNo = customer.getRegistrationNo();
         CustomerBrand customerBrand = customer.getCustomerBrand();
         Seller seller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
@@ -404,6 +402,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.setAttribute("sellerCode", seller.getCode() != null ? seller.getCode() : "");
         customerTag.setAttribute("brand", customerBrand != null ? customerBrand.getCode() : "");
         customerTag.setAttribute("category", customerCategory != null ? customerCategory.getCode() : "");
+        customerTag.setAttribute("vatNo", vatNo != null ? vatNo : "");
+        customerTag.setAttribute("registrationNo", registrationNo != null ? registrationNo : "");
 
         PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
 
@@ -424,6 +424,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addAdress(seller, doc, sellerTag, billingAccountLanguage);
         header.appendChild(sellerTag);
         
+        header.appendChild(customerTag);
+
         // log.debug("creating ca");
         // CustomerAccount customerAccount = customerAccount;
         TradingCurrency tradingCurrency = customerAccount.getTradingCurrency();
@@ -641,7 +643,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAggre, List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates)
             throws BusinessException {
         // log.debug("add user account");
-        long startDate = System.currentTimeMillis();
         Element userAccountsTag = null;
         if (displayDetail) {
             userAccountsTag = doc.createElement("userAccounts");
@@ -972,7 +973,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @param languageCode code of language
      */
     public void addNameAndAdress(AccountEntity account, Document doc, Element parent, String languageCode) {
-        log.debug("add name and address");
+        log.debug("add name and address for {}", account.getClass().getSimpleName());
 
         if (!(account instanceof Customer)) {
             Element nameTag = doc.createElement("name");
@@ -1055,16 +1056,21 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "");
             country.appendChild(countryTxt);
 
-            Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
-            Text countryNameTxt;
-            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
-                // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
-            } else if (countrybyCode != null) {
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
-            } else {
-                countryNameTxt = doc.createTextNode("");
+            String translationKey = "C_" + account.getAddress().getCountry() + "_" + languageCode;
+            String descTranslated = descriptionMap.get(translationKey);
+            if (descTranslated == null) {
+                Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
+                if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
+                    // get country description by language code
+                    descTranslated = countrybyCode.getDescriptionI18n().get(languageCode);
+                } else if (countrybyCode != null) {
+                    descTranslated = countrybyCode.getDescription();
+                } else {
+                    descTranslated = "";
+                }
+                descriptionMap.put(translationKey, descTranslated);
             }
+            Text countryNameTxt = doc.createTextNode(descTranslated);
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);
@@ -1394,7 +1400,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                                 // get periodStartDate and periodEndDate for usages
                                 // instanceof is not used in this control because chargeTemplate can never be instance of usageChargeTemplate according to model structure
                                 Date operationDate = walletOperation.getOperationDate();
-                                if (usageChargeTemplateService.findById(chargeTemplate.getId()) != null && operationDate != null) {
+                                if (chargeTemplate instanceof UsageChargeTemplate && operationDate != null && usageChargeTemplateService.findById(chargeTemplate.getId()) != null) {
                                     CounterPeriod counterPeriod = null;
                                     CounterInstance counter = walletOperation.getCounter();
                                     if (!isVirtual) {
@@ -1634,7 +1640,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     throw new BusinessException("Billing account must have a trading language.");
                 }
 
-                String translationKey = "T_" + taxInvoiceAgregate.getTax().getCode() + "_" + languageCode;
+                String translationKey = "TX_" + taxInvoiceAgregate.getTax().getCode() + "_" + languageCode;
                 String descTranslated = descriptionMap.get(translationKey);
                 if (descTranslated == null) {
                     descTranslated = taxInvoiceAgregate.getTax().getDescriptionOrCode();

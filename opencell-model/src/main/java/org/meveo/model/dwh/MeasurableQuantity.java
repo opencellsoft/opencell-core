@@ -3,6 +3,7 @@ package org.meveo.model.dwh;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -24,6 +25,7 @@ import org.meveo.model.ModuleItem;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code"})
 @Table(name = "dwh_measurable_quant", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_measurable_quant_seq"), })

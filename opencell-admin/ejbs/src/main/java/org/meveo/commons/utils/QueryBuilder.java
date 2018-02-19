@@ -590,6 +590,14 @@ public class QueryBuilder {
     }
 
     /**
+     * @param orderColumn name of column which is used for orderBy
+     * @param ascending true/false
+     */
+    public void addOrderCriterionAsIs(String orderColumn, boolean ascending) {
+        q.append(" ORDER BY ").append(orderColumn).append(ascending ? " ASC " : " DESC ");
+    }
+
+    /**
      * @param groupColumn the name of groupBy column
      */
     public void addGroupCriterion(String groupColumn) {
@@ -795,7 +803,7 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query instance 
+     * @param query query instance
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */
@@ -811,8 +819,9 @@ public class QueryBuilder {
     /* DEBUG */
     public void debug() {
         System.out.println("Requete : " + q.toString());
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
+        }
     }
 
     public String getSqlString() {

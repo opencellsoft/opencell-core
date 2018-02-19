@@ -57,7 +57,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -374,7 +373,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public boolean isXmlInvoiceAlreadyGenerated() {
-        if (xmlGenerated == null) {
+        if (entity.getXmlFilename() == null) {
+            return false;
+
+        } else if (xmlGenerated == null) {
             xmlGenerated = invoiceService.isInvoiceXmlExist(entity);
         }
         return xmlGenerated;
@@ -383,7 +385,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     public boolean isPdfInvoiceAlreadyGenerated() {
         if (!pdfGenerated.containsKey(entity.getId())) {
             pdfGenerated.put(entity.getId(), invoiceService.isInvoicePdfExist(entity));
-        }
+    }
 
         return pdfGenerated.get(entity.getId());
     }
@@ -606,7 +608,9 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             }
         }
         if (isDetailed()) {
-            ratedTransactionService.createInvoiceAndAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+            ratedTransactionService.appendInvoiceAgregates(entity.getBillingAccount(), entity, null, null, null, new Date());
+            entity = invoiceService.update(entity);
+
         } else {
             if (entity.getAmountWithoutTax() == null) {
                 invoiceService.recomputeAggregates(entity);
@@ -679,9 +683,10 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
     }
 
     public Set<Invoice> getLinkedInvoices(Invoice invoice) {
-        if (invoice!=null){
-        return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
-        } return null;
+        if (invoice != null) {
+            return invoiceService.refreshOrRetrieve(invoice).getLinkedInvoices();
+        }
+        return null;
     }
 
     public boolean isSelectedInvoices() {

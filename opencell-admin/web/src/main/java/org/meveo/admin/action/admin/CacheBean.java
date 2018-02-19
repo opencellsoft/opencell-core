@@ -40,7 +40,6 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -66,14 +65,11 @@ public class CacheBean implements Serializable {
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
     @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
-    
-    @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
-    
+
     /** Logger. */
     @Inject
     protected org.slf4j.Logger log;
@@ -133,7 +129,6 @@ public class CacheBean implements Serializable {
             Map<String, Cache> caches = walletCacheContainerProvider.getCaches();
             caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
             caches.putAll(notificationCacheContainerProvider.getCaches());
-            caches.putAll(ratingCacheContainerProvider.getCaches());
             caches.putAll(customFieldsCacheContainerProvider.getCaches());
             caches.putAll(jobCacheContainerProvider.getCaches());
 
@@ -153,7 +148,6 @@ public class CacheBean implements Serializable {
         Map<String, Cache> caches = walletCacheContainerProvider.getCaches();
         caches.putAll(cdrEdrProcessingCacheContainerProvider.getCaches());
         caches.putAll(notificationCacheContainerProvider.getCaches());
-        caches.putAll(ratingCacheContainerProvider.getCaches());
         caches.putAll(customFieldsCacheContainerProvider.getCaches());
         caches.putAll(jobCacheContainerProvider.getCaches());
         caches = new TreeMap<String, Cache>(caches);
@@ -173,13 +167,12 @@ public class CacheBean implements Serializable {
      * @param cacheName Cache name
      */
     public void refresh(String cacheName) {
-    	if(StringUtils.isBlank(cacheName)){
-    		cacheName= null;
-    	}
+        if (StringUtils.isBlank(cacheName)) {
+            cacheName = null;
+        }
         walletCacheContainerProvider.refreshCache(cacheName);
         cdrEdrProcessingCacheContainerProvider.refreshCache(cacheName);
         notificationCacheContainerProvider.refreshCache(cacheName);
-        ratingCacheContainerProvider.refreshCache(cacheName);
         customFieldsCacheContainerProvider.refreshCache(cacheName);
         jobCacheContainerProvider.refreshCache(cacheName);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));
@@ -189,7 +182,6 @@ public class CacheBean implements Serializable {
         walletCacheContainerProvider.refreshCache(null);
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
-        ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
         messages.info(new BundleKey("messages", "cache.refreshInitiated"));

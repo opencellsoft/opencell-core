@@ -278,7 +278,7 @@ public class GroupedCustomField implements Serializable {
                 CustomFieldTemplate cft = (CustomFieldTemplate) cfFieldOrOrg.getData();
                 try {
                     if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
-                            && ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)) {
+                            && ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)) {
                         hasVisibleCustomFields = true;
                     }
                 } catch (BusinessException e) {
@@ -289,7 +289,7 @@ public class GroupedCustomField implements Serializable {
                     CustomFieldTemplate cft = (CustomFieldTemplate) cfField.getData();
                     try {
                         if ((!cft.isDisabled() || (cft.isDisabled() && !cfValueHolder.isAnyFieldEmptyForGui(cft))) && (!newEntity || (newEntity && !cft.isHideOnNew()))
-                                && ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)) {
+                                && ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)) {
                             hasVisibleCustomFields = true;
                             return hasVisibleCustomFields;
                         }

@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
 import org.meveo.model.AuditableEntity;
@@ -49,6 +50,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     @EJB
     private NotificationService notificationService;
 
+    private ParamBean paramBean = ParamBean.getInstance();
+
+    private static boolean useNotificationCache = true;
+
     /**
      * Contains association between event type, entity class and notifications. Key format: &lt;eventTypeFilter&gt;-&lt;entity class&gt;
      */
@@ -61,8 +66,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     @PostConstruct
     private void init() {
         try {
+
+            useNotificationCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheNotification", "true"));
+
             log.debug("NotificationCacheContainerProvider initializing...");
-            // eventNotificationCache = meveoContainer.getCache("meveo-notification-cache");
 
             refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
@@ -78,9 +85,22 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * Populate notification cache.
      */
     private void populateNotificationCache() {
-        log.debug("Start to populate notification cache");
+
+        if (!useNotificationCache) {
+            log.info("Notification cache population will be skipped as cache will not be used");
+            return;
+        }
 
         eventNotificationCache.clear();
+
+        boolean prepopulateNotificationCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheNotification.prepopulate", "true"));
+
+        if (!prepopulateNotificationCache) {
+            log.info("Notification cache pre-population will be skipped");
+            return;
+        }
+
+        log.debug("Start to pre-populate Notification cache");
 
         List<Notification> activeNotifications = notificationService.getNotificationsForCache();
         for (Notification notif : activeNotifications) {
@@ -97,6 +117,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      */
     // @Lock(LockType.WRITE)
     public void addNotificationToCache(Notification notif) {
+
+        if (!useNotificationCache) {
+            return;
+        }
 
         String cacheKey = getCacheKey(notif);
 
@@ -129,6 +153,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      */
     public void removeNotificationFromCache(Notification notif) {
 
+        if (!useNotificationCache) {
+            return;
+        }
+
         String cacheKey = getCacheKey(notif);
 
         log.trace("Removing notification {} from notification cache under key {}", notif.getId(), cacheKey);
@@ -156,20 +184,26 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * @param notif Notification to update
      */
     public void updateNotificationInCache(Notification notif) {
+
+        if (!useNotificationCache) {
+            return;
+        }
+
         removeNotificationFromCache(notif);
         addNotificationToCache(notif);
     }
 
     /**
-     * Get a list of notifications that match event type and entity class
+     * Get a list of notifications that match event type and entity class. Entity class hierarchy up is consulted if notifications are set on a parent class
      * 
      * @param eventType Event type
      * @param entityOrEvent Entity involved or event containing the entity involved
-     * @return A list of notifications
+     * @return A list of notifications. A NULL is returned if cache was not prepopulated at application startup and cache contains no entry for a base entity passed.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
 
+        // Determine a base entity
         Object entity = null;
         if (entityOrEvent instanceof IEntity) {
             entity = (IEntity) entityOrEvent;
@@ -182,15 +216,23 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         List<Notification> notifications = new ArrayList<Notification>();
 
         Class entityClass = entity.getClass();
+        int i = 0;
 
         while (!entityClass.isAssignableFrom(BusinessCFEntity.class) && !entityClass.isAssignableFrom(BusinessEntity.class) && !entityClass.isAssignableFrom(BaseEntity.class)
                 && !entityClass.isAssignableFrom(AuditableEntity.class) && !entityClass.isAssignableFrom(Object.class)) {
+
             String cacheKey = getCacheKey(eventType, entityClass);
             if (eventNotificationCache.containsKey(cacheKey)) {
                 notifications.addAll(eventNotificationCache.get(cacheKey));
 
+                // If cache was not prepopulated or cache record was removed by cache itself (limit or cache entries, expiration, etc..)
+                // and there is no cache entry for the base class, then return null, as cache needs to be populated first
+                // TODO there could be a problem that a cache record for parent class is expired by cache. There should be no cache limit/expiration for Notification cache
+            } else if (i == 0) {
+                return null;
             }
             entityClass = entityClass.getSuperclass();
+            i++;
         }
 
         Collections.sort(notifications, (o1, o2) -> o1.getPriority() - o2.getPriority());
@@ -233,5 +275,29 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     @SuppressWarnings("rawtypes")
     private String getCacheKey(NotificationEventTypeEnum eventType, Class entityClass) {
         return eventType.name() + "_" + ReflectionUtils.getCleanClassName(entityClass.getName());
+    }
+
+    /**
+     * Mark in cache that there are no notifications cached for this base entity class and event
+     * 
+     * @param eventType Event type
+     * @param entityOrEvent Entity involved or event containing the entity involved
+     */
+    public void markNoNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
+
+        // Determine a base entity
+        Object entity = null;
+        if (entityOrEvent instanceof IEntity) {
+            entity = (IEntity) entityOrEvent;
+        } else if (entityOrEvent instanceof IEvent) {
+            entity = (IEntity) ((IEvent) entityOrEvent).getEntity();
+        } else {
+            entity = entityOrEvent;
+        }
+
+        String cacheKey = getCacheKey(eventType, entity.getClass());
+        if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
+            eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new ArrayList<Notification>());
+        }
     }
 }

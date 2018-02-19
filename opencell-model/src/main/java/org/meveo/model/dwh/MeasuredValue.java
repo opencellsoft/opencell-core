@@ -7,6 +7,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -30,7 +31,7 @@ public class MeasuredValue extends BaseEntity {
 
 	private static final long serialVersionUID = -3343485468990186936L;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "measurable_quantity", nullable = true, unique = false, updatable = true)
 	private MeasurableQuantity measurableQuantity;
 	

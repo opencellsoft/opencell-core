@@ -2,7 +2,6 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -856,7 +855,7 @@ public class QuoteApi extends BaseApi {
 
         // TODO Need to initiate workflow if there is one
 
-        quote = quoteService.refreshOrRetrieve(quote);
+        quote = quoteService.update(quote);
 
         return quoteToDto(quote);
 

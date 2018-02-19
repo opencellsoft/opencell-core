@@ -21,7 +21,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -36,12 +35,6 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ServiceChargeTemplateUsageService extends PersistenceService<ServiceChargeTemplateUsage> {
 
-	public void removeByPrefix(EntityManager em, String prefix) {
-		Query query = em.createQuery("DELETE ServiceChargeTemplateUsage t WHERE t.chargeTemplate.code LIKE '" + prefix
-				+ "%' ");
-		query.executeUpdate();
-	}
-
 	public void removeByServiceTemplate(ServiceTemplate serviceTemplate) {
 		Query query = getEntityManager()
 				.createQuery(
@@ -50,7 +43,8 @@ public class ServiceChargeTemplateUsageService extends PersistenceService<Servic
 		query.executeUpdate();
 	}
 
-	public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(UsageChargeTemplate usageChargeTemplate) {
+	@SuppressWarnings("unchecked")
+    public List<ServiceChargeTemplateUsage> findByUsageChargeTemplate(UsageChargeTemplate usageChargeTemplate) {
 
 		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateUsage.class, "a");
 		qb.addCriterionEntity("chargeTemplate", usageChargeTemplate);

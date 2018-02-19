@@ -72,7 +72,7 @@ public class CustomerAccount extends AccountEntity {
 	@Enumerated(EnumType.STRING)
 	private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "credit_category_id")
 	private CreditCategory creditCategory;
 

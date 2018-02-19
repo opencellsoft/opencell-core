@@ -18,6 +18,7 @@
  */
 package org.meveo.model.crm;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -34,6 +35,7 @@ import org.meveo.model.shared.Address;
 
 @Entity
 @ObservableEntity
+@Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "crm_provider_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
