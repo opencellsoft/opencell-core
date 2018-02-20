@@ -168,26 +168,18 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "wo_description_el", length = 2000)
     @Size(max = 2000)
     private String woDescriptionEL;
-    
+
     @Column(name = "rating_el", length = 2000)
     @Size(max = 2000)
     private String ratingEL;
-    
+
     @Column(name = "minimum_amount_without_tax_el", length = 2000)
     @Size(max = 2000)
-    private String minimumAmountWithoutTaxEl ;
-    
+    private String minimumAmountWithoutTaxEl;
+
     @Column(name = "minimum_amount_with_tax_el", length = 2000)
     @Size(max = 2000)
-    private String minimumAmountWithTaxEl ;
-    
-    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
-    @Digits(integer = 23, fraction = 12)
-    private BigDecimal rawAmountWithoutTax;
-    
-    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
-    @Digits(integer = 23, fraction = 12)
-    private BigDecimal rawAmountWithTax;
+    private String minimumAmountWithTaxEl;
 
     public String getEventCode() {
         return eventCode;
@@ -552,7 +544,7 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
     }
-    
+
     public String getMinimumAmountWithoutTaxEl() {
         return minimumAmountWithoutTaxEl;
     }
@@ -569,19 +561,4 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
         this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
     }
 
-    public BigDecimal getRawAmountWithoutTax() {
-        return rawAmountWithoutTax;
-    }
-
-    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
-        this.rawAmountWithoutTax = rawAmountWithoutTax;
-    }
-
-    public BigDecimal getRawAmountWithTax() {
-        return rawAmountWithTax;
-    }
-
-    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
-        this.rawAmountWithTax = rawAmountWithTax;
-    }
 }

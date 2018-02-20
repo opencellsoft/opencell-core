@@ -46,8 +46,6 @@ public class PricePlanMatrixDto extends BusinessDto {
     
     private String minimumAmountWithoutTaxEl ;
     private String minimumAmountWithTaxEl ;
-    private BigDecimal rawAmountWithoutTax;
-    private BigDecimal rawAmountWithTax;
 
     private int priority;
 
@@ -118,8 +116,6 @@ public class PricePlanMatrixDto extends BusinessDto {
         ratingEL = pricePlan.getRatingEL();
         minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
         minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
-        rawAmountWithoutTax = pricePlan.getRawAmountWithoutTax();
-        rawAmountWithTax = pricePlan.getRawAmountWithTax();
     }
 
     public String getEventCode() {
@@ -378,21 +374,5 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
         this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
-    }
-
-    public BigDecimal getRawAmountWithoutTax() {
-        return rawAmountWithoutTax;
-    }
-
-    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
-        this.rawAmountWithoutTax = rawAmountWithoutTax;
-    }
-
-    public BigDecimal getRawAmountWithTax() {
-        return rawAmountWithTax;
-    }
-
-    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
-        this.rawAmountWithTax = rawAmountWithTax;
     }
 }

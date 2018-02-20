@@ -67,7 +67,6 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
-import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.service.medina.impl.AccessService;
@@ -113,9 +112,6 @@ public class RatingService extends BusinessService<WalletOperation> {
     @Inject
     private ProductOfferingService productOfferingService;
     
-    @Inject
-    private PricePlanMatrixService pricePlanMatrixService;
-
     /**
      * @param level level enum
      * @param chargeCode charge's code
@@ -498,18 +494,16 @@ public class RatingService extends BusinessService<WalletOperation> {
             if (appProvider.isEntreprise() && !StringUtils.isBlank(pricePlan.getMinimumAmountWithoutTaxEl())) {
                 BigDecimal minimumAmount = new BigDecimal(
                     evaluateDoubleExpression(pricePlan.getMinimumAmountWithoutTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
-                if (pricePlan.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
-                    pricePlan.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
-                    pricePlan.setAmountWithoutTax(minimumAmount);
-                    pricePlanMatrixService.update(pricePlan);
+                if (bareWalletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
+                    bareWalletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
+                    bareWalletOperation.setAmountWithoutTax(minimumAmount);
                 }
             } else if (!StringUtils.isBlank(pricePlan.getMinimumAmountWithTaxEl())) {
                 BigDecimal minimumAmount = new BigDecimal(
                     evaluateDoubleExpression(pricePlan.getMinimumAmountWithTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
-                if (pricePlan.getAmountWithTax().compareTo(minimumAmount) < 0) {
-                    pricePlan.setRawAmountWithTax(pricePlan.getAmountWithTax());
-                    pricePlan.setAmountWithTax(minimumAmount);
-                    pricePlanMatrixService.update(pricePlan);
+                if (bareWalletOperation.getAmountWithTax().compareTo(minimumAmount) < 0) {
+                    bareWalletOperation.setRawAmountWithTax(pricePlan.getAmountWithTax());
+                    bareWalletOperation.setAmountWithTax(minimumAmount);
                 }
             }
         }

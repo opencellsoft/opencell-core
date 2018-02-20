@@ -1549,7 +1549,10 @@
             <column name="minimum_amount_with_tax_el" type="varchar(2000)">
                 <constraints nullable="true" />
             </column>
-            <column name="raw_amount_without_tax" type="numeric(23, 12)" />
+    	</addColumn>
+    	
+    	<addColumn tableName="billing_wallet_operation">
+    		<column name="raw_amount_without_tax" type="numeric(23, 12)" />
             <column name="raw_amount_with_tax" type="numeric(23, 12)" />
     	</addColumn>
     </changeSet>
