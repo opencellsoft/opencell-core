@@ -1702,11 +1702,7 @@
 		<dropColumn tableName="dwh_account_operation" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="dwh_journal_entries" columnName="accounting_code"></dropColumn>
 		
-		<dropUniqueConstraint constraintName="uk_og8li9rlut4trrxgajab23j7y" tableName="dwh_journal_entries" />
-    </changeSet>
-    
-    <changeSet id="#1705_20180221-add constraint" author="EdwardPLegaspi">
-    	<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
+		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
     </changeSet>
     
 </databaseChangeLog> 
