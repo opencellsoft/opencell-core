@@ -28,9 +28,12 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -42,10 +45,11 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
+import org.meveo.model.billing.AccountingCode;
 
 @Entity
 @Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = {
-		"origin_id", "invoice_number", "accounting_code" }))
+		"origin_id", "invoice_number", "accounting_code_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_journal_entries_seq"), })
 public class JournalEntry implements IEntity, IJPAVersionedEntity {
 	@SuppressWarnings("unused")
@@ -72,9 +76,9 @@ public class JournalEntry implements IEntity, IJPAVersionedEntity {
     @Size(max = 20)
 	private String invoiceNumber;
 
-	@Column(name = "accounting_code", length = 255)
-    @Size(max = 255)
-	private String accountingCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accounting_code_id")
+	private AccountingCode accountingCode;
 
 	@Column(name = "invoice_date")
 	@Temporal(TemporalType.DATE)
@@ -140,11 +144,11 @@ public class JournalEntry implements IEntity, IJPAVersionedEntity {
 		this.invoiceNumber = invoiceNumber;
 	}
 
-	public String getAccountingCode() {
+	public AccountingCode getAccountingCode() {
 		return accountingCode;
 	}
 
-	public void setAccountingCode(String accountingCode) {
+	public void setAccountingCode(AccountingCode accountingCode) {
 		this.accountingCode = accountingCode;
 	}
 

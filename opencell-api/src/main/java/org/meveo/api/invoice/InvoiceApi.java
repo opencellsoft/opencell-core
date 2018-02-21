@@ -838,7 +838,9 @@ public class InvoiceApi extends BaseApi {
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
                 subCategoryInvoiceAgregateDto.setType("R");
                 subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                if(invoiceAgregate.getAccountingCode() != null) {
+                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                }
                 subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                 subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                 subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
@@ -856,7 +858,9 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setType("F");
                     subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
                     subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                    if(invoiceAgregate.getAccountingCode() != null) {
+                        subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                    }
                     subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                     subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                     subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());

@@ -110,6 +110,7 @@
 	</p:submenu>
 	
 	<p:submenu id="invoicing" label="#{messages['menu.invoicing']}" rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement')  or currentUser.hasRole('createInvoice')}">
+		<p:menuitem id="accountingCodes" outcome="accountingCodes" value="#{messages['menu.accountingCodes']}" rendered="#{currentUser.hasRole('billingManagement') or currentUser.hasRole('billingVisualization')}" />
 		<p:submenu id="rating" label="#{messages['menu.rating']}" rendered="#{currentUser.hasRole('billingVisualization')}">
 			<p:menuitem id="walletOperations" outcome="walletOperations" value="#{messages['menu.walletOperations']}" />
 		</p:submenu>

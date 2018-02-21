@@ -105,7 +105,7 @@ public class TaxBean extends CustomFieldBean<Tax> {
 	 */
 	public void parseAccountingCode() {
 		if (entity.getAccountingCode() != null) {
-			String[] accountingCodeValues = entity.getAccountingCode().split(
+			String[] accountingCodeValues = entity.getAccountingCode().getCode().split(
 					separator);
 			if (accountingCodeValues != null) {
 				for (int i = 0; i < accountingCodeFields.length; i++) {

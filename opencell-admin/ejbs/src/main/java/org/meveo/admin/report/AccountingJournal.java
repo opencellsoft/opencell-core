@@ -80,7 +80,7 @@ public class AccountingJournal extends FileProducer implements Reporting {
 				writer.append(operation.getAccountCode() + ";");// customerAccountCode
 				if (operation.getAccountingCode() != null) {// accountingCode
 					// (debit)
-					writer.append(operation.getAccountingCode().toString()
+					writer.append(operation.getAccountingCode().getCode()
 							.replace(separator.toCharArray()[0], ';')
 							+ ";");
 				} else {

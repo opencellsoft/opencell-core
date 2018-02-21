@@ -1599,4 +1599,103 @@
         <sql>update billing_usage_charge_inst join billing_charge_instance on billing_charge_instance.id=billing_usage_charge_inst.id join cat_usage_charge_template on billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority</sql>       
     </changeSet>
     
+    <changeSet id="#1705_20180219" author="EdwardPLegaspi">
+    	<createTable tableName="billing_accounting_code">
+	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
+	            <constraints nullable="false" primaryKey="true" primaryKeyName="billing_accounting_code_pkey" />
+	        </column>
+	        <column name="version" type="int4" />
+	        <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="created" type="datetime">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="updated" type="datetime" />
+	        <column name="code" type="varchar(255)">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="description" type="varchar(255)" />
+	        <column name="creator" type="varchar(100)" />
+	        <column name="updater" type="varchar(100)" />
+	        <column name="parent_accounting_code_id" type="bigint" />
+			<column name="chart_of_account_type" type="varchar(25)" />
+			<column name="reporting_account" type="varchar(50)" />        
+	        <column name="chart_of_account_view_type" type="varchar(25)" />
+	        <column name="status" type="${type.boolean}" defaultValueNumeric="0">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="notes" type="varchar(2000)" />
+		</createTable>
+        
+        <createSequence sequenceName="billing_accounting_code_seq" />
+        <addUniqueConstraint columnNames="code" constraintName="uk_billing_accounting_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_accounting_code" />
+        <addForeignKeyConstraint baseColumnNames="parent_accounting_code_id" baseTableName="billing_accounting_code" constraintName="fk_billing_accounting_code_parent" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+            
+        <addColumn tableName="billing_invoice_sub_cat">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="billing_tax">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_agregate">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="dwh_account_operation">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="dwh_journal_entries">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        
+        <addForeignKeyConstraint constraintName="fk_billing_invoice_sub_cat_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_invoice_sub_cat" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_tax_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_tax" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_invoice_aggregate_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="billing_invoice_agregate" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_dwh_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_account_operation" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_dwh_journal_entries_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_journal_entries" baseColumnNames="accounting_code_id" />
+    </changeSet>
+   
+    <changeSet id="#1705_20180219-migration" author="EdwardPLegaspi">
+    	<sql>
+			<![CDATA[
+			insert into billing_accounting_code (id, version, disabled, created, creator, code, chart_of_account_type, chart_of_account_view_type)
+			select nextval('billing_accounting_code_seq'), 0, 0, now(), creator, accounting_code, 'ASSETS', 'REGULAR' 
+			from billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'';
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			update billing_invoice_sub_cat set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into billing_accounting_code (id, version, disabled, created, creator, code, chart_of_account_type, chart_of_account_view_type)
+			select nextval('billing_accounting_code_seq'), 0, 0, now(), creator, accounting_code, 'ASSETS', 'REGULAR' 
+			from billing_tax where accounting_code is not null and accounting_code<>'' and accounting_code not in (select code from billing_accounting_code);
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update billing_tax set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update billing_invoice_agregate set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update dwh_account_operation set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update dwh_journal_entries set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="billing_tax" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="billing_invoice_agregate" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="dwh_account_operation" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="dwh_journal_entries" columnName="accounting_code"></dropColumn>
+		
+		<dropUniqueConstraint constraintName="uk_og8li9rlut4trrxgajab23j7y" tableName="dwh_journal_entries" />
+		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
+    </changeSet>
+    
 </databaseChangeLog> 

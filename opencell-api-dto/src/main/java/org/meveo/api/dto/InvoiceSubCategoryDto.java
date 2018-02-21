@@ -35,7 +35,9 @@ public class InvoiceSubCategoryDto extends BusinessDto {
 	public InvoiceSubCategoryDto(InvoiceSubCategory invoiceSubCategory, CustomFieldsDto customFieldInstances) {
 		super(invoiceSubCategory);
 		invoiceCategory = invoiceSubCategory.getInvoiceCategory().getCode();
-		accountingCode=invoiceSubCategory.getAccountingCode();
+        if (invoiceSubCategory.getAccountingCode() != null) {
+            accountingCode = invoiceSubCategory.getAccountingCode().getCode();
+        }
 		customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceSubCategory.getDescriptionI18n()));
 	}
