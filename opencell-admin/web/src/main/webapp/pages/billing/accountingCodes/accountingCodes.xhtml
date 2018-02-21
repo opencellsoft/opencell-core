@@ -12,18 +12,18 @@
 	</ui:define>
 
 	<ui:define name="body">
-		<hftl:searchPanel backingBean="#{walletListBean}" label="#{messages['accountingCode.search']}" newButtonView="/pages/billing/wallets/walletDetail.xhtml">
+		<hftl:searchPanel backingBean="#{accountingCodeListBean}" label="#{messages['accountingCode.search']}">
 			<hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
 		</hftl:searchPanel>
 
-		<hftl:dataList label="#{messages['accountingCode']}" backingBean="#{walletListBean}" pdf="true">
+		<hftl:dataList label="#{messages['accountingCode']}" backingBean="#{accountingCodeListBean}">
 			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
 			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
-			<hftl:column label="#{messages['BusinessEntity.chartOfAccountTypeEnum']}" field="chartOfAccountTypeEnum" />
-			<hftl:column label="#{messages['BusinessEntity.reportingAccount']}" field="reportingAccount" />
-			<hftl:column label="#{messages['BusinessEntity.chartOfAccountViewTypeEnum']}" field="chartOfAccountViewTypeEnum" />
-			<hftl:column label="#{messages['BusinessEntity.status']}" field="status" isMessage="true" />
+			<hftl:column label="#{messages['accountingCode.chartOfAccountTypeEnum']}" field="chartOfAccountTypeEnum" />
+			<hftl:column label="#{messages['accountingCode.reportingAccount']}" field="reportingAccount" />
+			<hftl:column label="#{messages['accountingCode.chartOfAccountViewTypeEnum']}" field="chartOfAccountViewTypeEnum" />
+			<hftl:column label="#{messages['accountingCode.status']}" field="status" isMessage="true" />
 
 			<hftl:actionsColumn permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>

@@ -8,6 +8,6 @@ public enum ChartOfAccountViewTypeEnum {
     VIEW, REGULAR;
     
     public String getLabel() {
-        return "ChartOfAccountViewTypeEnum" + name();
+        return "ChartOfAccountViewTypeEnum." + name();
     }
 }
