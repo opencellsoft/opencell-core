@@ -55,6 +55,7 @@ public class NotificationDto extends BusinessDto {
 			scriptParams.putAll(e.getParams());
 		}
 		priority = e.getPriority();
+		active = e.isActive();
 //		scriptParams = e.getParams();
 	}	
 
