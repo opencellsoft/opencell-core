@@ -14,6 +14,8 @@ import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.SellerDto;
 import org.meveo.api.dto.SellersDto;
 import org.meveo.api.dto.SequenceDto;
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -31,6 +33,8 @@ import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -91,7 +95,15 @@ public class SellerApi extends BaseApi {
                 seller.getInvoiceTypeSequence().add(new InvoiceTypeSellerSequence(invoiceType, seller, entry.getValue().fromDto()));
             }
         }
-
+        
+        if (postData.getContactInformation() != null) {
+            seller.setContactInformation(toContactInformation(postData.getContactInformation()));
+        }
+        
+        if (postData.getAddress() != null) {
+            seller.setAddress(toAddress(postData.getAddress()));
+        }
+        
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());
@@ -149,6 +161,27 @@ public class SellerApi extends BaseApi {
 
         return seller;
     }
+    
+    private ContactInformation toContactInformation(ContactInformationDto contactInformationDto) {
+        ContactInformation contactInformation = new ContactInformation();
+        contactInformation.setEmail(contactInformationDto.getEmail());
+        contactInformation.setPhone(contactInformationDto.getPhone());
+        contactInformation.setMobile(contactInformationDto.getMobile());
+        contactInformation.setFax(contactInformationDto.getFax());
+        return contactInformation;        
+    }
+    
+    private Address toAddress(AddressDto addressDto) {
+        Address address = new Address();
+        address.setAddress1(addressDto.getAddress1());
+        address.setAddress2(addressDto.getAddress2());
+        address.setAddress3(addressDto.getAddress3());
+        address.setCity(addressDto.getCity());
+        address.setCountry(addressDto.getCountry());
+        address.setState(addressDto.getState());
+        address.setZipCode(addressDto.getZipCode());
+        return address;
+    }
 
     public void update(SellerDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
@@ -190,6 +223,15 @@ public class SellerApi extends BaseApi {
                 }
             }
         }
+        
+        if (postData.getContactInformation() != null) {
+            seller.setContactInformation(toContactInformation(postData.getContactInformation()));
+        }
+        
+        if (postData.getAddress() != null) {
+            seller.setAddress(toAddress(postData.getAddress()));
+        }
+        
         // check trading entities
         if (!StringUtils.isBlank(postData.getCurrencyCode())) {
             TradingCurrency tradingCurrency = tradingCurrencyService.findByTradingCurrencyCode(postData.getCurrencyCode());

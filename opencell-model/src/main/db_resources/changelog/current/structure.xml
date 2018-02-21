@@ -1514,8 +1514,7 @@
 			<column name="http_protocol" type="varchar(10)" />
 		</addColumn>
 		<sql>UPDATE adm_notif_webhooks SET http_protocol='HTTP'</sql>
-		<addNotNullConstraint tableName="adm_notif_webhooks"
-			columnName="http_protocol" />
+		<addNotNullConstraint tableName="adm_notif_webhooks" columnName="http_protocol" columnDataType="varchar(10)" />
 	</changeSet>
     
     <changeSet id="#3112_20171229 Add billingTemplateNameEL to invoiceType" author="EdwardPLegaspi">
@@ -1554,6 +1553,15 @@
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime"/>
     </changeSet>
     
+     <changeSet id="#2819_20180212" author="AbdelmounaimAkadid">
+    	<addColumn tableName="crm_seller">
+            <column name="email" type="varchar(2000)"  />           
+            <column name="fax" type="varchar(2000)"  />           
+            <column name="mobile" type="varchar(2000)"  />     
+            <column name="phone" type="varchar(2000)"  />
+        </addColumn>
+	</changeSet>
+
     <changeSet id="#2792_20170919" author="AndriusKarpavicius">  
         <sql>update cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
         <sql>update cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>
