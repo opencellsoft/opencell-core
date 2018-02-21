@@ -1664,7 +1664,7 @@
         <addForeignKeyConstraint constraintName="fk_dwh_journal_entries_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_journal_entries" baseColumnNames="accounting_code_id" />
     </changeSet>
    
-    <changeSet id="#1705_20180219-migration" author="EdwardPLegaspi">
+    <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi">
     	<sql>
 			<![CDATA[
 			insert into billing_accounting_code (id, version, disabled, created, creator, code, chart_of_account_type, chart_of_account_view_type)
@@ -1703,7 +1703,10 @@
 		<dropColumn tableName="dwh_journal_entries" columnName="accounting_code"></dropColumn>
 		
 		<dropUniqueConstraint constraintName="uk_og8li9rlut4trrxgajab23j7y" tableName="dwh_journal_entries" />
-		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
+    </changeSet>
+    
+    <changeSet id="#1705_20180221-add constraint" author="EdwardPLegaspi">
+    	<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
     </changeSet>
     
 </databaseChangeLog> 
