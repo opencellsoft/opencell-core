@@ -96,9 +96,9 @@ public class WorkflowService extends BusinessService<Workflow> {
     }
 
     /**
-     * Return all workflowType classes
+     * Return all workflowType classes.
      * 
-     * @return
+     * @return list of all workflow types.
      */
     public List<Class<?>> getAllWFTypes() {
         List<Class<?>> result = new ArrayList<Class<?>>();
@@ -109,7 +109,7 @@ public class WorkflowService extends BusinessService<Workflow> {
                 }
             }
         }
-        Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfaces();
+        Map<String, Class<ScriptInterface>> mmap = scriptInstanceService.getAllScriptInterfacesWCompile();
 
         if (mmap != null) {
             for (Entry<String, Class<ScriptInterface>> entry : mmap.entrySet()) {
@@ -152,8 +152,8 @@ public class WorkflowService extends BusinessService<Workflow> {
     /**
      * Find a Workflow by an Entity
      * 
-     * @param entityClass
-     * @return
+     * @param entityClass entity class
+     * @return list of workflow
      */
     public List<Workflow> findByEntity(Class<? extends BusinessEntity> entityClass) {
         List<Workflow> result = new ArrayList<Workflow>();
@@ -168,8 +168,8 @@ public class WorkflowService extends BusinessService<Workflow> {
     /**
      * Check if there is any Workflow setup for a given entity class
      * 
-     * @param entityClass
-     * @return
+     * @param entityClass entity class
+     * @return true if workflow is setup.
      */
     public boolean isWorkflowSetup(Class<? extends BusinessEntity> entityClass) {
         List<Workflow> workflows = findByEntity(entityClass);
@@ -183,7 +183,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @param workflowCode A concrete worklfow to execute
 
      * @return Updated entity
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public BusinessEntity executeWorkflow(BusinessEntity entity, String workflowCode) throws BusinessException {
 
@@ -201,7 +201,7 @@ public class WorkflowService extends BusinessService<Workflow> {
      * @param entity Entity to execute worklows on
 
      * @return Updated entity
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public BusinessEntity  executeMatchingWorkflows(BusinessEntity entity) throws BusinessException {
 
@@ -221,8 +221,8 @@ public class WorkflowService extends BusinessService<Workflow> {
      * 
      * @param entity Entity to execuet workflow on
      * @param workflow Workflow to execute
-
-     * @throws BusinessException
+     * @return business entity
+     * @throws BusinessException business exception
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public BusinessEntity executeWorkflow(BusinessEntity entity, Workflow workflow) throws BusinessException {
@@ -291,12 +291,12 @@ public class WorkflowService extends BusinessService<Workflow> {
     }
 
     /**
-     * Return the workflowType class by name
+     * Return the workflowType class by name.
      * 
-     * @param wfTypeClassName
-     * @return
-     * @throws ClassNotFoundException
-     * @throws InvalidScriptException
+     * @param wfTypeClassName workflow type class name
+     * @return workflow 
+     * @throws ClassNotFoundException class not found exception
+     * @throws InvalidScriptException invalid script exception
      */
     public Class<?> getWFTypeClassForName(String wfTypeClassName) throws ClassNotFoundException, InvalidScriptException {
 
@@ -324,7 +324,7 @@ public class WorkflowService extends BusinessService<Workflow> {
             userMap.put("entity", object);
         }
 
-        return ValueExpressionWrapper.evaluateToBoolean(expression, "entity", object);
+        return ValueExpressionWrapper.evaluateToBooleanOneVariable(expression, "entity", object);
 
     }
 

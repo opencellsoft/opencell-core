@@ -451,12 +451,12 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     }
 
     /**
-     * Create or updates the OfferTemplate based on code
+     * Create or updates the OfferTemplate based on code.
      *
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate createOrUpdate(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -513,7 +513,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
      * @param validTo Validity range to date.
      * @param pagingAndFiltering Paging and filtering criteria.
      * @return A list of offer templates
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parametter exception.
      */
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "offerTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })

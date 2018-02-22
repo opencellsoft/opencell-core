@@ -19,7 +19,6 @@ import org.meveo.admin.ftp.event.FileDownload;
 import org.meveo.admin.ftp.event.FileRename;
 import org.meveo.admin.ftp.event.FileUpload;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.event.CounterPeriodEvent;
@@ -43,7 +42,6 @@ import org.meveo.event.qualifier.Updated;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.admin.User;
-import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.WalletInstance;
 import org.meveo.model.mediation.MeveoFtpFile;
 import org.meveo.model.notification.EmailNotification;
@@ -93,7 +91,7 @@ public class DefaultObserver {
     private CounterInstanceService counterInstanceService;
 
     @Inject
-    private NotificationCacheContainerProvider notificationCacheContainerProvider;
+    private GenericNotificationService genericNotificationService;
 
     // @Inject
     // private RemoteInstanceNotifier remoteInstanceNotifier;
@@ -118,7 +116,7 @@ public class DefaultObserver {
         } catch (Exception e) {
             throw new BusinessException("Expression " + expression + " do not evaluate to boolean but " + res);
         }
-        return result;
+        return result == null ? false : result;
     }
 
     private void executeScript(ScriptInstance scriptInstance, Object entityOrEvent, Map<String, String> params, Map<String, Object> context) throws BusinessException {
@@ -168,8 +166,7 @@ public class DefaultObserver {
             // Check if the counter associated to notification was not exhausted yet
             if (notif.getCounterInstance() != null) {
                 try {
-                    CounterInstance counterInstance = counterInstanceService.refreshOrRetrieve(notif.getCounterInstance());
-                    counterInstanceService.deduceCounterValue(counterInstance, new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
+                    counterInstanceService.deduceCounterValue(notif.getCounterInstance(), new Date(), notif.getAuditable().getCreated(), new BigDecimal(1));
                 } catch (CounterValueInsufficientException ex) {
                     sendNotify = false;
                 }
@@ -193,7 +190,7 @@ public class DefaultObserver {
             // thus
             // will not be related to inbound request.
             if (notif instanceof ScriptNotification) {
-                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String)context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
+                NotificationHistory histo = notificationHistoryService.create(notif, entityOrEvent, (String) context.get(Script.RESULT_VALUE), NotificationHistoryStatusEnum.SENT);
 
                 if (notif.getEventTypeFilter() == NotificationEventTypeEnum.INBOUND_REQ && histo != null) {
                     ((InboundRequest) entityOrEvent).add(histo);
@@ -226,7 +223,7 @@ public class DefaultObserver {
                 throw new BusinessException(e1);
             } else {
                 throw (BusinessException) e1;
-        }
+            }
         }
 
         return true;
@@ -255,7 +252,7 @@ public class DefaultObserver {
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;
-        for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(type, entityOrEvent)) {
+        for (Notification notif : genericNotificationService.getApplicableNotifications(type, entityOrEvent)) {
             result = fireNotification(notif, entityOrEvent) || result;
         }
         return result;
@@ -300,7 +297,7 @@ public class DefaultObserver {
         log.debug("Defaut observer : Entity {} with id {} rejected", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.REJECTED, e);
     }
-    
+
     public void entityEndOfTerm(@Observes @EndOfTerm BaseEntity e) throws BusinessException {
         log.debug("Defaut observer : Entity {} with id {} end of term", e.getClass().getName(), e.getId());
         checkEvent(NotificationEventTypeEnum.END_OF_TERM, e);
@@ -308,7 +305,7 @@ public class DefaultObserver {
 
     public void cdrRejected(@Observes @RejectedCDR Object cdr) throws BusinessException {
         log.debug("Defaut observer : cdr {} rejected", cdr);
-        for (Notification notif : notificationCacheContainerProvider.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
+        for (Notification notif : genericNotificationService.getApplicableNotifications(NotificationEventTypeEnum.REJECTED_CDR, cdr)) {
             fireCdrNotification(notif, cdr);
         }
     }

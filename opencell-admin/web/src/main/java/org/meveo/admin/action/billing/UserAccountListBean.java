@@ -40,11 +40,6 @@ public class UserAccountListBean extends BaseBean<UserAccount> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link UserAccount} service. Extends {@link PersistenceService} .
-	 */
 	@Inject
 	private UserAccountService userAccountService;
 

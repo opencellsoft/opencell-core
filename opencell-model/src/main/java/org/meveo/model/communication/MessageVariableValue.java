@@ -20,6 +20,7 @@ package org.meveo.model.communication;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -39,7 +40,7 @@ public class MessageVariableValue extends BusinessEntity {
 
 	private static final long serialVersionUID = 3887656885680541231L;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "message")
 	private Message message;
 

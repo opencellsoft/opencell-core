@@ -31,10 +31,10 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * @param postData
-
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API
+     * @return offer template category
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public OfferTemplateCategory create(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -91,10 +91,10 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * @param postData
-
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API
+     * @return offer template category
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public OfferTemplateCategory update(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -175,9 +175,10 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     
     /**
      * 
-     * @param code
-     * @return
-     * @throws MeveoApiException
+     * @param code offer template category
+     * @param uriInfo uri info
+     * @return offer template category.
+     * @throws MeveoApiException meveo api exception.
      */
     public OfferTemplateCategoryDto find(String code, UriInfo uriInfo) throws MeveoApiException {
 
@@ -199,8 +200,9 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * @param code
-     * @throws MeveoApiException
+     * @param code code of offer template category
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void remove(String code) throws MeveoApiException, BusinessException {
 
@@ -222,10 +224,10 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * @param postData
-
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API
+     * @return offer template category
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exceptions
      */
     public OfferTemplateCategory createOrUpdate(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
        if (StringUtils.isBlank(postData.getCode())) {
@@ -241,8 +243,8 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return list of offer category
+     * @throws MeveoApiException meveo api exception
      */
     public List<OfferTemplateCategoryDto> list() throws MeveoApiException {
         List<OfferTemplateCategoryDto> offerTemplateCategoryDtos = new ArrayList<OfferTemplateCategoryDto>();
@@ -260,9 +262,9 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * 
-     * @return
-     * @throws MeveoApiException
+     * @param uriInfo uri infos
+     * @return list of offer template category
+     * @throws MeveoApiException meveo api exception
      */
     public List<OfferTemplateCategoryDto> list(UriInfo uriInfo) throws MeveoApiException {
         List<OfferTemplateCategoryDto> offerTemplateCategoryDtos = new ArrayList<OfferTemplateCategoryDto>();
@@ -280,10 +282,10 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
     /**
      * 
-     * @param code
+     * @param code code of offer template category
 
-     * @return
-     * @throws MeveoApiException
+     * @return offer template category
+     * @throws MeveoApiException meveo api exception
      */
     public OfferTemplateCategoryDto findByCode(String code) throws MeveoApiException {
         OfferTemplateCategoryDto offerTemplateCategoryDto = null;
@@ -303,14 +305,13 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     }
 
     /**
-     * 
-     * @param code
+     * @param uriInfo uri information
+     * @param code code of offer template category
 
-     * @return
-     * @throws EntityDoesNotExistsException
-     * @throws InvalidParameterException
-     * @throws MissingParameterException
-     * @throws MeveoApiException
+     * @return found offer template category
+     * @throws EntityDoesNotExistsException entity does not exist exception
+     * @throws InvalidParameterException invalid parameter exception
+     * @throws MissingParameterException missing parameter exception
      */
     public OfferTemplateCategoryDto findByCode(String code, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException,
             MissingParameterException {

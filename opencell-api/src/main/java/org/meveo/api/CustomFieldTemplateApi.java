@@ -164,7 +164,6 @@ public class CustomFieldTemplateApi extends BaseApi {
             missingParameters.add("childEntityFieldsForSummary");
         }
 
-        log.error("AKK in update CFT {} has {} translations", cft.getCode(), cft.getDescriptionI18n());
         cft = fromDTO(postData, appliesTo, cft);
 
         customFieldTemplateService.update(cft);
@@ -194,9 +193,9 @@ public class CustomFieldTemplateApi extends BaseApi {
     }
 
     /**
-     * Find Custom Field Template by its code and appliesTo attributes
+     * Find Custom Field Template by its code and appliesTo attributes.
      * 
-     * @param actionCode Custom Field Template code
+     * @param code Custom Field Template code
      * @param appliesTo Applies to
      * @return DTO
      * @throws EntityDoesNotExistsException Custom Field Template was not found
@@ -226,9 +225,9 @@ public class CustomFieldTemplateApi extends BaseApi {
     }
 
     /**
-     * Same as find method, only ignore EntityDoesNotExistException exception and return Null instead
+     * Same as find method, only ignore EntityDoesNotExistException exception and return Null instead.
      * 
-     * @param actionCode Custom Field Template code
+     * @param code Custom Field Template code
      * @param appliesTo Applies to
      * @return DTO or Null if not found
      * @throws InvalidParameterException AppliesTo value is incorrect

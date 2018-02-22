@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -23,6 +24,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OrderBy;
+import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -47,18 +49,21 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code", "appliesTo" })
 @Table(name = "crm_custom_field_tmpl", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_custom_fld_tmp_seq"), })
 @NamedQueries({
         @NamedQuery(name = "CustomFieldTemplate.getCFTForCache", query = "SELECT cft from CustomFieldTemplate cft left join fetch cft.calendar where cft.disabled=false order by cft.appliesTo"),
-        @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null ") })
+        @NamedQuery(name = "CustomFieldTemplate.getCFTForIndex", query = "SELECT cft from CustomFieldTemplate cft where cft.disabled=false and cft.indexType is not null "),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTByCodeAndAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.code=:code and cft.appliesTo=:appliesTo", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }),
+        @NamedQuery(name = "CustomFieldTemplate.getCFTByAppliesTo", query = "SELECT cft from CustomFieldTemplate cft where cft.appliesTo=:appliesTo order by cft.code", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class CustomFieldTemplate extends BusinessEntity implements Comparable<CustomFieldTemplate> {
 
     private static final long serialVersionUID = -1403961759495272885L;
@@ -131,7 +136,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     private boolean useInheritedAsDefaultValue;
 
     /**
-     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - <CustomEntityTemplate code>"
+     * Reference to an entity. A classname. In case of CustomEntityTemplate, classname consist of "CustomEntityTemplate - &lt;CustomEntityTemplate code&gt;"
      */
     @Column(name = "entity_clazz", length = 255)
     @Size(max = 255)
@@ -152,10 +157,9 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
 
     /**
      * Where field should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;fieldGroup:&lt;fieldgroup name&gt;:&lt;fieldgroup relative
-     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;<br/>
-     * <br/>
+     * position&gt;;field:&lt;field relative position in fieldgroup/tab&gt;
      * 
-     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
      * 
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;field:0 OR tab:Second tab:1;field:1
@@ -327,7 +331,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Extract codes of matrix columns into a sorted list by column index
+     * Extract codes of matrix columns into a sorted list by column index.
      * 
      * @return A list of matrix column codes
      */
@@ -390,8 +394,8 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     /**
      * Retrieve a cet code from classname and code as it is stored in entityClazz field.
      * 
-     * @param entityClazz
-     * @return
+     * @param entityClazz entity class
+     * @return code
      */
     public static String retrieveCetCode(String entityClazz) {
         if (entityClazz == null) {
@@ -620,7 +624,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
     }
 
     /**
-     * Instantiate a CustomFieldValue from a template, setting a default value if applicable
+     * Instantiate a CustomFieldValue from a template, setting a default value if applicable.
      *
      * @return CustomFieldValue object
      */
@@ -676,7 +680,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         }
 
         language = language.toUpperCase();
-        if (!descriptionI18n.containsKey(language)) {
+        if (StringUtils.isBlank(descriptionI18n.get(language))) {
             return description;
         } else {
             return descriptionI18n.get(language);
@@ -693,10 +697,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         if (matrixKeyColumns != null) {
             return matrixKeyColumns;
         }
-        Logger log = LoggerFactory.getLogger(getClass());
-        log.error("AKK matrixColums are {}", matrixColumns.size());
         matrixKeyColumns = matrixColumns.stream().filter(elem -> elem.isColumnForKey()).collect(Collectors.toList());
-        log.error("AKK matrixKeyColums are {}", matrixKeyColumns.size());
         return matrixKeyColumns;
     }
 

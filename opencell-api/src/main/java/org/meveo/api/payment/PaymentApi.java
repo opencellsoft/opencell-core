@@ -57,7 +57,7 @@ public class PaymentApi extends BaseApi {
     /**
      * @param paymentDto payment object which encapsulates the input data sent by client
      * @return the id of payment if created successful otherwise null
-     * @throws NoAllOperationUnmatchedException 
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
      * @throws UnbalanceAmountException balance amount exception
      * @throws BusinessException business exception
      * @throws MeveoApiException opencell api exception
@@ -177,7 +177,7 @@ public class PaymentApi extends BaseApi {
                 paymentDto.setPaymentMethod(p.getPaymentMethod());
                 paymentDto.setReference(p.getReference());
                 paymentDto.setTransactionDate(p.getTransactionDate());
-                paymentDto.setPaymentOrder(p.getOrderNumber());
+                paymentDto.setPaymentOrder(p.getPaymentOrder());
                 paymentDto.setFees(p.getFees());
                 paymentDto.setComment(p.getComment());
                 paymentDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));

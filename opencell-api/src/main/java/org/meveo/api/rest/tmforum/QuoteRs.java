@@ -42,7 +42,7 @@ public interface QuoteRs {
      * 
      * @param id Product code
      * @param info Http request context
-     * @return
+     * @return quote response
      */
     @GET
     @Path("/{quoteId}")
@@ -71,9 +71,8 @@ public interface QuoteRs {
     public Response updateProductQuote(@PathParam("id") String id, ProductQuote productQuote, @Context UriInfo info);
 
     /**
-     * Delete a product quote
+     * Delete a product quote.
      * 
-     * @param quoteId Product quote code
      * @param info Http request context
      * @return
      */
@@ -82,7 +81,7 @@ public interface QuoteRs {
     public Response deleteProductQuote(@PathParam("quoteId") String id, @Context UriInfo info);
 
     /**
-     * Place an order based on a product quote
+     * Place an order based on a product quote.
      * 
      * @param id Product quote code
      * @param info Http request context

@@ -27,22 +27,26 @@ import javax.faces.application.FacesMessage.Severity;
 public interface MutableMessage extends Message {
     /**
      * Set the {@link Severity} representing the severity of this message.
+     * @param severity serverity level
      */
     void setSeverity(Severity severity);
 
     /**
      * Set the message text.
+     * @param summary text to set
      */
     void setText(String summary);
 
     /**
      * Set the message detail.
+     * @param detail detail of message
      */
     void setDetail(String detail);
 
     /**
      * Set the targets for which a given view-layer or consumer should display this message, or to which this message should be
      * attached.
+     * @param targets targets
      */
     void setTargets(String targets);
 }

@@ -188,7 +188,7 @@ public class InvoiceDto extends BaseDto {
     }
 
     /**
-     * @param invoiceId
+     * @param invoiceId id of invoice.
      */
     public void setInvoiceId(Long invoiceId) {
         this.invoiceId = invoiceId;

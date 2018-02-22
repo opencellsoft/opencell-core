@@ -82,6 +82,8 @@ public class JobExecutionResultDto extends BaseDto {
      * Jon execution report/summary
      */
     private String report;
+    
+    private String jobInstanceCode;
 
     public JobExecutionResultDto() {
     }
@@ -97,6 +99,7 @@ public class JobExecutionResultDto extends BaseDto {
         this.nbItemsProcessedWithError = jobExecutionResult.getNbItemsProcessedWithError();
         this.done = jobExecutionResult.isDone();
         this.report = jobExecutionResult.getReport();
+        jobInstanceCode = jobExecutionResult.getJobInstance().getCode();
     }
 
     public Date getStartDate() {
@@ -192,5 +195,13 @@ public class JobExecutionResultDto extends BaseDto {
         return "JobExecutionResultDto [id=" + id + ", jobInstanceId=" + jobInstanceId + ", runningOnNodes=" + runningOnNodes + ", startDate=" + startDate + ", endDate=" + endDate
                 + ", nbItemsToProcess=" + nbItemsToProcess + ", nbItemsCorrectlyProcessed=" + nbItemsCorrectlyProcessed + ", nbItemsProcessedWithWarning="
                 + nbItemsProcessedWithWarning + ", nbItemsProcessedWithError=" + nbItemsProcessedWithError + ", done=" + done + ", report=" + report + "]";
+    }
+
+    public String getJobInstanceCode() {
+        return jobInstanceCode;
+    }
+
+    public void setJobInstanceCode(String jobInstanceCode) {
+        this.jobInstanceCode = jobInstanceCode;
     }
 }

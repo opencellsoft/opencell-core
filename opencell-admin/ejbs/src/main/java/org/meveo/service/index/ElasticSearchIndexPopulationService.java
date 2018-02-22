@@ -142,7 +142,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed
+     * Convert entity to a map of values that is accepted by Elastic Search as document to be stored and indexed.
      * 
      * @param entity Entity to store in Elastic Search
      * @param cftIndexable Sets to track CFTs that are indexable. Used in massive initial ES population.
@@ -175,7 +175,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                     }
 
                 } else {
-                    String fieldNames[] = fieldNameFrom.split("\\.");
+                    String[] fieldNames = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
@@ -200,7 +200,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                     jsonValueMap.put(fieldNameTo, value);
 
                 } else {
-                    String fieldNames[] = fieldNameTo.split("\\.");
+                    String[] fieldNames = fieldNameTo.split("\\.");
                     String fieldName = null;
                     Map<String, Object> mapEntry = jsonValueMap;
                     int length = fieldNames.length;
@@ -262,11 +262,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Convert object to a map of fields (recursively)
+     * Convert object to a map of fields (recursively).
      * 
      * @param valueToConvert Object to convert
      * @return A map of fieldnames and values
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException illegal access exception.
      */
     private Map<String, Object> convertObjectToFieldMap(Object valueToConvert) throws IllegalAccessException {
         Map<String, Object> fieldValueMap = new HashMap<>();
@@ -291,9 +291,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Make a REST call to drop all indexes
+     * Make a REST call to drop all indexes.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void dropIndexes() throws BusinessException {
 
@@ -311,9 +311,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Recreate index
+     * Recreate index.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
@@ -358,10 +358,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Update Elastic Search model with custom entity template definition
+     * Update Elastic Search model with custom entity template definition.
      * 
      * @param cet Custom entity template
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     public void createCETMapping(CustomEntityTemplate cet) throws BusinessException {
 
@@ -398,10 +398,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Update Elastic Search model with custom field definition
+     * Update Elastic Search model with custom field definition.
      * 
      * @param cft Custom field template
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public void updateCFMapping(CustomFieldTemplate cft) throws BusinessException {

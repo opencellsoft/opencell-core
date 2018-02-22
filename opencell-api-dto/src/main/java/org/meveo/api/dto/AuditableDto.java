@@ -4,20 +4,32 @@ import java.util.Date;
 
 /**
  * @author Edward P. Legaspi
- * @created 5 Sep 2017
+ * 
  */
 public class AuditableDto extends BaseDto {
 
-	private static final long serialVersionUID = 1040133977061424749L;
-	
-	private Date created;
+    /**
+     * serial versuion uid.
+     */
+    private static final long serialVersionUID = 1040133977061424749L;
 
-	public Date getCreated() {
-		return created;
-	}
+    /**
+     * created date.
+     */
+    private Date created;
 
-	public void setCreated(Date created) {
-		this.created = created;
-	}
-	
+    /**
+     * @return created date.
+     */
+    public Date getCreated() {
+        return created;
+    }
+
+    /**
+     * @param created created date
+     */
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
 }

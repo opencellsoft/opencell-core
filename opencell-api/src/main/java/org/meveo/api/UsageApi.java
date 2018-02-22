@@ -44,11 +44,10 @@ public class UsageApi extends BaseApi {
 
 	/**
 	 *
-	 * @param usageRequestDto
-	 * @param user
-	 * @return
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
+	 * @param usageRequestDto usage request dto
+	 * @return usage charge 
+	 * @throws MissingParameterException missing parameter exception.
+	 * @throws EntityDoesNotExistsException entity does not exist exception.
 	 */
 	public UsageChargeAggregateResponseDto chargeAggregate(UsageRequestDto usageRequestDto) throws MissingParameterException, EntityDoesNotExistsException {
 
@@ -100,11 +99,10 @@ public class UsageApi extends BaseApi {
 
 	/**
 	 *
-	 * @param usageRequestDto
-	 * @param user
-	 * @return
-	 * @throws MissingParameterException
-	 * @throws EntityDoesNotExistsException
+	 * @param usageRequestDto usage request dto
+	 * @return usage response dto
+	 * @throws MissingParameterException missing parameter exception.
+	 * @throws EntityDoesNotExistsException entity does not exist exception.
 	 */
 	public UsageResponseDto find(UsageRequestDto usageRequestDto) throws MissingParameterException, EntityDoesNotExistsException {
 

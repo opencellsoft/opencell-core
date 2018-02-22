@@ -29,10 +29,7 @@ public class AccountHierarchyRsImpl extends BaseRs implements AccountHierarchyRs
 
     /**
      * 
-     * @param customer entity containing values serving as filter (for "=" operator)
-     * @param limit nb max of entity to return
-     * @param index pagination limit
-     * @param sortField name of the field used for sorting
+     * @param accountHierarchyDto account hierarchy dto.
      * @return list of customer dto satisfying the filter
      */
     @Override

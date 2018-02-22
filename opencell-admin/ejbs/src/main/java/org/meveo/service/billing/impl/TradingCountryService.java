@@ -35,7 +35,6 @@ public class TradingCountryService extends PersistenceService<TradingCountry> {
      * 
      * @param tradingCountryCode Trading Country Code
      * @return Trading country found or null.
-     * @throws ElementNotFoundException
      */
     public TradingCountry findByTradingCountryCode(String tradingCountryCode) {
         try {

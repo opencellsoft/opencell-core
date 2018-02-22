@@ -99,7 +99,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
         }
 
         if (entity.getCalendar() != null) {
-            entity.setCalendar(calendarService.refreshOrRetrieve(entity.getCalendar()));
+            entity.setCalendar(calendarService.retrieveIfNotManaged(entity.getCalendar()));
         }
         return super.saveOrUpdate(killConversation);
     }
@@ -285,6 +285,7 @@ public class CustomFieldTemplateBean extends UpdateMapTypeFieldBean<CustomFieldT
             throw new ValidationException("Not specified what class to copy CFT to", "customFieldTemplate.copyCFT.targetNotSpecified");
         }
 
+        entity = customFieldTemplateService.refreshOrRetrieve(entity);
         customFieldTemplateService.copyCustomFieldTemplate(entity, copyCftTo);
 
         messages.info(new BundleKey("messages", "customFieldTemplate.copyCFT.ok"));

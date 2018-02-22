@@ -43,7 +43,6 @@ import org.meveo.model.billing.Invoice;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
@@ -61,11 +60,6 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     private static final long serialVersionUID = 1L;
 
-    /**
-     * Injected
-     * 
-     * @{link BillingAccount} service. Extends {@link PersistenceService}.
-     */
     @Inject
     private BillingAccountService billingAccountService;
 
@@ -106,9 +100,7 @@ public class BillingAccountBean extends AccountBean<BillingAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return billing account
      */
     @Override
     public BillingAccount initEntity() {

@@ -20,41 +20,40 @@ package org.meveo.model.billing;
 
 public enum InstanceStatusEnum {
 
-	ACTIVE(1, "accountStatusEnum.active"), 
-	INACTIVE(1, "accountStatusEnum.inactive"), 
-	CANCELED(2, "accountStatusEnum.canceled"), 
-	TERMINATED(3, "accountStatusEnum.terminated"), 
-	SUSPENDED(4, "accountStatusEnum.suspended"), 
-	CLOSED(4, "accountStatusEnum.closed");
+    ACTIVE(1, "accountStatusEnum.active"), INACTIVE(1, "accountStatusEnum.inactive"), CANCELED(2, "accountStatusEnum.canceled"), TERMINATED(3,
+            "accountStatusEnum.terminated"), SUSPENDED(4, "accountStatusEnum.suspended"), CLOSED(4, "accountStatusEnum.closed");
 
-	private Integer id;
-	private String label;
+    private Integer id;
+    
+    private String label;
 
-	InstanceStatusEnum(Integer id, String label) {
-		this.id = id;
-		this.label = label;
+    InstanceStatusEnum(Integer id, String label) {
+        this.id = id;
+        this.label = label;
 
-	}
+    }
 
-	public Integer getId() {
-		return id;
-	}
+    public Integer getId() {
+        return id;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	/**
-	 * Gets enum by its id.
-	 */
-	public static InstanceStatusEnum getValue(Integer id) {
-		if (id != null) {
-			for (InstanceStatusEnum status : values()) {
-				if (id.equals(status.getId())) {
-					return status;
-				}
-			}
-		}
-		return null;
-	}
+    /**
+     * Gets enum by its id.
+     * @param id id of instance status
+     * @return instance status.
+     */
+    public static InstanceStatusEnum getValue(Integer id) {
+        if (id != null) {
+            for (InstanceStatusEnum status : values()) {
+                if (id.equals(status.getId())) {
+                    return status;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
@@ -70,8 +71,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     private ParamBean paramBean = ParamBean.getInstance();
 
+
     /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#isCustomerAccountWithIdExists(java.lang.Long)
+     * @param id id of customer to be checking
+     * @return true if customer is found.
      */
     public boolean isCustomerAccountWithIdExists(Long id) {
         Query query = getEntityManager().createQuery("select count(*) from CustomerAccount a where a.id = :id");
@@ -162,8 +165,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
     
+
     /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceDue(java.lang.Long, java.lang.String, java.util.Date)
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance due
+     * @throws BusinessException business exception.
      */
     public BigDecimal customerAccountBalanceDue(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("start customerAccountBalanceDue with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
@@ -201,8 +209,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return computeBalance(customerAccount, to, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
+
     /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#customerAccountBalanceExigible(java.lang.Long, java.lang.String, java.util.Date)
+     * @param customerAccountId customer account id
+     * @param customerAccountCode customer account code
+     * @param to until date
+     * @return customer account balance exigible 
+     * @throws BusinessException business exception.
      */
     public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("customerAccountBalanceExligible with id:" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
@@ -286,9 +299,15 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     }
 
+
     /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#transferAccount(java.lang.Long, java.lang.String, java.lang.Long, java.lang.String, java.math.BigDecimal,
-     *      org.meveo.model.admin.User)
+     * @param fromCustomerAccountId customer account id
+     * @param fromCustomerAccountCode customer account code
+     * @param toCustomerAccountId  customer account  of transfer's destination
+     * @param toCustomerAccountCode customer account code of transfer's destination
+     * @param amount transfer's amount
+     * @throws BusinessException business exception
+     * @throws Exception general exception.
      */
     public void transferAccount(Long fromCustomerAccountId, String fromCustomerAccountCode, Long toCustomerAccountId, String toCustomerAccountCode, BigDecimal amount)
             throws BusinessException, Exception {
@@ -301,9 +320,12 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return findCustomerAccount(id, code);
     }
 
+ 
     /**
-     * @see org.meveo.service.payments.local.CustomerAccountServiceLocal#updateCreditCategory(java.lang.Long, java.lang.String, org.meveo.model.payments.CreditCategoryEnum,
-     *      org.meveo.model.admin.User)
+     * @param id id of customer account
+     * @param code code of customer account
+     * @param creditCategory credit category
+     * @throws BusinessException business exception.
      */
     public void updateCreditCategory(Long id, String code, String creditCategory) throws BusinessException {
         log.info("start updateCreditCategory with id:" + id + ",code:" + code);
@@ -322,6 +344,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     /**
      * update dunningLevel for one existed customer account by id or code
+     * @param id id of customer account
+     * @param code code of customer account
+     * @param dunningLevel dunning level
+     * @throws BusinessException business exception.
      */
     @MeveoAudit
     public void updateDunningLevel(Long id, String code, DunningLevelEnum dunningLevel) throws BusinessException {
@@ -338,7 +364,13 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     }
 
     /**
-     * get operations from one existed customerAccount by id or code
+     * get operations from one existed customerAccount by id or code.
+     * @param id customer account
+     * @param code customer account code
+     * @param from date from
+     * @param to until date
+     * @return list of account operation.
+     * @throws BusinessException business exception.
      */
     public List<AccountOperation> consultOperations(Long id, String code, Date from, Date to) throws BusinessException {
         log.info("start consultOperations with id:" + id + ",code:" + code + "from:" + from + ",to:" + to);
@@ -352,8 +384,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             Iterator<AccountOperation> it = operations.iterator();
             while (it.hasNext()) {
                 Date transactionDate = it.next().getTransactionDate();
-                if (transactionDate == null)
+                if (transactionDate == null) {
                     continue;
+                }
                 if (from == null) {
                     if (transactionDate.after(to)) {
                         it.remove();
@@ -437,9 +470,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
-		for(PaymentMethod pm : entity.getPaymentMethods()){
-			pm.updateAudit(currentUser);
-		}
+        for (PaymentMethod pm : entity.getPaymentMethods()) {
+            pm.updateAudit(currentUser);
+        }
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
@@ -455,9 +488,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
-		for(PaymentMethod pm : entity.getPaymentMethods()){
-			pm.updateAudit(currentUser);
-		}
+        for (PaymentMethod pm : entity.getPaymentMethods()) {
+            pm.updateAudit(currentUser);
+        }
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
@@ -466,23 +499,37 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
     }
+
+    public PaymentMethod getPreferredPaymentMethod(Long customerAccountId) {
+        try {
+            TypedQuery<PaymentMethod> query = this.getEntityManager().createNamedQuery("PaymentMethod.getPreferredPaymentMethodForCA", PaymentMethod.class).setMaxResults(1)
+                .setParameter("caId", customerAccountId);
+
+            PaymentMethod paymentMethod = query.getSingleResult();
+            return paymentMethod;
+
+        } catch (NoResultException e) {
+            log.warn("Customer account {} has no preferred payment method", customerAccountId, e);
+            return null;
+        }
+    }
     
     @SuppressWarnings("unchecked")
-	public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
-		long startDate = System.currentTimeMillis();
-		Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
-		query.setParameter("id", billingAccount.getId());
-		try {
-			List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
-			log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
-			return resultList;
-			
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-	
-	}
+    public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
+        long startDate = System.currentTimeMillis();
+        Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
+        query.setParameter("id", billingAccount.getId());
+        try {
+            List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
+            log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
+            return resultList;
+            
+        } catch (NoResultException e) {
+            log.warn("error while getting user account list by billing account",e);
+            return null;
+        }
+    
+    }
     
     public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to, boolean dunningExclusion) throws BusinessException {
         BigDecimal result = new BigDecimal(0);

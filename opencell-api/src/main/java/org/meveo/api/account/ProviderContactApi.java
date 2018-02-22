@@ -21,7 +21,7 @@ import org.meveo.service.crm.impl.ProviderContactService;
 /**
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 1:28:17 AM
+ * @since Jun 3, 2016 1:28:17 AM
  *
  */
 @Stateless

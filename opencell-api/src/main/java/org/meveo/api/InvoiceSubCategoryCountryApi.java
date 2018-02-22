@@ -217,10 +217,10 @@ public class InvoiceSubCategoryCountryApi extends BaseApi {
     /**
      * Create or update InvoiceSubCategoryCountry based on the invoice sub-category and country attached.
      * 
-     * @param postData
+     * @param postData instance of InvoiceSubCategoryCountryDto
 
-     * @throws MeveoApiException
-     * @throws BusinessException 
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException  business exception.
      */
     public void createOrUpdate(InvoiceSubCategoryCountryDto postData) throws MeveoApiException, BusinessException {
 

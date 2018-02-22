@@ -88,7 +88,6 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.XStreamCDATAConverter;
@@ -168,9 +167,6 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
-
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
@@ -401,7 +397,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Export entities matching a given export template
+     * Export entities matching a given export template.
      * 
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
@@ -464,10 +460,11 @@ public class EntityExportImportService implements Serializable {
             writer.addAttribute("version", this.currentExportModelVersionChangeset);
 
             // Export from a provided data model applies only in cases on non-grouped templates as it has a single entity type
-            if (exportTemplate.getGroupedTemplates() == null || exportTemplate.getGroupedTemplates().isEmpty()) {
+            if (exportTemplate.getEntityToExport() != null) {
                 entityExportImportService.serializeEntities(exportTemplate, parameters, dataModelToExport, selectedEntitiesToExport, exportStats, writer);
+            }
 
-            } else {
+            if (exportTemplate.getGroupedTemplates() != null && !exportTemplate.getGroupedTemplates().isEmpty()) {
                 for (ExportTemplate groupedExportTemplate : exportTemplate.getGroupedTemplates()) {
                     entityExportImportService.serializeEntities(groupedExportTemplate, parameters, null, null, exportStats, writer);
                 }
@@ -520,7 +517,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Remove entities after an export
+     * Remove entities after an export.
      * 
      * @param exportStats Export statistics, including entities to remove
      */
@@ -547,7 +544,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Export entities matching a given export template
+     * Export entities matching a given export template.
      * 
      * @param exportTemplate Export template
      * @param parameters Entity export (select) criteria
@@ -556,7 +553,6 @@ public class EntityExportImportService implements Serializable {
      * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
      * @param exportStats Export statistics
      * @param writer Writer for serialized entity output
-     * @return
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void serializeEntities(ExportTemplate exportTemplate, Map<String, Object> parameters, DataModel<? extends IEntity> dataModelToExport,
@@ -1741,7 +1737,7 @@ public class EntityExportImportService implements Serializable {
      * @param exportTemplate Export template
      * @param from Starting record index
      * @param pageSize Page size
-     * @param parameters Filter parameters to retrieve entities from DB
+     * @param parameters Filter parameters, as entered in GUI, to retrieve entities from DB
      * @param dataModelToExport Entities to export that are already filtered in a data model. Supports export of non-grouped export templates only. dataModelToExport and
      *        selectedEntitiesToExport are mutually exclusive.
      * @param selectedEntitiesToExport A list of entities to export. dataModelToExport and selectedEntitiesToExport are mutually exclusive.
@@ -1790,8 +1786,18 @@ public class EntityExportImportService implements Serializable {
             // related entities (e.g. exporting provider and related info and some provider is search criteria, but also it matches the top entity)
             StringBuilder sql = new StringBuilder("select e from " + exportTemplate.getEntityToExport().getName() + " e  ");
             boolean firstWhere = true;
+
+            // Combine parameters received from GUI and filters hardcoded in an export template definition
+            Map<String, Object> parametersAndFilters = new HashMap<String, Object>();
+            if (parameters != null) {
+                parametersAndFilters.putAll(parameters);
+            }
+            if (exportTemplate.getFilters() != null) {
+                parametersAndFilters.putAll(exportTemplate.getFilters());
+            }
+
             Map<String, Object> parametersToApply = new HashMap<String, Object>();
-            for (Entry<String, Object> param : parameters.entrySet()) {
+            for (Entry<String, Object> param : parametersAndFilters.entrySet()) {
                 String paramName = param.getKey();
                 Object paramValue = param.getValue();
 
@@ -1806,13 +1812,15 @@ public class EntityExportImportService implements Serializable {
                     firstWhere = false;
                     parametersToApply.put("id", ((IEntity) paramValue).getId());
 
+                    // By default parameters use condition of "=", but other conditions can be specified by suffixing fieldname with "_from", "_to", "_in"
                 } else {
+
                     String fieldName = paramName;
                     String fieldCondition = "=";
                     if (fieldName.contains("_")) {
                         String[] paramInfo = fieldName.split("_");
                         fieldName = paramInfo[0];
-                        fieldCondition = "from".equals(paramInfo[1]) ? ">" : "to".equals(paramInfo[1]) ? "<" : "=";
+                        fieldCondition = "from".equals(paramInfo[1]) ? ">" : "to".equals(paramInfo[1]) ? "<" : "in".equals(paramInfo[1]) ? " in " : "=";
                     }
 
                     Field field = FieldUtils.getField(exportTemplate.getEntityToExport(), fieldName, true);
@@ -2123,7 +2131,6 @@ public class EntityExportImportService implements Serializable {
         walletCacheContainerProvider.refreshCache(null);
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
-        ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
     }
@@ -2276,13 +2283,13 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Check status and get results of file upload to a remote meveo instance
+     * Check status and get results of file upload to a remote meveo instance.
      * 
      * @param executionId Import in remote meveo instance execution id
      * @param remoteInstance Remote meveo instance
-     * @throws RemoteAuthenticationException
-     * @throws RemoteImportException
-     * @throws Exception
+     * @return import export response
+     * @throws RemoteAuthenticationException remote authentication exception.
+     * @throws RemoteImportException remote import exception
      */
     public ImportExportResponseDto checkRemoteMeveoInstanceImportStatus(String executionId, MeveoInstance remoteInstance)
             throws RemoteAuthenticationException, RemoteImportException {
@@ -2321,7 +2328,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Get export template for a particular class
+     * Get export template for a particular class.
      * 
      * @param clazz Class
      * @return Export/import template definition
@@ -2354,7 +2361,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Get export template by name
+     * Get export template by name?
      * 
      * @param templateName Template name
      * @return Export/import template definition
@@ -2370,7 +2377,7 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Get export template by name
+     * Get export template by name.
      * 
      * @param relatedEntityInfo Related entity to be exported.
      * @return Export/import template definition

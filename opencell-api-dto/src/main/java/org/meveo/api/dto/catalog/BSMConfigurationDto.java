@@ -1,5 +1,7 @@
 package org.meveo.api.dto.catalog;
 
+import java.io.Serializable;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -8,13 +10,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Edward P. Legaspi
- * @created 2 Oct 2017
+ * @since 2 Oct 2017
  */
 @XmlRootElement(name = "BSMConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BSMConfigurationDto {
+public class BSMConfigurationDto implements Serializable {
 
-	@XmlAttribute
+    private static final long serialVersionUID = 1140305701541170851L;
+
+    @XmlAttribute
 	private String code;
 
 	/**

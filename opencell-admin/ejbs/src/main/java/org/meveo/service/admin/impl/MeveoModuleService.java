@@ -42,7 +42,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -58,6 +57,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 
 @Stateless
@@ -79,12 +79,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
     private MeveoInstanceService meveoInstanceService;
 
     /**
-     * import module from remote meveo instance
+     * import module from remote meveo instance.
      * 
-     * @param meveoInstance
-     * @return
-     * @throws MeveoApiException
-     * @throws RemoteAuthenticationException
+     * @param meveoInstance meveo instance
+     * @return list of meveo module
+     * @throws BusinessException business exception.
+     * @throws RemoteAuthenticationException remote authentication exception.
      */
     public List<MeveoModuleDto> downloadModulesFromMeveoInstance(MeveoInstance meveoInstance) throws BusinessException, RemoteAuthenticationException {
         List<MeveoModuleDto> result = null;
@@ -130,12 +130,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
     }
 
     /**
-     * Publish meveo module with DTO items to remote meveo instance
+     * Publish meveo module with DTO items to remote meveo instance.
      * 
-     * @param module
-     * @param meveoInstance
-     * @throws MeveoApiException
-     * @throws RemoteAuthenticationException
+     * @param module meveo module
+     * @param meveoInstance meveo instance.
+     * @throws BusinessException business exception.
+     * @throws RemoteAuthenticationException remote exception.
      */
     @SuppressWarnings("unchecked")
     public void publishModule2MeveoInstance(MeveoModule module, MeveoInstance meveoInstance) throws BusinessException, RemoteAuthenticationException {
@@ -194,8 +194,9 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             throw new BusinessException("Module is not installed");
         }
 
+        ModuleScriptInterface moduleScript = null;
         if (module.getScript() != null) {
-            moduleScriptService.preUninstallModule(module.getScript().getCode(), module);
+            moduleScript = moduleScriptService.preUninstallModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
@@ -242,8 +243,8 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             }
         }
 
-        if (module.getScript() != null) {
-            moduleScriptService.postUninstallModule(module.getScript().getCode(), module);
+        if (moduleScript != null) {
+            moduleScriptService.postUninstallModule(moduleScript, module);
         }
 
         // Remove if it is a child module

@@ -44,10 +44,10 @@ public interface PaymentRs extends IBaseRs {
     public PaymentActionStatus create(PaymentDto postData);
 
     /**
-     * Returns a list of account operations along with the balance of a customer
+     * Returns a list of account operations along with the balance of a customer.
      * 
-     * @param customerAccountCode
-     * @return
+     * @param customerAccountCode customer account code
+     * @return list of customer's response.
      */
     @GET
     @Path("/customerPayment")
@@ -88,7 +88,7 @@ public interface PaymentRs extends IBaseRs {
     public ActionStatus removeCardPaymentMethod(@QueryParam("id") Long id);
 
     /**
-     * List available card payment methods for a given customer account identified either by id or by code
+     * List available card payment methods for a given customer account identified either by id or by code.
      * 
      * @param customerAccountId Customer account id
      * @param customerAccountCode Customer account code
@@ -100,7 +100,7 @@ public interface PaymentRs extends IBaseRs {
             @QueryParam("customerAccountCode") String customerAccountCode);
 
     /**
-     * Retrieve card payment method by its id
+     * Retrieve card payment method by its id.
      * 
      * @param id Id
      * @return Card payment DTO
@@ -125,7 +125,7 @@ public interface PaymentRs extends IBaseRs {
     /**
      * Update existing payment method.
      * 
-     * @param paymentMethod payment method DTO
+     * @param ddPaymentMethod payment method DTO
      * @return Action status
      */
     @PUT
@@ -169,7 +169,7 @@ public interface PaymentRs extends IBaseRs {
     public PaymentMethodTokensDto listPaymentMethodPost(PagingAndFiltering pagingAndFiltering);
 
     /**
-     * Retrieve payment method by its id
+     * Retrieve payment method by its id.
      * 
      * @param id Id
      * @return payment DTO
@@ -199,12 +199,12 @@ public interface PaymentRs extends IBaseRs {
      */
     @PUT
     @Path("/paymentGateway")
-    public ActionStatus updatePaymentGateway(PaymentGatewayDto ddPaymentGateway);
+    public ActionStatus updatePaymentGateway(PaymentGatewayDto paymentGateway);
 
     /**
      * Remove payment gateway.
      * 
-     * @param id Id
+     * @param code payment gateway's code
      * @return Action status
      */
     @DELETE
@@ -228,7 +228,7 @@ public interface PaymentRs extends IBaseRs {
             @QueryParam("limit") Integer limit, @DefaultValue("id") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
-     * List Payment Gateways matching a given criteria
+     * List Payment Gateways matching a given criteria.
      * 
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return An payment gateway list
@@ -238,9 +238,9 @@ public interface PaymentRs extends IBaseRs {
     public PaymentGatewayResponseDto listPaymentGatewaysPost(PagingAndFiltering pagingAndFiltering);
 
     /**
-     * Retrieve payment gateway by its id
+     * Retrieve payment gateway by its code.
      * 
-     * @param id Id
+     * @param code payment gateway's code
      * @return payment DTO
      */
     @GET
@@ -254,7 +254,7 @@ public interface PaymentRs extends IBaseRs {
      * @return the paymentGateway dto created
      */
     @POST
-    @Path("/createOrUpdatePaymentGateway")
+    @Path("/paymentGateway/createOrUpdate")
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(PaymentGatewayDto paymentGateway);
 
 }

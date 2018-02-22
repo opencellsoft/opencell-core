@@ -200,8 +200,8 @@ public class ProviderApi extends BaseApi {
      * Return a list of all the countryCode, currencyCode and languageCode of the provider.
      * 
      * 
-     * @return
-     * @throws MeveoApiException
+     * @return GetTradingConfigurationResponseDto
+     * @throws MeveoApiException meveo api exception
      */
     public GetTradingConfigurationResponseDto getTradingConfiguration() throws MeveoApiException {
 
@@ -239,7 +239,8 @@ public class ProviderApi extends BaseApi {
      * Return a list of all the calendar, tax, invoice categories, invoice subcategories, billingCycle and termination reason of the provider.
      * 
      * 
-     * @return
+     * @return instance of GetInvoicingConfigurationResponseDto
+     * @throws MeveoApiException meveo exception.
      */
     public GetInvoicingConfigurationResponseDto getInvoicingConfiguration() throws MeveoApiException {
 

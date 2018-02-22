@@ -1,5 +1,6 @@
 package org.meveo.model.customEntities;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -16,6 +17,7 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "CE", cftCodeFields = "cetCode")
 @ExportIdentifier({ "code", "cetCode"})
 @Table(name = "cust_cei", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "cet_code"}))
@@ -72,7 +74,7 @@ public class CustomEntityInstance extends BusinessCFEntity {
             return false;
         } else if (cetCode == null && other.getCetCode() != null) {
             return false;
-        } else if (!cetCode.equals(other.getCetCode())) {
+        } else if (cetCode != null && !cetCode.equals(other.getCetCode())) {
             return false;
         }
         return true;

@@ -51,14 +51,14 @@ import org.slf4j.LoggerFactory;
  * Utils class for java reflection api.
  * 
  * @author Ignas Lelys
- * @created 2009.08.05
+ * 
  */
 public class ReflectionUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
     /**
-     * Mapping between an entity class and entity classes containing a field that that class
+     * Mapping between an entity class and entity classes containing a field that that class.
      */
     @SuppressWarnings("rawtypes")
     private static Map<Class, Map<Class, List<Field>>> classReferences = new HashMap<>();
@@ -319,7 +319,8 @@ public class ReflectionUtils {
      * 
      * @param clazz instance of Class
      * @param name name of method
-     * @return parameters
+     * @param parameterTypes parameter type list.
+     * @return true/false
      */
     public static boolean isMethodImplemented(Class<? extends Object> clazz, String name, Class<?>... parameterTypes) {
         try {
@@ -360,9 +361,9 @@ public class ReflectionUtils {
      * Get a field from a given class. Fieldname can refer to an immediate field of a class or traverse class relationship hierarchy e.g. customerAccount.customer.seller
      * 
      * @param c Class to start with
-     * @param fieldName Fieldname
+     * @param fieldName Field name
      * @return A field definition
-     * @throws SecurityException
+     * @throws SecurityException security excetion
      * @throws NoSuchFieldException no such field exception.
      */
     public static Field getFieldThrowException(Class<?> c, String fieldName) throws NoSuchFieldException {
@@ -421,7 +422,7 @@ public class ReflectionUtils {
     }
 
     /**
-     * Determine a generics type of a field (eg. for Set<String> field should return String)
+     * Determine a generics type of a field.
      * 
      * @param field instance of Field
      * @return A class
@@ -449,7 +450,7 @@ public class ReflectionUtils {
      * @param obj The object that contains the property value.
      * @param property The property of the object that contains the data.
      * @return The value of the data contained in obj.property
-     * @throws IllegalAccessException
+     * @throws IllegalAccessException illegal access exception.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public static Object getPropertyValue(Object obj, String property) throws IllegalAccessException {

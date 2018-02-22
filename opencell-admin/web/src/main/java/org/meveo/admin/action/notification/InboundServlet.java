@@ -21,7 +21,7 @@ import org.meveo.service.notification.InboundRequestService;
 import org.slf4j.Logger;
 
 /**
- * To call this servlet the url must be in this format: /inbound/<provider.code>
+ * To call this servlet the url must be in this format: /inbound/&lt;provider.code&gt;
  */
 @WebServlet("/inbound/*")
 public class InboundServlet extends HttpServlet {
@@ -117,7 +117,7 @@ public class InboundServlet extends HttpServlet {
             } else {
                 // produce the response
                 res.setCharacterEncoding(inReq.getResponseEncoding() == null ? req.getCharacterEncoding() : inReq.getResponseEncoding());
-                res.setContentType(inReq.getContentType());
+                res.setContentType(inReq.getResponseContentType() == null ? inReq.getContentType() : inReq.getResponseContentType());
                 for (String cookieName : inReq.getResponseCoockies().keySet()) {
                     res.addCookie(new Cookie(cookieName, inReq.getResponseCoockies().get(cookieName)));
                 }
@@ -134,11 +134,14 @@ public class InboundServlet extends HttpServlet {
                         res.setStatus(500);
                     }
                 }
-                res.setStatus(200);
+                if (inReq.getResponseStatus() != null) {
+                    res.setStatus(inReq.getResponseStatus());
+                } else {
+                    res.setStatus(200);
+                }
             }
 
             inReq = inboundRequestService.update(inReq);
-
 
             log.debug("Inbound request finished with status {}", res.getStatus());
 

@@ -156,10 +156,10 @@ public class InvoiceSubCategoryApi extends BaseApi {
     /**
      * Create or update invoice subcategory based on code.
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
         if (invoiceSubCategoryService.findByCode(postData.getCode()) != null) {

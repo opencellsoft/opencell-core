@@ -142,7 +142,7 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * constructor with paymentType.
      *
-     * @param paymentType
+     * @param paymentType payment type.
      */
     public PaymentMethodDto(PaymentMethodEnum paymentType) {
         this.paymentMethodType = paymentType;
@@ -151,10 +151,10 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * Constructor for TIP/DD types.
      *
-     * @param paymentType
-     * @param bankCoordinatesDto
-     * @param mandateIdentification
-     * @param mandateDate
+     * @param paymentType payment type.
+     * @param bankCoordinatesDto bank coordinates data transfer object.
+     * @param mandateIdentification mandate identification
+     * @param mandateDate mandate date
      */
     public PaymentMethodDto(PaymentMethodEnum paymentType, BankCoordinatesDto bankCoordinatesDto, String mandateIdentification, Date mandateDate) {
         this(paymentType);
@@ -209,7 +209,7 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * Constructor with cardPaymentMethodDto.
      *
-     * @param cardPaymentMethodDto
+     * @param cardPaymentMethodDto card payment method dto.
      */
     @SuppressWarnings("deprecation")
     public PaymentMethodDto(CardPaymentMethodDto cardPaymentMethodDto) {

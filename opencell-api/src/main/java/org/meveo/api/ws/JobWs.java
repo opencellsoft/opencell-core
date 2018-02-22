@@ -19,40 +19,43 @@ public interface JobWs extends IBaseWs {
 
     @WebMethod
     JobExecutionResultResponseDto execute(@WebParam(name = "jobInstanceInfo") JobInstanceInfoDto postData);
+    
+    @WebMethod
+    ActionStatus stop(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
     @WebMethod
-    public ActionStatus create(@WebParam(name = "jobInstance") JobInstanceDto postData);
+    ActionStatus create(@WebParam(name = "jobInstance") JobInstanceDto postData);
 
     @WebMethod
-    public ActionStatus update(@WebParam(name = "jobInstance") JobInstanceDto postData);
+    ActionStatus update(@WebParam(name = "jobInstance") JobInstanceDto postData);
 
     @WebMethod
-    public ActionStatus createOrUpdateJobInstance(@WebParam(name = "jobInstance") JobInstanceDto postData);
+    ActionStatus createOrUpdateJobInstance(@WebParam(name = "jobInstance") JobInstanceDto postData);
 
     @WebMethod
-    public JobInstanceResponseDto findJobInstance(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
+    JobInstanceResponseDto findJobInstance(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
     @WebMethod
-    public ActionStatus removeJobInstance(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
+    ActionStatus removeJobInstance(@WebParam(name = "jobInstanceCode") String jobInstanceCode);
 
     // timer
 
     @WebMethod
-    public ActionStatus createTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
+    ActionStatus createTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
 
     @WebMethod
-    public ActionStatus updateTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
+    ActionStatus updateTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
 
     @WebMethod
-    public ActionStatus createOrUpdateTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
+    ActionStatus createOrUpdateTimer(@WebParam(name = "timerEntity") TimerEntityDto postData);
 
     @WebMethod
-    public TimerEntityResponseDto findTimer(@WebParam(name = "timerCode") String timerCode);
+    TimerEntityResponseDto findTimer(@WebParam(name = "timerCode") String timerCode);
 
     @WebMethod
-    public ActionStatus removeTimer(@WebParam(name = "timerCode") String timerCode);
+    ActionStatus removeTimer(@WebParam(name = "timerCode") String timerCode);
     
     @WebMethod
-    public JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
+    JobExecutionResultResponseDto findJobExecutionResult(@WebParam(name="code") String code, @WebParam(name="jobExecutionResultId") Long jobExecutionResultId);
     
 }

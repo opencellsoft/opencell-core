@@ -5,61 +5,59 @@ import java.util.Map;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.service.script.ScriptInterface;
 
+/**
+ * @author phung
+ *
+ */
 public interface OfferScriptInterface extends ScriptInterface {
 	
 	/**
      * Called at the beginning of BusinessOfferModelService.createOfferFromBOM method.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_PARAMETERS=List<CustomFieldDto>
-     * @param user Current user
-     * @throws BusinessException
+     * @param methodContext Method variables in a form of a map where CONTEXT_PARAMETERS=List&lt;CustomFieldDto&gt;
+     * @throws BusinessException business exception
      */
 	void beforeCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException;
 	
 	/**
      * Called at the end of BusinessOfferModelService.createOfferFromBOM method.
      * 
-     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate, CONTEXT_PARAMETERS=List<CustomFieldDto>
-     * @param user Current user
-     * @throws BusinessException
+     * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=OfferTemplate, CONTEXT_PARAMETERS=List&lt;CustomFieldDto&gt;
+     * @throws BusinessException business exception
      */
 	void afterCreateOfferFromBOM(Map<String, Object> methodContext) throws BusinessException;
 
     /**
-     * Called after Subscription entity creation
+     * Called after Subscription entity creation.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=Subscription
-     * @param user Current user
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
-    public void subscribe(Map<String, Object> methodContext) throws BusinessException;
+    void subscribe(Map<String, Object> methodContext) throws BusinessException;
 
     /**
-     * Called before subscription suspension
+     * Called before subscription suspension.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=Subscription, CONTEXT_SUSPENSION_DATE=Suspension date
-     * @param user Current user
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
-    public void suspendSubscription(Map<String, Object> methodContext) throws BusinessException;
+    void suspendSubscription(Map<String, Object> methodContext) throws BusinessException;
 
     /**
-     * Called after subscription reactivation
+     * Called after subscription reactivation.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=Subscription, CONTEXT_ACTIVATION_DATE=Reactivation date
-     * @param user Current user
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
-    public void reactivateSubscription(Map<String, Object> methodContext) throws BusinessException;
+    void reactivateSubscription(Map<String, Object> methodContext) throws BusinessException;
 
     /**
-     * Called before subscription termination
+     * Called before subscription termination.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=Subscription, CONTEXT_TERMINATION_DATE=Termination date, CONTEXT_TERMINATION_REASON=Termination
      *        reason
-     * @param user Current user
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
-    public void terminateSubscription(Map<String, Object> methodContext) throws BusinessException;
+    void terminateSubscription(Map<String, Object> methodContext) throws BusinessException;
 
 }

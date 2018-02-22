@@ -136,14 +136,14 @@ public interface SubscriptionRs extends IBaseRs {
     public SubscriptionsListResponseDto listPost(PagingAndFiltering pagingAndFiltering);
 
     /**
-     * Deprecated in v.4.7.2 Use /list instead
+     * Deprecated in v.4.7.2 Use /list instead.
      * 
-     * @param offset
-     * @param limit
-     * @param mergedCF
-     * @param sortBy
-     * @param sortOrder
-     * @return
+     * @param offset offset
+     * @param limit number of elements in response
+     * @param mergedCF true if return
+     * @param sortBy sortby field
+     * @param sortOrder ASC/DESC
+     * @return list of all subscriptions.
      */
     @GET
     @Path("/listAll")
@@ -151,9 +151,10 @@ public interface SubscriptionRs extends IBaseRs {
             @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
     /**
-     * Search for a subscription with a given code
+     * Search for a subscription with a given code.
      * 
      * @param subscriptionCode The subscription's code
+     * @param mergedCF true if merge inherited custom fields.
      * @return A subscription
      */
     @GET
@@ -161,10 +162,10 @@ public interface SubscriptionRs extends IBaseRs {
     GetSubscriptionResponseDto findSubscription(@QueryParam("subscriptionCode") String subscriptionCode, @DefaultValue("false") @QueryParam("mergedCF") boolean mergedCF);
 
     /**
-     * Search for a subscription with a given code
+     * Search for a subscription with a given code.
      * 
-     * @param subscriptionCode The subscription's code
-     * @return A subscription
+     * 
+     * @return list of one-shot other charges.
      */
     @GET
     @Path("/listOneshotChargeOthers")
@@ -257,6 +258,7 @@ public interface SubscriptionRs extends IBaseRs {
      * 
      * @param subscriptionCode Subscription code
      * @param serviceInstanceCode Service instance code
+     * @param serviceInstanceId service instance id
      * @return Service instance
      */
     @GET
@@ -265,11 +267,11 @@ public interface SubscriptionRs extends IBaseRs {
             @QueryParam("serviceInstanceCode") String serviceInstanceCode);
 
     /**
-     * Returns a list of service instances
+     * Returns a list of service instances.
      * 
-     * @param subscriptionCode
-     * @param serviceInstanceCode
-     * @return
+     * @param subscriptionCode subscription code
+     * @param serviceInstanceCode service instance code.
+     * @return list of service instances
      */
     @GET
     @Path("serviceInstances")
@@ -282,7 +284,7 @@ public interface SubscriptionRs extends IBaseRs {
      * @param invoiceNumber - invoice number, can be null
      * @param invoiceTypeCode - can be null
      * @param orderCode - can be null
-     * @return
+     * @return list of due date delay
      */
     @GET
     @Path("/dueDateDelay")

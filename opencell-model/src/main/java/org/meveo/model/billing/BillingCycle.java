@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -44,6 +45,7 @@ import org.meveo.model.catalog.Calendar;
  * Billing cycle.
  */
 @Entity
+@Cacheable
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "BILLING_CYCLE")
 @Table(name = "billing_cycle", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
@@ -56,6 +58,10 @@ public class BillingCycle extends BusinessCFEntity {
 	@Column(name = "billing_template_name")
 	@Size(max = 50)
 	private String billingTemplateName;
+	
+	@Column(name = "billing_template_name_el", length = 2000)
+    @Size(max = 2000)
+    private String billingTemplateNameEL;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "calendar")
@@ -193,4 +199,12 @@ public class BillingCycle extends BusinessCFEntity {
 	public void setDueDateDelayEL(String dueDateDelayEL) {
 		this.dueDateDelayEL = dueDateDelayEL;
 	}
+
+    public String getBillingTemplateNameEL() {
+        return billingTemplateNameEL;
+    }
+
+    public void setBillingTemplateNameEL(String billingTemplateNameEL) {
+        this.billingTemplateNameEL = billingTemplateNameEL;
+    }
 }

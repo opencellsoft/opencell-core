@@ -18,7 +18,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 
 /**
  * @author Edward P. Legaspi
- * @created 22 Aug 2017
+ * @since 22 Aug 2017
  */
 @Stateless
 public class CreditCategoryApi extends BaseApi {

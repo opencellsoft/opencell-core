@@ -9,7 +9,7 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * 
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 7:08:28 AM
+ * @since Jun 3, 2016 7:08:28 AM
  *
  */
 @XmlRootElement(name="MeveoInstanceResponse")

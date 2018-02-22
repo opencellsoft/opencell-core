@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -44,6 +45,7 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ModuleItem
+@Cacheable
 @ObservableEntity
 @ExportIdentifier({ "code"})
 @Table(name = "cat_counter_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))

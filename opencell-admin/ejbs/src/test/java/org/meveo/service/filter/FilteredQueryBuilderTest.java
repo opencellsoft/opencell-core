@@ -9,7 +9,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.DiscriminatorValue;
-import javax.persistence.EntityManager;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -28,17 +27,12 @@ import org.meveo.model.filter.NativeFilterCondition;
 import org.meveo.model.filter.OrCompositeFilterCondition;
 import org.meveo.model.filter.OrderCondition;
 import org.meveo.model.filter.PrimitiveFilterCondition;
-import org.meveo.util.MeveoJpaForJobs;
 
 /**
  * @author Edward P. Legaspi
  **/
 @RunWith(Arquillian.class)
 public class FilteredQueryBuilderTest extends BaseFilterTest {
-
-	@Inject
-	@MeveoJpaForJobs
-	private EntityManager em;
 
 	@Inject
 	private FilterService filterService;

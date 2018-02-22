@@ -72,7 +72,7 @@ public class CustomerAccount extends AccountEntity {
 	@Enumerated(EnumType.STRING)
 	private CustomerAccountStatusEnum status = CustomerAccountStatusEnum.ACTIVE;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "credit_category_id")
 	private CreditCategory creditCategory;
 
@@ -462,16 +462,16 @@ public class CustomerAccount extends AccountEntity {
 	}
 
 	/**
-	 * Check if no more valid Card paymentMethod
+	 * Check if no more valid Card paymentMethod.
 	 * 
-	 * @return
+	 * @return true if no more valid card.
 	 */
-	public boolean isNoMoreValidCard(){
-		for (CardPaymentMethod card : getCardPaymentMethods(false)) {
-			if(!card.isDisabled() && card.isValidForDate(new Date())){
-				return false;        		         	
-			}
-		}    	
-		return true;
-	}
+    public boolean isNoMoreValidCard() {
+        for (CardPaymentMethod card : getCardPaymentMethods(false)) {
+            if (!card.isDisabled() && card.isValidForDate(new Date())) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

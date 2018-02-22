@@ -18,18 +18,21 @@ public @interface FilterProperty {
 
     /**
      * Name of a property of item selected for filtering. The value will be used to reconstruct an object of a given entity class
+     * @return name of property.
      */
     String property();
 
     /**
      * Identifies the entity type that property value corresponds to. e.g. if CustomerAccount.class is passed into this attribute, then property value resolved from a "property"
      * will correspond to code field of a CustomerAccount object.
+     * @return business entity class.
      */
     Class<? extends BusinessEntity> entityClass();
 
     /**
      * Shall access to an entity be granted in cases when property is resolved to a null value. If set to True, user will have access to entities that match his security settings
      * and those that have no property value set.
+     * @return true/false
      */
     boolean allowAccessIfNull() default false;
 }

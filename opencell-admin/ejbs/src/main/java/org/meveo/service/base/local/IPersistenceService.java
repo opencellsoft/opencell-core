@@ -41,7 +41,7 @@ public interface IPersistenceService<E extends IEntity> {
      * @param id Id to find entity by.
      * @return Entity found.
      */
-    public E findById(Long id);
+    E findById(Long id);
 
     /**
      * Find an entity by its id and fetch required fields.
@@ -50,7 +50,7 @@ public interface IPersistenceService<E extends IEntity> {
      * @param fetchFields List of fields to fetch.
      * @return Entity found.
      */
-    public E findById(Long id, List<String> fetchFields);
+    E findById(Long id, List<String> fetchFields);
 
     /**
      * Find an entity by its id.
@@ -59,7 +59,7 @@ public interface IPersistenceService<E extends IEntity> {
      * @param refresh Is entity refresh after load needed.
      * @return Entity found.
      */
-    public E findById(Long id, boolean refresh);
+    E findById(Long id, boolean refresh);
 
     /**
      * Find an entity by its id and fetch required fields.
@@ -69,25 +69,25 @@ public interface IPersistenceService<E extends IEntity> {
      * @param refresh Is entity refresh after load needed.
      * @return Entity found.
      */
-    public E findById(Long id, List<String> fetchFields, boolean refresh);
+    E findById(Long id, List<String> fetchFields, boolean refresh);
 
     /**
      * Persist an entity.
      * 
      * @param e Entity to persist.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public void create(E e) throws BusinessException;
+    void create(E e) throws BusinessException;
 
     /**
      * Update an entity.
      * 
      * @param e Entity to update.
-     * 
-     * @throws BusinessException
+     * @return entity
+     * @throws BusinessException business exception.
      */
-    public E update(E e) throws BusinessException;
+    E update(E e) throws BusinessException;
 
     /**
      * Disable an entity.
@@ -95,9 +95,9 @@ public interface IPersistenceService<E extends IEntity> {
      * @param id Entity id which has to be disabled.
      * @return Updated entity
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public E disable(Long id) throws BusinessException;
+    E disable(Long id) throws BusinessException;
 
     /**
      * Disable an entity.
@@ -105,9 +105,9 @@ public interface IPersistenceService<E extends IEntity> {
      * @param e Entity to be disabled.
      * @return Updated entity
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public E disable(E e) throws BusinessException;
+    E disable(E e) throws BusinessException;
 
     /**
      * Enable an entity.
@@ -115,16 +115,16 @@ public interface IPersistenceService<E extends IEntity> {
      * @param id Entity id which has to be enabled.
      * @return Updated entity
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public E enable(Long id) throws BusinessException;
+    E enable(Long id) throws BusinessException;
 
     /**
      * Enable an entity.
      * 
      * @param e Entity to be enabled.
      * @return Updated entity
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public E enable(E e) throws BusinessException;
 
@@ -133,99 +133,137 @@ public interface IPersistenceService<E extends IEntity> {
      * 
      * @param id Entity id which has to be deleted.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public void remove(Long id) throws BusinessException;
+    void remove(Long id) throws BusinessException;
 
     /**
      * Delete an entity.
      * 
      * @param e Entity to delete.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public void remove(E e) throws BusinessException;
+    void remove(E e) throws BusinessException;
 
     /**
      * Delete list of entities by provided ids.
      * 
      * @param ids Entities ids to delete.
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
-    public void remove(Set<Long> ids) throws BusinessException;
+    void remove(Set<Long> ids) throws BusinessException;
 
     /**
      * The entity class which the persistence is managed by the persistence service.
      * 
      * @return Entity class.
      */
-    public Class<E> getEntityClass();
+    Class<E> getEntityClass();
 
     /**
      * Load and return the complete list of the entities from database.
      * 
      * @return List of entities.
      */
-    public List<E> list();// ? extends E
+    List<E> list();// ? extends E
 
     /**
      * Load and return the complete list of active entities from database.
      * 
      * @return List of entities.
      */
-    public List<E> listActive();
+    List<E> listActive();
 
     /**
      * Load and return the list of the entities from database according to sorting and paging information in {@link PaginationConfiguration} object.
      * 
+     * @param config pagination config.
      * @return List of entities.
      */
-    public List<E> list(PaginationConfiguration config); // ? extends E
+    List<E> list(PaginationConfiguration config); // ? extends E
 
     /**
      * Count number of entities in database.
      * 
      * @return Number of entities.
      */
-    public long count();
+    long count();
 
     /**
      * Count number of filtered entities in database.
      * 
+     * @param config pagination config.
      * @return Number of filtered entities.
      */
-    public long count(PaginationConfiguration config);
+    long count(PaginationConfiguration config);
 
     /**
      * Detach an entity.
      * 
      * @param entity Entity which has to be detached.
      */
-    public void detach(E entity);
+    void detach(E entity);
 
     /**
      * Refresh entity with state from database.
+     * 
+     * @param entity entity to refresh.
      */
-    public void refresh(E entity);
+    void refresh(IEntity entity);
 
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
      * 
-     * @param entity Entity to refresh
+     * @param entity Entity to refresh/retrieve
+     * @return Refreshed/retrieved entity.
      */
-    public E refreshOrRetrieve(E entity);
+    E refreshOrRetrieve(E entity);
 
     /**
      * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
      * 
-     * @param entities A list of entities to refresh
+     * @param entities A list of entities to refresh/retrieve
+     * @return A list of refreshed/retrieved entities.
      */
-    public List<E> refreshOrRetrieve(List<E> entities);
+    List<E> refreshOrRetrieve(List<E> entities);
+    
+    /**
+     * Refresh entity with state from database, or if it is not managed - retrieve it freshly from DB.
+     * 
+     * @param entities A set of entities to refresh/retrieve
+     * @return A set of refreshed/retrieved entities
+     */
+    Set<E> refreshOrRetrieve(Set<E> entities);
+    
 
-    public void commit();
+    /**
+     * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
+     * 
+     * @param entity Entity to retrieve
+     * @return Retrieved entity.
+     */
+    E retrieveIfNotManaged(E entity);
 
-    public EntityManager getEntityManager();
+    /**
+     * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
+     * 
+     * @param entities A list of entities to refresh/retrieve
+     * @return List of retrieved entities.
+     */
+    List<E> retrieveIfNotManaged(List<E> entities);
 
-    public Set<E> refreshOrRetrieve(Set<E> entities);
+    /**
+     * If entity is not managed - retrieve it freshly from DB. If entity is managed - return as is.
+     * 
+     * @param entities A set of entities to refresh/retrieve
+     * @return Set of retrieved entities
+     */
+    Set<E> retrieveIfNotManaged(Set<E> entities);
+    
+    void commit();
+
+    EntityManager getEntityManager();
+
 }

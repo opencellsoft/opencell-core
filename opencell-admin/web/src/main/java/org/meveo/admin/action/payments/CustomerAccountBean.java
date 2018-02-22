@@ -101,9 +101,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return customer account 
      */
     @Override
     public CustomerAccount initEntity() {
@@ -166,12 +164,14 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     /**
      * Move selected accountOperation from current CustomerAccount to customerAccountTo
      * 
-     * @param customerAccountTo
-     * @return
+     * @return output view
      */
     public String transferAccount() {
         try {
-            customerAccountService.transferAccount(entity, getCustomerAccountTransfer(), getAmountToTransfer());
+            entity = customerAccountService.refreshOrRetrieve(entity);
+            customerAccountTransfer = customerAccountService.refreshOrRetrieve(customerAccountTransfer);
+            
+            customerAccountService.transferAccount(entity, customerAccountTransfer, getAmountToTransfer());
             messages.info(new BundleKey("messages", "customerAccount.transfertOK"));
             setCustomerAccountTransfer(null);
             setAmountToTransfer(BigDecimal.ZERO);
@@ -242,6 +242,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     public String closeCustomerAccount() {
         log.info("closeAccount customerAccountId:" + entity.getId());
         try {
+            entity = customerAccountService.refreshOrRetrieve(entity);
             customerAccountService.closeCustomerAccount(entity);
             messages.info(new BundleKey("messages", "customerAccount.closeSuccessful"));
 

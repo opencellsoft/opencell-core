@@ -209,13 +209,39 @@
                 </parameters>
             </relatedEntity>
         </relatedEntities>
+        <groupedTemplates>
+            <template ref="Catalog's custom field templates"/>
+        </groupedTemplates>        
+    </template>   
+    
+    <template name="Catalog's custom field templates" entityToExport="org.meveo.model.crm.CustomFieldTemplate">
+        <filters>
+            <entry>
+                <string>disabled</string>
+                <boolean>false</boolean>
+            </entry>
+            <entry>
+                <string>appliesTo_in</string>
+                <list>
+                    <string>OFFER</string>
+                    <string>SERVICE</string>
+                    <string>CHARGE</string>
+                    <string>OFFER_CATEGORY</string>
+                    <string>PRODUCT</string>
+                    <string>BUNDLE</string>
+                    <string>PRICEPLAN</string>
+                </list>
+            </entry>
+        </filters>
     </template>
+        
     <template name="ProductTemplate" entityToExport="org.meveo.model.catalog.ProductTemplate">
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>
             <java-class>org.meveo.model.catalog.BusinessProductModel</java-class>
         </classesToExportAsFull>
     </template>
+    
     <template name="BundleTemplate" entityToExport="org.meveo.model.catalog.BundleTemplate">
         <classesToExportAsFull>
             <java-class>org.meveo.model.catalog.ProductChargeTemplate</java-class>

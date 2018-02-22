@@ -86,50 +86,56 @@ public class ModuleUtil {
 		ImageIO.write(img,filename.substring(filename.indexOf(".")+1), out);
 		return out.toByteArray();
 	}
-	public static void writePicture(String filename,byte[] fileData) throws Exception{
-		ByteArrayInputStream in=new ByteArrayInputStream(fileData);
-		BufferedImage img=ImageIO.read(in);
-		in.close();
-		ImageIO.write(img, filename.substring(filename.indexOf(".")+1), new File(filename));
-	}
+
+    public static void writePicture(String filename, byte[] fileData) throws Exception {
+        ByteArrayInputStream in = new ByteArrayInputStream(fileData);
+        BufferedImage img = ImageIO.read(in);
+        in.close();
+        ImageIO.write(img, filename.substring(filename.indexOf(".") + 1), new File(filename));
+    }
 	/**
-	 * read a module picture and save into byte[]
-	 * @param filename
-	 * @return
-	 * @throws Exception
+	 * read a module picture and save into byte[].
+	 * @param providerCode provider code
+	 * @param filename file name
+	 * @return module picture as bytes
+	 * @throws IOException IO exception
 	 */
-	public static byte[] readModulePicture(String providerCode,String filename) throws IOException{
-		String picturePath=getModulePicturePath(providerCode);
-		String file=picturePath+File.separator+filename;
-		return readPicture(file);
-		
-	}
+    public static byte[] readModulePicture(String providerCode, String filename) throws IOException {
+        String picturePath = getModulePicturePath(providerCode);
+        String file = picturePath + File.separator + filename;
+        return readPicture(file);
+
+    }
 	/**
-	 * save a byte[] data of module picture into file
-	 * @param filename
-	 * @param fileData
-	 * @throws Exception
+	 * save a byte[] data of module picture into file.
+	 * @param providerCode provider code.
+	 * @param filename file name
+	 * @param fileData file data
+	 * @throws Exception exception
 	 */
-	public static void writeModulePicture(String providerCode,String filename,byte[] fileData) throws Exception{
-		String picturePath=getModulePicturePath(providerCode);
-		String file=picturePath+File.separator+filename;
-		writePicture(file,fileData);
-	}
-	public static void removePicture(String filename) throws Exception{
-		File file=new File(filename);
-		if(file.exists()){
-			file.delete();
-		}
-	}
-	public static void removeModulePicture(String providerCode,String filename) throws Exception{
-		String picturePath=getModulePicturePath(providerCode);
-		filename=picturePath+File.separator+filename;
-		removePicture(filename);
-	}
-	public static void cropPicture(String filename,CroppedImage croppedImage) throws Exception{
-		FileImageOutputStream imageOutput = new FileImageOutputStream(new File(filename));
+    public static void writeModulePicture(String providerCode, String filename, byte[] fileData) throws Exception {
+        String picturePath = getModulePicturePath(providerCode);
+        String file = picturePath + File.separator + filename;
+        writePicture(file, fileData);
+    }
+
+    public static void removePicture(String filename) throws Exception {
+        File file = new File(filename);
+        if (file.exists()) {
+            file.delete();
+        }
+    }
+
+    public static void removeModulePicture(String providerCode, String filename) throws Exception {
+        String picturePath = getModulePicturePath(providerCode);
+        filename = picturePath + File.separator + filename;
+        removePicture(filename);
+    }
+
+    public static void cropPicture(String filename, CroppedImage croppedImage) throws Exception {
+        FileImageOutputStream imageOutput = new FileImageOutputStream(new File(filename));
         imageOutput.write(croppedImage.getBytes(), 0, croppedImage.getBytes().length);
         imageOutput.flush();
         imageOutput.close();
-	}
+    }
 }

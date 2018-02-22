@@ -295,7 +295,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             if (country == null) {
                 log.warn("country with code={} does not exists", countryCode);
             } else {
-                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findInvoiceSubCategoryCountry(invoiceSubCategory.getId(), country.getId());
+                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithHighestPriority(invoiceSubCategory.getId(), country.getId());
                 if (invoiceSubcategoryCountry != null && invoiceSubcategoryCountry.getTax() != null) {
                     Tax tax = invoiceSubcategoryCountry.getTax();
                     oneShotChargeDto.setTaxCode(tax.getCode());

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ObservableEntity
+@Cacheable
 @ModuleItem
 @ExportIdentifier({ "code"})
 @Table(name = "meveo_module", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
@@ -67,7 +69,7 @@ public class MeveoModule extends BusinessEntity implements Serializable {
     @Column(name = "module_source", nullable = false, columnDefinition = "TEXT")
     private String moduleSource;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
 

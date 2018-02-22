@@ -6,10 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -17,6 +13,8 @@ import javax.interceptor.Interceptors;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.admin.sepa.PaynumFile;
+import org.meveo.cache.JobCacheContainerProvider;
+import org.meveo.cache.JobRunningStatusEnum;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.ParamBean;
@@ -27,19 +25,31 @@ import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.DDRequestItemService;
 
+/**
+ * The Class SepaRejectedTransactionsJob consume sepa/paynum rejected files (sepa/paynum callBacks).
+ */
 @Stateless
 public class SepaRejectedTransactionsJob extends Job {
 
+    /** The sepa service. */
     @Inject
     private DDRequestItemService sepaService;
+
+    /** The paynum file. */
     @Inject
     private PaynumFile paynumFile;
 
-    ParamBean param = ParamBean.getInstance();
+    /** The param. */
+    private ParamBean param = ParamBean.getInstance();
 
     String importDir;
+
+    /** The job execution service. */
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
@@ -68,6 +78,9 @@ public class SepaRejectedTransactionsJob extends Job {
             log.info("InputFiles job " + numberOfFiles + " to import");
             result.setNbItemsToProcess(numberOfFiles);
             for (File file : files) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                    break;
+                }
                 File currentFile = null;
                 try {
                     log.info("InputFiles job " + file.getName() + " in progres");
@@ -98,15 +111,19 @@ public class SepaRejectedTransactionsJob extends Job {
         }
     }
 
-    // public Collection<Timer> getTimers() {
-    // return this.timerService.getTimers();
-    // }
-
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.ACCOUNT_RECEIVABLES;
     }
     
+    /**
+     * Gets the files to process.
+     *
+     * @param dir the dir
+     * @param prefix the prefix
+     * @param ext the ext
+     * @return the files to process
+     */
 	private List<File> getFilesToProcess(File dir, String prefix, String ext) {
 		List<File> files = new ArrayList<File>();
 		ImportFileFiltre filtre = new ImportFileFiltre(prefix, ext);

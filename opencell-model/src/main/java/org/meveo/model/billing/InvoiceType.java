@@ -21,6 +21,7 @@ package org.meveo.model.billing;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
@@ -46,6 +47,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.payments.OCCTemplate;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_invoice_type", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -94,10 +96,10 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "xml_filename_el", length = 2000)
     @Size(max = 2000)
     private String xmlFilenameEL;
-
-    public InvoiceType() {
-
-    }
+    
+    @Column(name = "billing_template_name_el", length = 2000)
+    @Size(max = 2000)
+    private String billingTemplateNameEL;
 
     public OCCTemplate getOccTemplate() {
         return occTemplate;
@@ -196,5 +198,13 @@ public class InvoiceType extends BusinessEntity {
 
     public void setXmlFilenameEL(String xmlFilenameEL) {
         this.xmlFilenameEL = xmlFilenameEL;
+    }
+
+    public String getBillingTemplateNameEL() {
+        return billingTemplateNameEL;
+    }
+
+    public void setBillingTemplateNameEL(String billingTemplateNameEL) {
+        this.billingTemplateNameEL = billingTemplateNameEL;
     }
 }

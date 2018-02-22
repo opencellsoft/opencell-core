@@ -144,7 +144,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Add a new payment method. It will be marked as preferred.
      * 
-     * @param ddPaymentMethod DD payment method DTO
+     * @param paymentMethod DD payment method DTO
      * @return DD payment DTO with Token id from payment gateway
      */
     @WebMethod
@@ -153,7 +153,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * Update existing payment method.
      * 
-     * @param ddPaymentMethod DD payment method DTO
+     * @param paymentMethod DD payment method DTO
      * @return Action status
      */
     public ActionStatus updatePaymentMethod(@WebParam(name = "paymentMethod") PaymentMethodDto paymentMethod);
@@ -251,7 +251,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Action status
      */
     @WebMethod
-    public ActionStatus updatePaymentGateway(@WebParam(name = "paymentGateway") PaymentGatewayDto ddPaymentGateway);
+    public ActionStatus updatePaymentGateway(@WebParam(name = "paymentGateway") PaymentGatewayDto paymentGateway);
 
     /**
      * Remove payment gateway.

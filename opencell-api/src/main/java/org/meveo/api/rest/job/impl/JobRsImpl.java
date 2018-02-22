@@ -51,6 +51,17 @@ public class JobRsImpl extends BaseRs implements JobRs {
 
         return result;
     }
+    
+    @Override
+    public ActionStatus stop(String jobInstanceCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+        try {
+             jobApi.stopJob(jobInstanceCode);           
+        } catch (Exception e) {
+            processException(e, result);
+        }
+        return result;
+    }
 
     @Override
     public ActionStatus create(JobInstanceDto jobInstanceDto) {
@@ -181,13 +192,14 @@ public class JobRsImpl extends BaseRs implements JobRs {
     }
 
     @Override
-    public JobExecutionResultResponseDto findJobExecutionResult(Long jobExecutionResultId) {
+    public JobExecutionResultResponseDto findJobExecutionResult(String code, Long jobExecutionResultId) {
         JobExecutionResultResponseDto result = new JobExecutionResultResponseDto();
         try {
-            result.setJobExecutionResultDto(jobApi.findJobExecutionResult(jobExecutionResultId));
+            result.setJobExecutionResultDto(jobApi.findJobExecutionResult(code, jobExecutionResultId));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
         return result;
     }
+    
 }

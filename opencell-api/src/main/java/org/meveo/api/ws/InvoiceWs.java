@@ -44,15 +44,15 @@ public interface InvoiceWs extends IBaseWs {
     public CustomerInvoicesResponse findInvoice(@WebParam(name = "customerAccountCode") String customerAccountCode);
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : <lu>
+     * Launch all the invoicing process for a given billingAccount, that's mean : <ul>
      * <li>Create rated transactions
      * <li>Create an exceptional billingRun with given dates
      * <li>Validate the pre-invoicing report
      * <li>Validate the post-invoicing report
-     * <li>Validate the BillingRun </lu>
+     * <li>Validate the BillingRun </ul>
      * 
      * @param generateInvoiceRequestDto Contains the code of the billing account, invoicing and last transaction date
-     * @return
+     * @return generate invoice response.
      */
     @WebMethod
     public GenerateInvoiceResponseDto generateInvoiceData(@WebParam(name = "generateInvoiceRequest") GenerateInvoiceRequestDto generateInvoiceRequestDto);
@@ -61,7 +61,7 @@ public interface InvoiceWs extends IBaseWs {
      * Finds an invoice based on its invoice number and return it as xml string
      * 
      * @param invoiceNumber Invoice number
-     * @return
+     * @return get xmk invoice response/
      */
     @WebMethod
     public GetXmlInvoiceResponseDto findXMLInvoice(@WebParam(name = "invoiceId") Long invoiceId, @WebParam(name = "invoiceNumber") String invoiceNumber);
@@ -71,7 +71,7 @@ public interface InvoiceWs extends IBaseWs {
      * 
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
-     * @return
+     * @return xml invoice response dtpO
      */
     @WebMethod
     public GetXmlInvoiceResponseDto findXMLInvoiceWithType(@WebParam(name = "invoiceId") Long invoiceId, @WebParam(name = "invoiceNumber") String invoiceNumber,
@@ -81,7 +81,7 @@ public interface InvoiceWs extends IBaseWs {
      * Finds an invoice based on invoice number and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
      * @param invoiceNumber Invoice number
-     * @return
+     * @return get pdf invoice response
      */
     @WebMethod
     public GetPdfInvoiceResponseDto findPdfInvoice(@WebParam(name = "invoiceId") Long invoiceId, @WebParam(name = "invoiceNumber") String invoiceNumber);
@@ -91,7 +91,7 @@ public interface InvoiceWs extends IBaseWs {
      * 
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
-     * @return
+     * @return get pdf reponse dto.
      */
     @WebMethod
     public GetPdfInvoiceResponseDto findPdfInvoiceWithType(@WebParam(name = "invoiceId") Long invoiceId, @WebParam(name = "invoiceNumber") String invoiceNumber,
@@ -110,7 +110,7 @@ public interface InvoiceWs extends IBaseWs {
      * Validate an invoice based on the invoice id
      * 
      * @param invoiceId Invoice id
-     * @return
+     * @return action status.
      */
     @WebMethod
     public ActionStatus validateInvoice(@WebParam(name = "invoiceId") Long invoiceId);
@@ -122,7 +122,7 @@ public interface InvoiceWs extends IBaseWs {
      * @param invoiceNumber invoice number
      * @param invoiceType invoice type
      * @param includeTransactions Should transactions, associated to an invoice, be listed
-     * @return GetInvoiceResponseDto
+     * @return GetInvoiceResponseDto get invoice response dto.
      */
     @WebMethod
     public GetInvoiceResponseDto findInvoiceByIdOrType(@WebParam(name = "id") Long id, @WebParam(name = "invoiceNumber") String invoiceNumber,
@@ -146,7 +146,7 @@ public interface InvoiceWs extends IBaseWs {
     /**
      * List invoices matching a given criteria
      * 
-     * @param paging Pagination and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
+     * @param pagingAndFiltering Pagination and filtering criteria. Specify "transactions" in fields to include transactions and "pdf" to generate/include PDF document
      * @return An invoice list
      */
     @WebMethod

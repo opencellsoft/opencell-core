@@ -80,7 +80,7 @@ public class AccessBean extends CustomFieldBean<Access> {
 		super.initEntity();
 
 		log.debug("AccesBean initEntity id={}", entity.getId());
-		if (subscriptionId != null) {
+		if (subscriptionId != null && entity.isTransient()) {
 			Subscription subscription = subscriptionService.findById(subscriptionId);
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);
@@ -126,7 +126,7 @@ public class AccessBean extends CustomFieldBean<Access> {
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
-		Subscription subscription = subscriptionService.refreshOrRetrieve(entity.getSubscription());
+		Subscription subscription = subscriptionService.retrieveIfNotManaged(entity.getSubscription());
 		entity.setSubscription(subscription);
 
 		if (entity.isTransient()) {
@@ -149,7 +149,7 @@ public class AccessBean extends CustomFieldBean<Access> {
 	public void resetEntity() {
 		entity = new Access();
 
-		if (subscriptionId != null) {
+		if (subscriptionId != null && entity.isTransient()) {
 			Subscription subscription = subscriptionService.findById(subscriptionId);
 			entity.setStartDate(subscription.getSubscriptionDate());
 			entity.setSubscription(subscription);

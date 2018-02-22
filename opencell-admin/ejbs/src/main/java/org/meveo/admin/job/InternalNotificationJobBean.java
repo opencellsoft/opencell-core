@@ -24,32 +24,58 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
 import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.notification.NotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 
+/**
+ * The Class InternalNotificationJobBean.
+ */
 @Stateless
 public class InternalNotificationJobBean {
 
+    /** The log. */
     @Inject
     protected Logger log;
 
+    /** The job execution service . */
+    @Inject
+    private JobExecutionService jobExecutionService;
+
+    /** The df. */
     // iso 8601 date and datetime format
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    
+    /** The tf. */
     SimpleDateFormat tf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:hh");
 
+    /** The entity manager. */
+    @PersistenceContext(unitName = "MeveoAdmin")
+    private EntityManager em;
+
+    /** The manager. */
     @Inject
     private BeanManager manager;
 
+    /** The notification service. */
     @Inject
     NotificationService notificationService;
 
+    /** The script instance service. */
     @Inject
     ScriptInstanceService scriptInstanceService;
 
     @Inject
     EntityManagerProvider entityManagerProvider;
 
+    /**
+     * Execute.
+     *
+     * @param filterCode the filter code
+     * @param notificationCode the notification code
+     * @param result the result
+     */
     @SuppressWarnings("rawtypes")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -75,6 +101,10 @@ public class InternalNotificationJobBean {
             List<Object> results = query.getResultList();
             result.setNbItemsToProcess(results.size());
             for (Object res : results) {
+                if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                    break;
+                }
+
                 Map<Object, Object> userMap = new HashMap<Object, Object>();
                 userMap.put("event", res);
                 userMap.put("manager", manager);

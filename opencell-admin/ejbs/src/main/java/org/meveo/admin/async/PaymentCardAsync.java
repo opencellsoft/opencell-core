@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.meveo.admin.job.UnitPaymentCardJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.service.job.JobExecutionService;
 
 /**
  * @author anasseh
@@ -26,21 +27,29 @@ import org.meveo.model.payments.OperationCategoryEnum;
 public class PaymentCardAsync {
 
     @Inject
-    UnitPaymentCardJobBean unitPaymentCardJobBean;
+    private UnitPaymentCardJobBean unitPaymentCardJobBean;
+
+    /** The JobExecution service. */
+    @Inject
+    private JobExecutionService jobExecutionService;
 
     /**
      * @param ids list of ids
      * @param result job execution result
-     * @param createAO true/ false to  create account operation
+     * @param createAO true/ false to create account operation
      * @param matchingAO matching account operation
+     * @param operationCategory operation category.
      * @return future result
      */
     @Asynchronous
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO,OperationCategoryEnum operationCategory) {
-		for (Long id : ids) {
-			unitPaymentCardJobBean.execute(result, id, createAO, matchingAO,operationCategory);
-		}
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory) {
+        for (Long id : ids) {
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
+                break;
+            }
+            unitPaymentCardJobBean.execute(result, id, createAO, matchingAO, operationCategory);
+        }
         return new AsyncResult<String>("OK");
     }
 }

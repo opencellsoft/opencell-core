@@ -136,6 +136,7 @@ public class CsvReader {
      *            The path to the file to use as the data source.
      * @param delimiter
      *            The character to use as the column delimiter.
+     * @throws FileNotFoundException file not found exception.           
      */
     public CsvReader(String fileName, char delimiter) throws FileNotFoundException {
         this(fileName, delimiter, Charset.forName("UTF-8"));

@@ -47,6 +47,8 @@ public enum InvoiceStatusEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id of invoice status
+	 * @return invoice status enum
 	 */
 	public static InvoiceStatusEnum getValue(Integer id) {
 		if (id != null) {

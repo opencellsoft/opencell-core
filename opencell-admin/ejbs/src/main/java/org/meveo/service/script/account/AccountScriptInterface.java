@@ -14,15 +14,15 @@ public interface AccountScriptInterface extends ScriptInterface {
 	 * Called after Account entity creation
 	 * 
 	 * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=AccountEntity and CONTEXT_SELLER=The current seller..
-	 * @throws BusinessException
+	 * @throws BusinessException business exception.
 	 */
     void createAccount(Map<String, Object> methodContext) throws BusinessException;
 
     /**
-     * Called after Account entity update
+     * Called after Account entity update.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=AccountEntity and CONTEXT_SELLER=The current seller..
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     void updateAccount(Map<String, Object> methodContext) throws BusinessException;
 
@@ -30,7 +30,7 @@ public interface AccountScriptInterface extends ScriptInterface {
      * Called after either Billing or User account termination.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=BillingAccount or a UserAccount.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     void terminateAccount(Map<String, Object> methodContext) throws BusinessException;
 
@@ -38,7 +38,7 @@ public interface AccountScriptInterface extends ScriptInterface {
      * Called after closing of a Customer Account.
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=CustomerAccount.
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     void closeAccount(Map<String, Object> methodContext) throws BusinessException;
 }

@@ -73,7 +73,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
         BigDecimal amountDebit = amount;
         boolean fullMatch = false;
 
-        // log.error("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
+        // log.debug("AKK will match for amount {} partial match is for {}", amount, aoToMatchLast != null ? aoToMatchLast.getId() + "_" + aoToMatchLast.getReference() : null);
         for (AccountOperation accountOperation : listOcc) {
 
             if (aoToMatchLast != null && accountOperation.getId().equals(aoToMatchLast.getId())) {
@@ -249,9 +249,10 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @param operationIds Ids of account operations to match
      * @param aoToMatchLast An operation to match last - most likely will be matched partially
      * @return Information on matched operations
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
+     * @throws UnbalanceAmountException un balance amount exception
+     * @throws Exception general exception
      */
     public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, Exception {
@@ -267,9 +268,9 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @param aoToMatchLast An operation to match last - most likely will be matched partially
      * @param matchingTypeEnum Matching type
      * @return Information on matched operations
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception.
+     * @throws UnbalanceAmountException un balance amount exception
      */
     public MatchingReturnObject matchOperations(Long customerAccountId, String customerAccountCode, List<Long> operationIds, Long aoToMatchLast, MatchingTypeEnum matchingTypeEnum)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {

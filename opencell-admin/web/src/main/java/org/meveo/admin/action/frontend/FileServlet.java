@@ -46,7 +46,6 @@ public class FileServlet extends HttpServlet {
 	/**
 	 * Initialize the servlet.
 	 * 
-	 * @see HttpServlet#init().
 	 */
 	public void init() throws ServletException {
 
@@ -75,7 +74,6 @@ public class FileServlet extends HttpServlet {
 	 * Process HEAD request. This returns the same headers as GET request, but
 	 * without content.
 	 * 
-	 * @see HttpServlet#doHead(HttpServletRequest, HttpServletResponse).
 	 */
 	protected void doHead(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -86,7 +84,6 @@ public class FileServlet extends HttpServlet {
 	/**
 	 * Process GET request.
 	 * 
-	 * @see HttpServlet#doGet(HttpServletRequest, HttpServletResponse).
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {

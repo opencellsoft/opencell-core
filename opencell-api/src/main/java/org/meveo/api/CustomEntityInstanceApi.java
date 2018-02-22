@@ -204,7 +204,7 @@ public class CustomEntityInstanceApi extends BaseApi {
      * Validate CustomEntityInstance DTO without saving it
      * 
      * @param ceiDto CustomEntityInstance DTO to validate
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception.
      */
     public void validateEntityInstanceDto(CustomEntityInstanceDto ceiDto) throws MeveoApiException {
 

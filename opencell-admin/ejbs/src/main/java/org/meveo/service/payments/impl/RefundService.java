@@ -75,13 +75,13 @@ public class RefundService extends PersistenceService<Refund> {
      * 
      * @param customerAccount Customer account
      * @param ctsAmount Amount to mpau
-     * @param aoIdsToRefund
-     * @param createAO
-     * @param matchingAO
-     * @return
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @param aoIdsToRefund list of account operations ids to be refund
+     * @param createAO true if wanting to create account operation
+     * @param matchingAO true if matching account operation.
+     * @return payment by card response dto
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
+     * @throws UnbalanceAmountException un balance amount exception.
      */
     public PayByCardResponseDto refundByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -151,20 +151,20 @@ public class RefundService extends PersistenceService<Refund> {
     /**
      * Refund by card. A new card payment type is registered if payment was successfull.
      * 
-     * @param customerAccount
-     * @param ctsAmount
-     * @param cardNumber
-     * @param ownerName
-     * @param cvv
-     * @param expiryDate
-     * @param cardType
-     * @param aoIdsToRefund
-     * @param createAO
-     * @param matchingAO
-     * @return
-     * @throws BusinessException
-     * @throws NoAllOperationUnmatchedException
-     * @throws UnbalanceAmountException
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent
+     * @param cardNumber card number
+     * @param ownerName owner name
+     * @param cvv cvv number
+     * @param expiryDate expiry date
+     * @param cardType card type
+     * @param aoIdsToRefund list of account operation ids to be refunded
+     * @param createAO true if creating account operation
+     * @param matchingAO true if matching account operation
+     * @return payment by card dto
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException no all operation un matched exception
+     * @throws UnbalanceAmountException un balance amount exception.
      */
     public PayByCardResponseDto refundByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
             CreditCardTypeEnum cardType, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO)
@@ -221,11 +221,11 @@ public class RefundService extends PersistenceService<Refund> {
 
     /**
      * 
-     * @param customerAccount
-     * @param ctsAmount
-     * @param paymentID
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent
+     * @param doPaymentResponseDto payment by card dto
      * @return the AO id created
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
         OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD"));

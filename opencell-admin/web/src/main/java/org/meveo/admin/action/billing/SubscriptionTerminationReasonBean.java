@@ -35,11 +35,6 @@ public class SubscriptionTerminationReasonBean extends
 		BaseBean<SubscriptionTerminationReason> {
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link OneShotChargeTemplate} service. Extends {@link PersistenceService}
-	 */
 	@Inject
 	private SubscriptionTerminationReasonService subscriptionTerminationReasonService;
 
@@ -54,9 +49,7 @@ public class SubscriptionTerminationReasonBean extends
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return subscripton termination
 	 */
 	@Produces
 	@Named("subscriptionTerminationReason")

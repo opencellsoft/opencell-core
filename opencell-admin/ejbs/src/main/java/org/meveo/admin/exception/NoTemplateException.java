@@ -23,7 +23,6 @@ package org.meveo.admin.exception;
  * have report template
  * 
  * @author Gediminas Ubartas
- * @created 2011.03.31
  * 
  */
 public class NoTemplateException extends RuntimeException {

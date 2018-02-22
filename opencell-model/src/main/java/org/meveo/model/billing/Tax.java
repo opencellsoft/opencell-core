@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.NamedQueries;
@@ -40,6 +41,7 @@ import org.meveo.model.ObservableEntity;
 
 @Entity
 @ObservableEntity
+@Cacheable
 @CustomFieldEntity(cftCodePrefix = "TAX")
 @ExportIdentifier({ "code" })
 @Table(name = "billing_tax", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))

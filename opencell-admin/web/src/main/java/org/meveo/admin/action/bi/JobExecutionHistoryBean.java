@@ -61,8 +61,7 @@ public class JobExecutionHistoryBean extends
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
 	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return job execution history.
 	 */
 	@Produces
 	@Named("jobExecutionHistory")

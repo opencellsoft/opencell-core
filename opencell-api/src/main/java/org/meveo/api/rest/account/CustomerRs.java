@@ -72,14 +72,16 @@ public interface CustomerRs extends IBaseRs {
     ActionStatus remove(@PathParam("customerCode") String customerCode);
 
     /**
-     * Filters are: category, seller, brand and provider
+     * Filters are: category, seller, brand and provider.
      * 
      * @param postData The customer's data
      * @param firstRow Pagination - from record number. Deprecated in v.4.7, use "from" instead
      * @param numberOfRows Pagination - number of records to retrieve. Deprecated in v.4.7, use "limit" instead
      * @param offset Pagination - from record number
      * @param limit Pagination - number of records to retrieve
-     * @return
+     * @param sortBy sortBy field
+     * @param sortOrder ASC/DESC
+     * @return list of customers
      */
     @POST
     @Path("/list47")

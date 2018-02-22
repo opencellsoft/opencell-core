@@ -73,7 +73,7 @@ public class ProviderRegistry {
 
     private EntityManagerFactory createEntityManagerFactory(Provider provider) {
         Map<String, String> props = new TreeMap<>();
-        log.info("provider code : " + provider.getCode());
+        log.info("Creating EMF for provider {}", provider.getCode());
 
         props.put("hibernate.default_schema", provider.getCode());
         return Persistence.createEntityManagerFactory("MeveoAdminMultiTenant", props);

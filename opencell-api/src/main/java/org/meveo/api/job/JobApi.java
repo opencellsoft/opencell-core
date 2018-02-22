@@ -34,12 +34,12 @@ public class JobApi extends BaseApi {
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     /**
-     * Execute job
+     * Execute job.
      * 
      * @param jobExecution Job execution info
      * @return Job execution result identifier
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
@@ -60,26 +60,62 @@ public class JobApi extends BaseApi {
 
         Long executionId = jobExecutionService.executeJobWithResultId(jobInstance, null);
 
-        return findJobExecutionResult(executionId);
+        return findJobExecutionResult(null, executionId);
     }
+    
+    /**
+     * Stop running job
+     * @param jobInstanceCode job instance code to stop
+     * @throws MeveoApiException
+     */
+    public void stopJob(String jobInstanceCode) throws MeveoApiException {
+        if (StringUtils.isBlank(jobInstanceCode)) {
+            missingParameters.add("jobInstanceCode");
+        }
+        handleMissingParameters();
+        org.meveo.model.jobs.JobInstance jobInstance = jobInstanceService.findByCode(jobInstanceCode);
+        if (jobInstance == null) {
+            throw new EntityDoesNotExistsException(JobInstance.class, jobInstanceCode);
+        }
+
+        try {
+            jobExecutionService.stopJob(jobInstance);
+        } catch (BusinessException e) {
+            throw new MeveoApiException(e.getMessage());
+        }       
+    }    
 
     /**
-     * Retrieve job execution result
+     * Retrieve job execution result.
+     * @param code 
      * 
      * @param id Job execution result identifier
      * @return Job execution result DTO
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception
      */
-    public JobExecutionResultDto findJobExecutionResult(Long id) throws MeveoApiException {
-        JobExecutionResultDto jobExecutionResultDto = new JobExecutionResultDto();
-        if (StringUtils.isBlank(id)) {
-            missingParameters.add("id");
+    public JobExecutionResultDto findJobExecutionResult(String code, Long id) throws MeveoApiException {
+        JobExecutionResultDto jobExecutionResultDto;
+        if (StringUtils.isBlank(code) && StringUtils.isBlank(id)) {
+            missingParameters.add("id or code");
             handleMissingParameters();
         }
 
-        JobExecutionResultImpl jobExecutionResult = jobExecutionService.findById(id);
-        if (jobExecutionResult == null) {
-            throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
+        JobExecutionResultImpl jobExecutionResult = new JobExecutionResultImpl();
+        if (!StringUtils.isBlank(code)) {
+            JobInstance jobInstance = jobInstanceService.findByCode(code);
+            if (jobInstance == null) {
+                throw new EntityDoesNotExistsException(JobInstance.class, code);
+            }
+
+            jobExecutionResult = jobExecutionService.findLastExecutionByInstance(jobInstance);
+            if (jobExecutionResult == null) {
+                throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, code);
+            }
+        } else if (!StringUtils.isBlank(id)) {
+            jobExecutionResult = jobExecutionService.findById(id);
+            if (jobExecutionResult == null) {
+                throw new EntityDoesNotExistsException(JobExecutionResultImpl.class, id);
+            }
         }
 
         jobExecutionResultDto = new JobExecutionResultDto(jobExecutionResult);

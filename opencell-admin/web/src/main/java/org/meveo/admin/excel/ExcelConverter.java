@@ -294,9 +294,9 @@ public class ExcelConverter {
 	 *            Method name to invoke for getting value
 	 * @return value of Entity field
 	 * 
-	 * @throws InvocationTargetException
-	 * @throw IllegalAccessException
-	 * @throws IllegalArgumentExceptio
+	 * @throws InvocationTargetException invocation target exception.
+	 * @throws IllegalAccessException illegal access exception
+	 * @throws IllegalArgumentException illegal argument exception
 	 */
 	public String invokeMethod(Object rowData, String methodName)
 			throws IllegalArgumentException, IllegalAccessException,

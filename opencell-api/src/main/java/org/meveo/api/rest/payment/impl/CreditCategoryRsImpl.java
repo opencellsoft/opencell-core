@@ -16,7 +16,7 @@ import org.meveo.api.rest.payment.CreditCategoryRs;
 
 /**
  * @author Edward P. Legaspi
- * @created 22 Aug 2017
+ * @since 22 Aug 2017
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

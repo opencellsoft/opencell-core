@@ -34,47 +34,54 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+
+/**
+ * The Class InvoicingJob launch invoicing for the available BillingRuns.
+ */
 @Stateless
 public class InvoicingJob extends Job {
 
-	@Inject
-	private InvoicingJobBean invoicingJobBean;
-	
-	@Override
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-		invoicingJobBean.execute(result,jobInstance);
-	}
+    /** The invoicing job bean. */
+    @Inject
+    private InvoicingJobBean invoicingJobBean;
 
-	@Override
-	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.INVOICING;
-	}
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        invoicingJobBean.execute(result, jobInstance);
+    }
 
-	@Override
-	public Map<String, CustomFieldTemplate> getCustomFields() {
+
+    @Override
+    public JobCategoryEnum getJobCategory() {
+        return JobCategoryEnum.INVOICING;
+    }
+
+
+    @Override
+    public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
-		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-		customFieldNbRuns.setCode("nbRuns");
-		customFieldNbRuns.setAppliesTo("JOB_InvoicingJob");
-		customFieldNbRuns.setActive(true);
-		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldNbRuns.setValueRequired(false);
-		customFieldNbRuns.setDefaultValue("1");
-		result.put("nbRuns", customFieldNbRuns);
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setAppliesTo("JOB_InvoicingJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue("1");
+        result.put("nbRuns", customFieldNbRuns);
 
-		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-		customFieldNbWaiting.setCode("waitingMillis");
-		customFieldNbWaiting.setAppliesTo("JOB_InvoicingJob");
-		customFieldNbWaiting.setActive(true);
-		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldNbWaiting.setDefaultValue("0");
-		customFieldNbWaiting.setValueRequired(false);
-		result.put("waitingMillis", customFieldNbWaiting);
+        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setAppliesTo("JOB_InvoicingJob");
+        customFieldNbWaiting.setActive(true);
+        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbWaiting.setDefaultValue("0");
+        customFieldNbWaiting.setValueRequired(false);
+        result.put("waitingMillis", customFieldNbWaiting);
 
-		return result;
-	}
+        return result;
+    }
 }

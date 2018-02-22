@@ -65,9 +65,7 @@ public class CounterInstanceBean extends BaseBean<CounterInstance> {
 	/**
 	 * Factory method for entity to edit. If objectId param set load that entity
 	 * from database, otherwise create new.
-	 * 
-	 * @throws IllegalAccessException
-	 * @throws InstantiationException
+	 * @return counter instance
 	 */
 	public CounterInstance initEntity() {
 		super.initEntity();

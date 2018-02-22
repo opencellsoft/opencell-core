@@ -40,7 +40,7 @@ import org.slf4j.Logger;
  * Action for importing Customer Accounts.
  * 
  * @author Gediminas Ubartas
- * @created 2010.11.09
+ * @since 2010.11.09
  */
 @Named
 @ConversationScoped
@@ -104,7 +104,7 @@ public class CustomerAccountImportAction implements Serializable {
 	/**
 	 * Converts parsed data to required entity
 	 * 
-	 * @returns List of Customer Accounts
+	 * @return List of Customer Accounts
 	 */
 	// TODO Fix mapping to Customer Account
 	public List<CustomerAccount> convertData() {
@@ -116,14 +116,6 @@ public class CustomerAccountImportAction implements Serializable {
 		return list;
 	}
 
-	/**
-	 * Upload listener.
-	 * 
-	 * @param event
-	 *            Upload event.
-	 * 
-	 * @throws Exception
-	 */
 	// TODO why synchronized??
 //	public synchronized void uploadListener(FileUploadEvent  event) throws Exception {
 //
@@ -158,13 +150,6 @@ public class CustomerAccountImportAction implements Serializable {
 //				item.getName());
 //	}
 
-	/**
-	 * Validate file name and extension.
-	 * 
-	 * @param item
-	 *            Upload file
-	 * @return Null if valid and error code otherwise.
-	 */
 //	private boolean validateFileNameAndExtention(UploadedFile item) {
 //		log.debug("#{currentUser.username} > Start uploaded file name and extention validation ..");
 //		boolean valid = true;

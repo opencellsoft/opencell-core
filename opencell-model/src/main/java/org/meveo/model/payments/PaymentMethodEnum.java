@@ -19,18 +19,22 @@
 package org.meveo.model.payments;
 
 /**
- * Payment Method types
+ * Payment Method types.
  */
 public enum PaymentMethodEnum {
 
     CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, NONE;
 
+    /**
+     * @return label
+     */
     public String getLabel() {
         return this.getClass().getSimpleName() + "." + this.name();
     }
 
     /**
-     * Is it as simple payment method that does not required any additional information
+     * Is it as simple payment method that does not required any additional information.
+     * @return true/fale
      */
     public boolean isSimple() {
         return this == CHECK || this == PaymentMethodEnum.WIRETRANSFER;

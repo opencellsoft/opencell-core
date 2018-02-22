@@ -29,50 +29,50 @@ public interface TradingLanguageRs extends IBaseRs {
     /**
      * Creates tradingLanguage base on language code. If the language code does not exists, a language record is created.
      * 
-     * @param postData
-     * @return
+     * @param postData language iso to be created
+     * @return action status
      */
     @POST
     @Path("/")
-    public ActionStatus create(LanguageIsoDto postData);
+    ActionStatus create(LanguageIsoDto postData);
 
     /**
      * Search language given a code.
      * 
-     * @param languageCode
-     * @return
+     * @param languageCode language's code
+     * @return trading language
      */
     @GET
     @Path("/")
-    public GetTradingLanguageResponse find(@QueryParam("languageCode") String languageCode);
+    GetTradingLanguageResponse find(@QueryParam("languageCode") String languageCode);
 
     /**
      * Does not delete a language but the tradingLanguage associated to it.
      * 
-     * @param languageCode
-     * @return
+     * @param languageCode language's code
+     * @return action status
      */
     @DELETE
     @Path("/{languageCode}")
-    public ActionStatus remove(@PathParam("languageCode") String languageCode);
+    ActionStatus remove(@PathParam("languageCode") String languageCode);
 
     /**
      * modify a language. Same input parameter as create. The language and trading Language are created if they don't exists. The operation fails if the tradingLanguage is null.
      * 
-     * @param postData
-     * @return
+     * @param postData language iso to be updated
+     * @return action status
      */
     @PUT
     @Path("/")
-    public ActionStatus update(LanguageIsoDto postData);
+    ActionStatus update(LanguageIsoDto postData);
 
     /**
-     * Create or update a language if it doesn't exists
+     * Create or update a language if it doesn't exists.
      * 
-     * @param postData
-     * @return
+     * @param postData language iso to be created or updated
+     * @return action status
      */
     @POST
     @Path("/createOrUpdate")
-    public ActionStatus createOrUpdate(LanguageIsoDto postData);
+    ActionStatus createOrUpdate(LanguageIsoDto postData);
 }

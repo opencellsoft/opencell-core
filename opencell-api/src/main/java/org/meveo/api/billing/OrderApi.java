@@ -113,13 +113,13 @@ public class OrderApi extends BaseApi {
     private TerminationReasonService terminationReasonService;
 
     /**
-     * Register an order from TMForumApi
+     * Register an order from TMForumApi.
      * 
      * @param productOrder Product order
-     * 
+     * @param quoteId quote's id
      * @return Product order DTO updated
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws BusinessException business exception
+     * @throws MeveoApiException meveo api exception.
      */
     public ProductOrder createProductOrder(ProductOrder productOrder, Long quoteId) throws BusinessException, MeveoApiException {
 
@@ -322,11 +322,9 @@ public class OrderApi extends BaseApi {
     /**
      * Initiate workflow on order. If workflow is enabled on Order class, then execute workflow. If workflow is not enabled - then process the order right away.
      * 
-     * @param order
-     * 
-     * @return
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @param order order to create workflow 
+     * @return worked flow order.
+     * @throws BusinessException business exception.
      */
     public Order initiateWorkflow(Order order) throws BusinessException {
 
@@ -350,12 +348,13 @@ public class OrderApi extends BaseApi {
     }
 
     /**
-     * Process the order
+     * Process the order.
      * 
-     * @param order
+     * @param order order to process.
+     * @return processed order.
      * 
-     * @throws BusinessException
-     * @throws MeveoApiException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public Order processOrder(Order order) throws BusinessException, MeveoApiException {
 
@@ -365,8 +364,6 @@ public class OrderApi extends BaseApi {
         }
 
         log.info("Processing order {}", order.getCode());
-
-        order = orderService.refreshOrRetrieve(order);
 
         order.setStartDate(new Date());
 
@@ -531,7 +528,7 @@ public class OrderApi extends BaseApi {
         index = 1;
         for (Product productOfProduct : products) {
             ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
-            productOffering = productTemplateService.refreshOrRetrieve(productOffering);
+            productOffering = productTemplateService.retrieveIfNotManaged(productOffering);
             ProductInstance productInstance = instantiateProduct(productOffering, productOfProduct, orderItem, productOrderItem, subscription, orderNumber);
             if (productInstance != null) {
                 orderItem.addProductInstance(productInstance);
@@ -837,7 +834,7 @@ public class OrderApi extends BaseApi {
 
         // TODO Need to initiate workflow if there is one
 
-        order = orderService.refreshOrRetrieve(order);
+        order = orderService.update(order);
 
         return orderToDto(order);
 
@@ -855,9 +852,9 @@ public class OrderApi extends BaseApi {
     /**
      * Convert order stored in DB to order DTO expected by tmForum api.
      * 
-     * @param order Order to convert
+     * @param order Order to convert 
      * @return Order DTO object
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     private ProductOrder orderToDto(Order order) throws BusinessException {
 
@@ -913,11 +910,11 @@ public class OrderApi extends BaseApi {
     }
 
     /**
-     * Distinguish bundled products which could be either services or products
+     * Distinguish bundled products which could be either services or products.
      * 
      * @param productOrderItem Product order item DTO
      * @param orderItem Order item entity
-     * @return An array of List<Product> elements, first being list of products, and second - list of services
+     * @return An array of List&lt;Product&gt; elements, first being list of products, and second - list of services
      */
     @SuppressWarnings("unchecked")
     public List<Product>[] getProductsAndServices(ProductOrderItem productOrderItem, org.meveo.model.order.OrderItem orderItem) {
@@ -1017,7 +1014,7 @@ public class OrderApi extends BaseApi {
      * 
      * @param product Product information
      * @return SubscriptionRenewalDto object
-     * @throws InvalidParameterException
+     * @throws InvalidParameterException invalid parameter exception.
      */
     public SubscriptionRenewalDto extractSubscriptionRenewalDto(Product product) throws InvalidParameterException {
 

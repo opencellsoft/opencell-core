@@ -1,7 +1,10 @@
 package org.meveo.service.job;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
@@ -82,6 +85,8 @@ public abstract class Job {
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
+    
+ 
 
     /**
      * Execute job instance with results published to a given job execution result entity.
@@ -221,7 +226,7 @@ public abstract class Job {
 
         return null;
     }
-
+    
     /*
      * those methods will be used later for asynchronous jobs
      * 

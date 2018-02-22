@@ -2,7 +2,6 @@ package org.meveo.admin.job;
 
 import java.io.Serializable;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
@@ -41,27 +40,25 @@ public class UnitUsageRatingJobBean {
     @Rejected
     private Event<Serializable> rejectededEdrProducer;
 
-
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
         long startDate = System.currentTimeMillis();
-        log.debug("Running with edrId={}", edrId);
-        EDR edr = null;
+        log.debug("Processing EDR {}", edrId);
+
         try {
-            edr = edrService.findById(edrId);
+            EDR edr = edrService.findById(edrId);
             log.debug("After findById:" + (System.currentTimeMillis() - startDate));
             if (edr == null) {
                 return;
             }
             usageRatingService.ratePostpaidUsage(edr);
 
-            log.debug("After ratePostpaidUsage:" + (System.currentTimeMillis() - startDate));
+            log.debug("After ratePostpaidUsage EDR {}: {}", edrId, (System.currentTimeMillis() - startDate));
 
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 edr = edrService.updateNoCheck(edr);
-                log.debug("After updateNoCheck:" + (System.currentTimeMillis() - startDate));
                 result.registerSucces();
-                log.debug("After registerSucces:" + (System.currentTimeMillis() - startDate));
+                log.debug("After registerSucces EDR {}: {}", edrId, (System.currentTimeMillis() - startDate));
             } else {
                 throw new BusinessException(edr.getRejectReason());
             }
@@ -80,17 +77,17 @@ public class UnitUsageRatingJobBean {
         edr.setRejectReason(StringUtils.truncate(e.getMessage(), 255, true));
         rejectededEdrProducer.fire(edr);
         result.registerError();
-        String aLine = "EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()) +"\n";
-        aLine += "eventDate:"+edr.getEventDate() +"\n";
-        aLine += "originBatch:"+edr.getOriginBatch() +"\n";
-        aLine += "originRecord:"+edr.getOriginRecord() +"\n";
-        aLine += "quantity:"+edr.getQuantity() +"\n";
-        aLine += "subscription:"+edr.getSubscription().getCode() +"\n";
-        aLine += "access:"+edr.getAccessCode() +"\n";
-        aLine += "parameter1:"+edr.getParameter1() +"\n";
-        aLine += "parameter2:"+edr.getParameter2() +"\n";
-        aLine += "parameter3:"+edr.getParameter3() +"\n";
-        aLine += "parameter4:"+edr.getParameter4() +"\n";
+        String aLine = "EdrId : " + edr.getId() + " RejectReason : " + (e != null ? e.getMessage() : edr.getRejectReason()) + "\n";
+        aLine += "eventDate:" + edr.getEventDate() + "\n";
+        aLine += "originBatch:" + edr.getOriginBatch() + "\n";
+        aLine += "originRecord:" + edr.getOriginRecord() + "\n";
+        aLine += "quantity:" + edr.getQuantity() + "\n";
+        aLine += "subscription:" + edr.getSubscription().getCode() + "\n";
+        aLine += "access:" + edr.getAccessCode() + "\n";
+        aLine += "parameter1:" + edr.getParameter1() + "\n";
+        aLine += "parameter2:" + edr.getParameter2() + "\n";
+        aLine += "parameter3:" + edr.getParameter3() + "\n";
+        aLine += "parameter4:" + edr.getParameter4() + "\n";
         result.addReport(aLine);
     }
 }

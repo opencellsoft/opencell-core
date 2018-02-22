@@ -28,11 +28,7 @@ import javax.persistence.PersistenceUnit;
 
 public class Resources {
 
-    // @ExtensionManaged
-    // @RequestScoped
-    // @Produces
     @PersistenceUnit(unitName = "MeveoAdmin")
-    // @MeveoJpa
     private EntityManagerFactory emf;
 
     @Produces
@@ -48,44 +44,21 @@ public class Resources {
         }
     }
 
-    // @ExtensionManaged
+    // For some reason this causes issue in GUI with lazy loading:
+    // @PersistenceContext(unitName = "MeveoAdmin")
+    // private EntityManager em;
+    //
     // @Produces
-    // @PersistenceUnit(unitName = "MeveoAdmin")
-    // @MeveoJpaForJobs
-    // private EntityManagerFactory emfForJobs;
+    // @RequestScoped
+    // @MeveoJpa
+    // public EntityManager getEntityManager() {
+    // return em;
+    // }
+    // end of "For some reason this causes issue in GUI with lazy loading"
+
     @Produces
     @PersistenceContext(unitName = "MeveoAdmin")
     @MeveoJpaForJobs
     private EntityManager emfForJobs;
-
-    @Produces
-    // @PersistenceContext(unitName = "MeveoAdminTarget")
-    @PersistenceContext(unitName = "MeveoAdmin")
-    @MeveoJpaForTarget
-    static EntityManager emfForTarget;
-
-    /*
-     * @ExtensionManaged
-     * 
-     * @ConversationScoped
-     * 
-     * @Produces
-     * 
-     * @PersistenceUnit(unitName = "MeveoDWH")
-     * 
-     * @MeveoDWHJpa private EntityManagerFactory emfDwh;
-     */
-
-    // @Produces
-    // @MeveoJpa
-    // @PersistenceContext(unitName = "MeveoAdmin", type =
-    // PersistenceContextType.EXTENDED)
-    // private EntityManager em;
-
-    // @Produces
-    // @MeveoDWHJpa
-    // @PersistenceContext(unitName = "MeveoDWH", type =
-    // PersistenceContextType.EXTENDED)
-    // private EntityManager emDwh;
 
 }

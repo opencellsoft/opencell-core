@@ -1,6 +1,6 @@
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 3:51:34 AM 
+ * @since Jun 3, 2016 3:51:34 AM 
  */
 package org.meveo.api.rest.account;
 
@@ -23,7 +23,7 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * @author Tyshan　Shi(tyshan@manaty.net)
- * @date Jun 3, 2016 3:51:34 AM
+ * @since Jun 3, 2016 3:51:34 AM
  *
  */
 

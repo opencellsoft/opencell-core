@@ -31,8 +31,10 @@ import java.util.Map;
  */
 public interface CSVCDRParser {
 
-	
-	void init(File CDRFile);
+    /**
+     * @param CDRFile cdr file.
+     */
+    void init(File CDRFile);
 	
 	/**
 	 * 
@@ -46,14 +48,15 @@ public interface CSVCDRParser {
 	 *  The implementation should save locally the CDR as call to other methods do not contain reference to the CDR
 	 * @param line : the input CDR
 	 * @return the modified CDR
-	 * @throws InvalidFormatException 
+	 * @throws InvalidFormatException  invalid format exception.
 	 */
 	Serializable getCDR(String line) throws InvalidFormatException;
 	
 	/**
-	 * Build and return a unique identifier from the CDR in order
+	 * Build and return a unique identifier from the CDR in order.
 	 * to avoid importing twice the same CDR in MEVEO
 	 * @param cdr : CDR returned by the getCDR method
+	 * @param origin origin.
 	 * @return CDR's unique key
 	 */
 	String getOriginRecord(Serializable cdr, String origin);
@@ -63,26 +66,32 @@ public interface CSVCDRParser {
 	 *  that will allow to lookup the ACCESS.
 	 * @param cdr : CDR returned by the getCDR method
 	 * @return the Access userId
-	 * @throws InvalidAccessException
+	 * @throws InvalidAccessException invalid access exception.
 	 */
 	String getAccessUserId(Serializable cdr) throws InvalidAccessException;
 
 	/**
-	 * Construct EDRDAO from the CDR
+	 * Construct EDRDAO from the CDR.
 	 * @param cdr : CDR returned by the getCDR method
+	 * @param origin origin
 	 * @return  EDR Data Access Object
-	 * @throws CDRParsingException
+	 * 
 	 */
 	EDRDAO getEDR(Serializable cdr, String origin);
 
 	/**
-	 * Construct a csv record for the rejected CDR with given rejection reason
-	 * @param cdr
-	 * @param reason
-	 * @return
+	 * Construct a csv record for the rejected CDR with given rejection reason.
+	 * @param cdr cdr
+	 * @param reason reason
+	 * @return cdr line
 	 */
 	String getCDRLine(Serializable cdr, String reason);
 
+	/**
+	 * @param username user name
+	 * @param ip Ip address.
+	 * 
+	 */
 	void initByApi(String username, String ip);
 	
 }

@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,7 +24,7 @@ public class RevenueRecognitionRule extends BusinessEntity {
 
 	private static final long serialVersionUID = 7793758853731725829L;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "script_instance_id")
 	private ScriptInstance script;
 

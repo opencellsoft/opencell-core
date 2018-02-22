@@ -92,6 +92,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     private String editMode;
     private boolean newVersion;
     private Long bpmId;
+    private boolean duplicateProduct;
 
     public ProductTemplateBean() {
         super(ProductTemplate.class);
@@ -110,6 +111,8 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
                 instantiateNewVersion();
                 setObjectId(entity.getId());
                 newVersion = false;
+            } else if(duplicateProduct) {
+                duplicateWithoutSave();
             }
 
             if (entity.getValidity() == null) {
@@ -158,6 +161,17 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
         }
     }
+    
+    @ActionMethod
+    public void duplicateWithoutSave() {
+        if (entity != null && entity.getId() != null) {
+            try {
+                productTemplateService.duplicate(entity, false);
+            } catch (BusinessException e) {
+                log.error("Error encountered duplicating product template entity: {}", entity.getCode(), e);
+            }
+        }
+    }
 
     @ActionMethod
     public void instantiateNewVersion() {
@@ -202,6 +216,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         if (businessProductModel != null) {
+            businessProductModel = businessProductModelService.refreshOrRetrieve(businessProductModel);
             businessProductModelService.instantiateBPM(entity, businessProductModel);
             return back();
             
@@ -211,7 +226,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
             if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
                 entity.getOfferTemplateCategories().clear();
-                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.retrieveIfNotManaged(offerTemplateCategoriesDM.getTarget()));
             }
 
             if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
@@ -488,5 +503,13 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     public void setBpmId(Long bpmId) {
         this.bpmId = bpmId;
+    }
+
+    public boolean isDuplicateProduct() {
+        return duplicateProduct;
+    }
+
+    public void setDuplicateProduct(boolean duplicateProduct) {
+        this.duplicateProduct = duplicateProduct;
     }
 }

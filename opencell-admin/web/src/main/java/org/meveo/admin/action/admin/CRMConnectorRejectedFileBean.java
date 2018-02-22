@@ -94,7 +94,7 @@ public class CRMConnectorRejectedFileBean implements Serializable {
 	 * BaseBean.list() method that handles all data model loading. Overriding is
 	 * needed only to put factory name on it.
 	 * 
-	 * @see org.meveo.admin.action.BaseBean#list()
+	 * @see org.meveo.admin.action.BaseBean
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	// TODO @Begin(join = true)

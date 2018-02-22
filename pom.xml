@@ -5,7 +5,7 @@
 	<groupId>com.opencellsoft</groupId>
 	<artifactId>opencell</artifactId>
 	<packaging>pom</packaging>
-	<version>4.8-SNAPSHOT</version>
+	<version>5.0-SNAPSHOT</version>
 	<name>Opencell Parent Project</name>
 
 	<modules>
@@ -75,6 +75,14 @@
 			<url>http://central.maven.org/maven2/</url>
 		</pluginRepository>
 	</pluginRepositories>
+	
+   <distributionManagement>
+    <site>
+        <id>internal.repo</id>
+        <name>Temporary Staging Repository</name>
+        <url>file://${project.groupId}</url>
+    </site>
+    </distributionManagement>
 
 	<dependencyManagement>
 		<dependencies>
@@ -565,7 +573,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>2.10.1</version>
+					<version>3.0.0</version>
 				</plugin>
 
 				<plugin>
@@ -579,6 +587,7 @@
 					<configuration>
 						<source>1.8</source>
 						<target>1.8</target>
+						<useIncrementalCompilation>false</useIncrementalCompilation>
 					</configuration>
 				</plugin>
 				<plugin>
@@ -664,7 +673,12 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.1</version>
+				<!--  
+				<configuration>
+			        <additionalparam>-Xdoclint:none</additionalparam>
+			      </configuration>
+			    -->
+				<version>3.0.0</version>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -683,6 +697,7 @@
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 			</properties>
@@ -715,6 +730,7 @@
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>root</db.username>
 				<db.password></db.password>
 			</properties>
@@ -740,6 +756,7 @@
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver</db.driver>
 				<db.url>jdbc:postgresql://localhost/integrmeveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>integrmeveo</db.username>
 				<db.password>integrmeveo</db.password>
 			</properties>
@@ -770,6 +787,7 @@
 				<!-- Properties for liquibase plugin -->
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 			</properties>

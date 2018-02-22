@@ -377,7 +377,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             selectedOrderItem.setSource(org.tmf.dsmapi.catalog.resource.order.ProductOrderItem.serializeOrderItem(orderItemDto));
 
             if (selectedOrderItem.getUserAccount() == null && selectedOrderItem.getSubscription() != null) {
-                selectedOrderItem.setUserAccount(userAccountService.refreshOrRetrieve(selectedOrderItem.getSubscription().getUserAccount()));
+                selectedOrderItem.setUserAccount(userAccountService.retrieveIfNotManaged(selectedOrderItem.getSubscription().getUserAccount()));
             }
 
             if (entity.getOrderItems() == null) {
@@ -421,13 +421,14 @@ public class OrderBean extends CustomFieldBean<Order> {
 
     /**
      * Initiate processing of order
+     * @return output view
      * 
-     * @throws BusinessException
      */
     @ActionMethod
     public String sendToProcess() {
 
         try {
+            entity = orderService.refreshOrRetrieve(entity);
             entity = orderApi.initiateWorkflow(entity);
             messages.info(new BundleKey("messages", "order.sendToProcess.ok"));
             return "orderDetail";
@@ -456,7 +457,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         TreeNode root = new DefaultTreeNode("Offer details", null);
         root.setExpanded(true);
 
-        ProductOffering mainOffering = productOfferingService.refreshOrRetrieve(this.selectedOrderItem.getMainOffering());
+        ProductOffering mainOffering = productOfferingService.retrieveIfNotManaged(this.selectedOrderItem.getMainOffering());
 
         // Take offer characteristics either from DTO (priority) or from current subscription configuration (will be used only for the first time when entering order item to modify
         // or delete and subscription is selected)
@@ -942,7 +943,7 @@ public class OrderBean extends CustomFieldBean<Order> {
         boolean editable = entity.getStatus() != OrderStatusEnum.CANCELLED && entity.getStatus() != OrderStatusEnum.COMPLETED && entity.getStatus() != OrderStatusEnum.REJECTED;
 
         if (editable && entity.getRoutedToUserGroup() != null) {
-            UserHierarchyLevel userGroup = userHierarchyLevelService.refreshOrRetrieve(entity.getRoutedToUserGroup());
+            UserHierarchyLevel userGroup = userHierarchyLevelService.retrieveIfNotManaged(entity.getRoutedToUserGroup());
             User user = userService.findByUsername(currentUser.getUserName());
             editable = userGroup.isUserBelongsHereOrHigher(user);
         }

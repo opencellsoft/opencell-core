@@ -233,7 +233,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Initiates entity from request parameter id.
      * 
-     * @param objectClass Class of the object.
      * @return Entity from database.
      */
     public T initEntity() {
@@ -380,8 +379,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     /**
      * Save method when used in popup - no return value. Sets validation to failed if saveOrUpdate method called does not return a value.
      * 
-     * @return
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @ActionMethod
     public void saveOrUpdateForPopup() throws BusinessException {
@@ -514,10 +512,10 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Delete Entity using it's ID. Add error message to status message if unsuccessful.
      * 
      * @param id Entity id to delete
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     @ActionMethod
     public void delete(Long id) throws BusinessException {
@@ -526,12 +524,12 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Delete Entity using it's ID. Add error message to status messages if unsuccessful.
      * 
      * @param id Entity id to delete
      * @param code Entity's code - just for display in error messages
      * @param setOkMessages Shall success messages be set for display
-     * @throws BusinessException
+     * @throws BusinessException business exception
      */
     private boolean deleteInternal(Long id, String code, boolean setOkMessages) throws BusinessException {
         try {
@@ -574,9 +572,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Delete checked entities. Add error message to {@link statusMessages} if unsuccessful.
+     * Delete checked entities. Add error message to status messages if unsuccessful.
      * 
-     * @throws Exception
+     * @throws Exception general exception
      */
     @ActionMethod
     public void deleteMany() throws Exception {
@@ -684,9 +682,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Disable current entity. Add error message to {@link statusMessages} if unsuccessful.
+     * Disable current entity. Add error message to status messages if unsuccessful.
      * 
-     * @param id Entity id to disable
      */
     @ActionMethod
     public void disable() {
@@ -702,7 +699,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Disable Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Disable Entity using it's ID. Add error message to status messages if unsuccessful.
      * 
      * @param id Entity id to disable
      */
@@ -720,9 +717,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Enable current entity. Add error message to {@link statusMessages} if unsuccessful.
+     * Enable current entity. Add error message to status messages if unsuccessful.
      * 
-     * @param id Entity id to enable
      */
     @ActionMethod
     public void enable() {
@@ -738,7 +734,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Enable Entity using it's ID. Add error message to {@link statusMessages} if unsuccessful.
+     * Enable Entity using it's ID. Add error message to status messages if unsuccessful.
      * 
      * @param id Entity id to enable
      */
@@ -837,8 +833,8 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. <br/>
-     * Criteria name consist of [<condition> ]<field name> (e.g. "like firstName") where <condition> is a condition to apply to field value comparison and <field name> is an entit
+     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. 
+     * Criteria name consist of [&lt;condition&gt;]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;name&gt; is an entity
      * attribute name.
      * 
      * @param searchCriteria Search criteria - should be same as filters attribute
@@ -1038,7 +1034,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
      * 
      * @param values Collection of values
      * @param itemIndex An index of an item to remove
-     * @return True/false if item was removed
      */
     @SuppressWarnings("rawtypes")
     public void deleteItemFromCollection(Collection values, int itemIndex) {

@@ -71,9 +71,7 @@ public class OtherCreditAndChargeService extends
 			log.warn("addOCC dueDate is null");
 			throw new BusinessException("dueDate is null");
 		}
-		
-		customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
-		
+				
 		OCCTemplate occTemplate = occTemplateService.findByCode(
 				codeOCCTemplate);
 		if (occTemplate == null) {
@@ -119,7 +117,7 @@ public class OtherCreditAndChargeService extends
 
     /**
      * Set the discriminatorValue value, so it would be available in the list of entities right away
-     * @throws BusinessException 
+     * @throws BusinessException business exception.
      */
 	@MeveoAudit
     @Override

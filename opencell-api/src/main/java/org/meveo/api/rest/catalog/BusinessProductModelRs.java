@@ -88,7 +88,7 @@ public interface BusinessProductModelRs extends IBaseRs {
 
     /**
      * Install business product model module
-     * 
+     * @param moduleDto business product model
      * @return Request processing status
      */
     @PUT

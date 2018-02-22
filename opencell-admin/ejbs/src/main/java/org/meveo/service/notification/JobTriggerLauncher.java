@@ -17,7 +17,7 @@ import org.slf4j.Logger;
  * Lauch a jobInstance and create a notificationHistory
  * 
  * @author anasseh
- * @created 19.06.2015
+ * @since 19.06.2015
  * 
  */
 @Stateless
@@ -42,7 +42,7 @@ public class JobTriggerLauncher {
             HashMap<Object, Object> params = new HashMap<Object, Object>();
             params.put("event", entityOrEvent);
             
-            jobExecutionService.executeJob(jobInstanceService.refreshOrRetrieve(jobTrigger.getJobInstance()), params);
+            jobExecutionService.executeJob(jobInstanceService.retrieveIfNotManaged(jobTrigger.getJobInstance()), params);
             
             log.debug("launch jobTrigger:{} launched", jobTrigger);
 

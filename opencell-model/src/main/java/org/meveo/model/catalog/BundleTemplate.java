@@ -20,30 +20,30 @@ import org.meveo.model.CustomFieldEntity;
 @CustomFieldEntity(cftCodePrefix = "BUNDLE")
 @DiscriminatorValue("BUNDLE")
 @NamedQueries({ @NamedQuery(name = "BundleTemplate.countActive", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=false"),
-		@NamedQuery(name = "BundleTemplate.countDisabled", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=true"),
-		@NamedQuery(name = "BundleTemplate.countExpiring", query = "SELECT COUNT(*) FROM BundleTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW()") })
+        @NamedQuery(name = "BundleTemplate.countDisabled", query = "SELECT COUNT(*) FROM BundleTemplate WHERE disabled=true"),
+        @NamedQuery(name = "BundleTemplate.countExpiring", query = "SELECT COUNT(*) FROM BundleTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW()") })
 public class BundleTemplate extends ProductTemplate {
 
-	private static final long serialVersionUID = -4295608354238684804L;
+    private static final long serialVersionUID = -4295608354238684804L;
 
-	@OneToMany(mappedBy = "bundleTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<BundleProductTemplate> bundleProducts = new ArrayList<BundleProductTemplate>();
+    @OneToMany(mappedBy = "bundleTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BundleProductTemplate> bundleProducts = new ArrayList<BundleProductTemplate>();
 
-	public List<BundleProductTemplate> getBundleProducts() {
-		return bundleProducts;
-	}
+    public List<BundleProductTemplate> getBundleProducts() {
+        return bundleProducts;
+    }
 
-	public void setBundleProducts(List<BundleProductTemplate> bundleProducts) {
-		this.bundleProducts = bundleProducts;
-	}
+    public void setBundleProducts(List<BundleProductTemplate> bundleProducts) {
+        this.bundleProducts = bundleProducts;
+    }
 
-	public void addBundleProductTemplate(BundleProductTemplate bundleProductTemplate) {
-		if (getBundleProducts() == null) {
-			bundleProducts = new ArrayList<BundleProductTemplate>();
-		}
-		bundleProductTemplate.setBundleTemplate(this);
-		
-		bundleProducts.add(bundleProductTemplate);
-	}
+    public void addBundleProductTemplate(BundleProductTemplate bundleProductTemplate) {
+        if (getBundleProducts() == null) {
+            bundleProducts = new ArrayList<BundleProductTemplate>();
+        }
+        bundleProductTemplate.setBundleTemplate(this);
+
+        bundleProducts.add(bundleProductTemplate);
+    }
 
 }

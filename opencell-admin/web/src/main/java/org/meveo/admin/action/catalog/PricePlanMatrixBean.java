@@ -99,9 +99,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * 
-     * @throws IllegalAccessException
-     * @throws InstantiationException
+     * @return price plan matrix.
      */
 
     public PricePlanMatrix initEntity() {
@@ -229,7 +227,7 @@ public class PricePlanMatrixBean extends CustomFieldBean<PricePlanMatrix> {
         long result = 0;
         try {
             if (chargetemplate != null) {
-                result = pricePlanMatrixService.getLastPricePlanByCharge(chargetemplate.getCode()) + 1;
+                result = pricePlanMatrixService.getLastPricePlanSequenceByChargeCode(chargetemplate.getCode()) + 1;
             }
         } catch (Exception e) {
             log.warn("error while getting next sequence", e);

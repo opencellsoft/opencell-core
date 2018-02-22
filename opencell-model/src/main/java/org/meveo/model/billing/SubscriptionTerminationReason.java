@@ -18,6 +18,7 @@
  */
 package org.meveo.model.billing;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -30,6 +31,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "code" })
 @Table(name = "billing_subscrip_termin_reason", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {

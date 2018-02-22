@@ -365,10 +365,19 @@ public class CustomerApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(CustomerBrand.class, postData.getCode());
         }
 
-        customerBrand.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        customerBrand.setDescription(postData.getDescription());
+        boolean toUpdate = false;
+        if (!StringUtils.isBlank(postData.getUpdatedCode()) && !postData.getUpdatedCode().equals(customerBrand.getCode())) {
+            customerBrand.setCode(postData.getUpdatedCode());
+            toUpdate = true;
+        }
+        if (postData.getDescription() != null && StringUtils.compare(postData.getDescription(), customerBrand.getDescription()) != 0) {
+            customerBrand.setDescription(postData.getDescription());
+            toUpdate = true;
+        }
 
-        customerBrandService.update(customerBrand);
+        if (toUpdate) {
+            customerBrandService.update(customerBrand);
+        }
     }
 
     public void createCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
@@ -384,7 +393,9 @@ public class CustomerApi extends AccountEntityApi {
         CustomerCategory customerCategory = new CustomerCategory();
         customerCategory.setCode(postData.getCode());
         customerCategory.setDescription(postData.getDescription());
-        customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+        if (postData.isExoneratedFromTaxes() != null) {
+            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+        }
         customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
         customerCategory.setExonerationReason(postData.getExonerationReason());
 
@@ -402,13 +413,33 @@ public class CustomerApi extends AccountEntityApi {
         if (customerCategory == null) {
             throw new EntityDoesNotExistsException(CustomerCategory.class, postData.getCode());
         }
-        customerCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
-        customerCategory.setDescription(postData.getDescription());
-        customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
-        customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
-        customerCategory.setExonerationReason(postData.getExonerationReason());
 
-        customerCategoryService.update(customerCategory);
+        boolean toUpdate = false;
+        if (!StringUtils.isBlank(postData.getUpdatedCode()) && !postData.getUpdatedCode().equals(customerCategory.getCode())) {
+            customerCategory.setCode(postData.getUpdatedCode());
+            toUpdate = true;
+        }
+        if (postData.getDescription() != null && StringUtils.compare(postData.getDescription(), customerCategory.getDescription()) != 0) {
+            customerCategory.setDescription(postData.getDescription());
+            toUpdate = true;
+        }
+
+        if (postData.isExoneratedFromTaxes() != null && customerCategory.getExoneratedFromTaxes() != postData.isExoneratedFromTaxes().booleanValue()) {
+            customerCategory.setExoneratedFromTaxes(postData.isExoneratedFromTaxes());
+            toUpdate = true;
+        }
+        if (postData.getExonerationTaxEl() != null && StringUtils.compare(postData.getExonerationTaxEl(), customerCategory.getExonerationTaxEl()) != 0) {
+            customerCategory.setExonerationTaxEl(postData.getExonerationTaxEl());
+            toUpdate = true;
+        }
+        if (postData.getExonerationReason() != null && StringUtils.compare(postData.getExonerationReason(), customerCategory.getExonerationReason()) != 0) {
+            customerCategory.setExonerationReason(postData.getExonerationReason());
+            toUpdate = true;
+        }
+
+        if (toUpdate) {
+            customerCategoryService.update(customerCategory);
+        }
     }
 
     public void createOrUpdateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
@@ -477,9 +508,9 @@ public class CustomerApi extends AccountEntityApi {
     /**
      * Create or update customer brand based on code.
      *
-     * @param postData
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData posted data to API containing customer's brand.
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
      */
     public void createOrUpdateBrand(CustomerBrandDto postData) throws MeveoApiException, BusinessException {
 
@@ -495,6 +526,11 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
 
+    /**
+     * @param customerDto customer data
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception
+     */
     public void createOrUpdatePartial(CustomerDto customerDto) throws MeveoApiException, BusinessException {
         CustomerDto existedCustomerDto = null;
         try {
@@ -502,7 +538,7 @@ public class CustomerApi extends AccountEntityApi {
         } catch (Exception e) {
             existedCustomerDto = null;
         }
-        log.debug("createOrUpdate customer {}", customerDto);
+        log.debug("createOrUpdatePartial customer {}", customerDto);
         if (existedCustomerDto == null) {
             create(customerDto);
         } else {
@@ -511,7 +547,6 @@ public class CustomerApi extends AccountEntityApi {
             if (!StringUtils.isBlank(customerDto.getCustomerBrand())) {
                 CustomerBrandDto customerBrand = new CustomerBrandDto();
                 customerBrand.setCode(customerBrandCode);
-                customerBrand.setDescription(customerBrandCode);
                 createOrUpdateBrand(customerBrand);
                 existedCustomerDto.setCustomerBrand(customerBrandCode);
             }
@@ -519,7 +554,6 @@ public class CustomerApi extends AccountEntityApi {
             if (!StringUtils.isBlank(customerDto.getCustomerCategory())) {
                 CustomerCategoryDto customerCategory = new CustomerCategoryDto();
                 customerCategory.setCode(customerCategoryCode);
-                customerCategory.setDescription(customerCategoryCode);
                 createOrUpdateCategory(customerCategory);
                 existedCustomerDto.setCustomerCategory(customerCategoryCode);
             }

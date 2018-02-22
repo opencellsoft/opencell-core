@@ -3,8 +3,10 @@ package org.meveo.model.crm.custom;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -23,7 +25,8 @@ import org.meveo.model.scripts.ScriptInstance;
 
 @Entity
 @ModuleItem
-@ExportIdentifier({ "code", "appliesTo" })
+@Cacheable
+@ExportIdentifier({ "code", "appliesTo"})
 @Table(name = "crm_custom_action", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "applies_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "crm_custom_action_seq"), })
@@ -48,15 +51,15 @@ public class EntityCustomAction extends BusinessEntity {
     @Column(name = "label_i18n", columnDefinition = "text")
     private Map<String, String> labelI18n;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance script;
-
+    
     /**
-     * Where action should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;action:&lt;action relative position in tab&gt;<br/>
-     * <br/>
+     * Where action should be displayed. Format: tab:&lt;tab name&gt;:&lt;tab relative position&gt;;action:&lt;action relative position in tab&gt;
      * 
-     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;<br/>
+     * 
+     * Tab and field group names support translation in the following format: &lt;default value&gt;|&lt;language3 letter key=translated value&gt;
      * 
      * e.g. tab:Tab default title|FRA=Title in french|ENG=Title in english:0;fieldGroup:Field group default label|FRA=Field group label in french|ENG=Field group label in
      * english:0;action:0 OR tab:Second tab:1;action:1
@@ -131,13 +134,13 @@ public class EntityCustomAction extends BusinessEntity {
         return String.format("EntityActionScript [id=%s, appliesTo=%s, code=%s]", id, appliesTo, code);
     }
 
-    public String getGuiPosition() {
-        return guiPosition;
-    }
+	public String getGuiPosition() {
+		return guiPosition;
+	}
 
-    public void setGuiPosition(String guiPosition) {
-        this.guiPosition = guiPosition;
-    }
+	public void setGuiPosition(String guiPosition) {
+		this.guiPosition = guiPosition;
+	}
 
     public Map<String, String> getGuiPositionParsed() {
 

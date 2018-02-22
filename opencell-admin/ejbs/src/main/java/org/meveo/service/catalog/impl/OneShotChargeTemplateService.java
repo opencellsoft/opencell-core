@@ -21,7 +21,6 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,8 +33,9 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 @Stateless
 public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotChargeTemplate> {
 	
+
 	/**
-	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getTerminationChargeTemplates()
+	 * @return list of one shot charge template.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getTerminationChargeTemplates() {
@@ -46,8 +46,9 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 		return query.getResultList();
 	}
 
+	
 	/**
-	 * @see org.meveo.service.catalog.local.OneShotChargeTemplateServiceLocal#getSubscriptionChargeTemplates()
+	 * @return list of one shot charge template.
 	 */
 	@SuppressWarnings("unchecked")
 	public List<OneShotChargeTemplate> getSubscriptionChargeTemplates() {
@@ -57,13 +58,6 @@ public class OneShotChargeTemplateService extends ChargeTemplateService<OneShotC
 				.getQuery(getEntityManager());
 		return query.getResultList();
 	}
-
-	public void removeByCode(EntityManager em, String code) {
-		Query query = em.createQuery("DELETE OneShotChargeTemplate t WHERE t.code=:code");
-		query.setParameter("code", code);
-		query.executeUpdate();
-	}
-
 
 	public int getNbrOneShotWithNotPricePlan() {
 		return ((Long) getEntityManager()

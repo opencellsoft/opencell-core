@@ -16,47 +16,53 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
+/**
+ * The Class XMLInvoiceGenerationJob generate XML for all valid invoices that dont have it..
+ */
 @Stateless
 public class XMLInvoiceGenerationJob extends Job {
 
-	@Inject
-	private XMLInvoiceGenerationJobBean xmlInvoiceGenerationJobBean;
+    /** The xml invoice generation job bean. */
+    @Inject
+    private XMLInvoiceGenerationJobBean xmlInvoiceGenerationJobBean;
 
-	@Override
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-		xmlInvoiceGenerationJobBean.execute(result, jobInstance.getParametres(), jobInstance);
-	}
 
-	@Override
-	public JobCategoryEnum getJobCategory() {
-		return JobCategoryEnum.INVOICING;
-	}
+    @Override
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
+        xmlInvoiceGenerationJobBean.execute(result, jobInstance.getParametres(), jobInstance);
+    }
 
-	@Override
-	public Map<String, CustomFieldTemplate> getCustomFields() {
+    @Override
+    public JobCategoryEnum getJobCategory() {
+        return JobCategoryEnum.INVOICING;
+    }
+
+    @Override
+    public Map<String, CustomFieldTemplate> getCustomFields() {
         Map<String, CustomFieldTemplate> result = new HashMap<String, CustomFieldTemplate>();
 
-		CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
-		customFieldNbRuns.setCode("nbRuns");
-		customFieldNbRuns.setAppliesTo("JOB_XMLInvoiceGenerationJob");
-		customFieldNbRuns.setActive(true);
-		customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
-		customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldNbRuns.setValueRequired(false);
-		customFieldNbRuns.setDefaultValue("1");
-		result.put("nbRuns", customFieldNbRuns);
+        CustomFieldTemplate customFieldNbRuns = new CustomFieldTemplate();
+        customFieldNbRuns.setCode("nbRuns");
+        customFieldNbRuns.setAppliesTo("JOB_XMLInvoiceGenerationJob");
+        customFieldNbRuns.setActive(true);
+        customFieldNbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
+        customFieldNbRuns.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbRuns.setValueRequired(false);
+        customFieldNbRuns.setDefaultValue("1");
+        result.put("nbRuns", customFieldNbRuns);
 
-		CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
-		customFieldNbWaiting.setCode("waitingMillis");
-		customFieldNbWaiting.setAppliesTo("JOB_XMLInvoiceGenerationJob");
-		customFieldNbWaiting.setActive(true);
-		customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
-		customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
-		customFieldNbWaiting.setValueRequired(false);
-		customFieldNbWaiting.setDefaultValue("0");
-		result.put("waitingMillis", customFieldNbWaiting);
+        CustomFieldTemplate customFieldNbWaiting = new CustomFieldTemplate();
+        customFieldNbWaiting.setCode("waitingMillis");
+        customFieldNbWaiting.setAppliesTo("JOB_XMLInvoiceGenerationJob");
+        customFieldNbWaiting.setActive(true);
+        customFieldNbWaiting.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
+        customFieldNbWaiting.setFieldType(CustomFieldTypeEnum.LONG);
+        customFieldNbWaiting.setValueRequired(false);
+        customFieldNbWaiting.setDefaultValue("0");
+        result.put("waitingMillis", customFieldNbWaiting);
 
-		return result;
-	}
+        return result;
+    }
+
 }

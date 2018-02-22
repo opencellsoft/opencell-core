@@ -15,7 +15,7 @@ import org.meveo.api.dto.CustomFieldDto;
 
 /**
  * @author Edward P. Legaspi
- * @created 28 Nov 2017
+ * @since 28 Nov 2017
  **/
 @XmlRootElement(name = "BpmProduct")
 @XmlAccessorType(XmlAccessType.FIELD)

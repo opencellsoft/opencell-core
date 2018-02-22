@@ -70,6 +70,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
+import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 
 /**
@@ -360,8 +361,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         }
 
         if (!installed) {
+            ModuleScriptInterface moduleScript = null;
             if (meveoModule.getScript() != null) {
-                moduleScriptService.preInstallModule(meveoModule.getScript().getCode(), meveoModule);
+                moduleScript = moduleScriptService.preInstallModule(meveoModule.getScript().getCode(), meveoModule);
             }
 
             unpackAndInstallModuleItems(meveoModule, moduleDto);
@@ -369,8 +371,8 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             meveoModule.setInstalled(true);
             meveoModule = meveoModuleService.update(meveoModule);
 
-            if (meveoModule.getScript() != null) {
-                moduleScriptService.postInstallModule(meveoModule.getScript().getCode(), meveoModule);
+            if (moduleScript!= null) {
+                moduleScriptService.postInstallModule(moduleScript, meveoModule);
             }
         }
         
@@ -679,11 +681,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     }
 
     /**
-     * Convert MeveoModule or its subclass object to DTO representation
+     * Convert MeveoModule or its subclass object to DTO representation.
      * 
      * @param module Module object
-     * @param provider Provider
      * @return MeveoModuleDto object
+     * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public MeveoModuleDto moduleToDto(MeveoModule module) throws MeveoApiException {

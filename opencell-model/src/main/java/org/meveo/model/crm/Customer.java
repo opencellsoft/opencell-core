@@ -52,11 +52,11 @@ public class Customer extends AccountEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "customer_category_id")
     private CustomerCategory customerCategory;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "customer_brand_id")
     private CustomerBrand customerBrand;
 

@@ -16,6 +16,7 @@ import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.admin.impl.GenericModuleService;
 import org.meveo.service.script.service.ServiceModelScriptService;
+import org.meveo.service.script.service.ServiceScriptInterface;
 
 /**
  * @author Edward P. Legaspi
@@ -42,9 +43,11 @@ public class BusinessServiceModelService extends GenericModuleService<BusinessSe
     }
 
     public ServiceTemplate instantiateBSM(BusinessServiceModel bsm, String prefix, List<CustomFieldDto> customFields) throws BusinessException {
+        
+        ServiceScriptInterface serviceScipt = null;
         if (bsm.getScript() != null) {
             try {
-                serviceModelScriptService.beforeCreateServiceFromBSM(customFields, bsm.getScript().getCode());
+                serviceScipt = serviceModelScriptService.beforeCreateServiceFromBSM(customFields, bsm.getScript().getCode());
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
             }
@@ -54,9 +57,9 @@ public class BusinessServiceModelService extends GenericModuleService<BusinessSe
         ServiceTemplate newServiceTemplateCreated = catalogHierarchyBuilderService.duplicateServiceTemplate(bsm.getServiceTemplate().getCode(), prefix, null, pricePlansInMemory,
             chargeTemplateInMemory);
 
-        if (bsm.getScript() != null) {
+        if (serviceScipt != null) {
             try {
-                serviceModelScriptService.afterCreateServiceFromBSM(newServiceTemplateCreated, customFields, bsm.getScript().getCode());
+                serviceModelScriptService.afterCreateServiceFromBSM(newServiceTemplateCreated, customFields, serviceScipt);
             } catch (BusinessException e) {
                 log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
             }

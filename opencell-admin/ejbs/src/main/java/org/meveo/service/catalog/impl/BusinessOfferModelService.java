@@ -26,8 +26,11 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.admin.impl.GenericModuleService;
 import org.meveo.service.script.offer.OfferModelScriptService;
+import org.meveo.service.script.offer.OfferScriptInterface;
 import org.meveo.service.script.product.ProductModelScriptService;
+import org.meveo.service.script.product.ProductScriptInterface;
 import org.meveo.service.script.service.ServiceModelScriptService;
+import org.meveo.service.script.service.ServiceScriptInterface;
 
 /**
  * @author Edward P. Legaspi
@@ -65,24 +68,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	/**
 	 * Creates an offer given a BusinessOfferModel.
 	 * 
-	 * @param businessOfferModel
-	 * @param customFields
-	 * @param code
-	 * @param name
-	 * @param offerDescription
-	 * @param serviceCodes
-	 * @param channels
-	 * @param bams
-	 * @param offerTemplateCategories
-	 * @param lifeCycleStatusEnum
-	 * @param map
-	 * @return
-	 * @throws BusinessException
+	 * @param bomParams business offer model parameters.
+	 * @return offer template
+	 * @throws BusinessException business exception.
 	 */
 	public OfferTemplate instantiateFromBOM(BOMInstantiationParameters bomParams) throws BusinessException {
 
-		OfferTemplate bomOffer = bomParams.getBusinessOfferModel().getOfferTemplate();
-		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
+        OfferTemplate bomOffer = bomParams.getBusinessOfferModel().getOfferTemplate();
 
 		// 1 create offer
 		OfferTemplate newOfferTemplate = new OfferTemplate();
@@ -95,11 +87,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					+ (bomParams.getValidTo() == null ? "-" : bomParams.getValidTo()) + " already exists");
 		}
 
+		OfferScriptInterface offerScript = null;
 		if (bomParams.getBusinessOfferModel() != null && bomParams.getBusinessOfferModel().getScript() != null) {
-			try {
-				offerModelScriptService.beforeCreateOfferFromBOM(bomParams.getCustomFields(),
-						bomParams.getBusinessOfferModel().getScript().getCode());
-			} catch (BusinessException e) {
+            try {
+                offerScript = offerModelScriptService.beforeCreateOfferFromBOM(bomParams.getCustomFields(), bomParams.getBusinessOfferModel().getScript().getCode());
+            } catch (BusinessException e) {
 				log.error("Failed to execute a script {}", bomParams.getBusinessOfferModel().getScript().getCode(), e);
 			}
 		}
@@ -191,16 +183,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			newOfferTemplate.addOfferProductTemplate(newOfferProductTemplate);
 		}
 
-		if (newOfferTemplate.getBusinessOfferModel() != null
-				&& newOfferTemplate.getBusinessOfferModel().getScript() != null) {
-			try {
-				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, bomParams.getCustomFields(),
-						newOfferTemplate.getBusinessOfferModel().getScript().getCode());
-			} catch (BusinessException e) {
-				log.error("Failed to execute a script {}",
-						newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
-			}
-		}
+        if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
+            try {
+                offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, bomParams.getCustomFields(), offerScript);
+            } catch (BusinessException e) {
+                log.error("Failed to execute a script {}", newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
+            }
+        }
 
 		return newOfferTemplate;
 	}
@@ -268,14 +257,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 				}
 			}
 
-			if (bpm != null && bpm.getScript() != null) {
-				try {
-					productModelScriptService.beforeCreate(
-							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
-				}
-			}
+            ProductScriptInterface productScript = null;
+            if (bpm != null && bpm.getScript() != null) {
+                try {
+                    productScript = productModelScriptService.beforeCreate(matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
+                }
+            }
 
 			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateOfferProductTemplate(
 					offerProductTemplate, prefix, matchedProductConfigurationDto, pricePlansInMemory,
@@ -283,14 +272,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			newOfferProductTemplates.add(newOfferProductTemplate);
 
-			if (bpm != null && bpm.getScript() != null) {
-				try {
-					productModelScriptService.afterCreate(newOfferProductTemplate.getProductTemplate(),
-							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
-				}
-			}
+            if (productScript != null) {
+                try {
+                    productModelScriptService.afterCreate(newOfferProductTemplate.getProductTemplate(), matchedProductConfigurationDto.getCustomFields(), productScript);
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
+                }
+            }
 		}
 
 		return newOfferProductTemplates;
@@ -303,54 +291,55 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		// we need this to check in case of non-bsm, non-existing service template
 		List<OfferServiceTemplate> offerServiceTemplates = new ArrayList<>(bomOffer.getOfferServiceTemplates());
 
-		if (offerServiceTemplates == null || offerServiceTemplates.isEmpty() || serviceCodes == null
-				|| serviceCodes.isEmpty()) {
+		if (offerServiceTemplates == null || serviceCodes == null || serviceCodes.isEmpty()) {
 			return newOfferServiceTemplates;
 		}
 
 		// check if service exists in offer
-		for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
-			boolean serviceFound = false;
-			String serviceCode = serviceCodeDto.getCode();
+        for (ServiceConfigurationDto serviceCodeDto : serviceCodes) {
+            boolean serviceFound = false;
+            String serviceCode = serviceCodeDto.getCode();
 
-			OfferServiceTemplate tempOfferServiceTemplate = null;
-			for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
-				ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
-				if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
-					serviceFound = true;
-					break;
-				} else {
-					// instantiated from bsm
-					ServiceTemplate stSource = serviceTemplateService.findByCode(serviceCode);
-					if (stSource != null) {
-						// check if exists in bsm or is from offer entity
-						// (meaning not from bsm = non transient)
-						BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, stSource);
-						if (bsm != null) {
-							tempOfferServiceTemplate = new OfferServiceTemplate();
-							tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
-							tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
+            OfferServiceTemplate tempOfferServiceTemplate = null;
+            if (serviceCodeDto.isInstantiatedFromBSM()) {
+                // no need to check in offer, we initialized a new instance and add to the newly created offer
+                // instantiated from bsm
+                ServiceTemplate stSource = serviceTemplateService.findByCode(serviceCode);
+                if (stSource != null) {
+                    // check if exists in bsm or is from offer entity
+                    // (meaning not from bsm = non transient)
+                    BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, stSource);
+                    if (bsm != null) {
+                        tempOfferServiceTemplate = new OfferServiceTemplate();
+                        tempOfferServiceTemplate.setMandatory(serviceCodeDto.isMandatory());
+                        tempOfferServiceTemplate.setOfferTemplate(newOfferTemplate);
 
-							ServiceTemplate stTarget = new ServiceTemplate();
-							stTarget.setCode(stSource.getCode());
-							stTarget.setDescription(stSource.getDescription());
-							stTarget.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
-							stTarget.setBusinessServiceModel(bsm);
+                        ServiceTemplate stTarget = new ServiceTemplate();
+                        stTarget.setCode(stSource.getCode());
+                        stTarget.setDescription(stSource.getDescription());
+                        stTarget.setInstantiatedFromBSM(serviceCodeDto.isInstantiatedFromBSM());
+                        stTarget.setBusinessServiceModel(bsm);
 
-							tempOfferServiceTemplate.setServiceTemplate(stTarget);
-							offerServiceTemplates.add(tempOfferServiceTemplate);
-							serviceFound = true;
-							break;
-						}
-					}
-				}
-			}
+                        tempOfferServiceTemplate.setServiceTemplate(stTarget);
+                        offerServiceTemplates.add(tempOfferServiceTemplate);
+                        serviceFound = true;
+                    }
+                }
+            } else {
+                for (OfferServiceTemplate offerServiceTemplate : offerServiceTemplates) {
+                    ServiceTemplate serviceTemplate = offerServiceTemplate.getServiceTemplate();
+                    if (serviceCode.equals(serviceTemplate.getCode()) && !serviceCodeDto.isInstantiatedFromBSM()) {
+                        serviceFound = true;
+                        break;
+                    }
+                }
+            }
 
-			if (!serviceFound) {
-				// service is not defined in offer
-				throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
-			}
-		}
+            if (!serviceFound) {
+                // service is not defined in offer
+                throw new BusinessException("Service " + serviceCode + " is not defined in the offer");
+            }
+        }
 
 		List<PricePlanMatrix> pricePlansInMemory = new ArrayList<>();
 		List<ChargeTemplate> chargeTemplateInMemory = new ArrayList<>();
@@ -380,9 +369,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			// get the BSM from BOM
 			BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, serviceTemplate);
 
+			ServiceScriptInterface serviceScipt = null;
 			if (bsm != null && bsm.getScript() != null) {
 				try {
-					serviceModelScriptService.beforeCreateServiceFromBSM(serviceConfigurationDto.getCustomFields(),
+				    serviceScipt = serviceModelScriptService.beforeCreateServiceFromBSM(serviceConfigurationDto.getCustomFields(),
 							bsm.getScript().getCode());
 				} catch (BusinessException e) {
 					log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
@@ -393,19 +383,22 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					offerServiceTemplate, serviceConfigurationDto, prefix, pricePlansInMemory, chargeTemplateInMemory);
 			newOfferServiceTemplates.add(newOfferServiceTemplate);
 
-			if (bsm != null && bsm.getScript() != null) {
-				try {
-					serviceModelScriptService.afterCreateServiceFromBSM(newOfferServiceTemplate.getServiceTemplate(),
-							serviceConfigurationDto.getCustomFields(), bsm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
-				}
-			}
+            if (serviceScipt != null) {
+                try {
+                    serviceModelScriptService.afterCreateServiceFromBSM(newOfferServiceTemplate.getServiceTemplate(), serviceConfigurationDto.getCustomFields(), serviceScipt);
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
+                }
+            }
 		}
 
 		return newOfferServiceTemplates;
 	}
 
+	/**
+	 * @param businessOfferModel business offer model
+	 * @return list of business service modle.
+	 */
 	public List<BusinessServiceModel> getBusinessServiceModels(BusinessOfferModel businessOfferModel) {
 		List<BusinessServiceModel> businessServiceModels = new ArrayList<>();
 		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
@@ -417,6 +410,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 		return businessServiceModels;
 	}
 
+	/**
+	 * @param businessOfferModel business offer model
+	 * @param serviceTemplate service template
+	 * @return business service model.
+	 */
 	public BusinessServiceModel findBsmFromBom(BusinessOfferModel businessOfferModel, ServiceTemplate serviceTemplate) {
 		BusinessServiceModel bsm = null;
 		for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {

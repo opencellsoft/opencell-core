@@ -304,7 +304,7 @@ public class CustomFieldValue implements Serializable {
     /**
      * Set a list of values.
      * 
-     * @param listValue
+     * @param listValue list of values to set.
      */
     @SuppressWarnings({ "rawtypes" })
     public void setListValue(List listValue) {
@@ -483,8 +483,8 @@ public class CustomFieldValue implements Serializable {
     /**
      * Set value of a given type
      * 
-     * @param value
-     * @param fieldType
+     * @param value value object
+     * @param fieldType field type.
      */
     public void setSingleValue(Object value, CustomFieldTypeEnum fieldType) {
 
@@ -577,9 +577,9 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Get a short representation of a value to be used as display in GUI in inherited fields
+     * Get a short representation of a value to be used as display in GUI in inherited fields.
      * 
-     * @param cft Custom field template
+     * @param value object value.
      * @param dateFormat Date format
      * @return Return formated value when storage type is Single and concatenated values when storage type is multiple
      */
@@ -657,8 +657,6 @@ public class CustomFieldValue implements Serializable {
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
             StringBuilder builder = new StringBuilder();
 
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("AKK in short rep : map is {}, {}", mapDateValue!=null , mapValuesForGUI!=null);
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             int i = 0;
             for (Map<String, Object> valueInfo : mapValuesForGUI) {
@@ -1201,13 +1199,19 @@ public class CustomFieldValue implements Serializable {
             entityReferenceValueForGUI);
     }
 
+    /**
+     * @param collection collection
+     * @param maxLen max length
+     * @return collection as string.
+     */
     private String toString(Collection<?> collection, int maxLen) {
         StringBuilder builder = new StringBuilder();
         builder.append("[");
         int i = 0;
         for (Iterator<?> iterator = collection.iterator(); iterator.hasNext() && i < maxLen; i++) {
-            if (i > 0)
+            if (i > 0) {
                 builder.append(", ");
+            }
             builder.append(iterator.next());
         }
         builder.append("]");
@@ -1215,8 +1219,9 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition
+     * Convert (deserialize) a string value (serialized value in case of list, map, entity, childEntity) into an object according to custom field data type definition.
      * 
+     * @param cft custom field template.s
      * @param valueToConvert Value to convert
      * @return A value corresponding to custom field data type definition
      */
@@ -1281,8 +1286,8 @@ public class CustomFieldValue implements Serializable {
     }
 
     /**
-     * Convert (serialize) object according to custom field data type definition to a string value (serialized value in case of list, map, entity, childEntity)
-     * 
+     * Convert (serialize) object according to custom field data type definition to a string value (serialized value in case of list, map, entity, childEntity).
+     * @param cft customer field template.
      * @param valueToConvert Value to convert
      * @return A value corresponding to custom field data type definition
      */

@@ -22,25 +22,49 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
+import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
 
+/**
+ * @author phung
+ *
+ * @param <P> extension of Business Entity.
+ */
 public abstract class BusinessService<P extends BusinessEntity> extends PersistenceService<P> {
 
     /**
-     * Find entity by code - strict match
+     * Find entity by code - strict match.
      * 
      * @param code Code to match
      * @return A single entity matching code
      */
     public P findByCode(String code) {
-        return findByCode(code, null);
+
+        if (code == null) {
+            return null;
+        }
+
+        TypedQuery<P> query = getEntityManager().createQuery("select be from " + entityClass.getSimpleName() + " be where upper(code)=:code", entityClass)
+            .setParameter("code", code.toUpperCase()).setMaxResults(1);
+
+        // if (entityClass.isAnnotationPresent(Cacheable.class)) {
+        // query.setHint("org.hibernate.cacheable", true);
+        // }
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
+            return null;
+        }
     }
 
     /**
-     * Find entity by code - strict match
+     * Find entity by code - strict match.
      * 
      * @param code Code to match
      * @param fetchFields Fields to fetch
@@ -51,25 +75,30 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     }
 
     /**
-     * Find entity by code - strict match
+     * Find entity by code - strict match.
      * 
      * @param code Code to match
      * @param fetchFields Fields to fetch
      * @param additionalSql Additional sql to append to the find clause
      * @param additionalParameters An array of Parameter names and values for additional sql
-     * @param additionalParamValue Parameter value in additional sql
      * @return A single entity matching code
      */
     @SuppressWarnings("unchecked")
     protected P findByCode(String code, List<String> fetchFields, String additionalSql, Object... additionalParameters) {
+        
+        if (StringUtils.isBlank(code)) {
+            return null;
+        }
+        
         QueryBuilder qb = new QueryBuilder(getEntityClass(), "be", fetchFields);
         qb.addCriterion("be.code", "=", code, true);
-        if (additionalSql!=null){
+        if (additionalSql != null) {
             qb.addSqlCriterionMultiple(additionalSql, additionalParameters);
         }
 
         try {
             return (P) qb.getQuery(getEntityManager()).getSingleResult();
+
         } catch (NoResultException e) {
             log.debug("No {} of code {} found", getEntityClass().getSimpleName(), code);
             return null;
@@ -80,7 +109,7 @@ public abstract class BusinessService<P extends BusinessEntity> extends Persiste
     }
 
     /**
-     * Find entity by code - match the beginning of code
+     * Find entity by code - match the beginning of code.
      * 
      * @param codePrefix Beginning of code
      * @return A list of entities which code starts with a given value

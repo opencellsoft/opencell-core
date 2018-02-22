@@ -25,7 +25,6 @@ public abstract class SecureMethodParameterParser<T> {
      * 
      * @param parameter The {@link SecureMethodParameter} instance that describe the parameter that will be evaluated.
      * @param values The method parameters received by the method that was annotated with {@link SecuredBusinessEntityMethod}
-     * @param user The current user
      * @return The resulting object that was retrieved by the parser.
      *
      * @throws InvalidParameterException Parameter value was not resolved because of wrong path, or other parsing errors

@@ -110,8 +110,8 @@ public class StringUtils {
     /**
      * @param s input string
      * @param length length of string
-     * @param indicator
-     * @return
+     * @param indicator true/false
+     * @return truncated string.
      */
     public static String truncate(String s, int length, boolean indicator) {
         if (isBlank(s) || s.length() <= length) {

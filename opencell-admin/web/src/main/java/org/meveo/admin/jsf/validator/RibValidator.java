@@ -33,7 +33,7 @@ import org.meveo.admin.util.ResourceBundle;
 
 /**
  * @author Gediminas Ubartas
- * @created Jan 31, 2011
+ * @since Jan 31, 2011
  * 
  */
 @FacesValidator("ribValidator")

@@ -24,7 +24,6 @@ import java.util.List;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
@@ -195,8 +194,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
             terminationDate = new Date();
         }
 
-        subscription = refreshOrRetrieve(subscription);
-
         List<ServiceInstance> serviceInstances = subscription.getServiceInstances();
         for (ServiceInstance serviceInstance : serviceInstances) {
             if (InstanceStatusEnum.ACTIVE.equals(serviceInstance.getStatus()) || InstanceStatusEnum.SUSPENDED.equals(serviceInstance.getStatus())) {
@@ -227,35 +224,19 @@ public class SubscriptionService extends BusinessService<Subscription> {
         return subscription;
     }
 
-    @SuppressWarnings("unchecked")
-    public List<Subscription> findByOfferTemplate(OfferTemplate offerTemplate) {
-        QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
-        qb.addCriterionEntity("offer", offerTemplate);
-
+    public boolean hasSubscriptions(OfferTemplate offerTemplate) {
         try {
-            return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            log.warn("failed to find subscription by offer template", e);
-            return null;
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Subscription> findByOfferTemplate(EntityManager em, OfferTemplate offerTemplate) {
-        QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
-
-        try {
-
+            QueryBuilder qb = new QueryBuilder(Subscription.class, "s");
             qb.addCriterionEntity("offer", offerTemplate);
 
-            return (List<Subscription>) qb.getQuery(em).getResultList();
+            return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult()).longValue() > 0;
         } catch (NoResultException e) {
-            return null;
+            return false;
         }
     }
-    
+
     public List<Subscription> listByUserAccount(UserAccount userAccount) {
-    	return listByUserAccount(userAccount, "code", SortOrder.ASCENDING);
+        return listByUserAccount(userAccount, "code", SortOrder.ASCENDING);
     }
 
     @SuppressWarnings("unchecked")
@@ -263,10 +244,10 @@ public class SubscriptionService extends BusinessService<Subscription> {
         QueryBuilder qb = new QueryBuilder(Subscription.class, "c");
         qb.addCriterionEntity("userAccount", userAccount);
         boolean ascending = true;
-		if (sortOrder != null) {
-			ascending = sortOrder.equals(SortOrder.ASCENDING);
-		}
-		qb.addOrderCriterion(sortBy, ascending);
+        if (sortOrder != null) {
+            ascending = sortOrder.equals(SortOrder.ASCENDING);
+        }
+        qb.addOrderCriterion(sortBy, ascending);
 
         try {
             return (List<Subscription>) qb.getQuery(getEntityManager()).getResultList();
@@ -288,18 +269,17 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         return ids;
     }
-    
-    
-    @SuppressWarnings("unchecked")
-	public List<ServiceInstance> listBySubscription(Subscription subscription) {
-		QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
-		qb.addCriterionEntity("subscription", subscription);
 
-		try {
-			return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-	}
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> listBySubscription(Subscription subscription) {
+        QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+        qb.addCriterionEntity("subscription", subscription);
+
+        try {
+            return (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("error while getting user account list by billing account", e);
+            return null;
+        }
+    }
 }

@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.InstanceStatusEnum;
@@ -58,9 +57,6 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
 
     @Inject
     private WalletOperationService walletOperationService;
-
-    @Inject
-    private WalletCacheContainerProvider walletCacheContainerProvider;
 
     public OneShotChargeInstance findByCodeAndSubsription(String code, Long subscriptionId) {
         OneShotChargeInstance oneShotChargeInstance = null;
@@ -136,8 +132,8 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     }
 
     public OneShotChargeInstance oneShotChargeApplication(Subscription subscription, OneShotChargeTemplate chargeTemplate, String walletCode, Date effetDate,
-            BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description,
-            String orderNumber, boolean applyCharge) throws BusinessException {
+            BigDecimal amoutWithoutTax, BigDecimal amoutWithTax, BigDecimal quantity, String criteria1, String criteria2, String criteria3, String description, String orderNumber,
+            boolean applyCharge) throws BusinessException {
 
         if (quantity == null) {
             quantity = BigDecimal.ONE;
@@ -197,12 +193,13 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
     /**
      * Apply one shot charge to a user account for a Virtual operation. Does not create/update/persist any entity.
      * 
+     * @param subscription subscription
      * @param oneShotChargeInstance Recurring charge instance
      * @param quantity Quantity as calculated
-     * @param fromDate Recurring charge application start
-     * @param toDate Recurring charge application end
+     * @param effectiveDate Recurring charge application start
+     * @param quantity quantity
      * @return Wallet operations
-     * @throws BusinessException
+     * @throws BusinessException business excetion.
      */
     public WalletOperation oneShotChargeApplicationVirtual(Subscription subscription, OneShotChargeInstance oneShotChargeInstance, Date effectiveDate, BigDecimal quantity)
             throws BusinessException {
@@ -274,7 +271,7 @@ public class OneShotChargeInstanceService extends BusinessService<OneShotChargeI
         walletOperationService.oneShotWalletOperation(subscription, compensationCharge, inputQuantity, null, new Date(), false, null);
         // we check that balance is unchanged
         //
-        BigDecimal cacheBalance = walletCacheContainerProvider.getBalance(wallet.getId());
+        BigDecimal cacheBalance = walletService.getWalletBalance(wallet.getId());
         if (cacheBalance.compareTo(balanceWithTax) != 0) {
             log.error("balances in prepaid matching process do not match cache={}, compensated={}", cacheBalance, balanceWithTax);
             throw new BusinessException("MATCHING_ERROR");

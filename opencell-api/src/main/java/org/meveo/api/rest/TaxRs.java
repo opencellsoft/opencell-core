@@ -30,48 +30,53 @@ public interface TaxRs extends IBaseRs {
     /**
      * Create tax. Description per language can be defined
      * 
-     * @param postData
-     * @return
+     * @param postData tax to be created
+     * @return action status
      */
     @Path("/")
     @POST
-    public ActionStatus create(TaxDto postData);
+    ActionStatus create(TaxDto postData);
 
     /**
      * Update tax. Description per language can be defined
      * 
-     * @param postData
-     * @return
+     * @param postData tax to be updated
+     * @return action status
      */
     @Path("/")
     @PUT
-    public ActionStatus update(TaxDto postData);
+    ActionStatus update(TaxDto postData);
 
     /**
      * Search tax with a given code.
      * 
-     * @param taxCode
-     * @return
+     * @param taxCode tax's
+     * @return tax if exists
      */
     @Path("/")
     @GET
-    public GetTaxResponse find(@QueryParam("taxCode") String taxCode);
+    GetTaxResponse find(@QueryParam("taxCode") String taxCode);
 
     /**
      * Remove tax with a given code.
      * 
-     * @param taxCode
-     * @return
+     * @param taxCode tax's code
+     * @return action status
      */
     @Path("/{taxCode}")
     @DELETE
-    public ActionStatus remove(@PathParam("taxCode") String taxCode);
+    ActionStatus remove(@PathParam("taxCode") String taxCode);
 
+    /**
+     * @param postData tax to be created or updated
+     * @return action status
+     */
     @Path("/createOrUpdate")
-    @POST
-    public ActionStatus createOrUpdate(TaxDto postData);
+    @POST ActionStatus createOrUpdate(TaxDto postData);
 
+    /**
+     * @return list of all taxes.
+     */
     @Path("/list")
-    @GET
-    public GetTaxesResponse list();
+    @GET GetTaxesResponse list();
 }

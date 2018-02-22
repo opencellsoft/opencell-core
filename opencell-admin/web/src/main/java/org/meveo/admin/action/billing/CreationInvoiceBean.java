@@ -50,7 +50,6 @@ import org.meveo.model.billing.TaxInvoiceAgregate;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateHandler;
@@ -79,11 +78,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected
-	 * 
-	 * @{link Invoice} service. Extends {@link PersistenceService}.
-	 */
 	@Inject
 	private InvoiceService invoiceService;
 
@@ -275,7 +269,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 				return;
 			}
 
-			selectInvoiceSubCat = invoiceSubCategoryService.refreshOrRetrieve(selectInvoiceSubCat);
+			selectInvoiceSubCat = invoiceSubCategoryService.retrieveIfNotManaged(selectInvoiceSubCat);
 
 			RatedTransaction ratedTransaction = new RatedTransaction();
 			ratedTransaction.setUsageDate(usageDate);
@@ -305,9 +299,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Recompute agregates
 	 * 
-	 * @param agregateHandler
-	 * @param billingAccount
-	 * @throws BusinessException
+	 * @param billingAccount billing account
+	 * @throws BusinessException business exception
 	 */
 	public void updateAmountsAndLines(BillingAccount billingAccount) throws BusinessException {
 		billingAccount = billingAccountService.refreshOrRetrieve(billingAccount);
@@ -331,7 +324,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Called whene a line is deleted from the dataList detailInvoice
 	 * 
-	 * @throws BusinessException
 	 */
 	public void deleteRatedTransactionLine(){
 		try{
@@ -345,7 +337,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 
 	/**
 	 * 
-	 * @throws BusinessException
 	 */
 	public void deleteLinkedInvoiceCategoryDetaild(){		
 		try{
@@ -364,8 +355,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * Called whene quantity or unitAmout are changed in the dataList
 	 * detailInvoice
 	 * 
-	 * @param ratedTx
-	 * @throws BusinessException
+	 * @param ratedTx rated transacion.
 	 */
 	public void reComputeAmountWithoutTax(RatedTransaction ratedTx) {
 		try{
@@ -386,7 +376,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Include original opened ratedTransaction
 	 * 
-	 * @throws BusinessException
 	 */
 
 	public void importOpenedRT(){
@@ -481,7 +470,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	/**
 	 * Include a copy from linkedIncoice's RatedTransaction
 	 * 
-	 * @throws BusinessException
 	 */
 	public void importFromLinkedInvoices(){
 		try{
@@ -600,14 +588,15 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		if (entity.getBillingAccount() == null || entity.getBillingAccount().isTransient()) {
 			throw new BusinessException("BillingAccount is required.");
 		}
-		return billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+		return billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 	}
 
 	private UserAccount getFreshUA() throws BusinessException {
-		if (getFreshBA().getUsersAccounts() == null || getFreshBA().getUsersAccounts().isEmpty()) {
+	    BillingAccount ba = getFreshBA();
+		if (ba.getUsersAccounts() == null || ba.getUsersAccounts().isEmpty()) {
 			throw new BusinessException("BillingAccount with code=" + getFreshBA().getCode() + " has no userAccount.");
 		}
-		return userAccountService.refreshOrRetrieve(getFreshBA().getUsersAccounts().get(0));
+		return userAccountService.retrieveIfNotManaged(ba.getUsersAccounts().get(0));
 	}
 
 	public List<CategoryInvoiceAgregate> getCategoryInvoiceAggregates() {
@@ -686,7 +675,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 			return;
 		}
 
-		selectedInvoiceSubCategory = invoiceSubCategoryService.refreshOrRetrieve(selectedInvoiceSubCategory);		
+		selectedInvoiceSubCategory = invoiceSubCategoryService.retrieveIfNotManaged(selectedInvoiceSubCategory);		
 
 		agregateHandler.addInvoiceSubCategory(selectedInvoiceSubCategory, getFreshBA(), getFreshUA(),description, amountWithoutTax);
 		updateAmountsAndLines(getFreshBA());
@@ -696,8 +685,8 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 * Called whene quantity or unitAmout are changed in the dataList
 	 * detailInvoice
 	 * 
-	 * @param ratedTx
-	 * @throws BusinessException
+	 * @param invSubCat sub category invoice
+	 * @throws BusinessException business exception.
 	 */
 	public void reComputeAmountWithoutTax(SubCategoryInvoiceAgregate invSubCat) throws BusinessException {
 		agregateHandler.reset();
@@ -718,7 +707,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	 */
 	public LazyDataModel<Invoice> getInvoicesByTypeAndBA() throws BusinessException {
 		if (getEntity().getBillingAccount() != null && !entity.getBillingAccount().isTransient()) {
-			BillingAccount ba = billingAccountService.refreshOrRetrieve(entity.getBillingAccount());
+			BillingAccount ba = billingAccountService.retrieveIfNotManaged(entity.getBillingAccount());
 			filters.put("billingAccount", ba);
 		}
 		if (entity.getInvoiceType() != null) {

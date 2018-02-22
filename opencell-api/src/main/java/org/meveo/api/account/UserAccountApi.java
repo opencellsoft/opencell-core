@@ -250,10 +250,10 @@ public class UserAccountApi extends AccountEntityApi {
     /**
      * Create or update User Account entity based on code.
      * 
-     * @param postData
+     * @param postData posted data to API
      * 
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
     public void createOrUpdate(UserAccountDto postData) throws MeveoApiException, BusinessException {
 

@@ -127,7 +127,7 @@ public class CustomEntityTemplateBean extends BaseBean<CustomEntityTemplate> {
     /**
      * Prepare to show entity customozation for a particular class - To be used from GUI action button/link
      * 
-     * @param clazz Entity class
+     * @param entityClassName Entity class
      */
     public void initCustomization(String entityClassName) {
         customizedEntity = null;

@@ -43,6 +43,8 @@ public enum ApplicationTypeEnum {
 
 	/**
 	 * Gets enum by its id.
+	 * @param id id of application type 
+	 * @return application type enum/
 	 */
 	public static ApplicationTypeEnum getValue(Integer id) {
 		if (id != null) {

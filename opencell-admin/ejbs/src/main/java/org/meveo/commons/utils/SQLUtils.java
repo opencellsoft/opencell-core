@@ -27,12 +27,11 @@ import java.sql.Statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-//TODO test
 /**
  * SQL Utility methods.
  * 
  * @author Donatas Remeika
- * @created Mar 13, 2009
+ * 
  */
 public final class SQLUtils {
 
@@ -70,6 +69,7 @@ public final class SQLUtils {
      * 
      * @param rs
      *            ResultSet to get value from.
+     * @param types class
      * @return types instance of Class.
      * @throws SQLException sql exception
      */
@@ -106,8 +106,7 @@ public final class SQLUtils {
     /**
      * Get Integer value from ResultSet and close it.
      * 
-     * @param rs
-     *            ResultSet to get value from.
+     * @param rs ResultSet to get value from.
      * @return Integer value.
      */
     public static Integer getIntegerAndCloseResultSet(ResultSet rs) {
@@ -127,8 +126,7 @@ public final class SQLUtils {
     /**
      * Get Integer value from ResultSet and close it.
      * 
-     * @param rs
-     *            ResultSet to get value from.
+     * @param rs ResultSet to get value from.
      * @return Integer value.
      */
     public static Long getLongAndCloseResultSet(ResultSet rs) {

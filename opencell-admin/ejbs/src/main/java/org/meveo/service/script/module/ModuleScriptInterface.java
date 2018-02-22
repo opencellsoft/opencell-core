@@ -12,7 +12,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void preInstallModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -21,7 +21,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void postInstallModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -30,7 +30,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void preUninstallModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -39,7 +39,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void postUninstallModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -48,7 +48,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void preEnableModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -57,7 +57,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void postEnableModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -66,7 +66,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void preDisableModule(Map<String, Object> methodContext) throws BusinessException;
 
@@ -76,7 +76,7 @@ public interface ModuleScriptInterface extends ScriptInterface {
      * 
      * @param methodContext Method variables in a form of a map where CONTEXT_ENTITY=MeveoModule
      * 
-     * @throws BusinessException
+     * @throws BusinessException business exception.
      */
     public void postDisableModule(Map<String, Object> methodContext) throws BusinessException;
 }
