@@ -58,8 +58,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
-        if (postData.getEventTypeFilter() == null) {
+        if (StringUtils.isBlank(postData.getEventTypeFilter())) {
             missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            missingParameters.add("scriptInstanceCode");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -141,8 +144,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
-        if (postData.getEventTypeFilter() == null) {
+        if (StringUtils.isBlank(postData.getEventTypeFilter())) {
             missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            missingParameters.add("scriptInstanceCode");
         }
 
         handleMissingParametersAndValidate(postData);
