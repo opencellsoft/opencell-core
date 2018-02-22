@@ -94,7 +94,7 @@ public class RefundApi extends BaseApi {
         refund.setAmount(refundDto.getAmount());
         refund.setUnMatchingAmount(refundDto.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
-        refund.setAccountCode(occTemplate.getAccountCode());
+        refund.setAccountingCode(occTemplate.getAccountingCode());
         refund.setOccCode(occTemplate.getCode());
         refund.setOccDescription(StringUtils.isBlank(refundDto.getDescription()) ? occTemplate.getDescription() : refundDto.getDescription());
         refund.setTransactionCategory(occTemplate.getOccCategory());
@@ -139,16 +139,11 @@ public class RefundApi extends BaseApi {
         }
         log.debug("refund created for amount:" + refund.getAmount());
 
-        if (refund != null) {
-            return refund.getId();
-        } else {
-            return null;
-        }
-
+        return refund.getId();
     }
 
     public List<RefundDto> getRefundList(String customerAccountCode) throws Exception {
-        List<RefundDto> result = new ArrayList<RefundDto>();
+        List<RefundDto> result = new ArrayList<>();
 
         CustomerAccount customerAccount = customerAccountService.findByCode(customerAccountCode);
 

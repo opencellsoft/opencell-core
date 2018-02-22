@@ -26,6 +26,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
@@ -36,6 +37,7 @@ import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
@@ -74,6 +76,9 @@ public class AccountOperationApi extends BaseApi {
     /** The payment service. */
     @Inject
     private PaymentService paymentService;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     /**
      * Creates the.
@@ -124,7 +129,22 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setTransactionDate(postData.getTransactionDate());
         accountOperation.setTransactionCategory(postData.getTransactionCategory());
         accountOperation.setReference(postData.getReference());
-        accountOperation.setAccountCode(postData.getAccountCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            accountOperation.setAccountingCode(accountingCode);
+        } else {
+            // backward compatibility
+            if (!StringUtils.isBlank(postData.getAccountCode())) {
+                AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountCode());
+                if (accountingCode == null) {
+                    throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountCode());
+                }
+                accountOperation.setAccountingCode(accountingCode);
+            } 
+        }
         accountOperation.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         accountOperation.setAmount(postData.getAmount());
         accountOperation.setMatchingAmount(postData.getMatchingAmount());
@@ -472,7 +492,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
         accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
         accountOperationDto.setReference(accountOp.getReference());
-        accountOperationDto.setAccountCode(accountOp.getAccountCode());
+        accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
         accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
         accountOperationDto.setAmount(accountOp.getAmount());
         accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());

@@ -23,6 +23,9 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Size;
@@ -31,6 +34,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.billing.AccountingCode;
 
 @Entity
 @Cacheable
@@ -41,9 +45,9 @@ public class OCCTemplate extends BusinessEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	@Column(name = "account_code", length = 255)
-    @Size(max = 255)
-	private String accountCode;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "accounting_code_id")
+	private AccountingCode accountingCode;
 
 	@Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
@@ -52,14 +56,6 @@ public class OCCTemplate extends BusinessEntity {
 	@Column(name = "occ_category")
 	@Enumerated(EnumType.STRING)
 	private OperationCategoryEnum occCategory;
-
-	public String getAccountCode() {
-		return accountCode;
-	}
-
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
-	}
 
 	public String getAccountCodeClientSide() {
 		return accountCodeClientSide;
@@ -104,5 +100,13 @@ public class OCCTemplate extends BusinessEntity {
 			return false;
 		return true;
 	}
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
 }

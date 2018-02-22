@@ -51,6 +51,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 
@@ -100,9 +101,9 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Size(max = 255)
     private String reference;
 
-    @Column(name = "account_code", length = 255)
-    @Size(max = 255)
-    private String accountCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
@@ -231,14 +232,6 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     public void setCustomerAccount(CustomerAccount customerAccount) {
         this.customerAccount = customerAccount;
-    }
-
-    public void setAccountCode(String accountCode) {
-        this.accountCode = accountCode;
-    }
-
-    public String getAccountCode() {
-        return accountCode;
     }
 
     public String getAccountCodeClientSide() {
@@ -411,5 +404,13 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     public void setBankCollectionDate(Date bankCollectionDate) {
         this.bankCollectionDate = bankCollectionDate;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 }

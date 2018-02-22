@@ -237,7 +237,7 @@ public class RefundService extends PersistenceService<Refund> {
         refund.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         refund.setUnMatchingAmount(refund.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
-        refund.setAccountCode(occTemplate.getAccountCode());
+        refund.setAccountingCode(occTemplate.getAccountingCode());
         refund.setOccCode(occTemplate.getCode());
         refund.setOccDescription(occTemplate.getDescription());
         refund.setType(doPaymentResponseDto.getPaymentBrand());

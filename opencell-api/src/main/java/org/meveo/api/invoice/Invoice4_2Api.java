@@ -588,7 +588,7 @@ public class Invoice4_2Api extends BaseApi {
             accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
             accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
             accountOperationDto.setReference(accountOp.getReference());
-            accountOperationDto.setAccountCode(accountOp.getAccountCode());
+            accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
             accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
             accountOperationDto.setAmount(accountOp.getAmount());
             accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());

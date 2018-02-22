@@ -15,6 +15,9 @@ public class OccTemplateDto extends BusinessDto {
     private static final long serialVersionUID = 2587489734648000805L;
 
     @XmlElement(required = true)
+    private String accountingCode;
+    
+    @Deprecated
     private String accountCode;
 
     @XmlElement(required = true)
@@ -27,17 +30,9 @@ public class OccTemplateDto extends BusinessDto {
 
     public OccTemplateDto(OCCTemplate e) {
         super(e);
-        accountCode = e.getAccountCode();
+        accountingCode = e.getAccountingCode().getCode();
         occCategory = e.getOccCategory();
         accountCodeClientSide = e.getAccountCodeClientSide();
-    }
-
-    public String getAccountCode() {
-        return accountCode;
-    }
-
-    public void setAccountCode(String accountCode) {
-        this.accountCode = accountCode;
     }
 
     public OperationCategoryEnum getOccCategory() {
@@ -56,9 +51,24 @@ public class OccTemplateDto extends BusinessDto {
         this.accountCodeClientSide = accountCodeClientSide;
     }
 
+    public String getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
     @Override
     public String toString() {
-        return "OCCTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", accountCode=" + accountCode + ", occCategory=" + occCategory + ", accountCodeClientSide="
-                + accountCodeClientSide + "]";
+        return "OccTemplateDto [accountingCode=" + accountingCode + ", occCategory=" + occCategory + ", accountCodeClientSide=" + accountCodeClientSide + "]";
+    }
+
+    public String getAccountCode() {
+        return accountCode;
+    }
+
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
     }
 }

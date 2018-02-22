@@ -226,7 +226,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 		if (occ != null) {
 			entity.setOccCode(occ.getCode());
 			entity.setOccDescription(occ.getDescription());
-			entity.setAccountCode(occ.getAccountCode());
+			entity.setAccountingCode(occ.getAccountingCode());
 			entity.setTransactionCategory(occ.getOccCategory());
 			entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
 		}

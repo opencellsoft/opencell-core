@@ -235,7 +235,7 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         payment.setUnMatchingAmount(payment.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setAccountCode(occTemplate.getAccountCode());
+        payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setOccCode(occTemplate.getCode());
         payment.setOccDescription(occTemplate.getDescription());
         payment.setType(doPaymentResponseDto.getPaymentBrand());

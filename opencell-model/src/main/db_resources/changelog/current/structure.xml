@@ -1656,53 +1656,20 @@
         <addColumn tableName="dwh_journal_entries">
         	<column name="accounting_code_id" type="bigint"></column>
         </addColumn>
+        <addColumn tableName="ar_occ_template">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
         
         <addForeignKeyConstraint constraintName="fk_billing_invoice_sub_cat_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_invoice_sub_cat" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_billing_tax_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_tax" referencedColumnNames="id"/>
         <addForeignKeyConstraint constraintName="fk_billing_invoice_aggregate_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="billing_invoice_agregate" baseColumnNames="accounting_code_id" />
         <addForeignKeyConstraint constraintName="fk_dwh_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_account_operation" baseColumnNames="accounting_code_id" />
         <addForeignKeyConstraint constraintName="fk_dwh_journal_entries_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_journal_entries" baseColumnNames="accounting_code_id" />
-    </changeSet>
-   
-    <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi">
-    	<sql>
-			<![CDATA[
-			insert into billing_accounting_code (id, version, disabled, created, creator, code, chart_of_account_type, chart_of_account_view_type)
-			select nextval('billing_accounting_code_seq'), 0, 0, now(), creator, accounting_code, 'ASSETS', 'REGULAR' 
-			from billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'';
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[
-			update billing_invoice_sub_cat set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[
-			insert into billing_accounting_code (id, version, disabled, created, creator, code, chart_of_account_type, chart_of_account_view_type)
-			select nextval('billing_accounting_code_seq'), 0, 0, now(), creator, accounting_code, 'ASSETS', 'REGULAR' 
-			from billing_tax where accounting_code is not null and accounting_code<>'' and accounting_code not in (select code from billing_accounting_code);
-			]]>
-		</sql>
-		<sql>
-			<![CDATA[update billing_tax set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
-		</sql>
-		<sql>
-			<![CDATA[update billing_invoice_agregate set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
-		</sql>
-		<sql>
-			<![CDATA[update dwh_account_operation set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
-		</sql>
-		<sql>
-			<![CDATA[update dwh_journal_entries set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
-		</sql>
-		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
-		<dropColumn tableName="billing_tax" columnName="accounting_code"></dropColumn>
-		<dropColumn tableName="billing_invoice_agregate" columnName="accounting_code"></dropColumn>
-		<dropColumn tableName="dwh_account_operation" columnName="accounting_code"></dropColumn>
-		<dropColumn tableName="dwh_journal_entries" columnName="accounting_code"></dropColumn>
-		
-		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
-    </changeSet>
+        <addForeignKeyConstraint constraintName="fk_ar_occ_template_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_occ_template" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_account_operation" baseColumnNames="accounting_code_id" />
+    </changeSet> 
     
 </databaseChangeLog> 
