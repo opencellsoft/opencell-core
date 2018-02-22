@@ -8135,7 +8135,6 @@
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="COM" />
             <column name="description" value="Commercial invoice" />
-
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_size" valueNumeric="9" />
             <column name="occ_template_id" value="-25" />
@@ -8149,10 +8148,9 @@
             <column name="created" valueDate="2016-09-14 00:00:00.000" />
             <column name="code" value="ADJ" />
             <column name="description" value="Adjustement" />
-
             <column name="creator" value="OPENCELL.ADMIN" />
             <column name="sequence_size" valueNumeric="9" />
-            <column name="occ_template_id" value="-11" />
+            <column name="occ_template_id" value="-29" />
             <column name="matching_auto" valueNumeric="0" />
         </insert>
         <insert tableName="billing_invoice_type">
