@@ -1574,6 +1574,7 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated_status_date" type="datetime" />
+            <column name="last_update_date" type="datetime" />
             <column name="amount_cts" type="bigint" >
                 <constraints nullable="false" />
             </column>            		

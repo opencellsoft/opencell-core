@@ -57,6 +57,10 @@ public class PaymentHistory extends EnableEntity{
     @Column(name = "updated_status_date")
     private Date updatedStatusDate;
     
+    /** The last Update Date. */
+    @Column(name = "last_update_date")
+    private Date lastUpdateDate;
+    
     /** The amount. */
     @Column(name = "amount_cts")
     @NotNull
@@ -392,6 +396,20 @@ public class PaymentHistory extends EnableEntity{
      */
     public void setRefund(Refund refund) {
         this.refund = refund;
+    }
+
+    /**
+     * @return the lastUpdateDate
+     */
+    public Date getLastUpdateDate() {
+        return lastUpdateDate;
+    }
+
+    /**
+     * @param lastUpdateDate the lastUpdateDate to set
+     */
+    public void setLastUpdateDate(Date lastUpdateDate) {
+        this.lastUpdateDate = lastUpdateDate;
     }
     
 

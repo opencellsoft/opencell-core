@@ -46,6 +46,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         paymentHistory.setOperationCategory(operationCategory);
         paymentHistory.setSyncStatus(status);
         paymentHistory.setPaymentGatewayCode(paymentGateway == null ? null : paymentGateway.getCode());
+        paymentHistory.setLastUpdateDate(paymentHistory.getUpdatedStatusDate() == null ? paymentHistory.getOperationDate() : paymentHistory.getUpdatedStatusDate() );
         if (paymentMethod != null) {
             paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
             String pmVal = null;
