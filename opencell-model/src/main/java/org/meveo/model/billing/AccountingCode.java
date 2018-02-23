@@ -11,7 +11,6 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -47,11 +46,6 @@ public class AccountingCode extends BusinessEntity {
     @Column(name = "chart_of_account_view_type", length = 25)
     private ChartOfAccountViewTypeEnum chartOfAccountViewTypeEnum;
 
-    @NotNull
-    @Type(type = "numeric_boolean")
-    @Column(name = "status")
-    private boolean status = false;
-
     @Column(name = "notes", length = 2000)
     private String notes;
 
@@ -85,14 +79,6 @@ public class AccountingCode extends BusinessEntity {
 
     public void setChartOfAccountViewTypeEnum(ChartOfAccountViewTypeEnum chartOfAccountViewTypeEnum) {
         this.chartOfAccountViewTypeEnum = chartOfAccountViewTypeEnum;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     public String getNotes() {

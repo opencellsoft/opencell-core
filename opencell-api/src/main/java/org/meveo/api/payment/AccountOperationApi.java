@@ -493,6 +493,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
         accountOperationDto.setReference(accountOp.getReference());
         accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
+        accountOperationDto.setAccountCode(accountOp.getAccountingCode().getCode());
         accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
         accountOperationDto.setAmount(accountOp.getAmount());
         accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());

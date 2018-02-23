@@ -27,6 +27,7 @@ public class AccountOperationDto extends BaseDto {
 	@Deprecated
 	private String accountCode;
 	private String accountingCode;
+	@Deprecated
 	private String accountCodeClientSide;
 	private BigDecimal amount;
 	private BigDecimal matchingAmount = BigDecimal.ZERO;

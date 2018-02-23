@@ -36,6 +36,7 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.AccountingCode;
 
+@Deprecated
 @Entity
 @Table(name = "dwh_account_operation")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "dwh_account_operation_seq"), })

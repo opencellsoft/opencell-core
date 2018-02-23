@@ -47,6 +47,7 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.billing.AccountingCode;
 
+@Deprecated
 @Entity
 @Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = {
 		"origin_id", "invoice_number", "accounting_code_id" }))

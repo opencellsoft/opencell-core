@@ -49,6 +49,7 @@ public class OCCTemplate extends BusinessEntity {
 	@JoinColumn(name = "accounting_code_id")
 	private AccountingCode accountingCode;
 
+	@Deprecated
 	@Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
 	private String accountCodeClientSide;

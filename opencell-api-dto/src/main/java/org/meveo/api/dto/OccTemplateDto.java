@@ -23,6 +23,7 @@ public class OccTemplateDto extends BusinessDto {
     @XmlElement(required = true)
     private OperationCategoryEnum occCategory;
 
+    @Deprecated
     private String accountCodeClientSide;
 
     public OccTemplateDto() {
@@ -31,6 +32,7 @@ public class OccTemplateDto extends BusinessDto {
     public OccTemplateDto(OCCTemplate e) {
         super(e);
         accountingCode = e.getAccountingCode().getCode();
+        accountCode = e.getAccountingCode().getCode();
         occCategory = e.getOccCategory();
         accountCodeClientSide = e.getAccountCodeClientSide();
     }

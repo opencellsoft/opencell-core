@@ -23,7 +23,7 @@
 			<hftl:column label="#{messages['accountingCode.chartOfAccountTypeEnum']}" field="chartOfAccountTypeEnum" />
 			<hftl:column label="#{messages['accountingCode.reportingAccount']}" field="reportingAccount" />
 			<hftl:column label="#{messages['accountingCode.chartOfAccountViewTypeEnum']}" field="chartOfAccountViewTypeEnum" />
-			<hftl:column label="#{messages['enableEntity.active']}" field="status" isMessage="true" />
+			<hftl:column label="#{messages['enableEntity.disabled']}" field="disabled" />
 
 			<hftl:actionsColumn permission="#{currentUser.hasRole('billingManagement')}" />
 		</hftl:dataList>

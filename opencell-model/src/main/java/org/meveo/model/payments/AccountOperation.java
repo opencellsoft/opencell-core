@@ -105,6 +105,7 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
 
+    @Deprecated
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
     private String accountCodeClientSide;
