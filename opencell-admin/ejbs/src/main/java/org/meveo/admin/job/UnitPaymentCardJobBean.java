@@ -18,7 +18,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
-import org.meveo.service.payments.impl.RefundService;
 import org.slf4j.Logger;
 
 /**
@@ -37,9 +36,6 @@ public class UnitPaymentCardJobBean {
 
     @Inject
     private PaymentService paymentService;
-
-    @Inject
-    private RefundService refundService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway,
@@ -64,10 +60,10 @@ public class UnitPaymentCardJobBean {
                 }
             } else {
                 if (paymentMethodType == PaymentMethodEnum.CARD) {
-                    doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
+                    doPaymentResponseDto = paymentService.refundByCardToken(accountOperation.getCustomerAccount(),
                         accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                   // doPaymentResponseDto = refundService.refundByMandat(accountOperation.getCustomerAccount(),
+                   // doPaymentResponseDto = paymentService.refundByMandat(accountOperation.getCustomerAccount(),
                        // accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             }

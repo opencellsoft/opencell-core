@@ -131,20 +131,20 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
         return doPaymentResponseDto;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#doPaymentSepa(org.meveo.model.payments.DDPaymentMethod, java.lang.Long, java.util.Map)
-     */
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#checkMandat(java.lang.String)
-     */
     @Override
     public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         // TODO Auto-generated method stub
         return null;
     }

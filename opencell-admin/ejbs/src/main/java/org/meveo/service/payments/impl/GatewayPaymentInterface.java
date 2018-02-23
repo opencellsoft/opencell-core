@@ -31,7 +31,7 @@ public interface GatewayPaymentInterface {
      * @return cart token.
      * @throws BusinessException business exception
      */
-    String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
+    public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
             CreditCardTypeEnum cardType) throws BusinessException;
 
     /**
@@ -40,10 +40,10 @@ public interface GatewayPaymentInterface {
      * @param paymentToken payment token
      * @param ctsAmount amount in cent
      * @param additionalParams additional params
-     * @return payment by card dto
+     * @return payment response dto
      * @throws BusinessException business exception.
      */
-    PaymentResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    public PaymentResponseDto doPaymentToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
      * Initiate a payment with card and save the token for this card.
@@ -57,10 +57,10 @@ public interface GatewayPaymentInterface {
      * @param cardType card type
      * @param countryCode country code
      * @param additionalParams additional params
-     * @return payment by card response dtO
+     * @return payment response dto
      * @throws BusinessException business exception.
      */
-    PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    public PaymentResponseDto doPaymentCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
@@ -69,10 +69,21 @@ public interface GatewayPaymentInterface {
      * @param paymentToken payment token(mandat)
      * @param ctsAmount amount in cent
      * @param additionalParams additional params
-     * @return payment by card dto
+     * @return payment response dto
      * @throws BusinessException business exception.
      */
-    PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    
+    /**
+     * Initiate a payment out sepa whit valid mandat.
+     * 
+     * @param paymentToken payment token(mandat)
+     * @param ctsAmount amount in cent
+     * @param additionalParams additional params
+     * @return payment response dto
+     * @throws BusinessException business exception.
+     */
+    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
      * This makes it impossible to process the payment any further and will also try to reverse an authorization on a card.
@@ -80,20 +91,21 @@ public interface GatewayPaymentInterface {
      * @param paymentID payment id
      * @throws BusinessException business exception
      */
-    void cancelPayment(String paymentID) throws BusinessException;
+    public void cancelPayment(String paymentID) throws BusinessException;
 
+ // TODO PaymentRun
     /**
      * @param ddRequestLot debit direct request by lot
      * @throws BusinessException business exception
      */
-    void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException;
+    public void doBulkPaymentAsFile(DDRequestLOT ddRequestLot) throws BusinessException;
 
     // TODO PaymentRun
     /**
      * @param ddRequestLot debit direct request lot
      * @throws BusinessException business exception
      */
-    void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException;
+    public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException;
 
     /**
      * 
@@ -103,7 +115,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card response dto
      * @throws BusinessException business exception.
      */
-    PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
+    public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
      * 
@@ -119,7 +131,7 @@ public interface GatewayPaymentInterface {
      * @return payment by card
      * @throws BusinessException business exception.
      */
-    PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
+    public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
 
     /**

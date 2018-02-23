@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
@@ -31,7 +32,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      */
     // TODO paymentRun return gateway by CA, EL, Priority,.....
     @SuppressWarnings("unchecked")
-    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod) throws BusinessException {
+    public PaymentGateway getPaymentGateway(CustomerAccount customerAccount, PaymentMethod paymentMethod,CreditCardTypeEnum cardType) throws BusinessException {
         PaymentGateway paymentGateway = null;
         if (paymentMethod == null) {
             paymentMethod = customerAccount.getPreferredPaymentMethod();

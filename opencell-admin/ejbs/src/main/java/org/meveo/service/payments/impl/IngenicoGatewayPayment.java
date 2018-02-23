@@ -275,4 +275,10 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
         throw new UnsupportedOperationException();
     }
+
+
+    @Override
+    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
 }

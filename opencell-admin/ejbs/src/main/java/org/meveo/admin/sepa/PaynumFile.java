@@ -183,4 +183,9 @@ public class PaynumFile implements GatewayPaymentInterface {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
+
 }

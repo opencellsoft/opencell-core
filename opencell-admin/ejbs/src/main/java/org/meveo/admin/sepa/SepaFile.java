@@ -255,11 +255,13 @@ public class SepaFile implements GatewayPaymentInterface {
         throw new UnsupportedOperationException();
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#checkMandat(java.lang.String)
-     */
     @Override
     public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 

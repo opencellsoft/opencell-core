@@ -19,6 +19,7 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -28,19 +29,20 @@ import org.meveo.service.base.PersistenceService;
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void addHistory(CustomerAccount customerAccount, Payment payment, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
+    public void addHistory(CustomerAccount customerAccount, Payment payment,Refund refund, Long amountCts, PaymentStatusEnum status, String errorCode,String errorMessage,
             PaymentErrorTypeEnum errorType, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway, PaymentMethod paymentMethod) throws BusinessException {
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setCustomerAccountCode(customerAccount.getCode());
         paymentHistory.setCustomerAccountName(customerAccount.getName() == null ? null : customerAccount.getName().getFullName());
         paymentHistory.setSellerCode(customerAccount.getCustomer().getSeller().getCode());
         paymentHistory.setPayment(payment);
+        paymentHistory.setRefund(refund);
         paymentHistory.setOperationDate(new Date());
         paymentHistory.setAmountCts(amountCts);
         paymentHistory.setErrorCode(errorCode);
         paymentHistory.setErrorMessage(errorMessage);
         paymentHistory.setErrorType(errorType);
-        paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : null);
+        paymentHistory.setExternalPaymentId(payment != null ? payment.getReference() : (refund != null ? refund.getReference() : null));
         paymentHistory.setOperationCategory(operationCategory);
         paymentHistory.setSyncStatus(status);
         paymentHistory.setPaymentGatewayCode(paymentGateway == null ? null : paymentGateway.getCode());

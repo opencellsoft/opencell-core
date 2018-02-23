@@ -71,7 +71,7 @@ public class PaymentJobBean {
                 paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
+                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());               
                 paymentMethodType = PaymentMethodEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
                 nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
