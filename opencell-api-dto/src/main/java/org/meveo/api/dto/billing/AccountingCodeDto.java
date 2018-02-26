@@ -23,7 +23,7 @@ public class AccountingCodeDto extends BusinessEntityDto {
     private ChartOfAccountViewTypeEnum chartOfAccountViewTypeEnum;
 
     @NotNull
-    private boolean disabled;
+    private boolean disabled = false;
 
     private String reportingAccount;
     private String notes;

@@ -8,6 +8,9 @@ import org.meveo.api.billing.AccountingCodeApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.billing.AccountingCodeDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
+import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.AccountingWs;
 
@@ -30,6 +33,58 @@ public class AccountingWsImpl extends BaseWs implements AccountingWs {
             accountingCodeApi.create(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus updateAccountingCode(AccountingCodeDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            accountingCodeApi.update(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createOrUpdateAccountingCode(AccountingCodeDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            accountingCodeApi.createOrUpdate(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public AccountingCodeGetResponseDto findAccountingCode(String accountingCode) {
+        AccountingCodeGetResponseDto result = new AccountingCodeGetResponseDto();
+
+        try {
+            result.setAccountingCode(accountingCodeApi.find(accountingCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public AccountingCodeListResponse listAccountingCode(PagingAndFiltering pagingAndFiltering) {
+        AccountingCodeListResponse result = new AccountingCodeListResponse();
+
+        try {
+            return accountingCodeApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;
