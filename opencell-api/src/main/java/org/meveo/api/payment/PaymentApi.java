@@ -370,9 +370,8 @@ public class PaymentApi extends BaseApi {
         paymentHistoryDto.setRefund(accountOperationApi.accountOperationToDto(paymentHistory.getRefund()));
         paymentHistoryDto.setPayment(accountOperationApi.accountOperationToDto(paymentHistory.getPayment()));
         paymentHistoryDto.setSyncStatus(paymentHistory.getSyncStatus());
-        paymentHistoryDto.setStatus(paymentHistory.getStatus());
-        paymentHistoryDto.setUpdatedStatusDate(paymentHistory.getUpdatedStatusDate());
-        paymentHistoryDto.setLastUpdateDate(paymentHistory.getUpdatedStatusDate() == null ? paymentHistory.getOperationDate() :  paymentHistory.getUpdatedStatusDate());
+        paymentHistoryDto.setStatus(paymentHistory.getStatus());        
+        paymentHistoryDto.setLastUpdateDate(paymentHistory.getLastUpdateDate());
         AccountOperationsDto accountOperationsDto = new AccountOperationsDto();
         accountOperationsDto.setAccountOperation(getAosPaidByPayment(paymentHistory.getRefund() == null ? paymentHistory.getPayment() : paymentHistory.getRefund()));
         paymentHistoryDto.setListAoPaid(accountOperationsDto);

@@ -6,6 +6,7 @@ package org.meveo.service.payments.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -38,9 +39,12 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
             paymentMethod = customerAccount.getPreferredPaymentMethod();
         }        
         try {
-            List<PaymentGateway> paymentGateways = (List<PaymentGateway>) getEntityManager()
-                .createQuery("from " + PaymentGateway.class.getSimpleName() + " where paymentMethodType =:paymenTypeValueIN and disabled=false  ")
-                .setParameter("paymenTypeValueIN", paymentMethod.getPaymentType()).getResultList();
+            
+            Query query = getEntityManager()
+                    .createQuery("from " + PaymentGateway.class.getSimpleName() + " where paymentMethodType =:paymenTypeValueIN and disabled=false  ")
+                    .setParameter("paymenTypeValueIN", paymentMethod.getPaymentType());
+            
+            List<PaymentGateway> paymentGateways = (List<PaymentGateway>) query.getResultList();
             if (paymentGateways != null && !paymentGateways.isEmpty()) {
                 paymentGateway = paymentGateways.get(0);
             }

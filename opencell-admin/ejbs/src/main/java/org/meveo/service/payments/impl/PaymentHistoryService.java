@@ -7,8 +7,10 @@ import java.util.Date;
 
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -46,7 +48,7 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         paymentHistory.setOperationCategory(operationCategory);
         paymentHistory.setSyncStatus(status);
         paymentHistory.setPaymentGatewayCode(paymentGateway == null ? null : paymentGateway.getCode());
-        paymentHistory.setLastUpdateDate(paymentHistory.getUpdatedStatusDate() == null ? paymentHistory.getOperationDate() : paymentHistory.getUpdatedStatusDate() );
+        paymentHistory.setLastUpdateDate(paymentHistory.getOperationDate());
         if (paymentMethod != null) {
             paymentHistory.setPaymentMethodType(paymentMethod.getPaymentType());
             String pmVal = null;
@@ -60,5 +62,15 @@ public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
         }
         super.create(paymentHistory);
 
+    }
+    
+    public PaymentHistory findHistoryByPaymentId(String paymentId) {
+        try {
+            QueryBuilder qb = new QueryBuilder(PaymentHistory.class, "a");
+            qb.addCriterion("externalPaymentId", "=", paymentId, false);
+            return (PaymentHistory) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException ne) {
+            return null;
+        } 
     }
 }

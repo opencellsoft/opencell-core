@@ -46,9 +46,11 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentErrorTypeEnum;
 import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentHistory;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.payments.Refund;
 import org.meveo.model.payments.RejectedPayment;
 import org.meveo.model.payments.RejectedType;
 import org.meveo.service.base.PersistenceService;
@@ -82,7 +84,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     @Inject
     private AccountOperationService accountOperationService;
-    
+
     @Inject
     private RefundService refundService;
 
@@ -154,7 +156,6 @@ public class PaymentService extends PersistenceService<Payment> {
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
     }
-    
 
     /**
      * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
@@ -173,9 +174,9 @@ public class PaymentService extends PersistenceService<Payment> {
      */
     public PaymentResponseDto refundByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO,
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-        return doPayment(customerAccount, ctsAmount, aoIdsToRefund, createAO, matchingAO, paymentGateway, null, null, null, null, null, false,PaymentMethodEnum.CARD);
+        return doPayment(customerAccount, ctsAmount, aoIdsToRefund, createAO, matchingAO, paymentGateway, null, null, null, null, null, false, PaymentMethodEnum.CARD);
     }
-    
+
     /**
      * @param customerAccount
      * @param ctsAmount
@@ -189,13 +190,14 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param toMatch
      * @param object
      * @return
-     * @throws UnbalanceAmountException 
-     * @throws NoAllOperationUnmatchedException 
-     * @throws BusinessException 
+     * @throws UnbalanceAmountException
+     * @throws NoAllOperationUnmatchedException
+     * @throws BusinessException
      */
     public PaymentResponseDto refundByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
-            CreditCardTypeEnum cardType, List<Long> aoToPay, boolean createAO, boolean toMatch, PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-       return doPayment(customerAccount, ctsAmount, aoToPay, createAO, toMatch, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, false, PaymentMethodEnum.CARD);
+            CreditCardTypeEnum cardType, List<Long> aoToPay, boolean createAO, boolean toMatch, PaymentGateway paymentGateway)
+            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+        return doPayment(customerAccount, ctsAmount, aoToPay, createAO, toMatch, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, false, PaymentMethodEnum.CARD);
     }
 
     /**
@@ -323,8 +325,8 @@ public class PaymentService extends PersistenceService<Payment> {
                 errorType = PaymentErrorTypeEnum.REJECT;
                 log.warn("Payment with method id {} was rejected. Status: {}", preferredMethod.getId(), doPaymentResponseDto.getPaymentStatus());
             }
-            paymentHistoryService.addHistory(customerAccount, findById(aoPaymentId),refundService.findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto.getErrorCode(), doPaymentResponseDto.getErrorMessage(),
-                errorType, operationCat, paymentGateway, preferredMethod);
+            paymentHistoryService.addHistory(customerAccount, findById(aoPaymentId), refundService.findById(aoPaymentId), ctsAmount, status, doPaymentResponseDto.getErrorCode(),
+                doPaymentResponseDto.getErrorMessage(), errorType, operationCat, paymentGateway, preferredMethod);
 
         } catch (Exception e) {
             log.error("Error during payment AO:", e);
@@ -333,7 +335,7 @@ public class PaymentService extends PersistenceService<Payment> {
             }
             doPaymentResponseDto.setErrorMessage(e.getMessage());
             doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
-            paymentHistoryService.addHistory(customerAccount, null, null,ctsAmount, PaymentStatusEnum.ERROR, null, e.getMessage(), PaymentErrorTypeEnum.ERROR, operationCat,
+            paymentHistoryService.addHistory(customerAccount, null, null, ctsAmount, PaymentStatusEnum.ERROR, null, e.getMessage(), PaymentErrorTypeEnum.ERROR, operationCat,
                 paymentGateway, preferredMethod);
         }
         return doPaymentResponseDto;
@@ -402,6 +404,15 @@ public class PaymentService extends PersistenceService<Payment> {
         return paymentMethod;
     }
 
+    /**
+     * Handle payment callBack, if the payment/refund is accepted then nothing to do, if it's rejected a new AO rejected payment/refund will be created.
+     * 
+     * @param paymentId
+     * @param paymentStatus
+     * @param errorCode
+     * @param errorMessage
+     * @throws BusinessException
+     */
     public void paymentCallback(String paymentId, PaymentStatusEnum paymentStatus, String errorCode, String errorMessage) throws BusinessException {
         try {
             if (paymentStatus == null) {
@@ -410,24 +421,41 @@ public class PaymentService extends PersistenceService<Payment> {
             if (StringUtils.isBlank(paymentId)) {
                 throw new BusinessException("paymentId is required");
             }
+            AccountOperation accountOperation = accountOperationService.findByReference(paymentId);
 
-            Payment payment = (Payment) accountOperationService.findByReference(paymentId);
-            if (payment == null) {
+            if (accountOperation == null) {
                 throw new BusinessException("Payment " + paymentId + " not found");
             }
-            if (!payment.getMatchingStatus().name().equals(MatchingStatusEnum.L.name())) {
+            if (accountOperation.getMatchingStatus() != MatchingStatusEnum.L) {
                 throw new BusinessException("CallBack unexpected  for payment " + paymentId);
             }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
-                log.debug("Payment ok, nothing to do.");
+                log.debug("Payment ok, nothing to do.");              
             } else {
-                OCCTemplate occTemplate = oCCTemplateService.findByCode("IP_CARD");
-                if (occTemplate == null) {
-                    throw new BusinessException("Cannot find AO Template with code:IP_CARD");
+                String occTemplateCode = null;
+
+                if (accountOperation instanceof Payment) {
+                    if (PaymentMethodEnum.CARD == ((Payment) accountOperation).getPaymentMethod()) {
+
+                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedPayment.card", "IP_CARD");
+                    } else {
+                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedPayment.dd", "IP_PLVT");
+                    }
                 }
-                CustomerAccount ca = payment.getCustomerAccount();
-                AccountOperation aoThatShouldePaid = getAccountOperationThatWasPaid(payment);
-                Long aoPaymentIdWasRejected = payment.getId();
+                if (accountOperation instanceof Refund) {
+                    if (PaymentMethodEnum.CARD == ((Refund) accountOperation).getPaymentMethod()) {
+                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.card", "IP_RFD_CARD");
+                    } else {
+                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.dd", "IP_RFD_PLVT");
+                    }
+                }
+                OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
+                if (occTemplate == null) {
+                    throw new BusinessException("Cannot find AO Template with code:" + occTemplateCode);
+                }
+                CustomerAccount ca = accountOperation.getCustomerAccount();
+                AccountOperation aoThatShouldePaid = getAccountOperationThatWasPaid(accountOperation);
+                Long aoPaymentIdWasRejected = accountOperation.getId();
 
                 matchingCodeService.unmatchingByAOid(aoThatShouldePaid.getId());
 
@@ -443,7 +471,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setOccCode(occTemplate.getCode());
                 rejectedPayment.setOccDescription(occTemplate.getDescription());
                 rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
-                rejectedPayment.setAccountCodeClientSide(payment.getAccountCodeClientSide());
+                rejectedPayment.setAccountCodeClientSide(accountOperation.getAccountCodeClientSide());
 
                 rejectedPayment.setRejectedType(RejectedType.A);
                 rejectedPayment.setRejectedDate(new Date());
@@ -458,27 +486,31 @@ public class PaymentService extends PersistenceService<Payment> {
                 aos.add(oARejectPaymentID);
 
                 matchingCodeService.matchOperations(ca.getId(), null, aos, null);
-
+            }
+            PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(paymentId);
+            if(paymentHistory != null) {
+                paymentHistory.setAsyncStatus(paymentStatus);
+                paymentHistory.setLastUpdateDate(new Date());
+                paymentHistory.setErrorCode(errorCode);
+                paymentHistory.setErrorMessage(errorMessage);
+                paymentHistoryService.update(paymentHistory);
             }
         } catch (Exception e) {
-           log.error("Error on payment callback processing:",e);
+            log.error("Error on payment callback processing:", e);
             throw new BusinessException(e.getMessage());
         }
     }
 
-    private AccountOperation getAccountOperationThatWasPaid(Payment payment) throws BusinessException {
-        List<MatchingAmount> matchingAmounts = payment.getMatchingAmounts();
+    private AccountOperation getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
+        List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();
         log.trace("matchingAmounts:" + matchingAmounts);
-        for (MatchingAmount ma : payment.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
-            log.trace("ma.getAccountOperation() id:{} , occ code:{}" , ma.getAccountOperation().toString(),ma.getAccountOperation().getOccCode());            
-            if (!(ma.getAccountOperation() instanceof Payment)) {
+        for (MatchingAmount ma : paymentOrRefund.getMatchingAmounts().get(0).getMatchingCode().getMatchingAmounts()) {
+            log.trace("ma.getAccountOperation() id:{} , occ code:{}", ma.getAccountOperation().toString(), ma.getAccountOperation().getOccCode());
+            if (!(ma.getAccountOperation() instanceof Payment) && !(ma.getAccountOperation() instanceof Refund)) {
                 return ma.getAccountOperation();
             }
         }
         throw new BusinessException("Cant find invoice account operation to unmatching");
     }
 
-   
-    
-   
 }

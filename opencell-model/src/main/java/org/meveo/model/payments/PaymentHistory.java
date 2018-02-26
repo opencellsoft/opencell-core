@@ -53,10 +53,6 @@ public class PaymentHistory extends EnableEntity{
     @NotNull
     private Date operationDate;
     
-    /** The updated status date. */
-    @Column(name = "updated_status_date")
-    private Date updatedStatusDate;
-    
     /** The last Update Date. */
     @Column(name = "last_update_date")
     private Date lastUpdateDate;
@@ -154,20 +150,6 @@ public class PaymentHistory extends EnableEntity{
      */
     public void setOperationDate(Date operationDate) {
         this.operationDate = operationDate;
-    }
-
-    /**
-     * @return the updatedStatusDate
-     */
-    public Date getUpdatedStatusDate() {
-        return updatedStatusDate;
-    }
-
-    /**
-     * @param updatedStatusDate the updatedStatusDate to set
-     */
-    public void setUpdatedStatusDate(Date updatedStatusDate) {
-        this.updatedStatusDate = updatedStatusDate;
     }
 
     /**

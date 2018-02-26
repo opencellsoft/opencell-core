@@ -29,6 +29,7 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.base.PersistenceService;
@@ -146,5 +147,23 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         QueryBuilder queryBuilder = new QueryBuilder(CardPaymentMethod.class, "a", null);
         queryBuilder.addCriterion("tokenId", "=", tokenId, true);
         return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+    }
+    
+    /**
+     * Create a new DDPaymentMethod from the createMandate callBback
+     * @param customerAccount
+     * @param mandate
+     * @param singDate
+     * @throws BusinessException
+     */
+    public void createMandateCallBack(CustomerAccount customerAccount,String mandate, Date singDate) throws BusinessException {
+       log.debug("createMandateCallBack customerAccount:{} mandate:{} singDate:{}",customerAccount,mandate,singDate);
+        DDPaymentMethod ddPaymentMethod = new DDPaymentMethod();
+        ddPaymentMethod.setCustomerAccount(customerAccount);
+        ddPaymentMethod.setMandateIdentification(mandate);  
+        ddPaymentMethod.setMandateDate(singDate);
+        ddPaymentMethod.setPreferred(true);
+        ddPaymentMethod.setAlias(mandate);
+        create(ddPaymentMethod);
     }
 }
