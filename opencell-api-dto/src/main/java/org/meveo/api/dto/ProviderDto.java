@@ -35,6 +35,7 @@ public class ProviderDto extends BaseDto {
 	private Boolean levelDuplication;	
 	private Integer rounding;
 	private Long prepaidReservationExpirationDelayinMillisec;
+	@Deprecated
 	private String discountAccountingCode;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();
