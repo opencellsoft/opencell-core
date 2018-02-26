@@ -141,7 +141,7 @@ public class ParamBean {
         try {
         	ParamBean pBean = getInstance("meveo-admin.properties");
         	isMultiTenancyActive = Boolean.valueOf(pBean.getProperty("meveo.multiTenancy", "false"));
-            return getInstance("meveo-admin.properties");
+            return pBean;
         } catch (Exception e) {
             log.error("Failed to initialize meveo-admin.properties file.", e);
             return null;
@@ -489,4 +489,53 @@ public class ParamBean {
     public String getDateTimeFormat() {
         return getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
     }
+    
+    public String getProperty(String key, String defaultValue, String provider) {
+        String result = null;
+        ParamBean params = getInstanceByProvider(provider);
+        Properties properties = params.getProperties();
+        
+        if (properties.containsKey(key)) {
+            result = properties.getProperty(key);
+        } else if (defaultValue != null) {
+            result = defaultValue;
+            properties.put(key, defaultValue);
+            params.setProperties(properties);
+            params.saveProperties();
+        }
+        return result;
+    }
+    
+    public String getInheritedProperty(String key, String defaultValue, String provider) {
+        String result = null;
+        ParamBean params = getInstanceByProvider(provider);
+        Properties properties = params.getProperties();
+        
+        if (properties.containsKey(key)) {
+            result = properties.getProperty(key);
+        } else if (params.isSubTenant) {
+        	// check if a value is already defined for the main tenant
+        	result = getInstance().getProperty(key, defaultValue);
+        	properties.put(key, result);
+            params.setProperties(properties);
+            params.saveProperties();
+        } 
+        
+        return result;
+    }
+    
+    public String getDateFormat(String provider) {
+    	if(!isSubTenant) {
+    		return getInstanceByProvider(provider).getDateFormat();
+    	}
+    	return getDateFormat();
+    }
+    
+    public String getDateTimeFormat(String provider) {
+    	if(!isSubTenant) {
+    		return getInstanceByProvider(provider).getDateTimeFormat();
+    	}
+    	return getDateTimeFormat(); 
+    }
+
 }
