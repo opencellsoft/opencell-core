@@ -68,8 +68,9 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.service.index.ElasticClient;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
@@ -88,13 +89,18 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
+    @MeveoJpaForMultiTenancy
+    private EntityManager em;
+
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager emfForJobs;
+
+    @Inject
     private ElasticClient elasticClient;
 
     @Inject
     private Conversation conversation;
-    //
-    // @Resource
-    // protected TransactionSynchronizationRegistry txReg;
 
     @Inject
     @Created
@@ -118,12 +124,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
-
-    @Inject
-    ProviderRegistry providerRegistry;
-
-    @Inject
-    EntityManagerProvider entityManagerProvider;
 
     /**
      * Constructor.
@@ -644,7 +644,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return refreshedEntities;
     }
-    
+
     /**
      * Creates query to filter entities according data provided in pagination configuration.
      * 
@@ -1053,6 +1053,15 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     public EntityManager getEntityManager() {
-        return entityManagerProvider.getEntityManager();
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return em;
+            } catch (Exception e) {
+                return emfForJobs;
+            }
+        }
+
+        return emfForJobs;
     }
 }

@@ -50,9 +50,9 @@ public class JobExecutionInJaasService extends BaseService implements Serializab
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void executeInJaas(JobInstance jobInstance, Job job) throws BusinessException {
         // Force authentication to a current job's user
-        currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator(),jobInstance.getProvider());
+        currentUserProvider.forceAuthentication(jobInstance.getAuditable().getCreator(), jobInstance.getProvider());
 
-        // log.trace("Running {} as user {}", job.getClass(), currentUser);
+         log.trace("Running {} as user {}", job.getClass(), currentUser);
         job.execute(jobInstance, null);
     }
 }

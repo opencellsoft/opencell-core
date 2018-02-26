@@ -80,16 +80,21 @@ public class ProviderRegistry {
     }
 
     public EntityManager createEntityManager(String providerCode) {
+        log.error("AKK creating entity manager for code {}", providerCode);
         return entityManagerFactories.get(providerCode).createEntityManager();
     }
 
     public EntityManager createEntityManagerForJobs(String providerCode) {
+        
+        log.error("AKK creating entity manager for JOBs for code {}", providerCode);
         EntityManager entityManager = null;
         if (entityManagers.containsKey(providerCode)) {
             entityManager = entityManagers.get(providerCode);
         }
         if ((entityManager == null || !entityManager.isOpen()) && entityManagerFactories.containsKey(providerCode)) {
             entityManager = entityManagerFactories.get(providerCode).createEntityManager();
+            
+            log.error("AKK putting new entity manager for JOBs for code {}", providerCode);
             entityManagers.put(providerCode, entityManager);
         }
         return entityManager;

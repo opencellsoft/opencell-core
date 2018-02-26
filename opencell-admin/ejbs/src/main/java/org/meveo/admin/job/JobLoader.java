@@ -25,55 +25,53 @@ public class JobLoader implements Serializable {
 
     @Inject
     private JobInstanceService jobInstanceService;
-    
-    
+
     @Inject
     private ProviderService providerService;
-    
+
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-//    @Resource
-//    protected TimerService timerService;
-
+    // @Resource
+    // protected TimerService timerService;
 
     @PostConstruct
     public void init() {
 
-//        cleanAllTimers();
+        // cleanAllTimers();
 
         Set<Class<?>> classes = ReflectionUtils.getSubclasses(Job.class);
         final List<Provider> providers = providerService.list();
-        
+
         for (Class<?> jobClass : classes) {
 
             Job job = (Job) EjbUtils.getServiceInterface(jobClass.getSimpleName());
             providers.forEach(provider -> {
-                currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), provider.getCode());
+
+                currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), provider.getCode().equals("DEMO") ? null : provider.getCode());
                 jobInstanceService.registerJob(job);
             });
 
-            
         }
     }
 
-//    /*
-//     * Clear timers work on a bean that scheduler timer, and JobLoader does not schedule anything.
-//     */
-//    private void cleanAllTimers() {
-//        // timerService.getAllTimers() work on singleton bean only and job classes are stateless beans, so disabled for now
-//
-//        Collection<Timer> alltimers = timerService.getTimers();
-//        log.info("Canceling job timers");
-//
-//        for (Timer timer : alltimers) {
-//            try {
-//                if (timer.getInfo() instanceof JobInstance) {
-//                    timer.cancel();
-//                }
-//            } catch (Exception e) {
-//                log.error("Failed to cancel timer {} ", timer.getHandle(), e);
-//            }
-//        }
-//    }
+    // /*
+    // * Clear timers work on a bean that scheduler timer, and JobLoader does not schedule anything.
+    // */
+    // private void cleanAllTimers() {
+    // // timerService.getAllTimers() work on singleton bean only and job classes are stateless beans, so disabled for now
+    //
+    // Collection<Timer> alltimers = timerService.getTimers();
+    // log.info("Canceling job timers");
+    //
+    // for (Timer timer : alltimers) {
+    // try {
+    // if (timer.getInfo() instanceof JobInstance) {
+    // timer.cancel();
+    // }
+    // } catch (Exception e) {
+    // log.error("Failed to cancel timer {} ", timer.getHandle(), e);
+    // }
+    // }
+    // }
 }

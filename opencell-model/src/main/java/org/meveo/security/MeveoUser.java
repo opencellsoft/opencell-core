@@ -48,9 +48,9 @@ public abstract class MeveoUser implements Serializable {
      * Roles/permissions held by a user. Contains both role, composite role child role and permission names
      */
     protected Set<String> roles = new HashSet<>();
-    
+
     protected String locale;
-    
+
     protected int authTime;
 
     public MeveoUser() {
@@ -112,18 +112,18 @@ public abstract class MeveoUser implements Serializable {
         return false;
     }
 
-    public String getLocale(){
+    public String getLocale() {
         return locale;
     }
-    
+
     @Override
     public String toString() {
         return "MeveoUser [" + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
-                + ", provider=" + providerCode + " roles " + roles + "]";
+                + ", provider=" + providerCode + ", roles " + roles + "]";
     }
 
     public Object toStringShort() {
-        return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + "]";
+        return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", provider=" + providerCode + "]";
     }
 
     public int getAuthTime() {

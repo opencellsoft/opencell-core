@@ -7,7 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
+import javax.ejb.PostActivate;
+import javax.ejb.PrePassivate;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ContextNotActiveException;
@@ -21,6 +25,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
+import org.meveo.security.ForcedAuthentication;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
@@ -32,7 +37,7 @@ public class CurrentUserProvider {
     /**
      * Map<providerCode, Map<roleName, rolePermissions>>
      */
-    private static Map<String, Map<String, Set<String>>>  roleToPermissionMapping;
+    private static Map<String, Map<String, Set<String>>> roleToPermissionMapping;
 
     @Resource
     private SessionContext ctx;
@@ -40,31 +45,29 @@ public class CurrentUserProvider {
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
-    private String forcedUserUsername;
-    private String forcedProvider;
+    @Inject
+    private ForcedAuthentication forcedAuthentication;
 
     private Logger log = LoggerFactory.getLogger(getClass());
 
     public void forceAuthentication(String currentUserUserName, String providerCode) {
-        log.debug("forceAuthentication currentUserUserName={},forcedProvider={}", currentUserUserName, providerCode);
-        this.forcedProvider = providerCode;
+        log.debug("forceAuthentication currentUserUserName={}, forcedProvider={}", currentUserUserName, providerCode);
         // Current user is already authenticated, can't overwrite it
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             log.info("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
-        this.forcedUserUsername = currentUserUserName;
-
+        forcedAuthentication.forceAuthentication(currentUserUserName, providerCode);
     }
 
     public String getCurrentUserProviderCode() {
         String providerCode = null;
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedProvider != null) {
-            providerCode = forcedProvider;
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedAuthentication.getForcedProvider() != null) {
+            providerCode = forcedAuthentication.getForcedProvider();
         } else {
             providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
         }
-        log.debug("getCurrentUserProviderCode providerCode={},forcedUserUsername={}", providerCode, forcedUserUsername);
+        log.trace("Current provider {}, forcedAuthentication {}", providerCode, forcedAuthentication);
         return providerCode;
 
     }
@@ -74,20 +77,21 @@ public class CurrentUserProvider {
      * 
      * @return Current user implementation
      */
-    public MeveoUser getCurrentUser(String providerCode,EntityManager em) {
+    public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedUserUsername);
+        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedAuthentication.getForcedUserUsername());
 
         MeveoUser user = null;
 
         // User was forced authenticated, so need to lookup the rest of user information
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedUserUsername != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedUserUsername, forcedProvider, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode,em));
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedAuthentication.getForcedUserUsername() != null) {
+            user = new MeveoUserKeyCloakImpl(ctx, forcedAuthentication.getForcedUserUsername(), forcedAuthentication.getForcedProvider(), getAdditionalRoles(username, em),
+                getRoleToPermissionMapping(providerCode, em));
 
         } else {
-            user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode,em));
+            user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
         }
-        log.info("getCurrentUser username={},forcedUserUsername={},providerCode={},em={}", username, forcedUserUsername, user != null ? user.getProviderCode() : null, em);
+        log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {} ", username, user != null ? user.getProviderCode() : null, forcedAuthentication);
         supplementOrCreateUserInApp(user, em);
 
         log.trace("Current user is {}", user);
@@ -118,7 +122,7 @@ public class CurrentUserProvider {
                     em.merge(user);
                     em.flush();
                 }
-                
+
                 currentUser.setFullName(user.getNameOrUsername());
 
             } catch (NoResultException e) {
@@ -158,15 +162,16 @@ public class CurrentUserProvider {
      * 
      * @return A mapping between roles and permissions
      */
-    private Map<String, Set<String>> getRoleToPermissionMapping(String providerCode,EntityManager em) {
+    private Map<String, Set<String>> getRoleToPermissionMapping(String providerCode, EntityManager em) {
 
         synchronized (this) {
-            if (CurrentUserProvider.roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode)==null) {
+            if (CurrentUserProvider.roleToPermissionMapping == null || roleToPermissionMapping.get(providerCode) == null) {
                 CurrentUserProvider.roleToPermissionMapping = new HashMap<>();
 
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
-                    Map<String, Set<String>>  roleToPermissionMappingForProvider=new HashMap<>();;
+                    Map<String, Set<String>> roleToPermissionMappingForProvider = new HashMap<>();
+                    
                     for (Role role : userRoles) {
                         Set<String> rolePermissions = new HashSet<>();
                         for (Permission permission : role.getAllPermissions()) {
@@ -223,5 +228,29 @@ public class CurrentUserProvider {
             log.error("Failed to retrieve additional roles for a user {}", username, e);
             return null;
         }
+    }
+
+    @PostConstruct
+    public void boo() {
+        log.error("AKK @PostConstruct {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    }
+
+    @PreDestroy
+    public void muu() {
+        log.error("AKK @PreDestroy {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    }
+
+    @PostActivate
+    public void aaa() {
+        log.error("AKK @PostActivate {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    }
+
+    @PrePassivate
+    public void bbb() {
+        log.error("AKK @PrePassivate {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    }
+
+    public void init() {
+        log.error("AKK @init {}, {}", getClass().getSimpleName(), forcedAuthentication);
     }
 }

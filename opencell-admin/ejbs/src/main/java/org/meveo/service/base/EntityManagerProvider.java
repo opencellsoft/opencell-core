@@ -35,6 +35,8 @@ import org.meveo.service.crm.impl.ProviderRegistry;
 import org.meveo.util.MeveoJpa;
 import org.meveo.util.MeveoJpaForJobs;
 import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
+import org.slf4j.Logger;
 
 @Stateless
 public class EntityManagerProvider {
@@ -56,43 +58,105 @@ public class EntityManagerProvider {
     @CurrentUser
     MeveoUser currentUser;
 
+    @Inject
+    Logger log;
+
     private EntityManager currentEntityManager;
+
+    private static boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
     @Produces
     @RequestScoped
     @MeveoJpaForMultiTenancy
     public EntityManager getEntityManager() {
-        final String currentProvider = currentUser != null ? currentUser.getProviderCode() : null;
-        return getEntityManager(currentProvider);
-    }
-    
-    public void dispose(@Disposes @MeveoJpaForMultiTenancy EntityManager entityManager) {
-        if (conversation != null && entityManager.isOpen()) {
-            entityManager.close();
-        }
-    }
+        String providerCode = currentUser != null ? currentUser.getProviderCode() : null;
 
-    public EntityManager getEntityManager(String currentProvider) {
-        String isMultiTenancyActive = ParamBean.getInstance().getProperty("meveo.multiTenancy", "false");
-        currentEntityManager = getDefaultEntityManager();
-        if (currentProvider != null && Boolean.valueOf(isMultiTenancyActive)) {
+        log.trace("Produce EM for provider {}", providerCode);
 
-            if (conversation != null) {
-                try {
-                    conversation.isTransient();
-                    currentEntityManager = providerRegistry.createEntityManager(currentProvider);
-                } catch (Exception e) {
-                }
-            } else {
-                currentEntityManager = providerRegistry.createEntityManagerForJobs(currentProvider);
-            }
+        if (providerCode == null || !isMultiTenancyEnabled) {
+            return em;
         }
+
+        EntityManager currentEntityManager = providerRegistry.createEntityManager(providerCode);
+
         return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
             currentEntityManager.joinTransaction();
             return method.invoke(currentEntityManager, args);
         });
     }
 
+    @Produces
+    @RequestScoped
+    @MeveoJpaForMultiTenancyForJobs
+    public EntityManager getEntityManagerForJobs() {
+        String providerCode = currentUser != null ? currentUser.getProviderCode() : null;
+
+        log.trace("Produce EM for Jobs for provider {}", providerCode);
+
+        if (providerCode == null || !isMultiTenancyEnabled) {
+            return emfForJobs;
+        }
+
+        EntityManager currentEntityManager = providerRegistry.createEntityManager(providerCode);
+
+        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+            currentEntityManager.joinTransaction();
+            return method.invoke(currentEntityManager, args);
+        });
+    }
+
+    public void disposeEM(@Disposes @MeveoJpaForMultiTenancy EntityManager entityManager) {
+        if (conversation != null && entityManager.isOpen()) {
+            log.error("AKK dispose @MeveoJpaForMultiTenancy EM");
+            entityManager.close();
+        }
+    }
+    
+//    public void disposeEMForJobs(@Disposes @MeveoJpaForMultiTenancyForJobs EntityManager entityManager) {
+//        if (conversation != null && entityManager.isOpen()) {
+//            log.error("AKK dispose @MeveoJpaForMultiTenancy EM for Jobs");
+//            entityManager.close();
+//        }
+//    }    
+
+    /**
+     * Get entity manager for a given provider
+     * 
+     * @param providerCode Provider code
+     * @return Entity manager instance
+     */
+    public EntityManager getEntityManager(String providerCode) {
+
+        log.trace("Getting EM for provider {}", providerCode);
+
+        boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
+        currentEntityManager = getDefaultEntityManager();
+        if (providerCode == null || !isMultiTenancyEnabled) {
+            return currentEntityManager;
+        }
+
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                currentEntityManager = providerRegistry.createEntityManager(providerCode);
+            } catch (Exception e) {
+                currentEntityManager = providerRegistry.createEntityManagerForJobs(providerCode);
+            }
+        } else {
+            currentEntityManager = providerRegistry.createEntityManagerForJobs(providerCode);
+        }
+
+        return (EntityManager) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class<?>[] { EntityManager.class }, (proxy, method, args) -> {
+            currentEntityManager.joinTransaction();
+            return method.invoke(currentEntityManager, args);
+        });
+    }
+
+    /**
+     * Get a default entity manager
+     * 
+     * @return Entity manager instance
+     */
     private EntityManager getDefaultEntityManager() {
         EntityManager result = emfForJobs;
         if (conversation != null) {
@@ -103,8 +167,6 @@ public class EntityManagerProvider {
             }
         }
 
-        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-        // em.hashCode());
         return result;
     }
 }
