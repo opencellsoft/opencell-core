@@ -17,6 +17,7 @@ import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
+import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -39,8 +40,9 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.BaseService;
-import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +65,15 @@ public class CustomFieldInstanceService extends BaseService {
     private ProviderService providerService;
 
     @Inject
-    EntityManagerProvider entityManagerProvider;
+    @MeveoJpaForMultiTenancy
+    private EntityManager em;
+
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager emfForJobs;
+
+    @Inject
+    private Conversation conversation;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -2276,7 +2286,16 @@ public class CustomFieldInstanceService extends BaseService {
         }
     }
 
-    private EntityManager getEntityManager() {
-        return entityManagerProvider.getEntityManager();
+    public EntityManager getEntityManager() {
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return em;
+            } catch (Exception e) {
+                return emfForJobs;
+            }
+        }
+
+        return emfForJobs;
     }
 }

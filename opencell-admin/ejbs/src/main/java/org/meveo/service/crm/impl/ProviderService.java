@@ -20,6 +20,7 @@ package org.meveo.service.crm.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -39,7 +40,7 @@ public class ProviderService extends PersistenceService<Provider> {
     @Inject
     private ClusterEventPublisher clusterEventPublisher;
 
-    @Inject
+    @EJB
     private ProviderRegistry providerRegistry;
 
     
@@ -67,7 +68,7 @@ public class ProviderService extends PersistenceService<Provider> {
     @Override
     public void remove(Provider provider) throws BusinessException {
         super.remove(provider);
-        providerRegistry.removeEntityManagerFactoryFromCache(provider);
+        providerRegistry.removeProvider(provider);
     }
 
     @Override

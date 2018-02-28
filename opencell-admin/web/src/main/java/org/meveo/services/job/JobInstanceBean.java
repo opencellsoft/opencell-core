@@ -56,7 +56,10 @@ public class JobInstanceBean extends CustomFieldBean<JobInstance> {
     public JobInstance initEntity() {
         super.initEntity();
 
-        createMissingCustomFieldTemplates();
+        try {
+            refreshCustomFieldsAndActions();
+        } catch (BusinessException e) {
+        }
 
         return entity;
     }

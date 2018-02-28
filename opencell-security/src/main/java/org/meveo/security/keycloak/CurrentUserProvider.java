@@ -7,11 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.annotation.Resource;
-import javax.ejb.PostActivate;
-import javax.ejb.PrePassivate;
 import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.enterprise.context.ContextNotActiveException;
@@ -25,7 +21,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
-import org.meveo.security.ForcedAuthentication;
+import org.meveo.security.ForcedAuthenticationHolder;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
@@ -45,53 +41,79 @@ public class CurrentUserProvider {
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
-    @Inject
-    private ForcedAuthentication forcedAuthentication;
-
     private Logger log = LoggerFactory.getLogger(getClass());
 
-    public void forceAuthentication(String currentUserUserName, String providerCode) {
-        log.debug("forceAuthentication currentUserUserName={}, forcedProvider={}", currentUserUserName, providerCode);
+    private static final InheritableThreadLocal<String> currentTenant = new InheritableThreadLocal<String>() {
+        @Override
+        protected String initialValue() {
+            return "NA";
+        }
+    };
+
+    /**
+     * Simulate authentication of a user. Allowed only when no security context is present, mostly used in jobs.
+     * 
+     * @param userName User name
+     * @param providerCode Provider code
+     */
+    public void forceAuthentication(String userName, String providerCode) {
+        log.debug("Force authentication to {}/{}", providerCode, userName);
         // Current user is already authenticated, can't overwrite it
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             log.info("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
-        forcedAuthentication.forceAuthentication(currentUserUserName, providerCode);
+        ForcedAuthenticationHolder.setForcedUsername(userName);
+        setCurrentTenant(providerCode);
     }
 
+    /**
+     * Get a current provider code. If value is currently not initialized, obtain it from a current user's security context
+     * 
+     * @return Current provider's code
+     */
     public String getCurrentUserProviderCode() {
+
         String providerCode = null;
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedAuthentication.getForcedProvider() != null) {
-            providerCode = forcedAuthentication.getForcedProvider();
-        } else {
+
+        if (!isCurrentTenantSet() && ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
+            log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
+            setCurrentTenant(providerCode);
+
+        } else if (isCurrentTenantSet()) {
+            providerCode = getCurrentTenant();
+            log.trace("Current provider is {}", providerCode);
+
+        } else {
+            log.trace("Current provider is not set");
         }
-        log.trace("Current provider {}, forcedAuthentication {}", providerCode, forcedAuthentication);
+
         return providerCode;
 
     }
 
     /**
-     * return a current user from JAAS security context
+     * Return a current user from JAAS security context
      * 
      * @return Current user implementation
      */
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, forcedAuthentication.getForcedUserUsername());
+        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, ForcedAuthenticationHolder.getForcedUsername());
 
         MeveoUser user = null;
 
         // User was forced authenticated, so need to lookup the rest of user information
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && forcedAuthentication.getForcedUserUsername() != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, forcedAuthentication.getForcedUserUsername(), forcedAuthentication.getForcedProvider(), getAdditionalRoles(username, em),
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && ForcedAuthenticationHolder.getForcedUsername() != null) {
+            user = new MeveoUserKeyCloakImpl(ctx, ForcedAuthenticationHolder.getForcedUsername(), getCurrentTenant(), getAdditionalRoles(username, em),
                 getRoleToPermissionMapping(providerCode, em));
 
         } else {
             user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
         }
-        log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {} ", username, user != null ? user.getProviderCode() : null, forcedAuthentication);
+        log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null,
+            ForcedAuthenticationHolder.getForcedUsername(), getCurrentTenant());
         supplementOrCreateUserInApp(user, em);
 
         log.trace("Current user is {}", user);
@@ -171,7 +193,7 @@ public class CurrentUserProvider {
                 try {
                     List<Role> userRoles = em.createNamedQuery("Role.getAllRoles", Role.class).getResultList();
                     Map<String, Set<String>> roleToPermissionMappingForProvider = new HashMap<>();
-                    
+
                     for (Role role : userRoles) {
                         Set<String> rolePermissions = new HashSet<>();
                         for (Permission permission : role.getAllPermissions()) {
@@ -230,27 +252,16 @@ public class CurrentUserProvider {
         }
     }
 
-    @PostConstruct
-    public void boo() {
-        log.error("AKK @PostConstruct {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    private static boolean isCurrentTenantSet() {
+        return !"NA".equals(currentTenant.get());
     }
 
-    @PreDestroy
-    public void muu() {
-        log.error("AKK @PreDestroy {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    private static String getCurrentTenant() {
+        return currentTenant.get();
     }
 
-    @PostActivate
-    public void aaa() {
-        log.error("AKK @PostActivate {}, {}", getClass().getSimpleName(), forcedAuthentication);
-    }
-
-    @PrePassivate
-    public void bbb() {
-        log.error("AKK @PrePassivate {}, {}", getClass().getSimpleName(), forcedAuthentication);
-    }
-
-    public void init() {
-        log.error("AKK @init {}, {}", getClass().getSimpleName(), forcedAuthentication);
+    private static void setCurrentTenant(final String tenantName) {
+        currentTenant.remove();
+        currentTenant.set(tenantName);
     }
 }

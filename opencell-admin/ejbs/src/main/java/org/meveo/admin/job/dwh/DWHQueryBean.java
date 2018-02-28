@@ -24,8 +24,8 @@ import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
-import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -38,9 +38,10 @@ public class DWHQueryBean {
 
     @Inject
     private MeasuredValueService mvService;
-
+    
     @Inject
-    private EntityManagerProvider entityManagerProvider;
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager em;
 
     @Inject
     private Logger log;
@@ -106,7 +107,7 @@ public class DWHQueryBean {
                 if (mq.getLastMeasureDate() == null) {
                     mq.setLastMeasureDate(mq.getPreviousDate(toDate));
                 }
-                EntityManager em=entityManagerProvider.getEntityManager();
+    
                 while (mq.getNextMeasureDate().before(toDate)) {
                     log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}", mq.getSqlQuery(), mq.getNextMeasureDate(), mq.getLastMeasureDate());
                     String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getLastMeasureDate()));
@@ -155,7 +156,7 @@ public class DWHQueryBean {
                             value = new BigDecimal("" + res);
                         }
                         date = DateUtils.truncate(date, Calendar.DAY_OF_MONTH);
-                        MeasuredValue mv = mvService.getByDate(entityManagerProvider.getEntityManager(), date, mve, mq);
+                        MeasuredValue mv = mvService.getByDate(em, date, mve, mq);
                         if (mv == null) {
                             mv = new MeasuredValue();
                         }

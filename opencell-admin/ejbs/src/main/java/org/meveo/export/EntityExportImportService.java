@@ -44,6 +44,7 @@ import javax.ejb.LockType;
 import javax.ejb.Singleton;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.enterprise.context.Conversation;
 import javax.faces.model.DataModel;
 import javax.inject.Inject;
 import javax.persistence.CascadeType;
@@ -101,9 +102,10 @@ import org.meveo.model.security.Permission;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -191,7 +193,15 @@ public class EntityExportImportService implements Serializable {
     private Map<String, ExportTemplate> exportImportTemplates;
 
     @Inject
-    EntityManagerProvider entityManagerFactory;
+    @MeveoJpaForMultiTenancy
+    private EntityManager em;
+
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager emfForJobs;
+
+    @Inject
+    private Conversation conversation;
 
     @PostConstruct
     private void init() {
@@ -355,7 +365,16 @@ public class EntityExportImportService implements Serializable {
     }
 
     public EntityManager getEntityManager() {
-        return entityManagerFactory.getEntityManager();
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return em;
+            } catch (Exception e) {
+                return emfForJobs;
+            }
+        }
+
+        return emfForJobs;
     }
 
     /**
