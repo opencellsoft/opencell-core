@@ -18,6 +18,7 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -29,6 +30,7 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "hour", "minute" })
 @Table(name = "cat_hour_in_day", uniqueConstraints = @UniqueConstraint(columnNames = { "hour", "min" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_hour_in_day_seq"), })

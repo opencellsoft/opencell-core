@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -38,56 +37,48 @@ public class CountryService extends PersistenceService<Country> {
      * @param countryCode country code
      * @return found country
      */
-    public Country findByCode(String countryCode) {
-        return findByCode(getEntityManager(), countryCode);
-    }
+	public Country findByCode(String countryCode) {
+	    
+		if (countryCode == null || countryCode.trim().length()==0) {
+			return null;
+		}
 
-    /**
-     * @param em entity manager
-     * @param countryCode code of country.
-     * @return country
-     */
-    public Country findByCode(EntityManager em, String countryCode) {
-        if (countryCode == null || countryCode.trim().length() == 0) {
-            return null;
-        }
+		QueryBuilder qb = new QueryBuilder(Country.class, "c");
+		qb.addCriterion("countryCode", "=", countryCode, false);
 
-        QueryBuilder qb = new QueryBuilder(Country.class, "c");
-        qb.addCriterion("countryCode", "=", countryCode, false);
-
-        try {
-            return (Country) qb.getQuery(em).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
+		try {
+			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
 
     /**
      * @param countryName countryName
      * @return country
      */
-    public Country findByName(String countryName) {
-        QueryBuilder qb = new QueryBuilder(Country.class, "c");
-        qb.startOrClause();
+	public Country findByName(String countryName) {				
+		QueryBuilder qb = new QueryBuilder(Country.class, "c");
+		qb.startOrClause();
         qb.addCriterion("description", "=", countryName, false);
-        qb.endOrClause();
-        try {
-            return (Country) qb.getQuery(getEntityManager()).getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
+		qb.endOrClause();
+		try {
+			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		}	
+	}
 
     /**
      * @return list of country
      * @see org.meveo.service.base.PersistenceService#list()
      */
-    @SuppressWarnings("unchecked")
-    public List<Country> list() {
-        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+	@SuppressWarnings("unchecked")
+	public List<Country> list() {
+		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         queryBuilder.addOrderCriterion("a.description", true);
-        Query query = queryBuilder.getQuery(getEntityManager());
-        return query.getResultList();
-    }
+		Query query = queryBuilder.getQuery(getEntityManager());
+		return query.getResultList();
+	}
 
 }

@@ -442,7 +442,7 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : 
+     * Launch all the invoicing process for a given billingAccount, that's mean :
      * <ul>
      * <li>Create an exeptionnal billingRun with given dates
      * <li>Validate the preinvoicing resport
@@ -489,7 +489,7 @@ public class InvoiceApi extends BaseApi {
         if (billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
         }
-
+        
         Filter ratedTransactionFilter = null;
         if (generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());

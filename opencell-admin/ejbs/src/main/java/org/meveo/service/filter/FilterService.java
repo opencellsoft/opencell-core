@@ -164,11 +164,8 @@ public class FilterService extends BusinessService<Filter> {
     }
 
     public boolean isMatch(NativeFilterCondition filter, Map<Object, Object> params) {
-        try {
-            return ((Boolean) ValueExpressionWrapper.evaluateExpression(filter.getEl(), params, Boolean.class)).booleanValue();
-        } catch (BusinessException e) {
-            return false;
-        }
+
+        return ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(filter.getEl(), params);
     }
 
     public String serializeEntities(XStream xstream, Filter filter, List<? extends IEntity> entities) {
@@ -215,7 +212,6 @@ public class FilterService extends BusinessService<Filter> {
     @SuppressWarnings("unchecked")
     public List<? extends IEntity> filteredListAsObjects(Filter filter) throws BusinessException {
 
-        filter = refreshOrRetrieve(filter);
         FilteredQueryBuilder fqb = getFilteredQueryBuilder(filter);
 
         Query query = fqb.getQuery(getEntityManager());

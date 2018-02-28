@@ -183,7 +183,7 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         BillingAccount billingAccount = invoice.getBillingAccount();
 
         if (isRecordedInvoiceExist(invoice.getInvoiceNumber())) {
-            throw new InvoiceExistException("Invoice id" + invoice.getId() + " already exist");
+            throw new InvoiceExistException("Invoice id " + invoice.getId() + " already exist");
         }
 
         try {

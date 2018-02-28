@@ -89,7 +89,6 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.XStreamCDATAConverter;
@@ -181,9 +180,6 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
-
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
@@ -2159,7 +2155,6 @@ public class EntityExportImportService implements Serializable {
         walletCacheContainerProvider.refreshCache(null);
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
-        ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
     }

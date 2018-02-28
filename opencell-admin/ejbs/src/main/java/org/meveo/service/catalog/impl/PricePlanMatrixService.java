@@ -28,19 +28,17 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.TradingCurrency;
@@ -53,65 +51,35 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
+    private ParamBean param = ParamBean.getInstance();
 
-    ParamBean param = ParamBean.getInstance();
-
-    SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
+    private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
 
     @Override
-    public void create(PricePlanMatrix pricePlan) throws BusinessException {
-        super.create(pricePlan);
-        ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
+    public void create(PricePlanMatrix pp) throws BusinessException {
+
+        pp.setCriteria1Value(StringUtils.stripToNull(pp.getCriteria1Value()));
+        pp.setCriteria2Value(StringUtils.stripToNull(pp.getCriteria2Value()));
+        pp.setCriteria3Value(StringUtils.stripToNull(pp.getCriteria3Value()));
+        pp.setCriteriaEL(StringUtils.stripToNull(pp.getCriteriaEL()));
+        pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
+        pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
+
+        super.create(pp);
     }
 
     @Override
-    public PricePlanMatrix disable(PricePlanMatrix pricePlan) throws BusinessException {
-        pricePlan = super.disable(pricePlan);
-        ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
-        return pricePlan;
-    }
+    public PricePlanMatrix update(PricePlanMatrix pp) throws BusinessException {
 
-    @Override
-    public PricePlanMatrix enable(PricePlanMatrix pricePlan) throws BusinessException {
-        pricePlan = super.enable(pricePlan);
-        ratingCacheContainerProvider.addPricePlanToCache(pricePlan);
-        return pricePlan;
-    }
+        pp.setCriteria1Value(StringUtils.stripToNull(pp.getCriteria1Value()));
+        pp.setCriteria2Value(StringUtils.stripToNull(pp.getCriteria2Value()));
+        pp.setCriteria3Value(StringUtils.stripToNull(pp.getCriteria3Value()));
+        pp.setCriteriaEL(StringUtils.stripToNull(pp.getCriteriaEL()));
+        pp.setAmountWithoutTaxEL(StringUtils.stripToNull(pp.getAmountWithoutTaxEL()));
+        pp.setAmountWithTaxEL(StringUtils.stripToNull(pp.getAmountWithTaxEL()));
 
-    @Override
-    public void remove(PricePlanMatrix pricePlan) throws BusinessException {
-        super.remove(pricePlan);
-        ratingCacheContainerProvider.removePricePlanFromCache(pricePlan);
+        return super.update(pp);
     }
-
-    @Override
-    public PricePlanMatrix update(PricePlanMatrix pricePlan) throws BusinessException {
-        pricePlan = super.update(pricePlan);
-        ratingCacheContainerProvider.updatePricePlanInCache(pricePlan);
-        return pricePlan;
-    }
-    //
-    // @SuppressWarnings("unchecked")
-    // public void removeByPrefix(EntityManager em, String prefix) throws BusinessException {
-    // Query query = em.createQuery(
-    // "select m from PricePlanMatrix m WHERE m.eventCode LIKE '" + prefix + "%'");
-    // List<PricePlanMatrix> pricePlans = query.getResultList();
-    // for (PricePlanMatrix pricePlan : pricePlans) {
-    // remove(pricePlan);
-    // }
-    // }
-    //
-    // @SuppressWarnings("unchecked")
-    // public void removeByCode(EntityManager em, String code) throws BusinessException {
-    // Query query = em.createQuery("select m PricePlanMatrix m WHERE m.eventCode=:code");
-    // query.setParameter("code", code);
-    // List<PricePlanMatrix> pricePlans = query.getResultList();
-    // for (PricePlanMatrix pricePlan : pricePlans) {
-    // remove(pricePlan);
-    // }
-    // }
 
     @SuppressWarnings("deprecation")
     private String getCellAsString(Cell cell) {
@@ -489,15 +457,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
     }
 
-    /**
-     * Get a list of priceplans to populate a cache.
-     * 
-     * @return A list of active priceplans ordered by eventCode and priority
-     */
-    public List<PricePlanMatrix> getPricePlansForCache() {
-        return getEntityManager().createNamedQuery("PricePlanMatrix.getPricePlansForCache", PricePlanMatrix.class).getResultList();
-    }
-
     @SuppressWarnings("unchecked")
     public List<PricePlanMatrix> findByOfferTemplate(OfferTemplate offerTemplate) {
         QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p");
@@ -511,11 +470,11 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
     }
 
-    public List<PricePlanMatrix> findByOfferTemplateAndEventCode(String offerTemplateCode, String chargeCode) {
+    public List<PricePlanMatrix> getActivePricePlansByOfferAndChargeCode(String offerTemplateCode, String chargeCode) {
 
         List<PricePlanMatrix> priceplansByOffer = new ArrayList<>();
 
-        List<PricePlanMatrix> priceplans = ratingCacheContainerProvider.getPricePlansByChargeCode(chargeCode);
+        List<PricePlanMatrix> priceplans = getActivePricePlansByChargeCode(chargeCode);
         if (priceplans == null) {
             return priceplansByOffer;
         }
@@ -533,10 +492,17 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         return priceplansByOffer;
     }
 
+    /**
+     * Get all price plans for a given charge code
+     * 
+     * @param chargeCode Charge code
+     * @return A list of price plans matching a charge code
+     */
     @SuppressWarnings("unchecked")
-    public List<PricePlanMatrix> listByEventCode(String eventCode) {
+    public List<PricePlanMatrix> listByChargeCode(String chargeCode) {
         QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "m", null);
-        qb.addCriterion("eventCode", "=", eventCode, true);
+        qb.addCriterion("eventCode", "=", chargeCode, true);
+        qb.addOrderCriterionAsIs("priority", true);
 
         try {
             return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
@@ -545,9 +511,19 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         }
     }
 
-    public Long getLastPricePlanByCharge(String eventCode) {
+    /**
+     * Get active price plans for a given charge code. Only these are applicable for rating.
+     * 
+     * @param chargeCode Charge code
+     * @return A list of applicable price plans matching a charge code and ordered by priority
+     */
+    public List<PricePlanMatrix> getActivePricePlansByChargeCode(String chargeCode) {
+        return getEntityManager().createNamedQuery("PricePlanMatrix.getActivePricePlansByChargeCode", PricePlanMatrix.class).setParameter("chargeCode", chargeCode).getResultList();
+    }
+
+    public Long getLastPricePlanSequenceByChargeCode(String chargeCode) {
         QueryBuilder qb = new QueryBuilder("select max(sequence) from PricePlanMatrix m");
-        qb.addCriterion("m.eventCode", "=", eventCode, true);
+        qb.addCriterion("m.eventCode", "=", chargeCode, true);
         try {
             Long result = (Long) qb.getQuery(getEntityManager()).getSingleResult();
             return result == null ? 0L : result;
@@ -667,7 +643,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
             }
             if (result) {
                 update(pricePlanMatrix);
-                this.ratingCacheContainerProvider.updatePricePlanInCache(pricePlanMatrix);
             }
         }
         return result;
@@ -689,18 +664,4 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         pricePlan.setCode(code);
         create(pricePlan);
     }
-
-    @SuppressWarnings("unchecked")
-    public List<PricePlanMatrix> listByEventCodeWithOrder(String eventCode, String priority) {
-        QueryBuilder qb = new QueryBuilder(PricePlanMatrix.class, "p", null);
-        qb.addCriterion("eventCode", "=", eventCode, true);
-        qb.addOrderCriterion(priority, true);
-
-        try {
-            return (List<PricePlanMatrix>) qb.getQuery(getEntityManager()).getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
 }

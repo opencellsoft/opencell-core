@@ -43,23 +43,22 @@ public class UnitUsageRatingJobBean {
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, Long edrId) throws BusinessException {
         long startDate = System.currentTimeMillis();
-        log.debug("Running with edrId={}", edrId);
-        EDR edr = null;
+        log.debug("Processing EDR {}", edrId);
+
         try {
-            edr = edrService.findById(edrId);
+            EDR edr = edrService.findById(edrId);
             log.debug("After findById:" + (System.currentTimeMillis() - startDate));
             if (edr == null) {
                 return;
             }
             usageRatingService.ratePostpaidUsage(edr);
 
-            log.debug("After ratePostpaidUsage:" + (System.currentTimeMillis() - startDate));
+            log.debug("After ratePostpaidUsage EDR {}: {}", edrId, (System.currentTimeMillis() - startDate));
 
             if (edr.getStatus() == EDRStatusEnum.RATED) {
                 edr = edrService.updateNoCheck(edr);
-                log.debug("After updateNoCheck:" + (System.currentTimeMillis() - startDate));
                 result.registerSucces();
-                log.debug("After registerSucces:" + (System.currentTimeMillis() - startDate));
+                log.debug("After registerSucces EDR {}: {}", edrId, (System.currentTimeMillis() - startDate));
             } else {
                 throw new BusinessException(edr.getRejectReason());
             }

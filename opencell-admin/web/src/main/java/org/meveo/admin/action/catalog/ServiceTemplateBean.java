@@ -52,97 +52,96 @@ import org.primefaces.model.DualListModel;
 @ViewScoped
 public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
-	private static final long serialVersionUID = 1L;
-	
-	@Inject
-	private ServiceInstanceService serviceInstanceService;
+    private static final long serialVersionUID = 1L;
+
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
-    
+
     @Inject
-	private ServiceTemplateService serviceTemplateService;
+    private ServiceTemplateService serviceTemplateService;
 
-	@Inject
-	private WalletTemplateService walletTemplateService;
-	
-	@Inject
-	private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
-	@Inject
-	private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
-	@Inject
-	private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
-	@Inject
-	private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
+    @Inject
+    private WalletTemplateService walletTemplateService;
 
-	private DualListModel<WalletTemplate> usageWallets;
-	private DualListModel<WalletTemplate> recurringWallets;
-	private DualListModel<WalletTemplate> subscriptionWallets;
-	private DualListModel<WalletTemplate> terminationWallets;
+    @Inject
+    private ServiceChargeTemplateSubscriptionService serviceChargeTemplateSubscriptionService;
+    @Inject
+    private ServiceChargeTemplateTerminationService serviceChargeTemplateTerminationService;
+    @Inject
+    private ServiceChargeTemplateRecurringService serviceChargeTemplateRecurringService;
+    @Inject
+    private ServiceChargeTemplateUsageService serviceChargeTemplateUsageService;
 
-	private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
+    private DualListModel<WalletTemplate> usageWallets;
+    private DualListModel<WalletTemplate> recurringWallets;
+    private DualListModel<WalletTemplate> subscriptionWallets;
+    private DualListModel<WalletTemplate> terminationWallets;
 
-	public ServiceChargeTemplateRecurring getServiceChargeTemplateRecurring() {
+    private ServiceChargeTemplateRecurring serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
+
+    public ServiceChargeTemplateRecurring getServiceChargeTemplateRecurring() {
         return serviceChargeTemplateRecurring;
     }
-	
-	public void setServiceChargeTemplateRecurring(ServiceChargeTemplateRecurring serviceChargeTemplateRecurring) {
+
+    public void setServiceChargeTemplateRecurring(ServiceChargeTemplateRecurring serviceChargeTemplateRecurring) {
         this.serviceChargeTemplateRecurring = serviceChargeTemplateRecurring;
     }
-	
-	public void newServiceChargeTemplateRecurring() {
-		this.serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
-		this.recurringWallets = null;
-	}
 
-	private ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
+    public void newServiceChargeTemplateRecurring() {
+        this.serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurring();
+        this.recurringWallets = null;
+    }
 
-	public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscription() {
+    private ServiceChargeTemplateSubscription serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
+
+    public ServiceChargeTemplateSubscription getServiceChargeTemplateSubscription() {
         return serviceChargeTemplateSubscription;
     }
-	
-	public void setServiceChargeTemplateSubscription(ServiceChargeTemplateSubscription serviceChargeTemplateSubscription) {
+
+    public void setServiceChargeTemplateSubscription(ServiceChargeTemplateSubscription serviceChargeTemplateSubscription) {
         this.serviceChargeTemplateSubscription = serviceChargeTemplateSubscription;
     }
-	
-	public void newServiceChargeTemplateSubscription() {
-		this.serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
-		this.subscriptionWallets = null;
-	}
 
-	private ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
+    public void newServiceChargeTemplateSubscription() {
+        this.serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscription();
+        this.subscriptionWallets = null;
+    }
 
-	public ServiceChargeTemplateTermination getServiceChargeTemplateTermination() {
+    private ServiceChargeTemplateTermination serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
+
+    public ServiceChargeTemplateTermination getServiceChargeTemplateTermination() {
         return serviceChargeTemplateTermination;
     }
-	
-	public void setServiceChargeTemplateTermination(ServiceChargeTemplateTermination serviceChargeTemplateTermination) {
+
+    public void setServiceChargeTemplateTermination(ServiceChargeTemplateTermination serviceChargeTemplateTermination) {
         this.serviceChargeTemplateTermination = serviceChargeTemplateTermination;
     }
-	
-	public void newServiceChargeTemplateTermination() {
-		this.serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
-		this.terminationWallets = null;
-	}
 
-	@Produces
-	@Named
-	private ServiceChargeTemplateUsage serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
-	
-	public void newServiceChargeTemplateUsage() {
-		this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
-		this.usageWallets = null;
-	}
+    public void newServiceChargeTemplateTermination() {
+        this.serviceChargeTemplateTermination = new ServiceChargeTemplateTermination();
+        this.terminationWallets = null;
+    }
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public ServiceTemplateBean() {
-		super(ServiceTemplate.class);
-	}
+    @Produces
+    @Named
+    private ServiceChargeTemplateUsage serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
 
-	public DualListModel<WalletTemplate> getUsageDualListModel() {
+    public void newServiceChargeTemplateUsage() {
+        this.serviceChargeTemplateUsage = new ServiceChargeTemplateUsage();
+        this.usageWallets = null;
+    }
+
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public ServiceTemplateBean() {
+        super(ServiceTemplate.class);
+    }
+
+    public DualListModel<WalletTemplate> getUsageDualListModel() {
         if (usageWallets == null) {
             List<WalletTemplate> perksSource = walletTemplateService.list();
             List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
@@ -156,13 +155,13 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             usageWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
         }
         return usageWallets;
-	}
+    }
 
-	public void setUsageDualListModel(DualListModel<WalletTemplate> perks) {
-	    this.usageWallets = perks;
-	}
+    public void setUsageDualListModel(DualListModel<WalletTemplate> perks) {
+        this.usageWallets = perks;
+    }
 
-	public DualListModel<WalletTemplate> getSubscriptionDualListModel() {
+    public DualListModel<WalletTemplate> getSubscriptionDualListModel() {
         if (subscriptionWallets == null) {
             List<WalletTemplate> perksSource = walletTemplateService.list();
             List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
@@ -176,13 +175,13 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             subscriptionWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
         }
         return subscriptionWallets;
-	}
+    }
 
-	public void setSubscriptionDualListModel(DualListModel<WalletTemplate> perks) {
-	    this.subscriptionWallets = perks;
-	}
+    public void setSubscriptionDualListModel(DualListModel<WalletTemplate> perks) {
+        this.subscriptionWallets = perks;
+    }
 
-	public DualListModel<WalletTemplate> getTerminationDualListModel() {
+    public DualListModel<WalletTemplate> getTerminationDualListModel() {
         if (terminationWallets == null) {
             List<WalletTemplate> perksSource = walletTemplateService.list();
             List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
@@ -196,13 +195,13 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             terminationWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
         }
         return terminationWallets;
-	}
+    }
 
-	public void setTerminationDualListModel(DualListModel<WalletTemplate> perks) {
+    public void setTerminationDualListModel(DualListModel<WalletTemplate> perks) {
         this.terminationWallets = perks;
     }
 
-	public DualListModel<WalletTemplate> getRecurringDualListModel() {
+    public DualListModel<WalletTemplate> getRecurringDualListModel() {
         if (recurringWallets == null) {
             List<WalletTemplate> perksSource = walletTemplateService.list();
             List<WalletTemplate> perksTarget = new ArrayList<WalletTemplate>();
@@ -216,42 +215,42 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
             recurringWallets = new DualListModel<WalletTemplate>(perksSource, perksTarget);
         }
         return recurringWallets;
-	}
-
-	public void setRecurringDualListModel(DualListModel<WalletTemplate> perks) {
-	    this.recurringWallets = perks;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
-	 */
-	@Override
+    public void setRecurringDualListModel(DualListModel<WalletTemplate> perks) {
+        this.recurringWallets = perks;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.admin.action.BaseBean#saveOrUpdate(boolean)
+     */
+    @Override
     @ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
-		for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
-			if (!recurringCharge.getChargeTemplate().getApplyInAdvance()) {
-				break;
-			}
-		}
-		boolean newEntity = (entity.getId() == null);
-	
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        List<ServiceChargeTemplateRecurring> recurringCharges = entity.getServiceRecurringCharges();
+        for (ServiceChargeTemplateRecurring recurringCharge : recurringCharges) {
+            if (!recurringCharge.getChargeTemplate().getApplyInAdvance()) {
+                break;
+            }
+        }
+        boolean newEntity = (entity.getId() == null);
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
             return newEntity ? getEditViewName() : outcome;
         }
         return null;
-	}
+    }
 
-	public void saveServiceChargeTemplateSubscription() {
-		log.info("saveServiceChargeTemplateSubscription getObjectId=#0", getObjectId());
+    public void saveServiceChargeTemplateSubscription() {
+        log.info("saveServiceChargeTemplateSubscription getObjectId=#0", getObjectId());
 
-		try {
-			if (serviceChargeTemplateSubscription == null) {
-			    return;
+        try {
+            if (serviceChargeTemplateSubscription == null) {
+                return;
             }
             for (ServiceChargeTemplateSubscription inc : entity.getServiceSubscriptionCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateSubscription.getChargeTemplate().getCode())
@@ -259,17 +258,18 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                     throw new Exception();
                 }
             }
-            
+
             if (serviceChargeTemplateSubscription.getWalletTemplates() == null) {
                 serviceChargeTemplateSubscription.setWalletTemplates(new ArrayList<WalletTemplate>());
             } else {
                 serviceChargeTemplateSubscription.getWalletTemplates().clear();
             }
             serviceChargeTemplateSubscription.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(subscriptionWallets.getTarget()));
-            
+
             if (serviceChargeTemplateSubscription.getId() != null) {
                 serviceChargeTemplateSubscriptionService.update(serviceChargeTemplateSubscription);
-                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
+                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be
+                                                                            // saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateSubscription.setServiceTemplate(entity);
@@ -277,41 +277,41 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 entity.getServiceSubscriptionCharges().add(serviceChargeTemplateSubscription);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
-		} catch (Exception e) {
-			log.error("exception when applying one serviceUsageChargeTemplate !", e);
-			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
-		}
+        } catch (Exception e) {
+            log.error("exception when applying one serviceUsageChargeTemplate !", e);
+            messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
+        }
 
-		newServiceChargeTemplateSubscription();
-	}
+        newServiceChargeTemplateSubscription();
+    }
 
-	public void deleteServiceSubscriptionChargeTemplate(Long id) throws BusinessException {
-		ServiceChargeTemplateSubscription subscription=serviceChargeTemplateSubscriptionService.findById(id);
-		entity.getServiceSubscriptionCharges().remove(subscription);
-		entity=getPersistenceService().update(entity);
-		serviceChargeTemplateSubscriptionService.remove(subscription);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+    public void deleteServiceSubscriptionChargeTemplate(Long id) throws BusinessException {
+        ServiceChargeTemplateSubscription subscription = serviceChargeTemplateSubscriptionService.findById(id);
+        entity.getServiceSubscriptionCharges().remove(subscription);
+        entity = getPersistenceService().update(entity);
+        serviceChargeTemplateSubscriptionService.remove(subscription);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
 
     public void editServiceSubscriptionChargeTemplate(ServiceChargeTemplateSubscription serviceSubscriptionChargeTemplate) {
         this.serviceChargeTemplateSubscription = serviceSubscriptionChargeTemplate;
         this.subscriptionWallets = null;
     }
 
-	public void saveServiceChargeTemplateTermination() {
-		log.info("saveServiceChargeTemplateTermination getObjectId=#0", getObjectId());
+    public void saveServiceChargeTemplateTermination() {
+        log.info("saveServiceChargeTemplateTermination getObjectId=#0", getObjectId());
 
-		try {
-			if (serviceChargeTemplateTermination == null) {
-			    return;
-			}
+        try {
+            if (serviceChargeTemplateTermination == null) {
+                return;
+            }
             for (ServiceChargeTemplateTermination inc : entity.getServiceTerminationCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateTermination.getChargeTemplate().getCode())
                         && !inc.getId().equals(serviceChargeTemplateTermination.getId())) {
                     throw new Exception();
                 }
             }
-            
+
             if (serviceChargeTemplateTermination.getWalletTemplates() == null) {
                 serviceChargeTemplateTermination.setWalletTemplates(new ArrayList<WalletTemplate>());
             } else {
@@ -321,7 +321,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
             if (serviceChargeTemplateTermination.getId() != null) {
                 serviceChargeTemplateTerminationService.update(serviceChargeTemplateTermination);
-                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
+                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be
+                                                                            // saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateTermination.setServiceTemplate(entity);
@@ -329,32 +330,32 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 entity.getServiceTerminationCharges().add(serviceChargeTemplateTermination);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
-		} catch (Exception e) {
-			log.error("exception when applying one serviceUsageChargeTemplate !", e);
-			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
-		}
-		newServiceChargeTemplateTermination();
-	}
+        } catch (Exception e) {
+            log.error("exception when applying one serviceUsageChargeTemplate !", e);
+            messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
+        }
+        newServiceChargeTemplateTermination();
+    }
 
-	public void deleteServiceTerminationChargeTemplate(Long id) throws BusinessException {
-		ServiceChargeTemplateTermination termination=serviceChargeTemplateTerminationService.findById(id);
-		entity.getServiceTerminationCharges().remove(termination);
-		entity=getPersistenceService().update(entity);
-		serviceChargeTemplateTerminationService.remove(termination);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+    public void deleteServiceTerminationChargeTemplate(Long id) throws BusinessException {
+        ServiceChargeTemplateTermination termination = serviceChargeTemplateTerminationService.findById(id);
+        entity.getServiceTerminationCharges().remove(termination);
+        entity = getPersistenceService().update(entity);
+        serviceChargeTemplateTerminationService.remove(termination);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
 
-	public void editServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
-		this.serviceChargeTemplateTermination = serviceTerminationChargeTemplate;
-		this.terminationWallets = null;
-	}
+    public void editServiceTerminationChargeTemplate(ServiceChargeTemplateTermination serviceTerminationChargeTemplate) {
+        this.serviceChargeTemplateTermination = serviceTerminationChargeTemplate;
+        this.terminationWallets = null;
+    }
 
-	public void saveServiceChargeTemplateRecurring() {
-		log.info("saveServiceChargeTemplateRecurring getObjectId=#0", getObjectId());
+    public void saveServiceChargeTemplateRecurring() {
+        log.info("saveServiceChargeTemplateRecurring getObjectId=#0", getObjectId());
 
-		try {
-			if (serviceChargeTemplateRecurring == null) {
-			    return;
+        try {
+            if (serviceChargeTemplateRecurring == null) {
+                return;
             }
             for (ServiceChargeTemplateRecurring inc : entity.getServiceRecurringCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateRecurring.getChargeTemplate().getCode())
@@ -362,17 +363,18 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                     throw new Exception();
                 }
             }
-            
+
             if (serviceChargeTemplateRecurring.getWalletTemplates() == null) {
                 serviceChargeTemplateRecurring.setWalletTemplates(new ArrayList<WalletTemplate>());
             } else {
                 serviceChargeTemplateRecurring.getWalletTemplates().clear();
             }
             serviceChargeTemplateRecurring.getWalletTemplates().addAll(walletTemplateService.refreshOrRetrieve(recurringWallets.getTarget()));
-            
+
             if (serviceChargeTemplateRecurring.getId() != null) {
                 serviceChargeTemplateRecurringService.update(serviceChargeTemplateRecurring);
-                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
+                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be
+                                                                            // saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateRecurring.setServiceTemplate(entity);
@@ -380,38 +382,37 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
                 entity.getServiceRecurringCharges().add(serviceChargeTemplateRecurring);
                 messages.info(new BundleKey("messages", "save.successful"));
             }
-		} catch (Exception e) {
-			log.error("exception when applying one serviceUsageChargeTemplate !", e);
-			messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
-		}
-		newServiceChargeTemplateRecurring();
-	}
+        } catch (Exception e) {
+            log.error("exception when applying one serviceUsageChargeTemplate !", e);
+            messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
+        }
+        newServiceChargeTemplateRecurring();
+    }
 
-	public void deleteServiceRecurringChargeTemplate(Long id) throws BusinessException {
-		ServiceChargeTemplateRecurring recurring=serviceChargeTemplateRecurringService.findById(id);
-		entity.getServiceRecurringCharges().remove(recurring);
-		entity=getPersistenceService().update(entity);
-		serviceChargeTemplateRecurringService.remove(recurring);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+    public void deleteServiceRecurringChargeTemplate(Long id) throws BusinessException {
+        ServiceChargeTemplateRecurring recurring = serviceChargeTemplateRecurringService.findById(id);
+        entity.getServiceRecurringCharges().remove(recurring);
+        entity = getPersistenceService().update(entity);
+        serviceChargeTemplateRecurringService.remove(recurring);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
 
-	public void editServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
-		this.serviceChargeTemplateRecurring = serviceRecurringChargeTemplate;
-		this.recurringWallets= null;
-	}
+    public void editServiceRecurringChargeTemplate(ServiceChargeTemplateRecurring serviceRecurringChargeTemplate) {
+        this.serviceChargeTemplateRecurring = serviceRecurringChargeTemplate;
+        this.recurringWallets = null;
+    }
 
-	public void saveServiceChargeTemplateUsage() {
-		log.info("saveServiceChargeTemplateUsage getObjectId=" + getObjectId());
+    public void saveServiceChargeTemplateUsage() {
+        log.info("saveServiceChargeTemplateUsage getObjectId=" + getObjectId());
 
-		try {
+        try {
             if (serviceChargeTemplateUsage == null) {
                 return;
             }
             for (ServiceChargeTemplateUsage inc : entity.getServiceUsageCharges()) {
                 if (inc.getChargeTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getChargeTemplate().getCode())
-                        && !inc.getId().equals(serviceChargeTemplateUsage.getId())
-                        && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null) || inc.getCounterTemplate().getCode()
-                            .equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
+                        && !inc.getId().equals(serviceChargeTemplateUsage.getId()) && ((inc.getCounterTemplate() == null && serviceChargeTemplateUsage.getCounterTemplate() == null)
+                                || inc.getCounterTemplate().getCode().equalsIgnoreCase(serviceChargeTemplateUsage.getCounterTemplate().getCode()))) {
                     log.error("exception when applying one serviceUsageChargeTemplate !");
                     messages.error(new BundleKey("messages", "serviceTemplate.uniqueUsageCounterFlied"));
                     return;
@@ -427,7 +428,8 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
 
             if (serviceChargeTemplateUsage.getId() != null) {
                 serviceChargeTemplateUsageService.update(serviceChargeTemplateUsage);
-                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be saved
+                entity = getPersistenceService().refreshOrRetrieve(entity); // TODO this line might cause an issue when after update of charge template service template can not be
+                                                                            // saved
                 messages.info(new BundleKey("messages", "update.successful"));
             } else {
                 serviceChargeTemplateUsage.setServiceTemplate(entity);
@@ -442,64 +444,65 @@ public class ServiceTemplateBean extends CustomFieldBean<ServiceTemplate> {
         newServiceChargeTemplateUsage();
     }
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 * @throws BusinessException 
-	 */
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     * 
+     * @throws BusinessException
+     */
 
-	public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {
-		ServiceChargeTemplateUsage usage=serviceChargeTemplateUsageService.findById(id);
-		entity.getServiceUsageCharges().remove(usage);
-		entity=getPersistenceService().update(entity);
-		serviceChargeTemplateUsageService.remove(usage);
-		messages.info(new BundleKey("messages", "delete.successful"));
-	}
+    public void deleteServiceUsageChargeTemplate(Long id) throws BusinessException {
+        ServiceChargeTemplateUsage usage = serviceChargeTemplateUsageService.findById(id);
+        entity.getServiceUsageCharges().remove(usage);
+        entity = getPersistenceService().update(entity);
+        serviceChargeTemplateUsageService.remove(usage);
+        messages.info(new BundleKey("messages", "delete.successful"));
+    }
 
-	public void editServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
-		this.serviceChargeTemplateUsage = serviceUsageChargeTemplate;
-		this.usageWallets = null;
-	}
+    public void editServiceUsageChargeTemplate(ServiceChargeTemplateUsage serviceUsageChargeTemplate) {
+        this.serviceChargeTemplateUsage = serviceUsageChargeTemplate;
+        this.usageWallets = null;
+    }
 
-	public ServiceChargeTemplateUsage getServiceChargeTemplateUsage() {
-		return serviceChargeTemplateUsage;
-	}
+    public ServiceChargeTemplateUsage getServiceChargeTemplateUsage() {
+        return serviceChargeTemplateUsage;
+    }
 
-	public void setServiceChargeTemplateUsage(ServiceChargeTemplateUsage serviceChargeTemplateUsage) {
-		this.serviceChargeTemplateUsage = serviceChargeTemplateUsage;
-	}
+    public void setServiceChargeTemplateUsage(ServiceChargeTemplateUsage serviceChargeTemplateUsage) {
+        this.serviceChargeTemplateUsage = serviceChargeTemplateUsage;
+    }
 
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<ServiceTemplate> getPersistenceService() {
-		return serviceTemplateService;
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<ServiceTemplate> getPersistenceService() {
+        return serviceTemplateService;
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	@ActionMethod
-	public void duplicate() {
-	    
+    @ActionMethod
+    public void duplicate() {
+
         if (entity != null && entity.getId() != null) {
-           try{
-        	   serviceTemplateService.duplicate(entity);
-               messages.info(new BundleKey("messages", "duplicate.successfull"));
+            try {
+                serviceTemplateService.duplicate(entity);
+                messages.info(new BundleKey("messages", "duplicate.successfull"));
             } catch (BusinessException e) {
                 log.error("Error encountered duplicating service template entity: {}", entity.getCode(), e);
                 messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
             }
-		}
-	}
-	
-	public boolean isUsedInSubscription() {
-		return (getEntity() != null && !getEntity().isTransient()
-				&& (serviceInstanceService.findByServiceTemplate(getEntity()) != null) && serviceInstanceService
-				.findByServiceTemplate(getEntity()).size() > 0) ? true : false;
-	}
-	
+        }
+    }
+
+    public boolean isUsedInSubscription() {
+        if (getEntity() == null || getEntity().isTransient()) {
+            return false;
+        }
+
+        return serviceInstanceService.hasInstances(entity, null);
+    }
 }

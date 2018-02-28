@@ -23,6 +23,7 @@ import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
@@ -67,6 +68,9 @@ public class ClusterEventMonitor implements MessageListener {
         try {
             if (rcvMessage instanceof ObjectMessage) {
                 ClusterEventDto eventDto = (ClusterEventDto) ((ObjectMessage) rcvMessage).getObject();
+                if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())){
+                    return;
+                }
                 log.info("Received cluster synchronization event message {}", eventDto);
 
                 processClusterEvent(eventDto);
@@ -87,7 +91,7 @@ public class ClusterEventMonitor implements MessageListener {
     private void processClusterEvent(ClusterEventDto eventDto) {
 
         if (eventDto.getClazz().equals(ScriptInstance.class.getSimpleName())) {
-            scriptInstanceService.refreshCompiledScript(eventDto.getCode());
+            scriptInstanceService.clearCompiledScripts(eventDto.getCode());
 
         } else if (eventDto.getClazz().equals(JobInstance.class.getSimpleName())) {
             jobInstanceService.scheduleUnscheduleJob(eventDto.getId());

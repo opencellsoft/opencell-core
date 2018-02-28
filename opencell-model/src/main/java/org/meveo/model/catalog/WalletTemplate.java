@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.math.BigDecimal;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -36,6 +37,7 @@ import org.meveo.model.ObservableEntity;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 
 @Entity
+@Cacheable
 @ObservableEntity
 @ExportIdentifier({ "code"})
 @Table(name = "cat_wallet_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))

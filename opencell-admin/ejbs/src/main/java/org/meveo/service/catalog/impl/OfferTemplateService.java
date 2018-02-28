@@ -29,7 +29,6 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -41,7 +40,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -65,18 +63,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private SubscriptionService subscriptionService;
-
-    @SuppressWarnings("unchecked")
-    public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
-        Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
-        query.setParameter("serviceTemplate", serviceTemplate);
-
-        try {
-            return (List<OfferTemplate>) query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -174,13 +160,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * @throws BusinessException exception when error happens
      */
     public synchronized void delete(OfferTemplate entity) throws BusinessException {
-        entity = refreshOrRetrieve(entity);
-        List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
-        if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
-            this.remove(entity);
-            this.catalogHierarchyBuilderService.delete(entity);
-        }
 
+        if (entity == null || entity.isTransient() || subscriptionService.hasSubscriptions(entity)) {
+            return;
+        }
+        this.remove(entity);
+        this.catalogHierarchyBuilderService.delete(entity);
     }
 
     /**
@@ -340,9 +325,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-
+    
     public List<OfferTemplate> list(String code, Date validFrom, Date validTo, LifeCycleStatusEnum lifeCycleStatusEnum) {
-        List<OfferTemplate> listOfferTemplates = null;
+		List<OfferTemplate> listOfferTemplates = null;
 
         if (StringUtils.isBlank(code) && validFrom == null && validTo == null && lifeCycleStatusEnum == null) {
             listOfferTemplates = list();
@@ -367,17 +352,17 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             } else if (validFrom != null && validTo != null) {
                 filters.put("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
             }
-
-            if (!StringUtils.isBlank(lifeCycleStatusEnum)) {
-                filters.put("lifeCycleStatus", lifeCycleStatusEnum);
-            }
-
-            filters.put("disabled", false);
+            
+			if (!StringUtils.isBlank(lifeCycleStatusEnum)) {
+				filters.put("lifeCycleStatus", lifeCycleStatusEnum);
+			}
+			
+			filters.put("disabled", false);
 
             PaginationConfiguration config = new PaginationConfiguration(filters);
             listOfferTemplates = list(config);
         }
-
+        
         return listOfferTemplates;
     }
 }

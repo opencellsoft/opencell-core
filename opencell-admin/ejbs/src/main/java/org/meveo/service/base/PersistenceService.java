@@ -344,7 +344,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         query.executeUpdate();
     }
 
-   
     /**
      * @see org.meveo.service.base.local.IPersistenceService#update(org.meveo.model.IEntity)
      */
@@ -393,7 +392,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return true;
     }
 
- 
     /**
      * @see org.meveo.service.base.local.IPersistenceService#create(org.meveo.model.IEntity)
      */
@@ -523,12 +521,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().detach(entity);
     }
 
-
     /**
      * @see org.meveo.service.base.local.IPersistenceService#refresh(org.meveo.model.IEntity)
      */
     @Override
-    public void refresh(E entity) {
+    public void refresh(IEntity entity) {
         // entity manager throws exception if trying to refresh not managed
         // entity (ejb spec requires this).
         /*
@@ -541,17 +538,16 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
     }
 
-
     /**
      * @see org.meveo.service.base.local.IPersistenceService#refreshOrRetrieve(org.meveo.model.IEntity)
      */
     @Override
     public E refreshOrRetrieve(E entity) {
 
-        if (entity == null){
+        if (entity == null) {
             return null;
         }
-        
+
         if (getEntityManager().contains(entity)) {
             log.trace("Entity {}/{} will be refreshed) ..", getEntityClass().getSimpleName(), entity.getId());
             getEntityManager().refresh(entity);
@@ -594,6 +590,61 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return refreshedEntities;
     }
 
+    /**
+     * Retrieve an entity if it is not managed by EM
+     * 
+     * @param entity Entity to retrieve
+     * @return New instance of an entity
+     */
+    @Override
+    public E retrieveIfNotManaged(E entity) {
+
+        if (entity.getId() == null) {
+            return entity;
+        }
+
+        // Entity is managed already
+        if (getEntityManager().contains(entity)) {
+            return entity;
+
+        } else {
+            return findById((Long) entity.getId());
+        }
+    }
+
+    /**
+     * @see org.meveo.service.base.local.IPersistenceService#retrieveIfNotManaged(java.util.List)
+     */
+    @Override
+    public List<E> retrieveIfNotManaged(List<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        List<E> refreshedEntities = new ArrayList<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(retrieveIfNotManaged(entity));
+        }
+
+        return refreshedEntities;
+    }
+
+    @Override
+    public Set<E> retrieveIfNotManaged(Set<E> entities) {
+
+        if (entities == null) {
+            return null;
+        }
+
+        Set<E> refreshedEntities = new HashSet<E>();
+        for (E entity : entities) {
+            refreshedEntities.add(retrieveIfNotManaged(entity));
+        }
+
+        return refreshedEntities;
+    }
+    
     /**
      * Creates query to filter entities according data provided in pagination configuration.
      * 
@@ -643,36 +694,25 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      * To filter by a related entity's field you can either filter by related entity's field or by related entity itself specifying code as value. These two example will do the
      * same in case when quering a customer account: customer.code=aaa OR customer=aaa
      * 
-     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList
-     * sellers=code1,code2
+     * To filter a list of related entities by a list of entity codes use "inList" on related entity field. e.g. for quering offer template by sellers: inList sellers=code1,code2
      * 
      * 
-     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists 
+     * <b>Note:</b> Quering by related entity field directly will result in exception when entity with a specified code does not exists
      * 
      * 
      * Examples:
      * <ul>
-     * <li>invoice number equals "1578AU":
-     * Filter key: invoiceNumber. Filter value: 1578AU</li>
-     * <li>invoice number is not "1578AU":
-     * Filter key: ne invoiceNumber. Filter value: 1578AU</li>
-     * <li>invoice number is null:
-     * Filter key: invoiceNumber. Filter value: IS_NULL</li>
-     * <li>invoice number is not empty:
-     * Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
-     * <li>Invoice date is between 2017-05-01 and 2017-06-01:
-     * Filter key: fromRange invoiceDate. Filter value: 2017-05-01
-     * Filter key: toRange invoiceDate. Filter value: 2017-06-01</li>
-     * <li>Date is between creation and update dates:
-     * Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
-     * <li>invoice number is any of 158AU, 159KU or 189LL:
-     * Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
-     * <li>any of param1, param2 or param3 fields contains "energy":
-     * Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
-     * <li>any of param1, param2 or param3 fields start with "energy":
-     * Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
-     * <li>any of param1, param2 or param3 fields is "energy":
-     * Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
+     * <li>invoice number equals "1578AU": Filter key: invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is not "1578AU": Filter key: ne invoiceNumber. Filter value: 1578AU</li>
+     * <li>invoice number is null: Filter key: invoiceNumber. Filter value: IS_NULL</li>
+     * <li>invoice number is not empty: Filter key: invoiceNumber. Filter value: IS_NOT_NULL</li>
+     * <li>Invoice date is between 2017-05-01 and 2017-06-01: Filter key: fromRange invoiceDate. Filter value: 2017-05-01 Filter key: toRange invoiceDate. Filter value:
+     * 2017-06-01</li>
+     * <li>Date is between creation and update dates: Filter key: minmaxRange audit.created audit.updated. Filter value: 2017-05-25</li>
+     * <li>invoice number is any of 158AU, 159KU or 189LL: Filter key: inList invoiceNumber. Filter value: 158AU,159KU,189LL</li>
+     * <li>any of param1, param2 or param3 fields contains "energy": Filter key: wildcardOr param1 param2 param3. Filter value: energy</li>
+     * <li>any of param1, param2 or param3 fields start with "energy": Filter key: likeCriterias param1 param2 param3. Filter value: *energy</li>
+     * <li>any of param1, param2 or param3 fields is "energy": Filter key: likeCriterias param1 param2 param3. Filter value: energy</li>
      * </ul>
      * 
      * 
@@ -996,8 +1036,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
 
-        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-        // em.hashCode());
         return result;
     }
 

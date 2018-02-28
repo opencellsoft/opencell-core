@@ -1,7 +1,5 @@
 package org.meveo.admin.action.catalog;
 
-import java.util.ArrayList;
-
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,16 +50,16 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-    	boolean newEntity = (entity.getId() == null);
-    	
+        boolean newEntity = (entity.getId() == null);
+
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
             return newEntity ? getEditViewName() : outcome;
         }
-        
+
         return null;
-        //return "/pages/catalog/discountPlans/discountPlanDetail?objectId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
+        // return "/pages/catalog/discountPlans/discountPlanDetail?objectId=" + entity.getId() + "&faces-redirect=true&includeViewParams=true";
     }
 
     public DiscountPlanItem getDiscountPlanItem() {
@@ -72,28 +70,26 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
         this.discountPlanItem = discountPlanItem;
     }
 
-    public void saveOrUpdateDiscountPlan() throws BusinessException {
-
-        discountPlanItem.setDiscountPlan(getEntity());
-
-        if (getEntity().getDiscountPlanItems() == null) {
-            getEntity().setDiscountPlanItems(new ArrayList<DiscountPlanItem>());
-        }
+    public void saveOrUpdateDiscountPlanItem() throws BusinessException {
 
         if (discountPlanItem.getId() != null) {
-            discountPlanItemService.update(discountPlanItem);
+            discountPlanItem = discountPlanItemService.update(discountPlanItem);
             messages.info(new BundleKey("messages", "update.successful"));
-        }
 
-        if (discountPlanItem.isTransient()) {
+        } else {
+
+            discountPlanItem.setDiscountPlan(getEntity());
+
             try {
                 if (getEntity().getDiscountPlanItems().contains(discountPlanItem)) {
                     messages.error(new BundleKey("messages", "discountPlan.discountPlanItem.unique"));
                 } else {
                     discountPlanItemService.create(discountPlanItem);
-                    getEntity().getDiscountPlanItems().add(discountPlanItem);
                     messages.info(new BundleKey("messages", "save.successful"));
                 }
+
+                discountPlanService.refresh(getEntity());
+
             } catch (BusinessException e) {
                 log.error("failed to save or update discount plan", e);
                 messages.error(new BundleKey("messages", e.getMessage()));
@@ -110,15 +106,14 @@ public class DiscountPlanBean extends BaseBean<DiscountPlan> {
     }
 
     @ActionMethod
-    public void deleteDiscountPlan(DiscountPlanItem discountPlanItem) {
+    public void deleteDiscountPlanItem(DiscountPlanItem discountPlanItem) {
         try {
-            getEntity().getDiscountPlanItems().remove(discountPlanItem);
             discountPlanItemService.remove(discountPlanItem.getId());
+            discountPlanService.refresh(getEntity());
             messages.info(new BundleKey("messages", "delete.successful"));
 
         } catch (Exception e) {
             messages.error(new BundleKey("messages", "error.delete.unexpected"));
         }
     }
-
 }

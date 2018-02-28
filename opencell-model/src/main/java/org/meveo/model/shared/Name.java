@@ -22,6 +22,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.Size;
@@ -31,7 +32,7 @@ public class Name implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne()
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "title_id")
     private Title title;
 

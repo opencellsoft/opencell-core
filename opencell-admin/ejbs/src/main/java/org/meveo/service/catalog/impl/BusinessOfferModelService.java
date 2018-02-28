@@ -26,8 +26,11 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.module.MeveoModuleItem;
 import org.meveo.service.admin.impl.GenericModuleService;
 import org.meveo.service.script.offer.OfferModelScriptService;
+import org.meveo.service.script.offer.OfferScriptInterface;
 import org.meveo.service.script.product.ProductModelScriptService;
+import org.meveo.service.script.product.ProductScriptInterface;
 import org.meveo.service.script.service.ServiceModelScriptService;
+import org.meveo.service.script.service.ServiceScriptInterface;
 
 /**
  * @author Edward P. Legaspi
@@ -71,8 +74,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 	 */
 	public OfferTemplate instantiateFromBOM(BOMInstantiationParameters bomParams) throws BusinessException {
 
-		OfferTemplate bomOffer = bomParams.getBusinessOfferModel().getOfferTemplate();
-		bomOffer = offerTemplateService.refreshOrRetrieve(bomOffer);
+        OfferTemplate bomOffer = bomParams.getBusinessOfferModel().getOfferTemplate();
 
 		// 1 create offer
 		OfferTemplate newOfferTemplate = new OfferTemplate();
@@ -85,11 +87,11 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					+ (bomParams.getValidTo() == null ? "-" : bomParams.getValidTo()) + " already exists");
 		}
 
+		OfferScriptInterface offerScript = null;
 		if (bomParams.getBusinessOfferModel() != null && bomParams.getBusinessOfferModel().getScript() != null) {
-			try {
-				offerModelScriptService.beforeCreateOfferFromBOM(bomParams.getCustomFields(),
-						bomParams.getBusinessOfferModel().getScript().getCode());
-			} catch (BusinessException e) {
+            try {
+                offerScript = offerModelScriptService.beforeCreateOfferFromBOM(bomParams.getCustomFields(), bomParams.getBusinessOfferModel().getScript().getCode());
+            } catch (BusinessException e) {
 				log.error("Failed to execute a script {}", bomParams.getBusinessOfferModel().getScript().getCode(), e);
 			}
 		}
@@ -181,16 +183,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			newOfferTemplate.addOfferProductTemplate(newOfferProductTemplate);
 		}
 
-		if (newOfferTemplate.getBusinessOfferModel() != null
-				&& newOfferTemplate.getBusinessOfferModel().getScript() != null) {
-			try {
-				offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, bomParams.getCustomFields(),
-						newOfferTemplate.getBusinessOfferModel().getScript().getCode());
-			} catch (BusinessException e) {
-				log.error("Failed to execute a script {}",
-						newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
-			}
-		}
+        if (newOfferTemplate.getBusinessOfferModel() != null && newOfferTemplate.getBusinessOfferModel().getScript() != null) {
+            try {
+                offerModelScriptService.afterCreateOfferFromBOM(newOfferTemplate, bomParams.getCustomFields(), offerScript);
+            } catch (BusinessException e) {
+                log.error("Failed to execute a script {}", newOfferTemplate.getBusinessOfferModel().getScript().getCode(), e);
+            }
+        }
 
 		return newOfferTemplate;
 	}
@@ -263,14 +262,14 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 				}
 			}
 
-			if (bpm != null && bpm.getScript() != null) {
-				try {
-					productModelScriptService.beforeCreate(
-							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
-				}
-			}
+            ProductScriptInterface productScript = null;
+            if (bpm != null && bpm.getScript() != null) {
+                try {
+                    productScript = productModelScriptService.beforeCreate(matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
+                }
+            }
 
 			OfferProductTemplate newOfferProductTemplate = catalogHierarchyBuilderService.duplicateOfferProductTemplate(
 					offerProductTemplate, prefix, matchedProductConfigurationDto, pricePlansInMemory,
@@ -278,14 +277,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 
 			newOfferProductTemplates.add(newOfferProductTemplate);
 
-			if (bpm != null && bpm.getScript() != null) {
-				try {
-					productModelScriptService.afterCreate(newOfferProductTemplate.getProductTemplate(),
-							matchedProductConfigurationDto.getCustomFields(), bpm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
-				}
-			}
+            if (productScript != null) {
+                try {
+                    productModelScriptService.afterCreate(newOfferProductTemplate.getProductTemplate(), matchedProductConfigurationDto.getCustomFields(), productScript);
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bpm.getScript().getCode(), e);
+                }
+            }
 		}
 
 		return newOfferProductTemplates;
@@ -376,9 +374,10 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 			// get the BSM from BOM
 			BusinessServiceModel bsm = findBsmFromBom(businessOfferModel, serviceTemplate);
 
+			ServiceScriptInterface serviceScipt = null;
 			if (bsm != null && bsm.getScript() != null) {
 				try {
-					serviceModelScriptService.beforeCreateServiceFromBSM(serviceConfigurationDto.getCustomFields(),
+				    serviceScipt = serviceModelScriptService.beforeCreateServiceFromBSM(serviceConfigurationDto.getCustomFields(),
 							bsm.getScript().getCode());
 				} catch (BusinessException e) {
 					log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
@@ -389,14 +388,13 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
 					offerServiceTemplate, serviceConfigurationDto, prefix, pricePlansInMemory, chargeTemplateInMemory);
 			newOfferServiceTemplates.add(newOfferServiceTemplate);
 
-			if (bsm != null && bsm.getScript() != null) {
-				try {
-					serviceModelScriptService.afterCreateServiceFromBSM(newOfferServiceTemplate.getServiceTemplate(),
-							serviceConfigurationDto.getCustomFields(), bsm.getScript().getCode());
-				} catch (BusinessException e) {
-					log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
-				}
-			}
+            if (serviceScipt != null) {
+                try {
+                    serviceModelScriptService.afterCreateServiceFromBSM(newOfferServiceTemplate.getServiceTemplate(), serviceConfigurationDto.getCustomFields(), serviceScipt);
+                } catch (BusinessException e) {
+                    log.error("Failed to execute a script {}", bsm.getScript().getCode(), e);
+                }
+            }
 		}
 
 		return newOfferServiceTemplates;
