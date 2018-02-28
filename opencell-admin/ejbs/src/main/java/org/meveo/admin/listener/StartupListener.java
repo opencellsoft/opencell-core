@@ -37,7 +37,7 @@ public class StartupListener {
 
     @PostConstruct
     private void init() {
-        log.info("Thank you for running MEVEO Community code. For Commercial Grade Support, please purchase a MEVEO subscription from http://www.manaty.net");
+        log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase a Opencell subscription from https://opencellsoft.com/");
 
         applicationInitializer.init();
     }
