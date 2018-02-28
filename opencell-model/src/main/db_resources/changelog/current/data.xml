@@ -221,5 +221,13 @@
             <column name="role_description" value="Finance Visualization" />
             <column name="role_name" value="financeVisualization" />
         </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-7"></column>
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-8"></column>
+        </insert>
 	</changeSet>
 </databaseChangeLog>
