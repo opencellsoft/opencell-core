@@ -1,7 +1,5 @@
 package org.meveo.service.crm.impl;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.ejb.Stateless;
 import javax.enterprise.context.RequestScoped;
 import javax.enterprise.inject.Produces;
@@ -23,7 +21,7 @@ public class CurrentUserProducer {
 
     @Inject
     EntityManagerProvider entityManagerProvider;
-    
+
     @Inject
     Logger log;
 
@@ -37,23 +35,12 @@ public class CurrentUserProducer {
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
-        log.error("AKK start to product current user");
+        // log.error("AKK start to produce current user");
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
         EntityManager em = entityManagerProvider.getEntityManager(providerCode);
         MeveoUser meveoUser = currentUserProvider.getCurrentUser(providerCode, em);
-        
-        log.error("AKK end to product current user");
+
+        // log.error("AKK end to produce current user");
         return meveoUser;
-    }
-    
-    @PostConstruct
-    public void boo(){
-        log.error("AKK PostConstruct {}", getClass().getSimpleName());
-    }
-    
-    
-    @PreDestroy
-    public void muu(){
-        log.error("AKK PreDestroy {}", getClass().getSimpleName());
     }
 }

@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.ScheduleExpression;
 import javax.ejb.Stateless;
@@ -64,17 +65,32 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private static ParamBean paramBean = ParamBean.getInstance();
 
     /**
+     * Register job classes and schedule active job instances
+     */
+    public void registerJobs() {
+
+        Set<Class<?>> classes = ReflectionUtils.getSubclasses(Job.class);
+
+        for (Class<?> jobClass : classes) {
+            Job job = (Job) EjbUtils.getServiceInterface(jobClass.getSimpleName());
+            registerJob(job);
+        }
+    }
+
+    /**
      * Register job class and schedule active job instances.
      * 
      * @param job job to be registered.
      */
-    public void registerJob(Job job) {
+    private void registerJob(Job job) {
         synchronized (jobTimers) {
 
             if (!jobClasses.containsKey(job.getJobCategory())) {
                 jobClasses.put(job.getJobCategory(), new ArrayList<>());
             }
-            jobClasses.get(job.getJobCategory()).add(job.getClass());
+            if (!jobClasses.get(job.getJobCategory()).contains(job.getClass())) {
+                jobClasses.get(job.getJobCategory()).add(job.getClass());
+            }
 
             Map<String, CustomFieldTemplate> cfts = job.getCustomFields();
             if (cfts != null && !cfts.isEmpty()) {

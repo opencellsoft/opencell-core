@@ -20,10 +20,11 @@ package org.meveo.service.validation;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.service.base.EntityManagerProvider;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * @author Ignas Lelys
@@ -34,14 +35,15 @@ import org.meveo.service.base.EntityManagerProvider;
 public class ValidationService {
 
     @Inject
-    EntityManagerProvider entityManagerProvider;
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager em;
 
     /**
-	 * @param className class name
-	 * @param fieldName field name
-	 * @param id id of checking object
-	 * @param value value of checking objec
-	 * @return true if object has unique field
+     * @param className class name
+     * @param fieldName field name
+     * @param id id of checking object
+     * @param value value of checking object
+     * @return true if object has unique field
      */
     public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
 
@@ -55,7 +57,7 @@ public class ValidationService {
             queryString = String.format("select count(*) from %s where lower(%s)='%s' and id != %s", className, fieldName,
                 (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, id);
         }
-        Query query = entityManagerProvider.getEntityManager().createQuery(queryString);
+        Query query = em.createQuery(queryString);
         long count = (Long) query.getSingleResult();
         return count == 0L;
     }
