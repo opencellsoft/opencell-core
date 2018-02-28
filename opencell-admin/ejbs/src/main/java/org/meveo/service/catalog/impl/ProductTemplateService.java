@@ -10,6 +10,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
@@ -24,6 +25,8 @@ import org.meveo.model.crm.BusinessAccountModel;
 
 @Stateless
 public class ProductTemplateService extends GenericProductOfferingService<ProductTemplate> {
+    
+    private ParamBean paramBean = ParamBean.getInstance();
 
     public long countProductTemplateActive(boolean status) {
         long result = 0;
@@ -41,11 +44,13 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
     }
 
     public long countProductTemplateExpiring() {
+        int beforeExpiration = Integer.parseInt(paramBean.getProperty("offer.expiration.before", "30"));
+        
         Long result = 0L;
         Query query = getEntityManager().createNamedQuery("ProductTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -1);
-        query.setParameter("nowMinus1Day", c.getTime());
+        c.add(Calendar.DATE, -beforeExpiration);
+        query.setParameter("nowMinusXDay", c.getTime());
 
         try {
             result = (long) query.getSingleResult();
