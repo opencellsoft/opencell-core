@@ -36,6 +36,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
@@ -57,6 +58,8 @@ import org.meveo.service.billing.impl.SubscriptionService;
  */
 @Stateless
 public class OfferTemplateService extends GenericProductOfferingService<OfferTemplate> {
+    
+    private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
@@ -99,11 +102,13 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     }
 
     public long countExpiring() {
+        int beforeExpiration = Integer.parseInt(paramBean.getProperty("offer.expiration.before", "30"));
+        
         Long result = 0L;
         Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -1);
-        query.setParameter("nowMinus1Day", c.getTime());
+        c.add(Calendar.DATE, -beforeExpiration);
+        query.setParameter("nowMinusXDay", c.getTime());
 
         try {
             result = (long) query.getSingleResult();
