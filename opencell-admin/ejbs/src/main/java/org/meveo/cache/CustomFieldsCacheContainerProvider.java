@@ -28,9 +28,11 @@ import org.meveo.model.catalog.CalendarInterval;
 import org.meveo.model.catalog.CalendarYearly;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldException;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
@@ -69,14 +71,20 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * identified by a template code
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cft-cache")
-    private Cache<String, Map<String, CustomFieldTemplate>> cftsByAppliesTo;
+    private Cache<CacheKeyStr, Map<String, CustomFieldTemplate>> cftsByAppliesTo;
 
     /**
      * Contains custom entity templates.Key format: &lt;CET code&gt;, value: &lt;CustomEntityTemplate&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-cet-cache")
-    private Cache<String, CustomEntityTemplate> cetsByCode;
+    private Cache<CacheKeyStr, CustomEntityTemplate> cetsByCode;
 
+    @Inject
+    private ProviderService providerService;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
     @PostConstruct
     private void init() {
         try {

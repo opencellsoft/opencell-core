@@ -25,7 +25,7 @@
     <persistence-unit name="MeveoAdminMultiTenant">
         <jta-data-source>java:jboss/datasources/MeveoAdminDatasource</jta-data-source>
         <!-- <jta-data-source>java:jboss/datasources/MeveoAdminMariaDBDatasource</jta-data-source> -->
-        <jar-file>C:\\andrius\\projektai\\seb\\meveo50\\opencell-model\\target\\opencell-model-${project.version}.jar</jar-file>
+        <jar-file>C:\\opencell\\meveo\\opencell-model\\target\\opencell-model-${project.version}.jar</jar-file>
         <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
         <properties>
             <property name="hibernate.archive.autodetection" value="class" />

@@ -19,7 +19,10 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.model.crm.Provider;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.EdrService;
+import org.meveo.service.crm.impl.ProviderService;
 import org.slf4j.Logger;
 
 /**
@@ -47,7 +50,13 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * Stores a list of processed EDR's. Key format: &lt;originBatch&gt;_&lt;originRecord&gt;, value: 0 (no meaning, only keys are used)
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
-    private Cache<String, Boolean> edrCache;
+    private Cache<CacheKeyStr, Boolean> edrCache;
+    
+    @Inject
+    private ProviderService providerService;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     @PostConstruct
     private void init() {
@@ -90,27 +99,37 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateInMemory.size", "100000"));
         int pageSize = Integer.parseInt(paramBean.getProperty("mediation.deduplicateInMemory.pageSize", "1000"));
 
-        int totalEdrs = 0;
+        final Integer[] totalEdrs = new Integer[1];
+        totalEdrs[0] = 0;
+        
+        // for each provider we fill the cache with initial equal portion of the cache 
+        // This may vary during the run 
+        final List<Provider> providers = providerService.list();
+        int maxRecordsPerProvider = maxRecords/providers.size();
+        providers.forEach(provider -> {
+        	for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {
+        		// Force authentication for a 
+        		String lProvider = provider.getCode().equals("DEMO") ? null : provider.getCode();
+            	currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), lProvider);
+            	
+                List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
+                List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
+                Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(lProvider,p), p -> true));
 
-        for (int from = 0; from < maxRecords; from = from + pageSize) {
+                edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putAll(mappedEdrCacheKeys);
 
-            List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
-            List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
-            Map<String, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> p, p -> true));
+                int retrievedSize = edrCacheKeys.size();
+                totalEdrs[0] = totalEdrs[0] + retrievedSize;
 
-            edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putAll(mappedEdrCacheKeys);
+                log.info("EDR cache pre-populated with {} EDRs", retrievedSize);
 
-            int retrievedSize = edrCacheKeys.size();
-            totalEdrs = totalEdrs + retrievedSize;
+                if (retrievedSize < pageSize) {
+                    break;
+                }
+            }   	
+        });
 
-            log.info("EDR cache pre-populated with {} EDRs", retrievedSize);
-
-            if (retrievedSize < pageSize) {
-                break;
-            }
-        }
-
-        log.info("Finished to pre-populate EDR cache with {}", totalEdrs);
+        log.info("Finished to pre-populate EDR cache with {}", totalEdrs[0]);
     }
 
     /**
@@ -120,9 +139,9 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * @param originRecord Origin record
      * @return True if EDR is cached
      */
-    public Boolean getEdrDuplicationStatus(String originBatch, String originRecord) {
+    public Boolean getEdrDuplicationStatus(String originBatch, String originRecord, String providerCode) {
 
-        return edrCache.get(originBatch + '_' + originRecord);
+        return edrCache.get(new CacheKeyStr(providerCode, originBatch + '_' + originRecord));
     }
 
     /**
@@ -131,8 +150,8 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * @param originBatch Origin batch
      * @param originRecord Origin record
      */
-    public void setEdrDuplicationStatus(String originBatch, String originRecord) {
-        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(originBatch + '_' + originRecord, true);
+    public void setEdrDuplicationStatus(String originBatch, String originRecord, String providerCode) {
+        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(providerCode, originBatch + '_' + originRecord), true);
     }
 
     /**

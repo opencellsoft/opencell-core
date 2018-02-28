@@ -27,8 +27,11 @@ import org.meveo.model.BaseEntity;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.security.keycloak.CurrentUserProvider;
+import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.notification.NotificationService;
 import org.slf4j.Logger;
 
@@ -58,11 +61,17 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * Contains association between event type, entity class and notifications. Key format: &lt;eventTypeFilter&gt;-&lt;entity class&gt;
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-notification-cache")
-    private Cache<String, List<Notification>> eventNotificationCache;
+    private Cache<CacheKeyStr, List<Notification>> eventNotificationCache;
 
     // @Resource(name = "java:jboss/infinispan/container/meveo")
     // private CacheContainer meveoContainer;
-
+    
+    @Inject
+    private ProviderService providerService;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+    
     @PostConstruct
     private void init() {
         try {
@@ -101,13 +110,20 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         }
 
         log.debug("Start to pre-populate Notification cache");
-
-        List<Notification> activeNotifications = notificationService.getNotificationsForCache();
-        for (Notification notif : activeNotifications) {
-            addNotificationToCache(notif);
-        }
-
-        log.info("Notification cache populated with {} notifications", activeNotifications.size());
+        
+        
+        final List<Provider> providers = providerService.list();
+        providers.forEach(provider -> {
+        	String lProvider = provider.getCode().equals("DEMO") ? null : provider.getCode();
+        	currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), lProvider);
+        	
+        	List<Notification> activeNotifications = notificationService.getNotificationsForCache();
+            for (Notification notif : activeNotifications) {
+                addNotificationToCache(notif, lProvider);
+            }
+            
+            log.info("Notification cache populated with {} notifications for provider {}.", activeNotifications.size(), lProvider);
+        });
     }
 
     /**
@@ -116,13 +132,13 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * @param notif Notification to add
      */
     // @Lock(LockType.WRITE)
-    public void addNotificationToCache(Notification notif) {
+    public void addNotificationToCache(Notification notif, String providerCode) {
 
         if (!useNotificationCache) {
             return;
         }
 
-        String cacheKey = getCacheKey(notif);
+        CacheKeyStr cacheKey = getCacheKey(notif, providerCode);
 
         log.trace("Adding notification {} to notification cache under key {}", notif.getId(), cacheKey);
         // Solve lazy loading issues when firing notification
@@ -151,13 +167,13 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * 
      * @param notif Notification to remove
      */
-    public void removeNotificationFromCache(Notification notif) {
+    public void removeNotificationFromCache(Notification notif, String providerCode) {
 
         if (!useNotificationCache) {
             return;
         }
 
-        String cacheKey = getCacheKey(notif);
+        CacheKeyStr cacheKey = getCacheKey(notif, providerCode);
 
         log.trace("Removing notification {} from notification cache under key {}", notif.getId(), cacheKey);
 
@@ -183,14 +199,14 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * 
      * @param notif Notification to update
      */
-    public void updateNotificationInCache(Notification notif) {
+    public void updateNotificationInCache(Notification notif, String providerCode) {
 
         if (!useNotificationCache) {
             return;
         }
 
-        removeNotificationFromCache(notif);
-        addNotificationToCache(notif);
+        removeNotificationFromCache(notif, providerCode);
+        addNotificationToCache(notif, providerCode);
     }
 
     /**
@@ -201,7 +217,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * @return A list of notifications. A NULL is returned if cache was not prepopulated at application startup and cache contains no entry for a base entity passed.
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
+    public List<Notification> getApplicableNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent, String providerCode) {
 
         // Determine a base entity
         Object entity = null;
@@ -221,7 +237,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         while (!entityClass.isAssignableFrom(BusinessCFEntity.class) && !entityClass.isAssignableFrom(BusinessEntity.class) && !entityClass.isAssignableFrom(BaseEntity.class)
                 && !entityClass.isAssignableFrom(AuditableEntity.class) && !entityClass.isAssignableFrom(Object.class)) {
 
-            String cacheKey = getCacheKey(eventType, entityClass);
+            CacheKeyStr cacheKey = getCacheKey(eventType, entityClass, providerCode);
             if (eventNotificationCache.containsKey(cacheKey)) {
                 notifications.addAll(eventNotificationCache.get(cacheKey));
 
@@ -268,13 +284,15 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         }
     }
 
-    private String getCacheKey(Notification notif) {
-        return notif.getEventTypeFilter().name() + "_" + notif.getClassNameFilter();
+    private CacheKeyStr getCacheKey(Notification notif, String providerCode) {
+    	String key = notif.getEventTypeFilter().name() + "_" + notif.getClassNameFilter();
+		return new CacheKeyStr(providerCode, key);
     }
 
     @SuppressWarnings("rawtypes")
-    private String getCacheKey(NotificationEventTypeEnum eventType, Class entityClass) {
-        return eventType.name() + "_" + ReflectionUtils.getCleanClassName(entityClass.getName());
+    private CacheKeyStr getCacheKey(NotificationEventTypeEnum eventType, Class entityClass, String providerCode) {
+    	String key = eventType.name() + "_" + ReflectionUtils.getCleanClassName(entityClass.getName()); 
+        return new CacheKeyStr(providerCode, key);
     }
 
     /**
@@ -283,7 +301,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
      * @param eventType Event type
      * @param entityOrEvent Entity involved or event containing the entity involved
      */
-    public void markNoNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent) {
+    public void markNoNotifications(NotificationEventTypeEnum eventType, Object entityOrEvent, String providerCode) {
 
         // Determine a base entity
         Object entity = null;
@@ -295,7 +313,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
             entity = entityOrEvent;
         }
 
-        String cacheKey = getCacheKey(eventType, entity.getClass());
+        CacheKeyStr cacheKey = getCacheKey(eventType, entity.getClass(), providerCode);
         if (!eventNotificationCache.getAdvancedCache().containsKey(cacheKey)) {
             eventNotificationCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(cacheKey, new ArrayList<Notification>());
         }
