@@ -170,6 +170,10 @@ public class BillingAccount extends AccountEntity {
     @Column(name = "phone", length = 15)
     @Size(max = 15)
     protected String phone;
+    
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
 
     public BillingAccount() {
         accountType = ACCOUNT_TYPE;
@@ -405,6 +409,14 @@ public class BillingAccount extends AccountEntity {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
     }
 
 }

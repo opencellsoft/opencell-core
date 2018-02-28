@@ -64,7 +64,7 @@ public class InvoicingAsync {
             if (jobInstanceId != null && !jobExecutionService.isJobRunningOnThis(jobInstanceId)) {
                 break;
             }
-            if (billingAccountService.updateBillingAccountTotalAmounts(billingAccountId, billingRun)) {
+            if (billingAccountService.updateBillingAccountTotalAmountsAndCreateMinBilledRT(billingAccountId, billingRun)) {
                 count++;
             }
         }

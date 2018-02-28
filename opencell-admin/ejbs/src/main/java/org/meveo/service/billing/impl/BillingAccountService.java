@@ -45,6 +45,8 @@ import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.CustomerCategory;
@@ -60,6 +62,9 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 
     @EJB
     private BillingRunService billingRunService;
+    
+    @Inject
+    private RatedTransactionService ratedTransactionService;
 
     public void initBillingAccount(BillingAccount billingAccount) {
         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
@@ -258,6 +263,99 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         
         return true;
     }
+    
+    private Map<Object, Object> constructElContext(String expression, BillingAccount ba) {
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", ba);
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", ba.getCustomerAccount());
+        }
+        if (expression.indexOf("c") >= 0) {
+            userMap.put("c", ba.getCustomerAccount().getCustomer());
+        }
+
+        return userMap;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param walletOperation wallet operation
+     * @param ua user account
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private Double evaluateDoubleExpression(String expression, BillingAccount ba) throws BusinessException {
+        Double result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, ba);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
+        try {
+            result = (Double) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
+        }
+        return result;
+    }
+    
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    public boolean updateBillingAccountTotalAmountsAndCreateMinBilledRT(Long billingAccountId, BillingRun billingRun) throws BusinessException {
+        log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
+        BillingAccount billingAccount = findById(billingAccountId, true);
+        BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, new Date(0), billingRun.getLastTransactionDate());
+        
+        if(!StringUtils.isBlank(billingAccount.getMinimumAmountEl())) {
+            BigDecimal minAmount = new BigDecimal(evaluateDoubleExpression(billingAccount.getMinimumAmountEl(), billingAccount));
+            BigDecimal diff = minAmount.subtract(invoiceAmount);
+            if(diff.intValueExact() > 0) {
+                // create RT
+                RatedTransaction ratedTransaction = new RatedTransaction(null, new Date(), diff, diff,
+                    new BigDecimal(0),  new BigDecimal(1), diff, diff,  new BigDecimal(0), RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                    null, "", "", "", "", "", "", "", null, "DUMMY", null, "", "");
+
+                ratedTransactionService.create(ratedTransaction);
+                ratedTransactionService.commit();
+                invoiceAmount = minAmount;
+            }
+        }
+        
+        
+        if (invoiceAmount != null) {
+            BillingCycle billingCycle = billingRun.getBillingCycle();
+            BigDecimal invoicingThreshold = billingCycle == null ? null : billingCycle.getInvoicingThreshold();
+
+            log.debug("updateBillingAccountTotalAmounts invoicingThreshold is {}", invoicingThreshold);
+            if (invoicingThreshold != null) {
+                if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
+                    log.debug("updateBillingAccountTotalAmounts  invoicingThreshold( stop invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
+                        billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                    return false;
+                } else {
+                    log.debug("updateBillingAccountTotalAmounts  invoicingThreshold(out continue invoicing)  baCode:{}, amountWithoutTax:{} ,invoicingThreshold:{}",
+                        billingAccount.getCode(), invoiceAmount, invoicingThreshold);
+                }
+            } else {
+                log.debug("updateBillingAccountTotalAmounts no invoicingThreshold to apply");
+            }
+            billingAccount.setBrAmountWithoutTax(invoiceAmount);
+
+            log.debug("set brAmount {} in BA {}", invoiceAmount, billingAccount.getId());
+        }
+        
+        billingAccount.setBillingRun(getEntityManager().getReference(BillingRun.class, billingRun.getId()));
+        
+        updateNoCheck(billingAccount);
+        
+        return true;
+    }
+    
 
     /**
      * Compute the invoice amount for billingAccount.

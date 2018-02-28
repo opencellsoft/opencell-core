@@ -226,7 +226,9 @@
                                                 rendered="#{billingAccountBean.entity.name.title == null or !billingAccountBean.entity.name.title.isCompany}"/>
                                     </h:panelGroup>                                                
                                     
-                                 	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />               
+                                 	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />        
+                                 	<hftl:formField label="#{messages['pricePlanMatrix.minimumAmountWithTax']} EL" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />
+                                 	       
 							     </p:fieldset>		
 							     
                                  <p:fieldset legend="#{messages['commons.status']}" styleClass="clearLeft" >

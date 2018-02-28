@@ -790,10 +790,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         if (BillingRunStatusEnum.NEW.equals(billingRun.getStatus())) {
 
             log.info("Nb billingAccounts to process={}", (billingAccountIds != null ? billingAccountIds.size() : 0));
-            billingRunExtensionService.updateBRAmounts(billingRun);
 
+            int billableBA = 0;
             if (billingAccountIds != null && billingAccountIds.size() > 0) {
-                int billableBA = 0;
                 SubListCreator subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
                 List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
                 while (subListCreator.isHasNext()) {
@@ -811,7 +810,13 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
 
                 log.info("Total billableBA:" + billableBA);
+            }
 
+            
+            billingRunExtensionService.updateBRAmounts(billingRun);
+            billingRunExtensionService.refresh(billingRun);
+            /// 
+            if (billingAccountIds != null && billingAccountIds.size() > 0) {
                 billingRunExtensionService.updateBillingRun(billingRun, billingAccountIds.size(), billableBA, BillingRunStatusEnum.PREINVOICED, new Date());
 
                 if (billingRun.getProcessType() == BillingProcessTypesEnum.AUTOMATIC || appProvider.isAutomaticInvoicing()) {
@@ -820,7 +825,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 }
             }
 
-        } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {
+        } else if (BillingRunStatusEnum.PREVALIDATED.equals(billingRun.getStatus())) {  
             createAgregatesAndInvoice(billingRun, nbRuns, waitingMillis, jobInstanceId, billingAccountIds);
             billingRunExtensionService.updateBillingRun(billingRun, null, null, BillingRunStatusEnum.POSTINVOICED, null);
 
