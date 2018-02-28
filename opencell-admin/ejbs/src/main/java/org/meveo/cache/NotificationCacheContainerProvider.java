@@ -19,6 +19,7 @@ import javax.inject.Inject;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
@@ -33,6 +34,7 @@ import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.notification.NotificationService;
+import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 /**
@@ -112,9 +114,10 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         log.debug("Start to pre-populate Notification cache");
         
         
-        final List<Provider> providers = providerService.list();
-        providers.forEach(provider -> {
-        	String lProvider = provider.getCode().equals("DEMO") ? null : provider.getCode();
+        final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
+        int i = 0;
+        for (Provider provider : providers) {
+        	String lProvider = i==0 ? null : provider.getCode();
         	currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), lProvider);
         	
         	List<Notification> activeNotifications = notificationService.getNotificationsForCache();
@@ -123,7 +126,8 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
             }
             
             log.info("Notification cache populated with {} notifications for provider {}.", activeNotifications.size(), lProvider);
-        });
+            i++;
+        }
     }
 
     /**

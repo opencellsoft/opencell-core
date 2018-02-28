@@ -18,11 +18,13 @@ import javax.inject.Inject;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 /**
@@ -104,14 +106,14 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
         
         // for each provider we fill the cache with initial equal portion of the cache 
         // This may vary during the run 
-        final List<Provider> providers = providerService.list();
+        final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
+        int i = 0;
         int maxRecordsPerProvider = maxRecords/providers.size();
-        providers.forEach(provider -> {
-        	for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {
-        		// Force authentication for a 
-        		String lProvider = provider.getCode().equals("DEMO") ? null : provider.getCode();
-            	currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), lProvider);
-            	
+        for (Provider provider : providers) {
+        	String lProvider = i==0 ? null : provider.getCode();
+        	// Force authentication for a 
+        	currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), lProvider);
+        	for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {	          	
                 List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
                 List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
                 Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(lProvider,p), p -> true));
@@ -126,8 +128,9 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
                 if (retrievedSize < pageSize) {
                     break;
                 }
-            }   	
-        });
+            } 
+        	i++;
+        }
 
         log.info("Finished to pre-populate EDR cache with {}", totalEdrs[0]);
     }

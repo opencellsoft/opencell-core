@@ -20,6 +20,7 @@ import javax.inject.Inject;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -33,6 +34,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.UsageChargeInstanceService;
 import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 /**
@@ -138,9 +140,11 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         log.debug("Start to pre-populate Prepaid balance cache");
 
         // for each prepaid Usage chargeInstance of active subscription we create association
-        final List<Provider> providers = providerService.list();
-        providers.forEach(provider -> {
-        	String lProvider = provider.getCode().equals("DEMO") ? null : provider.getCode();
+        final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
+        int i = 0;
+        for (Provider provider : providers) {
+        	String lProvider = i==0 ? null : provider.getCode();
+        	// Force authentication for a 
         	currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), lProvider);
             //jobInstanceService.registerJob(job);
             List<UsageChargeInstance> charges = usageChargeInstanceService.getPrepaidUsageChargeInstancesForCache();
@@ -155,8 +159,9 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
                     initializeBalanceCachesForWallet(walletId, provider.getCode());
                 }
             }
+            i++;
             log.info("Wallet cache populated for provider {} with {} usagecharges and {} wallets", provider.getCode(), charges.size(), walletIds.size());
-        });
+        }
     }
 
     /**
