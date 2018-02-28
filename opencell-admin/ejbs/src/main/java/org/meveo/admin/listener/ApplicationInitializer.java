@@ -8,6 +8,10 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
+import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.cache.NotificationCacheContainerProvider;
+import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.EntityManagerProvider;
@@ -41,6 +45,18 @@ public class ApplicationInitializer {
 
     @Inject
     private Logger log;
+    
+    @Inject 
+    WalletCacheContainerProvider walletCache;
+    
+    @Inject 
+    CdrEdrProcessingCacheContainerProvider cdrEdrCache;
+    
+    @Inject
+    NotificationCacheContainerProvider notifCache;
+    
+    @Inject
+    CustomFieldsCacheContainerProvider cftCache;
 
     public void init() {
 
@@ -63,7 +79,14 @@ public class ApplicationInitializer {
         currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), isMainProvider ? null : provider.getCode());
 
         jobInstanceService.registerJobs();
-
+        
+        // Initialize caches
+        walletCache.refreshCache(null);
+        cdrEdrCache.refreshCache(null);
+        notifCache.refreshCache(null);
+        cftCache.refreshCache(null);
+        
         log.info("Initialized application for provider {}", provider.getCode());
     }
+    
 }
