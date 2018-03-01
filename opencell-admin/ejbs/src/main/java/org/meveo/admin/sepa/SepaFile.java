@@ -47,6 +47,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.payments.impl.GatewayPaymentInterface;
@@ -256,12 +257,18 @@ public class SepaFile implements GatewayPaymentInterface {
     }
 
     @Override
-    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+    public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
+
+
+    @Override
+    public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 

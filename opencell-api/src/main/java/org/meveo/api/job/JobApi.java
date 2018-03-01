@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.job.JobExecutionResultDto;
 import org.meveo.api.dto.job.JobInstanceInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
@@ -45,7 +46,6 @@ public class JobApi extends BaseApi {
      * @throws BusinessException business exception
      */
     public JobExecutionResultDto executeJob(JobInstanceInfoDto jobExecution) throws MeveoApiException, BusinessException {
-
         if (StringUtils.isBlank(jobExecution.getCode()) && StringUtils.isBlank(jobExecution.getTimerName())) {
             missingParameters.add("timerName or code");
         }

@@ -17,6 +17,7 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestItem;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.payments.impl.GatewayPaymentInterface;
 import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
@@ -179,12 +180,18 @@ public class PaynumFile implements GatewayPaymentInterface {
 
     
     @Override
-    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+    public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        throw new UnsupportedOperationException();
+    }
+
+   
+    @Override
+    public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 

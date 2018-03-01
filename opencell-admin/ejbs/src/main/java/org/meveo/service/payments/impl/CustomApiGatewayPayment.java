@@ -11,6 +11,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.script.payment.PaymentScript;
 import org.meveo.service.script.payment.PaymentScriptInterface;
@@ -138,13 +139,22 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException {
+    public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#checkPayment(java.lang.String, org.meveo.model.payments.PaymentMethodEnum)
+     */
+    @Override
+    public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         // TODO Auto-generated method stub
         return null;
     }

@@ -10,6 +10,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author anasseh
@@ -86,7 +87,16 @@ public interface GatewayPaymentInterface {
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
-     * This makes it impossible to process the payment any further and will also try to reverse an authorization on a card.
+     * Check a payment.
+     * 
+     * @param paymentID payment id
+     * @param paymentMethodType payment method (CARD or DIRECTDEBIT)
+     * @throws BusinessException business exception
+     */
+    public PaymentResponseDto checkPayment(String paymentID,PaymentMethodEnum paymentMethodType) throws BusinessException;
+    
+    /**
+     * Cancel a pending payment.
      * 
      * @param paymentID payment id
      * @throws BusinessException business exception
@@ -135,11 +145,13 @@ public interface GatewayPaymentInterface {
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
-     * Check mandat.
+     * Check mandate by RUM or ID.
      * 
-     * @param mandatReference Mandat reference to check
+     * @param mandatReference Mandate reference (RUM) to check
+     * @param mandateId Mandate id to check
      * @return MandatInfoDto
      * @throws BusinessException
      */
-    public MandatInfoDto checkMandat(String mandatReference) throws BusinessException;
+    public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException;
+   
 }

@@ -19,15 +19,14 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ModuleItem;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * The PaymentGateway on opencell exists in 2 types {@link org.meveo.model.payments.PaymentGatewayTypeEnum PaymentGatewayTypeEnum}: &lt;ul&gt;
  * &lt;li&gt;Custom: The administrator can define the implementation in a script.&lt;/li&gt;
- * &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are Inginico Global Collect, and SEPA format payment file generation
- * and Paynum format.&lt;/li&gt;
+ * &lt;li&gt;Native: The business implementation code is available on the opencell core, currently the available PSP are Inginico Ogone, and  Slimpay .&lt;/li&gt;
  *  &lt;/ul&gt;
  *
  *
@@ -74,8 +73,8 @@ public class PaymentGateway extends BusinessCFEntity {
 
     /** The trading country. */
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "trading_country_id")
-    private TradingCountry tradingCountry;
+    @JoinColumn(name = "country_id")
+    private Country country;
 
     /** The trading currency. */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -159,18 +158,20 @@ public class PaymentGateway extends BusinessCFEntity {
         this.applicationEL = applicationEL;
     }
 
+    
+
     /**
-     * @return the tradingCountry
+     * @return the country
      */
-    public TradingCountry getTradingCountry() {
-        return tradingCountry;
+    public Country getCountry() {
+        return country;
     }
 
     /**
-     * @param tradingCountry the tradingCountry to set
+     * @param country the country to set
      */
-    public void setTradingCountry(TradingCountry tradingCountry) {
-        this.tradingCountry = tradingCountry;
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
     /**
@@ -262,7 +263,7 @@ public class PaymentGateway extends BusinessCFEntity {
     @Override
     public String toString() {
         return "PaymentGateway [type=" + type + ", paymentMethodType=" + paymentMethodType + ", scriptInstance=" + (scriptInstance == null ? null : scriptInstance.getCode())
-                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", tradingCountry=" + tradingCountry + ", tradingCurrency="
-                + tradingCurrency + ", cardType=" + cardType + "]";
+                + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL + ", Country=" + (country == null ? null : country.getCountryCode()) + ", tradingCurrency="
+                + (tradingCurrency == null ? null : tradingCurrency.getCurrencyCode()) + ", cardType=" + cardType + "]";
     }
 }

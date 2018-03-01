@@ -31,6 +31,7 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
 
@@ -60,10 +61,14 @@ public class RefundService extends PersistenceService<Refund> {
      * @return the AO id created
      * @throws BusinessException business exception.
      */
-    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto) throws BusinessException {
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD"));
+    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto,PaymentMethodEnum paymentMethodType) throws BusinessException {
+       String occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD");
+       if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+           occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.dd", "RB_PLVT");
+       }
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD")));
+            throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Refund refund = new Refund();
         refund.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());

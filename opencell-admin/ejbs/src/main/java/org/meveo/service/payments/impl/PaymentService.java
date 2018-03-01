@@ -302,9 +302,9 @@ public class PaymentService extends PersistenceService<Payment> {
                 if (createAO) {
                     try {
                         if (isPayment) {
-                            aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto);
+                            aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto,paymentMethodType);
                         } else {
-                            aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto);
+                            aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto,paymentMethodType);
                         }
                         doPaymentResponseDto.setAoCreated(true);
                     } catch (Exception e) {
@@ -346,13 +346,18 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
+     * @param paymentMethodType 
      * @return the AO id created
      * @throws BusinessException business exception.
      */
-    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto) throws BusinessException {
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD"));
+    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType) throws BusinessException {
+       String occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD");
+       if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+           occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.dd", "RG_PLVT");
+       }
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD")));
+            throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Payment payment = new Payment();
         payment.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());

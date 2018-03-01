@@ -1021,7 +1021,7 @@
             <column name="card_type" type="varchar(255)" />
             <column name="implementation_class_name" type="varchar(255)" />
             <column name="script_instance_id" type="bigint" />
-            <column name="trading_country_id" type="bigint" />
+            <column name="country_id" type="bigint" />
             <column name="trading_currency_id" type="bigint" />
             <column name="application_el" type="varchar(2000)">
                 <constraints nullable="true" />
@@ -1046,8 +1046,8 @@
         <addForeignKeyConstraint baseColumnNames="script_instance_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_script_instance" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
             
-        <addForeignKeyConstraint baseColumnNames="trading_country_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_trad_country" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_country" />
+        <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_country" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
             
         <addForeignKeyConstraint baseColumnNames="trading_currency_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_trad_currency" deferrable="false" initiallyDeferred="false"
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_trading_currency" />  
