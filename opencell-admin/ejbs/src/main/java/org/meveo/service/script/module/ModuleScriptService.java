@@ -22,57 +22,57 @@ public class ModuleScriptService implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void preInstallModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public ModuleScriptInterface preInstallModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.preInstallModule(scriptContext);
+        return scriptInterface;
     }
 
-    public void postInstallModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    public void postInstallModule(ModuleScriptInterface scriptInterface, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.postInstallModule(scriptContext);
     }
 
-    public void preUninstallModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public ModuleScriptInterface preUninstallModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.preUninstallModule(scriptContext);
+        return scriptInterface;
     }
 
-    public void postUninstallModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    public void postUninstallModule(ModuleScriptInterface scriptInterface, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.postUninstallModule(scriptContext);
     }
 
-    public void preEnableModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public ModuleScriptInterface preEnableModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.preEnableModule(scriptContext);
+        return scriptInterface;
     }
 
-    public void postEnableModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    public void postEnableModule(ModuleScriptInterface scriptInterface, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.postEnableModule(scriptContext);
     }
 
-    public void preDisableModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
+    public ModuleScriptInterface preDisableModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.preDisableModule(scriptContext);
+        return scriptInterface;
     }
 
-    public void postDisableModule(String scriptCode, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        ModuleScriptInterface scriptInterface = (ModuleScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    public void postDisableModule(ModuleScriptInterface scriptInterface, MeveoModule module) throws ElementNotFoundException, InvalidScriptException, BusinessException {
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, module);
         scriptInterface.postDisableModule(scriptContext);

@@ -3,6 +3,7 @@ package org.meveo.model.billing;
 import javax.persistence.CascadeType;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -19,7 +20,9 @@ public class WalletReservation extends WalletOperation {
 
 	private static final long serialVersionUID = 2757123710864061091L;
 
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    // Added lazy loading to prevent when quering for WalletOperation to join with reservation table when entity is of plain Walletoperation class. Was done for RT job. Performance
+    // effects for reservation process were not analyzed.
+    @ManyToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "reservation_id")
 	private Reservation reservation;
 

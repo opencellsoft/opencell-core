@@ -1327,7 +1327,7 @@
 		<sql>CREATE INDEX  cat_chrg_edr_chtmpl_index ON cat_chrg_edr(charge_tmpl_id);</sql>
 		<sql>DROP INDEX IF EXISTS cat_chrg_edr_trigg_edr_index ON cat_chrg_edr;</sql>
 		<sql>CREATE INDEX  cat_chrg_edr_trigg_edr_index ON cat_chrg_edr(trigg_edr_id);</sql>
-    </changeSet>
+    </changeSet>         
     
     <changeSet id="#3017_20171031 Add phone to ba" author="EdwardPLegapi">
     	<addColumn tableName="billing_billing_account">
@@ -1444,7 +1444,9 @@
         and billing_user_account.billing_account_id=billing_billing_account.id</sql>
 
         <sql>update billing_charge_instance set trading_currency=ar_customer_account.trading_currency_id from billing_user_account, billing_billing_account, ar_customer_account where billing_charge_instance.trading_currency is null and  billing_charge_instance.user_account_id=billing_user_account.id
-        and billing_user_account.billing_account_id=billing_billing_account.id and billing_billing_account.customer_account_id=ar_customer_account.id</sql>   
+        and billing_user_account.billing_account_id=billing_billing_account.id and billing_billing_account.customer_account_id=ar_customer_account.id</sql>
+        
+        <sql>update ar_customer_account set trading_language_id=(select min(id) from billing_trading_language) where trading_language_id is null</sql>   
     </changeSet>
     
     <changeSet id="#2836_20171019_update_M" author="AndriusKarpavicius" dbms="mysql">
@@ -1455,7 +1457,9 @@
          set trading_country=billing_billing_account.trading_country_id where billing_charge_instance.trading_country is null</sql>
 
         <sql>update billing_charge_instance join billing_user_account on billing_charge_instance.user_account_id=billing_user_account.id join billing_billing_account on billing_user_account.billing_account_id=billing_billing_account.id
-        join ar_customer_account on billing_billing_account.customer_account_id=ar_customer_account.id set trading_currency=ar_customer_account.trading_currency_id where billing_charge_instance.trading_currency is null</sql>  
+        join ar_customer_account on billing_billing_account.customer_account_id=ar_customer_account.id set trading_currency=ar_customer_account.trading_currency_id where billing_charge_instance.trading_currency is null</sql>
+        
+        <sql>update ar_customer_account set trading_language_id=(select min(id) from billing_trading_language) where trading_language_id is null</sql>     
     </changeSet>    
     
     <changeSet id="#2836_20171019_update_end" author="AndriusKarpavicius">
@@ -1504,6 +1508,14 @@
             onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="meveo_script_instance" />
 
     </changeSet>
+
+	<changeSet id="#2428_20180105" author="EdwardPLegaspi">
+		<addColumn tableName="adm_notif_webhooks">
+			<column name="http_protocol" type="varchar(10)" />
+		</addColumn>
+		<sql>UPDATE adm_notif_webhooks SET http_protocol='HTTP'</sql>
+		<addNotNullConstraint tableName="adm_notif_webhooks" columnName="http_protocol" columnDataType="varchar(10)" />
+	</changeSet>
     
     <changeSet id="#3112_20171229 Add billingTemplateNameEL to invoiceType" author="EdwardPLegaspi">
     	<addColumn tableName="billing_invoice_type">
@@ -1516,7 +1528,7 @@
             <column name="billing_template_name_el" type="varchar(2000)"  />           
         </addColumn>   
    	</changeSet>
-   	
+    
    	<changeSet id="#3170_20180119 Add payment method to invoice" author="EdwardPLegaspi">
     	<addColumn tableName="billing_invoice">
             <column name="payment_method_id" type="bigint"  />           
@@ -1539,6 +1551,60 @@
     <changeSet id="#3196_20180131" author="AndriusKarpavicius">
         <modifyDataType tableName="billing_charge_instance" columnName="termination_date" newDataType="datetime"/>
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime"/>
+    </changeSet>
+    
+     <changeSet id="#2819_20180212" author="AbdelmounaimAkadid">
+    	<addColumn tableName="crm_seller">
+            <column name="email" type="varchar(2000)"  />           
+            <column name="fax" type="varchar(2000)"  />           
+            <column name="mobile" type="varchar(2000)"  />     
+            <column name="phone" type="varchar(2000)"  />
+        </addColumn>
+	</changeSet>
+
+    <changeSet id="#2792_20170919" author="AndriusKarpavicius">  
+        <sql>update cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_2=null where filter_param_2=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_3=null where filter_param_3=''</sql>
+        <sql>update cat_usage_charge_template set filter_param_4=null where filter_param_4=''</sql>
+        
+        <sql>update cat_triggered_edr set condition_el=null where condition_el=''</sql>
+        <sql>update cat_triggered_edr set param_1_el=null where param_1_el=''</sql>
+        <sql>update cat_triggered_edr set param_2_el=null where param_2_el=''</sql>
+        <sql>update cat_triggered_edr set param_3_el=null where param_3_el=''</sql>
+        <sql>update cat_triggered_edr set param_4_el=null where param_4_el=''</sql>
+        <sql>update cat_triggered_edr set quantity_el=null where quantity_el=''</sql>
+        <sql>update cat_triggered_edr set subscription_el=null where subscription_el=''</sql>
+    </changeSet>
+    
+    
+    <changeSet id="#2792_20180110" author="AndriusKarpavicius">  
+        <sql>update cat_price_plan_matrix set criteria_1=null where criteria_1=''</sql>
+        <sql>update cat_price_plan_matrix set criteria_2=null where criteria_2=''</sql>
+        <sql>update cat_price_plan_matrix set criteria_3=null where criteria_3=''</sql>
+        <sql>update cat_price_plan_matrix set criteria_el=null where criteria_el=''</sql>
+        <sql>update cat_price_plan_matrix set amount_without_tax_el=null where amount_without_tax_el=''</sql>
+        <sql>update cat_price_plan_matrix set amount_with_tax_el=null where amount_with_tax_el=''</sql>
+        
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON cat_price_plan_matrix(event_code)</sql>
+        <sql>CREATE INDEX medina_access_user_id_index ON medina_access(acces_user_id)</sql>
+    </changeSet>
+    
+    <changeSet id="#2792_20180119" author="AndriusKarpavicius">  
+        <sql>CREATE INDEX bc_instance_sub_id ON billing_charge_instance(subscription_id)</sql>
+        <sql>CREATE INDEX counter_period_ci_id ON billing_counter_period(counter_instance_id)</sql>
+        <addColumn tableName="billing_usage_charge_inst">
+            <column defaultValueNumeric="1" name="priority" type="int4" />
+        </addColumn>
+    </changeSet>
+        
+    <changeSet id="#2792_20180119_migration_P" author="AndriusKarpavicius" dbms="postgresql">  
+        <sql>update billing_usage_charge_inst set priority = cat_usage_charge_template.priority from billing_charge_instance, cat_usage_charge_template where billing_charge_instance.id=billing_usage_charge_inst.id and billing_charge_instance.charge_template_id=cat_usage_charge_template.id</sql>       
+    </changeSet>
+    
+    <changeSet id="#2792_20180119_migration_M" author="AndriusKarpavicius" dbms="mysql">  
+        <sql>update billing_usage_charge_inst join billing_charge_instance on billing_charge_instance.id=billing_usage_charge_inst.id join cat_usage_charge_template on billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority</sql>       
     </changeSet>
     
 </databaseChangeLog> 

@@ -28,7 +28,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
@@ -253,11 +252,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 	}
 
 	public void cancelReservation(Reservation reservation) throws BusinessException {
-		cancelReservation(getEntityManager(), reservation);
-	}
-
-	public void cancelReservation(EntityManager em, Reservation reservation) throws BusinessException {
-
+	
 		// #1 Check that the reservation is OPEN, else KO.
 		if (reservation.getStatus() != ReservationStatus.OPEN) {
 			throw new BusinessException("Reservation with id=" + reservation.getId() + " is not "
@@ -286,7 +281,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.CANCELED);
-			walletCacheContainerProvider.updateBalanceCache(op);
+			walletCacheContainerProvider.updateBalance(op);
 		}
 
         // restore all counters values
@@ -309,7 +304,7 @@ public class ReservationService extends PersistenceService<Reservation> {
 		for (WalletReservation op : ops) {
 			op.getAuditable().setUpdated(new Date());
 			op.setStatus(WalletOperationStatusEnum.OPEN);
-			walletCacheContainerProvider.updateBalanceCache(op);
+			walletCacheContainerProvider.updateBalance(op);
 		}
 		reservation.setStatus(ReservationStatus.CONFIRMED);
 	}

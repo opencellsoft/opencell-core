@@ -365,8 +365,6 @@ public class OrderApi extends BaseApi {
 
         log.info("Processing order {}", order.getCode());
 
-        order = orderService.refreshOrRetrieve(order);
-
         order.setStartDate(new Date());
 
         for (org.meveo.model.order.OrderItem orderItem : order.getOrderItems()) {
@@ -530,7 +528,7 @@ public class OrderApi extends BaseApi {
         index = 1;
         for (Product productOfProduct : products) {
             ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
-            productOffering = productTemplateService.refreshOrRetrieve(productOffering);
+            productOffering = productTemplateService.retrieveIfNotManaged(productOffering);
             ProductInstance productInstance = instantiateProduct(productOffering, productOfProduct, orderItem, productOrderItem, subscription, orderNumber);
             if (productInstance != null) {
                 orderItem.addProductInstance(productInstance);
@@ -836,7 +834,7 @@ public class OrderApi extends BaseApi {
 
         // TODO Need to initiate workflow if there is one
 
-        order = orderService.refreshOrRetrieve(order);
+        order = orderService.update(order);
 
         return orderToDto(order);
 

@@ -657,8 +657,6 @@ public class CustomFieldValue implements Serializable {
         if (cft.getStorageType() == CustomFieldStorageTypeEnum.LIST || cft.getStorageType() == CustomFieldStorageTypeEnum.MAP) {
             StringBuilder builder = new StringBuilder();
 
-            Logger log = LoggerFactory.getLogger(getClass());
-            log.error("AKK in short rep : map is {}, {}", mapDateValue!=null , mapValuesForGUI!=null);
             SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
             int i = 0;
             for (Map<String, Object> valueInfo : mapValuesForGUI) {

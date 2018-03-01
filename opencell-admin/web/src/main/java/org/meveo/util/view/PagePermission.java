@@ -89,16 +89,10 @@ public class PagePermission {
 				return false;
 			}
 
-			if ((currentUser != null && page != null)) { // && currentUser.isLoggedIn()
-				Map<Object, Object> parameters = fetchParameters(page, request, currentUser);
-				try {
-					allow = (Boolean) ValueExpressionWrapper.evaluateExpression(page.getExpression(type), parameters,
-							Boolean.class);
-				} catch (BusinessException e) {
-					logger.error("Failed to execute constraint expression. Returning false.", e);
-					allow = false;
-				}
-			}
+            if ((currentUser != null && page != null)) { // && currentUser.isLoggedIn()
+                Map<Object, Object> parameters = fetchParameters(page, request, currentUser);
+                allow = ValueExpressionWrapper.evaluateToBooleanIgnoreErrors(page.getExpression(type), parameters);
+            }
 		} else {
 			allow = true;
 		}

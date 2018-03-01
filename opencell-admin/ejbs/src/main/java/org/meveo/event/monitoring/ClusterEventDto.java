@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Synchronization between cluster nodes event information.
+ * 
  * @author Andrius Karpavicius
  *
  */
@@ -40,6 +41,11 @@ public class ClusterEventDto implements Serializable {
     private CrudActionEnum action;
 
     /**
+     * Node that published the information
+     */
+    private String sourceNode;
+
+    /**
      * defaut constructor.
      */
     public ClusterEventDto() {
@@ -50,13 +56,15 @@ public class ClusterEventDto implements Serializable {
      * @param id id
      * @param code code
      * @param action crud action
+     * @param sourceNode
      */
-    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action) {
+    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode) {
         super();
         this.clazz = clazz;
         this.id = id;
         this.code = code;
         this.action = action;
+        this.sourceNode = sourceNode;
     }
 
     /**
@@ -86,12 +94,16 @@ public class ClusterEventDto implements Serializable {
     public CrudActionEnum getAction() {
         return action;
     }
+    
+    public String getSourceNode() {
+        return sourceNode;
+    }
 
     /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "ClusterEventDto [clazz=" + clazz + ", idOrCode=" + id + ", action=" + action + "]";
+        return "ClusterEventDto [clazz=" + clazz + ", idOrCode=" + id + ", action=" + action + ", sourceNode=" + sourceNode + "]";
     }
 }

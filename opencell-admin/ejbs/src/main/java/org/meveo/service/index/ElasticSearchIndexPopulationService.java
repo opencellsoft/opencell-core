@@ -157,7 +157,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 conversation.isTransient();
                 result = em;
             } catch (Exception e) {
-                log.error("Error happene:", e);
             }
         }
 
@@ -249,7 +248,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         if (entity instanceof ICustomFieldEntity && ((ICustomFieldEntity) entity).getCfValues() != null) {
 
             ICustomFieldEntity cfEntity = (ICustomFieldEntity) entity;
-            
+
             for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfEntity.getCfValues().getValuesByCode().entrySet()) {
 
                 if (cfValueInfo.getValue().isEmpty()) {

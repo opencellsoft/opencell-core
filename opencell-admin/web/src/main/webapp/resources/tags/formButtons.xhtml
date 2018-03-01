@@ -190,7 +190,7 @@
                 <p:commandButton value="#{customAction.getLabel(customFieldDataEntryBean.currentLocale.ISO3Language)}" action="#{customFieldDataEntryBean.executeCustomAction(cc.attrs.backingBean.entity, customAction, null)}"
                     process="@this #{cc.attrs.submitPartialProcess!=null?cc.attrs.submitPartialProcess:'@form'}" partialSubmit="#{cc.attrs.submitPartialProcess !=null}"
                     partialSubmitFilter="#{cc.attrs.submitPartialSubmitFilter}" update="@form"
-                    rendered="#{exp:evaluateToBoolean(customAction.applicableOnEl,'entity',cc.attrs.backingBean.entity)}" />
+                    rendered="#{exp:evaluateToBooleanOneVariable(customAction.applicableOnEl,'entity',cc.attrs.backingBean.entity)}" />
             </ui:repeat>
         </c:if>
 

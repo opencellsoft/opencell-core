@@ -286,6 +286,19 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
     }
 
     /**
+     * Find a particular product offering version by a code. A current date will be used to select a valid version.
+     * 
+     * @param code Product offering code
+     * @return Product offering
+     */
+    @Override
+    public T findByCode(String code) {
+
+        // Append search by a current date
+        return super.findByCode(code, null, FIND_CODE_BY_DATE_CLAUSE, "date", new Date());
+    }
+
+    /**
      * Find a particular product offering version with additional fields to fetch. A current date will be used to select a valid version.
      * 
      * @param code Product offering code

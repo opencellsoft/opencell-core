@@ -90,6 +90,9 @@
 					<reportsDirectories>
 						<reportsDirectories>${basedir}/target/surefire-reports/</reportsDirectories>
 					</reportsDirectories>
+		   			<showSuccess>true</showSuccess>
+		   			<aggregate>true</aggregate>
+		   			<linkXRef>false</linkXRef>
 				</configuration>
 			</plugin>
 		</plugins>

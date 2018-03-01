@@ -24,91 +24,85 @@ import org.meveo.model.ICustomFieldEntity;
 @Entity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")
 @DiscriminatorValue("PRODUCT")
-@NamedQueries({
-		@NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=false "),
-		@NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE disabled=true "),
-		@NamedQuery(name = "ProductTemplate.countExpiring", query = "SELECT COUNT(*) FROM ProductTemplate WHERE :nowMinus1Day<validity.to and validity.to > NOW() ") })
+@NamedQueries({ @NamedQuery(name = "ProductTemplate.countActive", query = "SELECT COUNT(*) FROM ProductTemplate WHERE lifeCycleStatus='ACTIVE' "),
+        @NamedQuery(name = "ProductTemplate.countDisabled", query = "SELECT COUNT(*) FROM ProductTemplate WHERE lifeCycleStatus<>'ACTIVE'"),
+        @NamedQuery(name = "ProductTemplate.countExpiring", query = "SELECT COUNT(*) FROM ProductTemplate WHERE :nowMinusXDay<validity.to and validity.to<=NOW()") })
 public class ProductTemplate extends ProductOffering {
 
-	private static final long serialVersionUID = 6380565206599659432L;
-	
-	@Transient
-	public static final String CF_CATALOG_PRICE = "CATALOG_PRICE";
+    private static final long serialVersionUID = 6380565206599659432L;
 
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cat_product_templ_charge_templ", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "product_charge_template_id"))	
-	private List<ProductChargeTemplate> productChargeTemplates = new ArrayList<>();
+    @Transient
+    public static final String CF_CATALOG_PRICE = "CATALOG_PRICE";
 
-	@ManyToOne
-	@JoinColumn(name = "business_product_model_id")
-	private BusinessProductModel businessProductModel;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_product_templ_charge_templ", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "product_charge_template_id"))
+    private List<ProductChargeTemplate> productChargeTemplates = new ArrayList<>();
 
-	@ManyToOne
-	@JoinColumn(name = "invoicing_calendar_id")
-	private Calendar invoicingCalendar;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "business_product_model_id")
+    private BusinessProductModel businessProductModel;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cat_product_wallet_template", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
-	@OrderColumn(name = "indx")
-	private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
-	
-	public void addProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
-		if (getProductChargeTemplates() == null) {
-			productChargeTemplates = new ArrayList<>();
-		}
-		if (!productChargeTemplates.contains(productChargeTemplate)) {
-			productChargeTemplates.add(productChargeTemplate);
-		}
-	}
-	
-	public void addWalletTemplate(WalletTemplate walletTemplate) {
-		if (getWalletTemplates() == null) {
-			walletTemplates = new ArrayList<>();
-		}
-		if (!walletTemplates.contains(walletTemplate)) {
-			walletTemplates.add(walletTemplate);
-		}
-	}
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoicing_calendar_id")
+    private Calendar invoicingCalendar;
 
-	public List<ProductChargeTemplate> getProductChargeTemplates() {
-		if (productChargeTemplates == null) {
-			productChargeTemplates = new ArrayList<>();
-		}
-		return productChargeTemplates;
-	}
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_product_wallet_template", joinColumns = @JoinColumn(name = "product_template_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+    @OrderColumn(name = "indx")
+    private List<WalletTemplate> walletTemplates = new ArrayList<WalletTemplate>();
 
-	public void setProductChargeTemplates(List<ProductChargeTemplate> productChargeTemplates) {
-		this.productChargeTemplates = productChargeTemplates;
-	}
-	
-	public BusinessProductModel getBusinessProductModel() {
-		return businessProductModel;
-	}
+    public void addProductChargeTemplate(ProductChargeTemplate productChargeTemplate) {
+        if (getProductChargeTemplates() == null) {
+            productChargeTemplates = new ArrayList<>();
+        }
+        if (!productChargeTemplates.contains(productChargeTemplate)) {
+            productChargeTemplates.add(productChargeTemplate);
+        }
+    }
 
-	public void setBusinessProductModel(BusinessProductModel businessProductModel) {
-		this.businessProductModel = businessProductModel;
-	}
+    public void addWalletTemplate(WalletTemplate walletTemplate) {
+        if (getWalletTemplates() == null) {
+            walletTemplates = new ArrayList<>();
+        }
+        if (!walletTemplates.contains(walletTemplate)) {
+            walletTemplates.add(walletTemplate);
+        }
+    }
 
-	public Calendar getInvoicingCalendar() {
-		return invoicingCalendar;
-	}
+    public List<ProductChargeTemplate> getProductChargeTemplates() {
+        return productChargeTemplates;
+    }
 
-	public void setInvoicingCalendar(Calendar invoicingCalendar) {
-		this.invoicingCalendar = invoicingCalendar;
-	}
+    public void setProductChargeTemplates(List<ProductChargeTemplate> productChargeTemplates) {
+        this.productChargeTemplates = productChargeTemplates;
+    }
 
-	public List<WalletTemplate> getWalletTemplates() {
-		return walletTemplates;
-	}
+    public BusinessProductModel getBusinessProductModel() {
+        return businessProductModel;
+    }
 
-	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
+    public void setBusinessProductModel(BusinessProductModel businessProductModel) {
+        this.businessProductModel = businessProductModel;
+    }
 
-	@Override
-	public ICustomFieldEntity[] getParentCFEntities() {
-		return null;
-	}
+    public Calendar getInvoicingCalendar() {
+        return invoicingCalendar;
+    }
 
+    public void setInvoicingCalendar(Calendar invoicingCalendar) {
+        this.invoicingCalendar = invoicingCalendar;
+    }
+
+    public List<WalletTemplate> getWalletTemplates() {
+        return walletTemplates;
+    }
+
+    public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
+
+    @Override
+    public ICustomFieldEntity[] getParentCFEntities() {
+        return null;
+    }
 }

@@ -21,12 +21,9 @@ package org.meveo.service.catalog.impl;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.QueryBuilder;
-import org.meveo.model.catalog.RecurringChargeTemplate;
 import org.meveo.model.catalog.ServiceChargeTemplateRecurring;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
@@ -35,41 +32,22 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ServiceChargeTemplateRecurringService extends PersistenceService<ServiceChargeTemplateRecurring> {
 
-	public void removeByPrefix(EntityManager em, String prefix) {
-		Query query = em.createQuery("DELETE ServiceChargeTemplateRecurring t WHERE t.chargeTemplate.code LIKE '"
-				+ prefix + "%'");
-		query.executeUpdate();
-	}
+    public void removeByServiceTemplate(ServiceTemplate serviceTemplate) {
+        Query query = getEntityManager().createQuery("DELETE ServiceChargeTemplateRecurring t WHERE t.serviceTemplate=:serviceTemplate ");
+        query.setParameter("serviceTemplate", serviceTemplate);
+        query.executeUpdate();
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateRecurring> findByRecurringChargeTemplate(EntityManager em,
-			RecurringChargeTemplate chargeTemplate) {
-		QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateRecurring.class, "a");
-		qb.addCriterionEntity("chargeTemplate", chargeTemplate);
-		
-
-		return (List<ServiceChargeTemplateRecurring>) qb.getQuery(em).getResultList();
-	}
-
-	public void removeByServiceTemplate(ServiceTemplate serviceTemplate) {
-		Query query = getEntityManager()
-				.createQuery(
-						"DELETE ServiceChargeTemplateRecurring t WHERE t.serviceTemplate=:serviceTemplate ");
-		query.setParameter("serviceTemplate", serviceTemplate);
-		query.executeUpdate();
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<ServiceChargeTemplateRecurring> findByWalletTemplate(WalletTemplate walletTemplate){
-		QueryBuilder qb=new QueryBuilder(ServiceChargeTemplateRecurring.class,"r");
-		qb.addCriterionEntity("walletTemplate", walletTemplate);
-		return qb.find(getEntityManager());
-	}
-
-	@Override
-	public void remove(ServiceChargeTemplateRecurring e) throws BusinessException {
-		refreshOrRetrieve(e);
-		super.remove(e);
-	}
-
+    @SuppressWarnings("unchecked")
+    public List<ServiceChargeTemplateRecurring> findByWalletTemplate(WalletTemplate walletTemplate) {
+        QueryBuilder qb = new QueryBuilder(ServiceChargeTemplateRecurring.class, "r");
+        qb.addCriterionEntity("walletTemplate", walletTemplate);
+        return qb.find(getEntityManager());
+    }
+    //
+    // @Override
+    // public void remove(ServiceChargeTemplateRecurring e) throws BusinessException {
+    // refreshOrRetrieve(e);
+    // super.remove(e);
+    // }
 }

@@ -126,7 +126,7 @@ public class AccessBean extends CustomFieldBean<Access> {
     @ActionMethod
 	public String saveOrUpdate(boolean killConversation) throws BusinessException {
 		String result = "";
-		Subscription subscription = subscriptionService.refreshOrRetrieve(entity.getSubscription());
+		Subscription subscription = subscriptionService.retrieveIfNotManaged(entity.getSubscription());
 		entity.setSubscription(subscription);
 
 		if (entity.isTransient()) {

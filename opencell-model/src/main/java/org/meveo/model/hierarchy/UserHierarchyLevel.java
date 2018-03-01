@@ -20,6 +20,7 @@ package org.meveo.model.hierarchy;
 
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -29,6 +30,7 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 
 @Entity
+@Cacheable
 @DiscriminatorValue(value = "USER_TYPE")
 public class UserHierarchyLevel extends HierarchyLevel<User> {
 

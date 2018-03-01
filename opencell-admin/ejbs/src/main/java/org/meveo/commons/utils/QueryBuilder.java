@@ -564,12 +564,15 @@ public class QueryBuilder {
         int month = cal.get(Calendar.MONTH);
         int date = cal.get(Calendar.DATE);
         cal.set(year, month, date, 0, 0, 0);
-        value = cal.getTime();
-
-        String sql = "((PARAM_START_DATE<='PARAM_VALUE' AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_START_DATE IS NULL AND PARAM_END_DATE IS NULL) OR (PARAM_START_DATE IS NULL AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_END_DATE IS NULL AND PARAM_START_DATE<='PARAM_VALUE'))";
-        sql = sql.replaceAll("PARAM_START_DATE", startField).replaceAll("PARAM_END_DATE", endField).replaceAll("PARAM_VALUE", value.toString());
-
-        return addSql(sql);
+        Date start = cal.getTime();
+        cal.set(year, month, date, 23, 59, 59);
+        Date end = cal.getTime();
+        
+        String startDateParameterName = "start" + startField.replace(".", "");
+        String endDateParameterName = "end" + endField.replace(".", "");
+        
+        return addSqlCriterion("(" +startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
+                .addSqlCriterion("(" +endField + "<=:" + endDateParameterName  + " OR " + endField + " IS NULL )", endDateParameterName, end);
     }
 
     /**
@@ -584,6 +587,14 @@ public class QueryBuilder {
             q.append(" DESC ");
         }
 
+    }
+
+    /**
+     * @param orderColumn name of column which is used for orderBy
+     * @param ascending true/false
+     */
+    public void addOrderCriterionAsIs(String orderColumn, boolean ascending) {
+        q.append(" ORDER BY ").append(orderColumn).append(ascending ? " ASC " : " DESC ");
     }
 
     /**
@@ -792,7 +803,7 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query instance 
+     * @param query query instance
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */
@@ -808,8 +819,9 @@ public class QueryBuilder {
     /* DEBUG */
     public void debug() {
         System.out.println("Requete : " + q.toString());
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
+        }
     }
 
     public String getSqlString() {

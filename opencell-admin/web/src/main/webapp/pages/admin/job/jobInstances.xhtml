@@ -27,8 +27,8 @@
         </hftl:searchPanel>
 
         <h:panelGroup id="resultsDatatable">
-            <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results">
-                <p:column headerText="#{messages['timer.name']}">
+            <hftl:dataList backingBean="#{jobInstanceListBean}" resultsId="timersBean_results" sortBy="code">
+                <p:column headerText="#{messages['timer.name']}" sortBy="#{entity.code}">
                     <h:link outcome="jobInstanceDetail" value="#{entity.code}">
                         <f:param name="objectId" value="#{entity.id}" />
                         <f:param name="edit" value="true" />
@@ -38,7 +38,7 @@
                 <hftl:column label="#{messages['timer.jobName']}" field="jobTemplate" />
                 <hftl:column label="#{messages['job.category']}" field="jobCategoryEnum" />
                 <hftl:column label="#{messages['timer.schedule']}" field="timerEntity.code" />
-                <hftl:column label="#{messages['timer.active']}" field="active" isMessage="true" />
+                <hftl:column label="#{messages['timer.active']}" field="disabled" isDisabledMessage="true"/>
                 <p:column headerText="#{messages['timer.isRunning']}">
                     <h:outputText styleClass="ui-icon ui-icon-circle-check" title="#{messages['timer.isRunning.this']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_THIS}" />
                     <h:outputText styleClass="ui-icon ui-icon-check" title="#{messages['timer.isRunning.other']}" rendered="#{jobInstanceListBean.isTimerRunning(entity)== JobRunningStatusEnum.RUNNING_OTHER}" />

@@ -26,7 +26,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.model.communication.MeveoInstance;
 import org.meveo.service.base.PersistenceService;
@@ -37,28 +36,22 @@ import org.meveo.service.catalog.impl.TriggeredEDRTemplateService;
 @ViewScoped
 public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Injected @{link PricePlanMatrix} service. Extends
-	 * {@link PersistenceService}.
-	 */
-	@Inject
-	private TriggeredEDRTemplateService triggeredEdrService;
-
-	@Inject
-	private RatingCacheContainerProvider ratingCacheContainerProvider;
-
+    /**
+     * Injected @{link PricePlanMatrix} service. Extends {@link PersistenceService}.
+     */
+    @Inject
+    private TriggeredEDRTemplateService triggeredEdrService;
 
     protected MeveoInstance meveoInstance;
-    
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public TriggeredEDRTemplateBean() {
-		super(TriggeredEDRTemplate.class);
-	}
+
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public TriggeredEDRTemplateBean() {
+        super(TriggeredEDRTemplate.class);
+    }
 
     public MeveoInstance getMeveoInstance() {
         return meveoInstance;
@@ -67,48 +60,48 @@ public class TriggeredEDRTemplateBean extends BaseBean<TriggeredEDRTemplate> {
     public void setMeveoInstance(MeveoInstance meveoInstance) {
         this.meveoInstance = meveoInstance;
     }
-	/**
-	 * @see org.meveo.admin.action.BaseBean#getPersistenceService()
-	 */
-	@Override
-	protected IPersistenceService<TriggeredEDRTemplate> getPersistenceService() {
-		return triggeredEdrService;
-	}
 
-	@Override
-	protected String getListViewName() {
-		return "triggeredEdrTemplates";
-	}
+    /**
+     * @see org.meveo.admin.action.BaseBean#getPersistenceService()
+     */
+    @Override
+    protected IPersistenceService<TriggeredEDRTemplate> getPersistenceService() {
+        return triggeredEdrService;
+    }
 
-	@Override
-	public String getEditViewName() {
-		return "triggeredEdrTemplateDetail";
-	}
+    @Override
+    protected String getListViewName() {
+        return "triggeredEdrTemplates";
+    }
 
-	@Override
-	protected String getDefaultSort() {
-		return "code";
-	}
+    @Override
+    public String getEditViewName() {
+        return "triggeredEdrTemplateDetail";
+    }
 
-	@Override
-	@ActionMethod
-	public String saveOrUpdate(boolean killConversation) throws BusinessException {
-		String result = super.saveOrUpdate(killConversation);
-		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(entity);
-		return result;
-	}
+    @Override
+    protected String getDefaultSort() {
+        return "code";
+    }
 
-	public void duplicate() {
-		if (entity == null || entity.getId() == null) {
-			return;
-		}
-		try {
-			triggeredEdrService.duplicate(entity);
-			messages.info(new BundleKey("messages", "duplicate.successfull"));
-		} catch (BusinessException e) {
-			log.error("Error encountered duplicating triggered EDR template entity: {}", entity.getCode(), e);
-			messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
-		}
-	}
+    @Override
+    @ActionMethod
+    public String saveOrUpdate(boolean killConversation) throws BusinessException {
+        String result = super.saveOrUpdate(killConversation);
+        return result;
+    }
+
+    public void duplicate() {
+        if (entity == null || entity.getId() == null) {
+            return;
+        }
+        try {
+            triggeredEdrService.duplicate(entity);
+            messages.info(new BundleKey("messages", "duplicate.successfull"));
+        } catch (BusinessException e) {
+            log.error("Error encountered duplicating triggered EDR template entity: {}", entity.getCode(), e);
+            messages.error(new BundleKey("messages", "error.duplicate.unexpected"));
+        }
+    }
 
 }

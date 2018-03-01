@@ -143,6 +143,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
+     * 
      * @param serviceInstance service instance to instantiate
      * @param descriptionOverride overridden description
      * @throws IncorrectSusbcriptionException incorrect subscription exception
@@ -427,7 +428,6 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE) {
             throw new IncorrectServiceInstanceException("service instance is inactive. service Code=" + serviceCode + ",subscription Code" + subscription.getCode());
         }
-        serviceInstance = refreshOrRetrieve(serviceInstance);
 
         // execute termination script
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
@@ -668,6 +668,29 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return entity;
 
+    }
+
+    /**
+     * Check of service template has any instances
+     * 
+     * @param serviceTemplate Service template
+     * @param status Instance status. Opptional
+     * @return True if any instances are found
+     */
+    public boolean hasInstances(ServiceTemplate serviceTemplate, InstanceStatusEnum status) {
+        QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "i");
+
+        try {
+            qb.addCriterionEntity("serviceTemplate", serviceTemplate);
+
+            if (status != null) {
+                qb.addCriterionEnum("status", status);
+            }
+
+            return ((Long) qb.getCountQuery(getEntityManager()).getSingleResult()).longValue() > 0;
+        } catch (NoResultException e) {
+            return false;
+        }
     }
 
     @SuppressWarnings("unchecked")

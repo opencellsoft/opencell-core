@@ -1291,10 +1291,12 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         if (getEntityManager().contains(entity)) {
-            getEntityManager().refresh(entity);
+            // Entity is managed already, no need to refresh
+            // getEntityManager().refresh(entity);
             return entity;
 
         } else {
+            log.trace("Find {}/{} by id", entity.getClass().getSimpleName(), entity.getId());
             entity = getEntityManager().find(PersistenceUtils.getClassForHibernateObject(entity), entity.getId());
             return entity;
         }
@@ -2284,7 +2286,7 @@ public class CustomFieldInstanceService extends BaseService {
         }
     }
 
-    public EntityManager getEntityManager() {
+    private EntityManager getEntityManager() {
         EntityManager result = emfForJobs;
         if (conversation != null) {
             try {
@@ -2294,8 +2296,6 @@ public class CustomFieldInstanceService extends BaseService {
             }
         }
 
-        // log.debug("em.txKey={}, em.hashCode={}", txReg.getTransactionKey(),
-        // em.hashCode());
         return result;
     }
 }

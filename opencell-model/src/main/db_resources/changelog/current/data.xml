@@ -186,4 +186,48 @@
 			<column name="payment_method" value="NONE" />			
 		</insert>			
 	</changeSet>
+	
+	<changeSet author="AbdelmounaimAkadid" id="#3224_16022018">
+		<insert tableName="adm_role">
+			<column name="id" valueNumeric="-6" />
+			<column name="version" valueNumeric="0" />
+			<column name="role_description" value="Customer care user" />
+			<column name="role_name" value="CUSTOMER_CARE_USER" />
+		</insert>
+		<insert tableName="adm_role_role">
+			<column name="role_id" valueNumeric="-6" />
+			<column name="child_role_id" valueNumeric="-3" />
+		</insert>
+		<insert tableName="adm_role_permission">
+			<column name="role_id" valueNumeric="-6" />
+			<column name="permission_id" valueNumeric="14" />
+		</insert>
+		<insert tableName="adm_role_permission">
+			<column name="role_id" valueNumeric="-6" />
+			<column name="permission_id" valueNumeric="1" />
+		</insert>
+	</changeSet>
+	
+	<changeSet id="#3260_20180227 - Add finance roles" author="EdwardPLegaspi">
+		<insert tableName="adm_role">
+            <column name="id" value="-7" />
+            <column name="version" value="0" />
+            <column name="role_description" value="Finance Management" />
+            <column name="role_name" value="financeManagement" />
+        </insert>
+        <insert tableName="adm_role">
+            <column name="id" value="-8" />
+            <column name="version" value="0" />
+            <column name="role_description" value="Finance Visualization" />
+            <column name="role_name" value="financeVisualization" />
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-7"></column>
+        </insert>
+        <insert tableName="adm_user_role">
+        	<column name="user_id" value="-1"></column>
+        	<column name="role_id" value="-8"></column>
+        </insert>
+	</changeSet>
 </databaseChangeLog>

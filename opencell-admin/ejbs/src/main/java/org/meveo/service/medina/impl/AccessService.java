@@ -18,17 +18,12 @@
  */
 package org.meveo.service.medina.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
-import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.mediation.Access;
@@ -36,101 +31,49 @@ import org.meveo.service.base.PersistenceService;
 
 @Stateless
 public class AccessService extends PersistenceService<Access> {
-    
-    @Inject
-    private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
-
-	@SuppressWarnings("unchecked")
-	public List<Access> findByUserID(String userId) {
-		log.info("findByUserID '" + userId + "'");
-		List<Access> result = new ArrayList<Access>();
-		if (userId != null && userId.length() > 0) {
-			Query query = getEntityManager().createQuery("from Access a where a.accessUserId=:accessUserId "
-					+ "and a.disabled=false")
-					.setParameter("accessUserId", userId);
-			result = query.getResultList();
-		}
-		return result;
-	}
-
-	public boolean isDuplicate(Access access) {
-		String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName()
-				+ " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
-		Query query = getEntityManager().createQuery(stringQuery);
-		query.setParameter("accessUserId", access.getAccessUserId());
-		query.setParameter("subscriptionId", access.getSubscription().getId());
-		query.setHint("org.hibernate.flushMode", "NEVER");
-		return ((Long) query.getSingleResult()).intValue() != 0;
-	}
-
-	public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
-		return findByUserIdAndSubscription(getEntityManager(), accessUserId, subscription);
-	}
-
-	public Access findByUserIdAndSubscription(EntityManager em, String accessUserId, Subscription subscription) {
-		try {
-			QueryBuilder qb = new QueryBuilder(Access.class, "a");
-			qb.addCriterion("accessUserId", "=", accessUserId, false);
-			qb.addCriterionEntity("subscription", subscription);
-			return (Access) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("no result found");
-			return null;
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	public List<Access> listBySubscription(Subscription subscription) {
-		QueryBuilder qb = new QueryBuilder(Access.class, "c");
-		qb.addCriterionEntity("subscription", subscription);
-
-		try {
-			return (List<Access>) qb.getQuery(getEntityManager()).getResultList();
-		} catch (NoResultException e) {
-			log.warn("failed to get list Access by subscription",e);
-			return null;
-		}
-	}
 
     /**
-     * Get a list of access to populate a cache
+     * Get a list of Accesses matching a given accessUserId value
      * 
-     * @return A list of active access
+     * @param accessUserId
+     * @return
      */
-    public List<Access> getAccessesForCache() {
-        return getEntityManager().createNamedQuery("Access.getAccessesForCache", Access.class).getResultList();
-    }
-    
-    @Override
-    public void create(Access access) throws BusinessException {
-        super.create(access);
-        cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
+    public List<Access> getActiveAccessByUserId(String accessUserId) {
+        return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();
     }
 
-    @Override
-    public Access update(Access access) throws BusinessException {
-        access = super.update(access);
-        cdrEdrProcessingCacheContainerProvider.updateAccessInCache(access);
-        return access;
+    public boolean isDuplicate(Access access) {
+        String stringQuery = "SELECT COUNT(*) FROM " + Access.class.getName() + " a WHERE a.accessUserId=:accessUserId AND a.subscription.id=:subscriptionId";
+        Query query = getEntityManager().createQuery(stringQuery);
+        query.setParameter("accessUserId", access.getAccessUserId());
+        query.setParameter("subscriptionId", access.getSubscription().getId());
+        query.setHint("org.hibernate.flushMode", "NEVER");
+        return ((Long) query.getSingleResult()).intValue() != 0;
     }
 
-    @Override
-    public void remove(Access access) throws BusinessException {
-        super.remove(access);
-        cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
-    }
-    
-    @Override
-    public Access disable(Access access) throws BusinessException {
-        access = super.disable(access);
-        cdrEdrProcessingCacheContainerProvider.removeAccessFromCache(access);
-        return access;
+    public Access findByUserIdAndSubscription(String accessUserId, Subscription subscription) {
+        try {
+            QueryBuilder qb = new QueryBuilder(Access.class, "a");
+            qb.addCriterion("accessUserId", "=", accessUserId, false);
+            qb.addCriterionEntity("subscription", subscription);
+            return (Access) qb.getQuery(getEntityManager()).getSingleResult();
+
+        } catch (NoResultException e) {
+            log.warn("no result found");
+            return null;
+        }
     }
 
-    @Override
-    public Access enable(Access access) throws BusinessException {
-        access = super.enable(access);
-        cdrEdrProcessingCacheContainerProvider.addAccessToCache(access);
-        return access;
+    @SuppressWarnings("unchecked")
+    public List<Access> listBySubscription(Subscription subscription) {
+        QueryBuilder qb = new QueryBuilder(Access.class, "c");
+        qb.addCriterionEntity("subscription", subscription);
+
+        try {
+            return (List<Access>) qb.getQuery(getEntityManager()).getResultList();
+        } catch (NoResultException e) {
+            log.warn("failed to get list Access by subscription", e);
+            return null;
+        }
     }
 }
