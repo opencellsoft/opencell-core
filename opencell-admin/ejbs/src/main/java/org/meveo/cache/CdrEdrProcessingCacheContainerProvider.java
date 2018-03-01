@@ -21,6 +21,8 @@ import org.infinispan.context.Flag;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.ProviderService;
@@ -58,24 +60,25 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     private ProviderService providerService;
     
     @Inject
-    private CurrentUserProvider currentUserProvider;
+    @CurrentUser
+    protected MeveoUser currentUser;
 
-    @PostConstruct
-    private void init() {
-        try {
-            log.debug("CdrEdrProcessingCacheContainerProvider initializing...");
-            // accessCache = meveoContainer.getCache("meveo-access-cache");
-            // edrCache = meveoContainer.getCache("meveo-edr-cache");
-
-            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
-
-            log.info("CdrEdrProcessingCacheContainerProvider initialized");
-
-        } catch (Exception e) {
-            log.error("CdrEdrProcessingCacheContainerProvider init() error", e);
-            throw e;
-        }
-    }
+//    @PostConstruct
+//    private void init() {
+//        try {
+//            log.debug("CdrEdrProcessingCacheContainerProvider initializing...");
+//            // accessCache = meveoContainer.getCache("meveo-access-cache");
+//            // edrCache = meveoContainer.getCache("meveo-edr-cache");
+//
+//            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+//
+//            log.info("CdrEdrProcessingCacheContainerProvider initialized");
+//
+//        } catch (Exception e) {
+//            log.error("CdrEdrProcessingCacheContainerProvider init() error", e);
+//            throw e;
+//        }
+//    }
 
     /**
      * Populate EDR cache from db.
@@ -113,7 +116,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     	for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {	          	
             List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
             List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
-            Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(currentUserProvider.getCurrentUserProviderCode(),p), p -> true));
+            Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(currentUser.getProviderCode(),p), p -> true));
 
             edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putAll(mappedEdrCacheKeys);
 
@@ -127,7 +130,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
             }
         } 
 
-        log.info("Finished to pre-populate EDR cache with {} for provider {}", totalEdrs[0], currentUserProvider.getCurrentUserProviderCode());
+        log.info("Finished to pre-populate EDR cache with {} for provider {}", totalEdrs[0], currentUser.getProviderCode());
     }
 
     /**
@@ -139,7 +142,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      */
     public Boolean getEdrDuplicationStatus(String originBatch, String originRecord) {
 
-        return edrCache.get(new CacheKeyStr(currentUserProvider.getCurrentUserProviderCode(), originBatch + '_' + originRecord));
+        return edrCache.get(new CacheKeyStr(currentUser.getProviderCode(), originBatch + '_' + originRecord));
     }
 
     /**
@@ -149,7 +152,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * @param originRecord Origin record
      */
     public void setEdrDuplicationStatus(String originBatch, String originRecord) {
-        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUserProvider.getCurrentUserProviderCode(), originBatch + '_' + originRecord), true);
+        edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(new CacheKeyStr(currentUser.getProviderCode(), originBatch + '_' + originRecord), true);
     }
 
     /**
@@ -186,8 +189,8 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      * @param 
      */
     public void clear() {
-    	String currentProvider = currentUserProvider.getCurrentUserProviderCode();
-    	edrCache.keySet().removeIf(key -> key.getProvider().equals(currentProvider));
+    	String currentProvider = currentUser.getProviderCode();
+    	edrCache.keySet().removeIf(key -> (key.getProvider() == null)? currentProvider == null: key.getProvider().equals(currentProvider));
     }
     
     /**

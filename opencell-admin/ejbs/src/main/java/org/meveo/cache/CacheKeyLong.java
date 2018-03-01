@@ -21,12 +21,6 @@ public class CacheKeyLong {
 		this.provider = provider;
 		this.key = key;
 	}
-	
-	public CacheKeyLong(Long key, String provider) {
-		super();
-		this.provider = provider;
-		this.key = key;
-	}
 
 	/**
 	 * @return the provider

@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
+import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.crm.Provider;
@@ -57,6 +58,9 @@ public class ApplicationInitializer {
     
     @Inject
     CustomFieldsCacheContainerProvider cftCache;
+    
+    @Inject 
+    JobCacheContainerProvider jobCache;
 
     public void init() {
 
@@ -85,6 +89,7 @@ public class ApplicationInitializer {
         cdrEdrCache.refreshCache(null);
         notifCache.refreshCache(null);
         cftCache.refreshCache(null);
+        jobCache.refreshCache(null);
         
         log.info("Initialized application for provider {}", provider.getCode());
     }

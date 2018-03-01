@@ -29,6 +29,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.notification.NotificationService;
 import org.slf4j.Logger;
@@ -65,25 +67,26 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     // private CacheContainer meveoContainer;
     
     @Inject
-    private CurrentUserProvider currentUserProvider;
+    @CurrentUser
+    protected MeveoUser currentUser;
     
-    @PostConstruct
-    private void init() {
-        try {
-
-            useNotificationCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheNotification", "true"));
-
-            log.debug("NotificationCacheContainerProvider initializing...");
-
-            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
-
-            log.info("NotificationCacheContainerProvider initialized");
-
-        } catch (Exception e) {
-            log.error("NotificationCacheContainerProvider init() error", e);
-            throw e;
-        }
-    }
+//    @PostConstruct
+//    private void init() {
+//        try {
+//
+//            useNotificationCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheNotification", "true"));
+//
+//            log.debug("NotificationCacheContainerProvider initializing...");
+//
+//            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+//
+//            log.info("NotificationCacheContainerProvider initialized");
+//
+//        } catch (Exception e) {
+//            log.error("NotificationCacheContainerProvider init() error", e);
+//            throw e;
+//        }
+//    }
 
     /**
      * Populate notification cache.
@@ -104,9 +107,9 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
             return;
         }
 
-        log.debug("Start to pre-populate Notification cache for provider {}.", currentUserProvider.getCurrentUserProviderCode());
+        log.debug("Start to pre-populate Notification cache for provider {}.", currentUser.getProviderCode());
         
-    	String lProvider = currentUserProvider.getCurrentUserProviderCode();
+    	String lProvider = currentUser.getProviderCode();
     	
     	List<Notification> activeNotifications = notificationService.getNotificationsForCache();
         for (Notification notif : activeNotifications) {
@@ -276,13 +279,13 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
 
     private CacheKeyStr getCacheKey(Notification notif) {
     	String key = notif.getEventTypeFilter().name() + "_" + notif.getClassNameFilter();
-		return new CacheKeyStr(currentUserProvider.getCurrentUserProviderCode(), key);
+		return new CacheKeyStr(currentUser.getProviderCode(), key);
     }
 
     @SuppressWarnings("rawtypes")
     private CacheKeyStr getCacheKey(NotificationEventTypeEnum eventType, Class entityClass) {
     	String key = eventType.name() + "_" + ReflectionUtils.getCleanClassName(entityClass.getName()); 
-        return new CacheKeyStr(currentUserProvider.getCurrentUserProviderCode(), key);
+        return new CacheKeyStr(currentUser.getProviderCode(), key);
     }
 
     /**
