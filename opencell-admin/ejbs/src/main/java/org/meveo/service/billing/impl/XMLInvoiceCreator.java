@@ -1173,15 +1173,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
 
-        Long id = userAccount.getId();
-
         if (hasInvoiceAgregates) {
             for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-                if (invoiceAgregate.getUserAccount().getId() == id) {
-                    if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                        CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-                        categoryInvoiceAgregates.add(categoryInvoiceAgregate);
-                    }
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                    CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+                    categoryInvoiceAgregates.add(categoryInvoiceAgregate);
                 }
             }
         }
