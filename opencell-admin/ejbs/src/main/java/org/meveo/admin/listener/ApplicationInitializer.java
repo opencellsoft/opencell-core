@@ -8,6 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.cache.CacheContainerProvider;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
@@ -18,6 +19,7 @@ import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
+import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
@@ -42,24 +44,27 @@ public class ApplicationInitializer {
     private JobInstanceService jobInstanceService;
 
     @Inject
+    private ScriptInstanceService scriptInstanceService;
+
+    @Inject
     private EntityManagerProvider entityManagerProvider;
 
     @Inject
     private Logger log;
-    
-    @Inject 
+
+    @Inject
     WalletCacheContainerProvider walletCache;
-    
-    @Inject 
+
+    @Inject
     CdrEdrProcessingCacheContainerProvider cdrEdrCache;
-    
+
     @Inject
     NotificationCacheContainerProvider notifCache;
-    
+
     @Inject
     CustomFieldsCacheContainerProvider cftCache;
-    
-    @Inject 
+
+    @Inject
     JobCacheContainerProvider jobCache;
 
     public void init() {
@@ -70,7 +75,9 @@ public class ApplicationInitializer {
 
         int i = 0;
         for (Provider provider : providers) {
-            entityManagerProvider.registerEntityManagerFactory(provider.getCode());
+            if (i > 0) {
+                entityManagerProvider.registerEntityManagerFactory(provider.getCode());
+            }
             multitenantAppInitializer.initializeTenant(provider, i == 0);
             i++;
         }
@@ -82,16 +89,20 @@ public class ApplicationInitializer {
         log.debug("Will initialize application for provider {}", provider.getCode());
         currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), isMainProvider ? null : provider.getCode());
 
+        // Register jobs
         jobInstanceService.registerJobs();
-        
+
+        // Initialize scripts
+        scriptInstanceService.compileAll();
+
         // Initialize caches
-        walletCache.refreshCache(null);
-        cdrEdrCache.refreshCache(null);
-        notifCache.refreshCache(null);
-        cftCache.refreshCache(null);
-        jobCache.refreshCache(null);
-        
+        walletCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        cdrEdrCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        notifCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        cftCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+        jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+
         log.info("Initialized application for provider {}", provider.getCode());
     }
-    
+
 }

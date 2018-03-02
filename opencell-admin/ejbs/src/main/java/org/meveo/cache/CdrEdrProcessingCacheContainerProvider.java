@@ -6,27 +6,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
-import javax.ejb.Startup;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
-import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.crm.Provider;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.ProviderService;
-import org.primefaces.model.SortOrder;
 import org.slf4j.Logger;
 
 /**
@@ -35,7 +29,7 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * 
  */
-//@Startup
+// @Startup
 @Singleton
 @Lock(LockType.READ)
 public class CdrEdrProcessingCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
@@ -55,30 +49,13 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      */
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-edr-cache")
     private Cache<CacheKeyStr, Boolean> edrCache;
-    
+
     @Inject
     private ProviderService providerService;
-    
+
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-
-//    @PostConstruct
-//    private void init() {
-//        try {
-//            log.debug("CdrEdrProcessingCacheContainerProvider initializing...");
-//            // accessCache = meveoContainer.getCache("meveo-access-cache");
-//            // edrCache = meveoContainer.getCache("meveo-edr-cache");
-//
-//            refreshCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
-//
-//            log.info("CdrEdrProcessingCacheContainerProvider initialized");
-//
-//        } catch (Exception e) {
-//            log.error("CdrEdrProcessingCacheContainerProvider init() error", e);
-//            throw e;
-//        }
-//    }
 
     /**
      * Populate EDR cache from db.
@@ -91,32 +68,30 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
             return;
         }
 
-        //edrCache.clear();
-        // remove current provider data from cache
-        clear();
-        
         boolean prepopulateMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
         if (!prepopulateMemoryDeduplication) {
             log.info("EDR cache pre-population will be skipped");
             return;
         }
 
-        log.debug("Start to pre-populate EDR cache");
+        String currentProvider = currentUser.getProviderCode();
+
+        log.debug("Start to pre-populate EDR cache for provider {}", currentProvider);
 
         int maxRecords = Integer.parseInt(paramBean.getProperty("mediation.deduplicateInMemory.size", "100000"));
         int pageSize = Integer.parseInt(paramBean.getProperty("mediation.deduplicateInMemory.pageSize", "1000"));
 
         final Integer[] totalEdrs = new Integer[1];
         totalEdrs[0] = 0;
-        
-        // for each provider we fill the cache with initial equal portion of the cache 
-        // This may vary during the run 
+
+        // for each provider we fill the cache with initial equal portion of the cache
+        // This may vary during the run
         final int nbProviders = providerService.list().size();
-        int maxRecordsPerProvider = maxRecords/nbProviders;
-    	for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {	          	
+        int maxRecordsPerProvider = maxRecords / nbProviders;
+        for (int from = 0; from < maxRecordsPerProvider; from = from + pageSize) {
             List<String> edrCacheKeys = edrService.getUnprocessedEdrsForCache(from, pageSize);
             List<String> distinct = edrCacheKeys.stream().distinct().collect(Collectors.toList());
-            Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(currentUser.getProviderCode(),p), p -> true));
+            Map<CacheKeyStr, Boolean> mappedEdrCacheKeys = distinct.stream().collect(Collectors.toMap(p -> new CacheKeyStr(currentProvider, p), p -> true));
 
             edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).putAll(mappedEdrCacheKeys);
 
@@ -128,9 +103,9 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
             if (retrievedSize < pageSize) {
                 break;
             }
-        } 
+        }
 
-        log.info("Finished to pre-populate EDR cache with {} for provider {}", totalEdrs[0], currentUser.getProviderCode());
+        log.info("Finished to pre-populate EDR cache with {} for provider {}", totalEdrs[0], currentProvider);
     }
 
     /**
@@ -170,7 +145,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * Refresh cache by name
+     * Refresh cache by name. Removes current provider's data from cache and populates it again
      * 
      * @param cacheName Name of cache to refresh or null to refresh all caches
      */
@@ -179,26 +154,40 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     public void refreshCache(String cacheName) {
 
         if (cacheName == null || cacheName.equals(edrCache.getName()) || cacheName.contains(edrCache.getName())) {
+            clear();
             populateEdrCache();
         }
     }
-    
+
     /**
-     * clear the data belonging to the current provider from cache 
+     * Refresh cache by name. Same as populateCache(), but cleans it up cache before.
      * 
-     * @param 
+     * @param cacheName Name of cache to populate or null to populate all caches
+     */
+    // @Override
+    public void populateCache(String cacheName) {
+
+        if (cacheName == null || cacheName.equals(edrCache.getName()) || cacheName.contains(edrCache.getName())) {
+            populateEdrCache();
+        }
+    }
+
+    /**
+     * clear the data belonging to the current provider from cache
+     * 
+     * @param
      */
     public void clear() {
-    	String currentProvider = currentUser.getProviderCode();
-    	edrCache.keySet().removeIf(key -> (key.getProvider() == null)? currentProvider == null: key.getProvider().equals(currentProvider));
+        String currentProvider = currentUser.getProviderCode();
+        edrCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
     }
-    
+
     /**
-     * clear the data belonging to the current provider from cache 
+     * clear the data belonging to the current provider from cache
      * 
-     * @param 
+     * @param
      */
     public void clearAll() {
-    	edrCache.clear();
+        edrCache.clear();
     }
 }

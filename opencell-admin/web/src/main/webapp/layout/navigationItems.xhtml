@@ -9,7 +9,7 @@
 		rendered="#{currentUser.hasRole('administrationVisualization') or currentUser.hasRole('catalogVisualization') or currentUser.hasRole('userVisualization')}">
 		<p:menuitem id="providers" outcome="providers"
 			value="#{messages['menu.providers']}"
-			rendered="#{currentUser.hasRole('administrationManagement') or currentUser.hasRole('superAdminManagement')}" />
+			rendered="#{currentUser.hasRole('superAdminManagement')}" />
 		<p:menuitem id="provider" outcome="providerSelfDetail"
 			value="#{messages['menu.appConfiguration']}"
 			rendered="#{currentUser.hasRole('administrationManagement') or currentUser.hasRole('superAdminManagement')}" />
@@ -397,10 +397,10 @@
 				value="#{messages['menu.auditLogs']}" />
 		</p:submenu>
 		<p:menuitem id="cache"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('administrationVisualization')}"
 			outcome="caches" value="#{messages['menu.cacheInfo']}" />
 		<p:menuitem id="indexing"
-			rendered="#{currentUser.hasRole('superAdminManagement')}"
+			rendered="#{currentUser.hasRole('administrationVisualization')}"
 			outcome="indexing" value="#{messages['menu.indexing']}" />
 	</p:submenu>
 

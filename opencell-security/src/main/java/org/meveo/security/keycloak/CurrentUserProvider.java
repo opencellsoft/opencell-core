@@ -21,11 +21,9 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
 import org.meveo.model.shared.Name;
-import org.meveo.security.ForcedAuthenticationHolder;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Stateless
 public class CurrentUserProvider {
@@ -41,14 +39,23 @@ public class CurrentUserProvider {
     @Inject
     private Instance<UserAuthTimeProducer> userAuthTimeProducer;
 
-    private Logger log = LoggerFactory.getLogger(getClass());
+    @Inject
+    private Logger log;
 
+    /**
+     * Contains a current tenant
+     */
     private static final InheritableThreadLocal<String> currentTenant = new InheritableThreadLocal<String>() {
         @Override
         protected String initialValue() {
             return "NA";
         }
     };
+
+    /**
+     * Contains a forced authentication user username
+     */
+    private static final InheritableThreadLocal<String> forcedUserUsername = new InheritableThreadLocal<String>();
 
     /**
      * Simulate authentication of a user. Allowed only when no security context is present, mostly used in jobs.
@@ -63,7 +70,7 @@ public class CurrentUserProvider {
             log.info("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
-        ForcedAuthenticationHolder.setForcedUsername(userName);
+        setForcedUsername(userName);
         setCurrentTenant(providerCode);
     }
 
@@ -100,20 +107,19 @@ public class CurrentUserProvider {
      */
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {
 
-        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, ForcedAuthenticationHolder.getForcedUsername());
+        String username = MeveoUserKeyCloakImpl.extractUsername(ctx, getForcedUsername());
 
         MeveoUser user = null;
 
         // User was forced authenticated, so need to lookup the rest of user information
-        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && ForcedAuthenticationHolder.getForcedUsername() != null) {
-            user = new MeveoUserKeyCloakImpl(ctx, ForcedAuthenticationHolder.getForcedUsername(), getCurrentTenant(), getAdditionalRoles(username, em),
-                getRoleToPermissionMapping(providerCode, em));
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal) && getForcedUsername() != null) {
+            user = new MeveoUserKeyCloakImpl(ctx, getForcedUsername(), getCurrentTenant(), getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
 
         } else {
             user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
         }
-        log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null,
-            ForcedAuthenticationHolder.getForcedUsername(), getCurrentTenant());
+        log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
+            getCurrentTenant());
         supplementOrCreateUserInApp(user, em);
 
         log.trace("Current user is {}", user);
@@ -252,16 +258,50 @@ public class CurrentUserProvider {
         }
     }
 
+    /**
+     * Check if current tenant value is set (differs from the initial value)
+     * 
+     * @return If current tenant value was set
+     */
     private static boolean isCurrentTenantSet() {
         return !"NA".equals(currentTenant.get());
     }
 
+    /**
+     * Returns a current tenant/provider code. Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or
+     * initialize current provider value instead.
+     * 
+     * @return Current provider code
+     */
     private static String getCurrentTenant() {
         return currentTenant.get();
     }
 
+    /**
+     * Set current tenant/provider value
+     * 
+     * @param tenantName Current tenant/provider code
+     */
     private static void setCurrentTenant(final String tenantName) {
         currentTenant.remove();
         currentTenant.set(tenantName);
+    }
+
+    /**
+     * Get forced authentication username value
+     * 
+     * @return Forced authentication username
+     */
+    private static String getForcedUsername() {
+        return forcedUserUsername.get();
+    }
+
+    /**
+     * Set forced authentication username value
+     * 
+     * @param username Forced authentication username
+     */
+    private static void setForcedUsername(final String username) {
+        forcedUserUsername.set(username);
     }
 }

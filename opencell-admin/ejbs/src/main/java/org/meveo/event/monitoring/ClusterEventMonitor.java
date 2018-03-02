@@ -68,7 +68,7 @@ public class ClusterEventMonitor implements MessageListener {
         try {
             if (rcvMessage instanceof ObjectMessage) {
                 ClusterEventDto eventDto = (ClusterEventDto) ((ObjectMessage) rcvMessage).getObject();
-                if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())){
+                if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())) {
                     return;
                 }
                 log.info("Received cluster synchronization event message {}", eventDto);
@@ -90,6 +90,8 @@ public class ClusterEventMonitor implements MessageListener {
      */
     private void processClusterEvent(ClusterEventDto eventDto) {
 
+        currentUserProvider.forceAuthentication(eventDto.getUserName(), eventDto.getProviderCode());
+
         if (eventDto.getClazz().equals(ScriptInstance.class.getSimpleName())) {
             scriptInstanceService.clearCompiledScripts(eventDto.getCode());
 
@@ -99,9 +101,6 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(Role.class.getSimpleName())) {
             currentUserProvider.invalidateRoleToPermissionMapping();
 
-        } else if (eventDto.getClazz().equals(Provider.class.getSimpleName())) {
-            providerService.refreshAppProvider();
         }
-
     }
 }

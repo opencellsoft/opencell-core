@@ -43,8 +43,6 @@ public class ProviderService extends PersistenceService<Provider> {
     @EJB
     private ProviderRegistry providerRegistry;
 
-    
-
     public Provider getProvider() {
 
         Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
@@ -81,7 +79,7 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     /**
-     * Refresh appProvider application scope variable
+     * Refresh appProvider request scope variable, just in case it is used in some EL expressions within the same request
      * 
      * @param provider New provider data to refresh with
      */
@@ -100,13 +98,4 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setCfValues(provider.getCfValues());
     }
-
-    /**
-     * Refresh appProvider application scope variable with provider data from DB
-     */
-    public void refreshAppProvider() {
-        refreshAppProvider(getProvider());
-    }
-
-
 }

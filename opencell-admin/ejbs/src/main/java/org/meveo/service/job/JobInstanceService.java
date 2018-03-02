@@ -33,6 +33,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.CacheKeyLong;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
@@ -43,6 +44,8 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.jobs.TimerEntity;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
@@ -54,13 +57,17 @@ public class JobInstanceService extends BusinessService<JobInstance> {
     private ClusterEventPublisher clusterEventPublisher;
 
     @Inject
+    @CurrentUser
+    private MeveoUser currentUser;
+
+    @Inject
     private CustomFieldTemplateService customFieldTemplateService;
 
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     private static Map<JobCategoryEnum, List<Class<? extends Job>>> jobClasses = new HashMap<>();
-    private static Map<Long, Timer> jobTimers = new HashMap<Long, Timer>();
+    private static Map<CacheKeyLong, Timer> jobTimers = new HashMap<>();
 
     private static ParamBean paramBean = ParamBean.getInstance();
 
@@ -83,6 +90,8 @@ public class JobInstanceService extends BusinessService<JobInstance> {
      * @param job job to be registered.
      */
     private void registerJob(Job job) {
+
+        boolean clearTimers = false;
         synchronized (jobTimers) {
 
             if (!jobClasses.containsKey(job.getJobCategory())) {
@@ -90,6 +99,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             }
             if (!jobClasses.get(job.getJobCategory()).contains(job.getClass())) {
                 jobClasses.get(job.getJobCategory()).add(job.getClass());
+                clearTimers = true;
             }
 
             Map<String, CustomFieldTemplate> cfts = job.getCustomFields();
@@ -103,18 +113,21 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
             log.debug("Registered a job {} of category {}", job.getClass(), job.getJobCategory());
         }
-        startTimers(job);
+        startTimers(job, clearTimers);
     }
 
     /**
      * Register timers for applicable job instances of a given job class.
      * 
-     * @param job
+     * @param job Job class to register timers for
+     * @param clearTimers Should previous timers be removed - used to remove old timers at application startup
      */
     @SuppressWarnings("unchecked")
-    private void startTimers(Job job) {
+    private void startTimers(Job job, boolean clearTimers) {
 
-        job.cleanTimers();
+        if (clearTimers) {
+            job.cleanTimers();
+        }
 
         List<JobInstance> jobInstances = getEntityManager().createQuery("from JobInstance ji LEFT JOIN FETCH ji.followingJob where ji.jobTemplate=:jobName")
             .setParameter("jobName", ReflectionUtils.getCleanClassName(job.getClass().getSimpleName())).getResultList();
@@ -199,18 +212,21 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     @Override
     public void remove(JobInstance jobInstance) throws BusinessException {
+
         log.info("remove jobInstance {}, id={}", jobInstance.getJobTemplate(), jobInstance.getId());
+
+        String providerCode = currentUser.getProviderCode();
         if (jobInstance.getId() == null) {
             log.info("removing jobInstance entity with null id, something is wrong");
 
-        } else if (jobTimers.containsKey(jobInstance.getId())) {
+        } else if (jobTimers.containsKey(new CacheKeyLong(providerCode, jobInstance.getId()))) {
             try {
-                Timer timer = jobTimers.get(jobInstance.getId());
+                Timer timer = jobTimers.get(new CacheKeyLong(providerCode, jobInstance.getId()));
                 timer.cancel();
             } catch (Exception ex) {
                 log.info("cannot cancel timer " + ex);
             }
-            jobTimers.remove(jobInstance.getId());
+            jobTimers.remove(new CacheKeyLong(providerCode, jobInstance.getId()));
         } else {
             log.info("jobInstance timer not found, cannot remove it");
         }
@@ -247,11 +263,13 @@ public class JobInstanceService extends BusinessService<JobInstance> {
 
     private void unscheduleJob(Long jobInstanceId) {
 
-        if (jobInstanceId != null && jobTimers.containsKey(jobInstanceId)) {
+        String providerCode = currentUser.getProviderCode();
+
+        if (jobInstanceId != null && jobTimers.containsKey(new CacheKeyLong(providerCode, jobInstanceId))) {
             try {
-                Timer timer = jobTimers.get(jobInstanceId);
+                Timer timer = jobTimers.get(new CacheKeyLong(providerCode, jobInstanceId));
                 timer.cancel();
-                jobTimers.remove(jobInstanceId);
+                jobTimers.remove(new CacheKeyLong(providerCode, jobInstanceId));
                 log.info("Cancelled timer id={}", jobInstanceId);
 
             } catch (Exception ex) {
@@ -280,7 +298,7 @@ public class JobInstanceService extends BusinessService<JobInstance> {
             log.info("Scheduling job {} of type {} for {}", jobInstance.getCode(), jobInstance.getJobTemplate(), scheduleExpression);
 
             // detach(jobInstance);
-            jobTimers.put(jobInstance.getId(), job.createTimer(scheduleExpression, jobInstance));
+            jobTimers.put(new CacheKeyLong(currentUser.getProviderCode(), jobInstance.getId()), job.createTimer(scheduleExpression, jobInstance));
             return true;
 
         } else {

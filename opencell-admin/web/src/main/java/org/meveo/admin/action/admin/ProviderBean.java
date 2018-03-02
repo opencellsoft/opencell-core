@@ -35,6 +35,7 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.ProviderService;
+import org.omnifaces.cdi.Param;
 import org.primefaces.model.DualListModel;
 
 @Named
@@ -45,7 +46,11 @@ public class ProviderBean extends CustomFieldBean<Provider> {
 
     @Inject
     private ProviderService providerService;
-    
+
+    @Inject
+    @Param
+    private String mode;
+
     private DualListModel<PaymentMethodEnum> paymentMethodsModel;
 
     public ProviderBean() {
@@ -70,10 +75,13 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         return "code";
     }
 
-    
-    
     @Override
     public Provider initEntity() {
+
+        if ("appConfiguration".equals(mode)) {
+            setObjectId(appProvider.getId());
+        }
+
         super.initEntity();
         if (entity.getId() != null && entity.getInvoiceConfiguration() == null) {
             InvoiceConfiguration invoiceConfiguration = new InvoiceConfiguration();
@@ -99,7 +107,7 @@ public class ProviderBean extends CustomFieldBean<Provider> {
         boolean isNew = entity.isTransient();
         if (isNew) {
             entity.getInvoiceConfiguration().setProvider(entity);
-        }  
+        }
         entity = super.saveOrUpdate(entity);
         return entity;
     }
@@ -107,31 +115,35 @@ public class ProviderBean extends CustomFieldBean<Provider> {
     @Override
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
-	getEntity().getPaymentMethods().clear();
-	getEntity().setPaymentMethods(paymentMethodsModel.getTarget());
-        super.saveOrUpdate(killConversation);
-        return "providerSelfDetail";
+        getEntity().getPaymentMethods().clear();
+        getEntity().setPaymentMethods(paymentMethodsModel.getTarget());
+        String returnTo = super.saveOrUpdate(killConversation);
+
+        if ("appConfiguration".equals(mode)) {
+            return "providerSelfDetail";
+        }
+
+        return returnTo;
     }
-    
-  public DualListModel<PaymentMethodEnum> getPaymentMethodsModel() {
-	if (paymentMethodsModel == null) {
-	    List<PaymentMethodEnum> source = new ArrayList<PaymentMethodEnum>(Arrays.asList(PaymentMethodEnum.values()));
-	    List<PaymentMethodEnum> target = new ArrayList<PaymentMethodEnum>();
-	    if (getEntity().getPaymentMethods() != null) {
-		target.addAll(getEntity().getPaymentMethods());
-	    }
-	    source.removeAll(target);
-	    paymentMethodsModel = new DualListModel<PaymentMethodEnum>(source, target);
-	}
-	return paymentMethodsModel;
-  }
 
-/**
- * @param paymentMethodsModel the paymentMethodsModel to set
- */
-public void setPaymentMethodsModel(DualListModel<PaymentMethodEnum> paymentMethodsModel) {
-    this.paymentMethodsModel = paymentMethodsModel;
-}
+    public DualListModel<PaymentMethodEnum> getPaymentMethodsModel() {
+        if (paymentMethodsModel == null) {
+            List<PaymentMethodEnum> source = new ArrayList<PaymentMethodEnum>(Arrays.asList(PaymentMethodEnum.values()));
+            List<PaymentMethodEnum> target = new ArrayList<PaymentMethodEnum>();
+            if (getEntity().getPaymentMethods() != null) {
+                target.addAll(getEntity().getPaymentMethods());
+            }
+            source.removeAll(target);
+            paymentMethodsModel = new DualListModel<PaymentMethodEnum>(source, target);
+        }
+        return paymentMethodsModel;
+    }
 
-  
+    /**
+     * @param paymentMethodsModel the paymentMethodsModel to set
+     */
+    public void setPaymentMethodsModel(DualListModel<PaymentMethodEnum> paymentMethodsModel) {
+        this.paymentMethodsModel = paymentMethodsModel;
+    }
+
 }

@@ -5,19 +5,12 @@
         <f:metadata>
             <f:viewParam name="objectId" value="#{providerBean.objectId}" />
             <f:viewParam name="tab" value="#{providerBean.activeTab}" />
-			<f:event type="preRenderView" listener="#{providerBean.preRenderView}" />
+            <f:event type="preRenderView" listener="#{providerBean.preRenderView}" />
         </f:metadata>
     </ui:define>
 
     <ui:define name="body">
 
-<!--         <c:if test="#{providerBean.edit}"> -->
-<!--             <hftl:entityPopup id="languagePopup" header="#{messages['tradingLanguage.popup.header']}" updateField=":providerFormId:languageSelectedId:languageSelectedId" -->
-<!--                 selection="#{providerBean.entity.language}" backingBean="#{languageBean}" searchField1Label="#{messages['language.languageCode']}" searchField1="languageCode" -->
-<!--                 column1Label="#{messages['language.languageCode']}" column1="languageCode" column2Label="#{messages['tradingLanguage.prDescription']}" column2="descriptionEn" -->
-<!--                 > -->
-<!--             </hftl:entityPopup> -->
-<!--         </c:if> -->
         <p:panel>
             <h:form id="crumbmenuForm">
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -27,8 +20,10 @@
             </h:form>
         </p:panel>
 
-        <hftl:formPanel formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormId:tabView" label="#{messages['provider.title']}" backingBean="#{providerBean}">
+        <hftl:formPanel formId="providerFormId" ajaxSubmit="true" submitPartialProcess=":providerFormId:tabView" label="#{messages['provider.title']}" backingBean="#{providerBean}"
+            showBackButton="true" showDeleteButton="#{appProvider.id != providerBean.entity.id}">
             <p:tabView id="tabView" activeIndex="#{providerBean.activeTab}">
+
                 <p:tab title="#{messages['customer.tab.information']}">
                     <hftl:formField label="#{messages['businessEntity.code']}" field="code" required="true" />
 
@@ -37,81 +32,65 @@
                     <!-- <hftl:formField id="languageSelectedId" label="#{messages['tradingLanguage.languageCode']}" field="language" valueLabelField="languageCode"
 								popup="true" popupId="languagePopup" required="true" /> -->
 
-                    <hftl:formField label="#{messages['provider.enterprise']}" field="entreprise" id="enterprise" />
+                    <h:panelGroup rendered="#{appProvider.id == providerBean.entity.id}">
+                        <hftl:formField label="#{messages['provider.enterprise']}" field="entreprise" id="enterprise" />
 
-                    <hftl:formField label="#{messages['provider.rounding']}" field="rounding" id="rounding" newLine="true"/>
+                        <hftl:formField label="#{messages['provider.rounding']}" field="rounding" id="rounding" newLine="true" />
 
-                    <hftl:formField label="#{messages['provider.prepaidReservationExpirationDelayinMillisec']}" field="prepaidReservationExpirationDelayinMillisec"
-                        id="prepaidReservationExpirationDelayinMillisec" />
+                        <hftl:formField label="#{messages['provider.prepaidReservationExpirationDelayinMillisec']}" field="prepaidReservationExpirationDelayinMillisec"
+                            id="prepaidReservationExpirationDelayinMillisec" />
 
-                    <!-- <hftl:formField label="#{messages['provider.amountValidation']}"
+                        <!-- <hftl:formField label="#{messages['provider.amountValidation']}"
                                 field="amountValidation" id="amountValidation"/> -->
 
-                    <hftl:formField label="#{messages['provider.discountAccountingCode']}" field="discountAccountingCode" id="discountAccountingCode" />
+                        <hftl:formField label="#{messages['provider.discountAccountingCode']}" field="discountAccountingCode" id="discountAccountingCode" />
 
-                    <hftl:formField label="#{messages['provider.levelDuplication']}" field="levelDuplication" id="levelDuplication" />
+                        <hftl:formField label="#{messages['provider.levelDuplication']}" field="levelDuplication" id="levelDuplication" />
 
-                    <hftl:formField label="#{messages['provider.email']}" field="email" id="email" />
+                        <hftl:formField label="#{messages['provider.email']}" field="email" id="email" />
 
-					<hftl:formField label="#{messages['provider.recognizeRevenue']}" field="recognizeRevenue" id="recognizeRevenue" />
-					<hftl:formField label="#{messages['provider.paymentMethods']}" field="paymentMethods" listType="pickUpList" valueLabelField="label" dualListModel="#{providerBean.paymentMethodsModel}" newLine="true"/>
-                  
-                    <!--
-                    <p:fieldset legend="#{messages['provider.invoicing.title']}" styleClass="clearLeft">
-                        <hftl:formField label="#{messages['provider.invoicePrefix']}" field="invoicePrefix" id="invoicePrefix" textArea="true" rows="1" maxlength="2000" />
+                        <hftl:formField label="#{messages['provider.recognizeRevenue']}" field="recognizeRevenue" id="recognizeRevenue" />
 
-                        <hftl:formField label="#{messages['provider.currentInvoiceNb']}" field="currentInvoiceNb" id="currentInvoiceNb" />
+                        <hftl:formField label="#{messages['provider.paymentMethods']}" field="paymentMethods" listType="pickUpList" valueLabelField="label"
+                            dualListModel="#{providerBean.paymentMethodsModel}" newLine="true" />
 
-                        <hftl:formField label="#{messages['provider.invoiceSequenceSize']}" field="invoiceSequenceSize" id="invoiceSequenceSize" />
+                        <p:fieldset legend="#{messages['provider.bankCoordinates.title']}" styleClass="clearLeft">
+                            <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" newLine="true" />
 
-                        <hftl:formField label="#{messages['invoice.adjustment.prefix']}" field="invoiceAdjustmentPrefix" id="invoiceAdjustmentPrefix" textArea="true" rows="1"
-                            maxlength="2000" newLine="true"/>
+                            <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="41" />
 
-                        <hftl:formField label="#{messages['invoice.adjustment.currentSequenceNb']}" field="currentInvoiceAdjustmentNb" id="currentInvoiceAdjustmentNb" />
+                            <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="42" />
+                        </p:fieldset>
+                        <p:fieldset legend="#{messages['provider.invoiceConfiguration.title']}" styleClass="clearLeft">
+                            <hftl:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}" field="invoiceConfiguration" childField="displaySubscriptions" id="displaySubscriptions" />
 
-                        <hftl:formField label="#{messages['invoice.adjustment.sequenceSize']}" field="invoiceAdjustmentSequenceSize" id="invoiceAdjustmentSequenceSize" />
-                    </p:fieldset>
-					-->
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayOffers']}" field="invoiceConfiguration" childField="displayOffers" id="displayOffers" />
 
-                    <p:fieldset legend="#{messages['provider.bankCoordinates.title']}" styleClass="clearLeft">
-                        <hftl:formField label="#{messages['bankCoordinates.bic']}" field="bankCoordinates" childField="bic" size="15" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayServices']}" field="invoiceConfiguration" childField="displayServices" id="displayServices" />
 
-                        <hftl:formField label="#{messages['bankCoordinates.iban']}" field="bankCoordinates" childField="iban" size="45" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayPricePlans']}" field="invoiceConfiguration" childField="displayPricePlans" id="displayPricePlans" />
 
-                        <hftl:formField label="#{messages['bankCoordinates.ics']}" field="bankCoordinates" childField="ics" size="45" />
-                    </p:fieldset>
-                    
-                    <p:fieldset legend="#{messages['provider.invoiceConfiguration.title']}">
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayEdrs']}" field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displaySubscriptions']}" field="invoiceConfiguration" childField="displaySubscriptions"
-                            id="displaySubscriptions" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayFreeTransacInInvoice']}" field="displayFreeTransacInInvoice" id="displayFreeTx" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayOffers']}" field="invoiceConfiguration" childField="displayOffers" id="displayOffers" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayProvider']}" field="invoiceConfiguration" childField="displayProvider" id="displayProvider" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayServices']}" field="invoiceConfiguration" childField="displayServices" id="displayServices" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayDetail']}" field="invoiceConfiguration" childField="displayDetail" id="displayDetail" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayPricePlans']}" field="invoiceConfiguration" childField="displayPricePlans"
-                            id="displayPricePlans" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayCfAsXML']}" field="invoiceConfiguration" childField="displayCfAsXML" id="displayCfAsXML" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayEdrs']}" field="invoiceConfiguration" childField="displayEdrs" id="displayEdrs" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayChargesPeriods']}" field="invoiceConfiguration" childField="displayChargesPeriods" id="displayChargesPeriods" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayFreeTransacInInvoice']}" field="displayFreeTransacInInvoice" id="displayFreeTx" />
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayBillingCycle']}" field="invoiceConfiguration" childField="displayBillingCycle" id="displayBillingCycle" />
 
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayProvider']}" field="invoiceConfiguration" childField="displayProvider" id="displayProvider" />
-
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayDetail']}" field="invoiceConfiguration" childField="displayDetail" id="displayDetail" />
-
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayCfAsXML']}" field="invoiceConfiguration" childField="displayCfAsXML" id="displayCfAsXML" />
-                           
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayChargesPeriods']}" field="invoiceConfiguration" childField="displayChargesPeriods" id="displayChargesPeriods" />
-                        
-                        <hftl:formField label="#{messages['invoiceConfiguration.displayOrders']}" field="invoiceConfiguration" childField="displayOrders" id="displayOrders" />
-
-                    </p:fieldset>
-					
+                            <hftl:formField label="#{messages['invoiceConfiguration.displayOrders']}" field="invoiceConfiguration" childField="displayOrders" id="displayOrders" />
+                        </p:fieldset>
+                    </h:panelGroup>
                 </p:tab>
 
-                <hftl:customFields backingBean="#{providerBean}" messagesId=":providerFormId:messages" />
+                <hftl:customFields backingBean="#{providerBean}" messagesId=":providerFormId:messages" prefix="kuu" rendered="#{appProvider.id == providerBean.entity.id}" />
+
             </p:tabView>
         </hftl:formPanel>
     </ui:define>

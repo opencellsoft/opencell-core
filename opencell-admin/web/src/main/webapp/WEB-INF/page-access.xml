@@ -46,7 +46,8 @@
 	</page>
 	
 	<page view-id=".+\/reporting\/cache\/.*" >
-		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
+		<constraint>currentUser.hasRole('administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/admin\/providers\/providerSelfDetail">
