@@ -22,7 +22,6 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 	private OneShotChargeTemplateTypeEnum oneShotChargeTemplateType;
 
 	private Boolean immediateInvoicing = true;
-    private String filterExpression = null;
 
 	public OneShotChargeTemplateDto() {
 
@@ -32,7 +31,7 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 		super(e, customFieldInstances);
 		oneShotChargeTemplateType = e.getOneShotChargeTemplateType();
 		immediateInvoicing = e.getImmediateInvoicing();
-		filterExpression = e.getFilterExpression();
+		setFilterExpression(e.getFilterExpression());
 	}
 
 	public Boolean getImmediateInvoicing() {
@@ -61,11 +60,4 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
 		this.oneShotChargeTemplateType = oneShotChargeTemplateType;
 	}
 
-	public String getFilterExpression() {
-		return filterExpression;
-	}
-
-	public void setFilterExpression(String filterExpression) {
-		this.filterExpression = filterExpression;
-	}
 }
