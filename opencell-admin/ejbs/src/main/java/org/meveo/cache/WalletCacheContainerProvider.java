@@ -17,6 +17,7 @@ import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
+import org.infinispan.commons.util.CloseableIterator;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.qualifier.LowBalance;
@@ -350,9 +351,35 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
      */
     private void clear() {
         String currentProvider = currentUser.getProviderCode();
-        balanceCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
-        reservedBalanceCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
-        usageChargeInstanceWalletCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        // balanceCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        // reservedBalanceCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        // usageChargeInstanceWalletCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        for (CacheKeyLong elem : cleanCache(balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            balanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
+
+        for (CacheKeyLong elem : cleanCache(reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            reservedBalanceCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
+
+        for (CacheKeyLong elem : cleanCache(usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).keySet().iterator(), currentProvider)) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            usageChargeInstanceWalletCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
+    }
+
+    private ArrayList<CacheKeyLong> cleanCache(CloseableIterator<CacheKeyLong> iter, String currentProvider) {
+        ArrayList<CacheKeyLong> itemsToBeRemoved = new ArrayList<>();
+        while (iter.hasNext()) {
+            CacheKeyLong entry = iter.next();
+            boolean comparison = (entry.getProvider() == null) ? currentProvider == null : entry.getProvider().equals(currentProvider);
+            if (comparison) {
+                itemsToBeRemoved.add(entry);
+            }
+        }
+        return itemsToBeRemoved;
     }
 
     /**

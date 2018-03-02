@@ -1,9 +1,12 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -179,7 +182,21 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
      */
     public void clear() {
         String currentProvider = currentUser.getProviderCode();
-        edrCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        // edrCache.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        Iterator<Entry<CacheKeyStr, Boolean>> iter = edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
+        ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();
+        while (iter.hasNext()) {
+            Entry<CacheKeyStr, Boolean> entry = iter.next();
+            boolean comparison = (entry.getKey().getProvider() == null) ? currentProvider == null : entry.getKey().getProvider().equals(currentProvider);
+            if (comparison) {
+                itemsToBeRemoved.add(entry.getKey());
+            }
+        }
+
+        for (CacheKeyStr elem : itemsToBeRemoved) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            edrCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
     }
 
     /**

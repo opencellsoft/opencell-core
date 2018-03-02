@@ -1,11 +1,14 @@
 package org.meveo.cache;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import javax.annotation.Resource;
@@ -446,8 +449,22 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      */
     public void cetsByCodeClear() {
         String currentProvider = currentUser.getProviderCode();
-        log.info("cetsByCodeClear() => " + currentProvider + ".");
-        cetsByCode.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        log.debug("cetsByCodeClear() => " + currentProvider + ".");
+        // cetsByCode.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        Iterator<Entry<CacheKeyStr, CustomEntityTemplate>> iter = cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
+        ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();
+        while (iter.hasNext()) {
+            Entry<CacheKeyStr, CustomEntityTemplate> entry = iter.next();
+            boolean comparison = (entry.getKey().getProvider() == null) ? currentProvider == null : entry.getKey().getProvider().equals(currentProvider);
+            if (comparison) {
+                itemsToBeRemoved.add(entry.getKey());
+            }
+        }
+
+        for (CacheKeyStr elem : itemsToBeRemoved) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            cetsByCode.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
     }
 
     /**
@@ -467,7 +484,21 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     public void cftsByAppliesToClear() {
         String currentProvider = currentUser.getProviderCode();
         log.info("cftsByAppliesToClear() => " + currentProvider + "." + currentUser.toString());
-        cftsByAppliesTo.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        // cftsByAppliesTo.keySet().removeIf(key -> (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider));
+        Iterator<Entry<CacheKeyStr, Map<String, CustomFieldTemplate>>> iter = cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
+        ArrayList<CacheKeyStr> itemsToBeRemoved = new ArrayList<>();
+        while (iter.hasNext()) {
+            Entry<CacheKeyStr, Map<String, CustomFieldTemplate>> entry = iter.next();
+            boolean comparison = (entry.getKey().getProvider() == null) ? currentProvider == null : entry.getKey().getProvider().equals(currentProvider);
+            if (comparison) {
+                itemsToBeRemoved.add(entry.getKey());
+            }
+        }
+
+        for (CacheKeyStr elem : itemsToBeRemoved) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            cftsByAppliesTo.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
+        }
     }
 
     /**

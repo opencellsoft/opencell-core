@@ -3,8 +3,10 @@ package org.meveo.cache;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
 import javax.annotation.Resource;
@@ -277,16 +279,19 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      */
     private void clear() {
         String currentProvider = currentUser.getProviderCode();
-        log.info(
-            "runningJobsCache != null => " + (runningJobsCache != null) + " size => " + runningJobsCache.size() + " :: " + currentProvider + " => " + (currentProvider == null));
-        if (runningJobsCache != null && runningJobsCache.size() > 0) {
-            runningJobsCache.keySet().removeIf(key -> {
-                boolean res = (key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider);
-                log.info("runningJobsCache 1-" + key.getProvider() + " 2-" + currentProvider + "3-"
-                        + ((key.getProvider() == null) ? currentProvider == null : key.getProvider().equals(currentProvider)));
-                log.info("runningJobsCache X ? X = " + res + " contains ? " + runningJobsCache.containsKey(key) + ".");
-                return res;
-            });
+        Iterator<Entry<CacheKeyLong, List<String>>> iter = runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).entrySet().iterator();
+        ArrayList<CacheKeyLong> itemsToBeRemoved = new ArrayList<>();
+        while (iter.hasNext()) {
+            Entry<CacheKeyLong, List<String>> entry = iter.next();
+            boolean comparison = (entry.getKey().getProvider() == null) ? currentProvider == null : entry.getKey().getProvider().equals(currentProvider);
+            if (comparison) {
+                itemsToBeRemoved.add(entry.getKey());
+            }
+        }
+
+        for (CacheKeyLong elem : itemsToBeRemoved) {
+            log.debug("Remove element Provider:" + elem.getProvider() + " Key:" + elem.getKey() + ".");
+            runningJobsCache.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(elem);
         }
     }
 
