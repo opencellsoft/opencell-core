@@ -822,7 +822,7 @@ public interface SettingsWs extends IBaseWs {
 
     /**
      * Returns a list of OCCTemplate.
-     * @param customerAccountCode
+     * 
      * @param query
      * @param fields
      * @param offset
