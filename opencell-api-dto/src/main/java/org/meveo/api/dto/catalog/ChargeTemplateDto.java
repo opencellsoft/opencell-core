@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -39,10 +38,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     private int unitNbDecimal = BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
     private String revenueRecognitionRuleCode;
-    private CustomFieldsDto customFields;
-    
-    @Size(max = 2000)
-    private String filterExpression = null;
+    private CustomFieldsDto customFields;    
 
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
@@ -177,14 +173,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
 
     public void setRevenueRecognitionRuleCode(String revenueRecognitionRuleCode) {
         this.revenueRecognitionRuleCode = revenueRecognitionRuleCode;
-    }
-
-    public String getFilterExpression() {
-        return filterExpression;
-    }
-
-    public void setFilterExpression(String filterExpression) {
-        this.filterExpression = filterExpression;
     }
 
 }

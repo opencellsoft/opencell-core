@@ -31,6 +31,9 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 	@Size(min = 0, max = 255)
 	private String filterParam4 = WILCARD;
 	
+	@Size(max = 2000)
+    private String filterExpression = null;
+	
 	private int priority = 1;
 
 	public UsageChargeTemplateDto() {
@@ -92,4 +95,12 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
 		return "UsageChargeTemplateDto [filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4
 				+ ", filterExpression=" + getFilterExpression() + ", priority=" + priority + "]";
 	}
+	
+    public String getFilterExpression() {
+        return filterExpression;
+    }
+
+    public void setFilterExpression(String filterExpression) {
+        this.filterExpression = filterExpression;
+    }
 }
