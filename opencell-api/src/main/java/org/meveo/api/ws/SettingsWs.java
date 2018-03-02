@@ -50,6 +50,7 @@ import org.meveo.api.dto.response.GetInvoiceTypesResponse;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetLanguageResponse;
 import org.meveo.api.dto.response.GetOccTemplateResponseDto;
+import org.meveo.api.dto.response.GetOccTemplatesResponseDto;
 import org.meveo.api.dto.response.GetProviderResponse;
 import org.meveo.api.dto.response.GetRoleResponse;
 import org.meveo.api.dto.response.GetSellerResponse;
@@ -60,6 +61,7 @@ import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetUserResponse;
 import org.meveo.api.dto.response.ListCalendarResponse;
 import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.PermissionResponseDto;
 import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.dto.response.SellerResponseDto;
@@ -817,5 +819,19 @@ public interface SettingsWs extends IBaseWs {
      */
     @WebMethod
     public ActionStatus setConfigurationProperty(@WebParam(name = "property") String property, @WebParam(name = "value") String value);
+
+    /**
+     * Returns a list of OCCTemplate.
+     * @param customerAccountCode
+     * @param query
+     * @param fields
+     * @param offset
+     * @param limit
+     * @param sortBy
+     * @param sortOrder
+     * @return
+     */
+    @WebMethod
+    GetOccTemplatesResponseDto listOccTemplate(@WebParam(name = "query") String query, @WebParam(name = "fields") String fields, @WebParam(name = "offset") Integer offset, @WebParam(name = "limit")  Integer limit, @WebParam(name = "sortBy")  String sortBy, @WebParam(name = "sortOrder")  SortOrder sortOrder);
 
 }
