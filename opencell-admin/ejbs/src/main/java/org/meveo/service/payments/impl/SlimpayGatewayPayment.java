@@ -29,6 +29,7 @@ import com.slimpay.hapiclient.exception.HttpException;
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Resource;
 import com.slimpay.hapiclient.http.Follow;
+import com.slimpay.hapiclient.http.Follow.Builder;
 import com.slimpay.hapiclient.http.HapiClient;
 import com.slimpay.hapiclient.http.Method;
 import com.slimpay.hapiclient.http.Request;
@@ -60,15 +61,13 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
         client = new HapiClient.Builder().setApiUrl(API_URL).setProfile(PROFILE).setAuthenticationMethod(
             new Oauth2BasicAuthentication.Builder().setTokenEndPointUrl(TOKEN_END_POINT).setUserid(USER_ID).setPassword(SECRET_KEY).setScope(SCOPE).build()).build();
     }
-    
+
     private HapiClient getClient() {
         // if (client == null) {
         connect();
         // }
         return client;
-    }    
-    
-    
+    }
 
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
@@ -79,7 +78,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
                 paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), SCHEME, label).toString()));
 
             if (isCheckMandatBeforePayment) {
-                MandatInfoDto mandatInfo = checkMandat(paymentToken.getMandateIdentification(),null);
+                MandatInfoDto mandatInfo = checkMandat(paymentToken.getMandateIdentification(), null);
                 if (MandatStateEnum.active != mandatInfo.getState()) {
                     doPaymentResponseDto.setErrorMessage("Mandate " + paymentToken.getMandateIdentification() + " not active");
                     doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
@@ -112,10 +111,17 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException {
-        log.trace("checkMandat request:" + (getCheckMandatRequest(USER_ID, mandatReference,mandateId).toString()));
-        Follow follow = new Follow.Builder(new CustomRel(RELNS + "get-mandates")).setMethod(Method.GET).setUrlVariable("creditorReference", USER_ID)
-            .setUrlVariable("reference", mandatReference).build();
+    public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
+        log.trace("checkMandat request:" + (getCheckMandatRequest(USER_ID, mandatReference, mandateId).toString()));
+        Builder builder = new Follow.Builder(new CustomRel(RELNS + "get-mandates")).setMethod(Method.GET).setUrlVariable("creditorReference",
+            USER_ID);
+        if (!StringUtils.isBlank(mandatReference)) {
+            builder = builder.setUrlVariable("reference", mandatReference);
+        }
+        if (!StringUtils.isBlank(mandateId)) {
+            builder = builder.setUrlVariable("id", mandateId);
+        }
+        Follow follow = builder.build();
         MandatInfoDto mandatInfoDto = null;
         try {
             Resource response = getClient().send(follow);
@@ -149,15 +155,16 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     /**
      * Retrieve the subscriber as a customerAccount from the signMandate order.
+     * 
      * @param reference
      * @return
      * @throws BusinessException
      */
     public CustomerAccountDto getSubscriberFromOrder(String referenceOrder) throws BusinessException {
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
-        log.trace("getSubscriberFromOrder request:" + ("/orders/"+referenceOrder+"/subscriber"));
-        try {          
-            Request request = new Request.Builder("/orders/"+referenceOrder+"/subscriber").setMethod(Method.GET).build();
+        log.trace("getSubscriberFromOrder request:" + ("/orders/" + referenceOrder + "/subscriber"));
+        try {
+            Request request = new Request.Builder("/orders/" + referenceOrder + "/subscriber").setMethod(Method.GET).build();
             Resource response = getClient().send(request);
             JsonObject body = response.getState();
             customerAccountDto.setCode(body.getString("reference"));
@@ -226,12 +233,12 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
      * @param mandateId Mandate ID
      * @return
      */
-    private JsonObject getCheckMandatRequest(String creditor, String mandateReference,String mandateId) {
+    private JsonObject getCheckMandatRequest(String creditor, String mandateReference, String mandateId) {
         JsonObjectBuilder jsonObjectBuilder = Json.createObjectBuilder().add("creditorReference", creditor);
-        if(!StringUtils.isBlank(mandateReference)) {
+        if (!StringUtils.isBlank(mandateReference)) {
             jsonObjectBuilder = jsonObjectBuilder.add("reference", mandateReference);
         }
-        if(!StringUtils.isBlank(mandateId)) {
+        if (!StringUtils.isBlank(mandateId)) {
             jsonObjectBuilder = jsonObjectBuilder.add("id", mandateId);
         }
         return jsonObjectBuilder.build();
@@ -268,6 +275,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
         mandatInfoDto.setStandard(body.getString("standard"));
         return mandatInfoDto;
     }
+
     @Override
     public String createCardToken(CustomerAccount customerAccount, String alias, String cardNumber, String cardHolderName, String expirayDate, String issueNumber,
             CreditCardTypeEnum cardType) throws BusinessException {
