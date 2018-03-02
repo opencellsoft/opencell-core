@@ -2,8 +2,9 @@ package org.meveo.keycloak.client;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ejb.Stateless;
@@ -32,6 +33,8 @@ import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.slf4j.Logger;
 
 /**
@@ -44,8 +47,13 @@ public class KeycloakAdminClientService {
     @Inject
     private Logger log;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     /**
      * Reads the configuration from system property.
+     * 
      * @return KeycloakAdminClientConfig
      */
     public KeycloakAdminClientConfig loadConfig() {
@@ -97,6 +105,7 @@ public class KeycloakAdminClientService {
 
     /**
      * Creates a user in keycloak. Also assigns the role.
+     * 
      * @param httpServletRequest http request
      * @param postData posted data to API
      * @return user created id.
@@ -120,7 +129,11 @@ public class KeycloakAdminClientService {
         user.setFirstName(postData.getFirstName());
         user.setLastName(postData.getLastName());
         user.setEmail(postData.getEmail());
-        user.setAttributes(Collections.singletonMap("origin", Arrays.asList("OPENCELL-API")));
+
+        Map<String, List<String>> attributes = new HashMap<>();
+        attributes.put("origin", Arrays.asList("OPENCELL-API"));
+        attributes.put("provider", Arrays.asList(currentUser.getProviderCode()));
+        user.setAttributes(attributes);
 
         // Get realm
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
@@ -204,6 +217,7 @@ public class KeycloakAdminClientService {
 
     /**
      * Updates a user in keycloak. Also assigns the role.
+     * 
      * @param httpServletRequest http request
      * @param postData posted data.
      * @throws BusinessException business exception.
@@ -217,7 +231,7 @@ public class KeycloakAdminClientService {
         RealmResource realmResource = keycloak.realm(keycloakAdminClientConfig.getRealm());
         UsersResource usersResource = realmResource.users();
         try {
-            
+
             UserRepresentation userRepresentation = getUserRepresentationByUsername(usersResource, postData.getUsername());
             UserResource userResource = usersResource.get(userRepresentation.getId());
 
@@ -273,7 +287,7 @@ public class KeycloakAdminClientService {
      * Deletes a user in keycloak.
      * 
      * @param httpServletRequest http request
-     * @param username user name 
+     * @param username user name
      * @throws BusinessException business exception.
      */
     public void deleteUser(HttpServletRequest httpServletRequest, String username) throws BusinessException {
@@ -350,9 +364,10 @@ public class KeycloakAdminClientService {
             throw new BusinessException("Unable to list role.");
         }
     }
-    
+
     /**
      * As the search function from keycloack doesn't perform exact search, we need to browse results to pick the exact username
+     * 
      * @param usersResource
      * @param username
      * @throws BusinessException business exception.
@@ -360,16 +375,16 @@ public class KeycloakAdminClientService {
     public UserRepresentation getUserRepresentationByUsername(UsersResource usersResource, String username) throws BusinessException {
         UserRepresentation userRepresentation = null;
         List<UserRepresentation> userRepresentations = usersResource.search(username, null, null, null, null, null);
-        for(UserRepresentation userRepresentationListItem: userRepresentations) {
-            if(username.equalsIgnoreCase(userRepresentationListItem.getUsername())) {
+        for (UserRepresentation userRepresentationListItem : userRepresentations) {
+            if (username.equalsIgnoreCase(userRepresentationListItem.getUsername())) {
                 userRepresentation = userRepresentationListItem;
             }
         }
-        
-        if(userRepresentation == null) {
+
+        if (userRepresentation == null) {
             throw new BusinessException("Unable to find user on keycloack.");
         }
-        
+
         return userRepresentation;
     }
 
