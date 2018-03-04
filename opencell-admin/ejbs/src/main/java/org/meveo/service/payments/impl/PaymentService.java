@@ -227,9 +227,7 @@ public class PaymentService extends PersistenceService<Payment> {
         PaymentMethod preferredMethod = null;
         OperationCategoryEnum operationCat = isPayment ? OperationCategoryEnum.CREDIT : OperationCategoryEnum.DEBIT;
         try {
-
             boolean isNewCard = !StringUtils.isBlank(cardNumber);
-
             preferredMethod = customerAccount.getPreferredPaymentMethod();
             if (!isNewCard) {
                 if (preferredMethod == null) {
@@ -237,15 +235,20 @@ public class PaymentService extends PersistenceService<Payment> {
                 }
             }
             GatewayPaymentInterface gatewayPaymentInterface = null;
-            if (paymentGateway == null) {
-                paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, preferredMethod, cardType);
-            }
-            if (paymentGateway == null) {
-                throw new BusinessException("No payment gateway");
+            PaymentGateway matchedPaymentGatewayForTheCA = paymentGatewayService.getPaymentGateway(customerAccount, preferredMethod, cardType);
+            if (matchedPaymentGatewayForTheCA == null) {
+                throw new BusinessException("No payment gateway for customerAccount:" + customerAccount.getCode());
             }
 
+            if (paymentGateway != null) {
+                if (!paymentGateway.getCode().equals(matchedPaymentGatewayForTheCA.getCode())) {
+                    throw new BusinessException(
+                        "Cant process payment for the customerAccount:" + customerAccount.getCode() + " with the selected paymentGateway:" + paymentGateway.getCode());
+                }
+            } else {
+                paymentGateway = matchedPaymentGatewayForTheCA;
+            }
             gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
-
             if (PaymentMethodEnum.CARD == paymentMethodType) {
                 if (!(preferredMethod instanceof CardPaymentMethod)) {
                     throw new BusinessException("Can not process payment card as prefered payment method is " + preferredMethod.getPaymentType());
@@ -302,9 +305,9 @@ public class PaymentService extends PersistenceService<Payment> {
                 if (createAO) {
                     try {
                         if (isPayment) {
-                            aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto,paymentMethodType);
+                            aoPaymentId = createPaymentAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType);
                         } else {
-                            aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto,paymentMethodType);
+                            aoPaymentId = refundService.createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto, paymentMethodType);
                         }
                         doPaymentResponseDto.setAoCreated(true);
                     } catch (Exception e) {
@@ -346,15 +349,16 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
-     * @param paymentMethodType 
+     * @param paymentMethodType
      * @return the AO id created
      * @throws BusinessException business exception.
      */
-    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType) throws BusinessException {
-       String occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD");
-       if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
-           occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.dd", "RG_PLVT");
-       }
+    public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType)
+            throws BusinessException {
+        String occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.card", "RG_CARD");
+        if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.dd", "RG_PLVT");
+        }
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
@@ -435,7 +439,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 throw new BusinessException("CallBack unexpected  for payment " + paymentId);
             }
             if (PaymentStatusEnum.ACCEPTED == paymentStatus) {
-                log.debug("Payment ok, nothing to do.");              
+                log.debug("Payment ok, nothing to do.");
             } else {
                 String occTemplateCode = null;
 
@@ -493,7 +497,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 matchingCodeService.matchOperations(ca.getId(), null, aos, null);
             }
             PaymentHistory paymentHistory = paymentHistoryService.findHistoryByPaymentId(paymentId);
-            if(paymentHistory != null) {
+            if (paymentHistory != null) {
                 paymentHistory.setAsyncStatus(paymentStatus);
                 paymentHistory.setLastUpdateDate(new Date());
                 paymentHistory.setErrorCode(errorCode);

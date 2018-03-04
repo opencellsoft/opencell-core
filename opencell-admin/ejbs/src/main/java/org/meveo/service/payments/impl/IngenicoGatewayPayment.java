@@ -28,8 +28,10 @@ import com.ingenico.connect.gateway.sdk.java.domain.definitions.AmountOfMoney;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.Card;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CardWithoutCvv;
 import com.ingenico.connect.gateway.sdk.java.domain.definitions.CompanyInformation;
+import com.ingenico.connect.gateway.sdk.java.domain.errors.definitions.APIError;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentRequest;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.CreatePaymentResponse;
+import com.ingenico.connect.gateway.sdk.java.domain.payment.PaymentResponse;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.CardPaymentMethodSpecificInput;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
 import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Order;
@@ -156,7 +158,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             if (paymentCardToken != null) {
                 body.setCardPaymentMethodSpecificInput(getCardTokenInput(paymentCardToken));
             }
-            if (StringUtils.isBlank(cardNumber)) {
+            if (!StringUtils.isBlank(cardNumber)) {
                 body.setCardPaymentMethodSpecificInput((getCardInput(cardNumber, ownerName, cvv, expirayDate, cardType)));
             }
 
@@ -196,6 +198,32 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
         }
     }
 
+    @Override
+    public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        try {
+            PaymentResponse paymentResponse = getClient().merchant(merchantId).payments().get(paymentID);
+            if (paymentResponse != null) {
+                String errorMessage = "";
+                doPaymentResponseDto.setPaymentID(paymentID);
+                doPaymentResponseDto.setPaymentStatus(mappingStaus(paymentResponse.getStatus()));
+                if (paymentResponse.getStatusOutput() != null) {
+                    if (paymentResponse.getStatusOutput().getErrors() != null) {
+                        for (APIError apiError : paymentResponse.getStatusOutput().getErrors()) {
+                            errorMessage = errorMessage + apiError.getMessage() + "\n";
+                        }
+                    }
+                }
+                doPaymentResponseDto.setErrorMessage(errorMessage);
+                return doPaymentResponseDto;
+            } else {
+                throw new BusinessException("Gateway response is null");
+            }
+        } catch (ApiException e) {
+            throw new BusinessException(e.getResponseBody());
+        }
+    }
+
     private Address getBillingAddress(CustomerAccount customerAccount) {
         Address billingAddress = new Address();
         if (customerAccount.getAddress() != null) {
@@ -212,12 +240,33 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     private PaymentStatusEnum mappingStaus(String ingenicoStatus) {
         if (ingenicoStatus == null) {
-            return PaymentStatusEnum.REJECTED;
+            return PaymentStatusEnum.ERROR;
         }
-        if ("CREATED".equals(ingenicoStatus) || "PAID".equals(ingenicoStatus)) {
+        if ("CREATED".equals(ingenicoStatus) || "PAID".equals(ingenicoStatus) || "REFUNDED".equals(ingenicoStatus) || "CAPTURED".equals(ingenicoStatus)) {
             return PaymentStatusEnum.ACCEPTED;
         }
         if (ingenicoStatus.startsWith("PENDING")) {
+            return PaymentStatusEnum.PENDING;
+        }
+        if (ingenicoStatus.equals("ACCOUNT_VERIFIED")) {
+            return PaymentStatusEnum.PENDING;
+        }
+        if (ingenicoStatus.equals("AUTHORIZATION_REQUESTED")) {
+            return PaymentStatusEnum.PENDING;
+        }
+        if (ingenicoStatus.equals("CAPTURE_REQUESTED")) {
+            return PaymentStatusEnum.PENDING;
+        }
+        if (ingenicoStatus.equals("REJECTED_CAPTURE")) {
+            return PaymentStatusEnum.REJECTED;
+        }
+        if (ingenicoStatus.equals("REVERSED")) {
+            return PaymentStatusEnum.ACCEPTED;
+        }
+        if (ingenicoStatus.equals("CHARGEBACKED")) {
+            return PaymentStatusEnum.ACCEPTED;
+        }
+        if (ingenicoStatus.equals("REFUND_REQUESTED")) {
             return PaymentStatusEnum.PENDING;
         }
         return PaymentStatusEnum.REJECTED;
@@ -273,18 +322,12 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     }
 
     @Override
-    public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException {
+    public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
         throw new UnsupportedOperationException();
     }
-
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 }
