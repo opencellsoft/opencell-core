@@ -27,6 +27,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.QueryBuilder.QueryLikeStyleEnum;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
 
@@ -51,13 +52,15 @@ public class CountryService extends PersistenceService<Country> {
         if (countryCode == null || countryCode.trim().length() == 0) {
             return null;
         }
-
         QueryBuilder qb = new QueryBuilder(Country.class, "c");
-        qb.addCriterion("countryCode", "=", countryCode, false);
-        qb.startOrClause();
-        qb.addCriterion("description", "=", countryCode, false);
-        qb.endOrClause();
-        
+        if (countryCode.length() <= 3) {
+            qb.addCriterion("countryCode", "=", countryCode, false);
+        } else {
+            qb.startOrClause();
+            qb.addCriterion("description", "=", countryCode, false);
+            qb.addSql("lower(descriptionI18n) like'%" + countryCode.toLowerCase() + "%'");
+            qb.endOrClause();
+        }
         try {
             return (Country) qb.getQuery(em).getSingleResult();
         } catch (NoResultException e) {
