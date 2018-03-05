@@ -16,29 +16,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.meveo.admin.listener;
+package org.meveo.util;
 
-import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
-import javax.inject.Inject;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.slf4j.Logger;
+import javax.inject.Qualifier;
 
-@Startup
-@Singleton
-public class StartupListener {
+@Qualifier
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER, ElementType.TYPE })
+public @interface MeveoJpaForMultiTenancyForJobs {
 
-    @Inject
-    private ApplicationInitializer applicationInitializer;
-
-    @Inject
-    private Logger log;
-
-    @PostConstruct
-    private void init() {
-        log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
-
-        applicationInitializer.init();
-    }
 }

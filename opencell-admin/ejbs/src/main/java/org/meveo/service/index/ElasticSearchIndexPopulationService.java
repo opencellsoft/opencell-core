@@ -51,25 +51,14 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 @Stateless
 public class ElasticSearchIndexPopulationService implements Serializable {
 
     private static final long serialVersionUID = 6177817839276664632L;
-
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
 
     @Inject
     private ElasticSearchConfiguration esConfiguration;
@@ -88,6 +77,17 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     @Inject
     private Logger log;
+
+    @Inject
+    @MeveoJpaForMultiTenancy
+    private EntityManager em;
+
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager emfForJobs;
+
+    @Inject
+    private Conversation conversation;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -147,20 +147,17 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return found;
     }
 
-    /**
-     * @return entity manager
-     */
-    private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
+    public EntityManager getEntityManager() {
         if (conversation != null) {
             try {
                 conversation.isTransient();
-                result = em;
+                return em;
             } catch (Exception e) {
+                return emfForJobs;
             }
         }
 
-        return result;
+        return emfForJobs;
     }
 
     /**

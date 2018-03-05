@@ -31,6 +31,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -39,20 +40,23 @@ import org.slf4j.LoggerFactory;
 /**
  * @author anasseh
  */
+/**
+ * @author Wassim Drira
+ *
+ */
 public class ParamBean {
 
     private static final Logger log = LoggerFactory.getLogger(ParamBean.class);
-    
-    private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    
-    private String _propertyFile;
 
+    private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
+
+    private String _propertyFile;
 
     /**
      * true if it allows multi service instance.
      */
     public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
-    
+
     /**
      * Save properties imported from the file.
      */
@@ -71,6 +75,11 @@ public class ParamBean {
      * instance unique.
      */
     private static ParamBean instance = null;
+
+    private static Boolean multiTenancyEnabled;
+    private static Map<String, ParamBean> multiTenancyParams = new HashMap<String, ParamBean>();
+    private static boolean inheritance = true;
+    private boolean isSubTenant = false;
 
     /**
      * reload properties file.
@@ -108,6 +117,7 @@ public class ParamBean {
 
     /**
      * Retourne une instance de ParamBean.
+     * 
      * @param propertiesName property name
      * @return propertiesName properties name
      */
@@ -133,11 +143,59 @@ public class ParamBean {
         }
     }
 
-    /*
-     * Mis ï¿½ jour de l'instance de ParamBean.
+    /**
+     * Return a ParamBean of the specific provider, if it does not exists, it will be created By the default the file name is <providerCode.properties>
      * 
-     * @param newInstance ParamBean
+     * @param provider
+     * @return param bean.
      */
+    public static ParamBean getInstanceByProvider(String provider) {
+        try {
+            if (!isMultitenancyEnabled() || "".equals(provider)) {
+                return getInstance();
+            }
+
+            if (multiTenancyParams.containsKey(provider)) {
+                return multiTenancyParams.get(provider);
+            }
+
+            ParamBean providerParamBean = new ParamBean(provider + ".properties");
+            providerParamBean.isSubTenant = true;
+            multiTenancyParams.put(provider, providerParamBean);
+            return providerParamBean;
+
+        } catch (Exception e) {
+            log.error("Failed to initialize " + provider + ".properties file.", e);
+            return null;
+        }
+    }
+
+    /**
+     * Checks if multitenancy is enabled
+     */
+    public static boolean isMultitenancyEnabled() {
+        if (multiTenancyEnabled == null) {
+            multiTenancyEnabled = Boolean.valueOf(getInstance().getProperty("meveo.multiTenancy", "false"));
+        }
+        return multiTenancyEnabled;
+    }
+
+    /**
+     * @param provider
+     * @return
+     */
+    public String getChrootDir(String provider) {
+        if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
+            return getInstance().getProperty("providers.rootDir", "./opencelldata") + File.separator + instance.getProperty("provider.rootDir", "default");
+        }
+
+        String dir;
+        dir = getInstance().getProperty("providers.rootDir", "./opencelldata");
+        dir += File.separator;
+        dir += getInstanceByProvider(provider).getProperty("provider.rootDir", provider);
+        return dir;
+    }
+
     /**
      * 
      * @param newInstance instance of ParamBean
@@ -147,7 +205,7 @@ public class ParamBean {
     }
 
     /**
-     * Retourne les propriï¿½tï¿½s de l'application.
+     * Get application configuration properties
      * 
      * @return Properties
      */
@@ -165,7 +223,7 @@ public class ParamBean {
 
     /**
      * 
-     * @return <code>true/false</code> 
+     * @return <code>true/false</code>
      */
     public boolean initialize() {
         log.debug("-Debut initialize  from file :" + _propertyFile + "...");
@@ -227,7 +285,8 @@ public class ParamBean {
     }
 
     /**
-     * Set property. 
+     * Set property.
+     * 
      * @param property_p java.lang.String
      * @param vNewValue new value.
      */
@@ -248,7 +307,7 @@ public class ParamBean {
 
     /**
      * 
-     * @return <code>true if is ok</code> 
+     * @return <code>true if is ok</code>
      */
     public synchronized boolean saveProperties() {
         return saveProperties(new File(_propertyFile));
@@ -434,9 +493,59 @@ public class ParamBean {
 
     /**
      * A shortcut to get date with time format.
+     * 
      * @return date time format.
      */
     public String getDateTimeFormat() {
         return getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
     }
+    
+    public String getProperty(String key, String defaultValue, String provider) {
+        String result = null;
+        ParamBean params = getInstanceByProvider(provider);
+        Properties properties = params.getProperties();
+        
+        if (properties.containsKey(key)) {
+            result = properties.getProperty(key);
+        } else if (defaultValue != null) {
+            result = defaultValue;
+            properties.put(key, defaultValue);
+            params.setProperties(properties);
+            params.saveProperties();
+        }
+        return result;
+    }
+    
+    public String getInheritedProperty(String key, String defaultValue, String provider) {
+        String result = null;
+        ParamBean params = getInstanceByProvider(provider);
+        Properties properties = params.getProperties();
+        
+        if (properties.containsKey(key)) {
+            result = properties.getProperty(key);
+        } else if (params.isSubTenant) {
+            // check if a value is already defined for the main tenant
+            result = getInstance().getProperty(key, defaultValue);
+            properties.put(key, result);
+            params.setProperties(properties);
+            params.saveProperties();
+        } 
+        
+        return result;
+    }
+    
+    public String getDateFormat(String provider) {
+        if(!isSubTenant) {
+            return getInstanceByProvider(provider).getDateFormat();
+        }
+        return getDateFormat();
+    }
+    
+    public String getDateTimeFormat(String provider) {
+        if(!isSubTenant) {
+            return getInstanceByProvider(provider).getDateTimeFormat();
+        }
+        return getDateTimeFormat(); 
+    }
+
 }

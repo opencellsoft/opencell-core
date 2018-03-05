@@ -85,6 +85,10 @@ public class JobInstance extends BusinessCFEntity {
     @Size(max = 255)
     private String runOnNodes;
 
+    @Column(name = "provider", length = 255)
+    @Size(max = 255)
+    private String provider;
+
     /**
      * Can job be run in parallel on several cluster nodes. Value of True indicates that job can be run on a single node at a time.
      */
@@ -225,4 +229,13 @@ public class JobInstance extends BusinessCFEntity {
         return String.format("JobInstance [%s, jobTemplate=%s, parametres=%s, jobCategoryEnum=%s, timerEntity=%s,  followingJob=%s]", super.toString(), jobTemplate, parametres,
             jobCategoryEnum, timerEntity, followingJob != null ? followingJob.getCode() : null);
     }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
 }

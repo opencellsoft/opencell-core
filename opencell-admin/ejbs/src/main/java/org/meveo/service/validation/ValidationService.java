@@ -19,31 +19,33 @@
 package org.meveo.service.validation;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * @author Ignas Lelys
  * @since Jan 5, 2011
  * 
  */
-@Stateless 
+@Stateless
 public class ValidationService {
 
-	@PersistenceContext(unitName = "MeveoAdmin")
-	private EntityManager em;
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager em;
 
-	/**
-	 * @param className class name
-	 * @param fieldName field name
-	 * @param id id of checking object
-	 * @param value value of checking objec
-	 * @return true if object has unique field
-	 */
-	public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
+    /**
+     * @param className class name
+     * @param fieldName field name
+     * @param id id of checking object
+     * @param value value of checking object
+     * @return true if object has unique field
+     */
+    public boolean validateUniqueField(String className, String fieldName, Object id, Object value) {
 
         className = ReflectionUtils.getCleanClassName(className);
 
@@ -56,8 +58,8 @@ public class ValidationService {
                 (value != null && value instanceof String) ? ((String) value).toLowerCase().replaceAll("'", "''") : value, id);
         }
         Query query = em.createQuery(queryString);
-		long count = (Long) query.getSingleResult();
-		return count == 0L;
-	}
+        long count = (Long) query.getSingleResult();
+        return count == 0L;
+    }
 
 }

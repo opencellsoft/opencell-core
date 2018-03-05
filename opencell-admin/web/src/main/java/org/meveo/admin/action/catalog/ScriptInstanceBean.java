@@ -61,13 +61,10 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
     @Inject
     private RoleService roleService;
 
-    @Inject
-    private GenericScriptService genericScriptService;
-
     private DualListModel<Role> execRolesDM;
     private DualListModel<Role> sourcRolesDM;
-    
-	public void initCompilationErrors() {
+
+    public void initCompilationErrors() {
         if (FacesContext.getCurrentInstance().getPartialViewContext().isAjaxRequest()) {
             return;
         }
@@ -168,7 +165,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = genericScriptService.findByCode(code);
+        CustomScript scriptDuplicate = scriptInstanceService.findByCode(code); // genericScriptService
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return null;
@@ -224,7 +221,7 @@ public class ScriptInstanceBean extends BaseBean<ScriptInstance> {
         }
 
         // check duplicate script
-        CustomScript scriptDuplicate = genericScriptService.findByCode(code);
+        CustomScript scriptDuplicate = scriptInstanceService.findByCode(code); // genericScriptService
         if (scriptDuplicate != null && !scriptDuplicate.getId().equals(entity.getId())) {
             messages.error(new BundleKey("messages", "scriptInstance.scriptAlreadyExists"), code);
             return;

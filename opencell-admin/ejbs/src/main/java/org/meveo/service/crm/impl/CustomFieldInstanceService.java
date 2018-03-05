@@ -41,8 +41,8 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,11 +65,11 @@ public class CustomFieldInstanceService extends BaseService {
     private ProviderService providerService;
 
     @Inject
-    @MeveoJpa
+    @MeveoJpaForMultiTenancy
     private EntityManager em;
 
     @Inject
-    @MeveoJpaForJobs
+    @MeveoJpaForMultiTenancyForJobs
     private EntityManager emfForJobs;
 
     @Inject
@@ -2286,16 +2286,16 @@ public class CustomFieldInstanceService extends BaseService {
         }
     }
 
-    private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
+    public EntityManager getEntityManager() {
         if (conversation != null) {
             try {
                 conversation.isTransient();
-                result = em;
+                return em;
             } catch (Exception e) {
+                return emfForJobs;
             }
         }
 
-        return result;
+        return emfForJobs;
     }
 }
