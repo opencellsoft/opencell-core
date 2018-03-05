@@ -137,8 +137,8 @@ public class CustomerImportService extends ImportService {
         if (paymentMethod == null) {
             List<PaymentMethod> paymentMethods = customerAccount.getPaymentMethods();
             if (paymentMethods == null) {
-            	paymentMethods = new ArrayList<PaymentMethod>();
-            	customerAccount.setPaymentMethods(paymentMethods);
+                paymentMethods = new ArrayList<PaymentMethod>();
+                customerAccount.setPaymentMethods(paymentMethods);
             }
             CheckPaymentMethod checkPaymentMethod = new CheckPaymentMethod();
             checkPaymentMethod.setPaymentType(PaymentMethodEnum.CHECK);
@@ -208,6 +208,9 @@ public class CustomerImportService extends ImportService {
         if (tradingLanguage == null) {
             TradingLanguage findByTradingLanguageCode = tradingLanguageService.findByTradingLanguageCode(tradingLanguageCode);
             tradingLanguageMap.put(tradingLanguageCode, findByTradingLanguageCode);
+            if (findByTradingLanguageCode != null) {
+                customerAccount.setTradingLanguage(findByTradingLanguageCode);
+            }
         } else {
             customerAccount.setTradingLanguage(tradingLanguage);
         }

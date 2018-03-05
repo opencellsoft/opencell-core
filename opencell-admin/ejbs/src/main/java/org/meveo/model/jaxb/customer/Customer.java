@@ -42,8 +42,7 @@ import org.meveo.model.jaxb.account.Name;
  * Java class for anonymous complex type.
  * 
  * <p>
- * The following schema fragment specifies the expected content contained within
- * this class.
+ * The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
  * &lt;complexType&gt;
@@ -65,19 +64,23 @@ import org.meveo.model.jaxb.account.Name;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", 
-	propOrder = { 
-		"desCustomer",
-		"customerAccounts",
-		"customFields",
-		"name",
-		"address",
-		"mandateDate",
-		"mandateIdentification"
-		}
-)
+@XmlType(name = "", propOrder = { "desCustomer", "customerAccounts", "customFields", "name", "address", "mandateDate", "mandateIdentification" })
 @XmlRootElement(name = "customer")
 public class Customer {
+
+    /**
+     * @return the tradingLanguageCode
+     */
+    public String getTradingLanguageCode() {
+        return tradingLanguageCode;
+    }
+
+    /**
+     * @param tradingLanguageCode the tradingLanguageCode to set
+     */
+    public void setTradingLanguageCode(String tradingLanguageCode) {
+        this.tradingLanguageCode = tradingLanguageCode;
+    }
 
     @XmlAttribute(name = "code")
     protected String code;
@@ -85,8 +88,10 @@ public class Customer {
     protected String customerCategory;
     @XmlAttribute(name = "customerBrand")
     protected String customerBrand;
-    @XmlAttribute(name="ignoreCheck")
+    @XmlAttribute(name = "ignoreCheck")
     protected Boolean ignoreCheck;
+    @XmlAttribute(name = "tradingLanguageCode")
+    protected String tradingLanguageCode;
     @XmlElement(required = true)
     protected Name name;
 
@@ -96,11 +101,11 @@ public class Customer {
     protected Address address;
     protected Date mandateDate;
     protected String mandateIdentification;
-    
 
-    public Customer(){}    
+    public Customer() {
+    }
 
-	/**
+    /**
      * Gets the value of the desCustomer property.
      * 
      * @return possible object is {@link String }
@@ -113,8 +118,7 @@ public class Customer {
     /**
      * Sets the value of the desCustomer property.
      * 
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      * 
      */
     public void setDesCustomer(String value) {
@@ -134,8 +138,7 @@ public class Customer {
     /**
      * Sets the value of the customerAccounts property.
      * 
-     * @param value
-     *            allowed object is {@link CustomerAccounts }
+     * @param value allowed object is {@link CustomerAccounts }
      * 
      */
     public void setCustomerAccounts(CustomerAccounts value) {
@@ -155,8 +158,7 @@ public class Customer {
     /**
      * Sets the value of the code property.
      * 
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      * 
      */
     public void setCode(String value) {
@@ -176,8 +178,7 @@ public class Customer {
     /**
      * Sets the value of the customerCategory property.
      * 
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      * 
      */
     public void setCustomerCategory(String value) {
@@ -197,66 +198,65 @@ public class Customer {
     /**
      * Sets the value of the customerBrand property.
      * 
-     * @param value
-     *            allowed object is {@link String }
+     * @param value allowed object is {@link String }
      * 
      */
     public void setCustomerBrand(String value) {
         this.customerBrand = value;
     }
 
-	/**
-	 * @return the ignoreCheck
-	 */
-	public Boolean getIgnoreCheck() {
-		return ignoreCheck;
-	}
+    /**
+     * @return the ignoreCheck
+     */
+    public Boolean getIgnoreCheck() {
+        return ignoreCheck;
+    }
 
-	/**
-	 * @param ignoreCheck the ignoreCheck to set
-	 */
-	public void setIgnoreCheck(Boolean ignoreCheck) {
-		this.ignoreCheck = ignoreCheck;
-	}
+    /**
+     * @param ignoreCheck the ignoreCheck to set
+     */
+    public void setIgnoreCheck(Boolean ignoreCheck) {
+        this.ignoreCheck = ignoreCheck;
+    }
 
-	public CustomFields getCustomFields() {
-		return customFields;
-	}
+    public CustomFields getCustomFields() {
+        return customFields;
+    }
 
-	public void setCustomFields(CustomFields customFields) {
-		this.customFields = customFields;
-	}
+    public void setCustomFields(CustomFields customFields) {
+        this.customFields = customFields;
+    }
 
-	public Address getAddress() {
-		return address;
-	}
+    public Address getAddress() {
+        return address;
+    }
 
-	public void setAddress(Address address) {
-		this.address = address;
-	}
+    public void setAddress(Address address) {
+        this.address = address;
+    }
 
-	public Date getMandateDate() {
-		return mandateDate;
-	}
+    public Date getMandateDate() {
+        return mandateDate;
+    }
 
-	public void setMandateDate(Date mandateDate) {
-		this.mandateDate = mandateDate;
-	}
+    public void setMandateDate(Date mandateDate) {
+        this.mandateDate = mandateDate;
+    }
 
-	public String getMandateIdentification() {
-		return mandateIdentification;
-	}
+    public String getMandateIdentification() {
+        return mandateIdentification;
+    }
 
-	public void setMandateIdentification(String mandateIdentification) {
-		this.mandateIdentification = mandateIdentification;
-	}
+    public void setMandateIdentification(String mandateIdentification) {
+        this.mandateIdentification = mandateIdentification;
+    }
 
-	public Name getName() {
-		return name;
-	}
+    public Name getName() {
+        return name;
+    }
 
-	public void setName(Name name) {
-		this.name = name;
-	}
-	
+    public void setName(Name name) {
+        this.name = name;
+    }
+
 }

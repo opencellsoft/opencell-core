@@ -24,9 +24,10 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
-
 
 /**
  * The Class MediationJob consume standard cdr files.
@@ -42,6 +43,9 @@ public class MediationJob extends Job {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -63,8 +67,7 @@ public class MediationJob extends Job {
             }
 
             ParamBean parambean = ParamBean.getInstance();
-            String meteringDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports"
-                    + File.separator + "metering" + File.separator;
+            String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
 
             String inputDir = meteringDir + "input";
             String cdrExtension = parambean.getProperty("mediation.extensions", "csv");
