@@ -34,7 +34,6 @@ import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.BusinessProductModelService;
 import org.meveo.service.catalog.impl.BusinessServiceModelService;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
-import org.meveo.service.catalog.impl.OfferTemplateService;
 
 @Stateless
 public class BusinessOfferApi extends BaseApi {
@@ -44,9 +43,6 @@ public class BusinessOfferApi extends BaseApi {
 
     @Inject
     private BusinessServiceModelService businessServiceModelService;
-    
-    @Inject
-    private OfferTemplateService offerTemplateService;
     
     @Inject
     private OfferTemplateCategoryService offerTemplateCategoryService;

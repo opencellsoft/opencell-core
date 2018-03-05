@@ -58,8 +58,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
-        if (postData.getEventTypeFilter() == null) {
+        if (StringUtils.isBlank(postData.getEventTypeFilter())) {
             missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            missingParameters.add("scriptInstanceCode");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -98,7 +101,12 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
         notif.setPriority(postData.getPriority());
-
+        if(postData.isActive() != null) {
+            notif.setActive(postData.isActive());
+        } else {
+            notif.setActive(true);
+        }
+        
         notificationService.create(notif);
 
         return notif;
@@ -136,8 +144,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         if (StringUtils.isBlank(postData.getClassNameFilter())) {
             missingParameters.add("classNameFilter");
         }
-        if (postData.getEventTypeFilter() == null) {
+        if (StringUtils.isBlank(postData.getEventTypeFilter())) {
             missingParameters.add("eventTypeFilter");
+        }
+        if (StringUtils.isBlank(postData.getScriptInstanceCode())) {
+            missingParameters.add("scriptInstanceCode");
         }
 
         handleMissingParametersAndValidate(postData);
@@ -175,6 +186,9 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
         notif.setPriority(postData.getPriority());
+        if(postData.isActive() != null) {
+            notif.setActive(postData.isActive());
+        }
 
         notif = notificationService.update(notif);
 
