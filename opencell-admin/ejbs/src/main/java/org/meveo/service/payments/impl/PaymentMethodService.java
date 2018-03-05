@@ -25,8 +25,10 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -156,14 +158,19 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
      * @param singDate
      * @throws BusinessException
      */
-    public void createMandateCallBack(CustomerAccount customerAccount,String mandate, Date singDate) throws BusinessException {
-       log.debug("createMandateCallBack customerAccount:{} mandate:{} singDate:{}",customerAccount,mandate,singDate);
+    public void createMandateCallBack(CustomerAccount customerAccount,MandatInfoDto mandatInfoDto) throws BusinessException {
+       log.debug("createMandateCallBack customerAccount:{} mandatInfoDto:{}",customerAccount,mandatInfoDto);
         DDPaymentMethod ddPaymentMethod = new DDPaymentMethod();
         ddPaymentMethod.setCustomerAccount(customerAccount);
-        ddPaymentMethod.setMandateIdentification(mandate);  
-        ddPaymentMethod.setMandateDate(singDate);
+        ddPaymentMethod.setMandateIdentification(mandatInfoDto.getReference());  
+        ddPaymentMethod.setMandateDate(mandatInfoDto.getDateSigned());
         ddPaymentMethod.setPreferred(true);
-        ddPaymentMethod.setAlias(mandate);
+        ddPaymentMethod.setAlias(mandatInfoDto.getReference());
+        BankCoordinates bankCoordinates = new BankCoordinates();
+        bankCoordinates.setBankName(mandatInfoDto.getBankName());
+        bankCoordinates.setIban(mandatInfoDto.getIban());
+        bankCoordinates.setBic(mandatInfoDto.getBic());
+        ddPaymentMethod.setBankCoordinates(bankCoordinates);
         create(ddPaymentMethod);
     }
 }

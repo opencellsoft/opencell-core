@@ -27,6 +27,8 @@ import org.slf4j.LoggerFactory;
 
 import com.slimpay.hapiclient.exception.HttpException;
 import com.slimpay.hapiclient.hal.CustomRel;
+import com.slimpay.hapiclient.hal.Link;
+import com.slimpay.hapiclient.hal.Rel;
 import com.slimpay.hapiclient.hal.Resource;
 import com.slimpay.hapiclient.http.Follow;
 import com.slimpay.hapiclient.http.Follow.Builder;
@@ -113,8 +115,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
         log.trace("checkMandat request:" + (getCheckMandatRequest(USER_ID, mandatReference, mandateId).toString()));
-        Builder builder = new Follow.Builder(new CustomRel(RELNS + "get-mandates")).setMethod(Method.GET).setUrlVariable("creditorReference",
-            USER_ID);
+        Builder builder = new Follow.Builder(new CustomRel(RELNS + "get-mandates")).setMethod(Method.GET).setUrlVariable("creditorReference", USER_ID);
         if (!StringUtils.isBlank(mandatReference)) {
             builder = builder.setUrlVariable("reference", mandatReference);
         }
@@ -126,7 +127,10 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
         try {
             Resource response = getClient().send(follow);
             JsonObject body = response.getState();
-            mandatInfoDto = getMandateFromJson(body);
+            Link bankAccountLink = response.getLink(new CustomRel(RELNS + "get-bank-account"));
+            Request request = new Request.Builder(bankAccountLink.getHref()).setMethod(Method.GET).build();
+            Resource bankAccountResponse = getClient().send(request);
+            mandatInfoDto = getMandateFromJson(body, bankAccountResponse.getState());
         } catch (Exception e) {
             log.error("Error on slimpay check mandat:", e);
             throw new BusinessException(e.getMessage());
@@ -263,16 +267,19 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
         return PaymentStatusEnum.REJECTED;
     }
 
-    private MandatInfoDto getMandateFromJson(JsonObject body) {
+    private MandatInfoDto getMandateFromJson(JsonObject bodyGetMandat, JsonObject bodyBankAccount) {
         MandatInfoDto mandatInfoDto = new MandatInfoDto();
-        mandatInfoDto.setDateCreated(DateUtils.parseDateWithPattern(body.getString("dateCreated"), "yyyy-MM-dd'T'HH:mm:ss.S"));
-        mandatInfoDto.setDateSigned(DateUtils.parseDateWithPattern(body.getString("dateSigned"), "yyyy-MM-dd'T'HH:mm:ss.S"));
-        mandatInfoDto.setState(MandatStateEnum.valueOf(body.getString("state")));
-        mandatInfoDto.setId(body.getString("id"));
-        mandatInfoDto.setInitialScore(body.getInt("initialScore"));
-        mandatInfoDto.setPaymentScheme(body.getString("paymentScheme"));
-        mandatInfoDto.setReference(body.getString("reference"));
-        mandatInfoDto.setStandard(body.getString("standard"));
+        mandatInfoDto.setDateCreated(DateUtils.parseDateWithPattern(bodyGetMandat.getString("dateCreated"), "yyyy-MM-dd'T'HH:mm:ss.S"));
+        mandatInfoDto.setDateSigned(DateUtils.parseDateWithPattern(bodyGetMandat.getString("dateSigned"), "yyyy-MM-dd'T'HH:mm:ss.S"));
+        mandatInfoDto.setState(MandatStateEnum.valueOf(bodyGetMandat.getString("state")));
+        mandatInfoDto.setId(bodyGetMandat.getString("id"));
+        mandatInfoDto.setInitialScore(bodyGetMandat.getInt("initialScore"));
+        mandatInfoDto.setPaymentScheme(bodyGetMandat.getString("paymentScheme"));
+        mandatInfoDto.setReference(bodyGetMandat.getString("reference"));
+        mandatInfoDto.setStandard(bodyGetMandat.getString("standard"));
+        mandatInfoDto.setIban(bodyBankAccount.getString("iban"));
+        mandatInfoDto.setBic(bodyBankAccount.getString("bic"));
+        mandatInfoDto.setBankName(bodyBankAccount.getString("institutionName"));
         return mandatInfoDto;
     }
 

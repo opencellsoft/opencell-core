@@ -32,6 +32,9 @@ public class MandatInfoDto extends BaseResponse {
     private Date dateCreated;
     private Date dateSigned;
     private String paymentScheme;
+    private String bic;
+    private String iban;
+    private String bankName;
 
 
     /**
@@ -145,11 +148,54 @@ public class MandatInfoDto extends BaseResponse {
     public void setPaymentScheme(String paymentScheme) {
         this.paymentScheme = paymentScheme;
     }
+    
+
+    /**
+     * @return the bic
+     */
+    public String getBic() {
+        return bic;
+    }
+
+    /**
+     * @param bic the bic to set
+     */
+    public void setBic(String bic) {
+        this.bic = bic;
+    }
+
+    /**
+     * @return the iban
+     */
+    public String getIban() {
+        return iban;
+    }
+
+    /**
+     * @param iban the iban to set
+     */
+    public void setIban(String iban) {
+        this.iban = iban;
+    }
+
+    
+    /**
+     * @return the bankName
+     */
+    public String getBankName() {
+        return bankName;
+    }
+
+    /**
+     * @param bankName the bankName to set
+     */
+    public void setBankName(String bankName) {
+        this.bankName = bankName;
+    }
 
     @Override
     public String toString() {
         return "MandatInfoDto [id=" + id + ", reference=" + reference + ", state=" + state + ", standard=" + standard + ", initialScore=" + initialScore + ", dateCreated="
-                + dateCreated + ", dateSigned=" + dateSigned + ", paymentScheme=" + paymentScheme + ", getActionStatus()=" + getActionStatus() + "]";
+                + dateCreated + ", dateSigned=" + dateSigned + ", paymentScheme=" + paymentScheme + ", bic=" + bic + ", iban=" + iban + ", bankName=" + bankName + "]";
     }
-
 }
