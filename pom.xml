@@ -694,7 +694,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2 -->
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
                 <db.schema>public</db.schema>
@@ -727,7 +727,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
                 <db.schema>public</db.schema>
@@ -753,7 +753,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.postgresql.Driver</db.driver>
 				<db.url>jdbc:postgresql://localhost/integrmeveo</db.url>
                 <db.schema>public</db.schema>
@@ -784,7 +784,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
                 <db.schema>public</db.schema>

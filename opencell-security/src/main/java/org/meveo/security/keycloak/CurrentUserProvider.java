@@ -83,7 +83,7 @@ public class CurrentUserProvider {
 
         String providerCode = null;
 
-        if (!isCurrentTenantSet() && ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
+        if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
             log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
             setCurrentTenant(providerCode);

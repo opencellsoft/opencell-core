@@ -33,9 +33,6 @@ public class ClusterEventPublisher implements Serializable {
     private JMSContext context;
 
     @Inject
-    private CurrentUserProvider currentUserProvider;
-
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -51,7 +48,7 @@ public class ClusterEventPublisher implements Serializable {
         try {
             String code = entity instanceof BusinessEntity ? ((BusinessEntity) entity).getCode() : null;
             ClusterEventDto eventDto = new ClusterEventDto(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()), (Long) entity.getId(), code, action,
-                EjbUtils.getCurrentClusterNode(), currentUserProvider.getCurrentUserProviderCode(), currentUser.getUserName());
+                EjbUtils.getCurrentClusterNode(), currentUser.getProviderCode(), currentUser.getUserName());
             log.trace("Publishing data synchronization between cluster nodes event {}", eventDto);
 
             context.createProducer().send(topic, eventDto);

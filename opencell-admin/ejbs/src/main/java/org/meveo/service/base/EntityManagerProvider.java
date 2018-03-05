@@ -134,7 +134,7 @@ public class EntityManagerProvider {
      */
     public EntityManager getEntityManager(String providerCode) {
 
-        log.trace("Getting EM for provider {}", providerCode);
+        log.trace("Get EM for provider {}", providerCode);
 
         boolean isMultiTenancyEnabled = ParamBean.isMultitenancyEnabled();
 
@@ -180,12 +180,12 @@ public class EntityManagerProvider {
     }
 
     private EntityManager createEntityManager(String providerCode) {
-        log.error("Creating entity manager for provider {}", providerCode);
+        log.trace("Create EM for provider {}", providerCode);
         return entityManagerFactories.get(providerCode).createEntityManager();
     }
 
     public void registerEntityManagerFactory(String providerCode) {
-        log.info("Creating EMF for provider {}", providerCode);
+        log.trace("Create EMF for provider {}", providerCode);
 
         if (entityManagerFactories.containsKey(providerCode)) {
             return;
@@ -197,14 +197,16 @@ public class EntityManagerProvider {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("MeveoAdminMultiTenant", props);
 
         entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).put(providerCode, emf);
+
+        log.debug("Created EMF for provider {}", providerCode);
     }
 
     public void unregisterEntityManagerFactory(String providerCode) {
 
-        log.trace("Removing entityManagerFactory for provider {}", providerCode);
+        log.trace("Removed EMF for provider {}", providerCode);
 
         entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(providerCode);
 
-        log.info("Removed entityMangerFactory for provider {}, entityManagerFactories count={}", providerCode, entityManagerFactories.size());
+        log.debug("Removed EMF for provider {}", providerCode);
     }
 }

@@ -75,9 +75,6 @@ public class ApplicationInitializer {
 
         int i = 0;
         for (Provider provider : providers) {
-            if (i > 0) {
-                entityManagerProvider.registerEntityManagerFactory(provider.getCode());
-            }
             multitenantAppInitializer.initializeTenant(provider, i == 0);
             i++;
         }
@@ -87,6 +84,11 @@ public class ApplicationInitializer {
     public void initializeTenant(Provider provider, boolean isMainProvider) {
 
         log.debug("Will initialize application for provider {}", provider.getCode());
+        
+        if (!isMainProvider) {
+            entityManagerProvider.registerEntityManagerFactory(provider.getCode());
+        }
+        
         currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), isMainProvider ? null : provider.getCode());
 
         // Register jobs
