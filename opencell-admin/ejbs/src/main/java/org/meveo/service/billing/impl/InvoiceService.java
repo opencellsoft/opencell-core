@@ -99,6 +99,8 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.order.OrderService;
@@ -160,6 +162,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -596,11 +602,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
-        
+
         log.debug("Creating pdf for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
-        
+
         long startDate = System.currentTimeMillis();
-        String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
+        String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice, currentUser.getProviderCode());
 
@@ -625,7 +631,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         String resDir = meveoDir + "jasper";
 
         String pdfFilename = getOrGeneratePdfFilename(invoice);
-        invoice.setPdfFilename(pdfFilename);        
+        invoice.setPdfFilename(pdfFilename);
         String pdfFullFilename = getFullPdfFilePath(invoice, true);
 
         try {
@@ -742,11 +748,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.debug("After jasperPrint:" + (System.currentTimeMillis() - startDate));
 
             JasperExportManager.exportReportToPdfFile(jasperPrint, pdfFullFilename);
-            
-//            if (invoice.getInvoiceNumber() == null) {
-//                PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
-//            }
-            
+
+            // if (invoice.getInvoiceNumber() == null) {
+            // PdfWaterMark.add(pdfFullFilename, paramBean.getProperty("invoice.pdf.waterMark", "PROFORMA"), null);
+            // }
+
             invoice.setPdfFilename(pdfFilename);
 
             log.info("PDF file '{}' produced for invoice {}", pdfFullFilename, invoice.getInvoiceNumberOrTemporaryNumber());
@@ -925,8 +931,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
-                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(
+                subCategoryInvoiceAgregate.getAmountWithoutTax() != null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1066,7 +1073,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getFullXmlFilePath(Invoice invoice, boolean createDirs) {
 
-        String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
+        String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
 
         String xmlFilename = meveoDir + "invoices" + File.separator + "xml" + File.separator + getOrGenerateXmlFilename(invoice);
 
@@ -1143,7 +1150,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getFullPdfFilePath(Invoice invoice, boolean createDirs) {
 
-        String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator;
+        String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
 
         String pdfFilename = meveoDir + "invoices" + File.separator + "pdf" + File.separator + getOrGeneratePdfFilename(invoice);
 
