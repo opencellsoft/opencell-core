@@ -28,17 +28,4 @@ public class DoubleTypeHandler implements TypeHandler {
     public Class<?> getType() {
         return Double.class;
     }
-    
-    public static void main(String[] f) {
-    String text ="1,023";
-	Double d = null;
-	try{
-		d = new Double(text.replaceAll(",", "."));
-	}catch(Exception e){
-		e.printStackTrace();
-		
-	}
-    	System.out.println("d:"+d);
-    }
-
 }

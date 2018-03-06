@@ -35,6 +35,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -62,6 +63,9 @@ public class SellerApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private CountryService countryService;
 
     public void create(SellerDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -176,8 +180,10 @@ public class SellerApi extends BaseApi {
         address.setAddress1(addressDto.getAddress1());
         address.setAddress2(addressDto.getAddress2());
         address.setAddress3(addressDto.getAddress3());
-        address.setCity(addressDto.getCity());
-        address.setCountry(addressDto.getCountry());
+        address.setCity(addressDto.getCity());        
+        if (!StringUtils.isBlank(addressDto.getCountry())) {
+            address.setCountry(countryService.findByCode(addressDto.getCountry()));
+        }
         address.setState(addressDto.getState());
         address.setZipCode(addressDto.getZipCode());
         return address;

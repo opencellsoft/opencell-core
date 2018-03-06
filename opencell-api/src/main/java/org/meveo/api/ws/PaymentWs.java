@@ -13,10 +13,11 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
@@ -27,7 +28,7 @@ import org.meveo.api.dto.response.payment.CreditCategoryResponseDto;
 import org.meveo.api.dto.response.payment.DDRequestLotOpsResponseDto;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
-// TODO: Auto-generated Javadoc
+
 /**
  * The Interface PaymentWs.
  */
@@ -80,7 +81,7 @@ public interface PaymentWs extends IBaseWs {
      * @return Payment by card information
      */
     @WebMethod
-    public PayByCardResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
+    public PaymentResponseDto payByCard(@WebParam(name = "payByCard") PayByCardDto payByCardDto);
 
     /************************************************************************************************/
     /**** Card Payment Method ****/
@@ -287,5 +288,15 @@ public interface PaymentWs extends IBaseWs {
      */
     @WebMethod
     public PaymentGatewayResponseDto createOrUpdatePaymentGateway(@WebParam(name = "paymentGateway") PaymentGatewayDto paymentGateway);
+    
+
+    /**
+     * List payment history matching a given criteria
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria.
+     * @return An payment history list
+     */
+    @WebMethod
+    public PaymentHistoriesDto listHistory(@WebParam(name = "pagingAndFiltering") PagingAndFiltering pagingAndFiltering);
 
 }

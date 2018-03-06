@@ -20,14 +20,14 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.billing.TradingCountry;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
-import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -53,9 +53,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
-    /** The trading country service. */
+    /** The  country service. */
     @Inject
-    private TradingCountryService tradingCountryService;
+    private CountryService countryService;
 
     /**
      * Creates paymentGateway.
@@ -112,11 +112,11 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
             }
         }
 
-        TradingCountry tradingCountry = null;
-        if (!StringUtils.isBlank(paymentGatewayDto.getTradingCountryCode())) {
-            tradingCountryService.findByTradingCountryCode(paymentGatewayDto.getTradingCountryCode());
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, paymentGatewayDto.getTradingCountryCode());
+        Country country = null;
+        if (!StringUtils.isBlank(paymentGatewayDto.getCountryCode())) {
+            countryService.findByCode(paymentGatewayDto.getCountryCode());
+            if (country == null) {
+                throw new EntityDoesNotExistsException(Country.class, paymentGatewayDto.getCountryCode());
             }
         }
         paymentGateway = new PaymentGateway();
@@ -127,7 +127,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setDescription(paymentGatewayDto.getDescription());
         paymentGateway.setPaymentMethodType(paymentGatewayDto.getPaymentMethodType());
         paymentGateway.setScriptInstance(scriptInstance);
-        paymentGateway.setTradingCountry(tradingCountry);
+        paymentGateway.setCountry(country);
         paymentGateway.setTradingCurrency(tradingCurrency);
 
         try {
@@ -179,12 +179,12 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
             }
             paymentGateway.setTradingCurrency(tradingCurrency);
         }
-        if (!StringUtils.isBlank(paymentGatewayDto.getTradingCountryCode())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(paymentGatewayDto.getTradingCountryCode());
-            if (tradingCountry == null) {
-                throw new EntityDoesNotExistsException(TradingCountry.class, paymentGatewayDto.getTradingCountryCode());
+        if (!StringUtils.isBlank(paymentGatewayDto.getCountryCode())) {
+            Country country = countryService.findByCode(paymentGatewayDto.getCountryCode());
+            if (country == null) {
+                throw new EntityDoesNotExistsException(Country.class, paymentGatewayDto.getCountryCode());
             }
-            paymentGateway.setTradingCountry(tradingCountry);
+            paymentGateway.setCountry(country);
         }
         if (paymentGatewayDto.getApplicationEL() != null) {
             paymentGateway.setApplicationEL(paymentGatewayDto.getApplicationEL());

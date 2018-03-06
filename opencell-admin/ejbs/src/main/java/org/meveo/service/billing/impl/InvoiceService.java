@@ -603,7 +603,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
 
-        log.debug("Creating pdf for invoice id={} number={}. {}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
+        log.debug("Creating pdf for invoice id={} number={}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
 
         long startDate = System.currentTimeMillis();
         String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;

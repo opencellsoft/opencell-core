@@ -104,7 +104,6 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -127,9 +126,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
     @Inject
     private InvoiceService invoiceService;
-
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private RatedTransactionService ratedTransactionService;
@@ -946,19 +942,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry() : "");
-            country.appendChild(countryTxt);
-
-            Country countrybyCode = countryService.findByCode(seller.getAddress().getCountry());
+            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : "");
+            country.appendChild(countryTxt);            
+            Country countryEntity = seller.getAddress().getCountry();
             Text countryNameTxt;
-            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
+            if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
-            } else if (countrybyCode != null) {
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
+                countryNameTxt = doc.createTextNode(countryEntity.getDescriptionI18n().get(languageCode));
             } else {
-                countryNameTxt = doc.createTextNode("");
-            }
+                countryNameTxt = doc.createTextNode(countryEntity.getDescription());
+            } 
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);
@@ -1053,13 +1046,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "");
+            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
 
             String translationKey = "C_" + account.getAddress().getCountry() + "_" + languageCode;
             String descTranslated = descriptionMap.get(translationKey);
             if (descTranslated == null) {
-                Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
+                Country countrybyCode = account.getAddress().getCountry();
                 if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
                     // get country description by language code
                     descTranslated = countrybyCode.getDescriptionI18n().get(languageCode);

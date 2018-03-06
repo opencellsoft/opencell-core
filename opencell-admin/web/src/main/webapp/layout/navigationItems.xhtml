@@ -3,13 +3,13 @@
 	xmlns:h="http://xmlns.jcp.org/jsf/html"
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+    xmlns:o="http://omnifaces.org/ui"
 	xmlns:p="http://primefaces.org/ui">
+    
+    <o:importFunctions type="org.meveo.commons.utils.ParamBean" var="paramBean" />
 
 	<p:submenu id="admin" label="#{messages['menu.configuration']}"
 		rendered="#{currentUser.hasRole('administrationVisualization') or currentUser.hasRole('catalogVisualization') or currentUser.hasRole('userVisualization')}">
-		<p:menuitem id="providers" outcome="providers"
-			value="#{messages['menu.providers']}"
-			rendered="#{currentUser.hasRole('superAdminManagement')}" />
 		<p:menuitem id="provider" outcome="providerSelfDetail"
 			value="#{messages['menu.appConfiguration']}"
 			rendered="#{currentUser.hasRole('administrationManagement') or currentUser.hasRole('superAdminManagement')}" />
@@ -402,6 +402,9 @@
 		<p:menuitem id="indexing"
 			rendered="#{currentUser.hasRole('administrationVisualization')}"
 			outcome="indexing" value="#{messages['menu.indexing']}" />
+        <p:menuitem id="providers" outcome="providers"
+            value="#{messages['menu.tenants']}"
+            rendered="#{currentUser.hasRole('superAdminManagement') and currentUser.providerCode==null and paramBean.isMultitenancyEnabled()}" />            
 	</p:submenu>
 
 </ui:composition>

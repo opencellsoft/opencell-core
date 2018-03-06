@@ -27,11 +27,11 @@ import org.meveo.model.jaxb.subscription.ErrorServiceInstance;
 import org.meveo.model.jaxb.subscription.ErrorSubscription;
 import org.meveo.model.jaxb.subscription.Subscription;
 import org.meveo.model.jaxb.subscription.Subscriptions;
-import org.meveo.model.jaxb.subscription.WarningSubscription;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
 import org.meveo.service.billing.impl.TradingCountryService;
@@ -71,6 +71,9 @@ public class AccountImportService extends ImportService {
     @Inject
   	private SubscriptionImportService subscriptionImportService;
     
+    @Inject
+    private CountryService countryService;
+    
     private ParamBean param = ParamBean.getInstance();
     
     private  Map<String, Title> map = new HashMap<>();
@@ -86,8 +89,6 @@ public class AccountImportService extends ImportService {
     private ParamBean paramBean = ParamBean.getInstance();
     
     private Subscriptions subscriptionsError;
-    
-	private Subscriptions subscriptionsWarning;
 
 	int nbSubscriptions;
 	int nbSubscriptionsError;
@@ -169,7 +170,7 @@ public class AccountImportService extends ImportService {
             address.setAddress2(billAccount.getAddress().getAddress2());
             address.setAddress3(billAccount.getAddress().getAddress3());
             address.setCity(billAccount.getAddress().getCity());
-            address.setCountry(billAccount.getAddress().getCountry());
+            address.setCountry(countryService.findByCode(billAccount.getAddress().getCountry()));
             address.setZipCode("" + billAccount.getAddress().getZipCode());
             address.setState(billAccount.getAddress().getState());
         }
@@ -283,7 +284,7 @@ public class AccountImportService extends ImportService {
             address.setAddress2(billingAccountDto.getAddress().getAddress2());
             address.setAddress3(billingAccountDto.getAddress().getAddress3());
             address.setCity(billingAccountDto.getAddress().getCity());
-            address.setCountry(billingAccountDto.getAddress().getCountry());
+            address.setCountry(countryService.findByCode(billingAccountDto.getAddress().getCountry()));
             address.setZipCode("" + billingAccountDto.getAddress().getZipCode());
             address.setState(billingAccountDto.getAddress().getState());
         }
@@ -327,7 +328,7 @@ public class AccountImportService extends ImportService {
             addressUA.setAddress2(uAccount.getAddress().getAddress2());
             addressUA.setAddress3(uAccount.getAddress().getAddress3());
             addressUA.setCity(uAccount.getAddress().getCity());
-            addressUA.setCountry(uAccount.getAddress().getCountry());
+            addressUA.setCountry(countryService.findByCode(uAccount.getAddress().getCountry()));
             addressUA.setState(uAccount.getAddress().getState());
             addressUA.setZipCode("" + uAccount.getAddress().getZipCode());
         }
@@ -600,7 +601,7 @@ public class AccountImportService extends ImportService {
             addressUA.setAddress2(userAccountDto.getAddress().getAddress2());
             addressUA.setAddress3(userAccountDto.getAddress().getAddress3());
             addressUA.setCity(userAccountDto.getAddress().getCity());
-            addressUA.setCountry(userAccountDto.getAddress().getCountry());
+            addressUA.setCountry(countryService.findByCode(userAccountDto.getAddress().getCountry()));
             addressUA.setState(userAccountDto.getAddress().getState());
             addressUA.setZipCode("" + userAccountDto.getAddress().getZipCode());
         }

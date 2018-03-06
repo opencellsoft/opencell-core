@@ -32,7 +32,6 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * 
  */
-// @Startup
 @Singleton
 @Lock(LockType.READ)
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
@@ -103,6 +102,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param jobInstanceId Job instance identifier
      * @return Is Job currently running and if on this or another node
      */
+    @Lock(LockType.READ)
     public JobRunningStatusEnum isJobRunning(Long jobInstanceId) {
         String currentProvider = currentUser.getProviderCode();
         if (jobInstanceId == null) {
@@ -182,6 +182,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * 
      * @param jobInstanceId Job instance identifier
      */
+    @Lock(LockType.READ)
     public void markJobAsNotRunning(Long jobInstanceId) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();
@@ -295,10 +296,10 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
         }
     }
 
-    /**
-     * Clear all the data from cache
-     */
-    private void clearAll() {
-        runningJobsCache.clear();
-    }
+    // /**
+    // * Clear all the data from cache
+    // */
+    // private void clearAll() {
+    // runningJobsCache.clear();
+    // }
 }

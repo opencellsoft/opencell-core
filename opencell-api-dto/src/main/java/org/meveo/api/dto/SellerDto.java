@@ -107,7 +107,7 @@ public class SellerDto extends BusinessDto {
             address.setAddress2(sellerAddress.getAddress2());
             address.setAddress3(sellerAddress.getAddress3());
             address.setCity(sellerAddress.getCity());
-            address.setCountry(sellerAddress.getCountry());
+            address.setCountry(sellerAddress.getCountry() == null ? null : sellerAddress.getCountry().getCountryCode());                        
             address.setState(sellerAddress.getState());
             address.setZipCode(sellerAddress.getZipCode());
         }

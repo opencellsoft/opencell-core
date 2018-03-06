@@ -20,6 +20,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.WirePaymentMethod;
+import org.meveo.security.MeveoUser;
 
 /**
  * The PaymentMethod Dto.
@@ -168,7 +169,7 @@ public class PaymentMethodDto extends BaseDto {
      *
      * @param paymentMethod the paymentMethod entity.
      */
-    public PaymentMethodDto(PaymentMethod paymentMethod) {
+    public PaymentMethodDto(PaymentMethod paymentMethod) {               
         this.id = paymentMethod.getId();
         this.disabled = paymentMethod.isDisabled();
         this.alias = paymentMethod.getAlias();
@@ -179,6 +180,7 @@ public class PaymentMethodDto extends BaseDto {
         this.info3 = paymentMethod.getInfo3();
         this.info4 = paymentMethod.getInfo4();
         this.info5 = paymentMethod.getInfo5();
+        this.paymentMethodType = paymentMethod.getPaymentType();
         if (paymentMethod.getCustomerAccount() != null) {
             this.customerAccountCode = paymentMethod.getCustomerAccount().getCode();
         }
@@ -187,8 +189,8 @@ public class PaymentMethodDto extends BaseDto {
             this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
             this.mandateIdentification = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
             this.bankCoordinates = new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates());
-        }
-        if (paymentMethod instanceof CardPaymentMethod) {
+        }        
+        if (paymentMethod instanceof CardPaymentMethod) {           
             this.setPaymentMethodType(PaymentMethodEnum.CARD);
             this.cardNumber = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
             this.owner = ((CardPaymentMethod) paymentMethod).getOwner();
@@ -197,7 +199,7 @@ public class PaymentMethodDto extends BaseDto {
             this.yearExpiration = ((CardPaymentMethod) paymentMethod).getYearExpiration();
             this.issueNumber = ((CardPaymentMethod) paymentMethod).getIssueNumber();
             this.tokenId = ((CardPaymentMethod) paymentMethod).getTokenId();
-        }
+        }       
         if (paymentMethod instanceof CheckPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.CHECK);
         }
@@ -239,7 +241,7 @@ public class PaymentMethodDto extends BaseDto {
      * @param customerAccount the customerAccount.
      * @return PaymentMethod entity.
      */
-    public final PaymentMethod fromDto(CustomerAccount customerAccount) {
+    public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {
         PaymentMethod pmEntity = null;
         switch (getPaymentMethodType()) {
         case CARD:
@@ -268,6 +270,7 @@ public class PaymentMethodDto extends BaseDto {
         pmEntity.setInfo4(getInfo4());
         pmEntity.setInfo5(getInfo5());
         pmEntity.setUserId(getUserId());
+        pmEntity.updateAudit(currentUser);
         return pmEntity;
     }
 
