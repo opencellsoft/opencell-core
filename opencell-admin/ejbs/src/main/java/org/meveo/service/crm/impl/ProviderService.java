@@ -22,12 +22,11 @@ import java.lang.reflect.InvocationTargetException;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
-import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -36,9 +35,6 @@ import org.meveo.service.base.PersistenceService;
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
-
-    @Inject
-    private ClusterEventPublisher clusterEventPublisher;
 
     @EJB
     private ProviderRegistry providerRegistry;
@@ -74,7 +70,7 @@ public class ProviderService extends PersistenceService<Provider> {
         provider = super.update(provider);
         // Refresh appProvider application scope variable
         refreshAppProvider(provider);
-        clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
+        // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
         return provider;
     }
 
@@ -97,5 +93,28 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
         appProvider.setCfValues(provider.getCfValues());
+    }
+
+    /**
+     * Find Provider by code - strict match.
+     * 
+     * @param code Code to match
+     * @return A single entity matching code
+     */
+    public Provider findByCode(String code) {
+
+        if (code == null) {
+            return null;
+        }
+
+        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where upper(code)=:code", entityClass).setParameter("code", code.toUpperCase())
+            .setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No Provider of code {} found", code);
+            return null;
+        }
     }
 }

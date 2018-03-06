@@ -20,6 +20,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.WirePaymentMethod;
+import org.meveo.security.MeveoUser;
 
 /**
  * The PaymentMethod Dto.
@@ -240,7 +241,7 @@ public class PaymentMethodDto extends BaseDto {
      * @param customerAccount the customerAccount.
      * @return PaymentMethod entity.
      */
-    public final PaymentMethod fromDto(CustomerAccount customerAccount) {
+    public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {
         PaymentMethod pmEntity = null;
         switch (getPaymentMethodType()) {
         case CARD:
@@ -269,6 +270,7 @@ public class PaymentMethodDto extends BaseDto {
         pmEntity.setInfo4(getInfo4());
         pmEntity.setInfo5(getInfo5());
         pmEntity.setUserId(getUserId());
+        pmEntity.updateAudit(currentUser);
         return pmEntity;
     }
 

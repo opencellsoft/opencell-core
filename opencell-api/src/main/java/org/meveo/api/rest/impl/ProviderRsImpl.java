@@ -4,10 +4,12 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.ProviderApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.ProvidersDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
@@ -31,7 +33,7 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.create(postData);
+            throw new BusinessException("There should already be a provider setup");
         } catch (Exception e) {
             processException(e, result);
         }
@@ -163,4 +165,43 @@ public class ProviderRsImpl extends BaseRs implements ProviderRs {
         return result;
     }
 
+    @Override
+    public ActionStatus createTenant(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            providerApi.createTenant(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ProvidersDto listTenants() {
+
+        ProvidersDto result = new ProvidersDto();
+
+        try {
+            result = providerApi.listTenants();
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeTenant(String providerCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            providerApi.removeTenant(providerCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

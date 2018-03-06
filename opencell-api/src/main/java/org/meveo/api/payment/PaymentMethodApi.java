@@ -56,7 +56,7 @@ public class PaymentMethodApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
         }
 
-        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
+        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, currentUser);
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }

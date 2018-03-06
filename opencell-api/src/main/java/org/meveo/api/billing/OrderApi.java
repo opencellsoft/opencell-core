@@ -149,8 +149,7 @@ public class OrderApi extends BaseApi {
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
         if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
-            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null);
-            paymentMethod.updateAudit(currentUser);
+            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
             order.setPaymentMethod(paymentMethod);
         }
 

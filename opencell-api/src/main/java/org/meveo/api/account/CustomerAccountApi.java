@@ -171,7 +171,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
                 paymentMethodDto.validate();
-                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount));
+                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
             }
         }
 
@@ -297,6 +297,10 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setDunningLevel(postData.getDunningLevel());
         }
 
+        if (businessAccountModel != null) {
+            customerAccount.setBusinessAccountModel(businessAccountModel);
+        }
+
         // Synchronize payment methods
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             if (customerAccount.getPaymentMethods() == null) {
@@ -306,7 +310,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
 
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount);
+                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, currentUser);
 
                 int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
                 if (index < 0) {
@@ -342,12 +346,8 @@ public class CustomerAccountApi extends AccountEntityApi {
                     "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
-            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount);
+            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);       
             customerAccount.addPaymentMethod(paymentMethodFromDto);
-        }
-
-        if (businessAccountModel != null) {
-            customerAccount.setBusinessAccountModel(businessAccountModel);
         }
 
         // Validate and populate customFields
@@ -403,7 +403,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (totalInvoiceBalance == null) {
                 throw new BusinessException("Total invoice balance calculation failed.");
             }
-            
+
             customerAccountDto.setBalance(balanceDue);
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
             customerAccountDto.setCreditBalance(creditBalance);

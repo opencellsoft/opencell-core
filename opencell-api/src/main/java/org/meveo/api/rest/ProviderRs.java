@@ -1,16 +1,19 @@
 package org.meveo.api.rest;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.ProvidersDto;
 import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
@@ -124,4 +127,32 @@ public interface ProviderRs extends IBaseRs {
     @Path("/findProviderCF")
     GetProviderResponse findProviderCF(@QueryParam("providerCode") String providerCode);
 
+    /**
+     * Register a new tenant
+     * 
+     * @param postData Tenant/Provider data
+     * @return Action status
+     */
+    @POST
+    @Path("/createTenant")
+    public ActionStatus createTenant(ProviderDto postData);
+
+    /**
+     * List tenants
+     * 
+     * @return A list of Tenant/provider data
+     */
+    @GET
+    @Path("/listTenants")
+    public ProvidersDto listTenants();
+
+    /**
+     * Remove a tenant
+     * 
+     * @param providerCode Tenant/provider code
+     * @return Action status
+     */
+    @DELETE
+    @Path("/{providerCode}")
+    public ActionStatus removeTenant(@PathParam("providerCode") String providerCode);
 }

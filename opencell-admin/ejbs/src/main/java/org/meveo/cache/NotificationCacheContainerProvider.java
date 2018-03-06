@@ -7,14 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
-import javax.ejb.Startup;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -31,7 +27,6 @@ import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.notification.NotificationService;
 import org.slf4j.Logger;
 
@@ -40,9 +35,7 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  */
-// @Startup
-@Singleton
-@Lock(LockType.READ)
+@Stateless
 public class NotificationCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 358151068726872948L;
@@ -90,7 +83,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         }
 
         String provider = currentUser.getProviderCode();
-        
+
         log.debug("Start to pre-populate Notification cache for provider {}.", provider);
 
         List<Notification> activeNotifications = notificationService.getNotificationsForCache();

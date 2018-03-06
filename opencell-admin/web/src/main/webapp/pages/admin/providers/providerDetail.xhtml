@@ -15,7 +15,9 @@
             <h:form id="crumbmenuForm">
                 <p:breadCrumb homeDisplay="text" id="crumbmenu">
                     <p:menuitem value="#{messages['menu.admin']}" disabled="true" />
-                    <p:menuitem outcome="providers" value="#{messages['menu.providers']}" />
+                    <p:menuitem outcome="providers" value="#{messages['menu.tenants']}" />
+                <p:menuitem value="#{messages['commons.new']} #{messages['title']}" disabled="true" rendered="#{providerBean.entity.transient}" />
+                <p:menuitem value="#{messages['tenant']} - #{providerBean.entity.code}" disabled="true" rendered="#{!providerBean.entity.transient}" />
                 </p:breadCrumb>
             </h:form>
         </p:panel>

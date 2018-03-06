@@ -181,7 +181,12 @@ public class EntityManagerProvider {
 
     private EntityManager createEntityManager(String providerCode) {
         log.trace("Create EM for provider {}", providerCode);
-        return entityManagerFactories.get(providerCode).createEntityManager();
+        try {
+            return entityManagerFactories.get(providerCode).createEntityManager();
+        } catch (NullPointerException e) {
+            log.error("Failed to create EM for provider {}. EMFs created for {}", providerCode, entityManagerFactories.keySet().toArray());
+        }
+        return null;
     }
 
     public void registerEntityManagerFactory(String providerCode) {
