@@ -225,6 +225,7 @@ public class CatalogHierarchyBuilderService {
                 newProductTemplate.setCfValues(productTemplate.getCfValues());
             }
 
+            productTemplateService.refresh(productTemplate);
             productTemplateService.create(newProductTemplate);
 
             // true on GUI instantiation
