@@ -42,8 +42,8 @@ public class PaymentGatewayDto extends BusinessDto {
     /** The application EL. */
     private String applicationEL;
 
-    /** The trading country code. */
-    private String tradingCountryCode;
+    /** The  country code. */
+    private String countryCode;
 
     /** The trading currency code. */
     private String tradingCurrencyCode;
@@ -73,7 +73,7 @@ public class PaymentGatewayDto extends BusinessDto {
         this.implementationClassName = paymentGateway.getImplementationClassName();
         this.paymentMethodType = paymentGateway.getPaymentMethodType();
         this.scriptInstanceCode = paymentGateway.getScriptInstance() == null ? null : paymentGateway.getScriptInstance().getCode();
-        this.tradingCountryCode = paymentGateway.getTradingCountry() == null ? null : paymentGateway.getTradingCountry().getCountryCode();
+        this.countryCode = paymentGateway.getCountry() == null ? null : paymentGateway.getCountry().getCountryCode();
         this.tradingCurrencyCode = paymentGateway.getTradingCurrency() == null ? null : paymentGateway.getTradingCurrency().getCurrencyCode();
         this.type = paymentGateway.getType();
     }
@@ -183,17 +183,17 @@ public class PaymentGatewayDto extends BusinessDto {
     }
 
     /**
-     * @return the tradingCountryCode
+     * @return the countryCode
      */
-    public String getTradingCountryCode() {
-        return tradingCountryCode;
+    public String getCountryCode() {
+        return countryCode;
     }
 
     /**
-     * @param tradingCountryCode the tradingCountryCode to set
+     * @param countryCode the countryCode to set
      */
-    public void setTradingCountryCode(String tradingCountryCode) {
-        this.tradingCountryCode = tradingCountryCode;
+    public void setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
     }
 
     /**
@@ -228,7 +228,7 @@ public class PaymentGatewayDto extends BusinessDto {
     public String toString() {
         return "PaymentGatewayDto [id=" + id + ", code=" + code + ", description=" + description + ", updatedCode=" + updatedCode + ", type=" + type + ", paymentMethodType="
                 + paymentMethodType + ", scriptInstanceCode=" + scriptInstanceCode + ", implementationClassName=" + implementationClassName + ", applicationEL=" + applicationEL
-                + ", tradingCountryCode=" + tradingCountryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + "]";
+                + ", countryCode=" + countryCode + ", tradingCurrencyCode=" + tradingCurrencyCode + ", cardType=" + cardType + "]";
     }
 
 }

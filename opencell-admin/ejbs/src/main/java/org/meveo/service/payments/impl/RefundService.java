@@ -20,25 +20,18 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.admin.exception.NoAllOperationUnmatchedException;
-import org.meveo.admin.exception.UnbalanceAmountException;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.model.payments.CardPaymentMethod;
-import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
-import org.meveo.model.payments.MatchingTypeEnum;
 import org.meveo.model.payments.OCCTemplate;
-import org.meveo.model.payments.PaymentMethod;
-import org.meveo.model.payments.PaymentStatusEnum;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.Refund;
 import org.meveo.service.base.PersistenceService;
 
@@ -48,20 +41,10 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class RefundService extends PersistenceService<Refund> {
 
-    @Inject
-    private PaymentMethodService paymentMethodService;
+   
 
     @Inject
     private OCCTemplateService oCCTemplateService;
-
-    @Inject
-    private MatchingCodeService matchingCodeService;
-
-    @Inject
-    private GatewayPaymentFactory gatewayPaymentFactory;
-
-    @Inject
-    private CustomerAccountService customerAccountService;
 
     @MeveoAudit
     @Override
@@ -69,155 +52,6 @@ public class RefundService extends PersistenceService<Refund> {
         super.create(entity);
     }
 
-    /**
-     * Refund by card token. An existing and preferred card payment method will be used. If currently preferred card payment method is not valid, a new currently valid card payment
-     * will be used (and marked as preferred)
-     * 
-     * @param customerAccount Customer account
-     * @param ctsAmount Amount to mpau
-     * @param aoIdsToRefund list of account operations ids to be refund
-     * @param createAO true if wanting to create account operation
-     * @param matchingAO true if matching account operation.
-     * @return payment by card response dto
-     * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException no all operation un matched exception
-     * @throws UnbalanceAmountException un balance amount exception.
-     */
-    public PayByCardResponseDto refundByCardToken(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO)
-            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-
-        if (customerAccount.getPaymentMethods() == null || customerAccount.getPaymentMethods().isEmpty()) {
-            throw new BusinessException("There no payment token for customerAccount:" + customerAccount.getCode());
-        }
-
-        PaymentMethod preferredMethod = customerAccount.getPreferredPaymentMethod();
-        if (preferredMethod == null) {
-            throw new BusinessException("There is no payment method for customerAccount:" + customerAccount.getCode());
-
-        } else if (!(preferredMethod instanceof CardPaymentMethod)) {
-            throw new BusinessException("Can not process payment as prefered payment method is " + preferredMethod.getPaymentType());
-        }
-
-        // If card payment method is currently not valid, find a valid one and mark it as preferred or throw an exception
-        if (!((CardPaymentMethod) preferredMethod).isValidForDate(new Date())) {
-            preferredMethod = customerAccount.markCurrentlyValidCardPaymentAsPreferred();
-            if (preferredMethod != null) {
-                customerAccount = customerAccountService.update(customerAccount);
-            } else {
-                throw new BusinessException("There is no currently valid payment method for customerAccount:" + customerAccount.getCode());
-            }
-        }
-
-        CardPaymentMethod cardPaymentMethod = (CardPaymentMethod) preferredMethod;
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
-        } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
-        }
-
-        PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doRefundToken(cardPaymentMethod, ctsAmount, null);
-
-        if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
-            // log.error("AKK updating card payment with user id {} {}", cardPaymentMethod.getAlias(), doPaymentResponseDto.getCodeClientSide());
-            cardPaymentMethod.setUserId(doPaymentResponseDto.getCodeClientSide());
-            cardPaymentMethod = (CardPaymentMethod) paymentMethodService.update(cardPaymentMethod);
-            Long aoRefundId = null;
-            if (createAO) {
-                try {
-                    aoRefundId = createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto);
-                    doPaymentResponseDto.setAoCreated(true);
-                } catch (Exception e) {
-                    log.warn("Cant create Account operation payment :", e);
-                }
-                if (matchingAO) {
-                    try {
-                        List<Long> aoIdsToMatch = aoIdsToRefund;
-                        aoIdsToMatch.add(aoRefundId);
-                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
-                        doPaymentResponseDto.setMatchingCreated(true);
-                    } catch (Exception e) {
-                        log.warn("Cant create matching :", e);
-                    }
-                }
-            }
-        } else {
-            log.warn("Payment by card {} was not successfull. Status: {}", cardPaymentMethod.getTokenId(), doPaymentResponseDto.getPaymentStatus());
-        }
-
-        return doPaymentResponseDto;
-    }
-
-    /**
-     * Refund by card. A new card payment type is registered if payment was successfull.
-     * 
-     * @param customerAccount customer account
-     * @param ctsAmount amount in cent
-     * @param cardNumber card number
-     * @param ownerName owner name
-     * @param cvv cvv number
-     * @param expiryDate expiry date
-     * @param cardType card type
-     * @param aoIdsToRefund list of account operation ids to be refunded
-     * @param createAO true if creating account operation
-     * @param matchingAO true if matching account operation
-     * @return payment by card dto
-     * @throws BusinessException business exception
-     * @throws NoAllOperationUnmatchedException no all operation un matched exception
-     * @throws UnbalanceAmountException un balance amount exception.
-     */
-    public PayByCardResponseDto refundByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
-            CreditCardTypeEnum cardType, List<Long> aoIdsToRefund, boolean createAO, boolean matchingAO)
-            throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-
-        String coutryCode = null;// TODO : waiting #2830
-
-        GatewayPaymentInterface gatewayPaymentInterface = null;
-        try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, null);
-        } catch (Exception e) {
-            log.error("Cant find payment gateway");
-            throw new BusinessException(e.getMessage());
-        }
-
-        PayByCardResponseDto doPaymentResponseDto = gatewayPaymentInterface.doRefundCard(customerAccount, ctsAmount, cardNumber, ownerName, cvv, expiryDate, cardType, coutryCode,
-            null);
-
-        if (PaymentStatusEnum.ACCEPTED == doPaymentResponseDto.getPaymentStatus()) {
-            CardPaymentMethod paymentMethod = new CardPaymentMethod();
-            paymentMethod.setAlias("Card_" + cardNumber.substring(12, 16));
-            paymentMethod.setCardNumber(cardNumber);
-            paymentMethod.setCardType(cardType);
-            paymentMethod.setCustomerAccount(customerAccount);
-            paymentMethod.setPreferred(true);
-            paymentMethod.setMonthExpiration(new Integer(expiryDate.substring(0, 2)));
-            paymentMethod.setYearExpiration(new Integer(expiryDate.substring(2, 4)));
-            paymentMethod.setOwner(ownerName);
-            paymentMethod.setTokenId(doPaymentResponseDto.getTokenId());
-            paymentMethodService.create(paymentMethod);
-
-            Long aoRefundId = null;
-            if (createAO) {
-                try {
-                    aoRefundId = createRefundAO(customerAccount, ctsAmount, doPaymentResponseDto);
-                    doPaymentResponseDto.setAoCreated(true);
-                } catch (Exception e) {
-                    log.warn("Cant create Account operation payment :" + e.getMessage());
-                }
-                if (matchingAO) {
-                    try {
-                        List<Long> aoIdsToMatch = aoIdsToRefund;
-                        aoIdsToMatch.add(aoRefundId);
-                        matchingCodeService.matchOperations(null, customerAccount.getCode(), aoIdsToMatch, null, MatchingTypeEnum.A);
-                        doPaymentResponseDto.setMatchingCreated(true);
-                    } catch (Exception e) {
-                        log.warn("Cant create matching :" + e.getMessage());
-                    }
-                }
-            }
-        }
-        return doPaymentResponseDto;
-    }
 
     /**
      * 
@@ -227,10 +61,14 @@ public class RefundService extends PersistenceService<Refund> {
      * @return the AO id created
      * @throws BusinessException business exception.
      */
-    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PayByCardResponseDto doPaymentResponseDto) throws BusinessException {
-        OCCTemplate occTemplate = oCCTemplateService.findByCode(ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD"));
+    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto,PaymentMethodEnum paymentMethodType) throws BusinessException {
+       String occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD");
+       if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+           occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.dd", "RB_PLVT");
+       }
+        OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
-            throw new BusinessException("Cannot find OCC Template with code=" + (ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD")));
+            throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Refund refund = new Refund();
         refund.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());
@@ -252,4 +90,5 @@ public class RefundService extends PersistenceService<Refund> {
         return refund.getId();
 
     }
+  
 }
