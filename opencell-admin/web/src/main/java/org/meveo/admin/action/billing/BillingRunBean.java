@@ -168,6 +168,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
             entity.setStatus(BillingRunStatusEnum.NEW);
             entity.setProcessDate(new Date());
+            entity.setLastTransactionDate(DateUtils.setDateToEndOfDay(entity.getLastTransactionDate()));
 
             billingRunService.create(entity);
             return "billingRuns";

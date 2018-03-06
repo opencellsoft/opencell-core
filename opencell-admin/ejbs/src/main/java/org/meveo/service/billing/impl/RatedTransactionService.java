@@ -621,6 +621,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             createInvoiceDiscountAggregates(userAccount, invoice, taxInvoiceAgregateMap, isVirtual);
 
         }
+        
+        createBillingAccountMinAmountAggregate(invoice, billingAccount, lastTransactionDate, isInvoiceAdjustment, isVirtual);
 
         log.debug("Before  isVirtual:" + (System.currentTimeMillis() - startDate));
 
@@ -853,7 +855,84 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
     }
+    
+    
+    /**
+     * @param userAccount user account
+     * @param invoice invoice
+     * @param taxInvoiceAgregateMap map of tax invoice agregate
+     * @param isVirtual true/false
+     * @throws BusinessException 
+     */
+    private void createBillingAccountMinAmountAggregate(Invoice invoice, BillingAccount billingAccount, Date lastTransactionDate, boolean isInvoiceAdjustment, boolean isVirtual) 
+            throws BusinessException {
 
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumMinBilling")
+                .setParameter("lastTransactionDate", lastTransactionDate);
+        if (isInvoiceAdjustment) {
+            q = q.setParameter("status", RatedTransactionStatusEnum.BILLED);
+        } else {
+            q = q.setParameter("status", RatedTransactionStatusEnum.OPEN);
+        }
+
+        List<Object[]> invoiceSubCats = q.getResultList();
+        
+        for (Object[] object : invoiceSubCats) {
+            log.info("invoice subcategory {}, amountWithoutTax {}, amountWithTax {}, amountTax {}", object[0], object[1], object[2], object[3]);
+        
+            SubCategoryInvoiceAgregate invoiceAgregateSubcat = new SubCategoryInvoiceAgregate();
+            invoiceAgregateSubcat.setInvoice(invoice);
+            if (!isVirtual) {
+                invoiceAgregateSubcat.setBillingRun(billingAccount.getBillingRun());
+            }
+            //invoiceAgregateSubcat.setAccountingCode(invoiceSubCat.getAccountingCode());
+            invoiceAgregateSubcat.setBillingAccount(billingAccount);
+            int itemNumber = invoiceAgregateSubcat.getItemNumber() != null ? invoiceAgregateSubcat.getItemNumber() + 1 : 1;
+            invoiceAgregateSubcat.setItemNumber(itemNumber);
+            invoiceAgregateSubcat.setAmountWithoutTax((BigDecimal) object[1]);
+            invoiceAgregateSubcat.setAmountWithTax((BigDecimal) object[2]);
+            invoiceAgregateSubcat.setAmountTax((BigDecimal) object[3]);
+            invoiceAgregateSubcat.setQuantity((BigDecimal) object[4]);
+            invoiceAgregateSubcat.setDescription("yohooo");
+            
+            invoiceAgregateService.create(invoiceAgregateSubcat);
+            
+            //invoiceAgregateSubcatList.add(invoiceAgregateSubcat);    
+            if (!isVirtual) {
+                invoiceAgregateService.create(invoiceAgregateSubcat);
+            }
+        }
+        
+        
+
+
+
+/*
+        
+        BigDecimal discountAmountTax = BigDecimal.ZERO;
+        // TODO do this in the right place (one time by userAccount)
+        boolean isExonerated = billingAccountService.isExonerated(userAccount.getBillingAccount());
+        if (!isExonerated) {
+            for (Tax tax : taxes) {
+                BigDecimal amountTax = discountAmountWithoutTax.multiply(tax.getPercent().divide(HUNDRED));
+                discountAmountTax = discountAmountTax.add(amountTax);
+                invoiceAgregateSubcat.addSubCategoryTax(tax);
+                TaxInvoiceAgregate taxInvoiceAgregate = taxInvoiceAgregateMap.get(tax.getId());
+                if (taxInvoiceAgregate != null) {
+                    taxInvoiceAgregate.addAmountTax(amountTax);
+                    taxInvoiceAgregate.addAmountWithoutTax(discountAmountWithoutTax);
+                    if (!isVirtual) {
+                        invoiceAgregateService.update(taxInvoiceAgregate);
+                    }
+                }
+            }
+        }
+    
+        BigDecimal discountAmountWithTax = discountAmountWithoutTax.add(discountAmountTax);
+ */
+        
+    }
+    
     /**
      * @param userAccount user account
      * @param invoice invoice
