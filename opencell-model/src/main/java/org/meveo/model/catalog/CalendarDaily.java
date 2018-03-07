@@ -147,9 +147,4 @@ public class CalendarDaily extends Calendar {
     public Date nextPeriodStartDate(Date date) {
         return null;
     }
-    
-    @Override
-    public boolean truncDateTime() {
-        return false;
-    }
 }

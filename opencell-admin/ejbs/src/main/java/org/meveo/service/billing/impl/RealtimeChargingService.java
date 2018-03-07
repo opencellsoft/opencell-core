@@ -126,8 +126,8 @@ public class RealtimeChargingService {
         RecurringChargeInstance chargeInstance = new RecurringChargeInstance(null, null, quantity, subscriptionDate, null, ba.getCustomerAccount().getCustomer().getSeller(),
             ba.getTradingCountry(), ba.getCustomerAccount().getTradingCurrency(), chargeTemplate);
 
-        Date nextApplicationDate = walletOperationService.getNextApplicationDate(chargeInstance);
-        WalletOperation op = walletOperationService.prerateSubscription(subscriptionDate, chargeInstance, nextApplicationDate);
+        Date nextApplicationDate = walletOperationService.initChargeDateAndGetNextChargeDate(chargeInstance);
+        WalletOperation op = walletOperationService.applyFirstRecurringCharge(chargeInstance, nextApplicationDate, true);
 
         return priceWithoutTax ? op.getAmountWithoutTax() : op.getAmountWithTax();
     }

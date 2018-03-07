@@ -331,7 +331,7 @@ public class RatingService extends BusinessService<WalletOperation> {
         Date subscriptionDate = null;
 
         if (chargeInstance instanceof RecurringChargeInstance) {
-            subscriptionDate = ((RecurringChargeInstance) chargeInstance).getServiceInstance().getSubscriptionDate();
+            subscriptionDate = ((RecurringChargeInstance) chargeInstance).getSubscriptionDate();
         }
 
         UserAccount ua = chargeInstance.getUserAccount();
@@ -384,9 +384,7 @@ public class RatingService extends BusinessService<WalletOperation> {
                     if (sub != null) {
                         newEdr.setSubscription(sub);
                         log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-                        if (chargeInstance.getAuditable() == null) {
-                            log.info("trigger EDR from code " + triggeredEDRTemplate.getCode());
-                        } else {
+                        if (chargeInstance.getAuditable() != null) {
                             edrService.create(newEdr);
                         }
                     } else {

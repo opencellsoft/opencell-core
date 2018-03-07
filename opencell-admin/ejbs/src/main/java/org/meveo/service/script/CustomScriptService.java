@@ -447,15 +447,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     @Lock(LockType.WRITE)
     private Class<SI> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
-        Class<SI> result = null;
         
-        try {
-            Thread.sleep(30000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        result = allScriptInterfaces.get(scriptCode);
+        Class<SI> result = allScriptInterfaces.get(scriptCode);
 
         if (result == null) {
             T script = findByCode(scriptCode);
