@@ -101,11 +101,17 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @return A custom field code
      */
     public String getCustomFieldCode(InvoiceType invoiceType) {
-        String cfName = "INVOICE_SEQUENCE_" + invoiceType.getCode().toUpperCase();
-        if (getAdjustementCode().equals(invoiceType.getCode())) {
+    	
+        // LAMPIRIS CUSTOM
+        String invoiceTypeCode = invoiceType.getCode().toUpperCase();
+        if (invoiceTypeCode.equals("INSTALMENT_INVOICE") || invoiceTypeCode.equals("REGULARIZATION_INVOICE")) {
+            invoiceTypeCode = "ENA";
+        }
+        String cfName = "INVOICE_SEQUENCE_" + invoiceTypeCode;
+        if (getAdjustementCode().equals(invoiceTypeCode)) {
             cfName = "INVOICE_ADJUSTMENT_SEQUENCE";
         }
-        if (getCommercialCode().equals(invoiceType.getCode())) {
+        if (getCommercialCode().equals(invoiceTypeCode)) {
             cfName = "INVOICE_SEQUENCE";
         }
         return cfName;
