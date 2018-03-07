@@ -28,7 +28,6 @@ public class ScriptingAsync {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    
     @Asynchronous
     public Future<String> launchAndForget(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) {
         ScriptInterface script = null;
