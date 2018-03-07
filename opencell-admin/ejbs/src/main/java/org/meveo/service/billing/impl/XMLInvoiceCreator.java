@@ -1177,11 +1177,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         if (hasInvoiceAgregates) {
             for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-                if (invoiceAgregate.getUserAccount().getId() == id) {
-                    if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                        CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-                        categoryInvoiceAgregates.add(categoryInvoiceAgregate);
-                    }
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                    CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+                    categoryInvoiceAgregates.add(categoryInvoiceAgregate);
                 }
             }
         }
@@ -1270,15 +1268,19 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                     }
                     subCategory.setAttribute("taxCode", taxesCode);
                     subCategory.setAttribute("taxPercent", taxesPercent);
-
+                    
                     for (RatedTransaction ratedTransaction : ratedTransactions) {
-                        if (!(ratedTransaction.getWallet().getId().longValue() == wallet.getId()
-                                && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
-                            continue;
+                        if( ratedTransaction.getWallet() != null ) {
+                            if (!(ratedTransaction.getWallet().getId().longValue() == wallet.getId()
+                                    && ratedTransaction.getInvoiceSubCategory().getId().longValue() == invoiceSubCat.getId())) {
+                                continue;
+                            }   
                         }
+                        
                         if (!isVirtual) {
                             getEntityManager().refresh(ratedTransaction);
                         }
+                        
                         BigDecimal transactionAmount = entreprise ? ratedTransaction.getAmountWithTax() : ratedTransaction.getAmountWithoutTax();
                         if (transactionAmount == null) {
                             transactionAmount = BigDecimal.ZERO;

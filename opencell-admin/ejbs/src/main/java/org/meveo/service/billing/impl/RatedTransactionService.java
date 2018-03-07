@@ -895,8 +895,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
             invoiceAgregateSubcat.setQuantity((BigDecimal) object[4]);
             invoiceAgregateSubcat.setDescription("yohooo");
             
-            invoiceAgregateService.create(invoiceAgregateSubcat);
-            
             //invoiceAgregateSubcatList.add(invoiceAgregateSubcat);    
             if (!isVirtual) {
                 invoiceAgregateService.create(invoiceAgregateSubcat);
