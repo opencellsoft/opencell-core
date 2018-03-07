@@ -75,13 +75,16 @@
     </changeSet>
 
     <changeSet id="#2792_20180119_migration_P" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>update ${db.schema}.billing_usage_charge_inst set priority = cat_usage_charge_template.priority from ${db.schema}.billing_charge_instance, ${db.schema}.cat_usage_charge_template where billing_charge_instance.id=billing_usage_charge_inst.id and
-            billing_charge_instance.charge_template_id=cat_usage_charge_template.id</sql>
+        <sql>update ${db.schema}.billing_usage_charge_inst set priority = cat_usage_charge_template.priority from ${db.schema}.billing_charge_instance, ${db.schema}.cat_usage_charge_template where
+            billing_charge_instance.id=billing_usage_charge_inst.id and
+            billing_charge_instance.charge_template_id=cat_usage_charge_template.id
+        </sql>
     </changeSet>
 
     <changeSet id="#2792_20180119_migration_M" author="AndriusKarpavicius" dbms="mysql">
         <sql>update ${db.schema}.billing_usage_charge_inst join ${db.schema}.billing_charge_instance on billing_charge_instance.id=billing_usage_charge_inst.id join ${db.schema}.cat_usage_charge_template on
-            billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority</sql>
+            billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority
+        </sql>
     </changeSet>
 
     <changeSet id="#2894_20180129" author="smichea">
@@ -89,7 +92,7 @@
             <column name="provider" type="varchar(255)"></column>
         </addColumn>
     </changeSet>
-      
+
     <changeSet id="#3190_26012018_2" author="anasseh" dbms="mysql">
         <createTable tableName="ar_payment_history_seq">
             <column name="next_val" type="BIGINT">
@@ -97,8 +100,8 @@
             </column>
         </createTable>
         <sql>insert into ar_payment_history_seq values(1)</sql>
-     </changeSet>
-     
+    </changeSet>
+
     <changeSet author="anasseh" id="#3190_26012018">
         <createSequence sequenceName="ar_payment_history_seq" />
         <createTable tableName="ar_payment_history">
@@ -113,126 +116,132 @@
                 <constraints nullable="false" />
             </column>
             <column name="updated" type="datetime" />
-            <column name="customer_account_code" type="varchar(255)" >
-                 <constraints nullable="false" />
+            <column name="customer_account_code" type="varchar(255)">
+                <constraints nullable="false" />
             </column>
             <column name="customer_account_name" type="varchar(255)" />
             <column name="seller_code" type="varchar(255)" />
-            
+
             <column name="operation_date" type="datetime">
                 <constraints nullable="false" />
             </column>
             <column name="last_update_date" type="datetime" />
-            <column name="amount_cts" type="bigint" >
+            <column name="amount_cts" type="bigint">
                 <constraints nullable="false" />
-            </column>            		
-            <column name="sync_status" type="varchar(50)" >
+            </column>
+            <column name="sync_status" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
             <column name="async_status" type="varchar(50)" />
-             <column name="status" type="varchar(50)" />
+            <column name="status" type="varchar(50)" />
             <column name="external_payment_id" type="varchar(255)" />
             <column name="error_code" type="varchar(255)" />
             <column name="error_message" type="varchar(2000)" />
             <column name="error_type" type="varchar(50)" />
-            <column name="operation_category" type="varchar(50)" >
+            <column name="operation_category" type="varchar(50)">
                 <constraints nullable="false" />
             </column>
             <column name="payment_gateway_code" type="varchar(255)" />
             <column name="payment_method_type" type="varchar(50)" />
-            <column name="payment_method_name" type="varchar(50)" />            
+            <column name="payment_method_name" type="varchar(50)" />
             <column name="payment_id" type="bigint" />
             <column name="refund_id" type="bigint" />
             <column name="creator" type="varchar(100)" />
             <column name="updater" type="varchar(100)" />
         </createTable>
-               
-        <addForeignKeyConstraint baseColumnNames="payment_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_pay" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />   
-     
-        <addForeignKeyConstraint baseColumnNames="refund_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_refund" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />                    
+
+        <addForeignKeyConstraint baseColumnNames="payment_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_pay" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
+
+        <addForeignKeyConstraint baseColumnNames="refund_id" baseTableName="ar_payment_history" constraintName="fk_payhisto_ao_refund" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ar_account_operation" />
     </changeSet>
-    
+
     <changeSet author="anasseh" id="#3136_07022018">
         <sql>update ${db.schema}.meveo_job_instance set cf_values = replace (cf_values, 'PaymentCardJob_','PaymentJob_'), job_template = replace(job_template,'PaymentCardJob','PaymentJob') </sql>
-        <sql>update ${db.schema}.crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to =  replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
+        <sql>update ${db.schema}.crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to = replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
     </changeSet>
-    
+
     <changeSet author="anasseh" id="#2830_15022018">
-    <!-- account_entity -->         
-        	<addColumn tableName="account_entity">
-    			<column name="address_country_id" type="bigint" />
-    		</addColumn>
-    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />       
-        <sql>update ${db.schema}.account_entity ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>
+        <!-- account_entity -->
+        <addColumn tableName="account_entity">
+            <column name="address_country_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <sql>update ${db.schema}.account_entity ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+            upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="account_entity" columnName="address_country" />
-       
-    <!-- com_sender_config -->                
-        	<addColumn tableName="com_sender_config">
-    			<column name="address_country_id" type="bigint" />
-    		</addColumn>
-    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />     
-         <sql>update ${db.schema}.com_sender_config ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>   
-         <dropColumn tableName="com_sender_config" columnName="address_country" />
-          
-    <!-- crm_provider_contact -->                              
-        	<addColumn tableName="crm_provider_contact">
-    			<column name="address_country_id" type="bigint" />
-    		</addColumn>
-    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" /> 
-        <sql>update ${db.schema}.crm_provider_contact ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>        
+
+        <!-- com_sender_config -->
+        <addColumn tableName="com_sender_config">
+            <column name="address_country_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <sql>update ${db.schema}.com_sender_config ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+            upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
+        <dropColumn tableName="com_sender_config" columnName="address_country" />
+
+        <!-- crm_provider_contact -->
+        <addColumn tableName="crm_provider_contact">
+            <column name="address_country_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <sql>update ${db.schema}.crm_provider_contact ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+            upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="crm_provider_contact" columnName="address_country" />
-        
-    <!-- crm_provider -->        
-       	<addColumn tableName="crm_provider">
-    			<column name="address_country_id" type="bigint" />
-    		</addColumn>
-    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />              
-        <sql>update ${db.schema}.crm_provider ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql> 
+
+        <!-- crm_provider -->
+        <addColumn tableName="crm_provider">
+            <column name="address_country_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <sql>update ${db.schema}.crm_provider ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
+            )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="crm_provider" columnName="address_country" />
-          
-    <!-- crm_seller -->                    
-        	<addColumn tableName="crm_seller">
-    			<column name="address_country_id" type="bigint" />
-    		</addColumn>
-    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />    
-         <sql>update ${db.schema}.crm_seller ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>
-        <dropColumn tableName="crm_seller" columnName="address_country" />    
-            
-    <!-- ord_order_item -->            
-        	<addColumn tableName="ord_order_item">
-    			<column name="address_country_id" type="bigint" />
-    		</addColumn>
-    		<addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />                       
-        <sql>update ${db.schema}.ord_order_item ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%'  or upper(ac.description_i18n )like '%'||  upper(ae.address_country) ||'%') </sql>   
-        <dropColumn tableName="ord_order_item" columnName="address_country" />      
+
+        <!-- crm_seller -->
+        <addColumn tableName="crm_seller">
+            <column name="address_country_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <sql>update ${db.schema}.crm_seller ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
+            )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
+        <dropColumn tableName="crm_seller" columnName="address_country" />
+
+        <!-- ord_order_item -->
+        <addColumn tableName="ord_order_item">
+            <column name="address_country_id" type="bigint" />
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+        <sql>update ${db.schema}.ord_order_item ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+            upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
+        <dropColumn tableName="ord_order_item" columnName="address_country" />
     </changeSet>
-    
-     <changeSet id="#2875_20171201" author="anasseh"> 
+
+    <changeSet id="#2875_20171201" author="anasseh">
         <addColumn tableName="ar_payment_gateway">
             <column name="country_id" type="bigint" />
-        </addColumn> 
-        <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_country" deferrable="false" initiallyDeferred="false"
-            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-            
+        </addColumn>
+        <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_country" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+            onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
+
         <dropColumn tableName="ar_payment_gateway" columnName="trading_country_id" />
-    
+
         <addColumn tableName="ar_payment_gateway">
             <column name="nb_tries" type="int" />
-        </addColumn>  
-        <addColumn tableName="ar_payment_gateway">    
-            <column name="replay_cause" type="varchar(100)" />   
-        </addColumn>    
+        </addColumn>
+        <addColumn tableName="ar_payment_gateway">
+            <column name="replay_cause" type="varchar(100)" />
+        </addColumn>
 
-        <addColumn tableName="ar_payment_gateway">    
-           <column name="errors_to_replay" type="varchar(400)" />   
-       </addColumn>              
+        <addColumn tableName="ar_payment_gateway">
+            <column name="errors_to_replay" type="varchar(400)" />
+        </addColumn>
     </changeSet>
 </databaseChangeLog> 
