@@ -20,6 +20,7 @@ package org.meveo.service.payments.impl;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -28,6 +29,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OCCTemplate;
@@ -45,6 +48,9 @@ public class RefundService extends PersistenceService<Refund> {
 
     @Inject
     private OCCTemplateService oCCTemplateService;
+    
+    @Inject
+    private AccountOperationService accountOperationService;
 
     @MeveoAudit
     @Override
@@ -58,10 +64,11 @@ public class RefundService extends PersistenceService<Refund> {
      * @param customerAccount customer account
      * @param ctsAmount amount in cent
      * @param doPaymentResponseDto payment by card dto
+     * @param aoIdsToPay  list AO to refunded
      * @return the AO id created
      * @throws BusinessException business exception.
      */
-    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto,PaymentMethodEnum paymentMethodType) throws BusinessException {
+    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto,PaymentMethodEnum paymentMethodType, List<Long> aoIdsToPay) throws BusinessException {
        String occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD");
        if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
            occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.dd", "RB_PLVT");
@@ -71,7 +78,7 @@ public class RefundService extends PersistenceService<Refund> {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
         }
         Refund refund = new Refund();
-        refund.setPaymentMethod(customerAccount.getPreferredPaymentMethod().getPaymentType());
+        refund.setPaymentMethod(paymentMethodType);
         refund.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         refund.setUnMatchingAmount(refund.getAmount());
         refund.setMatchingAmount(BigDecimal.ZERO);
@@ -86,6 +93,20 @@ public class RefundService extends PersistenceService<Refund> {
         refund.setTransactionDate(new Date());
         refund.setMatchingStatus(MatchingStatusEnum.O);
         refund.setBankReference(doPaymentResponseDto.getBankRefenrence());
+        BigDecimal sumTax = BigDecimal.ZERO;
+        BigDecimal sumWithoutTax = BigDecimal.ZERO;
+        String orderNums = "";
+        for (Long aoId : aoIdsToPay) {
+            AccountOperation ao = accountOperationService.findById(aoId);
+            sumTax = sumTax.add(ao.getTaxAmount());
+            sumWithoutTax = sumWithoutTax.add(ao.getAmountWithoutTax());
+            if (!StringUtils.isBlank(ao.getOrderNumber())) {
+                orderNums = orderNums + ao.getOrderNumber() + "|";
+            }
+        }
+        refund.setTaxAmount(sumTax);
+        refund.setAmountWithoutTax(sumWithoutTax);
+        refund.setOrderNumber(orderNums);
         create(refund);
         return refund.getId();
 

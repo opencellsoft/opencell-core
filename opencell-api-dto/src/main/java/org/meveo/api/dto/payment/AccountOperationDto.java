@@ -27,6 +27,8 @@ public class AccountOperationDto extends BaseDto {
 	private String accountCode;
 	private String accountCodeClientSide;
 	private BigDecimal amount;
+	private BigDecimal amountWithoutTax;
+	private BigDecimal taxAmount;
 	private BigDecimal matchingAmount = BigDecimal.ZERO;
 	private BigDecimal unMatchingAmount = BigDecimal.ZERO;
 	private MatchingStatusEnum matchingStatus;
@@ -34,7 +36,9 @@ public class AccountOperationDto extends BaseDto {
 	private String occDescription;
 	private String customerAccount;
 	private Boolean excludedFromDunning;
-
+	// order number, '|' is used as seperator if many orders
+	private String orderNumber;
+	
 	private MatchingAmountsDto matchingAmounts;
 	private OtherCreditAndChargeDto otherCreditAndCharge;
 	private RecordedInvoiceDto recordedInvoice;
@@ -44,6 +48,7 @@ public class AccountOperationDto extends BaseDto {
 	private String bankReference;
 	private Date bankCollectionDate;
 	private Date depositDate;
+	private String paymentMethod;
 	
 	private CustomFieldsDto customFields;
 
@@ -252,4 +257,61 @@ public class AccountOperationDto extends BaseDto {
 	public void setDepositDate(Date depositDate) {
 		this.depositDate = depositDate;
 	}
+
+    /**
+     * @return the amountWithoutTax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    /**
+     * @param amountWithoutTax the amountWithoutTax to set
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    /**
+     * @return the taxAmount
+     */
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+
+    /**
+     * @param taxAmount the taxAmount to set
+     */
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    /**
+     * @return the orderNumber
+     */
+    public String getOrderNumber() {
+        return orderNumber;
+    }
+
+    /**
+     * @param orderNumber the orderNumber to set
+     */
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    /**
+     * @return the paymentMethod
+     */
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * @param paymentMethod the paymentMethod to set
+     */
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+	
 }

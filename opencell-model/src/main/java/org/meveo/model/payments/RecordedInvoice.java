@@ -27,8 +27,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -55,18 +53,8 @@ public class RecordedInvoice extends AccountOperation {
     @Temporal(TemporalType.DATE)
     private Date invoiceDate;
 
-    @Column(name = "amount_without_tax", precision = 23, scale = 12)
-    private BigDecimal amountWithoutTax;
-
-    @Column(name = "tax_amount", precision = 23, scale = 12)
-    private BigDecimal taxAmount;
-
     @Column(name = "net_to_pay", precision = 23, scale = 12)
     private BigDecimal netToPay;
-
-    @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
 
     @Column(name = "payment_info", length = 255)
     @Size(max = 255)
@@ -119,36 +107,12 @@ public class RecordedInvoice extends AccountOperation {
         this.invoiceDate = invoiceDate;
     }
 
-    public BigDecimal getAmountWithoutTax() {
-        return amountWithoutTax;
-    }
-
-    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-        this.amountWithoutTax = amountWithoutTax;
-    }
-
-    public BigDecimal getTaxAmount() {
-        return taxAmount;
-    }
-
-    public void setTaxAmount(BigDecimal taxAmount) {
-        this.taxAmount = taxAmount;
-    }
-
     public BigDecimal getNetToPay() {
         return netToPay;
     }
 
     public void setNetToPay(BigDecimal netToPay) {
         this.netToPay = netToPay;
-    }
-
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
     }
 
     public String getPaymentInfo() {
@@ -228,6 +192,8 @@ public class RecordedInvoice extends AccountOperation {
     public void setDdrequestItems(List<DDRequestItem> ddrequestItems) {
         this.ddrequestItems = ddrequestItems;
     }
+    
+    
 
     @Transient
     public DDRequestItem getPayedDDRequestItem() {
