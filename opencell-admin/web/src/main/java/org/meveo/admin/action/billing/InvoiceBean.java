@@ -234,6 +234,29 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
                 }
             }
         }
+        
+        ///
+        InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
+        headerCat.setDescription("min amount");
+        headerCat.setCode("min_amount");
+        headerCat.setAmountWithoutTax(new BigDecimal(100));
+        headerCat.setAmountWithTax(new BigDecimal(120));
+        
+        LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
+        for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
+            if (ratedTransaction.getWallet() == null) {
+                InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
+                headerSubCat.setDescription("ba billing amount");
+                headerSubCat.setCode(ratedTransaction.getCode());
+                headerSubCat.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
+                headerSubCat.setAmountWithTax(ratedTransaction.getAmountWithTax());
+                headerSubCat.setRatedTransactions(entity.getRatedTransactions());
+                headerSubCategories.put("yooo", headerSubCat);
+            }
+        }
+        headerCat.setInvoiceSubCategoryDTOMap(headerSubCategories);
+        headerCategories.put("min_amount", headerCat);
+        
         return new ArrayList<InvoiceCategoryDTO>(headerCategories.values());
     }
 
