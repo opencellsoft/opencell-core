@@ -44,4 +44,35 @@
         	<column name="role_id" value="-8"></column>
         </insert>
 	</changeSet>
+	<changeSet author="anasseh" id="#3167_20022018">
+	    <sql>update ${db.schema}.ar_payment_gateway set description ='Ingenico API Connect OGONE for Sepa payments', code='INGENICO_OGONE_SEPA', uuid='gateway_INGENICO_ONGONE' ,disabled=0, trading_currency_id = -1 , payment_method ='DIRECTDEBIT' where id =-1</sql> 
+	    <sql>delete from ${db.schema}.ar_payment_gateway where id =-2</sql> 
+	    <sql>delete from ${db.schema}.ar_payment_gateway where id =-3</sql>   
+	   	<insert tableName="ar_payment_gateway">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="SLIMPAY_SEPA" />
+			<column name="description" value="Slimpay for Sepa payments" />
+			<column name="type" value="NATIF" />
+			<column name="payment_method" value="DIRECTDEBIT" />
+			<column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
+			<column name="trading_currency_id" value="-2" /><!-- EUR -->
+			<column name="uuid" value="gateway_SLIMPAY" />
+		</insert>  	
+	   	<insert tableName="ar_payment_gateway">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="INGENICO_OGONE_CARD" />
+			<column name="description" value="Ingenico API Connect OGONE for Card payments" />
+			<column name="type" value="NATIF" />
+			<column name="payment_method" value="CARD" />
+			<column name="implementation_class_name" value="org.meveo.service.payments.impl.SlimpayGatewayPayment" />
+			<column name="trading_currency_id" value="-2" /><!-- EUR -->
+			<column name="uuid" value="gateway_SLIMPAY" />
+		</insert> 			 
+    </changeSet>
 </databaseChangeLog>

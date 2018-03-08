@@ -12,9 +12,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -32,9 +30,7 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * 
  */
-// @Startup
-@Singleton
-@Lock(LockType.READ)
+@Stateless
 public class CdrEdrProcessingCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 1435137623784514994L;

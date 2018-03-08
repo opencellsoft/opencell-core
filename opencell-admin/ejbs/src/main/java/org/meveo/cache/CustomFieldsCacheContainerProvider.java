@@ -14,9 +14,7 @@ import java.util.TreeMap;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.SerializationUtils;
@@ -43,9 +41,7 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  */
-// @Startup
-@Singleton
-@Lock(LockType.READ)
+@Stateless
 public class CustomFieldsCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = 180156064688145292L;
@@ -60,7 +56,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     private CustomFieldTemplateService customFieldTemplateService;
 
     @EJB
-    CustomEntityTemplateService customEntityTemplateService;
+    private CustomEntityTemplateService customEntityTemplateService;
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -377,7 +373,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param appliesTo entity (appliesTo value)
      * @return A map of custom field templates with template code as a key or NULL if cache key not found
      */
-    @Lock(LockType.READ)
     public Map<String, CustomFieldTemplate> getCustomFieldTemplates(String appliesTo) {
         CacheKeyStr key = new CacheKeyStr(currentUser.getProviderCode(), appliesTo);
         Map<String, CustomFieldTemplate> cfts = cftsByAppliesTo.get(key);
@@ -389,7 +384,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * 
      * @return A list of custom entity templates
      */
-    @Lock(LockType.READ)
     public Collection<CustomEntityTemplate> getCustomEntityTemplates() {
 
         return cetsByCode.values();
@@ -401,7 +395,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param code Custom entity template code
      * @return Custom entity template or NULL if not found
      */
-    @Lock(LockType.READ)
     public CustomEntityTemplate getCustomEntityTemplate(String code) {
         CacheKeyStr key = new CacheKeyStr(currentUser.getProviderCode(), code);
         return cetsByCode.get(key);
@@ -414,7 +407,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param entity Entity
      * @return Custom field template
      */
-    @Lock(LockType.READ)
     public CustomFieldTemplate getCustomFieldTemplate(String code, ICustomFieldEntity entity) {
         try {
             return getCustomFieldTemplate(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
@@ -432,7 +424,6 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
      * @param appliesTo Entity appliesTo value
      * @return Custom field template or NULL if not found
      */
-    @Lock(LockType.READ)
     public CustomFieldTemplate getCustomFieldTemplate(String code, String appliesTo) {
 
         Map<String, CustomFieldTemplate> cfts = getCustomFieldTemplates(appliesTo);

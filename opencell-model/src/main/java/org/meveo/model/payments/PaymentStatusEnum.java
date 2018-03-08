@@ -23,5 +23,5 @@ package org.meveo.model.payments;
  */
 public enum PaymentStatusEnum {
 
-    ACCEPTED, PENDING, REJECTED
+    ACCEPTED, PENDING, REJECTED, ERROR;
 }

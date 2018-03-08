@@ -59,6 +59,7 @@ import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
+import org.meveo.model.billing.Country;
 import org.meveo.model.billing.TradingCountry;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.crm.AccountHierarchyTypeEnum;
@@ -75,9 +76,9 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
 import org.meveo.model.shared.Title;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.billing.impl.BillingAccountService;
-import org.meveo.service.billing.impl.TradingCountryService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.crm.impl.AccountModelScriptService;
@@ -141,9 +142,6 @@ public class AccountHierarchyApi extends BaseApi {
     private UserAccountService userAccountService;
 
     @Inject
-    private TradingCountryService tradingCountryService;
-
-    @Inject
     private CountryApi countryApi;
 
     @Inject
@@ -169,6 +167,9 @@ public class AccountHierarchyApi extends BaseApi {
 
     @Inject
     private BusinessAccountModelService businessAccountModelService;
+    
+    @Inject
+    private  CountryService countryService;
 
     @Inject
     @MeveoParamBean
@@ -628,11 +629,11 @@ public class AccountHierarchyApi extends BaseApi {
             qb.addCriterionEntity("c.customerCategory", customerCategory);
         }
         if (!StringUtils.isBlank(postData.getCountryCode())) {
-            TradingCountry tradingCountry = tradingCountryService.findByTradingCountryCode(postData.getCountryCode());
-            if (tradingCountry == null) {
+            Country country = countryService.findByCode(postData.getCountryCode());
+            if (country == null) {
                 throw new EntityDoesNotExistsException(TradingCountry.class, postData.getCountryCode());
             }
-            qb.addCriterion("c.address.country", "=", tradingCountry.getPrDescription(), true);
+            qb.addCriterion("c.address.country", "=", country, true);
         }
         if (!StringUtils.isBlank(postData.getFirstName())) {
             qb.addCriterion("c.name.firstName", "=", postData.getFirstName(), true);
@@ -838,7 +839,7 @@ public class AccountHierarchyApi extends BaseApi {
             address.setAddress2(postData.getAddress().getAddress2());
             address.setAddress3(postData.getAddress().getAddress3());
             address.setCity(postData.getAddress().getCity());
-            address.setCountry(postData.getAddress().getCountry());
+            address.setCountry(countryService.findByCode(postData.getAddress().getCountry()));
             address.setState(postData.getAddress().getState());
             address.setZipCode(postData.getAddress().getZipCode());
         }

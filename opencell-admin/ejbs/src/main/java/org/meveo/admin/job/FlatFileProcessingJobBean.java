@@ -201,14 +201,11 @@ public class FlatFileProcessingJobBean {
                     log.error("Failed to close file parser");
                 }
                 try {
-                    if (fileParser != null) {
-                        fileParser.close();
-                    }
                     if (script != null) {
                         script.finalize(context);
                     }
                 } catch (Exception e) {
-                    report += "\r\n error in script finailzation" + e.getMessage();
+                    report += "\r\n error in script finailzation : " + e.getMessage();
                 }
                 try {
                     if (currentFile != null) {

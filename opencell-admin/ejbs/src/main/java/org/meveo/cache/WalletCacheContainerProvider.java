@@ -10,9 +10,7 @@ import java.util.Map;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.enterprise.event.Event;
 import javax.inject.Inject;
 
@@ -39,9 +37,7 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * 
  */
-// @Startup
-@Singleton
-@Lock(LockType.READ)
+@Stateless
 public class WalletCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4969288143287203121L;
@@ -382,12 +378,12 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         return itemsToBeRemoved;
     }
 
-    /**
-     * Clear all the data from cache
-     */
-    private void clearAll() {
-        balanceCache.clear();
-        reservedBalanceCache.clear();
-        usageChargeInstanceWalletCache.clear();
-    }
+    // /**
+    // * Clear all the data from cache
+    // */
+    // private void clearAll() {
+    // balanceCache.clear();
+    // reservedBalanceCache.clear();
+    // usageChargeInstanceWalletCache.clear();
+    // }
 }

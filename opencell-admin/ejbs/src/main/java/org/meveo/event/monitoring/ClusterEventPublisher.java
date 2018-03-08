@@ -17,7 +17,6 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 
 @JMSDestinationDefinitions(value = { @JMSDestinationDefinition(name = "java:/topic/CLUSTEREVENTTOPIC", interfaceName = "javax.jms.Topic", destinationName = "ClusterEventTopic") })

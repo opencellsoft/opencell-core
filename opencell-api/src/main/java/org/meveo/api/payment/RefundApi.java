@@ -12,7 +12,7 @@ import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.BaseApi;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.RefundDto;
 import org.meveo.api.exception.BusinessApiException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -30,6 +30,7 @@ import org.meveo.model.payments.Refund;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
+import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
 
@@ -38,6 +39,9 @@ public class RefundApi extends BaseApi {
 
     @Inject
     private RefundService refundService;
+
+    @Inject
+    private PaymentService paymentService;
 
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
@@ -59,7 +63,7 @@ public class RefundApi extends BaseApi {
      * @throws BusinessException business exception
      * @throws MeveoApiException meveo api exception
      */
-    public Long createPayment(RefundDto refundDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
+    public Long createRefund(RefundDto refundDto) throws NoAllOperationUnmatchedException, UnbalanceAmountException, BusinessException, MeveoApiException {
         log.info("create payment for amount:" + refundDto.getAmount() + " paymentMethodEnum:" + refundDto.getPaymentMethod() + " isToMatching:" + refundDto.isToMatching()
                 + "  customerAccount:" + refundDto.getCustomerAccountCode() + "...");
 
@@ -139,11 +143,7 @@ public class RefundApi extends BaseApi {
         }
         log.debug("refund created for amount:" + refund.getAmount());
 
-        if (refund != null) {
-            return refund.getId();
-        } else {
-            return null;
-        }
+        return refund.getId();
 
     }
 
@@ -172,12 +172,12 @@ public class RefundApi extends BaseApi {
                 refundDto.setTransactionDate(refund.getTransactionDate());
                 refundDto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(op, true));
                 result.add(refundDto);
-            } 
+            }
         }
         return result;
     }
 
-    public PayByCardResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
+    public PaymentResponseDto refundByCard(PayByCardDto cardPaymentRequestDto)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException, MeveoApiException {
 
         if (StringUtils.isBlank(cardPaymentRequestDto.getCtsAmount())) {
@@ -225,15 +225,15 @@ public class RefundApi extends BaseApi {
             throw new BusinessApiException("Can not process payment as prefered payment method is " + preferedMethod);
         }
 
-        PayByCardResponseDto doPaymentResponseDto = null;
+        PaymentResponseDto doPaymentResponseDto = null;
         if (useCard) {
 
-            doPaymentResponseDto = refundService.refundByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
+            doPaymentResponseDto = paymentService.refundByCard(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getCardNumber(),
                 cardPaymentRequestDto.getOwnerName(), cardPaymentRequestDto.getCvv(), cardPaymentRequestDto.getExpiryDate(), cardPaymentRequestDto.getCardType(),
-                cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());
+                cardPaymentRequestDto.getAoToPay(), cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
         } else {
-            doPaymentResponseDto = refundService.refundByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
-                cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch());
+            doPaymentResponseDto = paymentService.refundByCardToken(customerAccount, cardPaymentRequestDto.getCtsAmount(), cardPaymentRequestDto.getAoToPay(),
+                cardPaymentRequestDto.isCreateAO(), cardPaymentRequestDto.isToMatch(), null);
         }
 
         return doPaymentResponseDto;
