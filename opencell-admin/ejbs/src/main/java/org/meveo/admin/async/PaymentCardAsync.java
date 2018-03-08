@@ -41,7 +41,9 @@ public class PaymentCardAsync {
      * @param result job execution result
      * @param createAO true/ false to create account operation
      * @param matchingAO matching account operation
+     * @param paymentGateway paymentGateway to use
      * @param operationCategory operation category.
+     * @param paymentMethodType Payment method type to use
      * @return future result
      */
     @Asynchronous

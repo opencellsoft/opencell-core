@@ -189,7 +189,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param cvv cvv number
      * @param expiryDate expiry date
      * @param cardType card type
-     * @param aoIdsToPay list of account operation's id to refund
+     * @param aoToRefund list of account operation's id to refund
      * @param createAO if true payment account operation will be created.
      * @param matchingAO  if true matching account operation will be created.
      * @param paymentGateway the set this payment gateway will be used.
@@ -199,9 +199,9 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws UnbalanceAmountException balance amount exception.
      */
     public PaymentResponseDto refundByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
-            CreditCardTypeEnum cardType, List<Long> aoToPay, boolean createAO, boolean toMatch, PaymentGateway paymentGateway)
+            CreditCardTypeEnum cardType, List<Long> aoToRefund, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-        return doPayment(customerAccount, ctsAmount, aoToPay, createAO, toMatch, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, false, PaymentMethodEnum.CARD);
+        return doPayment(customerAccount, ctsAmount, aoToRefund, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, false, PaymentMethodEnum.CARD);
     }
 
    /**
@@ -351,10 +351,11 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Create the payment account operation for the payment that was processed.
+     * 
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
-     * @param paymentMethodType
+     * @param paymentMethodType payment method used
      * @param aoIdsToPay  list AO to paid
      * @return the AO id created
      * @throws BusinessException business exception.
@@ -535,6 +536,7 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Retrieve the account Operation that was paid.
+     * 
      * @param paymentOrRefund  the payment or refund.
      * @return  the account Operation that was paid
      * @throws  BusinessException Business Exception

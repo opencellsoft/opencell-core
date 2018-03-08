@@ -34,6 +34,7 @@ public class PaymentGatewayService extends BusinessService<PaymentGateway> {
      *
      * @param customerAccount the customer account
      * @param paymentMethod the payment method
+     * @param cardType card type
      * @return the payment gateway
      * @throws BusinessException the business exception
      */

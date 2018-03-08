@@ -91,6 +91,7 @@ public interface GatewayPaymentInterface {
      * 
      * @param paymentID payment id
      * @param paymentMethodType payment method (CARD or DIRECTDEBIT)
+     * @return payment response dto
      * @throws BusinessException business exception
      */
     public PaymentResponseDto checkPayment(String paymentID,PaymentMethodEnum paymentMethodType) throws BusinessException;
@@ -118,6 +119,7 @@ public interface GatewayPaymentInterface {
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException;
 
     /**
+     * Initiate a refund with token. 
      * 
      * @param paymentToken payment token
      * @param ctsAmount amount in cent
@@ -128,6 +130,7 @@ public interface GatewayPaymentInterface {
     public PaymentResponseDto doRefundToken(CardPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException;
 
     /**
+     * Initiate a refund with card.
      * 
      * @param customerAccount customer account
      * @param ctsAmount amount in cent
@@ -138,7 +141,7 @@ public interface GatewayPaymentInterface {
      * @param cardType card type
      * @param countryCode country code.
      * @param additionalParams additional params.
-     * @return payment by card
+     * @return payment response dto
      * @throws BusinessException business exception.
      */
     public PaymentResponseDto doRefundCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expirayDate,
@@ -150,7 +153,7 @@ public interface GatewayPaymentInterface {
      * @param mandatReference Mandate reference (RUM) to check
      * @param mandateId Mandate id to check
      * @return MandatInfoDto
-     * @throws BusinessException
+     * @throws BusinessException Business Exception 
      */
     public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException;
    
