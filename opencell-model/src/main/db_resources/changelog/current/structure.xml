@@ -92,6 +92,21 @@
             <column name="provider" type="varchar(255)"></column>
         </addColumn>
     </changeSet>
+    
+    <changeSet author="EdwardPLegaspi" id="#2370_20180306 - customer categories">
+        <createTable tableName="cat_product_offer_customer_category">
+            <column name="product_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="customer_category_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+            <column name="indx" type="int4">
+                <constraints nullable="false" />
+            </column>
+        </createTable>
+        <addPrimaryKey columnNames="product_id, customer_category_id" constraintName="cat_product_offer_customer_category_pkey" tableName="cat_product_offer_customer_category" />
+    </changeSet>
 
     <changeSet id="#3190_26012018_2" author="anasseh" dbms="mysql">
         <createTable tableName="ar_payment_history_seq">
