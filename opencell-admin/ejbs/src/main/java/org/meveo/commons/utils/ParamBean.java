@@ -38,11 +38,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Contains application configuration settings
+ * 
  * @author anasseh
- */
-/**
- * @author Wassim Drira
- *
  */
 public class ParamBean {
 
@@ -53,7 +51,7 @@ public class ParamBean {
     private String _propertyFile;
 
     /**
-     * true if it allows multi service instance.
+     * True if services can be instantiated and activated multiple times per subscription
      */
     public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
 
@@ -63,39 +61,48 @@ public class ParamBean {
     private Properties properties = new Properties();
 
     /**
-     * map of categories.
+     * Map of categories.
      */
     private HashMap<String, String> categories = new HashMap<String, String>();
+
     /**
-     * true if read file is ok.
+     * True if read file is ok.
      */
     private boolean valid = false;
 
     /**
-     * instance unique.
+     * Are current properties for secondary provider/tenant
      */
-    private static ParamBean instance = null;
-
-    private static Boolean multiTenancyEnabled;
-    private static Map<String, ParamBean> multiTenancyParams = new HashMap<String, ParamBean>();
-    private static boolean inheritance = true;
     private boolean isSubTenant = false;
 
     /**
-     * reload properties file.
+     * Configuration instance
+     */
+    private static ParamBean instance = null;
+
+    /**
+     * Is multitenancy enabled
+     */
+    private static Boolean multiTenancyEnabled;
+
+    /**
+     * Application configuration settings by a provider/tenant
+     */
+    private static Map<String, ParamBean> multiTenancyParams = new HashMap<String, ParamBean>();
+
+    /**
+     * Reload application configuration properties file.
      */
     private static boolean reload = false;
 
-    /**
-     * default constructor.
-     */
     public ParamBean() {
 
     }
 
     /**
-     * Constructeur de ParamBean.
+     * Loads application configuration properties from file
      * 
+     * @param name System property containing a file name, or a relative filename in Wildfly server's configuration directory
      */
     private ParamBean(String name) {
         super();
@@ -112,27 +119,29 @@ public class ParamBean {
             }
         }
         log.info("Created Parambean for file:" + _propertyFile);
-        setValid(initialize());
+        initialize();
     }
 
     /**
-     * Retourne une instance de ParamBean.
+     * Get an application configuration instance from a given file.
      * 
-     * @param propertiesName property name
-     * @return propertiesName properties name
+     * @param propertiesName System property containing a file name, or a relative filename in Wildfly server's configuration directory
+     * @return Application configuration instance
      */
     public static ParamBean getInstance(String propertiesName) {
         if (reload) {
-            setInstance(new ParamBean(propertiesName));
+            instance = new ParamBean(propertiesName);
         } else if (instance == null) {
-            setInstance(new ParamBean(propertiesName));
+            instance = new ParamBean(propertiesName);
         }
 
         return instance;
     }
 
     /**
-     * @return param bean.
+     * Get an application configuration instance from a default file.
+     * 
+     * @return Application configuration instance
      */
     public static ParamBean getInstance() {
         try {
@@ -144,10 +153,11 @@ public class ParamBean {
     }
 
     /**
-     * Return a ParamBean of the specific provider, if it does not exists, it will be created By the default the file name is <providerCode.properties>
+     * Return an application configuration instance of the specific provider, if it does not exists, it will be created By the default the file name is
+     * &gt;providerCode.properties&lt;
      * 
-     * @param provider
-     * @return param bean.
+     * @param provider Provider code
+     * @return Application configuration instance
      */
     public static ParamBean getInstanceByProvider(String provider) {
         try {
@@ -171,7 +181,7 @@ public class ParamBean {
     }
 
     /**
-     * Checks if multitenancy is enabled
+     * Checks if multitenancy is enabled. Flag is consulted in a main provider's/tenant's property file
      */
     public static boolean isMultitenancyEnabled() {
         if (multiTenancyEnabled == null) {
@@ -181,8 +191,10 @@ public class ParamBean {
     }
 
     /**
-     * @param provider
-     * @return
+     * Get a file directory root for a given provider
+     * 
+     * @param provider Provider code
+     * @return Full path to provider's data files
      */
     public String getChrootDir(String provider) {
         if (!isMultitenancyEnabled() || "".equals(provider) || provider == null) {
@@ -197,14 +209,6 @@ public class ParamBean {
     }
 
     /**
-     * 
-     * @param newInstance instance of ParamBean
-     */
-    private static void setInstance(ParamBean newInstance) {
-        instance = newInstance;
-    }
-
-    /**
      * Get application configuration properties
      * 
      * @return Properties
@@ -214,19 +218,21 @@ public class ParamBean {
     }
 
     /**
+     * Is file a valid file (was read successfully)
      * 
-     * @param new_valid true/false
+     * @return boolean
      */
-    protected void setValid(boolean new_valid) {
-        valid = new_valid;
+    public boolean isValid() {
+        return valid;
     }
 
     /**
+     * Initialize/load application configuration property file
      * 
-     * @return <code>true/false</code>
+     * @return true/false
      */
-    public boolean initialize() {
-        log.debug("-Debut initialize  from file :" + _propertyFile + "...");
+    private void initialize() {
+        log.debug("Initialize  from file :" + _propertyFile + "...");
         if (_propertyFile.startsWith("file:")) {
             _propertyFile = _propertyFile.substring(5);
         }
@@ -259,45 +265,48 @@ public class ParamBean {
         // log.debug("-Fin initialize , result:" + result
         // + ", portability.defaultDelay="
         // + getProperty("portability.defaultDelay"));
-        return result;
+        valid = result;
     }
 
+    /**
+     * Should application configuration instance be reloaded
+     * 
+     * @param reload True if reload
+     */
     public static void setReload(boolean reload) {
         ParamBean.reload = reload;
     }
 
     /**
-     * Accesseur sur l'init du Bean.
+     * Set properties
      * 
-     * @return boolean
-     */
-    public boolean isValid() {
-        return valid;
-    }
-
-    /**
-     * 
-     * 
-     * @param new_properties Properties
+     * @param new_properties New properties to set
      */
     public void setProperties(Properties new_properties) {
         properties = new_properties;
     }
 
     /**
-     * Set property.
+     * Set a single property.
      * 
-     * @param property_p java.lang.String
-     * @param vNewValue new value.
+     * @param property Property key
+     * @param value Property value
      */
-    public void setProperty(String property_p, String vNewValue) {
-        log.info("setProperty " + property_p + "->" + vNewValue);
-        if (vNewValue == null) {
-            vNewValue = "";
+    public void setProperty(String property, String value) {
+        log.info("setProperty " + property + "->" + value);
+        if (value == null) {
+            value = "";
         }
-        getProperties().setProperty(property_p, vNewValue);
+        getProperties().setProperty(property, value);
     }
 
+    /**
+     * Set a single property in a category
+     * 
+     * @param property Property key
+     * @param value Property value
+     * @param category Category name
+     */
     public void setProperty(String key, String value, String category) {
         setProperty(key, value);
         if (category != null) {
@@ -306,17 +315,19 @@ public class ParamBean {
     }
 
     /**
+     * Save application configuration properties to a default file
      * 
-     * @return <code>true if is ok</code>
+     * @return true if is ok
      */
     public synchronized boolean saveProperties() {
         return saveProperties(new File(_propertyFile));
     }
 
     /**
+     * Save application configuration properties to a given file
      * 
-     * @param file properties file
-     * @return <code>true</code> if we save file sucessfully.
+     * @param file File to save to
+     * @return True if file was saved successfully.
      */
     public boolean saveProperties(File file) {
         boolean result = false;
@@ -378,9 +389,11 @@ public class ParamBean {
     }
 
     /**
-     * @param key key of property
-     * @param defaultValue default value for key.
-     * @return value of property
+     * Get property value. Sets the property to a default value if value was not set previously.
+     * 
+     * @param key Property key
+     * @param defaultValue Default value
+     * @return Value of property, or a default value if it is not set yet
      */
     public String getProperty(String key, String defaultValue) {
         String result = null;
@@ -395,11 +408,13 @@ public class ParamBean {
     }
 
     /**
-     * @param propertiesName property name
+     * Reload application configuration from a given file
+     * 
+     * @param propertiesName System property containing a file name, or a relative filename in Wildfly server's configuration directory
      */
     public static void reload(String propertiesName) {
         // log.info("Reload");
-        setInstance(new ParamBean(propertiesName));
+        instance = new ParamBean(propertiesName);
     }
 
     /**
@@ -499,12 +514,20 @@ public class ParamBean {
     public String getDateTimeFormat() {
         return getProperty("meveo.dateTimeFormat", "dd/MM/yyyy HH:mm");
     }
-    
+
+    /**
+     * Get a property value for a given provider. Sets the property to a default value if value was not set previously.
+     * 
+     * @param key Property key
+     * @param defaultValue Default value
+     * @param provider Provider code
+     * @return Value of property, or a default value if it is not set yet
+     */
     public String getProperty(String key, String defaultValue, String provider) {
         String result = null;
         ParamBean params = getInstanceByProvider(provider);
         Properties properties = params.getProperties();
-        
+
         if (properties.containsKey(key)) {
             result = properties.getProperty(key);
         } else if (defaultValue != null) {
@@ -515,12 +538,21 @@ public class ParamBean {
         }
         return result;
     }
-    
+
+    /**
+     * Get a property value for a given provider or if not set - from a main provider. Sets the property to a default value in main provider's configuration if value was not set
+     * previously.
+     * 
+     * @param key Property key
+     * @param defaultValue Default value
+     * @param provider Provider code
+     * @return Value of property, or a default value if it is not set yet
+     */
     public String getInheritedProperty(String key, String defaultValue, String provider) {
         String result = null;
         ParamBean params = getInstanceByProvider(provider);
         Properties properties = params.getProperties();
-        
+
         if (properties.containsKey(key)) {
             result = properties.getProperty(key);
         } else if (params.isSubTenant) {
@@ -529,23 +561,37 @@ public class ParamBean {
             properties.put(key, result);
             params.setProperties(properties);
             params.saveProperties();
-        } 
-        
+        }
+
         return result;
     }
-    
+
+    /**
+     * A shortcut to get date with time format for a given provider
+     * 
+     * @param provider Provider code
+     * 
+     * @return date time format.
+     */
     public String getDateFormat(String provider) {
-        if(!isSubTenant) {
+        if (!isSubTenant) {
             return getInstanceByProvider(provider).getDateFormat();
         }
         return getDateFormat();
     }
-    
+
+    /**
+     * A shortcut to get date with time format for a given provider
+     * 
+     * @param provider Provider code
+     * 
+     * @return date time format.
+     */
     public String getDateTimeFormat(String provider) {
-        if(!isSubTenant) {
+        if (!isSubTenant) {
             return getInstanceByProvider(provider).getDateTimeFormat();
         }
-        return getDateTimeFormat(); 
+        return getDateTimeFormat();
     }
 
 }

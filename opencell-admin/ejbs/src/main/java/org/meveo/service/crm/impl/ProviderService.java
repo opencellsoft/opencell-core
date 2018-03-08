@@ -37,7 +37,7 @@ import org.meveo.service.base.PersistenceService;
 public class ProviderService extends PersistenceService<Provider> {
 
     @EJB
-    private ProviderRegistry providerRegistry;
+    private TenantRegistry providerRegistry;
 
     public Provider getProvider() {
 
@@ -60,9 +60,15 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     @Override
+    public void create(Provider provider) throws BusinessException {
+        super.create(provider);
+        providerRegistry.addTenant(provider);
+    }
+
+    @Override
     public void remove(Provider provider) throws BusinessException {
         super.remove(provider);
-        providerRegistry.removeProvider(provider);
+        providerRegistry.removeTenant(provider);
     }
 
     @Override

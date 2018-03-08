@@ -37,6 +37,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BankCoordinates;
@@ -532,8 +533,14 @@ public class ProviderApi extends BaseApi {
      */
     public void createTenant(ProviderDto postData) throws MeveoApiException, BusinessException {
 
-        // New tenant/provider management is available for superadmin user only
-        if (!currentUser.hasRole("superAdminManagement")) {
+        // Tenant/provider management is available for superadmin user only of main provider
+        if (!ParamBean.isMultitenancyEnabled()) {
+            throw new ActionForbiddenException("Multitenancy is not enabled");
+
+        } else if (currentUser.getProviderCode() != null) {
+            throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
+
+        } else if (!currentUser.hasRole("superAdminManagement")) {
             throw new ActionForbiddenException("User has no permission to manage tenants ");
         }
 
@@ -564,8 +571,14 @@ public class ProviderApi extends BaseApi {
      */
     public ProvidersDto listTenants() throws ActionForbiddenException, InvalidParameterException {
 
-        // Tenant/provider management is available for superadmin user only
-        if (!currentUser.hasRole("superAdminManagement")) {
+        // Tenant/provider management is available for superadmin user only of main provider
+        if (!ParamBean.isMultitenancyEnabled()) {
+            throw new ActionForbiddenException("Multitenancy is not enabled");
+
+        } else if (currentUser.getProviderCode() != null) {
+            throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
+
+        } else if (!currentUser.hasRole("superAdminManagement")) {
             throw new ActionForbiddenException("User has no permission to manage tenants ");
         }
 
@@ -595,8 +608,14 @@ public class ProviderApi extends BaseApi {
      */
     public void removeTenant(String providerCode) throws MeveoApiException {
 
-        // Tenant/provider management is available for superadmin user only
-        if (!currentUser.hasRole("superAdminManagement")) {
+        // Tenant/provider management is available for superadmin user only of main provider
+        if (!ParamBean.isMultitenancyEnabled()) {
+            throw new ActionForbiddenException("Multitenancy is not enabled");
+
+        } else if (currentUser.getProviderCode() != null) {
+            throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
+
+        } else if (!currentUser.hasRole("superAdminManagement")) {
             throw new ActionForbiddenException("User has no permission to manage tenants ");
         }
 
