@@ -344,6 +344,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
 
     /**
      * Clear the current provider data from cache
+     * 
      */
     private void clear() {
         String currentProvider = currentUser.getProviderCode();
@@ -366,6 +367,13 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
         }
     }
 
+    /**
+     * return data keys of specific provider in cache
+     * 
+     * @param iter keys of provider in cache
+     * @param currentProvider
+     * @return List of keys of the specified provider
+     */
     private ArrayList<CacheKeyLong> cleanCache(CloseableIterator<CacheKeyLong> iter, String currentProvider) {
         ArrayList<CacheKeyLong> itemsToBeRemoved = new ArrayList<>();
         while (iter.hasNext()) {
