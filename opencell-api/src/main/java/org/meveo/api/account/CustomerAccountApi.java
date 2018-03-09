@@ -25,6 +25,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -72,6 +73,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private PaymentMethodApi paymentMethodApi;
 
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
@@ -106,7 +110,8 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                paymentMethodDto.validate();
+                paymentMethodDto.setCustomerCode(postData.getCustomer());
+                paymentMethodApi.validate(paymentMethodDto,false);
             }
         }
 
@@ -140,7 +145,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             } else {
                 paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.CHECK);
             }
-            paymentMethodDto.validate();
+            paymentMethodApi.validate( paymentMethodDto,false);
             postData.getPaymentMethods().add(paymentMethodDto);
 
         }
@@ -169,8 +174,8 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (postData.getPaymentMethods() != null) {
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                paymentMethodDto.validate();
+            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {                
+                paymentMethodApi.validate( paymentMethodDto,false);
                 customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
             }
         }

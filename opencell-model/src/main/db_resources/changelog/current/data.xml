@@ -75,4 +75,7 @@
 			<column name="uuid" value="gateway_SLIMPAY" />
 		</insert> 			 
     </changeSet>
+    <changeSet author="anasseh" id="#3110_08032018">
+   		 <sql>delete from ${db.schema}.crm_provider_pay_methods where payment_method='NONE'</sql>   
+    </changeSet>
 </databaseChangeLog>

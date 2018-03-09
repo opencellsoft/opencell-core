@@ -40,6 +40,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
@@ -50,6 +51,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * Customer Account service implementation.
@@ -68,6 +70,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+    
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -546,5 +553,5 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
         return result;
-    }
+    }   
 }
