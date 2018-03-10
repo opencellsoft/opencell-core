@@ -207,8 +207,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     /**
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
+    @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels");
+        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels", "customerCategories");
     }
 
     public List<OfferTemplate> listActiveByDate(Date date) {
