@@ -1,7 +1,10 @@
 package org.meveo.admin.listener;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
+import javax.ejb.AsyncResult;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
@@ -69,26 +72,31 @@ public class ApplicationInitializer {
 
     public void init() {
 
-        // cleanAllTimers();
-
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
 
         int i = 0;
         for (Provider provider : providers) {
-            multitenantAppInitializer.initializeTenant(provider, i == 0);
+            Future<Boolean> initProvider = multitenantAppInitializer.initializeTenant(provider, i == 0);
+
+            // Wait for each provider to initialize
+            try {
+                initProvider.get();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Failed to initialize a provider {}", provider.getCode());
+            }
             i++;
         }
     }
 
     @Asynchronous
-    public void initializeTenant(Provider provider, boolean isMainProvider) {
+    public Future<Boolean> initializeTenant(Provider provider, boolean isMainProvider) {
 
         log.debug("Will initialize application for provider {}", provider.getCode());
-        
+
         if (!isMainProvider) {
             entityManagerProvider.registerEntityManagerFactory(provider.getCode());
         }
-        
+
         currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), isMainProvider ? null : provider.getCode());
 
         // Register jobs
@@ -105,6 +113,8 @@ public class ApplicationInitializer {
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
 
         log.info("Initialized application for provider {}", provider.getCode());
+
+        return new AsyncResult<Boolean>(Boolean.TRUE);
     }
 
 }
