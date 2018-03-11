@@ -468,6 +468,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, firstTransactionDate, lastTransactionDate);
             log.debug("appended aggregates");
 
+            List<RatedTransaction> ratedTransactionsToUpdate = new ArrayList<>();
+            if (ratedTransactionFilter != null || !StringUtils.isBlank(orderNumber)) {
+                ratedTransactionsToUpdate.addAll(invoice.getRatedTransactions());
+            }
+
             create(invoice);
 
             // Note that rated transactions get updated in
@@ -479,6 +484,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     query = query.setParameter("billingRun", billingRun);
                 }
                 query.executeUpdate();
+            
+            } else {
+                for (RatedTransaction ratedTransaction : ratedTransactionsToUpdate) {
+                    ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
+                    ratedTransaction.setInvoice(invoice);
+                }
             }
 
             List<String> orderNums = null;
@@ -931,9 +942,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(
-                subCategoryInvoiceAgregate.getAmountWithoutTax() != null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP)
-                        : BigDecimal.ZERO);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
+                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1455,7 +1465,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             firstTransactionDate = new Date(0);
         }
 
-        if (ratedTxFilter == null && StringUtils.isBlank(lastTransactionDate) && StringUtils.isBlank(orderNumber)) {
+        if (!StringUtils.isBlank(orderNumber) && lastTransactionDate == null) {
+            lastTransactionDate = new Date();
+        }
+
+        if (ratedTxFilter == null && lastTransactionDate == null && StringUtils.isBlank(orderNumber)) {
             throw new BusinessException("lastTransactionDate or filter or orderNumber is null");
         }
 
