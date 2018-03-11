@@ -342,7 +342,7 @@ public class InvoiceApi extends BaseApi {
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -489,7 +489,7 @@ public class InvoiceApi extends BaseApi {
         if (billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
         }
-        
+
         Filter ratedTransactionFilter = null;
         if (generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());

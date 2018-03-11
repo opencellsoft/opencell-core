@@ -248,7 +248,7 @@ public class DefaultObserver {
      * @param type Notification type
      * @param entityOrEvent Entity or event triggered
      * @return True if at least one notification has been triggered
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private boolean checkEvent(NotificationEventTypeEnum type, Object entityOrEvent) throws BusinessException {
         boolean result = false;

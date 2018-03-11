@@ -185,11 +185,9 @@ public class BillingAccountApi extends AccountEntityApi {
         createOrUpdatePaymentMethodInCA(postData, billingAccount);
 
         // Validate and populate customFields
-        try
-
-        {
+        try {
             populateCustomFields(postData.getCustomFields(), billingAccount, true, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -323,7 +321,7 @@ public class BillingAccountApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), billingAccount, false, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

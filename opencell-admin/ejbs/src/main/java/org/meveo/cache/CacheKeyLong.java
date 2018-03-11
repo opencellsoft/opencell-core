@@ -21,8 +21,8 @@ public class CacheKeyLong {
     private Long key;
 
     /**
-     * @param provider
-     * @param key
+     * @param provider Provider code
+     * @param key Cache key
      */
     public CacheKeyLong(String provider, Long key) {
         super();

@@ -5,10 +5,11 @@ package org.meveo.multitenancy;
  * NOT USED FOR NOW, as same code is implemented inside the CurrentUserProvider class. Left here only in case we need static access in the future.
  * 
  * 
- * Thread local storage of the current provider/tenant. This is the only place, where the provider name is available across all calls and beans. <br/>
+ * Thread local storage of the current provider/tenant. This is the only place, where the provider name is available across all calls and beans.
+ * <p>
  * Note, this is raw storage only and might not be initialized. Use currentUserProvider.getCurrentUserProviderCode(); to retrieve and/or initialize current provider value instead.
- * 
- * {@link https://www.tomas-dvorak.cz/posts/jpa-multitenancy/}
+ * </p>
+ * see https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
  */
 public class CurrentTenantHolder {
 

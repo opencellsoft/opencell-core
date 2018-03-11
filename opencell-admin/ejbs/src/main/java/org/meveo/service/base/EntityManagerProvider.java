@@ -44,7 +44,7 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
- * Handles Entity manager instantiation. Based on {@link https://www.tomas-dvorak.cz/posts/jpa-multitenancy/}
+ * Handles Entity manager instantiation. Based on  https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
  * 
  * @author Andrius Karpavicius
  */

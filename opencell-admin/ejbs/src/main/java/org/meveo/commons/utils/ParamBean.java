@@ -194,6 +194,8 @@ public class ParamBean {
 
     /**
      * Checks if multitenancy is enabled. Flag is consulted in a main provider's/tenant's property file
+     * 
+     * @return True of multitenancy is enabled
      */
     public static boolean isMultitenancyEnabled() {
         if (multiTenancyEnabled == null) {
@@ -319,17 +321,17 @@ public class ParamBean {
      * @param value Property value
      * @param category Category name
      */
-    public void setProperty(String key, String value, String category) {
-        setProperty(key, value);
+    public void setProperty(String property, String value, String category) {
+        setProperty(property, value);
         if (category != null) {
-            categories.put(key, category);
+            categories.put(property, category);
         }
     }
 
     /**
      * Save application configuration properties to a default file
      * 
-     * @return true if is ok
+     * @return True if is ok
      */
     public synchronized boolean saveProperties() {
         return saveProperties(new File(_propertyFile));

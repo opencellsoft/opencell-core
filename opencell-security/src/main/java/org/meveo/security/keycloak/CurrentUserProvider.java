@@ -103,6 +103,9 @@ public class CurrentUserProvider {
     /**
      * Return a current user from JAAS security context
      * 
+     * @param providerCode Provider code. Passed here, so not to look it up again
+     * @param em Entity manager to use to retrieve user info
+     * 
      * @return Current user implementation
      */
     public MeveoUser getCurrentUser(String providerCode, EntityManager em) {

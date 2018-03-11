@@ -41,7 +41,8 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * Current user constructor
      * 
      * @param securityContext Current JAAS security context
-     * @param forcedUserName Forced authentication username (when authenticated with @RunAs in job)
+     * @param forcedUserName Forced authentication username (when authenticated with @RunAs in job or any other timer trigger or at server startup)
+     * @param forcedProvider Forced provider (when authenticated with @RunAs in job or any other timer trigger or at server startup)
      * @param additionalRoles Additional roles to assign
      * @param roleToPermissionMapping Role to permission mapping
      */

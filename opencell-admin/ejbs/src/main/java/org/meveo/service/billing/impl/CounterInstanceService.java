@@ -166,7 +166,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param initDate Initial date, used for period start/end date calculation
      * @param usageChargeInstance Usage charge instance to associate counter with
      * @return CounterPeriod instance
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
@@ -192,7 +192,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param initDate Initial date, used for period start/end date calculation
      * @param usageChargeInstance Usage charge instance to associate counter with
      * @return CounterPeriod instance
-     * @throws BusinessException business exception
+     * @throws BusinessException Business exception
      */
     public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
             throws BusinessException {

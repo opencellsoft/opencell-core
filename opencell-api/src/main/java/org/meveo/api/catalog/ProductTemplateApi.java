@@ -167,7 +167,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), productTemplate, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -272,7 +272,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), productTemplate, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
