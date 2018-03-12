@@ -216,6 +216,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         if (businessProductModel != null) {
+            businessProductModel = businessProductModelService.refreshOrRetrieve(businessProductModel);
             businessProductModelService.instantiateBPM(entity, businessProductModel);
             return back();
             
@@ -225,7 +226,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
             if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
                 entity.getOfferTemplateCategories().clear();
-                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.retrieveIfNotManaged(offerTemplateCategoriesDM.getTarget()));
             }
 
             if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {

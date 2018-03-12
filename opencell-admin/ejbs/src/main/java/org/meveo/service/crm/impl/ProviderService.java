@@ -20,13 +20,13 @@ package org.meveo.service.crm.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
-import javax.inject.Inject;
+import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
-import org.meveo.event.monitoring.ClusterEventPublisher;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
@@ -36,8 +36,8 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
-    @Inject
-    private ClusterEventPublisher clusterEventPublisher;
+    @EJB
+    private TenantRegistry providerRegistry;
 
     public Provider getProvider() {
 
@@ -60,17 +60,28 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     @Override
+    public void create(Provider provider) throws BusinessException {
+        super.create(provider);
+        providerRegistry.addTenant(provider);
+    }
+
+    @Override
+    public void remove(Provider provider) throws BusinessException {
+        super.remove(provider);
+        providerRegistry.removeTenant(provider);
+    }
+
+    @Override
     public Provider update(Provider provider) throws BusinessException {
         provider = super.update(provider);
-
         // Refresh appProvider application scope variable
         refreshAppProvider(provider);
-        clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
+        // clusterEventPublisher.publishEvent(provider, CrudActionEnum.update);
         return provider;
     }
 
     /**
-     * Refresh appProvider application scope variable
+     * Refresh appProvider request scope variable, just in case it is used in some EL expressions within the same request
      * 
      * @param provider New provider data to refresh with
      */
@@ -87,13 +98,29 @@ public class ProviderService extends PersistenceService<Provider> {
         appProvider.setLanguage(provider.getLanguage() != null ? provider.getLanguage() : null);
         appProvider.setInvoiceConfiguration(provider.getInvoiceConfiguration() != null ? provider.getInvoiceConfiguration() : null);
         appProvider.setPaymentMethods(provider.getPaymentMethods());
-
+        appProvider.setCfValues(provider.getCfValues());
     }
 
     /**
-     * Refresh appProvider application scope variable with provider data from DB
+     * Find Provider by code - strict match.
+     * 
+     * @param code Code to match
+     * @return A single entity matching code
      */
-    public void refreshAppProvider() {
-        refreshAppProvider(getProvider());
+    public Provider findByCode(String code) {
+
+        if (code == null) {
+            return null;
+        }
+
+        TypedQuery<Provider> query = getEntityManager().createQuery("select be from Provider be where upper(code)=:code", entityClass).setParameter("code", code.toUpperCase())
+            .setMaxResults(1);
+
+        try {
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            log.debug("No Provider of code {} found", code);
+            return null;
+        }
     }
 }

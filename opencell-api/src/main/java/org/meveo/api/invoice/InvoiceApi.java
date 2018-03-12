@@ -342,7 +342,7 @@ public class InvoiceApi extends BaseApi {
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -442,7 +442,7 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : 
+     * Launch all the invoicing process for a given billingAccount, that's mean :
      * <ul>
      * <li>Create an exeptionnal billingRun with given dates
      * <li>Validate the preinvoicing resport

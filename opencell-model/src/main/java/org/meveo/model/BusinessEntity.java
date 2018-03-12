@@ -37,6 +37,12 @@ public class BusinessEntity extends EnableEntity implements ISearchable {
     @NotNull
     protected String code;
 
+    /**
+     * Used to track if "Code" field value has changed. Value is populated on postLoad, postPersist and postUpdate JPA events
+     */
+    @Transient
+    protected String previousCode;
+
     @Column(name = "description", nullable = true, length = 255)
     @Size(max = 255)
     protected String description;
@@ -147,11 +153,19 @@ public class BusinessEntity extends EnableEntity implements ISearchable {
 
     @Override
     public String toString() {
-        return String.format("%s[%s, code=%s]", this.getClass().getName(), super.toString(), code);
+        return String.format("%s[%s, code=%s]", this.getClass().getSimpleName(), super.toString(), code);
     }
 
     public void setDescriptionOrCode(String val) {
         setDescription(val);
     }
 
+    /**
+     * Check if current and previous "Code" field values match. Note: previous value is set to current value at postLoad, postPersist, postUpdate JPA events
+     * 
+     * @return True if current and previous "Code" field values DO NOT match
+     */
+    public boolean isCodeChanged() {
+        return !StringUtils.equals(code, previousCode);
+    }
 }

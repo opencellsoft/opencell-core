@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <con:soapui-project id="be765fc2-377f-4484-9193-ff119e423633" activeEnvironment="Default" name="Mediation - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings/>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="AccountWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountWs?wsdl" id="ea4ccfc5-0bef-4d4a-8963-dd86a6dcf499" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createAccess" bindingOperationName="createAccess" type="Request-Response" outputName="createAccessResponse" inputName="createAccess" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="49f6e7a0-8e5f-42db-8ab3-f765d8d28829">
       <con:settings/>
@@ -151,10 +151,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/CatalogWs?wsdl" id="9eec342d-acf7-43af-af2e-c3e253644f5f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="CatalogWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}CatalogWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/CatalogWs?wsdl" id="9eec342d-acf7-43af-af2e-c3e253644f5f" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createCounterTemplate" bindingOperationName="createCounterTemplate" type="Request-Response" outputName="createCounterTemplateResponse" inputName="createCounterTemplate" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="82435ae6-a800-436a-8170-22e5542f3e8b">
       <con:settings/>
@@ -289,10 +289,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="b7c9429b-1d05-4ac6-a0de-37a098d0ac40" wsaVersion="NONE" name="InvoiceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}InvoiceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/InvoiceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/InvoiceWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/InvoiceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="cb26d107-1bf6-46fb-9cd0-4e4ad1b64cf2" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -313,10 +313,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/MediationWs?wsdl" id="88ed7ad1-2063-493b-9c71-2ca85d5b9302" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="MediationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}MediationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/MediationWs?wsdl" id="88ed7ad1-2063-493b-9c71-2ca85d5b9302" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/MediationWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/MediationWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="cancelReservation" bindingOperationName="cancelReservation" type="Request-Response" outputName="cancelReservationResponse" inputName="cancelReservation" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="1f5fbd64-5362-4b5b-b7c2-90a2156c4d13">
       <con:settings/>
@@ -337,10 +337,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/SettingsWs?wsdl" id="3ae96632-2c43-4f00-af1f-fd5d718000ae" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="SettingsWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}SettingsWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/SettingsWs?wsdl" id="3ae96632-2c43-4f00-af1f-fd5d718000ae" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/SettingsWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/SettingsWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createBillingCycle" bindingOperationName="createBillingCycle" type="Request-Response" outputName="createBillingCycleResponse" inputName="createBillingCycle" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="53dee0c5-502c-4da1-b276-034949fa50e6">
       <con:settings/>
@@ -727,10 +727,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/NotificationWs?wsdl" id="c410cec5-50e9-4396-bc23-009c5c34afaf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="NotificationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}NotificationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/NotificationWs?wsdl" id="c410cec5-50e9-4396-bc23-009c5c34afaf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="createEmailNotification" bindingOperationName="createEmailNotification" type="Request-Response" outputName="createEmailNotificationResponse" inputName="createEmailNotification" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="7b07ab98-b0c5-491e-a715-e3a36ef39fbe">
       <con:settings/>
@@ -778,10 +778,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="2032decc-1d69-4f76-8069-23b228e976c0" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="2032decc-1d69-4f76-8069-23b228e976c0" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
     </con:endpoints>
     <con:operation id="faada9b9-3e7f-4437-b27c-4edadcfc979b" isOneWay="false" action="" name="reindex" bindingOperationName="reindex" type="Request-Response" outputName="reindexResponse" inputName="reindex" receivesAttachments="false" sendsAttachments="false">
       <con:settings/>
@@ -799,10 +799,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/JobWs?wsdl" id="1357434a-a05f-403c-bd4a-7c42726e9529" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" wsaVersion="NONE" name="JobWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}JobWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/JobWs?wsdl" id="1357434a-a05f-403c-bd4a-7c42726e9529" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
     </con:endpoints>
     <con:operation isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional" id="d15eac2f-9765-4bd2-b0ff-9b23d15f8884">
       <con:settings/>
@@ -829,10 +829,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="16b43bcb-f0a2-4f58-ab72-a69229098c2e" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="16b43bcb-f0a2-4f58-ab72-a69229098c2e" wsaVersion="NONE" name="ScriptInstanceWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}ScriptInstanceWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/ScriptInstanceWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
     </con:endpoints>
     <con:operation id="9fe72545-27cc-492c-8043-17ef3994e8da" isOneWay="false" action="" name="create" bindingOperationName="create" type="Request-Response" outputName="createResponse" inputName="create" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -853,10 +853,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="3896cf0b-c25f-49e6-8605-c6cfe9bddf5a" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="3896cf0b-c25f-49e6-8605-c6cfe9bddf5a" wsaVersion="NONE" name="EntityCustomizationWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}EntityCustomizationWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/EntityCustomizationWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
     </con:endpoints>
     <con:operation id="12cf9d20-e961-4dd3-8f05-b6dd649ae3c4" isOneWay="false" action="" name="createAction" bindingOperationName="createAction" type="Request-Response" outputName="createActionResponse" inputName="createAction" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -928,10 +928,10 @@
       <con:settings/>
     </con:operation>
   </con:interface>
-  <con:interface xsi:type="con:WsdlInterface" id="1207fd11-81fc-410d-a1a1-65aca01175d5" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#meveoUrl}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <con:interface xsi:type="con:WsdlInterface" id="1207fd11-81fc-410d-a1a1-65aca01175d5" wsaVersion="NONE" name="FilterWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilterWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilterWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}/FilterWs</con:endpoint>
     </con:endpoints>
     <con:operation id="50b03546-a8d2-4411-b58c-28c30ac8301d" isOneWay="false" action="" name="createOrUpdateFilter" bindingOperationName="createOrUpdateFilter" type="Request-Response" outputName="createOrUpdateFilterResponse" inputName="createOrUpdateFilter" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
@@ -943,7 +943,7 @@
   <con:interface xsi:type="con:RestService" id="1e8e2033-b970-4a76-aebf-6e76888a12b0" wadlVersion="http://wadl.dev.java.net/2009/02" name="http://integration.i.opencellsoft.com" type="rest" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <con:settings/>
     <con:endpoints>
-      <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+      <con:endpoint>${#Project#opencell.url}</con:endpoint>
     </con:endpoints>
     <con:resource name="Mediation" path="/inbound/demo/mediation" id="167c13a6-0c9d-4b02-806e-6a2873fbcf9d">
       <con:settings/>
@@ -1088,12 +1088,12 @@ StringToStringMap headersForAdmin = new StringToStringMap();
 StringToStringMap headersForSuper = new StringToStringMap();
 
 int count = 1;
-boolean isClusterEnabled = !(testCase.testSuite.project.getPropertyValue("meveoUrl").equals(testCase.testSuite.project.getPropertyValue("meveoUrl2")));
+boolean isClusterEnabled = !(testCase.testSuite.project.getPropertyValue("opencell.url").equals(testCase.testSuite.project.getPropertyValue("opencell.url2")));
 
-String superUserPass = testCase.testSuite.project.getPropertyValue("meveoSuperUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoSuperPassword");
+String superUserPass = testCase.testSuite.project.getPropertyValue("superUsername")+":"+testCase.testSuite.project.getPropertyValue("superPassword");
  log.info("superUserPass="+superUserPass);
  
-String adminPass = testCase.testSuite.project.getPropertyValue("meveoAdminUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoAdminPassword");
+String adminPass = testCase.testSuite.project.getPropertyValue("adminUsername")+":"+testCase.testSuite.project.getPropertyValue("adminPassword");
  log.info("adminPass="+adminPass);
 
 String userPass = testCase.testSuite.project.getPropertyValue("meveoUserUsername")+":"+testCase.testSuite.project.getPropertyValue("meveoUserPassword");
@@ -1113,9 +1113,9 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	          
 			if (testStep instanceof WsdlTestRequestStep || testStep instanceof RestTestRequestStep){
 				String endpoint = testStep.getPropertyValue("Endpoint");
-				endpoint = endpoint.replace("meveoUrl2", "meveoUrl");
+				endpoint = endpoint.replace("opencell.url2", "opencell.url");
 				if (isClusterEnabled &amp;&amp; count %2 ==0){
-					endpoint = endpoint.replace("meveoUrl", "meveoUrl2");
+					endpoint = endpoint.replace("opencell.url", "opencell.url2");
 				}
 				testStep.setPropertyValue("Endpoint", endpoint);
 			}
@@ -1168,7 +1168,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -1287,7 +1287,7 @@ public class Mediation_${#Project#baseEntityPrefix}_CreateEdr extends org.meveo.
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -1328,7 +1328,7 @@ public class Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck extends Scri
 		String originBatch = (String) initContext.get("originBatch");
 		String originRecord = getOriginRecord(initContext.get("record"));
 		initContext.put("originRecord", originRecord);
-		boolean result = edrService.duplicateFound(originBatch, originRecord);
+		boolean result = edrService.isDuplicateFound(originBatch, originRecord);
 		initContext.put("duplicateFound", Boolean.valueOf(result));
 		log.info("Execute result:"+result);
 	}
@@ -1390,7 +1390,7 @@ public class Mediation_${#Project#baseEntityPrefix}_DuplicatedCheck extends Scri
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -1403,10 +1403,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.mediation.Access;
 import org.meveo.service.script.Script;
+import org.meveo.service.medina.impl.AccessService;
 import org.meveo.model.admin.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1415,13 +1415,13 @@ public class Mediation_${#Project#baseEntityPrefix}_RoutingSub extends Script {
 
     private static final Logger log = LoggerFactory.getLogger(Mediation_${#Project#baseEntityPrefix}_RoutingSub.class);
 
-    CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider = (CdrEdrProcessingCacheContainerProvider) getServiceInterface("CdrEdrProcessingCacheContainerProvider");
+    AccessService accessService = (AccessService) getServiceInterface("AccessService");
 
 	@Override
 	public void execute(Map<String, Object> initContext) throws BusinessException {
         log.debug("Execute...");
         String accessUserId = (String) initContext.get("accessUserId");
-        List<Access> accesses = cdrEdrProcessingCacheContainerProvider.getAccessesByAccessUserId(accessUserId);
+        List<Access> accesses = accessService.getActiveAccessByUserId(accessUserId);
         initContext.put("accesses", accesses);
         log.info("Execute accesses size:"+((accesses == null)?"null":accesses.size()));
     }
@@ -1466,7 +1466,7 @@ public class Mediation_${#Project#baseEntityPrefix}_RoutingSub extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -1582,7 +1582,7 @@ public class Mediation_${#Project#baseEntityPrefix}_Flow extends org.meveo.servi
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -1686,7 +1686,7 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -1760,7 +1760,7 @@ public class ${#TestSuite#baseEntityPrefix}_CreateFile extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -1900,7 +1900,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -2023,7 +2023,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2092,7 +2092,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -2142,7 +2142,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2198,7 +2198,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2247,7 +2247,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2304,7 +2304,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2362,7 +2362,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2416,7 +2416,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -2468,7 +2468,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2513,7 +2513,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2558,7 +2558,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2612,7 +2612,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -2754,7 +2754,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -2796,7 +2796,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
             <con:request/>
             <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="25ee278d-10fb-429d-a4ad-7c182054f83d" name="Valid HTTP Status Codes">
@@ -2835,7 +2835,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
             <con:request/>
             <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="e79ab190-1e2a-4152-9f81-075c852174e1" name="Valid HTTP Status Codes">
@@ -2874,7 +2874,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
             <con:request/>
             <con:originalUri>http://integration.i.opencellsoft.com/opencell/opencell/inbound/demo/mediation</con:originalUri>
             <con:assertion type="Valid HTTP Status Codes" id="5841bc09-fb4d-48d7-b748-a7a7c0afa26b" name="Valid HTTP Status Codes">
@@ -2921,7 +2921,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/createFile</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/createFile</con:endpoint>
           <con:request>2015-06-16T00:00:22,${#TestSuite#entityPrefix}_${#TestSuite#index}_access,10,VOICE,0102030405
 2015-06-17T00:00:22,${#TestSuite#entityPrefix}_${#TestSuite#index}_access,10,VOICE,0101010101
 2015-06-18T00:00:22,${#TestSuite#entityPrefix}_${#TestSuite#index}_access,10,VOICE,0202020202</con:request>
@@ -2967,7 +2967,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3009,7 +3009,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3054,7 +3054,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3099,7 +3099,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3137,7 +3137,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>37</con:value>
+        <con:value>43</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -3157,7 +3157,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3285,7 +3285,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3425,7 +3425,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3514,7 +3514,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3565,7 +3565,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3621,7 +3621,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3670,7 +3670,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3727,7 +3727,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3785,7 +3785,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3839,7 +3839,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -3891,7 +3891,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3936,7 +3936,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -3981,7 +3981,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -4035,7 +4035,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -4176,7 +4176,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -4216,7 +4216,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/createFile</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/createFile</con:endpoint>
           <con:request>2015-06-16T00:00:22,${#TestSuite#entityPrefix}_${#TestSuite#index}_access,10,VOICE,0102030405
 2015-06-17T00:00:22,${#TestSuite#entityPrefix}_${#TestSuite#index}_access,10,VOICE,0101010101
 2015-06-18T00:00:22,${#TestSuite#entityPrefix}_${#TestSuite#index}_access,10,VOICE,0202020202</con:request>
@@ -4258,7 +4258,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4302,7 +4302,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/FilterWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/FilterWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4381,7 +4381,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/FilteredListWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -4437,7 +4437,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4482,7 +4482,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4524,7 +4524,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4562,7 +4562,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>34</con:value>
+        <con:value>40</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -4582,7 +4582,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4722,7 +4722,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4845,7 +4845,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -4914,7 +4914,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -4963,7 +4963,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5021,7 +5021,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5079,7 +5079,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5135,7 +5135,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5190,7 +5190,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -5239,7 +5239,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5284,7 +5284,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5329,7 +5329,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5383,7 +5383,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -5505,7 +5505,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5549,7 +5549,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5589,7 +5589,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -5640,7 +5640,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="b86b8ce2-2440-4c6b-9b83-2c7aeaeaab21" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -5691,7 +5691,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="bb79fb51-6689-4e47-b0d8-06bca4f08187" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -5742,7 +5742,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="39c58faf-2ccd-4edf-9da9-5e0215aa2fd7" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -5797,7 +5797,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -5851,7 +5851,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -5893,7 +5893,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -5938,7 +5938,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -5983,7 +5983,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -6021,7 +6021,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>34</con:value>
+        <con:value>40</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -6041,7 +6041,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -6174,7 +6174,7 @@ public class Mediation_${#TestSuite#entityPrefix}_EDR extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -6297,7 +6297,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6366,7 +6366,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -6416,7 +6416,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6474,7 +6474,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6532,7 +6532,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6588,7 +6588,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6643,7 +6643,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -6692,7 +6692,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6737,7 +6737,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6782,7 +6782,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/CatalogWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/CatalogWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -6836,7 +6836,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -6958,7 +6958,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -7003,7 +7003,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/AccountWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/AccountWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -7043,7 +7043,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="3cce94d8-e1eb-4988-80e7-381e03f79971" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -7094,7 +7094,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="871ee203-4af3-4f6e-a31b-3022353bdf77" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -7145,7 +7145,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="0abf046f-0edd-4e8d-a798-4ad8b0d719a1" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -7196,7 +7196,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
           <con:settings>
             <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
           </con:settings>
-          <con:endpoint>${#Project#meveoUrl}/inbound/DEMO/zoning</con:endpoint>
+          <con:endpoint>${#Project#opencell.url}/inbound/DEMO/zoning</con:endpoint>
           <con:request/>
           <con:assertion type="Invalid HTTP Status Codes" id="88054173-198d-4e6d-94e8-d91b365085d5" name="Invalid HTTP Status Codes">
             <con:configuration>
@@ -7251,7 +7251,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/JobWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/JobWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7305,7 +7305,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -7347,7 +7347,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7392,7 +7392,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7437,7 +7437,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/EntityCustomizationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/EntityCustomizationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7475,7 +7475,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>36</con:value>
+        <con:value>42</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -7495,7 +7495,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/NotificationWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/NotificationWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">
    <soapenv:Header/>
    <soapenv:Body>
@@ -7537,7 +7537,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7582,7 +7582,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7627,7 +7627,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7672,7 +7672,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7717,7 +7717,7 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#meveoUrl}/ScriptInstanceWs</con:endpoint>
+            <con:endpoint>${#Project#opencell.url}/ScriptInstanceWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -7757,31 +7757,31 @@ public class Mediation_${#TestSuite#entityPrefix}_Flow extends Script {
     <con:properties/>
   </con:testSuite>
   <con:endpointStrategy xsi:type="con:DefaultEndpointStrategy" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-    <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#meveoUrl}/CatalogWs</con:endpoint>
+    <con:endpoint mode="COMPLEMENT" username="meveo.admin" password="meveo.admin">${#Project#opencell.url}/CatalogWs</con:endpoint>
   </con:endpointStrategy>
   <con:properties>
     <con:property>
-      <con:name>meveoUrl</con:name>
+      <con:name>opencell.url</con:name>
       <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoUrl2</con:name>
+      <con:name>opencell.url2</con:name>
       <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoAdminUserName</con:name>
+      <con:name>adminUsername</con:name>
       <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoAdminPassword</con:name>
+      <con:name>adminPassword</con:name>
       <con:value>opencell.admin</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoSuperUserName</con:name>
+      <con:name>superUsername</con:name>
       <con:value>opencell.superadmin</con:value>
     </con:property>
     <con:property>
-      <con:name>meveoSuperPassword</con:name>
+      <con:name>superPassword</con:name>
       <con:value>opencell.superadmin</con:value>
     </con:property>
     <con:property>

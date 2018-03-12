@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -34,48 +35,50 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
+@Cacheable
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code" })
 @Table(name = "cat_serv_usage_charge_template")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_usagechrg_templt_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_serv_usagechrg_templt_seq"), })
 public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageChargeTemplate> {
 
-	private static final long serialVersionUID = -6881449392209666474L;
+    private static final long serialVersionUID = -6881449392209666474L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "counter_template_id")
-	private CounterTemplate counterTemplate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "counter_template_id")
+    private CounterTemplate counterTemplate;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cat_serv_usage_wallet_template", joinColumns = @JoinColumn(name = "service_usage_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
-	@OrderColumn(name = "INDX")
-	private List<WalletTemplate> walletTemplates;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_serv_usage_wallet_template", joinColumns = @JoinColumn(name = "service_usage_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+    @OrderColumn(name = "INDX")
+    private List<WalletTemplate> walletTemplates;
 
-	public CounterTemplate getCounterTemplate() {
-		return counterTemplate;
-	}
+    public CounterTemplate getCounterTemplate() {
+        return counterTemplate;
+    }
 
-	public void setCounterTemplate(CounterTemplate counterTemplate) {
-		this.counterTemplate = counterTemplate;
-	}
+    public void setCounterTemplate(CounterTemplate counterTemplate) {
+        this.counterTemplate = counterTemplate;
+    }
 
-	public List<WalletTemplate> getWalletTemplates() {
-		return walletTemplates;
-	}
+    public List<WalletTemplate> getWalletTemplates() {
+        return walletTemplates;
+    }
 
-	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
+    public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -84,14 +87,14 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
         } else if (!(obj instanceof ServiceChargeTemplateUsage)) {
             return false;
         }
-        
-		ServiceChargeTemplateUsage other = (ServiceChargeTemplateUsage) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+
+        ServiceChargeTemplateUsage other = (ServiceChargeTemplateUsage) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
 }

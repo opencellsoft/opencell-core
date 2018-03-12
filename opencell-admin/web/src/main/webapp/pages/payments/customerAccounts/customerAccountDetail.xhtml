@@ -138,12 +138,7 @@
                                         <hftl:formField label="#{messages['address.address3']}" field="address" id="address3" childField="address3" popup="false" />
                                         <hftl:formField label="#{messages['address.zipCode']}" id="zipCode" field="address" childField="zipCode" popup="false" newLine="true" />
                                         <hftl:formField label="#{messages['address.city']}" id="city" field="address" childField="city" popup="false" />
-                                        <hftl:formField label="#{messages['address.country']}" field="address" childField="country" />
-                                        <!-- 												<hftl:formField id="countryPanel" -->
-                                        <!-- 													label="#{messages['address.country']}" fkToEntity="true" -->
-                                        <!-- 													field="address" childField="country" -->
-                                        <!-- 													valueLabelField="description" valueField="countryCode" -->
-                                        <!-- 													listBean="#{countryBean}"/> -->
+                                        <hftl:formField id="countryPanel" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/> 
                                     </p:fieldset>
 
                                     <p:fieldset legend="#{messages['customerAccount.paymentMethods']}">
@@ -212,7 +207,7 @@
 
                                             <p:separator rendered="#{customerAccountBean.selectedPaymentMethod!=null}" />
 
-                                            <p:panel header="#{messages['customerAccount.paymentMethod']}" rendered="#{customerAccountBean.selectedPaymentMethod!=null}">
+                                            <p:panel id="paymentMethodPanelId"  header="#{messages['customerAccount.paymentMethod']}" rendered="#{customerAccountBean.selectedPaymentMethod!=null}">
                                                 <p:outputPanel styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
                                                     <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['paymentMethod.alias']}" field="alias" required="true" />
 
@@ -250,11 +245,13 @@
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bankName']}" field="bankCoordinates"
                                                             childField="bankName" size="55" required="true" />
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"
-                                                            field="bankCoordinates" childField="accountOwner" size="55" required="true" />
-                                                        <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
-                                                            childField="bic" size="15" required="true" />
+                                                            field="bankCoordinates" childField="accountOwner" size="55" required="true" />                                                        
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
-                                                            childField="iban" size="45" required="true" />                                                                                                     
+                                                            childField="iban" size="45"   listenerUpdate="bicId" actionListenerBean="#{customerAccountBean}"  actionListenerMethod="checkIsBicRequired" required="true" />                                                           
+                                                       <h:panelGroup id="bicId">
+                                                        <hftl:formField  entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
+                                                            childField="bic" size="15"  required="#{customerAccountBean.isBicRequired()}" />  
+                                                            </h:panelGroup>                                                                                                   
                                                     </c:if>
                                                 </p:outputPanel>
                                                 <h:panelGroup layout="block" styleClass="form-panel-actions">

@@ -16,7 +16,7 @@ public interface CacheContainerProvider {
      * 
      * @param cacheName Cache name (optional)
      */
-//    @Asynchronous
+    // @Asynchronous
     public void refreshCache(String cacheName);
 
     /**
@@ -24,7 +24,7 @@ public interface CacheContainerProvider {
      * 
      * @return A a map containing cache information with cache name as a key and cache as a value
      */
-//    @SuppressWarnings("rawtypes")
+    // @SuppressWarnings("rawtypes")
     public Map<String, Cache> getCaches();
 
 }

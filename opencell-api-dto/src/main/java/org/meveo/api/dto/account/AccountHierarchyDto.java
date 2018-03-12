@@ -200,7 +200,7 @@ public class AccountHierarchyDto implements Serializable {
             this.setAddress3(customer.getAddress().getAddress3());
             this.setState(customer.getAddress().getState());
             this.setZipCode(customer.getAddress().getZipCode());
-            this.setCountryCode(customer.getAddress().getCountry());
+            this.setCountryCode(customer.getAddress().getCountry() == null ? null : customer.getAddress().getCountry().getCountryCode());
             this.setCity(customer.getAddress().getCity());
         }
 

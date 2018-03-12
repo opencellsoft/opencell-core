@@ -75,10 +75,11 @@
 
         <c:if test="#{multiLang}">
             <ui:repeat var="languageCode" value="#{providerBean.providerLanguages}">
+            <div style="clear: both;">
                 <div style="float: left">
                     <h:graphicImage value="/img/img#{languageCode}.png" style="height:17px; width:33px; margin-right:3px" />
                 </div>
-                <div style="clear: right;">
+                <div>
                     <c:if test="#{textArea and edit}">
                         <p:inputTextarea value="#{entity[field.concat('I18nNullSafe')][languageCode]}" cols="#{cols}" rows="#{rows}" maxlength="#{maxlength}" autoResize="true" />
                     </c:if>
@@ -87,6 +88,7 @@
                     </c:if>
                     <h:outputText rendered="#{!edit}" value="#{entity[field.concat('I18n')][languageCode]}" style="font-weight:bold;" />
                 </div>
+            </div>
             </ui:repeat>
         </c:if>
     </hftl:decorateFormField>

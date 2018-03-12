@@ -7,6 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BillingCycleDto;
 import org.meveo.api.dto.CalendarDto;
 import org.meveo.api.dto.CountryDto;
@@ -15,6 +16,7 @@ import org.meveo.api.dto.InvoiceCategoryDto;
 import org.meveo.api.dto.InvoiceSubCategoryDto;
 import org.meveo.api.dto.LanguageDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.ProvidersDto;
 import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TerminationReasonDto;
 import org.meveo.api.dto.account.CreditCategoryDto;
@@ -25,11 +27,17 @@ import org.meveo.api.dto.response.GetCustomerAccountConfigurationResponseDto;
 import org.meveo.api.dto.response.GetCustomerConfigurationResponseDto;
 import org.meveo.api.dto.response.GetInvoicingConfigurationResponseDto;
 import org.meveo.api.dto.response.GetTradingConfigurationResponseDto;
+import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.TitleDto;
 import org.meveo.api.exception.ActionForbiddenException;
+import org.meveo.api.exception.BusinessApiException;
+import org.meveo.api.exception.DeleteReferencedEntityException;
+import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.BankCoordinates;
@@ -69,6 +77,7 @@ import org.meveo.service.crm.impl.CustomerBrandService;
 import org.meveo.service.crm.impl.CustomerCategoryService;
 import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.payments.impl.CreditCategoryService;
+import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
@@ -131,36 +140,6 @@ public class ProviderApi extends BaseApi {
     @Inject
     private TitleService titleService;
 
-    public void create(ProviderDto postData) throws MeveoApiException, BusinessException {
-
-        throw new BusinessException("There should already be a provider setup");
-        // if (StringUtils.isBlank(postData.getCode())) {
-        // missingParameters.add("code");
-        // }
-        //
-        // handleMissingParameters();
-        // if (!currentUser.hasRole("superAdminManagement")) {
-        // throw new ActionForbiddenException("User has no permission to create new providers");
-        // }
-        //
-        // Provider provider = providerService.findById(appProvider.getId());
-        //
-        // provider=fromDto(postData,provider);
-        // providerService.create(provider);
-        //
-        // // populate customFields
-        // try {
-        // populateCustomFields(postData.getCustomFields(), provider, true);
-        // } catch (MissingParameterException e) {
-        // log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
-        // throw e;
-        // } catch (Exception e) {
-        // log.error("Failed to associate custom field instance to an entity", e);
-        // throw e;
-        // }
-
-    }
-
     public ProviderDto find() throws MeveoApiException {
 
         Provider provider = providerService.findById(appProvider.getId(), Arrays.asList("currency", "country", "language"));
@@ -185,7 +164,7 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -271,8 +250,7 @@ public class ProviderApi extends BaseApi {
         List<InvoiceCategory> invoiceCategories = invoiceCategoryService.list();
         if (invoiceCategories != null) {
             for (InvoiceCategory invoiceCategory : invoiceCategories) {
-                result.getInvoiceCategories().getInvoiceCategory()
-                    .add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true)));
+                result.getInvoiceCategories().getInvoiceCategory().add(new InvoiceCategoryDto(invoiceCategory, entityToDtoConverter.getCustomFieldsDTO(invoiceCategory, true)));
             }
         }
 
@@ -357,7 +335,7 @@ public class ProviderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), provider, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -544,5 +522,125 @@ public class ProviderApi extends BaseApi {
             }
         }
         return provider;
+    }
+
+    /**
+     * New tenant/provider creation
+     * 
+     * @param postData
+     * @throws MeveoApiException
+     * @throws BusinessException
+     */
+    public void createTenant(ProviderDto postData) throws MeveoApiException, BusinessException {
+
+        // Tenant/provider management is available for superadmin user only of main provider
+        if (!ParamBean.isMultitenancyEnabled()) {
+            throw new ActionForbiddenException("Multitenancy is not enabled");
+
+        } else if (currentUser.getProviderCode() != null) {
+            throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
+
+        } else if (!currentUser.hasRole("superAdminManagement")) {
+            throw new ActionForbiddenException("User has no permission to manage tenants ");
+        }
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParameters();
+
+        // check if provider already exists
+        if (providerService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(Provider.class, postData.getCode());
+        }
+
+        Provider provider = new Provider();
+        provider.setCode(postData.getCode());
+        provider.setDescription(postData.getDescription());
+
+        providerService.create(provider);
+    }
+
+    /**
+     * List tenants/providers
+     * 
+     * @return A list of tenants/providers
+     * @throws ActionForbiddenException action forbidden exception
+     * @throws InvalidParameterException invalid parameter exception.
+     */
+    public ProvidersDto listTenants() throws ActionForbiddenException, InvalidParameterException {
+
+        // Tenant/provider management is available for superadmin user only of main provider
+        if (!ParamBean.isMultitenancyEnabled()) {
+            throw new ActionForbiddenException("Multitenancy is not enabled");
+
+        } else if (currentUser.getProviderCode() != null) {
+            throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
+
+        } else if (!currentUser.hasRole("superAdminManagement")) {
+            throw new ActionForbiddenException("User has no permission to manage tenants ");
+        }
+
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, null, Provider.class);
+
+        Long totalCount = providerService.count(paginationConfig);
+
+        ProvidersDto result = new ProvidersDto();
+        result.setPaging(new PagingAndFiltering());
+        result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
+
+        if (totalCount > 0) {
+            List<Provider> providers = providerService.list(paginationConfig);
+            for (Provider provider : providers) {
+                result.getProviders().add(new ProviderDto(provider, appProvider.getId().equals(provider.getId()) ? entityToDtoConverter.getCustomFieldsDTO(provider, true) : null));
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Remove tenant/provider
+     * 
+     * @param providerCode
+     * @throws MeveoApiException
+     */
+    public void removeTenant(String providerCode) throws MeveoApiException {
+
+        // Tenant/provider management is available for superadmin user only of main provider
+        if (!ParamBean.isMultitenancyEnabled()) {
+            throw new ActionForbiddenException("Multitenancy is not enabled");
+
+        } else if (currentUser.getProviderCode() != null) {
+            throw new ActionForbiddenException("Tenants should be managed by a main tenant's super administrator");
+
+        } else if (!currentUser.hasRole("superAdminManagement")) {
+            throw new ActionForbiddenException("User has no permission to manage tenants ");
+        }
+
+        if (StringUtils.isBlank(providerCode)) {
+            missingParameters.add("providerCode");
+            handleMissingParameters();
+        }
+
+        if (appProvider.getCode().equalsIgnoreCase(providerCode)) {
+            throw new BusinessApiException("Can not remove a main provider");
+        }
+
+        Provider provider = providerService.findByCode(providerCode);
+        if (provider == null) {
+            throw new EntityDoesNotExistsException(Provider.class, providerCode);
+        }
+
+        try {
+            providerService.remove(provider);
+            providerService.commit();
+        } catch (Exception e) {
+            if (e.getMessage().indexOf("ConstraintViolationException") > -1) {
+                throw new DeleteReferencedEntityException(Provider.class, providerCode);
+            }
+            throw new MeveoApiException(MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION, "Cannot delete entity");
+        }
     }
 }

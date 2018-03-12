@@ -31,12 +31,17 @@ import javax.persistence.Enumerated;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 
+import org.meveo.model.shared.DateUtils;
+
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
 /**
  * Represents a time inverval(s) based calendar. Time interval specifies a begin and end times, which can be expressed in the following units: weekdays, month/day and hour/minute.
  * 
- * Example: given a month/day interval of 01/15 - 01/30 a previous calendar date for 2015/01/20 will be 2015/01/15 and next calendar date will be 2015/01/30&lt;br/&gt;
- * given a hour/minute interval of 15:30 - 16:45 a previous calendar date for 2015/01/20 16:00 will be 2015/01/20 15:30 and next calendar date will be 2015/01/20 16:45 &lt;br/&gt;
- * given weekday interval of 1-5 (monday - friday) a previous calendar date for 2015/01/20 will be 2015/01/19 and next calendar date will be 2015/01/23&lt;br/&gt;
+ * Example: given a month/day interval of 01/15 - 01/30 a previous calendar date for 2015/01/20 will be 2015/01/15 and next calendar date will be 2015/01/30&lt;br/&gt; given a
+ * hour/minute interval of 15:30 - 16:45 a previous calendar date for 2015/01/20 16:00 will be 2015/01/20 15:30 and next calendar date will be 2015/01/20 16:45 &lt;br/&gt; given
+ * weekday interval of 1-5 (monday - friday) a previous calendar date for 2015/01/20 will be 2015/01/19 and next calendar date will be 2015/01/23&lt;br/&gt;
  * 
  * @author Andrius Karpavicius
  * 
@@ -51,6 +56,7 @@ public class CalendarInterval extends Calendar {
     @Enumerated(EnumType.STRING)
     private CalendarIntervalTypeEnum intervalType = CalendarIntervalTypeEnum.DAY;
 
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "calendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("intervalBegin")
     private List<CalendarDateInterval> intervals;
@@ -148,8 +154,8 @@ public class CalendarInterval extends Calendar {
             // adjusted by 24 hours.
         } else if (intervalType == CalendarIntervalTypeEnum.HOUR) {
 
-            int hourMin = Integer.parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "")
-                    + calendar.get(java.util.Calendar.MINUTE));
+            int hourMin = Integer
+                .parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "") + calendar.get(java.util.Calendar.MINUTE));
 
             for (CalendarDateInterval interval : intervals) {
 
@@ -260,8 +266,8 @@ public class CalendarInterval extends Calendar {
             // adjusted by 24 hours.
         } else if (intervalType == CalendarIntervalTypeEnum.HOUR) {
 
-            int hourMin = Integer.parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "")
-                    + calendar.get(java.util.Calendar.MINUTE));
+            int hourMin = Integer
+                .parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "") + calendar.get(java.util.Calendar.MINUTE));
 
             for (CalendarDateInterval interval : intervals) {
 
@@ -380,8 +386,8 @@ public class CalendarInterval extends Calendar {
             // when checking for 01:00), the interval end value is adjusted by -24 hours.
         } else if (intervalType == CalendarIntervalTypeEnum.HOUR) {
 
-            int hourMin = Integer.parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "")
-                    + calendar.get(java.util.Calendar.MINUTE));
+            int hourMin = Integer
+                .parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "") + calendar.get(java.util.Calendar.MINUTE));
 
             int earliestHourMin = -10000000;
             for (CalendarDateInterval interval : intervals) {
@@ -506,8 +512,8 @@ public class CalendarInterval extends Calendar {
             // checking for 23:00), the interval begin value is adjusted by 24 hours.
         } else if (intervalType == CalendarIntervalTypeEnum.HOUR) {
 
-            int hourMin = Integer.parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "")
-                    + calendar.get(java.util.Calendar.MINUTE));
+            int hourMin = Integer
+                .parseInt(calendar.get(java.util.Calendar.HOUR_OF_DAY) + "" + (calendar.get(java.util.Calendar.MINUTE) < 10 ? "0" : "") + calendar.get(java.util.Calendar.MINUTE));
 
             int earliestHourMin = 10000000;
             for (CalendarDateInterval interval : intervals) {
@@ -547,11 +553,12 @@ public class CalendarInterval extends Calendar {
         }
     }
 
-    /**
-     * Indicate to truncate time values for day and weekday calendars
-     */
     @Override
-    public boolean truncDateTime() {
-        return intervalType != CalendarIntervalTypeEnum.HOUR;
+    public Date truncateDateTime(Date dateToTruncate) {
+        if (intervalType != CalendarIntervalTypeEnum.HOUR) {
+            return DateUtils.setTimeToZero(dateToTruncate);
+        } else {
+            return dateToTruncate;
+    }
     }
 }

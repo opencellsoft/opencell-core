@@ -21,18 +21,24 @@ package org.meveo.admin.listener;
 import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.inject.Inject;
 
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Startup
 @Singleton
 public class StartupListener {
 
-	private Logger log = LoggerFactory.getLogger(StartupListener.class);
+    @Inject
+    private ApplicationInitializer applicationInitializer;
 
-	@PostConstruct
-	private void init() {
-		log.info("Thank you for running MEVEO Community code. For Commercial Grade Support, please purchase a MEVEO subscription from http://www.manaty.net");
-	}
+    @Inject
+    private Logger log;
+
+    @PostConstruct
+    private void init() {
+        log.info("Thank you for running Opencell Community code. For Commercial Grade Support, please purchase an Opencell subscription from https://opencellsoft.com/");
+
+        applicationInitializer.init();
+    }
 }

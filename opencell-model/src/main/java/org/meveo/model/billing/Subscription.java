@@ -66,7 +66,8 @@ import org.meveo.model.shared.DateUtils;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_subscription_seq"), })
 @NamedQueries({ @NamedQuery(name = "Subscription.getExpired", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.subscribedTillDate<=:date"),
-        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate") })
+        @NamedQuery(name = "Subscription.getToNotifyExpiration", query = "select s.id from Subscription s where s.subscribedTillDate is not null and s.renewalNotifiedDate is null and s.notifyOfRenewalDate is not null and s.notifyOfRenewalDate<=:date and :date < s.subscribedTillDate"),
+        @NamedQuery(name = "Subscription.getIdsByUsageChargeTemplate", query = "select ci.serviceInstance.subscription.id from UsageChargeInstance ci where ci.chargeTemplate=:chargeTemplate") })
 
 public class Subscription extends BusinessCFEntity {
 
@@ -388,12 +389,11 @@ public class Subscription extends BusinessCFEntity {
         }
     }
 
-    public void updateRenewalRule(SubscriptionRenewal newRenewalRule){
-        if (getSubscribedTillDate() != null && isRenewed()){
-            
+    public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
+        if (getSubscribedTillDate() != null && isRenewed()) {
+
         }
-        
-        
+
     }
-    
+
 }

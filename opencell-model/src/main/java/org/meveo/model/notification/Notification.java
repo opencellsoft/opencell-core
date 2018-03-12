@@ -43,8 +43,11 @@ import org.meveo.validation.constraint.ClassName;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "adm_notification_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-@NamedQueries({ @NamedQuery(name = "Notification.getNotificationsForCache", query = "SELECT n from Notification n where n.disabled=false", hints = {
-        @QueryHint(name = "org.hibernate.readOnly", value = "true") }) })
+@NamedQueries({
+        @NamedQuery(name = "Notification.getNotificationsForCache", query = "SELECT n from Notification n where n.disabled=false", hints = {
+                @QueryHint(name = "org.hibernate.readOnly", value = "true") }),
+        @NamedQuery(name = "Notification.getActiveNotificationsByEventAndClasses", query = "SELECT n from Notification n where n.disabled=false and n.eventTypeFilter=:eventTypeFilter and n.classNameFilter in :classNameFilter order by priority ASC", hints = {
+                @QueryHint(name = "org.hibernate.cacheable", value = "true") }) })
 public class Notification extends BusinessEntity {
 
     private static final long serialVersionUID = 2634877161620665288L;
@@ -82,7 +85,10 @@ public class Notification extends BusinessEntity {
 
     @OneToMany(mappedBy = "notification", cascade = CascadeType.REMOVE)
     protected List<NotificationHistory> notificationHistories;
-    
+
+    /**
+     * The lower number, the higher the priority is
+     */
     @Column(name = "priority", columnDefinition = "int DEFAULT 1")
     private int priority = 1;
 
@@ -169,11 +175,11 @@ public class Notification extends BusinessEntity {
         this.notificationHistories = notificationHistories;
     }
 
-	public int getPriority() {
-		return priority;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public void setPriority(int priority) {
-		this.priority = priority;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 }

@@ -19,10 +19,7 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
 
 	private Date productionDate;
 	private Date invoiceDate;
-	private BigDecimal amountWithoutTax;
-	private BigDecimal taxAmount;
-	private BigDecimal netToPay;
-	private String paymentMethod;
+	private BigDecimal netToPay;	
 	private String paymentInfo;// IBAN for direct debit
 	private String paymentInfo1;// bank code
 	private String paymentInfo2;// code guichet
@@ -30,9 +27,8 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
 	private String paymentInfo4;// RIB
 	private String paymentInfo5;// bankName
 	private String paymentInfo6;// bic
-	// private DDRequestLOT ddRequestLOT;
-	// private DDRequestItem ddRequestItem;
 	private String billingAccountName;
+	
 
 	public RecordedInvoiceDto() {
 		super.setType("I");
@@ -62,36 +58,12 @@ public class RecordedInvoiceDto extends AccountOperationDto implements Serializa
 		this.invoiceDate = invoiceDate;
 	}
 
-	public BigDecimal getAmountWithoutTax() {
-		return amountWithoutTax;
-	}
-
-	public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
-		this.amountWithoutTax = amountWithoutTax;
-	}
-
-	public BigDecimal getTaxAmount() {
-		return taxAmount;
-	}
-
-	public void setTaxAmount(BigDecimal taxAmount) {
-		this.taxAmount = taxAmount;
-	}
-
 	public BigDecimal getNetToPay() {
 		return netToPay;
 	}
 
 	public void setNetToPay(BigDecimal netToPay) {
 		this.netToPay = netToPay;
-	}
-
-	public String getPaymentMethod() {
-		return paymentMethod;
-	}
-
-	public void setPaymentMethod(String paymentMethod) {
-		this.paymentMethod = paymentMethod;
 	}
 
 	public String getPaymentInfo() {

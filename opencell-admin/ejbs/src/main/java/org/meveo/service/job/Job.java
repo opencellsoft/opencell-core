@@ -1,10 +1,7 @@
 package org.meveo.service.job;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Future;
 
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;

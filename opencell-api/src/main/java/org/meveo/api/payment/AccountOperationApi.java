@@ -23,6 +23,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.payment.AccountOperationsResponseDto;
 import org.meveo.api.dto.response.payment.MatchedOperationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -32,7 +33,6 @@ import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OtherCreditAndCharge;
-import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.payments.RejectedPayment;
@@ -40,7 +40,6 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
@@ -70,10 +69,6 @@ public class AccountOperationApi extends BaseApi {
     /** The recorded invoice service. */
     @Inject
     private RecordedInvoiceService recordedInvoiceService;
-
-    /** The payment service. */
-    @Inject
-    private PaymentService paymentService;
 
     /**
      * Creates the.
@@ -140,6 +135,12 @@ public class AccountOperationApi extends BaseApi {
 
         accountOperation.setOccCode(postData.getOccCode());
         accountOperation.setOccDescription(postData.getOccDescription());
+        if (!StringUtils.isBlank(postData.getPaymentMethod())) {
+            accountOperation.setPaymentMethod(PaymentMethodEnum.valueOf(postData.getPaymentMethod()));
+        }
+        accountOperation.setTaxAmount(postData.getTaxAmount());
+        accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
+        accountOperation.setOrderNumber(postData.getOrderNumber());
         if (!StringUtils.isBlank(postData.getExcludedFromDunning())) {
             accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
         } else {
@@ -150,7 +151,7 @@ public class AccountOperationApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), accountOperation, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -203,6 +204,7 @@ public class AccountOperationApi extends BaseApi {
 
     /**
      * List.
+     * 
      * @param pagingAndFiltering paging and filtering
      * @return the account operations response dto
      * @throws MeveoApiException the meveo api exception
@@ -445,16 +447,8 @@ public class AccountOperationApi extends BaseApi {
      */
     private void updatePaymentMethod(AccountOperation ao, PaymentMethodEnum paymentMethod) throws BusinessException {
         if (MatchingStatusEnum.O == ao.getMatchingStatus()) {
-            if (ao instanceof RecordedInvoice) {
-                RecordedInvoice recordedInvoice = (RecordedInvoice) ao;
-                recordedInvoice.setPaymentMethod(paymentMethod);
-                recordedInvoiceService.update(recordedInvoice);
-            }
-            if (ao instanceof Payment) {
-                Payment payment = (Payment) ao;
-                payment.setPaymentMethod(paymentMethod);
-                paymentService.update(payment);
-            }
+            ao.setPaymentMethod(paymentMethod);
+            accountOperationService.update(ao);
         }
     }
 
@@ -464,7 +458,10 @@ public class AccountOperationApi extends BaseApi {
      * @param accountOp the account op
      * @return the account operation dto
      */
-    private AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
+    public AccountOperationDto accountOperationToDto(AccountOperation accountOp) {
+        if (accountOp == null) {
+            return null;
+        }
         AccountOperationDto accountOperationDto = new AccountOperationDto();
         accountOperationDto.setId(accountOp.getId());
         accountOperationDto.setDueDate(accountOp.getDueDate());
@@ -485,6 +482,10 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setBankReference(accountOp.getBankReference());
         accountOperationDto.setDepositDate(accountOp.getDepositDate());
         accountOperationDto.setBankCollectionDate(accountOp.getBankCollectionDate());
+        accountOperationDto.setTaxAmount(accountOp.getTaxAmount());
+        accountOperationDto.setAmountWithoutTax(accountOp.getAmountWithoutTax());
+        accountOperationDto.setOrderNumber(accountOp.getOrderNumber());
+        accountOperationDto.setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
         List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
         if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
             MatchingAmountDto matchingAmountDto = null;

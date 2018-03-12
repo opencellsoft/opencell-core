@@ -53,6 +53,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
     @Inject
     private EntityCustomActionApi entityCustomActionApi;
+    
+    @Inject
+    private EntityCustomActionService entityCustomActionService;
 
     public CustomEntityTemplate create(CustomEntityTemplateDto dto) throws MeveoApiException, BusinessException {
 
@@ -361,16 +364,26 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
 		// custom fields that applies to an entity type, eg. OFFER
 		Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
-		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), null);
+		Map<String, EntityCustomAction> caFields = entityCustomActionService.findByAppliesTo(appliesTo);
+		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), caFields.values());
 
 		// evaluate the CFT againsts the entity
 		List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
 		for (CustomFieldTemplateDto cft : result.getFields()) {
-			if (ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entityInstance)) {
+			if (ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entityInstance)) {
 				evaluatedCFTDto.add(cft);
 			}
 		}
 		result.setFields(evaluatedCFTDto);
+		
+        // evaluate the CA againsts the entity
+        List<EntityCustomActionDto> evaluatedCA = new ArrayList<>();
+        for (EntityCustomActionDto eca : result.getActions()) {
+            if (ValueExpressionWrapper.evaluateToBooleanOneVariable(eca.getApplicableOnEl(), "entity", entityInstance)) {
+                evaluatedCA.add(eca);
+            }
+        }
+        result.setActions(evaluatedCA);
 
 		return result;
 	}

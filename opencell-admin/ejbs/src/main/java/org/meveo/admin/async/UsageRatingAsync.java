@@ -17,6 +17,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.job.JobExecutionService;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -32,6 +33,9 @@ public class UsageRatingAsync {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private Logger log;
+
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) throws BusinessException {
@@ -40,7 +44,10 @@ public class UsageRatingAsync {
                 break;
             }
             try {
+                long startDate = System.currentTimeMillis();
                 unitUsageRatingJobBean.execute(result, id);
+                log.debug("Finished processing EDR {}: {}", id, (System.currentTimeMillis() - startDate));
+
             } catch (BusinessException be) {
                 unitUsageRatingJobBean.registerFailedEdr(result, id, be);
             }

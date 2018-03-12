@@ -27,7 +27,7 @@ public class ProductModelScriptService implements Serializable {
     @Inject
     private ScriptInstanceService scriptInstanceService;
 
-    public void beforeCreate(List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
+    public ProductScriptInterface beforeCreate(List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
         ProductScriptInterface scriptInterface = (ProductScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<>();
         if (customFields != null) {
@@ -36,10 +36,10 @@ public class ProductModelScriptService implements Serializable {
             scriptContext.put(ServiceScript.CONTEXT_PARAMETERS, new ArrayList<CustomFieldDto>());
         }
         scriptInterface.beforeCreate(scriptContext);
+        return scriptInterface;
     }
 
-    public void afterCreate(ProductTemplate entity, List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
-        ProductScriptInterface scriptInterface = (ProductScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
+    public void afterCreate(ProductTemplate entity, List<CustomFieldDto> customFields, ProductScriptInterface scriptInterface) throws BusinessException {
         Map<String, Object> scriptContext = new HashMap<>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         if (customFields != null) {

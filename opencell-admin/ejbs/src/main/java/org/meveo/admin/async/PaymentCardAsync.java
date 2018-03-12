@@ -16,7 +16,10 @@ import javax.inject.Inject;
 import org.meveo.admin.job.UnitPaymentCardJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.job.JobExecutionService;
+
 
 /**
  * @author anasseh
@@ -38,17 +41,19 @@ public class PaymentCardAsync {
      * @param result job execution result
      * @param createAO true/ false to create account operation
      * @param matchingAO matching account operation
+     * @param paymentGateway paymentGateway to use
      * @param operationCategory operation category.
+     * @param paymentMethodType Payment method type to use
      * @return future result
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, boolean createAO, boolean matchingAO,PaymentGateway paymentGateway,OperationCategoryEnum operationCategory,PaymentMethodEnum paymentMethodType) {
         for (Long id : ids) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            unitPaymentCardJobBean.execute(result, id, createAO, matchingAO, operationCategory);
+            unitPaymentCardJobBean.execute(result, id, createAO, matchingAO,operationCategory,paymentGateway,paymentMethodType);
         }
         return new AsyncResult<String>("OK");
     }

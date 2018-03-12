@@ -289,9 +289,18 @@ public class CalendarJoin extends Calendar {
         return null;
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public boolean truncDateTime() {
-        return joinCalendar1.truncDateTime() && joinCalendar2.truncDateTime();
+    public Date truncateDateTime(Date dateToTruncate) {
+        Date date1 = joinCalendar1.truncateDateTime(dateToTruncate);
+        Date date2 = joinCalendar2.truncateDateTime(dateToTruncate);
+
+        // Pick which one has greatest time granularity
+        if (date1.getSeconds() > date2.getSeconds() || date1.getMinutes() > date2.getMinutes() || date1.getHours() > date2.getHours() || date1.getDate() > date2.getDate()) {
+            return date1;
+        } else {
+            return date2;
+        }
     }
 
     /**

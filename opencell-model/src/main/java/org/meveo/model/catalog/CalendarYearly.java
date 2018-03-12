@@ -28,6 +28,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.meveo.model.shared.DateUtils;
 
 @Entity
@@ -36,11 +38,11 @@ public class CalendarYearly extends Calendar {
 
 	private static final long serialVersionUID = 1L;
 	
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "cat_calendar_days", joinColumns = @JoinColumn(name = "calendar_id"), inverseJoinColumns = @JoinColumn(name = "day_id"))
 	private List<DayInYear> days;
 
-	
 	public List<DayInYear> getDays() {
 		return days;
 	}
@@ -50,14 +52,10 @@ public class CalendarYearly extends Calendar {
 	}
 
 	/**
-	 * Checks for next calendar date. If not found in this year checks next
-	 * years dates. Calendar has list of days (month/day), so if calendar has at
-	 * least one date it will be found in this or next year. For example today
-	 * is 2010.12.06. Calendar has only one day - 12.05. So nextCalendarDate
-	 * will be found for 2011.12.05.
+     * Checks for next calendar date. If not found in this year checks next years dates. Calendar has list of days (month/day), so if calendar has at least one date it will be
+     * found in this or next year. For example today is 2010.12.06. Calendar has only one day - 12.05. So nextCalendarDate will be found for 2011.12.05.
 	 * 
-	 * @param date
-	 *            Current date.
+     * @param date Current date.
 	 * @return Next calendar date.
 	 */
 	public Date nextCalendarDate(Date date) {
@@ -65,8 +63,7 @@ public class CalendarYearly extends Calendar {
 		Date result = future;
 		int currentYear = DateUtils.getYearFromDate(date);
 		for (DayInYear dayInYear : days) {
-			Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1,
-					dayInYear.getDay(), 0, 0, 0);
+            Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1, dayInYear.getDay(), 0, 0, 0);
 			if (d.after(date) && d.before(result)) {
 				result = d;
 			}
@@ -74,8 +71,7 @@ public class CalendarYearly extends Calendar {
 		if (result == future) { // if result did not change
 			currentYear++; // check for date in next year
 			for (DayInYear dayInYear : days) {
-				Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1,
-						dayInYear.getDay(), 0, 0, 0);
+                Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1, dayInYear.getDay(), 0, 0, 0);
 				if (d.after(date) && d.before(result)) {
 					result = d;
 				}
@@ -88,14 +84,10 @@ public class CalendarYearly extends Calendar {
 	}
 
 	/**
-	 * Checks for previous calendar date. If not found in this year checks
-	 * previous years dates. Calendar has list of days (month/day), so if
-	 * calendar has at least one date it will be found in this or next year. For
-	 * example today is 2010.12.06. Calendar has only one day - 12.07. So
-	 * previousCalendarDate will be found for 2009.12.07.
+     * Checks for previous calendar date. If not found in this year checks previous years dates. Calendar has list of days (month/day), so if calendar has at least one date it will
+     * be found in this or next year. For example today is 2010.12.06. Calendar has only one day - 12.07. So previousCalendarDate will be found for 2009.12.07.
 	 * 
-	 * @param date
-	 *            Current date.
+     * @param date Current date.
 	 * @return Next calendar date.
 	 */
 	public Date previousCalendarDate(Date date) {
@@ -103,8 +95,7 @@ public class CalendarYearly extends Calendar {
 		Date result = past;
 		int currentYear = DateUtils.getYearFromDate(date);
 		for (DayInYear dayInYear : days) {
-			Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1,
-					dayInYear.getDay(), 0, 0, 0);
+            Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1, dayInYear.getDay(), 0, 0, 0);
 			if ((d.before(date) || d.equals(date)) && d.after(result)) {
 				result = d;
 			}
@@ -112,8 +103,7 @@ public class CalendarYearly extends Calendar {
 		if (result == past) { // if result did not change
 			currentYear--; // check for date in previous year
 			for (DayInYear dayInYear : days) {
-				Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1,
-						dayInYear.getDay(), 0, 0, 0);
+                Date d = DateUtils.newDate(currentYear, dayInYear.getMonth().getId() - 1, dayInYear.getDay(), 0, 0, 0);
 				if ((d.before(date) || d.equals(date)) && d.after(result)) {
 					result = d;
 				}
@@ -133,5 +123,10 @@ public class CalendarYearly extends Calendar {
     @Override
     public Date nextPeriodStartDate(Date date) {
         return null;
+    }
+
+    @Override
+    public Date truncateDateTime(Date dateToTruncate) {
+        return DateUtils.setTimeToZero(dateToTruncate);
     }
 }

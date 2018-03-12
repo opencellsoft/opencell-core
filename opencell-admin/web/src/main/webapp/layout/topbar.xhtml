@@ -4,7 +4,7 @@
 	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
 	xmlns:p="http://primefaces.org/ui"
 	xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
-	
+
 
 	<div id="topbar-wrapper" class="clearfix">
 		<div id="layout-topbar" class="pull-left">
@@ -43,48 +43,57 @@
 				<!-- / top-right-menu -->
 			</div>
 			<script type="text/javascript">
-				$(document).ready(function() {
-					$('#top-right-menu li a').click(function(e) {
-						//e.preventDefault();
-						e.stopPropagation();
-						var id = $(this).attr("id");
-						if(id == "menu1") {
-							$("#menu2").parent().find('ul').hide();
-						} else {
-							$("#menu1").parent().find('ul').hide();
-						}
-						
-						$(this).parent().find('ul').slideToggle();
-						$(this).parent().find('ul').delay(5000).fadeOut('slow');
-					});
-				})
+				$(document).ready(
+						function() {
+							$('#top-right-menu li a').click(
+									function(e) {
+										//e.preventDefault();
+										e.stopPropagation();
+										var id = $(this).attr("id");
+										if (id == "menu1") {
+											$("#menu2").parent().find('ul')
+													.hide();
+										} else {
+											$("#menu1").parent().find('ul')
+													.hide();
+										}
+
+										$(this).parent().find('ul')
+												.slideToggle();
+										$(this).parent().find('ul').delay(5000)
+												.fadeOut('slow');
+									});
+						})
 			</script>
 			<div class="FRight">
 				<ul id="user-info" class="ListNoStyle Padding10"
 					style="margin: 0 40px 0 0;">
 					<li class="Fs14 FontBold">#{currentUser.fullNameOrUserName}</li>
-					<li class="Fs12 FontBold">#{appProvider.code}</li>
+					<li class="Fs12 FontBold">#{currentUser.providerCode}</li>
 				</ul>
 			</div>
-			<c:if test="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }">
-			<div class="search-wrapper">		
-				<p:inputText id="globalFullTextSearch"
-					value="#{fullTextSearchBean.filters['fullText']}"
-					placeholder="#{messages['commons.search']}" />
-				<p:commandLink id="doGlobalFullTextSearch"
-					styleClass="Padding5 fa fa-search" action="mm_fullTextSearch"
-					process="globalFullTextSearch @this" />
-					
-			</div>
-			<p:defaultCommand target="doGlobalFullTextSearch" />
+			<c:if
+				test="#{currentUser.hasRole('marketingCatalogVisualization')  or currentUser.hasRole('marketingCatalogManager') }">
+				<div class="search-wrapper">
+					<p:inputText id="globalFullTextSearch"
+						value="#{fullTextSearchBean.filters['fullText']}"
+						placeholder="#{messages['commons.search']}" />
+					<p:commandLink id="doGlobalFullTextSearch"
+						styleClass="Padding5 fa fa-search" action="mm_fullTextSearch"
+						process="globalFullTextSearch @this" />
+
+				</div>
+				<p:defaultCommand target="doGlobalFullTextSearch" />
 			</c:if>
 		</h:form>
 		<!-- / topbar-wrapper -->
 	</div>
-	
-	<div id="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}" class="FLeft">		
-		 <c:if test="#{!hideNavigation}">
-  			<ui:include src="/layout/navigation.xhtml" />
+
+	<div
+		id="#{facesContext.viewRoot.renderKitId eq 'PRIMEFACES_MOBILE' ? 'layout-menu-cover' : 'top-menu-cover'}"
+		class="FLeft">
+		<c:if test="#{!hideNavigation}">
+			<ui:include src="/layout/navigation.xhtml" />
 		</c:if>
 	</div>
 

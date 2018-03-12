@@ -47,6 +47,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 
 @Entity
 @ObservableEntity
@@ -73,6 +74,9 @@ public class Seller extends BusinessCFEntity {
 
     @Embedded
     private Address address;
+
+    @Embedded
+    private ContactInformation contactInformation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_seller_id")
@@ -127,6 +131,14 @@ public class Seller extends BusinessCFEntity {
 
     public void setSeller(Seller seller) {
         this.seller = seller;
+    }
+    
+    public ContactInformation getContactInformation() {
+        return contactInformation;
+    }
+
+    public void setContactInformation(ContactInformation contactInformation) {
+        this.contactInformation = contactInformation;
     }
 
     @Override

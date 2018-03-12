@@ -42,7 +42,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
@@ -54,7 +53,6 @@ import org.meveo.model.billing.WalletOperation;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.Name;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.CounterInstanceService;
@@ -63,6 +61,7 @@ import org.meveo.service.billing.impl.RatedTransactionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.billing.impl.WalletOperationService;
 import org.meveo.service.billing.impl.WalletReservationService;
+import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.omnifaces.util.Faces;
 import org.primefaces.model.LazyDataModel;
@@ -96,7 +95,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private BillingAccountService billingAccountService;
 
     @Inject
-    private WalletCacheContainerProvider walletCacheContainerProvider;
+    private WalletService walletService;
 
     @Inject
     private CounterInstanceService counterInstanceService;
@@ -136,6 +135,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
      * @return user account.
      */
     @Override
@@ -358,7 +358,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     public String getBalance(WalletInstance wallet) {
 
         String result = null;
-        BigDecimal balance = walletCacheContainerProvider.getBalance(wallet.getId());
+        BigDecimal balance = walletService.getWalletBalance(wallet.getId());
         if (balance != null) {
             result = balance.toPlainString();
         }
@@ -367,7 +367,7 @@ public class UserAccountBean extends AccountBean<UserAccount> {
 
     public String getReservedBalance(WalletInstance wallet) {
         String result = null;
-        BigDecimal balance = walletCacheContainerProvider.getReservedBalance(wallet.getId());
+        BigDecimal balance = walletService.getWalletReservedBalance(wallet.getId());
         if (balance != null) {
             result = balance.toPlainString();
         }
@@ -505,10 +505,10 @@ public class UserAccountBean extends AccountBean<UserAccount> {
                 }
             }
             productInstance.setUserAccount(getPersistenceService().refreshOrRetrieve(entity));
-            productInstance.setProductTemplate(productTemplateService.refreshOrRetrieve(productInstance.getProductTemplate()));
+            productInstance.setProductTemplate(productTemplateService.retrieveIfNotManaged(productInstance.getProductTemplate()));
 
             try {
-                //productInstanceService.create(productInstance);
+                // productInstanceService.create(productInstance);
                 customFieldDataEntryBean.saveCustomFieldsToEntity(productInstance, true);
                 List<WalletOperation> walletOps = productInstanceService.saveAndApplyProductInstance(productInstance, null, null, null, true);
 

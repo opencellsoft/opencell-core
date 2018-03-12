@@ -211,7 +211,7 @@ public class RatedTransaction extends BaseEntity implements ISearchable {
     @JoinColumn(name = "edr_id")
     private EDR edr;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "adjusted_rated_tx")
     private RatedTransaction adjustedRatedTx;
 
