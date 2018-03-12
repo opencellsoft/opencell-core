@@ -40,8 +40,10 @@ import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.mediation.Access;
+import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.medina.impl.AccessService;
+import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
 
@@ -56,6 +58,9 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
     @Inject
     private AccessService accessService;
+    
+    @Inject
+    private OrderHistoryService orderHistoryService;
 
     @MeveoAudit
     @Override
@@ -82,18 +87,6 @@ public class SubscriptionService extends BusinessService<Subscription> {
         subscription.updateSubscribedTillAndRenewalNotifyDates();
 
         return super.update(subscription);
-    }
-
-    @MeveoAudit
-    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
-
-        if (terminationReason == null) {
-            throw new BusinessException("terminationReason is null");
-        }
-
-        return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
-            terminationReason.isApplyTerminationCharges(), orderNumber);
     }
 
     @MeveoAudit
@@ -185,11 +178,28 @@ public class SubscriptionService extends BusinessService<Subscription> {
 
         return subscription;
     }
+    
+    @MeveoAudit
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber) throws BusinessException {
+        return terminateSubscription(subscription, terminationDate, terminationReason, orderNumber, null, null);
+    }
+
+    @MeveoAudit
+    public Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws BusinessException {
+
+        if (terminationReason == null) {
+            throw new BusinessException("terminationReason is null");
+        }
+
+        return terminateSubscription(subscription, terminationDate, terminationReason, terminationReason.isApplyAgreement(), terminationReason.isApplyReimbursment(),
+            terminationReason.isApplyTerminationCharges(), orderNumber, orderItemId, orderItemAction);
+    }
 
     @MeveoAudit
     private Subscription terminateSubscription(Subscription subscription, Date terminationDate, SubscriptionTerminationReason terminationReason, boolean applyAgreement,
-            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            boolean applyReimbursment, boolean applyTerminationCharges, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction)
+            throws BusinessException {
         if (terminationDate == null) {
             terminationDate = new Date();
         }
@@ -202,6 +212,8 @@ public class SubscriptionService extends BusinessService<Subscription> {
                 } else {
                     serviceInstanceService.terminateService(serviceInstance, terminationDate, applyAgreement, applyReimbursment, applyTerminationCharges, orderNumber, null);
                 }
+                
+                orderHistoryService.create(orderNumber, orderItemId, serviceInstance, orderItemAction);
             }
         }
 
@@ -216,6 +228,7 @@ public class SubscriptionService extends BusinessService<Subscription> {
             access.setEndDate(terminationDate);
             accessService.update(access);
         }
+        
         // execute termination script
         if (subscription.getOffer().getBusinessOfferModel() != null && subscription.getOffer().getBusinessOfferModel().getScript() != null) {
             offerModelScriptService.terminateSubscription(subscription, subscription.getOffer().getBusinessOfferModel().getScript().getCode(), terminationDate, terminationReason);
@@ -282,4 +295,5 @@ public class SubscriptionService extends BusinessService<Subscription> {
             return null;
         }
     }
+
 }
