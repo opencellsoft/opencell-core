@@ -176,7 +176,7 @@
         <addColumn tableName="account_entity">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id_account" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.account_entity ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -186,7 +186,7 @@
         <addColumn tableName="com_sender_config">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id_sender" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.com_sender_config ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -196,7 +196,7 @@
         <addColumn tableName="crm_provider_contact">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id_prov_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.crm_provider_contact ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -206,7 +206,7 @@
         <addColumn tableName="crm_provider">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id_prov" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.crm_provider ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
             )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -216,7 +216,7 @@
         <addColumn tableName="crm_seller">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.crm_seller ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
             )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -226,7 +226,7 @@
         <addColumn tableName="ord_order_item">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.ord_order_item ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
