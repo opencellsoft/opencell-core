@@ -48,6 +48,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -121,9 +122,6 @@ import org.xml.sax.SAXException;
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
-    /** Configuration parameter bean. */
-    private ParamBean paramBean = ParamBean.getInstance();
-
     @Inject
     private InvoiceService invoiceService;
 
@@ -160,6 +158,10 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
@@ -307,6 +309,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         log.debug("Creating xml for invoice id={} number={}. {}", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         serviceIds = new ArrayList<>();
         offerIds = new ArrayList<>();
@@ -412,14 +415,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         addCustomFields(customer, doc, customerTag);
 
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
-        
+
         Element sellerTag = doc.createElement("seller");
         sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
         sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
         addCustomFields(seller, doc, sellerTag);
         addAdress(seller, doc, sellerTag, billingAccountLanguage);
         header.appendChild(sellerTag);
-        
+
         header.appendChild(customerTag);
 
         // log.debug("creating ca");
@@ -683,6 +686,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private List<ServiceInstance> addSubscriptions(UserAccount userAccount, Document doc, Element userAccountTag, Element invoiceTag, List<Subscription> subscriptions) {
         long startDate = System.currentTimeMillis();
         List<ServiceInstance> allServiceInstances = new ArrayList<>();
+        ParamBean paramBean = paramBeanFactory.getInstance();
         // List<Subscription> subscriptions = userAccountService.listByUserAccount(userAccount);//userAccount.getSubscriptions();//
         if (subscriptions != null && subscriptions.size() > 0) {
             log.info(" :" + (System.currentTimeMillis() - startDate));
@@ -890,7 +894,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
         }
     }
-    
+
     /**
      * @param seller instance of entity
      * @param doc document
@@ -943,7 +947,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element countryName = doc.createElement("countryName");
         if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
             Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : "");
-            country.appendChild(countryTxt);            
+            country.appendChild(countryTxt);
             Country countryEntity = seller.getAddress().getCountry();
             Text countryNameTxt;
             if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
@@ -951,7 +955,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 countryNameTxt = doc.createTextNode(countryEntity.getDescriptionI18n().get(languageCode));
             } else {
                 countryNameTxt = doc.createTextNode(countryEntity.getDescription());
-            } 
+            }
             countryName.appendChild(countryNameTxt);
         }
         addressTag.appendChild(country);
@@ -1237,6 +1241,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             boolean isVirtual, List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAgregates, List<ServiceInstance> allServiceInstances,
             List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
         long startDate = System.currentTimeMillis();
+        ParamBean paramBean = paramBeanFactory.getInstance();
 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);

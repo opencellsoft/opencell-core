@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
@@ -45,6 +46,7 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -86,7 +88,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean;
 
     @Inject
     @MeveoJpaForMultiTenancy
@@ -125,6 +127,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     /**
      * Constructor.
      */
@@ -141,6 +147,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } else {
             this.entityClass = (Class<E>) o;
         }
+    }
+
+    @PostConstruct
+    private void init() {
+        paramBean = paramBeanFactory.getInstance();
     }
 
     /**

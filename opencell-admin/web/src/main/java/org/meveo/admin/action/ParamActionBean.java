@@ -38,14 +38,15 @@ public class ParamActionBean implements Serializable {
 
     private ParamBean paramBean;
 
+    /** paramBeanFactory */
     @Inject
-    private ParamBeanFactory paramBean2;
+    private ParamBeanFactory paramBeanFactory;
 
     private List<ParamProperty> properties = null;
 
     @PostConstruct
-    void init() {
-        paramBean = paramBean2.getInstance();
+    private void init() {
+        paramBean = paramBeanFactory.getInstance();
     }
 
     private void beginConversation() {

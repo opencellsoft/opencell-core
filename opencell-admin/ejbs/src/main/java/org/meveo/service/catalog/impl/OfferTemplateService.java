@@ -36,7 +36,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
@@ -58,14 +58,16 @@ import org.meveo.service.billing.impl.SubscriptionService;
  */
 @Stateless
 public class OfferTemplateService extends GenericProductOfferingService<OfferTemplate> {
-    
-    private ParamBean paramBean = ParamBean.getInstance();
 
     @Inject
     private CatalogHierarchyBuilderService catalogHierarchyBuilderService;
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -102,8 +104,8 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     }
 
     public long countExpiring() {
-        int beforeExpiration = Integer.parseInt(paramBean.getProperty("offer.expiration.before", "30"));
-        
+        int beforeExpiration = Integer.parseInt(paramBeanFactory.getInstance().getProperty("offer.expiration.before", "30"));
+
         Long result = 0L;
         Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
@@ -274,7 +276,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
                 offer.getSellers().add(seller);
             }
         }
-        
+
         if (persist) {
             create(offer);
         }
@@ -330,13 +332,13 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         return offer;
     }
-    
+
     public List<OfferTemplate> list(String code, Date validFrom, Date validTo, LifeCycleStatusEnum lifeCycleStatusEnum) {
-		List<OfferTemplate> listOfferTemplates = null;
+        List<OfferTemplate> listOfferTemplates = null;
 
         if (StringUtils.isBlank(code) && validFrom == null && validTo == null && lifeCycleStatusEnum == null) {
             listOfferTemplates = list();
-        
+
         } else {
 
             Map<String, Object> filters = new HashMap<String, Object>();
@@ -357,17 +359,17 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             } else if (validFrom != null && validTo != null) {
                 filters.put("overlapOptionalRange validity.from validity.to", new Date[] { validFrom, validTo });
             }
-            
-			if (!StringUtils.isBlank(lifeCycleStatusEnum)) {
-				filters.put("lifeCycleStatus", lifeCycleStatusEnum);
-			}
-			
-			filters.put("disabled", false);
+
+            if (!StringUtils.isBlank(lifeCycleStatusEnum)) {
+                filters.put("lifeCycleStatus", lifeCycleStatusEnum);
+            }
+
+            filters.put("disabled", false);
 
             PaginationConfiguration config = new PaginationConfiguration(filters);
             listOfferTemplates = list(config);
         }
-        
+
         return listOfferTemplates;
     }
 }
