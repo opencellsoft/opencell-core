@@ -228,8 +228,17 @@
                                     
                                  	<hftl:formField label="#{messages['customer.jobTitle']}" field="jobTitle" />     
                                  	
+                                 	<c:choose> 
+		                                <c:when test="${appProvider.entreprise}">
+									        <c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithoutTax']} EL" />
+									    </c:when>
+									    <c:otherwise>
+									    	<c:set var="minimumAmountLabel" value="#{messages['billingAccount.minimumAmountWithTax']} EL" />
+									    </c:otherwise>
+									</c:choose>   
+                                 	
                                  	<hftl:formField label="#{messages['billingAccount.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" />   
-                                 	<hftl:formField label="#{messages['billingAccount.minimumAmountWithTax']} EL" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />
+                                 	<hftl:formField label="#{minimumAmountLabel}" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />
                                  	       
 							     </p:fieldset>		
 							     
