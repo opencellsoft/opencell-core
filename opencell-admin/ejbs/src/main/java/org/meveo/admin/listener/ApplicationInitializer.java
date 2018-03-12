@@ -88,6 +88,13 @@ public class ApplicationInitializer {
         }
     }
 
+    /**
+     * Initialize tenant information: establish EMF for secondary tenants/providers, schedule jobs, compile scripts, preload caches
+     * 
+     * @param provider Tenant/provider to initialize
+     * @param isMainProvider Is it a main tenant/provider.
+     * @return
+     */
     @Asynchronous
     public Future<Boolean> initializeTenant(Provider provider, boolean isMainProvider) {
 

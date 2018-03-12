@@ -86,12 +86,6 @@
             billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority
         </sql>
     </changeSet>
-
-    <changeSet id="#2894_20180129" author="smichea">
-        <addColumn tableName="meveo_job_instance">
-            <column name="provider" type="varchar(255)"></column>
-        </addColumn>
-    </changeSet>
     
     <changeSet author="EdwardPLegaspi" id="#2370_20180306 - customer categories">
         <createTable tableName="cat_product_offer_customer_category">

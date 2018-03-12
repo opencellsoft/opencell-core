@@ -85,8 +85,9 @@ public class MediationJob extends Job {
             SubListCreator subListCreator = new SubListCreator(Arrays.asList(files), nbRuns.intValue());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres()));
+                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

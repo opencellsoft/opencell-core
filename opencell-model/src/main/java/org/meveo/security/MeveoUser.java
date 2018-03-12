@@ -56,6 +56,16 @@ public abstract class MeveoUser implements Serializable {
     public MeveoUser() {
     }
 
+    /**
+     * Clones a user by preserving username and provider properties
+     * 
+     * @param user User to clone
+     */
+    public MeveoUser(MeveoUser user) {
+        this.userName = user.getUserName();
+        this.providerCode = user.getProviderCode();
+    }
+
     public String getSubject() {
         return subject;
     }
@@ -136,5 +146,16 @@ public abstract class MeveoUser implements Serializable {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    /**
+     * Return unproxied instance of MeveoUser - preserving username and provider code only
+     * 
+     * @return MeveoUser instance
+     */
+    public MeveoUser unProxy() {
+        return new MeveoUser(this) {
+            private static final long serialVersionUID = 1864122036421892838L;
+        };
     }
 }
