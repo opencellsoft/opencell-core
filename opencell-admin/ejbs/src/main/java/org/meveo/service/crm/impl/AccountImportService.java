@@ -11,7 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.SubscriptionImportHisto;
 import org.meveo.model.billing.AccountStatusEnum;
@@ -67,88 +67,83 @@ public class AccountImportService extends ImportService {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-    
+
     @Inject
-  	private SubscriptionImportService subscriptionImportService;
-    
+    private SubscriptionImportService subscriptionImportService;
+
     @Inject
     private CountryService countryService;
-    
-    private ParamBean param = ParamBean.getInstance();
-    
-    private  Map<String, Title> map = new HashMap<>();
-    
-    private  Map<String, TradingCountry> tradingCountryMap = new HashMap<>(); 
-    
-    private  Map<String, TradingLanguage> tradingLanguageMap = new HashMap<>();
-    
-    private  Map<String, BillingCycle> billingCycleMap = new HashMap<>();
-    
-    private  Map<String, CustomerAccount> customerAccountMap = new HashMap<>();
-    
-    private ParamBean paramBean = ParamBean.getInstance();
-    
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    private Map<String, Title> map = new HashMap<>();
+
+    private Map<String, TradingCountry> tradingCountryMap = new HashMap<>();
+
+    private Map<String, TradingLanguage> tradingLanguageMap = new HashMap<>();
+
+    private Map<String, BillingCycle> billingCycleMap = new HashMap<>();
+
+    private Map<String, CustomerAccount> customerAccountMap = new HashMap<>();
+
     private Subscriptions subscriptionsError;
 
-	int nbSubscriptions;
-	int nbSubscriptionsError;
-	int nbSubscriptionsTerminated;
-	int nbSubscriptionsIgnored;
-	int nbSubscriptionsCreated;
-	SubscriptionImportHisto subscriptionImportHisto;
+    int nbSubscriptions;
+    int nbSubscriptionsError;
+    int nbSubscriptionsTerminated;
+    int nbSubscriptionsIgnored;
+    int nbSubscriptionsCreated;
+    SubscriptionImportHisto subscriptionImportHisto;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public org.meveo.model.billing.BillingAccount importBillingAccount(org.meveo.model.jaxb.account.BillingAccount billAccount, CustomerAccount createdCustomerAccount) throws BusinessException, ImportWarningException {
+    public org.meveo.model.billing.BillingAccount importBillingAccount(org.meveo.model.jaxb.account.BillingAccount billAccount, CustomerAccount createdCustomerAccount)
+            throws BusinessException, ImportWarningException {
         log.debug("create billingAccount found code:" + billAccount.getCode());
 
         org.meveo.model.billing.BillingAccount billingAccount = null;
         CustomerAccount customerAccount = createdCustomerAccount;
         BillingCycle billingCycle = null;
-        
+
         billingCycle = billingCycleMap.get(billAccount.getBillingCycle());
         if (billingCycle == null) {
-        	billingCycle = billingCycleService.findByCode(billAccount.getBillingCycle());
-        	billingCycleMap.put(billAccount.getBillingCycle(), billingCycle);
+            billingCycle = billingCycleService.findByCode(billAccount.getBillingCycle());
+            billingCycleMap.put(billAccount.getBillingCycle(), billingCycle);
         }
 
         /**
-        try {
-            billingCycle = billingCycleService.findByCode(billAccount.getBillingCycle());
-        } catch (Exception e) {
-            log.warn("failed to find billingCycle", e);
-        }*/
+         * try { billingCycle = billingCycleService.findByCode(billAccount.getBillingCycle()); } catch (Exception e) { log.warn("failed to find billingCycle", e); }
+         */
 
         if (billingCycle == null) {
             throw new BusinessException("billingCycle not found " + billAccount.getBillingCycle());
         }
-        
+
         if (customerAccount == null) {
 
-        	customerAccount = customerAccountMap.get(billAccount.getCustomerAccountId());
+            customerAccount = customerAccountMap.get(billAccount.getCustomerAccountId());
 
-        	if (customerAccount == null) {
-        		try {
-        			customerAccount = customerAccountService.findByCode(billAccount.getCustomerAccountId());
-        			if (customerAccount != null) {
-        				Customer customer = customerAccount.getCustomer();
-        				if (customer != null) {
-        					customer.getSeller();
-        				}
-        			}
+            if (customerAccount == null) {
+                try {
+                    customerAccount = customerAccountService.findByCode(billAccount.getCustomerAccountId());
+                    if (customerAccount != null) {
+                        Customer customer = customerAccount.getCustomer();
+                        if (customer != null) {
+                            customer.getSeller();
+                        }
+                    }
 
-        			customerAccountMap.put(billAccount.getCustomerAccountId(), customerAccount);
-        		} catch (Exception e) {
-        			log.warn("failed to find customer account", e);
-        		}
+                    customerAccountMap.put(billAccount.getCustomerAccountId(), customerAccount);
+                } catch (Exception e) {
+                    log.warn("failed to find customer account", e);
+                }
 
-        		if (customerAccount == null) {
-        			throw new BusinessException("Cannot find CustomerAccount");
-        		}
-        	}
+                if (customerAccount == null) {
+                    throw new BusinessException("Cannot find CustomerAccount");
+                }
+            }
         }
-        
-                
-       
 
         billingAccountCheckError(billAccount);
 
@@ -159,7 +154,8 @@ public class AccountImportService extends ImportService {
         billingAccount.setBillingCycle(billingCycle);
         billingAccount.setCustomerAccount(customerAccount);
         billingAccount.setCode(billAccount.getCode());
-        billingAccount.setSubscriptionDate(DateUtils.parseDateWithPattern(billAccount.getSubscriptionDate(), param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd")));
+        billingAccount.setSubscriptionDate(
+            DateUtils.parseDateWithPattern(billAccount.getSubscriptionDate(), paramBeanFactory.getInstance().getProperty("connectorCRM.dateFormat", "yyyy-MM-dd")));
         billingAccount.setStatus(AccountStatusEnum.ACTIVE);
         billingAccount.setStatusDate(new Date());
         billingAccount.setDescription(billAccount.getDescription());
@@ -185,43 +181,43 @@ public class AccountImportService extends ImportService {
         if (billAccount.getName() != null) {
             name.setFirstName(billAccount.getName().getFirstName());
             name.setLastName(billAccount.getName().getLastName());
-            //name.setTitle(titleService.findByCode(billAccount.getName().getTitle().trim()));
-            
+            // name.setTitle(titleService.findByCode(billAccount.getName().getTitle().trim()));
+
             String tilteCode = billAccount.getName().getTitle();
-			Title existingTitle = map.get(tilteCode);
-			if (existingTitle == null) {
-            	Title title = titleService.findByCode(tilteCode);
-            	map.put(tilteCode, title);
-            	name.setTitle(title);
+            Title existingTitle = map.get(tilteCode);
+            if (existingTitle == null) {
+                Title title = titleService.findByCode(tilteCode);
+                map.put(tilteCode, title);
+                name.setTitle(title);
             } else {
-            	name.setTitle(existingTitle);
+                name.setTitle(existingTitle);
             }
-            
+
             billingAccount.setName(name);
         }
 
-        //billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode()));
-        //billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode()));
-        
+        // billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode()));
+        // billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode()));
+
         TradingCountry tradingCountry = tradingCountryMap.get(billAccount.getTradingCountryCode());
         if (tradingCountry == null) {
-        	TradingCountry findByTradingCountryCode = tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode());
-			tradingCountryMap.put(billAccount.getTradingCountryCode(), findByTradingCountryCode);
-			findByTradingCountryCode.getCountry().getCountryCode();
-			billingAccount.setTradingCountry(findByTradingCountryCode);
+            TradingCountry findByTradingCountryCode = tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode());
+            tradingCountryMap.put(billAccount.getTradingCountryCode(), findByTradingCountryCode);
+            findByTradingCountryCode.getCountry().getCountryCode();
+            billingAccount.setTradingCountry(findByTradingCountryCode);
         } else {
-        	billingAccount.setTradingCountry(tradingCountry);
+            billingAccount.setTradingCountry(tradingCountry);
         }
-        
+
         String tradingLanguageCode = billAccount.getTradingLanguageCode();
-		TradingLanguage tradingLanguage = tradingLanguageMap.get(tradingLanguageCode);
+        TradingLanguage tradingLanguage = tradingLanguageMap.get(tradingLanguageCode);
         if (tradingLanguage == null) {
-        	TradingLanguage findByTradingLanguageCode = tradingLanguageService.findByTradingLanguageCode(tradingLanguageCode);
-        	findByTradingLanguageCode.getLanguage().getLanguageCode();
-			tradingLanguageMap.put(tradingLanguageCode, findByTradingLanguageCode);
-			billingAccount.setTradingLanguage(findByTradingLanguageCode);
+            TradingLanguage findByTradingLanguageCode = tradingLanguageService.findByTradingLanguageCode(tradingLanguageCode);
+            findByTradingLanguageCode.getLanguage().getLanguageCode();
+            tradingLanguageMap.put(tradingLanguageCode, findByTradingLanguageCode);
+            billingAccount.setTradingLanguage(findByTradingLanguageCode);
         } else {
-        	billingAccount.setTradingLanguage(tradingLanguage);
+            billingAccount.setTradingLanguage(tradingLanguage);
         }
 
         billingAccountService.create(billingAccount);
@@ -273,7 +269,8 @@ public class AccountImportService extends ImportService {
         billingAccount.setNextInvoiceDate(new Date());
         billingAccount.setBillingCycle(billingCycle);
         billingAccount.setCustomerAccount(customerAccount);
-        billingAccount.setSubscriptionDate(DateUtils.parseDateWithPattern(billingAccountDto.getSubscriptionDate(), param.getProperty("connectorCRM.dateFormat", "yyyy-MM-dd")));
+        billingAccount.setSubscriptionDate(
+            DateUtils.parseDateWithPattern(billingAccountDto.getSubscriptionDate(), paramBeanFactory.getInstance().getProperty("connectorCRM.dateFormat", "yyyy-MM-dd")));
         // billingAccount.setStatus(AccountStatusEnum.ACTIVE);
         billingAccount.setStatusDate(new Date());
         billingAccount.setDescription(billingAccountDto.getDescription());
@@ -343,17 +340,17 @@ public class AccountImportService extends ImportService {
         if (uAccount.getName() != null) {
             nameUA.setFirstName(uAccount.getName().getFirstName());
             nameUA.setLastName(uAccount.getName().getLastName());
-            //nameUA.setTitle(titleService.findByCode(uAccount.getName().getTitle().trim()));
+            // nameUA.setTitle(titleService.findByCode(uAccount.getName().getTitle().trim()));
             String tilteCode = billAccount.getName().getTitle();
-			Title existingTitle = map.get(tilteCode);
-			if (existingTitle != null) {
-            	Title title = titleService.findByCode(tilteCode);
-            	map.put(tilteCode, title);
-            	nameUA.setTitle(title);
+            Title existingTitle = map.get(tilteCode);
+            if (existingTitle != null) {
+                Title title = titleService.findByCode(tilteCode);
+                map.put(tilteCode, title);
+                nameUA.setTitle(title);
             } else {
-            	nameUA.setTitle(existingTitle);
+                nameUA.setTitle(existingTitle);
             }
-            
+
             userAccount.setName(nameUA);
         }
 
@@ -374,215 +371,179 @@ public class AccountImportService extends ImportService {
 
         userAccount.setWallet(wallet);
         userAccount.setBillingAccount(billingAccount);
-        
+
         Subscriptions subscriptions = uAccount.getSubscriptions();
 
         if (subscriptions != null) {
-        	List<Subscription> subscriptionList = subscriptions.getSubscription();
-        	int i = 0;
-			for (Subscription jaxbSubscription : subscriptionList) {
-				try {
-					CheckedSubscription checkSubscription = subscriptionCheckError(jaxbSubscription);
-					if (checkSubscription == null) {
-						continue;
-					}
-					checkSubscription.userAccount = userAccount;
-					nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription,
-							jaxbSubscription, "", i);
-				} catch (ImportIgnoredException ie) {
+            List<Subscription> subscriptionList = subscriptions.getSubscription();
+            int i = 0;
+            for (Subscription jaxbSubscription : subscriptionList) {
+                try {
+                    CheckedSubscription checkSubscription = subscriptionCheckError(jaxbSubscription);
+                    if (checkSubscription == null) {
+                        continue;
+                    }
+                    checkSubscription.userAccount = userAccount;
+                    nbSubscriptionsCreated += subscriptionImportService.importSubscription(checkSubscription, jaxbSubscription, "", i);
+                } catch (ImportIgnoredException ie) {
 
-				} catch (SubscriptionServiceException se) {
+                } catch (SubscriptionServiceException se) {
 
-				} catch (Exception e) {
+                } catch (Exception e) {
 
-				}
-			}
+                }
+            }
 
         }
-        
+
         return userAccount;
-       
+
     }
-    
-    private CheckedSubscription subscriptionCheckError(
-			org.meveo.model.jaxb.subscription.Subscription jaxbSubscription) {
-		CheckedSubscription checkSubscription = new CheckedSubscription();
 
-		if (StringUtils.isBlank(jaxbSubscription.getCode())) {
-			createSubscriptionError(jaxbSubscription, "Code is null.");
-			return null;
-		}
+    private CheckedSubscription subscriptionCheckError(org.meveo.model.jaxb.subscription.Subscription jaxbSubscription) {
+        CheckedSubscription checkSubscription = new CheckedSubscription();
 
-		if (StringUtils.isBlank(jaxbSubscription.getUserAccountId())) {
-			createSubscriptionError(jaxbSubscription, "UserAccountId is null.");
-			return null;
-		}
+        if (StringUtils.isBlank(jaxbSubscription.getCode())) {
+            createSubscriptionError(jaxbSubscription, "Code is null.");
+            return null;
+        }
 
-		if (StringUtils.isBlank(jaxbSubscription.getOfferCode())) {
-			createSubscriptionError(jaxbSubscription, "OfferCode is null.");
-			return null;
-		}
+        if (StringUtils.isBlank(jaxbSubscription.getUserAccountId())) {
+            createSubscriptionError(jaxbSubscription, "UserAccountId is null.");
+            return null;
+        }
 
-		if (StringUtils.isBlank(jaxbSubscription.getSubscriptionDate())) {
-			createSubscriptionError(jaxbSubscription, "SubscriptionDate is null.");
-			return null;
-		}
+        if (StringUtils.isBlank(jaxbSubscription.getOfferCode())) {
+            createSubscriptionError(jaxbSubscription, "OfferCode is null.");
+            return null;
+        }
 
-		if (jaxbSubscription.getStatus() == null
-				|| StringUtils.isBlank(jaxbSubscription.getStatus().getValue())
-				|| ("ACTIVE" + "TERMINATED" + "CANCELED" + "SUSPENDED")
-						.indexOf(jaxbSubscription.getStatus().getValue()) == -1) {
-			createSubscriptionError(jaxbSubscription,
-					"Status is null, or not in { ACTIVE, TERMINATED, CANCELED, SUSPENDED }");
+        if (StringUtils.isBlank(jaxbSubscription.getSubscriptionDate())) {
+            createSubscriptionError(jaxbSubscription, "SubscriptionDate is null.");
+            return null;
+        }
 
-			return null;
-		}
-		/**
-		OfferTemplate offerTemplate = null;
-		
-		offerTemplate = offerMap.get(jaxbSubscription.getOfferCode().toUpperCase());
-		if (offerTemplate == null) {
-			try {
-				offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
-						paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
-				offerMap.put(jaxbSubscription.getOfferCode().toUpperCase(), offerTemplate);
-			} catch (Exception e) {
-				log.warn("failed to find offerTemplate ",e);
-			}
-		}
+        if (jaxbSubscription.getStatus() == null || StringUtils.isBlank(jaxbSubscription.getStatus().getValue())
+                || ("ACTIVE" + "TERMINATED" + "CANCELED" + "SUSPENDED").indexOf(jaxbSubscription.getStatus().getValue()) == -1) {
+            createSubscriptionError(jaxbSubscription, "Status is null, or not in { ACTIVE, TERMINATED, CANCELED, SUSPENDED }");
 
-		if (offerTemplate == null) {
-			createSubscriptionError(jaxbSubscription,
-					"Cannot find OfferTemplate with code=" + jaxbSubscription.getOfferCode() + " / "+ jaxbSubscription.getSubscriptionDate());
-			return null;
-		}
-		checkSubscription.offerTemplate = offerTemplate;
+            return null;
+        }
+        /**
+         * OfferTemplate offerTemplate = null;
+         * 
+         * offerTemplate = offerMap.get(jaxbSubscription.getOfferCode().toUpperCase()); if (offerTemplate == null) { try { offerTemplate =
+         * offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(), DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(),
+         * paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy"))); offerMap.put(jaxbSubscription.getOfferCode().toUpperCase(), offerTemplate); } catch (Exception e) {
+         * log.warn("failed to find offerTemplate ",e); } }
+         * 
+         * if (offerTemplate == null) { createSubscriptionError(jaxbSubscription, "Cannot find OfferTemplate with code=" + jaxbSubscription.getOfferCode() + " / "+
+         * jaxbSubscription.getSubscriptionDate()); return null; } checkSubscription.offerTemplate = offerTemplate;
+         * 
+         * UserAccount userAccount = null; userAccount = userAccountMap.get(jaxbSubscription.getUserAccountId()); if (userAccount == null) { try { userAccount =
+         * userAccountService.findByCode(jaxbSubscription.getUserAccountId()); userAccountMap.put(jaxbSubscription.getUserAccountId(), userAccount); } catch (Exception e) {
+         * log.error("error generated while getting user account",e); } }
+         * 
+         * if (userAccount == null) { createSubscriptionError(jaxbSubscription, "Cannot find UserAccount entity=" + jaxbSubscription.getUserAccountId()); return null; }
+         * checkSubscription.userAccount = userAccount;
+         * 
+         * try { //checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode()); } catch (Exception e) { log.error("failed to find subscription",e);
+         * }
+         * 
+         * if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue()) && checkSubscription.subscription == null) { createSubscriptionError(jaxbSubscription, "Cannot find
+         * subscription with code=" + jaxbSubscription.getCode()); return null; }
+         */
+        if ("ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
+            if (jaxbSubscription.getServices() == null || jaxbSubscription.getServices().getServiceInstance() == null
+                    || jaxbSubscription.getServices().getServiceInstance().isEmpty()) {
+                createSubscriptionError(jaxbSubscription, "Cannot create subscription without services");
+                return null;
+            }
 
-		UserAccount userAccount = null;
-		userAccount = userAccountMap.get(jaxbSubscription.getUserAccountId());
-		if (userAccount == null) {
-			try {
-				userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
-				userAccountMap.put(jaxbSubscription.getUserAccountId(), userAccount);
-			} catch (Exception e) {
-				log.error("error generated while getting user account",e);
-			}
-		}
+            for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : jaxbSubscription.getServices().getServiceInstance()) {
+                if (serviceInstanceCheckError(jaxbSubscription, serviceInst)) {
+                    return null;
+                }
 
-		if (userAccount == null) {
-			createSubscriptionError(jaxbSubscription,
-					"Cannot find UserAccount entity=" + jaxbSubscription.getUserAccountId());
-			return null;
-		}
-		checkSubscription.userAccount = userAccount;
+                checkSubscription.serviceInsts.add(serviceInst);
+            }
 
-		try {
-			//checkSubscription.subscription = subscriptionService.findByCode(jaxbSubscription.getCode());
-		} catch (Exception e) {
-			log.error("failed to find subscription",e);
-		}
+            if (jaxbSubscription.getAccesses() != null) {
+                for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription.getAccesses().getAccess()) {
+                    if (accessCheckError(jaxbSubscription, jaxbAccess)) {
+                        return null;
+                    }
 
-		if (!"ACTIVE".equals(jaxbSubscription.getStatus().getValue()) && checkSubscription.subscription == null) {
-			createSubscriptionError(jaxbSubscription,
-					"Cannot find subscription with code=" + jaxbSubscription.getCode());
-			return null;
-		}
-	*/
-		if ("ACTIVE".equals(jaxbSubscription.getStatus().getValue())) {
-			if (jaxbSubscription.getServices() == null || jaxbSubscription.getServices().getServiceInstance() == null
-					|| jaxbSubscription.getServices().getServiceInstance().isEmpty()) {
-				createSubscriptionError(jaxbSubscription, "Cannot create subscription without services");
-				return null;
-			}
+                    checkSubscription.accessPoints.add(jaxbAccess);
+                }
+            }
+        }
 
-			for (org.meveo.model.jaxb.subscription.ServiceInstance serviceInst : jaxbSubscription.getServices()
-					.getServiceInstance()) {
-				if (serviceInstanceCheckError(jaxbSubscription, serviceInst)) {
-					return null;
-				}
+        return checkSubscription;
+    }
 
-				checkSubscription.serviceInsts.add(serviceInst);
-			}
+    private boolean serviceInstanceCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip, org.meveo.model.jaxb.subscription.ServiceInstance serviceInst) {
 
-			if (jaxbSubscription.getAccesses() != null) {
-				for (org.meveo.model.jaxb.subscription.Access jaxbAccess : jaxbSubscription.getAccesses().getAccess()) {
-					if (accessCheckError(jaxbSubscription, jaxbAccess)) {
-						return null;
-					}
+        if (StringUtils.isBlank(serviceInst.getCode())) {
+            createServiceInstanceError(subscrip, serviceInst, "code is null");
+            return true;
+        }
 
-					checkSubscription.accessPoints.add(jaxbAccess);
-				}
-			}
-		}
+        if (StringUtils.isBlank(serviceInst.getSubscriptionDate())) {
+            createSubscriptionError(subscrip, "SubscriptionDate is null");
+            return true;
+        }
 
-		return checkSubscription;
-	}
-	
-	private boolean serviceInstanceCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
-			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst) {
+        return false;
+    }
 
-		if (StringUtils.isBlank(serviceInst.getCode())) {
-			createServiceInstanceError(subscrip, serviceInst, "code is null");
-			return true;
-		}
+    private boolean accessCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip, org.meveo.model.jaxb.subscription.Access access) {
 
-		if (StringUtils.isBlank(serviceInst.getSubscriptionDate())) {
-			createSubscriptionError(subscrip, "SubscriptionDate is null");
-			return true;
-		}
+        if (StringUtils.isBlank(access.getAccessUserId())) {
+            createSubscriptionError(subscrip, "AccessUserId is null");
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	private boolean accessCheckError(org.meveo.model.jaxb.subscription.Subscription subscrip,
-			org.meveo.model.jaxb.subscription.Access access) {
+    private void createServiceInstanceError(org.meveo.model.jaxb.subscription.Subscription subscrip, org.meveo.model.jaxb.subscription.ServiceInstance serviceInst, String cause) {
+        ErrorServiceInstance errorServiceInstance = new ErrorServiceInstance();
+        errorServiceInstance.setCause(cause);
+        errorServiceInstance.setCode(serviceInst.getCode());
+        errorServiceInstance.setSubscriptionCode(subscrip.getCode());
 
-		if (StringUtils.isBlank(access.getAccessUserId())) {
-			createSubscriptionError(subscrip, "AccessUserId is null");
-			return true;
-		}
+        if (!subscriptionsError.getSubscription().contains(subscrip)) {
+            subscriptionsError.getSubscription().add(subscrip);
+        }
 
-		return false;
-	}
+        if (subscriptionsError.getErrors() == null) {
+            subscriptionsError.setErrors(new org.meveo.model.jaxb.subscription.Errors());
+        }
 
-	private void createServiceInstanceError(org.meveo.model.jaxb.subscription.Subscription subscrip,
-			org.meveo.model.jaxb.subscription.ServiceInstance serviceInst, String cause) {
-		ErrorServiceInstance errorServiceInstance = new ErrorServiceInstance();
-		errorServiceInstance.setCause(cause);
-		errorServiceInstance.setCode(serviceInst.getCode());
-		errorServiceInstance.setSubscriptionCode(subscrip.getCode());
+        subscriptionsError.getErrors().getErrorServiceInstance().add(errorServiceInstance);
+    }
 
-		if (!subscriptionsError.getSubscription().contains(subscrip)) {
-			subscriptionsError.getSubscription().add(subscrip);
-		}
+    private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
+        log.error(cause);
 
-		if (subscriptionsError.getErrors() == null) {
-			subscriptionsError.setErrors(new org.meveo.model.jaxb.subscription.Errors());
-		}
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
+        ErrorSubscription errorSubscription = new ErrorSubscription();
+        errorSubscription.setCause(cause);
+        errorSubscription.setCode(subscrip.getCode());
 
-		subscriptionsError.getErrors().getErrorServiceInstance().add(errorServiceInstance);
-	}
-	
-	private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
-		log.error(cause);
+        if (!subscriptionsError.getSubscription().contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject)) {
+            subscriptionsError.getSubscription().add(subscrip);
+        }
 
-		String generateFullCrmReject = paramBean.getProperty("connectorCRM.generateFullCrmReject", "true");
-		ErrorSubscription errorSubscription = new ErrorSubscription();
-		errorSubscription.setCause(cause);
-		errorSubscription.setCode(subscrip.getCode());
+        if (subscriptionsError.getErrors() == null) {
+            subscriptionsError.setErrors(new org.meveo.model.jaxb.subscription.Errors());
+        }
 
-		if (!subscriptionsError.getSubscription().contains(subscrip) && "true".equalsIgnoreCase(generateFullCrmReject)) {
-			subscriptionsError.getSubscription().add(subscrip);
-		}
+        subscriptionsError.getErrors().getErrorSubscription().add(errorSubscription);
+    }
 
-		if (subscriptionsError.getErrors() == null) {
-			subscriptionsError.setErrors(new org.meveo.model.jaxb.subscription.Errors());
-		}
-
-		subscriptionsError.getErrors().getErrorSubscription().add(errorSubscription);
-	}
-
-	@TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void updateUserAccount(org.meveo.model.billing.BillingAccount billingAccount, org.meveo.model.jaxb.account.BillingAccount billAccount,
             org.meveo.model.jaxb.account.UserAccount userAccountDto) throws BusinessException, ImportWarningException {
         userAccountCheckError(billAccount, userAccountDto);

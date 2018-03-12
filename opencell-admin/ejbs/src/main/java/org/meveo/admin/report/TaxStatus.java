@@ -32,6 +32,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.model.crm.Provider;
@@ -42,97 +43,99 @@ import org.slf4j.Logger;
 @Named
 public class TaxStatus extends FileProducer implements Reporting {
 
-	@Inject
-	protected Logger log;
+    @Inject
+    protected Logger log;
 
-	@Inject
-	private JournalEntryService salesTransformationService;
-	
+    @Inject
+    private JournalEntryService salesTransformationService;
+
     @Inject
     @ApplicationProvider
     private Provider appProvider;
-    
-	private String reportsFolder;
-	private String templateFilename;
-	public Map<String, Object> parameters = new HashMap<String, Object>();
 
-	public void generateTaxStatusFile(Date startDate, Date endDate,
-			OutputFormatEnum outputFormat) {
-		// log.info("generateTaxStatusFile({},{})", startDate,endDate);
-		try {
-			// log.info("generateTaxStatusFile : file {}",
-			// getFilename(startDate, endDate));
-			File file = null;
-			if (outputFormat == OutputFormatEnum.PDF) {
-				file = File.createTempFile("tempAccountingDetail", ".csv");
-			} else if (outputFormat == OutputFormatEnum.CSV) {
-				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
-				sb.append(".csv");
-				file = new File(sb.toString());
-			}
-			FileWriter writer = new FileWriter(file);
-			writer.append("Code;Description;Pourcentage;Base HT;Taxe due");
-			writer.append('\n');
-			List<Object> taxes = salesTransformationService.getTaxRecodsBetweenDate(startDate, endDate);
-			Iterator<Object> itr = taxes.iterator();
-			while (itr.hasNext()) {
-				Object[] row = (Object[]) itr.next();
-				if (row[0] != null)
-					writer.append(row[0].toString() + ";");
-				else
-					writer.append(";");
-				if (row[1] != null)
-					writer.append(row[1].toString() + ";");
-				else
-					writer.append(";");
-				if (row[2] != null)
-					writer.append(row[2].toString().replace('.', ',') + ";");
-				else
-					writer.append(";");
-				if (row[3] != null)
-					writer.append(row[3].toString().replace('.', ',') + ";");
-				else
-					writer.append(";");
-				if (row[4] != null)
-					writer.append(row[4].toString().replace('.', ','));
-				writer.append('\n');
-			}
-			writer.flush();
-			writer.close();
-			if (outputFormat == OutputFormatEnum.PDF) {
-				parameters.put("startDate", startDate);
-				parameters.put("endDate", endDate);
-				StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
-				sb.append(".pdf");
-				generatePDFfile(file, sb.toString(), templateFilename, parameters);
-			}
-		} catch (IOException e) {
-			log.error("failed to generate tax status file",e);
-		}
-	}
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-	public String getFilename(Date startDate, Date endDate) {
+    private String reportsFolder;
+    private String templateFilename;
+    public Map<String, Object> parameters = new HashMap<String, Object>();
 
-		String DATE_FORMAT = "dd-MM-yyyy";
-		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-		StringBuilder sb = new StringBuilder();
-		sb.append(reportsFolder);
-		sb.append(appProvider.getCode());
-		sb.append("_TAX_");
-		sb.append(sdf.format(startDate).toString());
-		sb.append("_");
-		sb.append(sdf.format(endDate).toString());
-		return sb.toString();
-	}
+    public void generateTaxStatusFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
+        // log.info("generateTaxStatusFile({},{})", startDate,endDate);
+        try {
+            // log.info("generateTaxStatusFile : file {}",
+            // getFilename(startDate, endDate));
+            File file = null;
+            if (outputFormat == OutputFormatEnum.PDF) {
+                file = File.createTempFile("tempAccountingDetail", ".csv");
+            } else if (outputFormat == OutputFormatEnum.CSV) {
+                StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
+                sb.append(".csv");
+                file = new File(sb.toString());
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.append("Code;Description;Pourcentage;Base HT;Taxe due");
+            writer.append('\n');
+            List<Object> taxes = salesTransformationService.getTaxRecodsBetweenDate(startDate, endDate);
+            Iterator<Object> itr = taxes.iterator();
+            while (itr.hasNext()) {
+                Object[] row = (Object[]) itr.next();
+                if (row[0] != null)
+                    writer.append(row[0].toString() + ";");
+                else
+                    writer.append(";");
+                if (row[1] != null)
+                    writer.append(row[1].toString() + ";");
+                else
+                    writer.append(";");
+                if (row[2] != null)
+                    writer.append(row[2].toString().replace('.', ',') + ";");
+                else
+                    writer.append(";");
+                if (row[3] != null)
+                    writer.append(row[3].toString().replace('.', ',') + ";");
+                else
+                    writer.append(";");
+                if (row[4] != null)
+                    writer.append(row[4].toString().replace('.', ','));
+                writer.append('\n');
+            }
+            writer.flush();
+            writer.close();
+            if (outputFormat == OutputFormatEnum.PDF) {
+                parameters.put("startDate", startDate);
+                parameters.put("endDate", endDate);
+                StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
+                sb.append(".pdf");
+                generatePDFfile(file, sb.toString(), templateFilename, parameters);
+            }
+        } catch (IOException e) {
+            log.error("failed to generate tax status file", e);
+        }
+    }
 
-	public void export(Report report) {
-		ParamBean param = ParamBean.getInstance();
-		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
-		templateFilename = jasperTemplatesFolder + "taxStatus.jasper";
-		generateTaxStatusFile(
-				report.getStartDate(), report.getEndDate(), report.getOutputFormat());
+    public String getFilename(Date startDate, Date endDate) {
 
-	}
+        String DATE_FORMAT = "dd-MM-yyyy";
+        SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        StringBuilder sb = new StringBuilder();
+        sb.append(reportsFolder);
+        sb.append(appProvider.getCode());
+        sb.append("_TAX_");
+        sb.append(sdf.format(startDate).toString());
+        sb.append("_");
+        sb.append(sdf.format(endDate).toString());
+        return sb.toString();
+    }
+
+    public void export(Report report) {
+        ParamBean param = paramBeanFactory.getInstance();
+        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
+        String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+        templateFilename = jasperTemplatesFolder + "taxStatus.jasper";
+        generateTaxStatusFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
+
+    }
 
 }

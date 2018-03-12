@@ -17,6 +17,7 @@ import org.elasticsearch.cluster.node.DiscoveryNode;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 
 /**
@@ -36,7 +37,9 @@ public class ElasticClientConnection {
     @Inject
     private ElasticSearchConfiguration esConfiguration;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * The actual ES client
@@ -53,7 +56,7 @@ public class ElasticClientConnection {
      */
     @PostConstruct
     private void initES() {
-
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String clusterName = null;
         String[] hosts = null;
         String portStr = null;

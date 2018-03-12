@@ -18,6 +18,7 @@ public class ParamBeanFactory {
     protected MeveoUser currentUser;
 
     /**
+     * Constructor
      * 
      */
     public ParamBeanFactory() {
@@ -25,16 +26,30 @@ public class ParamBeanFactory {
         log.info("> ParamBean2 init");
     }
 
+    /**
+     * Return an instance of current user provider ParamBean
+     * 
+     * @return ParamBean Instance
+     */
     public ParamBean getInstance() {
         log.info("> ParamBeanFactory > getInstance");
         ParamBean paramBean = null;
         if (currentUser != null && !StringUtils.isBlank(currentUser.getProviderCode())) {
-            log.info("> ParamBean2 > getInstance > ByProvider");
+            log.info("> ParamBeanFactory > getInstance > ByProvider");
             paramBean = ParamBean.getInstanceByProvider(currentUser.getProviderCode());
             return paramBean;
         }
-        paramBean = ParamBean.getInstance(null);
+        log.info("> ParamBeanFactory > getInstance > ByProvider");
+        paramBean = ParamBean.getInstanceByProvider("");
         return paramBean;
     }
 
+    public String getChrootDir() {
+        ParamBean paramBean = getInstance();
+        if (currentUser != null) {
+            return paramBean.getChrootDir(currentUser.getProviderCode());
+        } else {
+            return paramBean.getChrootDir("");
+        }
+    }
 }

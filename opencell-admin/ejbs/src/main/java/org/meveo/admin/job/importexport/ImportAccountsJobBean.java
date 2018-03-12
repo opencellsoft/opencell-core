@@ -19,6 +19,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.AccountImportHisto;
@@ -74,7 +75,6 @@ public class ImportAccountsJobBean {
 
     private BillingAccounts billingAccountsWarning;
     private BillingAccounts billingAccountsError;
-    private ParamBean param = ParamBean.getInstance();
 
     private int nbBillingAccounts;
     private int nbBillingAccountsError;
@@ -91,12 +91,15 @@ public class ImportAccountsJobBean {
     private int nbUserAccountsUpdated;
     private AccountImportHisto accountImportHisto;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobExecutionResultImpl result) {
-
-        String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "accounts" + File.separator;
+        ParamBean param = paramBeanFactory.getInstance();
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "accounts" + File.separator;
         String dirIN = importDir + "input";
 
         log.info("dirIN=" + dirIN);
@@ -366,6 +369,7 @@ public class ImportAccountsJobBean {
     }
 
     private void createBillingAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {
+        ParamBean param = paramBeanFactory.getInstance();
         String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
         ErrorBillingAccount errorBillingAccount = new ErrorBillingAccount();
         errorBillingAccount.setCause(cause);
@@ -383,6 +387,7 @@ public class ImportAccountsJobBean {
     }
 
     private void createUserAccountError(org.meveo.model.jaxb.account.BillingAccount billAccount, org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
+        ParamBean param = paramBeanFactory.getInstance();
         String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
         ErrorUserAccount errorUserAccount = new ErrorUserAccount();
         errorUserAccount.setCause(cause);
@@ -401,6 +406,7 @@ public class ImportAccountsJobBean {
     }
 
     private void createBillingAccountWarning(org.meveo.model.jaxb.account.BillingAccount billAccount, String cause) {
+        ParamBean param = paramBeanFactory.getInstance();
         String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
         WarningBillingAccount warningBillingAccount = new WarningBillingAccount();
         warningBillingAccount.setCause(cause);
@@ -418,6 +424,7 @@ public class ImportAccountsJobBean {
     }
 
     private void createUserAccountWarning(org.meveo.model.jaxb.account.BillingAccount billAccount, org.meveo.model.jaxb.account.UserAccount uAccount, String cause) {
+        ParamBean param = paramBeanFactory.getInstance();
         String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
         WarningUserAccount warningUserAccount = new WarningUserAccount();
         warningUserAccount.setCause(cause);
@@ -436,8 +443,7 @@ public class ImportAccountsJobBean {
     }
 
     private void generateReport(String fileName) throws Exception {
-        String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "accounts" + File.separator;
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "accounts" + File.separator;
 
         if (billingAccountsWarning.getWarnings() != null) {
             String warningDir = importDir + "output" + File.separator + "warnings";
