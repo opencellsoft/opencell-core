@@ -36,7 +36,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.JsonUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -89,7 +89,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @Inject
     private Conversation conversation;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -317,7 +319,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     public void dropIndexes() throws BusinessException {
 
         log.debug("Dropping all Elastic Search indexes");
-        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+        String uri = paramBeanFactory.getInstance().getProperty("elasticsearch.restUri", "http://localhost:9200");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget target = client.target(uri + "/*/");
@@ -346,7 +348,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             String indexName = model.getKey();
             String modelJson = model.getValue();
 
-            String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+            String uri = paramBeanFactory.getInstance().getProperty("elasticsearch.restUri", "http://localhost:9200");
 
             ResteasyWebTarget target = client.target(uri + "/" + indexName);
 
@@ -399,7 +401,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
-        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+        String uri = paramBeanFactory.getInstance().getProperty("elasticsearch.restUri", "http://localhost:9200");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
@@ -463,7 +465,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         String type = esConfiguration.getType(entityClass, entityCode);
 
-        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+        String uri = paramBeanFactory.getInstance().getProperty("elasticsearch.restUri", "http://localhost:9200");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);

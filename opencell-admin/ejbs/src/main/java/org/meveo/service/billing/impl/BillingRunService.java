@@ -38,6 +38,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -97,6 +98,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /** The service singleton. */
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Generate pre invoicing reports.
@@ -721,7 +726,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             throws BusinessException {
         log.info("launchExceptionelInvoicing...");
 
-        ParamBean param = ParamBean.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
         boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
         log.info("launchInvoicing allowManyInvoicing=#", isAllowed);

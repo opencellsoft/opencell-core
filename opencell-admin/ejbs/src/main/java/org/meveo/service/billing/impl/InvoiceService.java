@@ -75,6 +75,7 @@ import org.meveo.admin.job.PDFParametersConstruction;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.exceptions.ConfigurationException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.Seller;
@@ -121,8 +122,6 @@ import net.sf.jasperreports.engine.util.JRLoader;
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     public final static String INVOICE_ADJUSTMENT_SEQUENCE = "INVOICE_ADJUSTMENT_SEQUENCE";
 
     public final static String INVOICE_SEQUENCE = "INVOICE_SEQUENCE";
@@ -166,6 +165,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -484,7 +487,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                     query = query.setParameter("billingRun", billingRun);
                 }
                 query.executeUpdate();
-            
+
             } else {
                 for (RatedTransaction ratedTransaction : ratedTransactionsToUpdate) {
                     ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
@@ -613,10 +616,10 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @throws BusinessException business exception
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
-
         log.debug("Creating pdf for invoice id={} number={}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
-
         long startDate = System.currentTimeMillis();
+
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
         String invoiceXmlFileName = getFullXmlFilePath(invoice, false);
         Map<String, Object> parameters = pDFParametersConstruction.constructParameters(invoice, currentUser.getProviderCode());
@@ -942,8 +945,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(subCategoryInvoiceAgregate.getAmountWithTax());
             }
 
-            subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax() != null
-                    ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP) : BigDecimal.ZERO);
+            subCategoryInvoiceAgregate.setAmountWithoutTax(
+                subCategoryInvoiceAgregate.getAmountWithoutTax() != null ? subCategoryInvoiceAgregate.getAmountWithoutTax().setScale(rounding, RoundingMode.HALF_UP)
+                        : BigDecimal.ZERO);
 
             subCategoryInvoiceAgregate.getCategoryInvoiceAgregate().addAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
 
@@ -1083,7 +1087,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getFullXmlFilePath(Invoice invoice, boolean createDirs) {
 
-        String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
+        String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
 
         String xmlFilename = meveoDir + "invoices" + File.separator + "xml" + File.separator + getOrGenerateXmlFilename(invoice);
 
@@ -1104,6 +1108,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      * @return XML file name
      */
     public String getOrGenerateXmlFilename(Invoice invoice) {
+        ParamBean paramBean = paramBeanFactory.getInstance();
 
         if (invoice.getXmlFilename() != null) {
             return invoice.getXmlFilename();
@@ -1160,7 +1165,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
      */
     public String getFullPdfFilePath(Invoice invoice, boolean createDirs) {
 
-        String meveoDir = paramBean.getChrootDir(currentUser.getProviderCode()) + File.separator;
+        String meveoDir = paramBeanFactory.getChrootDir() + File.separator;
 
         String pdfFilename = meveoDir + "invoices" + File.separator + "pdf" + File.separator + getOrGeneratePdfFilename(invoice);
 
@@ -1213,7 +1218,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             boolean isInvoiceAdjustment = invoice.getInvoiceType().getCode().equals(invoiceTypeService.getAdjustementCode());
 
-            pdfFileName = formatInvoiceDate(invoice.getInvoiceDate()) + (isInvoiceAdjustment ? paramBean.getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "_")
+            pdfFileName = formatInvoiceDate(invoice.getInvoiceDate())
+                    + (isInvoiceAdjustment ? paramBeanFactory.getInstance().getProperty("invoicing.invoiceAdjustment.prefix", "_IA_") : "_")
                     + (!StringUtils.isBlank(invoice.getInvoiceNumber()) ? invoice.getInvoiceNumber() : invoice.getTemporaryInvoiceNumber());
         }
 

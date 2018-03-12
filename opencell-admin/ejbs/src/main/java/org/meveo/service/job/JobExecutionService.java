@@ -33,7 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -57,6 +57,10 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     @Inject
     private CurrentUserProvider currentUserProvider;
 
@@ -79,7 +83,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
                 isPersistResult = true;
             } else {
                 log.info(job.getClass().getName() + ": nothing to do");
-                isPersistResult = "true".equals(ParamBean.getInstance().getProperty("meveo.job.persistResult", "true"));
+                isPersistResult = "true".equals(paramBeanFactory.getInstance().getProperty("meveo.job.persistResult", "true"));
             }
             if (isPersistResult) {
                 if (resultToPersist.isTransient()) {
