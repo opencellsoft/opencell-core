@@ -73,6 +73,9 @@ public class InvoiceSubCategoryDTO
   }
 
 public List<RatedTransaction> getRatedTransactions() {
+    if(this.ratedTransactions == null) {
+        ratedTransactions = new ArrayList<RatedTransaction>();
+    }
 	return ratedTransactions;
 }
 

@@ -1487,16 +1487,23 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
         }
         
+                
         // generate invoice line for min amount RT
         boolean hasMinAmountRT = false;
         Element subCategories = doc.createElement("subCategories");
+        LinkedHashMap<String, Element> subCategoriesMap = new LinkedHashMap<String, Element>();
         for (RatedTransaction ratedTransaction : ratedTransactions) {
             if (ratedTransaction.getWallet() == null) {
                 hasMinAmountRT = true;
-                Element subCategory = doc.createElement("subCategory");
-                subCategory.setAttribute("label", "BA Min amount label");
-                subCategory.setAttribute("code", "ba_min_amount");
-                subCategory.setAttribute("amountWithoutTax", round(ratedTransaction.getAmountWithoutTax(), rounding));
+                Element subCategory = null;
+                if(subCategoriesMap.containsKey(ratedTransaction.getCode())) {
+                    subCategory = subCategoriesMap.get(ratedTransaction.getCode());
+                } else {
+                    subCategory = doc.createElement("subCategory");
+                    subCategory.setAttribute("label", ratedTransaction.getDescription());
+                    subCategory.setAttribute("code", ratedTransaction.getCode());
+                    subCategory.setAttribute("amountWithoutTax", round(ratedTransaction.getAmountWithoutTax(), rounding));
+                }
                 
                 Element line = doc.createElement("line");
                 Element lebel = doc.createElement("label");
@@ -1526,8 +1533,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
                 line.appendChild(quantity);
                 line.appendChild(lebel);
                 subCategory.appendChild(line);
-                subCategories.appendChild(subCategory);
+                
+                subCategoriesMap.put(ratedTransaction.getCode(), subCategory);
             }   
+        }
+        
+        for (Map.Entry<String, Element> entry : subCategoriesMap.entrySet()) {
+            subCategories.appendChild(entry.getValue());
         }
         
         if(hasMinAmountRT) {

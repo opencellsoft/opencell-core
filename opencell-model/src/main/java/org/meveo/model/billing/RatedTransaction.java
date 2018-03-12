@@ -31,6 +31,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -78,6 +79,11 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.sumBillingAccount", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
                 + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
+        
+        @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax) FROM RatedTransaction r "
+                + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
+                + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.walletOperationEntity.chargeInstance=:chargeInstance"),
+        
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
                 + " and r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN " + " and r.doNotTriggerInvoicing=false" + " AND r.usageDate<:lastTransactionDate "
@@ -108,6 +114,10 @@ public class RatedTransaction extends BaseEntity {
 
     @Column(name = "wallet_operation_id")
     private Long walletOperationId;
+    
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_operation_id", insertable=false, updatable=false)
+    private WalletOperation walletOperationEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "billing_run_id")
@@ -587,6 +597,10 @@ public class RatedTransaction extends BaseEntity {
 
     public void setWalletOperation(WalletOperation walletOperation) {
         this.walletOperation = walletOperation;
+    }
+    
+    public WalletOperation getWalletOperationEntity() {
+        return walletOperationEntity;
     }
 
     @Override

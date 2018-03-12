@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -35,6 +36,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Transient;
+import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.SubscriptionRenewal;
@@ -64,6 +66,14 @@ public class OfferTemplate extends ProductOffering {
 	@OneToMany(mappedBy = "offerTemplate", fetch = FetchType.LAZY, cascade=CascadeType.ALL, orphanRemoval=true)
 	@OrderBy("id")
 	private List<OfferProductTemplate> offerProductTemplates = new ArrayList<>();
+	
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+    
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
 
     @Embedded
     private SubscriptionRenewal subscriptionRenewal = new SubscriptionRenewal();
@@ -251,4 +261,21 @@ public class OfferTemplate extends ProductOffering {
 	public void setTransientCode(String transientCode) {
 		code = transientCode;
 	}
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+	
 }

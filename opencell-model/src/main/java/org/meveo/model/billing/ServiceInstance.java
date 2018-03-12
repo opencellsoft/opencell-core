@@ -136,7 +136,16 @@ public class ServiceInstance extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
+    
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+    
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
 
+    
     public Date getEndAgreementDate() {
         return endAgreementDate;
     }
@@ -315,4 +324,21 @@ public class ServiceInstance extends BusinessCFEntity {
     public BigDecimal getPreviousQuantity() {
         return previousQuantity;
     }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
 }

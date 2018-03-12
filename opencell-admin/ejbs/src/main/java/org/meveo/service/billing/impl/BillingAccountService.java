@@ -43,12 +43,19 @@ import org.meveo.model.billing.AccountStatusEnum;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
+import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
+import org.meveo.model.billing.RecurringChargeInstance;
+import org.meveo.model.billing.ServiceInstance;
+import org.meveo.model.billing.Subscription;
 import org.meveo.model.billing.SubscriptionTerminationReason;
+import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
+import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.AccountService;
@@ -277,14 +284,78 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         if (expression.indexOf("c") >= 0) {
             userMap.put("c", ba.getCustomerAccount().getCustomer());
         }
+        if (expression.indexOf("prov") >= 0) {
+            userMap.put("prov", appProvider);
+        }
+
+        return userMap;
+    }
+    
+    private Map<Object, Object> constructElContext(String expression, Subscription subscription) {
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        UserAccount userAccount = subscription.getUserAccount();
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+
+        if (expression.indexOf("offer") >= 0) {
+            OfferTemplate offer = subscription.getOffer();
+            userMap.put("offer", offer);
+        }
+        if (expression.indexOf("ua") >= 0) {
+            userMap.put("ua", userAccount);
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("c") >= 0) {
+            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+        }
+        if (expression.indexOf("prov") >= 0) {
+            userMap.put("prov", appProvider);
+        }
+
+        return userMap;
+    }
+    
+    private Map<Object, Object> constructElContext(String expression, ServiceInstance serviceInstance) {
+
+        Map<Object, Object> userMap = new HashMap<Object, Object>();
+        Subscription subscription = serviceInstance.getSubscription();
+        UserAccount userAccount = subscription.getUserAccount();
+        BillingAccount billingAccount = userAccount.getBillingAccount();
+
+        if (expression.indexOf("serviceInstance") >= 0) {
+            userMap.put("serviceInstance", serviceInstance);
+        }
+        if (expression.indexOf("offer") >= 0) {
+            OfferTemplate offer = serviceInstance.getSubscription().getOffer();
+            userMap.put("offer", offer);
+        }
+        if (expression.indexOf("ua") >= 0) {
+            userMap.put("ua", userAccount);
+        }
+        if (expression.indexOf("ba") >= 0) {
+            userMap.put("ba", billingAccount);
+        }
+        if (expression.indexOf("ca") >= 0) {
+            userMap.put("ca", billingAccount.getCustomerAccount());
+        }
+        if (expression.indexOf("c") >= 0) {
+            userMap.put("c", billingAccount.getCustomerAccount().getCustomer());
+        }
+        if (expression.indexOf("prov") >= 0) {
+            userMap.put("prov", appProvider);
+        }
 
         return userMap;
     }
     
     /**
      * @param expression EL expression
-     * @param walletOperation wallet operation
-     * @param ua user account
+     * @param billingAccount billingAccount
      * @return evaluated expression
      * @throws BusinessException business exception
      */
@@ -305,24 +376,200 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return result;
     }
     
+    /**
+     * @param expression EL expression
+     * @param serviceInstance   serviceInstance
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private Double evaluateDoubleExpression(String expression, ServiceInstance serviceInstance) throws BusinessException {
+        Double result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, serviceInstance);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
+        try {
+            result = (Double) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
+        }
+        return result;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param subscription   subscription
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private Double evaluateDoubleExpression(String expression, Subscription subscription) throws BusinessException {
+        Double result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, subscription);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Double.class);
+        try {
+            result = (Double) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to double but " + res);
+        }
+        return result;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param billingAccount billingAccount
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private String evaluateStringExpression(String expression, BillingAccount ba) throws BusinessException {
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, ba);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
+        }
+        return result;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param subscription subscription
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private String evaluateStringExpression(String expression, Subscription subscription) throws BusinessException {
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, subscription);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
+        }
+        return result;
+    }
+    
+    /**
+     * @param expression EL expression
+     * @param serviceInstance serviceInstance
+     * @return evaluated expression
+     * @throws BusinessException business exception
+     */
+    private String evaluateStringExpression(String expression, ServiceInstance serviceInstance) throws BusinessException {
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = constructElContext(expression, serviceInstance);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to string but " + res);
+        }
+        return result;
+    }
+    
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public boolean updateBillingAccountTotalAmountsAndCreateMinBilledRT(Long billingAccountId, BillingRun billingRun) throws BusinessException {
-        log.debug("updateBillingAccountTotalAmounts  billingAccount:" + billingAccountId);
+        log.debug("updateBillingAccountTotalAmountsAndCreateMinBilledRT  billingAccount:" + billingAccountId);
         BillingAccount billingAccount = findById(billingAccountId, true);
+        
+        for(UserAccount userAccount : billingAccount.getUsersAccounts()) {
+            for(Subscription subscription : userAccount.getSubscriptions()) {
+                BigDecimal totalSubscriptionBilledAmount = BigDecimal.ZERO;
+                for(ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                    
+                    if(!StringUtils.isBlank(serviceInstance.getMinimumAmountEl())) {
+                        BigDecimal serviceMinAmount = new BigDecimal(evaluateDoubleExpression(serviceInstance.getMinimumAmountEl(), serviceInstance));
+                        String serviceMinLabel = evaluateStringExpression(serviceInstance.getMinimumLabelEl(), serviceInstance);
+                        BigDecimal serviceAmount = BigDecimal.ZERO;
+                        
+                        List<RecurringChargeInstance> recurringChargeInstanceList = serviceInstance.getRecurringChargeInstances();
+                        for(RecurringChargeInstance recurringChargeInstance : recurringChargeInstanceList) {
+                            BigDecimal chargeAmount = computeChargeInvoiceAmount(recurringChargeInstance, new Date(0), billingRun.getLastTransactionDate());
+                            if(chargeAmount != null) {
+                                serviceAmount = serviceAmount.add(chargeAmount);
+                            }
+                        }
+                        
+                        List<UsageChargeInstance> usageChargeInstanceList = serviceInstance.getUsageChargeInstances();
+                        for(UsageChargeInstance usageChargeInstance : usageChargeInstanceList) {
+                            BigDecimal chargeAmount = computeChargeInvoiceAmount(usageChargeInstance, new Date(0), billingRun.getLastTransactionDate());
+                            if(chargeAmount != null) {
+                                serviceAmount = serviceAmount.add(chargeAmount);
+                            }
+                        }
+                        
+                        BigDecimal diff = serviceMinAmount.subtract(serviceAmount);
+                        if(diff.intValueExact() > 0) {
+                            RatedTransaction ratedTransaction = new RatedTransaction(null, new Date(), diff, diff,
+                                BigDecimal.ZERO,  BigDecimal.ONE, diff, diff,  BigDecimal.ZERO, RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                                null, "", "", "", "", "", "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_SERVICE_AMOUNT.getCode()+"_"+serviceInstance.getCode(), serviceMinLabel);
+                            ratedTransactionService.create(ratedTransaction);
+                            ratedTransactionService.commit();
+                            serviceAmount = serviceMinAmount;
+                        }
+                    
+                        if(serviceAmount != null) {
+                            totalSubscriptionBilledAmount = totalSubscriptionBilledAmount.add(serviceAmount);
+                        }
+                    }
+                }
+                
+                if(!StringUtils.isBlank(subscription.getMinimumAmountEl())) {
+                    BigDecimal subscriptionMinAmount = new BigDecimal(evaluateDoubleExpression(subscription.getMinimumAmountEl(), subscription));
+                    String subscriptionMinLabel = evaluateStringExpression(subscription.getMinimumLabelEl(), subscription);
+                    BigDecimal diff = subscriptionMinAmount.subtract(totalSubscriptionBilledAmount);
+                    if(diff.intValueExact() > 0) {
+                        RatedTransaction ratedTransaction = new RatedTransaction(null, new Date(), diff, diff,
+                            BigDecimal.ZERO,  BigDecimal.ONE, diff, diff,  BigDecimal.ZERO, RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                            null, "", "", "", "", "", "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_SUBSCRIPTION_AMOUNT.getCode()+"_"+subscription.getCode(), subscriptionMinLabel);
+                        ratedTransactionService.create(ratedTransaction);
+                        ratedTransactionService.commit();
+                    }
+                }
+                
+            }
+            
+            
+        }
+       
+        
         BigDecimal invoiceAmount = computeBaInvoiceAmount(billingAccount, new Date(0), billingRun.getLastTransactionDate());
         
         if(!StringUtils.isBlank(billingAccount.getMinimumAmountEl())) {
-            BigDecimal minAmount = new BigDecimal(evaluateDoubleExpression(billingAccount.getMinimumAmountEl(), billingAccount));
-            BigDecimal diff = minAmount.subtract(invoiceAmount);
+            BigDecimal billingAccountMinAmount = new BigDecimal(evaluateDoubleExpression(billingAccount.getMinimumAmountEl(), billingAccount));
+            String billingAccountMinLabel = evaluateStringExpression(billingAccount.getMinimumLabelEl(), billingAccount);
+            BigDecimal diff = billingAccountMinAmount.subtract(invoiceAmount);
             if(diff.intValueExact() > 0) {
-                // create RT
                 RatedTransaction ratedTransaction = new RatedTransaction(null, new Date(), diff, diff,
-                    new BigDecimal(0),  new BigDecimal(1), diff, diff,  new BigDecimal(0), RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                    null, "", "", "", "", "", "", "", null, "DUMMY", null, "", "");
-
+                    BigDecimal.ZERO,  BigDecimal.ONE, diff, diff,  BigDecimal.ZERO, RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                    null, "", "", "", "", "", "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_BA_AMOUNT.getCode()+"_"+billingAccount.getCode(), billingAccountMinLabel);
                 ratedTransactionService.create(ratedTransaction);
                 ratedTransactionService.commit();
-                invoiceAmount = minAmount;
+                invoiceAmount = billingAccountMinAmount;
             }
         }
         
@@ -378,6 +625,31 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 		
 		return sumAmountWithouttax;
 	}
+	
+	/**
+     * Compute the invoice amount by charge.
+     * 
+     * @param chargeInstance chargeInstance
+     * @param firstTransactionDate first transaction date.
+     * @param lastTransactionDate last transaction date
+     * @return computed invoice amount by charge.
+     */
+	public BigDecimal computeChargeInvoiceAmount(ChargeInstance chargeInstance, Date firstTransactionDate,
+            Date lastTransactionDate) {
+        Query q = getEntityManager().createNamedQuery("RatedTransaction.sumByCharge")
+                .setParameter("chargeInstance", chargeInstance)
+                .setParameter("firstTransactionDate", firstTransactionDate)
+                .setParameter("lastTransactionDate", lastTransactionDate);
+        try {
+            return (BigDecimal) q.getSingleResult();
+        } catch (NoResultException e) {
+            log.warn("error while getting amount by chargeInstance", e);
+            return null;
+        }
+    }
+	
+	
+	
 
     @SuppressWarnings("unchecked")
     public List<BillingAccount> listByCustomerAccount(CustomerAccount customerAccount) {

@@ -239,19 +239,22 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
         headerCat.setDescription("min amount");
         headerCat.setCode("min_amount");
-        headerCat.setAmountWithoutTax(new BigDecimal(100));
-        headerCat.setAmountWithTax(new BigDecimal(120));
         
         LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();
         for (RatedTransaction ratedTransaction : entity.getRatedTransactions()) {
             if (ratedTransaction.getWallet() == null) {
-                InvoiceSubCategoryDTO headerSubCat = new InvoiceSubCategoryDTO();
-                headerSubCat.setDescription("ba billing amount");
-                headerSubCat.setCode(ratedTransaction.getCode());
-                headerSubCat.setAmountWithoutTax(ratedTransaction.getAmountWithoutTax());
-                headerSubCat.setAmountWithTax(ratedTransaction.getAmountWithTax());
-                headerSubCat.setRatedTransactions(entity.getRatedTransactions());
-                headerSubCategories.put("yooo", headerSubCat);
+                InvoiceSubCategoryDTO headerSubCat = null;
+                if(headerSubCategories.containsKey(ratedTransaction.getCode())) {
+                    headerSubCat = headerSubCategories.get(ratedTransaction.getCode());
+                } else {
+                    headerSubCat = new InvoiceSubCategoryDTO();
+                    headerSubCat.setDescription(ratedTransaction.getDescription());
+                    headerSubCat.setCode(ratedTransaction.getCode());
+                }
+                headerSubCat.getRatedTransactions().add(ratedTransaction);
+                headerSubCat.setAmountWithoutTax(headerSubCat.getAmountWithoutTax().add(ratedTransaction.getAmountWithoutTax()));
+                headerSubCat.setAmountWithTax(headerSubCat.getAmountWithTax().add(ratedTransaction.getAmountWithTax()));
+                headerSubCategories.put(ratedTransaction.getCode(), headerSubCat);               
             }
         }
         headerCat.setInvoiceSubCategoryDTOMap(headerSubCategories);

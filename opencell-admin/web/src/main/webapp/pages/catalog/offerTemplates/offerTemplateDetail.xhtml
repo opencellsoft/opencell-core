@@ -66,6 +66,10 @@
                                         
                                     <hftl:formField id="scriptSelectId" label="#{messages['offerTemplate.globalRatingScript']}" field="globalRatingScriptInstance" valueLabelField="code" required="false"
                                         popup="true" popupId="offerTemplateScriptPopup" showResetButton="true" /> 
+                                        
+                                    <hftl:formField label="#{messages['offerTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" />   
+	                        		<hftl:formField label="#{messages['offerTemplate.minimumAmountWithTax']} EL" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />	
+							
 
                                     <o:validateMultiple components=":offerForm:tabView:offerInfo:code_txt :offerForm:tabView:offerInfo:validity_date :offerForm:tabView:offerInfo:validity_date_toRange"
                                         validator="#{offerTemplateBean.validateUniqueVersion}" message="#{messages['offerTemplate.version.exists.short']}" />

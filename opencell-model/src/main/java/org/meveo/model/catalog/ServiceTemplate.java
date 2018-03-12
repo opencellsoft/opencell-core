@@ -98,6 +98,14 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	@Size(max = 100)
     private String imagePath;
 	
+    @Column(name = "minimum_amount_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountEl;
+    
+    @Column(name = "minimum_label_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumLabelEl;
+	
 	@Transient
 	private boolean selected;
 	
@@ -109,7 +117,7 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
 	
 	@Transient
 	private String descriptionOverride;
-
+	
 	public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
 		ServiceChargeTemplateRecurring result = null;
 		for (ServiceChargeTemplateRecurring sctr : serviceRecurringCharges) {
@@ -261,5 +269,20 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
         this.descriptionOverride = descriptionOverride;
     }
 
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
 
 }

@@ -116,13 +116,21 @@
 								label="#{messages['serviceTemplate.description']}"
 								field="description" useConverter="false" size="50"
 								/>
+							
 							<hftl:formField
 								label="#{messages['serviceTemplate.longDescription']}"
 								field="longDescription" textArea="true" id="longDescription"
 								rows="1" />
+								
+								
 							<hftl:formField label="#{messages['serviceTemplate.calendar']}"
 								field="invoicingCalendar" valueLabelField="code"
 								required="false" popup="false" listBean="#{calendarBean}" />
+								
+							<hftl:formField label="#{messages['serviceTemplate.minimumLabel']} EL" field="minimumLabelEl" textArea="true" rows="1" maxlength="2000" />   
+	                        <hftl:formField label="#{messages['serviceTemplate.minimumAmountWithTax']} EL" field="minimumAmountEl" textArea="true" rows="1" maxlength="2000" />	
+							
+								
 						</hftl:formPanel>
 					</p:outputPanel>
 				</p:tab>
