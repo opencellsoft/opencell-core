@@ -386,7 +386,7 @@ public class ElasticClient {
         if (StringUtils.isBlank(query)) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
         } else {
-            reqBuilder.setQuery(QueryBuilders.simpleQueryStringQuery(query).defaultOperator(Operator.AND));
+            reqBuilder.setQuery(QueryBuilders.queryStringQuery(query).lenient(true));
         }
         SearchResponse response = reqBuilder.execute().actionGet();
 

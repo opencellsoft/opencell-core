@@ -45,13 +45,25 @@
 			"description": "description"
 		},
 		"Customer": {
-			"address": "address",
+			"address.address1": "address.address1",
+			"address.address2": "address.address2",
+			"address.address3": "address.address3",
+			"address.zipCode": "address.zipCode",
+			"address.city": "address.city",
+			"address.country": "address.country.countryCode",
+			"address.state": "address.state",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
 		},
 		"CustomerAccount": {
-			"address": "address",
+			"address.address1": "address.address1",
+			"address.address2": "address.address2",
+			"address.address3": "address.address3",
+			"address.zipCode": "address.zipCode",
+			"address.city": "address.city",
+			"address.country": "address.country.countryCode",
+			"address.state": "address.state",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
@@ -59,13 +71,25 @@
 			"customer": "getCustomer().getCode()"
 		},
 		"BillingAccount": {
-			"address": "address",
+			"address.address1": "address.address1",
+			"address.address2": "address.address2",
+			"address.address3": "address.address3",
+			"address.zipCode": "address.zipCode",
+			"address.city": "address.city",
+			"address.country": "address.country.countryCode",
+			"address.state": "address.state",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
 		},
 		"UserAccount": {
-			"address": "address",
+			"address.address1": "address.address1",
+			"address.address2": "address.address2",
+			"address.address3": "address.address3",
+			"address.zipCode": "address.zipCode",
+			"address.city": "address.city",
+			"address.country": "address.country.countryCode",
+			"address.state": "address.state",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
@@ -409,6 +433,9 @@
 								},
 								"zipCode": {
 									"type": "string"
+								},
+								"state": {
+									"type": "string"
 								}
 							}
 						},
@@ -456,6 +483,9 @@
 									"type": "string"
 								},
 								"zipCode": {
+									"type": "string"
+								},
+								"state": {
 									"type": "string"
 								}
 							}
@@ -505,6 +535,9 @@
 								},
 								"zipCode": {
 									"type": "string"
+								},
+								"state": {
+									"type": "string"
 								}
 							}
 						},
@@ -552,6 +585,9 @@
 									"type": "string"
 								},
 								"zipCode": {
+									"type": "string"
+								},
+								"state": {
 									"type": "string"
 								}
 							}
