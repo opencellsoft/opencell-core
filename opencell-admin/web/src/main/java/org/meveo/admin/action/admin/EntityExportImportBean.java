@@ -12,8 +12,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.enterprise.context.Conversation;
-import javax.faces.view.ViewScoped;
 import javax.faces.model.DataModel;
+import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -22,7 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.api.dto.response.utilities.ImportExportResponseDto;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportImportStatistics;
 import org.meveo.export.ExportTemplate;
@@ -66,7 +66,9 @@ public class EntityExportImportBean implements Serializable {
     @ApplicationProvider
     private Provider appProvider;
 
-    private ParamBean param = ParamBean.getInstance();
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private boolean requireFK = true;
 
@@ -112,7 +114,7 @@ public class EntityExportImportBean implements Serializable {
 
         // Determine applicable template by matching a class name
         if (dataModelToExport.getRowCount() > 0 && selectedExportTemplate == null) {
-        	selectedExportTemplate = getExportImportTemplateForClass(dataModelToExport.iterator().next().getClass());
+            selectedExportTemplate = getExportImportTemplateForClass(dataModelToExport.iterator().next().getClass());
             // } else { Now that dataModelToExport or selectedEntitiesToExport can be set, dont reset selectedExportTemplate value
             // selectedExportTemplate = null;
         }
@@ -204,10 +206,10 @@ public class EntityExportImportBean implements Serializable {
 
                     if (getRowCount() > 0) {
                         int toNr = first + pageSize;
-						if (toNr > templates.size()) {
-							first = 0;
-							pageSize = templates.size() - 1;
-						}
+                        if (toNr > templates.size()) {
+                            first = 0;
+                            pageSize = templates.size() - 1;
+                        }
                         return new LinkedList(templates.entrySet()).subList(first, getRowCount() <= toNr ? getRowCount() : toNr);
 
                     } else {
@@ -331,7 +333,7 @@ public class EntityExportImportBean implements Serializable {
     }
 
     public String getDatePattern() {
-        return param.getDateFormat();
+        return paramBeanFactory.getInstance().getDateFormat();
     }
 
     protected void beginConversation() {

@@ -40,7 +40,7 @@ public class ParamActionBean implements Serializable {
 
     /** paramBeanFactory */
     @Inject
-    private ParamBeanFactory paramBeanFactory;
+    protected ParamBeanFactory paramBeanFactory;
 
     private List<ParamProperty> properties = null;
 

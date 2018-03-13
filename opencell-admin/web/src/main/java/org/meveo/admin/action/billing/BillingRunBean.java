@@ -32,6 +32,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -70,6 +71,10 @@ public class BillingRunBean extends BaseBean<BillingRun> {
 
     @Inject
     private Messages messages;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -156,7 +161,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(),
             entity.getLastTransactionDate());
         try {
-            ParamBean param = ParamBean.getInstance();
+            ParamBean param = paramBeanFactory.getInstance();
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
             log.info("launchInvoicing allowManyInvoicing={}", isAllowed);

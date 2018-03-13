@@ -52,4 +52,14 @@ public class ParamBeanFactory {
             return paramBean.getChrootDir("");
         }
     }
+
+    public String getInheritedProperty(String key, String defaultValue) {
+        ParamBean paramBean = getInstance();
+        if (currentUser != null) {
+            return paramBean.getInheritedProperty(key, defaultValue, currentUser.getProviderCode());
+        } else {
+            return paramBean.getInheritedProperty(key, defaultValue, "");
+        }
+    }
+
 }
