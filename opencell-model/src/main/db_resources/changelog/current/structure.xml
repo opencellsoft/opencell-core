@@ -86,6 +86,12 @@
             billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority
         </sql>
     </changeSet>
+
+    <changeSet id="#2894_20180129" author="smichea">
+        <addColumn tableName="meveo_job_instance">
+            <column name="provider" type="varchar(255)"></column>
+        </addColumn>
+    </changeSet>
     
     <changeSet author="EdwardPLegaspi" id="#2370_20180306 - customer categories">
         <createTable tableName="cat_product_offer_customer_category">
@@ -176,7 +182,7 @@
         <addColumn tableName="account_entity">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id_account" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.account_entity ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -186,7 +192,7 @@
         <addColumn tableName="com_sender_config">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id_sender" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.com_sender_config ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -196,7 +202,7 @@
         <addColumn tableName="crm_provider_contact">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id_prov_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.crm_provider_contact ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -206,7 +212,7 @@
         <addColumn tableName="crm_provider">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id_prov" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.crm_provider ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
             )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -216,7 +222,7 @@
         <addColumn tableName="crm_seller">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.crm_seller ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
             )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -226,7 +232,7 @@
         <addColumn tableName="ord_order_item">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
         <sql>update ${db.schema}.ord_order_item ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
@@ -240,20 +246,18 @@
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_country" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
 
+        <dropColumn tableName="ar_payment_gateway" columnName="trading_country_id" />
+
         <addColumn tableName="ar_payment_gateway">
             <column name="nb_tries" type="int" />
+        </addColumn>
+        <addColumn tableName="ar_payment_gateway">
             <column name="replay_cause" type="varchar(100)" />
+        </addColumn>
+
+        <addColumn tableName="ar_payment_gateway">
             <column name="errors_to_replay" type="varchar(400)" />
         </addColumn>
-    </changeSet>
-
-    <changeSet id="#2875_20171201-M" author="anasseh" dbms="mysql">
-        <dropForeignKeyConstraint baseTableName="ar_payment_gateway" constraintName="fk_paygw_trad_country"/>
-        <dropIndex tableName="ar_payment_gateway" indexName="fk_paygw_trad_country"/>
-    </changeSet>
-
-    <changeSet id="#2875_20171201-End" author="anasseh">
-        <dropColumn tableName="ar_payment_gateway" columnName="trading_country_id" />
     </changeSet>
     
     <changeSet id="#1705_20180219" author="EdwardPLegaspi">
@@ -320,5 +324,4 @@
         <addForeignKeyConstraint constraintName="fk_ar_occ_template_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_occ_template" baseColumnNames="accounting_code_id" />
         <addForeignKeyConstraint constraintName="fk_ar_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_account_operation" baseColumnNames="accounting_code_id" />
     </changeSet> 
-        
 </databaseChangeLog> 
