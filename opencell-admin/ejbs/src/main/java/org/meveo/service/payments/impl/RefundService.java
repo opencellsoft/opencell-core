@@ -69,9 +69,9 @@ public class RefundService extends PersistenceService<Refund> {
      * @throws BusinessException business exception.
      */
     public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto,PaymentMethodEnum paymentMethodType, List<Long> aoIdsToPay) throws BusinessException {
-       String occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD");
+       String occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.card", "REF_CRD");
        if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
-           occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.dd", "RB_PLVT");
+           occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.dd", "REF_DDT");
        }
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
