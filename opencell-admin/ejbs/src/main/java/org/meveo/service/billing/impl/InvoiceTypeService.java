@@ -50,11 +50,11 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         }
 
         String occCode = "accountOperationsGenerationJob.occCode";
-        String occCodeDefaultValue = "FA_FACT";
+        String occCodeDefaultValue = "INV_STD";
         OperationCategoryEnum operationCategory = OperationCategoryEnum.DEBIT;
         if (getAdjustementCode().equals(invoiceTypeCode)) {
             occCode = "accountOperationsGenerationJob.occCodeAdjustement";
-            occCodeDefaultValue = "FA_ADJ";
+            occCodeDefaultValue = "INV_CRN";
             operationCategory = OperationCategoryEnum.CREDIT;
         }
 

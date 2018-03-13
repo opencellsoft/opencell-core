@@ -7346,7 +7346,7 @@
 	"type" : "",
 	"description" : "CHECK payment",
 	"paymentMethod" : "CHECK",
-	"occTemplateCode" : "RG_CHQ",
+	"occTemplateCode" : "PAY_CHK",
 	"amount" : "5",
 	"customerAccountCode" : "CA1",
 	"reference" : "bank",
