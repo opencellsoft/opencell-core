@@ -679,6 +679,16 @@
 			      </configuration>
 			    -->
 				<version>3.0.0</version>
+				<configuration>
+					<tags>
+						<tag>
+							<name>lastModifiedVersion</name>
+							<!-- tag for all places -->
+							<placement>a</placement>
+							<head>Last Modified Version:</head>
+						</tag>
+					</tags>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -730,6 +740,7 @@
 				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>root</db.username>
 				<db.password></db.password>
 			</properties>
