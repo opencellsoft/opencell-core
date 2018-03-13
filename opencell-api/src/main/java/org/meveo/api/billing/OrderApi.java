@@ -304,7 +304,7 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -629,7 +629,7 @@ public class OrderApi extends BaseApi {
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
             populateCustomFields(customFields, productInstance, true, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
@@ -827,7 +827,7 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

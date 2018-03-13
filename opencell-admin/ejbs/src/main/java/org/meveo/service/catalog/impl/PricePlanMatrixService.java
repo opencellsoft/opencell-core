@@ -28,6 +28,7 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -37,7 +38,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
@@ -51,9 +52,13 @@ import org.meveo.service.base.BusinessService;
 @Stateless
 public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
-    private ParamBean param = ParamBean.getInstance();
+    // private ParamBean param = ParamBean.getInstance();
 
-    private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
+    // private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @Override
     public void create(PricePlanMatrix pp) throws BusinessException {
@@ -111,6 +116,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
                 return cell.getDateCellValue();
             } catch (Exception e) {
                 try {
+                    SimpleDateFormat sdf = new SimpleDateFormat(paramBeanFactory.getInstance().getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
                     return sdf.parse(cell.getStringCellValue());
                 } catch (ParseException e1) {
                     return null;
@@ -150,14 +156,14 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         try {
             pricePlan.setStartSubscriptionDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid startAppli in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
-                    + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid startAppli in line=" + rowIndex + " expected format:"
+                    + paramBeanFactory.getInstance().getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
         }
         try {
             pricePlan.setEndSubscriptionDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid endAppli in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
-                    + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid endAppli in line=" + rowIndex + " expected format:"
+                    + paramBeanFactory.getInstance().getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
         }
         String offerCode = getCellAsString((Cell) cellsObj[i++]);
         String priority = getCellAsString((Cell) cellsObj[i++]);
@@ -174,14 +180,14 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
         try {
             pricePlan.setStartRatingDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid startRating in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
-                    + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid startRating in line=" + rowIndex + " expected format:"
+                    + paramBeanFactory.getInstance().getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
         }
         try {
             pricePlan.setEndRatingDate(getCellAsDate((Cell) cellsObj[i++]));
         } catch (Exception e) {
-            throw new BusinessException("Invalid endRating in line=" + rowIndex + " expected format:" + param.getProperty("excelImport.dateFormat", "dd/MM/yyyy")
-                    + ", you may change the property excelImport.dateFormat.");
+            throw new BusinessException("Invalid endRating in line=" + rowIndex + " expected format:"
+                    + paramBeanFactory.getInstance().getProperty("excelImport.dateFormat", "dd/MM/yyyy") + ", you may change the property excelImport.dateFormat.");
         }
         String minSubAge = getCellAsString((Cell) cellsObj[i++]);
         String maxSubAge = getCellAsString((Cell) cellsObj[i++]);

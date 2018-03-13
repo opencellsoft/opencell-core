@@ -141,7 +141,7 @@ public class UsageRatingService implements Serializable {
      * @param counterInstance Counter instance in case of virtual operation
      * @param offerCode Offer code in case of virtual operation
      * 
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal quantityToCharge, UsageChargeInstance usageChargeInstance, boolean isVirtual)
             throws BusinessException {
@@ -256,7 +256,7 @@ public class UsageRatingService implements Serializable {
      * @param reservation Is charge event part of reservation
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * @return if EDR quantity fits partially in the counter, returns the remaining quantity. NOTE: counter and EDR units might differ - translation is performed.
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private BigDecimal deduceCounter(EDR edr, UsageChargeInstance usageChargeInstance, Reservation reservation, boolean isVirtual) throws BusinessException {
 
@@ -353,7 +353,7 @@ public class UsageRatingService implements Serializable {
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * 
      * @return returns true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR content)
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException {
         boolean stopEDRRating = false;
@@ -477,7 +477,7 @@ public class UsageRatingService implements Serializable {
      * @param edr EDR to reserve
      * @param usageChargeInstance Associated charge
      * @return True EDR was rated fully - either no counter used, or quantity remaining in a counter was greater or equal to the quantity to rate
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, UsageChargeInstance usageChargeInstance) throws BusinessException {
         boolean stopEDRRating = false;

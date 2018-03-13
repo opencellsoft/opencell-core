@@ -77,7 +77,7 @@ public class EntityCustomizationDto extends BaseDto {
         dto.setClassname(clazz.getName());
 
         if (cetFields != null) {
-            List<CustomFieldTemplateDto> fields = new ArrayList<CustomFieldTemplateDto>();
+            List<CustomFieldTemplateDto> fields = new ArrayList<>();
             for (CustomFieldTemplate cft : cetFields) {
                 fields.add(new CustomFieldTemplateDto(cft));
             }
@@ -85,7 +85,7 @@ public class EntityCustomizationDto extends BaseDto {
         }
 
         if (cetActions != null) {
-            List<EntityCustomActionDto> actions = new ArrayList<EntityCustomActionDto>();
+            List<EntityCustomActionDto> actions = new ArrayList<>();
             for (EntityCustomAction action : cetActions) {
                 actions.add(new EntityCustomActionDto(action));
             }

@@ -12,9 +12,7 @@ import java.util.function.BiFunction;
 import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.EJB;
-import javax.ejb.Lock;
-import javax.ejb.LockType;
-import javax.ejb.Singleton;
+import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.infinispan.Cache;
@@ -32,8 +30,9 @@ import org.slf4j.Logger;
  * @author Andrius Karpavicius
  * 
  */
-@Singleton
-@Lock(LockType.READ)
+// @Singleton
+// @Lock(LockType.READ)
+@Stateless
 public class JobCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
 
     private static final long serialVersionUID = -4730906690144309131L;
@@ -97,12 +96,12 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
     }
 
     /**
-     * Determine if job, identified by a given job instance id, is currently running and if on this or another clusternode.
+     * Determine if job, identified by a given job instance id, is currently running and if - on this or another clusternode.
      * 
      * @param jobInstanceId Job instance identifier
      * @return Is Job currently running and if on this or another node
      */
-    @Lock(LockType.READ)
+    // @Lock(LockType.READ)
     public JobRunningStatusEnum isJobRunning(Long jobInstanceId) {
         String currentProvider = currentUser.getProviderCode();
         if (jobInstanceId == null) {
@@ -135,7 +134,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * @param limitToSingleNode true if this job can be run on only one node.
      * @return Was Job running before and if on this or another node
      */
-    @Lock(LockType.WRITE)
+    // @Lock(LockType.WRITE)
     public JobRunningStatusEnum markJobAsRunning(Long jobInstanceId, boolean limitToSingleNode) {
         JobRunningStatusEnum[] isRunning = new JobRunningStatusEnum[1];
         String currentNode = EjbUtils.getCurrentClusterNode();
@@ -169,12 +168,18 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
             return nodes;
         };
 
-        List<String> nodes = runningJobsCache.compute(new CacheKeyLong(currentProvider, jobInstanceId), remappingFunction);
+        CacheKeyLong cacheKey = new CacheKeyLong(currentProvider, jobInstanceId);
+
+        List<String> nodes = null;
+
+        synchronized (JobCacheContainerProvider.class) {
+            nodes = runningJobsCache.compute(cacheKey, remappingFunction);
+        }
 
         log.trace("Job {} of provider {} marked as running in job cache. Job is currently running on {} nodes. Previous job running status is {}", jobInstanceId, currentProvider,
             nodes, isRunning[0]);
-
         return isRunning[0];
+
     }
 
     /**
@@ -182,7 +187,7 @@ public class JobCacheContainerProvider implements Serializable { // CacheContain
      * 
      * @param jobInstanceId Job instance identifier
      */
-    @Lock(LockType.READ)
+    // @Lock(LockType.READ)
     public void markJobAsNotRunning(Long jobInstanceId) {
 
         String currentNode = EjbUtils.getCurrentClusterNode();

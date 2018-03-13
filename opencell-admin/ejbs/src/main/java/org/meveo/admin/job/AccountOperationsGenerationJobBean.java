@@ -17,6 +17,8 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -27,46 +29,51 @@ import org.slf4j.Logger;
 @Stateless
 public class AccountOperationsGenerationJobBean {
 
-	@Inject
-	private Logger log;
+    @Inject
+    private Logger log;
 
-	@Inject
-	private InvoiceService invoiceService;
+    @Inject
+    private InvoiceService invoiceService;
 
-	@Inject
-	private AccOpGenerationAsync accOpGenerationAsync;
-    
+    @Inject
+    private AccOpGenerationAsync accOpGenerationAsync;
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-    
-	@SuppressWarnings("unchecked")
-	@Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
-	@TransactionAttribute(TransactionAttributeType.NEVER)
-	public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
-		try {
-			
-			List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null);
-			log.debug("invoices to traite:" +( ids == null ? null:ids.size()));
-			
-			Long nbRuns = new Long(1);		
-			Long waitingMillis = new Long(0);
-			try{
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    @SuppressWarnings("unchecked")
+    @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
+    @TransactionAttribute(TransactionAttributeType.NEVER)
+    public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
+        try {
+
+            List<Long> ids = invoiceService.getInvoiceIdsWithNoAccountOperation(null);
+            log.debug("invoices to traite:" + (ids == null ? null : ids.size()));
+
+            Long nbRuns = new Long(1);
+            Long waitingMillis = new Long(0);
+            try {
                 nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
-				if(nbRuns == -1){
-					nbRuns  = (long) Runtime.getRuntime().availableProcessors();
-				}
-			}catch(Exception e){
-				nbRuns = new Long(1);
-				waitingMillis = new Long(0);
-				log.warn("Cant get customFields for "+jobInstance.getJobTemplate(),e.getMessage());
-			}
-			List<Future<String>> futures = new ArrayList<Future<String>>();
-	    	SubListCreator subListCreator = new SubListCreator(ids,nbRuns.intValue());
-	    	log.debug("block to run:" + subListCreator.getBlocToRun());
-	    	log.debug("nbThreads:" + nbRuns);
-			while (subListCreator.isHasNext()) {	
-				futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(),result));
+                if (nbRuns == -1) {
+                    nbRuns = (long) Runtime.getRuntime().availableProcessors();
+                }
+            } catch (Exception e) {
+                nbRuns = new Long(1);
+                waitingMillis = new Long(0);
+                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
+            }
+            List<Future<String>> futures = new ArrayList<Future<String>>();
+            SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
+            log.debug("block to run:" + subListCreator.getBlocToRun());
+            log.debug("nbThreads:" + nbRuns);
+            MeveoUser lastCurrentUser = currentUser.unProxy();
+            while (subListCreator.isHasNext()) {
+                futures.add(accOpGenerationAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());
@@ -81,17 +88,17 @@ public class AccountOperationsGenerationJobBean {
                     future.get();
                 } catch (InterruptedException e) {
                     // It was cancelled from outside - no interest
-                    
+
                 } catch (ExecutionException e) {
                     Throwable cause = e.getCause();
                     result.registerError(cause.getMessage());
                     log.error("Failed to execute async method", cause);
                 }
             }
-		} catch (Exception e) {
-            log.error("Failed to run accountOperation generation  job",e);
+        } catch (Exception e) {
+            log.error("Failed to run accountOperation generation  job", e);
             result.registerError(e.getMessage());
         }
-	}
+    }
 
 }

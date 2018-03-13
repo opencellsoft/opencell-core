@@ -172,9 +172,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * clear the data belonging to the current provider from cache
-     * 
-     * @param
+     * Clear the data belonging to the current provider from cache
      */
     public void clear() {
         String currentProvider = currentUser.getProviderCode();
@@ -196,9 +194,8 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     }
 
     /**
-     * clear the data belonging to the current provider from cache
+     * Clear the data belonging to the current provider from cache
      * 
-     * @param
      */
     public void clearAll() {
         edrCache.clear();

@@ -152,11 +152,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
     }
     
     /**
-     * Create a new DDPaymentMethod from the createMandate callBback
-     * @param customerAccount
-     * @param mandate
-     * @param singDate
-     * @throws BusinessException
+     * Create a new DDPaymentMethod from the createMandate callBback.
+     * 
+     * @param customerAccount Customer Account
+     * @param mandatInfoDto Mandat info dto
+     * @throws BusinessException Business Exception
      */
     public void createMandateCallBack(CustomerAccount customerAccount,MandatInfoDto mandatInfoDto) throws BusinessException {
        log.debug("createMandateCallBack customerAccount:{} mandatInfoDto:{}",customerAccount,mandatInfoDto);

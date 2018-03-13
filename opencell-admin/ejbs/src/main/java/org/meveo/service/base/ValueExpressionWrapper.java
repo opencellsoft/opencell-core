@@ -155,7 +155,7 @@ public class ValueExpressionWrapper {
      * @param expression Expression to evaluate
      * @param contextVarNameAndValue An array of context variables and their names in the following order: variable 1 name, variable 1, variable 2 name, variable2, etc..
      * @return A boolean value expression evaluates to. An empty expression evaluates to true;
-     * @throws BusinessException business exception.s
+     * @throws BusinessException business exception
      */
     public static String evaluateToStringMultiVariable(String expression, Object... contextVarNameAndValue) throws BusinessException {
         if (StringUtils.isBlank(expression)) {

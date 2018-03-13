@@ -45,6 +45,7 @@ import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.response.account.GetAccountHierarchyResponseDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.CRMAccountHierarchyDtoParser;
@@ -170,6 +171,9 @@ public class AccountHierarchyApi extends BaseApi {
     
     @Inject
     private  CountryService countryService;
+    
+    @Inject
+    private PaymentMethodApi paymentMethodApi;
 
     @Inject
     @MeveoParamBean
@@ -1951,7 +1955,8 @@ public class AccountHierarchyApi extends BaseApi {
                 paymentMethodDto = new PaymentMethodDto(postData.getPaymentMethod(), postData.getBankCoordinates(), postData.getMandateIdentification(), postData.getMandateDate());
             }
             if (!isForUpdate) {
-                paymentMethodDto.validate(false);
+                paymentMethodDto.setCustomerAccountCode(postData.getCode());
+                paymentMethodApi.validate(paymentMethodDto,false);
             }
             listPaymentMethod.add(paymentMethodDto);
         }

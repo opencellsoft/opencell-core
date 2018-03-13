@@ -7,10 +7,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
-import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CheckPaymentMethod;
@@ -133,6 +133,12 @@ public class PaymentMethodDto extends BaseDto {
      * User identifier.
      */
     private String userId;
+    
+    /**
+     * Customer code, used only on dtp validation.
+     */
+    @XmlTransient
+    private String customerCode;
 
     /**
      * Default constructor.
@@ -672,91 +678,21 @@ public class PaymentMethodDto extends BaseDto {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-
+    
+    
+    
     /**
-     * Validate the PaymentMethodDto.
+     * @return the customerCode
      */
-    public void validate() {
-        validate(false);
+    public String getCustomerCode() {
+        return customerCode;
     }
 
     /**
-     * Validate the PaymentMethodDto.
-     *
-     * @param isRoot is the root Dto or sub Dto.
+     * @param customerCode the customerCode to set
      */
-    public void validate(boolean isRoot) {
-        PaymentMethodEnum type = getPaymentMethodType();
-        if (type == null) {
-            throw new InvalidDTOException("Missing payment method type");
-        }
-        if (isRoot && StringUtils.isBlank(getCustomerAccountCode())) {
-            throw new InvalidDTOException("Missing customerAccountCode");
-        }
-        if (type == PaymentMethodEnum.CARD) {
-            int numberLength = getCardNumber().length();
-            CreditCardTypeEnum cardType = getCardType();
-            if (StringUtils.isBlank(getCardNumber()) || (numberLength != 16 && cardType != CreditCardTypeEnum.AMERICAN_EXPRESS)
-                    || (numberLength != 15 && cardType == CreditCardTypeEnum.AMERICAN_EXPRESS)) {
-                throw new InvalidDTOException("Invalid cardNumber");
-            }
-            if (StringUtils.isBlank(getOwner())) {
-                throw new InvalidDTOException("Missing Owner");
-            }
-            if (StringUtils.isBlank(getMonthExpiration()) || StringUtils.isBlank(getYearExpiration())) {
-                throw new InvalidDTOException("Missing expiryDate");
-            }
-
-            return;
-        }
-        if (type == PaymentMethodEnum.DIRECTDEBIT) {
-            validateBankCoordinates(type);
-            return;
-        }
-
-    }
-
-    /**
-     * Check bank coordinates fields.
-     *
-     * @param type the PaymentMethodEnum type.
-     */
-    private void validateBankCoordinates(PaymentMethodEnum type) {
-        BankCoordinatesDto bankCoordinates = getBankCoordinates();
-
-        if (type == PaymentMethodEnum.DIRECTDEBIT) {
-            // Start compatibility with pre-4.6 versions
-            if (getMandateIdentification() == null && bankCoordinates == null) {
-                throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
-            }
-
-            if (bankCoordinates != null) {
-                if (StringUtils.isBlank(bankCoordinates.getAccountOwner())) {
-                    throw new InvalidDTOException("Missing account owner.");
-                }
-
-                if (StringUtils.isBlank(bankCoordinates.getBankName())) {
-                    throw new InvalidDTOException("Missing bank name.");
-                }
-
-                if (StringUtils.isBlank(bankCoordinates.getBic())) {
-                    throw new InvalidDTOException("Missing BIC.");
-                }
-
-                if (StringUtils.isBlank(bankCoordinates.getIban())) {
-                    throw new InvalidDTOException("Missing IBAN.");
-                }
-            } else {
-                if (StringUtils.isBlank(getMandateIdentification())) {
-                    throw new InvalidDTOException("Missing mandate identification.");
-                }
-                if (getMandateDate() == null) {
-                    throw new InvalidDTOException("Missing mandate date.");
-                }
-            }
-            // End of compatibility with pre-4.6 versions
-        }
-
+    public void setCustomerCode(String customerCode) {
+        this.customerCode = customerCode;
     }
 
     @Override

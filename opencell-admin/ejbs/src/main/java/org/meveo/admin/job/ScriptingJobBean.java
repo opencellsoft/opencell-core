@@ -8,11 +8,11 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.apache.commons.beanutils.ConvertUtils;
 import org.meveo.admin.async.ScriptingAsync;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
@@ -25,14 +25,17 @@ public class ScriptingJobBean {
     private Logger log;
 
     @Inject
-   private ScriptInstanceService scriptInstanceService;
-    
-    
+    private ScriptInstanceService scriptInstanceService;
+
     @Inject
     private ScriptingAsync scriptingAsync;
-    
+
     @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void init(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
@@ -46,21 +49,23 @@ public class ScriptingJobBean {
         }
     }
 
-    long convert(Object s) {
-        long result = (long) ((StringUtils.isBlank(s)) ? 0l : ConvertUtils.convert(s + "", Long.class));
-        return result;
-    }
-
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String scriptCode, Map<String, Object> context) throws BusinessException {
-        Future<String> future = scriptingAsync.launchAndForget(result, scriptCode, context);       
-        while(!future.isDone()) {     
-            //can't stop a running job, Only the job with a sleeping or blocker thread will be stopped
-            if(!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {               
-                future.cancel(true);                
+        MeveoUser lastCurrentUser = currentUser.unProxy();
+        Future<String> future = scriptingAsync.launchAndForget(result, scriptCode, context, lastCurrentUser);
+        while (!future.isDone()) {
+
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+            }
+
+            // can't stop a running job, Only the job with a sleeping or blocker thread will be stopped
+            if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+                future.cancel(true);
             }
         }
-       
+
     }
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)

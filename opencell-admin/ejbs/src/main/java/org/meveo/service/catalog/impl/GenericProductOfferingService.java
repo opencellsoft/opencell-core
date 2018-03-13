@@ -99,7 +99,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
      * Update validity dates of previous versions of a given product offering that have conflicting validity dates
      * 
      * @param offering Product offering to consider as latest version
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     @SuppressWarnings("unchecked")
     private void updateValidityOfPreviousVersions(T offering) throws BusinessException {

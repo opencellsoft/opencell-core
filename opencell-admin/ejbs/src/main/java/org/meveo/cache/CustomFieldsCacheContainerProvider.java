@@ -434,9 +434,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * clear the data belonging to the current provider from cache
-     * 
-     * @param
+     * Clear the data belonging to the current provider from cache
      */
     public void cetsByCodeClear() {
         String currentProvider = currentUser.getProviderCode();
@@ -459,18 +457,14 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * clear all the data in cache
-     * 
-     * @param
+     * Clear all the data in CET cache
      */
     public void cetsByCodeClearAll() {
         cetsByCode.clear();
     }
 
     /**
-     * clear the data belonging to the current provider from cache
-     * 
-     * @param
+     * Clear the data belonging to the current provider from cache
      */
     public void cftsByAppliesToClear() {
         String currentProvider = currentUser.getProviderCode();
@@ -493,9 +487,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     }
 
     /**
-     * clear all the data in cache
-     * 
-     * @param
+     * Clear all the data in CFT cache
      */
     public void cftsByAppliesToClearAll() {
         cftsByAppliesTo.clear();

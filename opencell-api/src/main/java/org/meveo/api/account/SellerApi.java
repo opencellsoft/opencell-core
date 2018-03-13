@@ -20,6 +20,7 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
@@ -153,7 +154,7 @@ public class SellerApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, checkCustomField);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -292,7 +293,7 @@ public class SellerApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, checkCustomField);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

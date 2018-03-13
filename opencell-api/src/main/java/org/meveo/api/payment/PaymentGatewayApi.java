@@ -62,12 +62,9 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      *
      * @param paymentGatewayDto the payment gateway dto
      * @return the long
-     * @throws MissingParameterException the missing parameter exception
-     * @throws BusinessException the business exception
-     * @throws EntityDoesNotExistsException the entity does not exists exception
-     * @throws EntityAlreadyExistsException the entity already exists exception
+     * @throws MeveoApiException, BusinessException 
      */
-    public Long create(PaymentGatewayDto paymentGatewayDto) throws MissingParameterException, BusinessException, EntityDoesNotExistsException, EntityAlreadyExistsException {
+    public Long create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
         }
@@ -132,12 +129,12 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
         try {
             populateCustomFields(paymentGatewayDto.getCustomFields(), paymentGateway, true, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new BusinessException(e.getMessage());
+            throw e;
         }
 
         paymentGatewayService.create(paymentGateway);
@@ -148,12 +145,10 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      * Update paymentGateway.
      *
      * @param paymentGatewayDto the payment gateway dto
-     * @throws MissingParameterException the missing parameter exception
      * @throws BusinessException the business exception
-     * @throws EntityDoesNotExistsException the entity does not exists exception
-     * @throws EntityAlreadyExistsException the entity already exists exception
+     * @throws MeveoApiException 
      */
-    public void update(PaymentGatewayDto paymentGatewayDto) throws MissingParameterException, BusinessException, EntityDoesNotExistsException, EntityAlreadyExistsException {
+    public void update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
         if (paymentGatewayDto == null) {
             missingParameters.add("paymentGatewayDto");
         }
@@ -209,7 +204,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
 
         try {
             populateCustomFields(paymentGatewayDto.getCustomFields(), paymentGateway, true, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

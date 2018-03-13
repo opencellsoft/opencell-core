@@ -160,9 +160,9 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     /**
      * Retrieve the subscriber as a customerAccount from the signMandate order.
      * 
-     * @param reference
-     * @return
-     * @throws BusinessException
+     * @param referenceOrder Order reference 
+     * @return Customer account dto
+     * @throws BusinessException Business Exception
      */
     public CustomerAccountDto getSubscriberFromOrder(String referenceOrder) throws BusinessException {
         CustomerAccountDto customerAccountDto = new CustomerAccountDto();
@@ -181,8 +181,9 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     /**
-     * @param paymentID
-     * @param paymentMethodType
+     * Build check payment request
+     * @param paymentID The payment id
+     * @param paymentMethodType The payment Method Type
      * @return
      */
     private JsonObject getCheckPaymentRequest(String paymentID, PaymentMethodEnum paymentMethodType) {

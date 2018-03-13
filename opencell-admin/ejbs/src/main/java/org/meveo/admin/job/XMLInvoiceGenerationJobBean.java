@@ -17,6 +17,8 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -35,6 +37,10 @@ public class XMLInvoiceGenerationJobBean {
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -75,8 +81,9 @@ public class XMLInvoiceGenerationJobBean {
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
 
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(invoicingAsync.generateXmlAsync((List<Long>) subListCreator.getNextWorkSet(), result));
+                futures.add(invoicingAsync.generateXmlAsync((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {

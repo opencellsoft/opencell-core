@@ -25,7 +25,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
@@ -39,6 +39,7 @@ import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.BaseService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.MeveoJpaForMultiTenancy;
@@ -56,7 +57,7 @@ public class CustomFieldInstanceService extends BaseService {
     private CustomFieldTemplateService cfTemplateService;
 
     @Inject
-    private Event<CFEndPeriodEvent> cFEndPeriodEvent;
+    private Event<CFEndPeriodEvent> cFEndPeriodEventProducer;
 
     @Resource
     private TimerService timerService;
@@ -75,7 +76,12 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     private Conversation conversation;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     // Previous comments
     // /**
@@ -148,7 +154,7 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         // If value is not found, create a new Custom field with a value taken from configuration parameters
-        value = paramBean.getProperty(cfCode, defaultParamBeanValue);
+        value = paramBeanFactory.getInstance().getProperty(cfCode, defaultParamBeanValue);
         if (value == null) {
             return null;
         }
@@ -1248,10 +1254,12 @@ public class CustomFieldInstanceService extends BaseService {
      */
     @Timeout
     private void triggerEndPeriodEventExpired(Timer timer) {
-        log.debug("triggerEndPeriodEventExpired={}", timer);
+        log.debug("Custom field value period has expired {}", timer);
         try {
             CFEndPeriodEvent event = (CFEndPeriodEvent) timer.getInfo();
-            cFEndPeriodEvent.fire(event);
+
+            currentUserProvider.forceAuthentication(null, event.getProviderCode());
+            cFEndPeriodEventProducer.fire(event);
         } catch (Exception e) {
             log.error("Failed executing end period event timer", e);
         }
@@ -1265,11 +1273,11 @@ public class CustomFieldInstanceService extends BaseService {
     private void triggerEndPeriodEvent(ICustomFieldEntity entity, String cfCode, DatePeriod period) {
 
         if (period != null && period.getTo() != null && period.getTo().before(new Date())) {
-            CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
-            cFEndPeriodEvent.fire(event);
+            CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period, currentUser.getProviderCode());
+            cFEndPeriodEventProducer.fire(event);
 
         } else if (period != null && period.getTo() != null) {
-            CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period);
+            CFEndPeriodEvent event = new CFEndPeriodEvent(entity, cfCode, period, currentUser.getProviderCode());
 
             TimerConfig timerConfig = new TimerConfig();
             timerConfig.setInfo(event);
