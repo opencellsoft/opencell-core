@@ -51,7 +51,7 @@ public class OCCTemplateService extends BusinessService<OCCTemplate> {
 	}
 
 	public OCCTemplate getDunningOCCTemplate() throws Exception {
-		String occCodeDefaultValue = "OD_PREL";				
+		String occCodeDefaultValue = "INV_FEE";				
 		return getOccTemplateByCFKeyOrProperty(DUNNING_OCC_CODE, occCodeDefaultValue);
 	}
 

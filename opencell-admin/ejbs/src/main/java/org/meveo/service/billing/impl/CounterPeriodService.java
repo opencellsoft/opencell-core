@@ -39,7 +39,7 @@ public class CounterPeriodService extends PersistenceService<CounterPeriod> {
      * @param counterInstance Counter instance
      * @param date Date to match
      * @return Counter period
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     public CounterPeriod getCounterPeriod(CounterInstance counterInstance, Date date) throws BusinessException {
         Query query = getEntityManager().createNamedQuery("CounterPeriod.findByPeriodDate");

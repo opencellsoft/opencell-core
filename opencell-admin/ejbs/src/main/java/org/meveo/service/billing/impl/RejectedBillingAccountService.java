@@ -37,7 +37,7 @@ public class RejectedBillingAccountService extends PersistenceService<RejectedBi
      * @param billingAccount Billing account
      * @param billingRun Billing run
      * @param reason Reason why it failed
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void create(BillingAccount billingAccount, BillingRun billingRun, String reason) throws BusinessException {

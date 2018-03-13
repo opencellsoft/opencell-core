@@ -38,6 +38,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -57,6 +58,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -96,6 +98,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /** The service singleton. */
     @Inject
     private ServiceSingleton serviceSingleton;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Generate pre invoicing reports.
@@ -180,11 +186,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
         }
 
-        List<BillingAccount> listBA = getEntityManager()
-        		.createNamedQuery("BillingAccount.PreInv", BillingAccount.class)
-        		.setParameter("billingRunId", billingRun.getId())
-        		.getResultList();
-        
+        List<BillingAccount> listBA = getEntityManager().createNamedQuery("BillingAccount.PreInv", BillingAccount.class).setParameter("billingRunId", billingRun.getId())
+            .getResultList();
+
         for (BillingAccount billingAccount : listBA) {
             PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
             PaymentMethodEnum paymentMethodEnum = null;
@@ -309,9 +313,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                         npmAmountHT = npmAmountHT.add(invoice.getAmountWithoutTax());
                         npmAmount = npmAmount.add(invoice.getAmountWithTax());
                     } else {
-                    creditDebitCardInvoicesNumber++;
-                    creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
-                    creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
+                        creditDebitCardInvoicesNumber++;
+                        creditDebitCardAmountHT = creditDebitCardAmountHT.add(invoice.getAmountWithoutTax());
+                        creditDebitCardAmount = creditDebitCardAmount.add(invoice.getAmountWithTax());
                     }
                     break;
 
@@ -368,7 +372,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         postInvoicingReportsDTO.setTipAmuont(tipAmuont);
         postInvoicingReportsDTO.setTipAmuontHT(tipAmuontHT);
         postInvoicingReportsDTO.setTipInvoicesNumber(tipInvoicesNumber);
-        
+
         postInvoicingReportsDTO.setWiretransferAmuont(wiretransferAmuont);
         postInvoicingReportsDTO.setWiretransferAmuontHT(wiretransferAmuontHT);
         postInvoicingReportsDTO.setWiretransferInvoicesNumber(wiretransferInvoicesNumber);
@@ -376,11 +380,11 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         postInvoicingReportsDTO.setCreditDebitCardAmount(creditDebitCardAmount);
         postInvoicingReportsDTO.setCreditDebitCardAmountHT(creditDebitCardAmountHT);
         postInvoicingReportsDTO.setCreditDebitCardInvoicesNumber(creditDebitCardInvoicesNumber);
-        
+
         postInvoicingReportsDTO.setNpmAmount(npmAmount);
         postInvoicingReportsDTO.setNpmAmountHT(npmAmountHT);
-        postInvoicingReportsDTO.setNpmInvoicesNumber(npmInvoicesNumber);        
-        
+        postInvoicingReportsDTO.setNpmInvoicesNumber(npmInvoicesNumber);
+
         postInvoicingReportsDTO.setGlobalAmount(globalAmountHT);
 
         return postInvoicingReportsDTO;
@@ -565,12 +569,12 @@ public class BillingRunService extends PersistenceService<BillingRun> {
      */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {    	
-        //List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
-        //    .getResultList();
-    	
-    	List<Long> billingAccountIds = getBillingAccountIds(billingRun);
-    	
+    public void createAgregatesAndInvoice(BillingRun billingRun, long nbRuns, long waitingMillis, Long jobInstanceId) throws BusinessException {
+        // List<Long> billingAccountIds = getEntityManager().createNamedQuery("BillingAccount.listIdsByBillingRunId", Long.class).setParameter("billingRunId", billingRun.getId())
+        // .getResultList();
+
+        List<Long> billingAccountIds = getBillingAccountIds(billingRun);
+
         SubListCreator subListCreator = null;
 
         try {
@@ -580,8 +584,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -602,6 +607,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
 
     /**
      * Creates the agregates and invoice.
+     * 
      * @param billingRun billing run
      * @param nbRuns nb of runs
      * @param waitingMillis waiting millis
@@ -624,8 +630,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -683,9 +690,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                asyncReturns
-                    .add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet(), invoicesToNumberInfo, jobInstanceId));
+                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet(), invoicesToNumberInfo,
+                    jobInstanceId, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis);
                 } catch (InterruptedException e) {
@@ -718,7 +726,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             throws BusinessException {
         log.info("launchExceptionelInvoicing...");
 
-        ParamBean param = ParamBean.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
         boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
         log.info("launchInvoicing allowManyInvoicing=#", isAllowed);
@@ -789,8 +797,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 int billableBA = 0;
                 SubListCreator subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
                 List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+                MeveoUser lastCurrentUser = currentUser.unProxy();
                 while (subListCreator.isHasNext()) {
-                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId);
+                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
+                        lastCurrentUser);
                     asyncReturns.add(count);
                     try {
                         Thread.sleep(waitingMillis);

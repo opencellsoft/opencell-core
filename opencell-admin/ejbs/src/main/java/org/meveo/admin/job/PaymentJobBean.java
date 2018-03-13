@@ -16,16 +16,16 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.EntityReferenceWrapper;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
-import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -42,14 +42,13 @@ public class PaymentJobBean {
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-    
-    @Inject
-    private PaymentGatewayService paymentGatewayService;
-    
 
     @Inject
-    @ApplicationProvider
-    private Provider appProvider;
+    private PaymentGatewayService paymentGatewayService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -65,13 +64,13 @@ public class PaymentJobBean {
 
             OperationCategoryEnum operationCategory = OperationCategoryEnum.CREDIT;
             PaymentMethodEnum paymentMethodType = PaymentMethodEnum.CARD;
-            
+
             PaymentGateway paymentGateway = null;
-            if((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
+            if ((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway") != null) {
                 paymentGatewayService.findByCode(((EntityReferenceWrapper) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_paymentGateway")).getCode());
             }
             try {
-                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());               
+                operationCategory = OperationCategoryEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_creditOrDebit")).toUpperCase());
                 paymentMethodType = PaymentMethodEnum.valueOf(((String) customFieldInstanceService.getCFValue(jobInstance, "PaymentJob_cardOrDD")).toUpperCase());
                 nbRuns = (Long) customFieldInstanceService.getCFValue(jobInstance, "nbRuns");
                 waitingMillis = (Long) customFieldInstanceService.getCFValue(jobInstance, "waitingMillis");
@@ -87,12 +86,11 @@ public class PaymentJobBean {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e.getMessage());
             }
 
-
             List<Long> ids = new ArrayList<Long>();
-            if (OperationCategoryEnum.CREDIT == operationCategory) {                
-                ids = accountOperationService.getAOidsToPay(paymentMethodType);               
-            } else {               
-                ids = accountOperationService.getAOidsToRefund(paymentMethodType);                               
+            if (OperationCategoryEnum.CREDIT == operationCategory) {
+                ids = accountOperationService.getAOidsToPay(paymentMethodType);
+            } else {
+                ids = accountOperationService.getAOidsToRefund(paymentMethodType);
             }
 
             log.debug("AO to pay:" + ids.size());
@@ -102,8 +100,10 @@ public class PaymentJobBean {
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO,paymentGateway,operationCategory,paymentMethodType));
+                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
+                    paymentMethodType, lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

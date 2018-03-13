@@ -17,6 +17,7 @@ import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
@@ -131,7 +132,7 @@ public class BusinessOfferApi extends BaseApi {
                         CustomFieldsDto cfsDto = new CustomFieldsDto();
                         cfsDto.setCustomField(serviceConfigurationDto.getCustomFields());
                         populateCustomFields(cfsDto, serviceTemplate, true);
-                    } catch (MissingParameterException e) {
+                    } catch (MissingParameterException | InvalidParameterException e) {
                         log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                         throw e;
                     } catch (Exception e) {
@@ -236,7 +237,7 @@ public class BusinessOfferApi extends BaseApi {
             CustomFieldsDto cfsDto = new CustomFieldsDto();
             cfsDto.setCustomField(postData.getCustomFields());
             populateCustomFields(cfsDto, newServiceTemplateCreated, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -273,7 +274,7 @@ public class BusinessOfferApi extends BaseApi {
             cfsDto.setCustomField(postData.getCustomFields());
             populateCustomFields(cfsDto, newProducTemplate, true);
             
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
             

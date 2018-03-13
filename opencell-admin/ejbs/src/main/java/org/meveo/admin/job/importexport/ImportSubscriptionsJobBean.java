@@ -17,6 +17,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.SubscriptionImportHisto;
@@ -59,8 +60,6 @@ public class ImportSubscriptionsJobBean {
     @Inject
     private JobExecutionService jobExecutionService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     private Subscriptions subscriptionsError;
     private Subscriptions subscriptionsWarning;
 
@@ -72,12 +71,16 @@ public class ImportSubscriptionsJobBean {
 
     private SubscriptionImportHisto subscriptionImportHisto;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public void execute(JobExecutionResultImpl result) {
+        ParamBean paramBean = paramBeanFactory.getInstance();
 
-        String importDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "subscriptions" + File.separator;
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
         String dirIN = importDir + "input";
         log.info("dirIN=" + dirIN);
@@ -217,8 +220,7 @@ public class ImportSubscriptionsJobBean {
      * @throws Exception exception
      */
     private void generateReport(String fileName) throws Exception {
-        String importDir = paramBean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "subscriptions" + File.separator;
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "subscriptions" + File.separator;
 
         if (subscriptionsWarning.getWarnings() != null) {
             String warningDir = importDir + "output" + File.separator + "warnings";
@@ -360,7 +362,7 @@ public class ImportSubscriptionsJobBean {
     private void createSubscriptionError(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
         log.error(cause);
 
-        String generateFullCrmReject = paramBean.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         ErrorSubscription errorSubscription = new ErrorSubscription();
         errorSubscription.setCause(cause);
         errorSubscription.setCode(subscrip.getCode());
@@ -385,7 +387,7 @@ public class ImportSubscriptionsJobBean {
     private void createSubscriptionWarning(org.meveo.model.jaxb.subscription.Subscription subscrip, String cause) {
         log.warn(cause);
 
-        String generateFullCrmReject = paramBean.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         WarningSubscription warningSubscription = new WarningSubscription();
         warningSubscription.setCause(cause);
         warningSubscription.setCode(subscrip == null ? "" : subscrip.getCode());

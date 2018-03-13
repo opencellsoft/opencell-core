@@ -63,10 +63,13 @@ public class ClusterEventDto implements Serializable {
 
     /**
      * @param clazz class name
-     * @param id id
-     * @param code code
-     * @param action crud action
-     * @param sourceNode
+     * @param id Id
+     * @param code Code
+     * @param action Crud action
+     * @param sourceNode Node that published the information
+     * @param providerCode Code of provider, that information belonged to
+     * @param userName Username that initiated information publication
+     * 
      */
     public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName) {
         super();
@@ -107,14 +110,23 @@ public class ClusterEventDto implements Serializable {
         return action;
     }
 
+    /**
+     * @return Node that published the information
+     */
     public String getSourceNode() {
         return sourceNode;
     }
 
+    /**
+     * @return Code of provider, that information belonged to
+     */
     public String getProviderCode() {
         return providerCode;
     }
 
+    /**
+     * @return Username that initiated information publication
+     */
     public String getUserName() {
         return userName;
     }

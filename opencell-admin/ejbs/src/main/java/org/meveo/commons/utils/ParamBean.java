@@ -34,11 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -99,13 +94,6 @@ public class ParamBean {
      * Reload application configuration properties file.
      */
     private static boolean reload = false;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
-    @Inject
-    private CurrentUserProvider currentUserProvider;
 
     public ParamBean() {
 
@@ -173,7 +161,7 @@ public class ParamBean {
      */
     public static ParamBean getInstanceByProvider(String provider) {
         try {
-            if (!isMultitenancyEnabled() || "".equals(provider)) {
+            if (!isMultitenancyEnabled() || "".equals(provider) || StringUtils.isBlank(provider)) {
                 return getInstance();
             }
 
@@ -194,6 +182,8 @@ public class ParamBean {
 
     /**
      * Checks if multitenancy is enabled. Flag is consulted in a main provider's/tenant's property file
+     * 
+     * @return True of multitenancy is enabled
      */
     public static boolean isMultitenancyEnabled() {
         if (multiTenancyEnabled == null) {
@@ -319,17 +309,17 @@ public class ParamBean {
      * @param value Property value
      * @param category Category name
      */
-    public void setProperty(String key, String value, String category) {
-        setProperty(key, value);
+    public void setProperty(String property, String value, String category) {
+        setProperty(property, value);
         if (category != null) {
-            categories.put(key, category);
+            categories.put(property, category);
         }
     }
 
     /**
      * Save application configuration properties to a default file
      * 
-     * @return true if is ok
+     * @return True if is ok
      */
     public synchronized boolean saveProperties() {
         return saveProperties(new File(_propertyFile));
@@ -409,14 +399,6 @@ public class ParamBean {
      */
     public String getProperty(String key, String defaultValue) {
         String result = null;
-        if (multiTenancyEnabled != null && isMultitenancyEnabled() && currentUserProvider != null && StringUtils.isBlank(currentUserProvider.getCurrentUserProviderCode())) {
-            System.out.println("Inside IF 000  --");
-        }
-        if (multiTenancyEnabled != null && isMultitenancyEnabled() && currentUser != null && StringUtils.isBlank(currentUser.getProviderCode())) {
-            System.out.println("Inside IF --");
-            result = getProperty(key, defaultValue, currentUser.getProviderCode());
-            return result;
-        }
         if (properties.containsKey(key)) {
             result = properties.getProperty(key);
         } else if (defaultValue != null) {

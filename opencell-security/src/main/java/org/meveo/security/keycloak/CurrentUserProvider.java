@@ -45,7 +45,7 @@ public class CurrentUserProvider {
     /**
      * Contains a current tenant
      */
-    private static final InheritableThreadLocal<String> currentTenant = new InheritableThreadLocal<String>() {
+    private static final ThreadLocal<String> currentTenant = new ThreadLocal<String>() {
         @Override
         protected String initialValue() {
             return "NA";
@@ -55,7 +55,7 @@ public class CurrentUserProvider {
     /**
      * Contains a forced authentication user username
      */
-    private static final InheritableThreadLocal<String> forcedUserUsername = new InheritableThreadLocal<String>();
+    private static final ThreadLocal<String> forcedUserUsername = new ThreadLocal<String>();
 
     /**
      * Simulate authentication of a user. Allowed only when no security context is present, mostly used in jobs.
@@ -67,11 +67,27 @@ public class CurrentUserProvider {
         log.debug("Force authentication to {}/{}", providerCode, userName);
         // Current user is already authenticated, can't overwrite it
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
-            log.info("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
+            log.warn("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
         setForcedUsername(userName);
         setCurrentTenant(providerCode);
+    }
+
+    /**
+     * Reestablish authentication of a user. Allowed only when no security context is present.In case of multitenancy, when user authentication is forced as result of a fired
+     * trigger (scheduled jobs, other timed event expirations), current user might be lost, thus there is a need to reestablish.
+     * 
+     * @param lastCurrentUser Last authenticated user. Note: Pass a unproxied version of MeveoUser (currentUser.unProxy()), as otherwise it will access CurrentUser producer method
+     */
+    public void reestablishAuthentication(MeveoUser lastCurrentUser) {
+
+        // Current user is already authenticated, can't overwrite it
+        if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+            setForcedUsername(lastCurrentUser.getUserName());
+            setCurrentTenant(lastCurrentUser.getProviderCode());
+            log.debug("Reestablished authentication to {}/{}", lastCurrentUser.getUserName(), lastCurrentUser.getProviderCode());
+        }
     }
 
     /**
@@ -102,6 +118,9 @@ public class CurrentUserProvider {
 
     /**
      * Return a current user from JAAS security context
+     * 
+     * @param providerCode Provider code. Passed here, so not to look it up again
+     * @param em Entity manager to use to retrieve user info
      * 
      * @return Current user implementation
      */
@@ -173,7 +192,7 @@ public class CurrentUserProvider {
                 user.updateAudit(currentUser);
                 em.persist(user);
                 em.flush();
-                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName().getFullName());
+                log.info("A new application user was registered with username {} and name {}", user.getUserName(), user.getName() != null ? user.getName().getFullName() : "");
 
             } catch (ContextNotActiveException e) {
                 log.error("No session context={}", e.getMessage());

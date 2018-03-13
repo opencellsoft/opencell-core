@@ -6,7 +6,7 @@
         <addColumn tableName="adm_notif_webhooks">
             <column name="http_protocol" type="varchar(10)" />
         </addColumn>
-        <sql>UPDATE ${db.schema}.adm_notif_webhooks SET http_protocol='HTTP'</sql>
+        <sql>UPDATE ${db.schema.adapted}adm_notif_webhooks SET http_protocol='HTTP'</sql>
         <addNotNullConstraint tableName="adm_notif_webhooks" columnName="http_protocol" columnDataType="varchar(10)" />
     </changeSet>
 
@@ -38,59 +38,53 @@
     </changeSet>
 
     <changeSet id="#2792_20170919" author="AndriusKarpavicius">
-        <sql>update ${db.schema}.cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
-        <sql>update ${db.schema}.cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>
-        <sql>update ${db.schema}.cat_usage_charge_template set filter_param_2=null where filter_param_2=''</sql>
-        <sql>update ${db.schema}.cat_usage_charge_template set filter_param_3=null where filter_param_3=''</sql>
-        <sql>update ${db.schema}.cat_usage_charge_template set filter_param_4=null where filter_param_4=''</sql>
+        <sql>update ${db.schema.adapted}cat_usage_charge_template set filter_expression=null where filter_expression=''</sql>
+        <sql>update ${db.schema.adapted}cat_usage_charge_template set filter_param_1=null where filter_param_1=''</sql>
+        <sql>update ${db.schema.adapted}cat_usage_charge_template set filter_param_2=null where filter_param_2=''</sql>
+        <sql>update ${db.schema.adapted}cat_usage_charge_template set filter_param_3=null where filter_param_3=''</sql>
+        <sql>update ${db.schema.adapted}cat_usage_charge_template set filter_param_4=null where filter_param_4=''</sql>
 
-        <sql>update ${db.schema}.cat_triggered_edr set condition_el=null where condition_el=''</sql>
-        <sql>update ${db.schema}.cat_triggered_edr set param_1_el=null where param_1_el=''</sql>
-        <sql>update ${db.schema}.cat_triggered_edr set param_2_el=null where param_2_el=''</sql>
-        <sql>update ${db.schema}.cat_triggered_edr set param_3_el=null where param_3_el=''</sql>
-        <sql>update ${db.schema}.cat_triggered_edr set param_4_el=null where param_4_el=''</sql>
-        <sql>update ${db.schema}.cat_triggered_edr set quantity_el=null where quantity_el=''</sql>
-        <sql>update ${db.schema}.cat_triggered_edr set subscription_el=null where subscription_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set condition_el=null where condition_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set param_1_el=null where param_1_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set param_2_el=null where param_2_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set param_3_el=null where param_3_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set param_4_el=null where param_4_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set quantity_el=null where quantity_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_triggered_edr set subscription_el=null where subscription_el=''</sql>
     </changeSet>
 
 
     <changeSet id="#2792_20180110" author="AndriusKarpavicius">
-        <sql>update ${db.schema}.cat_price_plan_matrix set criteria_1=null where criteria_1=''</sql>
-        <sql>update ${db.schema}.cat_price_plan_matrix set criteria_2=null where criteria_2=''</sql>
-        <sql>update ${db.schema}.cat_price_plan_matrix set criteria_3=null where criteria_3=''</sql>
-        <sql>update ${db.schema}.cat_price_plan_matrix set criteria_el=null where criteria_el=''</sql>
-        <sql>update ${db.schema}.cat_price_plan_matrix set amount_without_tax_el=null where amount_without_tax_el=''</sql>
-        <sql>update ${db.schema}.cat_price_plan_matrix set amount_with_tax_el=null where amount_with_tax_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set criteria_1=null where criteria_1=''</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set criteria_2=null where criteria_2=''</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set criteria_3=null where criteria_3=''</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set criteria_el=null where criteria_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set amount_without_tax_el=null where amount_without_tax_el=''</sql>
+        <sql>update ${db.schema.adapted}cat_price_plan_matrix set amount_with_tax_el=null where amount_with_tax_el=''</sql>
 
-        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema}.cat_price_plan_matrix(event_code)</sql>
-        <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema}.medina_access(acces_user_id)</sql>
+        <sql>CREATE INDEX cat_price_plan_event_c_index ON ${db.schema.adapted}cat_price_plan_matrix(event_code)</sql>
+        <sql>CREATE INDEX medina_access_user_id_index ON ${db.schema.adapted}medina_access(acces_user_id)</sql>
     </changeSet>
 
     <changeSet id="#2792_20180119" author="AndriusKarpavicius">
-        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema}.billing_charge_instance(subscription_id)</sql>
-        <sql>CREATE INDEX counter_period_ci_id ON ${db.schema}.billing_counter_period(counter_instance_id)</sql>
+        <sql>CREATE INDEX bc_instance_sub_id ON ${db.schema.adapted}billing_charge_instance(subscription_id)</sql>
+        <sql>CREATE INDEX counter_period_ci_id ON ${db.schema.adapted}billing_counter_period(counter_instance_id)</sql>
         <addColumn tableName="billing_usage_charge_inst">
             <column defaultValueNumeric="1" name="priority" type="int4" />
         </addColumn>
     </changeSet>
 
     <changeSet id="#2792_20180119_migration_P" author="AndriusKarpavicius" dbms="postgresql">
-        <sql>update ${db.schema}.billing_usage_charge_inst set priority = cat_usage_charge_template.priority from ${db.schema}.billing_charge_instance, ${db.schema}.cat_usage_charge_template where
+        <sql>update ${db.schema.adapted}billing_usage_charge_inst set priority = cat_usage_charge_template.priority from ${db.schema.adapted}billing_charge_instance, ${db.schema.adapted}cat_usage_charge_template where
             billing_charge_instance.id=billing_usage_charge_inst.id and
             billing_charge_instance.charge_template_id=cat_usage_charge_template.id
         </sql>
     </changeSet>
 
     <changeSet id="#2792_20180119_migration_M" author="AndriusKarpavicius" dbms="mysql">
-        <sql>update ${db.schema}.billing_usage_charge_inst join ${db.schema}.billing_charge_instance on billing_charge_instance.id=billing_usage_charge_inst.id join ${db.schema}.cat_usage_charge_template on
+        <sql>update ${db.schema.adapted}billing_usage_charge_inst join ${db.schema.adapted}billing_charge_instance on billing_charge_instance.id=billing_usage_charge_inst.id join ${db.schema.adapted}cat_usage_charge_template on
             billing_charge_instance.charge_template_id=cat_usage_charge_template.id set billing_usage_charge_inst.priority = cat_usage_charge_template.priority
         </sql>
-    </changeSet>
-
-    <changeSet id="#2894_20180129" author="smichea">
-        <addColumn tableName="meveo_job_instance">
-            <column name="provider" type="varchar(255)"></column>
-        </addColumn>
     </changeSet>
     
     <changeSet author="EdwardPLegaspi" id="#2370_20180306 - customer categories">
@@ -173,8 +167,8 @@
     </changeSet>
 
     <changeSet author="anasseh" id="#3136_07022018">
-        <sql>update ${db.schema}.meveo_job_instance set cf_values = replace (cf_values, 'PaymentCardJob_','PaymentJob_'), job_template = replace(job_template,'PaymentCardJob','PaymentJob') </sql>
-        <sql>update ${db.schema}.crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to = replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
+        <sql>update ${db.schema.adapted}meveo_job_instance set cf_values = replace (cf_values, 'PaymentCardJob_','PaymentJob_'), job_template = replace(job_template,'PaymentCardJob','PaymentJob') </sql>
+        <sql>update ${db.schema.adapted}crm_custom_field_tmpl set code = replace (code, 'PaymentCardJob_','PaymentJob_'), applies_to = replace (applies_to, 'JOB_PaymentCardJob','JOB_PaymentJob') </sql>
     </changeSet>
 
     <changeSet author="anasseh" id="#2830_15022018">
@@ -182,9 +176,9 @@
         <addColumn tableName="account_entity">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="account_entity" constraintName="fk_country_id_account" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-        <sql>update ${db.schema}.account_entity ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+        <sql>update ${db.schema.adapted}account_entity ae set address_country_id = (select ac.id from ${db.schema.adapted}adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="account_entity" columnName="address_country" />
 
@@ -192,9 +186,9 @@
         <addColumn tableName="com_sender_config">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="com_sender_config" constraintName="fk_country_id_sender" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-        <sql>update ${db.schema}.com_sender_config ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+        <sql>update ${db.schema.adapted}com_sender_config ae set address_country_id = (select ac.id from ${db.schema.adapted}adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="com_sender_config" columnName="address_country" />
 
@@ -202,9 +196,9 @@
         <addColumn tableName="crm_provider_contact">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider_contact" constraintName="fk_country_id_prov_contact" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-        <sql>update ${db.schema}.crm_provider_contact ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+        <sql>update ${db.schema.adapted}crm_provider_contact ae set address_country_id = (select ac.id from ${db.schema.adapted}adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="crm_provider_contact" columnName="address_country" />
 
@@ -212,9 +206,9 @@
         <addColumn tableName="crm_provider">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_provider" constraintName="fk_country_id_prov" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-        <sql>update ${db.schema}.crm_provider ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
+        <sql>update ${db.schema.adapted}crm_provider ae set address_country_id = (select ac.id from ${db.schema.adapted}adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
             )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="crm_provider" columnName="address_country" />
 
@@ -222,9 +216,9 @@
         <addColumn tableName="crm_seller">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="crm_seller" constraintName="fk_country_id_seller" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-        <sql>update ${db.schema}.crm_seller ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
+        <sql>update ${db.schema.adapted}crm_seller ae set address_country_id = (select ac.id from ${db.schema.adapted}adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or upper(ac.description_i18n
             )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="crm_seller" columnName="address_country" />
 
@@ -232,9 +226,9 @@
         <addColumn tableName="ord_order_item">
             <column name="address_country_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        <addForeignKeyConstraint baseColumnNames="address_country_id" baseTableName="ord_order_item" constraintName="fk_country_id_order" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
-        <sql>update ${db.schema}.ord_order_item ae set address_country_id = (select ac.id from ${db.schema}.adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
+        <sql>update ${db.schema.adapted}ord_order_item ae set address_country_id = (select ac.id from ${db.schema.adapted}adm_country ac where upper(ac.description) like '%'|| upper(ae.address_country) ||'%' or
             upper(ac.description_i18n )like '%'|| upper(ae.address_country) ||'%' limit 1) </sql>
         <dropColumn tableName="ord_order_item" columnName="address_country" />
     </changeSet>
@@ -246,18 +240,20 @@
         <addForeignKeyConstraint baseColumnNames="country_id" baseTableName="ar_payment_gateway" constraintName="fk_paygw_country" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
             onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="adm_country" />
 
-        <dropColumn tableName="ar_payment_gateway" columnName="trading_country_id" />
-
         <addColumn tableName="ar_payment_gateway">
             <column name="nb_tries" type="int" />
-        </addColumn>
-        <addColumn tableName="ar_payment_gateway">
             <column name="replay_cause" type="varchar(100)" />
-        </addColumn>
-
-        <addColumn tableName="ar_payment_gateway">
             <column name="errors_to_replay" type="varchar(400)" />
         </addColumn>
+    </changeSet>
+
+    <changeSet id="#2875_20171201-M" author="anasseh" dbms="mysql">
+        <dropForeignKeyConstraint baseTableName="ar_payment_gateway" constraintName="fk_paygw_trad_country"/>
+        <dropIndex tableName="ar_payment_gateway" indexName="fk_paygw_trad_country"/>
+    </changeSet>
+
+    <changeSet id="#2875_20171201-End" author="anasseh">
+        <dropColumn tableName="ar_payment_gateway" columnName="trading_country_id" />
     </changeSet>
     
     <changeSet id="#1705_20180219" author="EdwardPLegaspi">
@@ -324,4 +320,5 @@
         <addForeignKeyConstraint constraintName="fk_ar_occ_template_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_occ_template" baseColumnNames="accounting_code_id" />
         <addForeignKeyConstraint constraintName="fk_ar_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_account_operation" baseColumnNames="accounting_code_id" />
     </changeSet> 
+        
 </databaseChangeLog> 

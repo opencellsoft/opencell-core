@@ -43,7 +43,7 @@ public class CountryService extends PersistenceService<Country> {
             return null;
         }
 
-        QueryBuilder qb = new QueryBuilder(Country.class, "c");       
+        QueryBuilder qb = new QueryBuilder(Country.class, "c");
         if (countryCode.length() <= 3) {
             qb.addCriterion("countryCode", "=", countryCode, false);
         } else {
@@ -53,7 +53,7 @@ public class CountryService extends PersistenceService<Country> {
             qb.endOrClause();
         }
         try {
-            return (Country) qb.getQuery(getEntityManager()).getSingleResult();
+            return (Country) qb.getQuery(getEntityManager()).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

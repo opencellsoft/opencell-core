@@ -62,7 +62,7 @@ public class MatchingCodeService extends PersistenceService<MatchingCode> {
      * @param amount Amount to match
      * @param aoToMatchLast Account operation to match partially - can be explicitly specified in case more than two operations are matched
      * @param matchingTypeEnum matching type
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private void matching(List<AccountOperation> listOcc, BigDecimal amount, AccountOperation aoToMatchLast, MatchingTypeEnum matchingTypeEnum) throws BusinessException {
 

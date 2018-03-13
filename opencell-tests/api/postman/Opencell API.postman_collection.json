@@ -2984,7 +2984,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"paymentMethod\" : \"CHECK\",\n  \"amount\": \"2\",\n  \"occTemplateCode\": \"RG_CHQ\",\n  \"customerAccountCode\": \"WS_BASE_CA_3\",\n  \"reference\": \"PC-1\",\n  \"dueDate\": \"2017-09-30\",\n  \"transactionDate\": \"2017-09-26\",\n  \"fees\": \"2\"\n}"
+							"raw": "{\n  \"paymentMethod\" : \"CHECK\",\n  \"amount\": \"2\",\n  \"occTemplateCode\": \"PAY_CHK\",\n  \"customerAccountCode\": \"WS_BASE_CA_3\",\n  \"reference\": \"PC-1\",\n  \"dueDate\": \"2017-09-30\",\n  \"transactionDate\": \"2017-09-26\",\n  \"fees\": \"2\"\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/payment/create",
@@ -3015,7 +3015,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"RG_CHQ\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 12000,\r\n    \"customerAccount\": \"ben.ohara.CLASSIC\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
+							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"PAY_CHK\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 12000,\r\n    \"customerAccount\": \"ben.ohara.CLASSIC\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/accountOperation",
@@ -3700,7 +3700,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"RG_CHQ\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 400,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
+							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"PAY_CHK\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 400,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/accountOperation",
@@ -3755,7 +3755,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"RG_CHQ\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 300,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
+							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"PAY_CHK\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 300,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/accountOperation",
@@ -3810,7 +3810,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"transactionCategory\": \"DEBIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"RG_CHQ\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 200,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
+							"raw": "{\r\n    \"transactionCategory\": \"DEBIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"PAY_CHK\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 200,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/accountOperation",
@@ -3865,7 +3865,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"RG_CHQ\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 100,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
+							"raw": "{\r\n    \"transactionCategory\": \"CREDIT\",\r\n    \"occDescription\": \"Règlement par chèque\",\r\n    \"type\": \"OCC\",\r\n    \"matchingStatus\": \"O\",\r\n    \"accountCode\": \"90590,41115,00000,000,0000,00000000,00000\",\r\n    \"otherCreditAndCharge\": {\r\n        \"operationDate\": \"2017-09-26\"\r\n    },\r\n    \"occCode\": \"PAY_CHK\",\r\n    \"dueDate\": \"2017-09-30\",\r\n    \"amount\": 100,\r\n    \"customerAccount\": \"WS_BASE_CA_3\",\r\n    \"unMatchingAmount\": 12000,\r\n    \"transactionDate\": 1506424775385\r\n}"
 						},
 						"url": {
 							"raw": "{{opencell.url}}/accountOperation",
