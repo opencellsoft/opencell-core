@@ -40,6 +40,8 @@ public class DateUtils {
 
     public static String DATE_PATTERN = "yyyy-MM-dd";
     public static String DATE_TIME_PATTERN = "yyyy-MM-dd'T'hh:mm:ssXXX";
+    private static final String START_DATE_DELIMITER = "[";
+    private static final String END_DATE_DELIMITER = "]";
 
     public static synchronized Date getCurrentDateWithUniqueSeconds() {
         long current = System.currentTimeMillis();
@@ -67,13 +69,13 @@ public class DateUtils {
     }
 
     public static String evaluteDateFormat(String input) {
-        if (!(input.contains("{") && input.contains("}"))) {
+        if (!(input.contains(START_DATE_DELIMITER) && input.contains(END_DATE_DELIMITER))) {
             return input;
         }
-        String dateFormatStr = input.substring(input.indexOf("{") + 1, input.lastIndexOf("}"));
+        String dateFormatStr = input.substring(input.indexOf(START_DATE_DELIMITER) + 1, input.lastIndexOf(END_DATE_DELIMITER));
         DateFormat dateFormat = new SimpleDateFormat(dateFormatStr);
         Calendar cal = Calendar.getInstance();
-        return input.substring(0, input.indexOf("{")) + dateFormat.format(cal.getTime()) + input.substring(input.lastIndexOf("}") + 1);
+        return input.substring(0, input.indexOf(START_DATE_DELIMITER)) + dateFormat.format(cal.getTime()) + input.substring(input.lastIndexOf(END_DATE_DELIMITER) + 1);
     }
 
     public static Date setTimeToZero(Date date) {

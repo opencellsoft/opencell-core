@@ -18,6 +18,7 @@ import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.finance.ReportExtractScript;
 
@@ -67,6 +68,7 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         }
 
         String filename = DateUtils.evaluteDateFormat(entity.getFilenameFormat());
+        filename = evaluateStringExpression(filename, entity);
 
         if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL)) {
             List<Map<String, Object>> resultList = scriptInstanceService.executeNativeSelectQuery(entity.getSqlQuery(), context);
@@ -134,6 +136,28 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
     @SuppressWarnings("unchecked")
     public List<Long> listIds() {
         return (List<Long>) getEntityManager().createNamedQuery("ReportExtract.listIds").getResultList();
+    }
+
+    private String evaluateStringExpression(String expression, ReportExtract re) throws BusinessException {
+        if (!expression.startsWith("#{")) {
+            return expression;
+        }
+
+        String result = null;
+        if (StringUtils.isBlank(expression)) {
+            return result;
+        }
+
+        Map<Object, Object> userMap = new HashMap<>();
+        userMap.put("re", re);
+
+        Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, String.class);
+        try {
+            result = (String) res;
+        } catch (Exception e) {
+            throw new BusinessException("Expression " + expression + " do not evaluate to String but " + res);
+        }
+        return result;
     }
 
 }
