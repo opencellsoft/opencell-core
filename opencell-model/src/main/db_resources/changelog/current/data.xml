@@ -45,9 +45,9 @@
         </insert>
 	</changeSet>
 	<changeSet author="anasseh" id="#3167_20022018">
-	    <sql>update ${db.schema}.ar_payment_gateway set description ='Ingenico API Connect OGONE for Sepa payments', code='INGENICO_OGONE_SEPA', uuid='gateway_INGENICO_ONGONE' ,disabled=0, trading_currency_id = -1 , payment_method ='DIRECTDEBIT' where id =-1</sql> 
-	    <sql>delete from ${db.schema}.ar_payment_gateway where id =-2</sql> 
-	    <sql>delete from ${db.schema}.ar_payment_gateway where id =-3</sql>   
+	    <sql>update ${db.schema.adapted}ar_payment_gateway set description ='Ingenico API Connect OGONE for Sepa payments', code='INGENICO_OGONE_SEPA', uuid='gateway_INGENICO_ONGONE' ,disabled=0, trading_currency_id = -1 , payment_method ='DIRECTDEBIT' where id =-1</sql> 
+	    <sql>delete from ${db.schema.adapted}ar_payment_gateway where id =-2</sql> 
+	    <sql>delete from ${db.schema.adapted}ar_payment_gateway where id =-3</sql>   
 	   	<insert tableName="ar_payment_gateway">
 			<column name="id" valueNumeric="-2" />
 			<column name="version" valueNumeric="0" />
@@ -76,6 +76,6 @@
 		</insert> 			 
     </changeSet>
     <changeSet author="anasseh" id="#3110_08032018">
-   		 <sql>delete from ${db.schema}.crm_provider_pay_methods where payment_method='NONE'</sql>   
+   		 <sql>delete from ${db.schema.adapted}crm_provider_pay_methods where payment_method='NONE'</sql>   
     </changeSet>
 </databaseChangeLog>

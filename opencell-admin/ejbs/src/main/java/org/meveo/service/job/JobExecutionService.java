@@ -37,6 +37,8 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -58,6 +60,9 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     /**
      * Persist job execution results.
@@ -109,10 +114,15 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
      * @param job Job implementation
      * @param jobInstance Job instance
      * @param continueSameJob Continue executing same job
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob) {
+    public void executeNextJob(Job job, JobInstance jobInstance, boolean continueSameJob, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         try {
             if (continueSameJob) {
                 log.debug("Continue executing job {}", jobInstance);

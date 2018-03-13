@@ -55,6 +55,8 @@ import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.billing.impl.CounterValueInsufficientException;
@@ -101,6 +103,10 @@ public class DefaultObserver {
 
     @Inject
     private JobTriggerLauncher jobTriggerLauncher;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     private boolean matchExpression(String expression, Object entityOrEvent) throws BusinessException {
         Boolean result = true;
@@ -197,16 +203,20 @@ public class DefaultObserver {
                 }
 
             } else if (notif instanceof EmailNotification) {
-                emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                emailNotifier.sendEmail((EmailNotification) notif, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof WebHook) {
-                webHookNotifier.sendRequest((WebHook) notif, entityOrEvent, context);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                webHookNotifier.sendRequest((WebHook) notif, entityOrEvent, context, lastCurrentUser);
 
             } else if (notif instanceof InstantMessagingNotification) {
-                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, entityOrEvent);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                imNotifier.sendInstantMessage((InstantMessagingNotification) notif, entityOrEvent, lastCurrentUser);
 
             } else if (notif instanceof JobTrigger) {
-                jobTriggerLauncher.launch((JobTrigger) notif, entityOrEvent);
+                MeveoUser lastCurrentUser = currentUser.unProxy();
+                jobTriggerLauncher.launch((JobTrigger) notif, entityOrEvent, lastCurrentUser);
             }
 
         } catch (Exception e1) {

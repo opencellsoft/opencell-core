@@ -157,865 +157,865 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="account_entity_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.account_entity_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}account_entity_seq values(1)</sql>
         <createTable tableName="adm_country_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_country_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_country_seq values(238)</sql>
+        <sql>insert into ${db.schema.adapted}adm_country_seq values(238)</sql>
         <createTable tableName="adm_currency_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_currency_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_currency_seq values(169)</sql>
+        <sql>insert into ${db.schema.adapted}adm_currency_seq values(169)</sql>
         <createTable tableName="adm_inbound_request_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_inbound_request_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_inbound_request_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}adm_inbound_request_seq values(1)</sql>
         <createTable tableName="adm_input_history_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_input_history_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_input_history_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}adm_input_history_seq values(1)</sql>
         <createTable tableName="adm_language_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_language_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_language_seq values(34)</sql>
+        <sql>insert into ${db.schema.adapted}adm_language_seq values(34)</sql>
         <createTable tableName="adm_notif_history_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_notif_history_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_notif_history_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}adm_notif_history_seq values(1)</sql>
         <createTable tableName="adm_notification_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_notification_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_notification_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}adm_notification_seq values(1)</sql>
         <createTable tableName="adm_permission_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_permission_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_permission_seq values(18)</sql>
+        <sql>insert into ${db.schema.adapted}adm_permission_seq values(18)</sql>
         <createTable tableName="adm_role_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_role_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_role_seq values(5)</sql>
+        <sql>insert into ${db.schema.adapted}adm_role_seq values(5)</sql>
         <createTable tableName="adm_title_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_title_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_title_seq values(38)</sql>
+        <sql>insert into ${db.schema.adapted}adm_title_seq values(38)</sql>
         <createTable tableName="adm_user_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="adm_user_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.adm_user_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}adm_user_seq values(3)</sql>
         <createTable tableName="ar_account_operation_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_account_operation_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_account_operation_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_account_operation_seq values(1)</sql>
         <createTable tableName="ar_action_dunning_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_action_dunning_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_action_dunning_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_action_dunning_seq values(1)</sql>
         <createTable tableName="ar_bank_operation_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_bank_operation_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_bank_operation_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_bank_operation_seq values(1)</sql>
         <createTable tableName="ar_ddrequest_item_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_item_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_ddrequest_item_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_ddrequest_item_seq values(1)</sql>
         <createTable tableName="ar_ddrequest_lot_op_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_lot_op_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_ddrequest_lot_op_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_ddrequest_lot_op_seq values(1)</sql>
         <createTable tableName="ar_ddrequest_lot_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_ddrequest_lot_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_ddrequest_lot_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_ddrequest_lot_seq values(1)</sql>
         <createTable tableName="ar_due_date_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_due_date_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_due_date_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_due_date_seq values(1)</sql>
         <createTable tableName="ar_dunning_lot_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_dunning_lot_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_dunning_lot_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_dunning_lot_seq values(1)</sql>
         <createTable tableName="ar_matching_amount_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_matching_amount_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_matching_amount_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_matching_amount_seq values(1)</sql>
         <createTable tableName="ar_matching_code_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_matching_code_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_matching_code_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_matching_code_seq values(1)</sql>
         <createTable tableName="ar_occ_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_occ_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_occ_template_seq values(26)</sql>
+        <sql>insert into ${db.schema.adapted}ar_occ_template_seq values(26)</sql>
         <createTable tableName="bi_job_history_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="bi_job_history_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.bi_job_history_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}bi_job_history_seq values(1)</sql>
         <createTable tableName="bi_job_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="bi_job_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.bi_job_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}bi_job_seq values(1)</sql>
         <createTable tableName="bi_report_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="bi_report_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.bi_report_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}bi_report_seq values(1)</sql>
         <createTable tableName="billing_billing_run_list_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_billing_run_list_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_billing_run_list_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_billing_run_list_seq values(1)</sql>
         <createTable tableName="billing_billing_run_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_billing_run_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_billing_run_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_billing_run_seq values(1)</sql>
         <createTable tableName="billing_charge_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_charge_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_charge_instance_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_charge_instance_seq values(1)</sql>
         <createTable tableName="billing_counter_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_counter_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_counter_instance_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_counter_instance_seq values(1)</sql>
         <createTable tableName="billing_counter_period_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_counter_period_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_counter_period_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_counter_period_seq values(1)</sql>
         <createTable tableName="billing_cycle_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_cycle_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_cycle_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_cycle_seq values(3)</sql>
         <createTable tableName="billing_disc_inst_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_disc_inst_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_disc_inst_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_disc_inst_seq values(1)</sql>
         <createTable tableName="billing_discount_language_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_language_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_discount_language_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_discount_language_seq values(1)</sql>
         <createTable tableName="billing_discount_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_discount_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_discount_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_discount_seq values(1)</sql>
         <createTable tableName="billing_inv_sub_cat_country_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_inv_sub_cat_country_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_inv_sub_cat_country_seq values(5)</sql>
+        <sql>insert into ${db.schema.adapted}billing_inv_sub_cat_country_seq values(5)</sql>
         <createTable tableName="billing_invoice_agregate_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_agregate_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_agregate_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_agregate_seq values(1)</sql>
         <createTable tableName="billing_invoice_cat_lang_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_cat_lang_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_cat_lang_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_cat_lang_seq values(1)</sql>
         <createTable tableName="billing_invoice_cat_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_cat_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_cat_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_cat_seq values(3)</sql>
         <createTable tableName="billing_invoice_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_seq values(1)</sql>
         <createTable tableName="billing_invoice_sub_cat_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_cat_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_sub_cat_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_sub_cat_seq values(3)</sql>
         <!-- <createTable tableName="billing_invoice_sub_country_seq"> -->
         <!-- <column name="next_val" type="BIGINT" > -->
         <!-- <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_sub_country_seq_pk" /> -->
         <!-- </column> -->
         <!-- </createTable> -->
-        <!-- <sql>insert into ${db.schema}.billing_inv_sub_country_seq values(1)</sql> -->
+        <!-- <sql>insert into ${db.schema.adapted}billing_inv_sub_country_seq values(1)</sql> -->
         <createTable tableName="billing_invoice_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_template_seq values(1)</sql>
         <createTable tableName="billing_rated_transaction_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rated_transaction_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_rated_transaction_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_rated_transaction_seq values(1)</sql>
         <createTable tableName="billing_rejected_ba_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_rejected_ba_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_rejected_ba_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_rejected_ba_seq values(1)</sql>
         <createTable tableName="billing_reservation_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_reservation_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_reservation_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_reservation_seq values(1)</sql>
         <createTable tableName="billing_service_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_service_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_service_instance_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_service_instance_seq values(1)</sql>
         <createTable tableName="billing_sub_term_reason_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_sub_term_reason_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_sub_term_reason_seq values(4)</sql>
+        <sql>insert into ${db.schema.adapted}billing_sub_term_reason_seq values(4)</sql>
         <createTable tableName="billing_subscription_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_subscription_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_subscription_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_subscription_seq values(1)</sql>
         <createTable tableName="billing_tax_language_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_language_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_tax_language_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_tax_language_seq values(1)</sql>
         <createTable tableName="billing_tax_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_tax_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_tax_seq values(4)</sql>
+        <sql>insert into ${db.schema.adapted}billing_tax_seq values(4)</sql>
         <createTable tableName="billing_trading_country_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_country_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_trading_country_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_trading_country_seq values(3)</sql>
         <createTable tableName="billing_trading_currency_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_currency_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_trading_currency_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_trading_currency_seq values(3)</sql>
         <createTable tableName="billing_trading_language_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_trading_language_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_trading_language_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_trading_language_seq values(3)</sql>
         <createTable tableName="billing_wallet_operation_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_operation_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_wallet_operation_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_wallet_operation_seq values(1)</sql>
         <createTable tableName="billing_wallet_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_wallet_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_wallet_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_wallet_seq values(1)</sql>
         <createTable tableName="cat_calendar_interval_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_interval_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_calendar_interval_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_calendar_interval_seq values(1)</sql>
         <createTable tableName="cat_calendar_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_calendar_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_calendar_seq values(4)</sql>
+        <sql>insert into ${db.schema.adapted}cat_calendar_seq values(4)</sql>
         <createTable tableName="cat_charge_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_charge_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_charge_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_charge_template_seq values(1)</sql>
         <createTable tableName="cat_counter_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_counter_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_counter_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_counter_template_seq values(1)</sql>
         <createTable tableName="cat_day_in_year_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_day_in_year_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_day_in_year_seq values(367)</sql>
+        <sql>insert into ${db.schema.adapted}cat_day_in_year_seq values(367)</sql>
         <createTable tableName="cat_discount_plan_item_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_item_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_discount_plan_item_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_discount_plan_item_seq values(1)</sql>
         <createTable tableName="cat_discount_plan_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_discount_plan_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_discount_plan_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_discount_plan_seq values(1)</sql>
         <createTable tableName="cat_hour_in_day_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_hour_in_day_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_hour_in_day_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_hour_in_day_seq values(1)</sql>
         <createTable tableName="cat_offer_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_offer_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_offer_template_seq values(1)</sql>
         <createTable tableName="cat_price_plan_matrix_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_price_plan_matrix_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_price_plan_matrix_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_price_plan_matrix_seq values(1)</sql>
         <createTable tableName="cat_serv_recchrg_templt_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_recchrg_templt_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_serv_recchrg_templt_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_serv_recchrg_templt_seq values(1)</sql>
         <createTable tableName="cat_serv_subchrg_templt_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_subchrg_templt_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_serv_subchrg_templt_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_serv_subchrg_templt_seq values(1)</sql>
         <createTable tableName="cat_serv_trmchrg_templt_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_trmchrg_templt_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_serv_trmchrg_templt_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_serv_trmchrg_templt_seq values(1)</sql>
         <createTable tableName="cat_serv_usagechrg_templt_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_serv_usagechrg_templt_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_serv_usagechrg_templt_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_serv_usagechrg_templt_seq values(1)</sql>
         <createTable tableName="cat_service_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_service_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_service_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_service_template_seq values(1)</sql>
         <createTable tableName="cat_triggered_edr_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_triggered_edr_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_triggered_edr_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_triggered_edr_seq values(1)</sql>
         <createTable tableName="cat_wallet_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_wallet_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_wallet_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_wallet_template_seq values(1)</sql>
         <createTable tableName="com_campaign_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_campaign_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_campaign_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_campaign_seq values(1)</sql>
         <createTable tableName="com_contact_coords_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_coords_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_contact_coords_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_contact_coords_seq values(1)</sql>
         <createTable tableName="com_contact_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_contact_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_contact_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_contact_seq values(1)</sql>
         <createTable tableName="com_message_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_message_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_message_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_message_seq values(1)</sql>
         <createTable tableName="com_msg_tmpl_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_msg_tmpl_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_msg_tmpl_seq values(1)</sql>
         <createTable tableName="com_msg_tmpl_var_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_tmpl_var_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_msg_tmpl_var_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_msg_tmpl_var_seq values(1)</sql>
         <createTable tableName="com_msg_var_val_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_msg_var_val_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_msg_var_val_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_msg_var_val_seq values(1)</sql>
         <createTable tableName="com_prov_pol_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_prov_pol_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_prov_pol_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_prov_pol_seq values(1)</sql>
         <createTable tableName="com_sndr_conf_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_sndr_conf_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_sndr_conf_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_sndr_conf_seq values(1)</sql>
         <createTable tableName="crm_custom_fld_tmp_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_fld_tmp_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_custom_fld_tmp_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}crm_custom_fld_tmp_seq values(1)</sql>
         <createTable tableName="crm_customer_brand_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_brand_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_customer_brand_seq values(2)</sql>
+        <sql>insert into ${db.schema.adapted}crm_customer_brand_seq values(2)</sql>
         <createTable tableName="crm_customer_category_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_customer_category_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_customer_category_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}crm_customer_category_seq values(3)</sql>
         <createTable tableName="crm_email_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_email_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_email_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}crm_email_seq values(1)</sql>
         <createTable tableName="crm_provider_contact_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_provider_contact_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_provider_contact_seq values(2)</sql>
+        <sql>insert into ${db.schema.adapted}crm_provider_contact_seq values(2)</sql>
         <createTable tableName="crm_provider_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_provider_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_provider_seq values(2)</sql>
+        <sql>insert into ${db.schema.adapted}crm_provider_seq values(2)</sql>
         <createTable tableName="crm_seller_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_seller_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_seller_seq values(4)</sql>
+        <sql>insert into ${db.schema.adapted}crm_seller_seq values(4)</sql>
         <createTable tableName="dwh_account_operation_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_account_operation_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.dwh_account_operation_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}dwh_account_operation_seq values(1)</sql>
         <createTable tableName="dwh_journal_entries_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_journal_entries_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.dwh_journal_entries_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}dwh_journal_entries_seq values(1)</sql>
         <createTable tableName="dwh_measurable_quant_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_measurable_quant_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.dwh_measurable_quant_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}dwh_measurable_quant_seq values(1)</sql>
         <createTable tableName="dwh_measured_value_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_measured_value_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.dwh_measured_value_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}dwh_measured_value_seq values(1)</sql>
         <createTable tableName="job_execution_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="job_execution_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.job_execution_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}job_execution_seq values(1)</sql>
         <createTable tableName="medina_access_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="medina_access_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.medina_access_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}medina_access_seq values(1)</sql>
         <createTable tableName="meveo_timer_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_timer_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_timer_seq values(2)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_timer_seq values(2)</sql>
         <createTable tableName="rating_edr_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="rating_edr_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.rating_edr_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}rating_edr_seq values(1)</sql>
         <createTable tableName="rm_service_param_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="rm_service_param_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.rm_service_param_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}rm_service_param_template_seq values(1)</sql>
         <createTable tableName="billing_invoice_configuration_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_configuration_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_configuration_seq values(2)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_configuration_seq values(2)</sql>
         <createTable tableName="ar_credit_category_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_credit_category_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_credit_category_seq values(6)</sql>
+        <sql>insert into ${db.schema.adapted}ar_credit_category_seq values(6)</sql>
         <createTable tableName="com_meveo_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="com_meveo_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.com_meveo_instance_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}com_meveo_instance_seq values(1)</sql>
         <createTable tableName="meveo_job_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_job_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_job_instance_seq values(12)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_job_instance_seq values(12)</sql>
         <createTable tableName="meveo_script_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_script_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_script_instance_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_script_instance_seq values(1)</sql>
         <createTable tableName="meveo_filter_condition_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_condition_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_filter_condition_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_filter_condition_seq values(1)</sql>
         <createTable tableName="meveo_filter_order_condition_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_order_condition_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_filter_order_condition_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_filter_order_condition_seq values(1)</sql>
         <createTable tableName="meveo_primitive_filter_condition_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_primitive_filter_condition_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_primitive_filter_condition_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_primitive_filter_condition_seq values(1)</sql>
         <createTable tableName="meveo_native_filter_condition_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_native_filter_condition_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_native_filter_condition_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_native_filter_condition_seq values(1)</sql>
         <createTable tableName="meveo_filter_selector_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_selector_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_filter_selector_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_filter_selector_seq values(1)</sql>
         <createTable tableName="meveo_filter_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_filter_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_filter_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_filter_seq values(1)</sql>
         <createTable tableName="cust_cet_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cust_cet_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cust_cet_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cust_cet_seq values(1)</sql>
         <createTable tableName="cust_cei_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cust_cei_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cust_cei_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cust_cei_seq values(1)</sql>
         <createTable tableName="meveo_module_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_module_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_module_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_module_seq values(1)</sql>
         <createTable tableName="meveo_module_item_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="meveo_module_item_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.meveo_module_item_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}meveo_module_item_seq values(1)</sql>
         <createTable tableName="ftp_imported_file_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ftp_imported_file_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ftp_imported_file_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ftp_imported_file_seq values(1)</sql>
         <createTable tableName="cat_offer_template_category_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_template_category_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_offer_template_category_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_offer_template_category_seq values(1)</sql>
         <createTable tableName="cat_offer_serv_templt_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_serv_templt_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_offer_serv_templt_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_offer_serv_templt_seq values(1)</sql>
         <createTable tableName="ar_revenue_recog_rule_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_recog_rule_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_revenue_recog_rule_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_revenue_recog_rule_seq values(1)</sql>
         <createTable tableName="ar_revenue_schedule_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_revenue_schedule_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_revenue_schedule_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_revenue_schedule_seq values(1)</sql>
         <createTable tableName="crm_custom_action_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="crm_custom_action_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.crm_custom_action_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}crm_custom_action_seq values(1)</sql>
         <createTable tableName="billing_invoice_type_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_invoice_type_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_invoice_type_seq values(3)</sql>
+        <sql>insert into ${db.schema.adapted}billing_invoice_type_seq values(3)</sql>
         <createTable tableName="ord_order_item_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_item_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ord_order_item_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ord_order_item_seq values(1)</sql>
         <createTable tableName="billing_product_chrg_inst_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_chrg_inst_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_product_chrg_inst_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_product_chrg_inst_seq values(1)</sql>
         <createTable tableName="billing_product_instance_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="billing_product_instance_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.billing_product_instance_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_product_instance_seq values(1)</sql>
         <createTable tableName="cat_bundle_product_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_bundle_product_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_bundle_product_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_bundle_product_template_seq values(1)</sql>
         <createTable tableName="cat_digital_resource_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_digital_resource_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_digital_resource_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_digital_resource_seq values(1)</sql>
         <createTable tableName="wf_action_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_action_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.wf_action_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}wf_action_seq values(1)</sql>
         <createTable tableName="wf_transition_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_transition_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.wf_transition_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}wf_transition_seq values(1)</sql>
         <createTable tableName="wf_workflow_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_workflow_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.wf_workflow_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}wf_workflow_seq values(1)</sql>
         <createTable tableName="cat_channel_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_channel_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_channel_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_channel_seq values(1)</sql>
         <createTable tableName="cat_offer_product_template_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="cat_offer_product_template_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.cat_offer_product_template_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}cat_offer_product_template_seq values(1)</sql>
         <createTable tableName="ord_order_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ord_order_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ord_order_seq values(1)</sql>
         <createTable tableName="hierarchy_entity_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="hierarchy_entity_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.hierarchy_entity_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}hierarchy_entity_seq values(1)</sql>
         <createTable tableName="ord_quote_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ord_quote_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ord_quote_seq values(1)</sql>
         <createTable tableName="ord_quote_item_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quote_item_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ord_quote_item_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ord_quote_item_seq values(1)</sql>
         <createTable tableName="wf_decision_rule_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_decision_rule_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.wf_decision_rule_seq values(10)</sql>
+        <sql>insert into ${db.schema.adapted}wf_decision_rule_seq values(10)</sql>
         <createTable tableName="wf_history_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_history_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.wf_history_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}wf_history_seq values(1)</sql>
         <createTable tableName="wf_history_action_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="wf_history_action_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.wf_history_action_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}wf_history_action_seq values(1)</sql>
         <createTable tableName="ord_item_offerings_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_item_offerings_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ord_item_offerings_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ord_item_offerings_seq values(1)</sql>
         <createTable tableName="ord_quot_item_offerings_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ord_quot_item_offerings_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ord_quot_item_offerings_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ord_quot_item_offerings_seq values(1)</sql>
         <createTable tableName="bill_seq_it_sell_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="bill_seq_it_sell_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.bill_seq_it_sell_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}bill_seq_it_sell_seq values(1)</sql>
         <createTable tableName="audit_log_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="audit_log_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.audit_log_seq value (1)</sql>
+        <sql>insert into ${db.schema.adapted}audit_log_seq value (1)</sql>
         <createTable tableName="ar_payment_token_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="ar_payment_token_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_payment_token_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_payment_token_seq values(1)</sql>
         <createTable tableName="dwh_chart_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_chart_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.dwh_chart_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}dwh_chart_seq values(1)</sql>
         <createTable tableName="ar_payment_gateway_seq">
             <column name="next_val" type="BIGINT">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="payment_gateway_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema}.ar_payment_gateway_seq values(1)</sql>
+        <sql>insert into ${db.schema.adapted}ar_payment_gateway_seq values(1)</sql>
     </changeSet>
 
     <!-- end sequence -->
@@ -7772,183 +7772,183 @@
     <!-- end fk -->
 
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-995">
-        <sql><![CDATA[ alter table ${db.schema}.adm_notif_history add constraint adm_notif_history_nb_retry_check check (nb_retry <= 10)]]></sql>
-        <sql><![CDATA[ alter table ${db.schema}.adm_notif_webhooks add constraint adm_notif_webhooks_http_port_check check (http_port <= 65535)]]></sql>
-        <sql><![CDATA[ alter table ${db.schema}.cat_discount_plan_item add constraint cat_discount_plan_item_discount_percent_check check (discount_percent >= 0 and discount_percent <= 100)]]></sql>
+        <sql><![CDATA[ alter table ${db.schema.adapted}adm_notif_history add constraint adm_notif_history_nb_retry_check check (nb_retry <= 10)]]></sql>
+        <sql><![CDATA[ alter table ${db.schema.adapted}adm_notif_webhooks add constraint adm_notif_webhooks_http_port_check check (http_port <= 65535)]]></sql>
+        <sql><![CDATA[ alter table ${db.schema.adapted}cat_discount_plan_item add constraint cat_discount_plan_item_discount_percent_check check (discount_percent >= 0 and discount_percent <= 100)]]></sql>
     </changeSet>
     
     <changeSet author="AndriusKarpavicius" id="rebuild-str-constr-996" dbms="postgresql">
-        <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema}.billing_invoice_agregate(billing_run_id)</sql>
-        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema}.billing_rated_transaction(billing_account__id)</sql>
-        <sql>CREATE INDEX transaction_billing_index ON ${db.schema}.billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
-        <sql>CREATE INDEX invoice_agre_index ON ${db.schema}.billing_invoice_agregate(invoice_id)</sql>
-        <sql>CREATE INDEX billing_recurring_charge_inst_index ON ${db.schema}.billing_recurring_charge_inst(service_instance_id)</sql>
-        <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema}.billing_chrginst_wallet(wallet_instance_id)</sql>
-        <sql>CREATE INDEX ar_customer_account_index ON ${db.schema}.ar_customer_account(credit_category_id)</sql>
-        <sql>CREATE INDEX meveo_module_index ON ${db.schema}.meveo_module(script_instance_id)</sql>
-        <sql>CREATE INDEX account_entity_index ON ${db.schema}.account_entity(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX meveo_module_item_index ON ${db.schema}.meveo_module_item(module_id)</sql>
-        <sql>CREATE INDEX billing_service_instance_index ON ${db.schema}.billing_service_instance(subscription_id)</sql>
-        <sql>CREATE INDEX billing_user_account_index ON ${db.schema}.billing_user_account(billing_account_id)</sql>
-        <sql>CREATE INDEX billing_billing_account_index ON ${db.schema}.billing_billing_account(customer_account_id)</sql>
-        <sql>CREATE INDEX crm_customer_index ON ${db.schema}.crm_customer(customer_brand_id)</sql>
-        <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema}.ar_payment_token(customer_account_id)</sql>
-        <sql>CREATE INDEX billing_subscription_index ON ${db.schema}.billing_subscription(user_account_id)</sql>
-        <sql>CREATE INDEX cat_chrg_edr_index ON ${db.schema}.cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
-        <sql>CREATE INDEX adm_title_index ON ${db.schema}.adm_title((lower(code)))</sql>
-        <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema}.crm_customer_brand((lower(code)))</sql>
-        <sql>CREATE INDEX crm_customer_category_index ON ${db.schema}.crm_customer_category((lower(code)))</sql>
-        <sql>CREATE INDEX cat_serv_trm_charge_template_index ON ${db.schema}.cat_serv_trm_charge_template(service_template_id)</sql>
-        <sql>CREATE INDEX cat_serv_usage_charge_template_index ON ${db.schema}.cat_serv_usage_charge_template(service_template_id)</sql>
-        <sql>CREATE INDEX cat_serv_usage_wallet_template_index ON ${db.schema}.cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
-        <sql>CREATE INDEX cat_calendar_days_index ON ${db.schema}.cat_calendar_days(calendar_id)</sql>
-        <sql>CREATE INDEX cat_triggered_edr_index ON ${db.schema}.cat_triggered_edr(meveo_instance_id)</sql>
-        <sql>CREATE INDEX billing_invoice_index ON ${db.schema}.billing_invoice(invoice_id, invoice_type_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema}.billing_wallet_operation(wallet_id, charge_instance_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_status_index ON ${db.schema}.billing_wallet_operation(invoicing_date,status)</sql>
-        <sql>CREATE INDEX billing_wallet_index ON ${db.schema}.billing_wallet(user_account_id,cat_wallet_template_id)</sql>
-        <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema}.billing_charge_instance(invoicing_calendar_id, lower(code), charge_template_id)</sql>
-        <sql>CREATE INDEX billing_reservation_index ON ${db.schema}.billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
-        <sql>CREATE INDEX rated_transaction_number ON ${db.schema}.billing_rated_transaction(order_number)</sql>
+        <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema.adapted}billing_invoice_agregate(billing_run_id)</sql>
+        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema.adapted}billing_rated_transaction(billing_account__id)</sql>
+        <sql>CREATE INDEX transaction_billing_index ON ${db.schema.adapted}billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
+        <sql>CREATE INDEX invoice_agre_index ON ${db.schema.adapted}billing_invoice_agregate(invoice_id)</sql>
+        <sql>CREATE INDEX billing_recurring_charge_inst_index ON ${db.schema.adapted}billing_recurring_charge_inst(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema.adapted}billing_chrginst_wallet(wallet_instance_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
+        <sql>CREATE INDEX meveo_module_index ON ${db.schema.adapted}meveo_module(script_instance_id)</sql>
+        <sql>CREATE INDEX account_entity_index ON ${db.schema.adapted}account_entity(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX meveo_module_item_index ON ${db.schema.adapted}meveo_module_item(module_id)</sql>
+        <sql>CREATE INDEX billing_service_instance_index ON ${db.schema.adapted}billing_service_instance(subscription_id)</sql>
+        <sql>CREATE INDEX billing_user_account_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
+        <sql>CREATE INDEX crm_customer_index ON ${db.schema.adapted}crm_customer(customer_brand_id)</sql>
+        <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema.adapted}ar_payment_token(customer_account_id)</sql>
+        <sql>CREATE INDEX billing_subscription_index ON ${db.schema.adapted}billing_subscription(user_account_id)</sql>
+        <sql>CREATE INDEX cat_chrg_edr_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
+        <sql>CREATE INDEX adm_title_index ON ${db.schema.adapted}adm_title((lower(code)))</sql>
+        <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema.adapted}crm_customer_brand((lower(code)))</sql>
+        <sql>CREATE INDEX crm_customer_category_index ON ${db.schema.adapted}crm_customer_category((lower(code)))</sql>
+        <sql>CREATE INDEX cat_serv_trm_charge_template_index ON ${db.schema.adapted}cat_serv_trm_charge_template(service_template_id)</sql>
+        <sql>CREATE INDEX cat_serv_usage_charge_template_index ON ${db.schema.adapted}cat_serv_usage_charge_template(service_template_id)</sql>
+        <sql>CREATE INDEX cat_serv_usage_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
+        <sql>CREATE INDEX cat_calendar_days_index ON ${db.schema.adapted}cat_calendar_days(calendar_id)</sql>
+        <sql>CREATE INDEX cat_triggered_edr_index ON ${db.schema.adapted}cat_triggered_edr(meveo_instance_id)</sql>
+        <sql>CREATE INDEX billing_invoice_index ON ${db.schema.adapted}billing_invoice(invoice_id, invoice_type_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema.adapted}billing_wallet_operation(wallet_id, charge_instance_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_status_index ON ${db.schema.adapted}billing_wallet_operation(invoicing_date,status)</sql>
+        <sql>CREATE INDEX billing_wallet_index ON ${db.schema.adapted}billing_wallet(user_account_id,cat_wallet_template_id)</sql>
+        <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id, lower(code), charge_template_id)</sql>
+        <sql>CREATE INDEX billing_reservation_index ON ${db.schema.adapted}billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
+        <sql>CREATE INDEX rated_transaction_number ON ${db.schema.adapted}billing_rated_transaction(order_number)</sql>
 
-        <sql>CREATE INDEX customer_code ON ${db.schema}.account_entity(lower(code));</sql>
-        <sql>CREATE INDEX billing_one_shot_charge_inst_subs_serv_inst_id ON ${db.schema}.billing_one_shot_charge_inst(subs_serv_inst_id);</sql>
-        <sql>CREATE INDEX cat_calendar_join_cal_1_id ON ${db.schema}.cat_calendar(join_cal_1_id);</sql>
-        <sql>CREATE INDEX cat_calendar_join_cal_2_id ON ${db.schema}.cat_calendar(join_cal_2_id);</sql>
-        <sql>CREATE INDEX bc_instance_inv_cal_id ON ${db.schema}.billing_charge_instance(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX term_serv_inst_id_index ON ${db.schema}.billing_one_shot_charge_inst(term_serv_inst_id);</sql>
-        <sql>CREATE INDEX billing_usage_charge_inst_index ON ${db.schema}.billing_usage_charge_inst(service_instance_id);</sql>
-        <sql>CREATE INDEX invoicing_calendar_id_index ON ${db.schema}.cat_offer_template(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema}.cat_business_product_model(product_template_id);</sql>
-        <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema}.cat_product_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema}.adm_script_sourc_role(script_instance_id);</sql>
-        <sql>CREATE INDEX adm_sc_role_id_index ON ${db.schema}.adm_script_sourc_role(role_id);</sql>
-        <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema}.cat_business_serv_model(service_template_id);</sql>
-        <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema}.cat_service_template(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema}.cat_service_template(business_service_model_id);</sql>
-        <sql>CREATE INDEX cat_rct_service_template_index ON ${db.schema}.cat_serv_rec_charge_template(service_template_id);</sql>
-        <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema}.cat_serv_rec_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema}.cat_serv_usage_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema}.cat_offer_template(business_product_model_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema}.cat_offer_template(valid_to);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema}.cat_offer_template(valid_from);</sql>
-        <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema}.cat_offer_template((lower(code)));</sql>
-        <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema}.cat_offer_product_template(offer_template_id);</sql>
-        <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema}.cat_offer_product_template(product_template_id);</sql>
-        <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema}.cat_service_template(lower(code));</sql>
-        <sql>CREATE INDEX account_entity_bam_id_index ON ${db.schema}.account_entity(bam_id);</sql>
-        <sql>CREATE INDEX account_entity_title_id_index ON ${db.schema}.account_entity(title_id);</sql>
-        <sql>CREATE INDEX account_entity_primary_contact_index ON ${db.schema}.account_entity(primary_contact);</sql>
-        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema}.crm_customer(customer_category_id);</sql>
-        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema}.crm_seller(bam_id);</sql>
-        <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema}.cat_charge_template(lower(code));</sql>
-        <sql>CREATE INDEX ord_quote_version_index ON ${db.schema}.ord_quote(version);</sql>
-        <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema}.billing_invoice(version);</sql>
-        <sql>CREATE INDEX ord_order_payment_index ON ${db.schema}.ord_order(payment_method_id);</sql>
-        <sql>CREATE INDEX ord_order_quote_index ON ${db.schema}.ord_order(quote_id);</sql>
-        <sql>CREATE INDEX ord_order_item_ua_index ON ${db.schema}.ord_order_item(user_account_id);</sql>
-        <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema}.ord_order_item(order_id);</sql>
-        <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema}.ord_order_item(subscription_id);</sql>
-        <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema}. billing_subscription(lower(code));</sql>
-        <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema}. cat_offer_serv_templates(service_template_id);</sql>
-        <sql>CREATE INDEX cat_service_template_bsm_index ON ${db.schema}.cat_service_template(business_service_model_id);</sql>
-        <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema}. billing_service_instance(lower(code));</sql>
-        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema}. cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
-        <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema}. billing_charge_instance(lower(code));</sql>
-        <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema}. billing_wallet (user_account_id);</sql>
-        <sql>CREATE INDEX billing_user_account_id_index ON ${db.schema}. billing_user_account(id);</sql>
-        <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema}.cat_offer_serv_templates(offer_template_id);</sql>
-        <sql>CREATE INDEX bbilling_account_disc_plan_index ON ${db.schema}.billing_billing_account(discount_plan_id);</sql>
-        <sql>CREATE INDEX adm_user_title_index ON ${db.schema}.adm_user(title_id);</sql>
-        <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema}.cat_chrg_edr(charge_tmpl_id);</sql>
-        <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema}.cat_chrg_edr(trigg_edr_id);</sql>        
+        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}account_entity(lower(code));</sql>
+        <sql>CREATE INDEX billing_one_shot_charge_inst_subs_serv_inst_id ON ${db.schema.adapted}billing_one_shot_charge_inst(subs_serv_inst_id);</sql>
+        <sql>CREATE INDEX cat_calendar_join_cal_1_id ON ${db.schema.adapted}cat_calendar(join_cal_1_id);</sql>
+        <sql>CREATE INDEX cat_calendar_join_cal_2_id ON ${db.schema.adapted}cat_calendar(join_cal_2_id);</sql>
+        <sql>CREATE INDEX bc_instance_inv_cal_id ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX term_serv_inst_id_index ON ${db.schema.adapted}billing_one_shot_charge_inst(term_serv_inst_id);</sql>
+        <sql>CREATE INDEX billing_usage_charge_inst_index ON ${db.schema.adapted}billing_usage_charge_inst(service_instance_id);</sql>
+        <sql>CREATE INDEX invoicing_calendar_id_index ON ${db.schema.adapted}cat_offer_template(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema.adapted}cat_business_product_model(product_template_id);</sql>
+        <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema.adapted}cat_product_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema.adapted}adm_script_sourc_role(script_instance_id);</sql>
+        <sql>CREATE INDEX adm_sc_role_id_index ON ${db.schema.adapted}adm_script_sourc_role(role_id);</sql>
+        <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema.adapted}cat_business_serv_model(service_template_id);</sql>
+        <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema.adapted}cat_service_template(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
+        <sql>CREATE INDEX cat_rct_service_template_index ON ${db.schema.adapted}cat_serv_rec_charge_template(service_template_id);</sql>
+        <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema.adapted}cat_serv_rec_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema.adapted}cat_offer_template(business_product_model_id);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
+        <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema.adapted}cat_offer_template((lower(code)));</sql>
+        <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
+        <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
+        <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema.adapted}cat_service_template(lower(code));</sql>
+        <sql>CREATE INDEX account_entity_bam_id_index ON ${db.schema.adapted}account_entity(bam_id);</sql>
+        <sql>CREATE INDEX account_entity_title_id_index ON ${db.schema.adapted}account_entity(title_id);</sql>
+        <sql>CREATE INDEX account_entity_primary_contact_index ON ${db.schema.adapted}account_entity(primary_contact);</sql>
+        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
+        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
+        <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema.adapted}cat_charge_template(lower(code));</sql>
+        <sql>CREATE INDEX ord_quote_version_index ON ${db.schema.adapted}ord_quote(version);</sql>
+        <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema.adapted}billing_invoice(version);</sql>
+        <sql>CREATE INDEX ord_order_payment_index ON ${db.schema.adapted}ord_order(payment_method_id);</sql>
+        <sql>CREATE INDEX ord_order_quote_index ON ${db.schema.adapted}ord_order(quote_id);</sql>
+        <sql>CREATE INDEX ord_order_item_ua_index ON ${db.schema.adapted}ord_order_item(user_account_id);</sql>
+        <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema.adapted}ord_order_item(order_id);</sql>
+        <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema.adapted}ord_order_item(subscription_id);</sql>
+        <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(lower(code));</sql>
+        <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema.adapted} cat_offer_serv_templates(service_template_id);</sql>
+        <sql>CREATE INDEX cat_service_template_bsm_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
+        <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(lower(code));</sql>
+        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
+        <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(lower(code));</sql>
+        <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
+        <sql>CREATE INDEX billing_user_account_id_index ON ${db.schema.adapted} billing_user_account(id);</sql>
+        <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
+        <sql>CREATE INDEX bbilling_account_disc_plan_index ON ${db.schema.adapted}billing_billing_account(discount_plan_id);</sql>
+        <sql>CREATE INDEX adm_user_title_index ON ${db.schema.adapted}adm_user(title_id);</sql>
+        <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
+        <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>        
     </changeSet>
 
     <changeSet author="AndriusKarpavicius"  id="rebuild-str-constr-997" dbms="mysql">
-        <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema}.billing_invoice_agregate(billing_run_id)</sql>
-        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema}.billing_rated_transaction(billing_account__id)</sql>
-        <sql>CREATE INDEX transaction_billing_index ON ${db.schema}.billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
-        <sql>CREATE INDEX invoice_agre_index ON ${db.schema}.billing_invoice_agregate(invoice_id)</sql>
-        <sql>CREATE INDEX billing_recurring_charge_inst_index ON ${db.schema}.billing_recurring_charge_inst(service_instance_id)</sql>
-        <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema}.billing_chrginst_wallet(wallet_instance_id)</sql>
-        <sql>CREATE INDEX ar_customer_account_index ON ${db.schema}.ar_customer_account(credit_category_id)</sql>
-        <sql>CREATE INDEX meveo_module_index ON ${db.schema}.meveo_module(script_instance_id)</sql>
-        <sql>CREATE INDEX account_entity_index ON ${db.schema}.account_entity(primary_contact, title_id, bam_id)</sql>
-        <sql>CREATE INDEX meveo_module_item_index ON ${db.schema}.meveo_module_item(module_id)</sql>
-        <sql>CREATE INDEX billing_service_instance_index ON ${db.schema}.billing_service_instance(subscription_id)</sql>
-        <sql>CREATE INDEX billing_user_account_index ON ${db.schema}.billing_user_account(billing_account_id)</sql>
-        <sql>CREATE INDEX billing_billing_account_index ON ${db.schema}.billing_billing_account(customer_account_id)</sql>
-        <sql>CREATE INDEX crm_customer_index ON ${db.schema}.crm_customer(customer_brand_id)</sql>
-        <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema}.ar_payment_token(customer_account_id)</sql>
-        <sql>CREATE INDEX billing_subscription_index ON ${db.schema}.billing_subscription(user_account_id)</sql>
-        <sql>CREATE INDEX cat_chrg_edr_index ON ${db.schema}.cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
-        <sql>CREATE INDEX adm_title_index ON ${db.schema}.adm_title(code)</sql>
-        <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema}.crm_customer_brand(code)</sql>
-        <sql>CREATE INDEX crm_customer_category_index ON ${db.schema}.crm_customer_category(code)</sql>
-        <sql>CREATE INDEX cat_serv_trm_charge_template_index ON ${db.schema}.cat_serv_trm_charge_template(service_template_id)</sql>
-        <sql>CREATE INDEX cat_serv_usage_charge_template_index ON ${db.schema}.cat_serv_usage_charge_template(service_template_id)</sql>
-        <sql>CREATE INDEX cat_serv_usage_wallet_template_index ON ${db.schema}.cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
-        <sql>CREATE INDEX cat_calendar_days_index ON ${db.schema}.cat_calendar_days(calendar_id)</sql>
-        <sql>CREATE INDEX cat_triggered_edr_index ON ${db.schema}.cat_triggered_edr(meveo_instance_id)</sql>
-        <sql>CREATE INDEX billing_invoice_index ON ${db.schema}.billing_invoice(invoice_id, invoice_type_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema}.billing_wallet_operation(wallet_id, charge_instance_id)</sql>
-        <sql>CREATE INDEX billing_wallet_operation_status_index ON ${db.schema}.billing_wallet_operation(invoicing_date,status)</sql>
-        <sql>CREATE INDEX billing_wallet_index ON ${db.schema}.billing_wallet(user_account_id,cat_wallet_template_id)</sql>
-        <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema}.billing_charge_instance(invoicing_calendar_id, code, charge_template_id)</sql>
-        <sql>CREATE INDEX billing_reservation_index ON ${db.schema}.billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
-        <sql>CREATE INDEX rated_transaction_number_index ON ${db.schema}.billing_rated_transaction(order_number)</sql>
+        <sql>CREATE INDEX invoice_billing_run_index ON ${db.schema.adapted}billing_invoice_agregate(billing_run_id)</sql>
+        <sql>CREATE INDEX transaction_billing_account_index ON ${db.schema.adapted}billing_rated_transaction(billing_account__id)</sql>
+        <sql>CREATE INDEX transaction_billing_index ON ${db.schema.adapted}billing_rated_transaction(invoice_id,wallet_id, invoice_sub_category_id)</sql>
+        <sql>CREATE INDEX invoice_agre_index ON ${db.schema.adapted}billing_invoice_agregate(invoice_id)</sql>
+        <sql>CREATE INDEX billing_recurring_charge_inst_index ON ${db.schema.adapted}billing_recurring_charge_inst(service_instance_id)</sql>
+        <sql>CREATE INDEX billing_chrginst_wallet_index ON ${db.schema.adapted}billing_chrginst_wallet(wallet_instance_id)</sql>
+        <sql>CREATE INDEX ar_customer_account_index ON ${db.schema.adapted}ar_customer_account(credit_category_id)</sql>
+        <sql>CREATE INDEX meveo_module_index ON ${db.schema.adapted}meveo_module(script_instance_id)</sql>
+        <sql>CREATE INDEX account_entity_index ON ${db.schema.adapted}account_entity(primary_contact, title_id, bam_id)</sql>
+        <sql>CREATE INDEX meveo_module_item_index ON ${db.schema.adapted}meveo_module_item(module_id)</sql>
+        <sql>CREATE INDEX billing_service_instance_index ON ${db.schema.adapted}billing_service_instance(subscription_id)</sql>
+        <sql>CREATE INDEX billing_user_account_index ON ${db.schema.adapted}billing_user_account(billing_account_id)</sql>
+        <sql>CREATE INDEX billing_billing_account_index ON ${db.schema.adapted}billing_billing_account(customer_account_id)</sql>
+        <sql>CREATE INDEX crm_customer_index ON ${db.schema.adapted}crm_customer(customer_brand_id)</sql>
+        <sql>CREATE INDEX ar_payment_customer_index ON ${db.schema.adapted}ar_payment_token(customer_account_id)</sql>
+        <sql>CREATE INDEX billing_subscription_index ON ${db.schema.adapted}billing_subscription(user_account_id)</sql>
+        <sql>CREATE INDEX cat_chrg_edr_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id,trigg_edr_id)</sql>
+        <sql>CREATE INDEX adm_title_index ON ${db.schema.adapted}adm_title(code)</sql>
+        <sql>CREATE INDEX crm_customer_brand_index ON ${db.schema.adapted}crm_customer_brand(code)</sql>
+        <sql>CREATE INDEX crm_customer_category_index ON ${db.schema.adapted}crm_customer_category(code)</sql>
+        <sql>CREATE INDEX cat_serv_trm_charge_template_index ON ${db.schema.adapted}cat_serv_trm_charge_template(service_template_id)</sql>
+        <sql>CREATE INDEX cat_serv_usage_charge_template_index ON ${db.schema.adapted}cat_serv_usage_charge_template(service_template_id)</sql>
+        <sql>CREATE INDEX cat_serv_usage_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(service_usage_templt_id)</sql>
+        <sql>CREATE INDEX cat_calendar_days_index ON ${db.schema.adapted}cat_calendar_days(calendar_id)</sql>
+        <sql>CREATE INDEX cat_triggered_edr_index ON ${db.schema.adapted}cat_triggered_edr(meveo_instance_id)</sql>
+        <sql>CREATE INDEX billing_invoice_index ON ${db.schema.adapted}billing_invoice(invoice_id, invoice_type_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_index ON ${db.schema.adapted}billing_wallet_operation(wallet_id, charge_instance_id)</sql>
+        <sql>CREATE INDEX billing_wallet_operation_status_index ON ${db.schema.adapted}billing_wallet_operation(invoicing_date,status)</sql>
+        <sql>CREATE INDEX billing_wallet_index ON ${db.schema.adapted}billing_wallet(user_account_id,cat_wallet_template_id)</sql>
+        <sql>CREATE INDEX billing_charge_instance_index ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id, code, charge_template_id)</sql>
+        <sql>CREATE INDEX billing_reservation_index ON ${db.schema.adapted}billing_reservation(subscription_id, user_account_id,wallet_id)</sql>
+        <sql>CREATE INDEX rated_transaction_number_index ON ${db.schema.adapted}billing_rated_transaction(order_number)</sql>
         
-        <sql>CREATE INDEX customer_code ON ${db.schema}.account_entity(code);</sql>
-        <sql>CREATE INDEX billing_one_shot_charge_inst_subs_serv_inst_id ON ${db.schema}.billing_one_shot_charge_inst(subs_serv_inst_id);</sql>
-        <sql>CREATE INDEX cat_calendar_join_cal_1_id ON ${db.schema}.cat_calendar(join_cal_1_id);</sql>
-        <sql>CREATE INDEX cat_calendar_join_cal_2_id ON ${db.schema}.cat_calendar(join_cal_2_id);</sql>
-        <sql>CREATE INDEX bc_instance_inv_cal_id ON ${db.schema}.billing_charge_instance(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX term_serv_inst_id_index ON ${db.schema}.billing_one_shot_charge_inst(term_serv_inst_id);</sql>
-        <sql>CREATE INDEX billing_usage_charge_inst_index ON ${db.schema}.billing_usage_charge_inst(service_instance_id);</sql>
-        <sql>CREATE INDEX invoicing_calendar_id_index ON ${db.schema}.cat_offer_template(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema}.cat_business_product_model(product_template_id);</sql>
-        <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema}.cat_product_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema}.adm_script_sourc_role(script_instance_id);</sql>
-        <sql>CREATE INDEX adm_sc_role_id_index ON ${db.schema}.adm_script_sourc_role(role_id);</sql>
-        <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema}.cat_business_serv_model(service_template_id);</sql>
-        <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema}.cat_service_template(invoicing_calendar_id);</sql>
-        <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema}.cat_service_template(business_service_model_id);</sql>
-        <sql>CREATE INDEX cat_rct_service_template_index ON ${db.schema}.cat_serv_rec_charge_template(service_template_id);</sql>
-        <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema}.cat_serv_rec_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema}.cat_serv_usage_wallet_template(wallet_template_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema}.cat_offer_template(business_product_model_id);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema}.cat_offer_template(valid_to);</sql>
-        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema}.cat_offer_template(valid_from);</sql>
-        <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema}.cat_offer_template(code);</sql>
-        <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema}.cat_offer_product_template(offer_template_id);</sql>
-        <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema}.cat_offer_product_template(product_template_id);</sql>
-        <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema}.cat_service_template(code);</sql>
-        <sql>CREATE INDEX account_entity_bam_id_index ON ${db.schema}.account_entity(bam_id);</sql>
-        <sql>CREATE INDEX account_entity_title_id_index ON ${db.schema}.account_entity(title_id);</sql>
-        <sql>CREATE INDEX account_entity_primary_contact_index ON ${db.schema}.account_entity(primary_contact);</sql>
-        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema}.crm_customer(customer_category_id);</sql>
-        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema}.crm_seller(bam_id);</sql>
-        <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema}.cat_charge_template(code);</sql>
-        <sql>CREATE INDEX ord_quote_version_index ON ${db.schema}.ord_quote(version);</sql>
-        <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema}.billing_invoice(version);</sql>
-        <sql>CREATE INDEX ord_order_payment_index ON ${db.schema}.ord_order(payment_method_id);</sql>
-        <sql>CREATE INDEX ord_order_quote_index ON ${db.schema}.ord_order(quote_id);</sql>
-        <sql>CREATE INDEX ord_order_item_ua_index ON ${db.schema}.ord_order_item(user_account_id);</sql>
-        <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema}.ord_order_item(order_id);</sql>
-        <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema}.ord_order_item(subscription_id);</sql>
-        <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema}. billing_subscription(code);</sql>
-        <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema}. cat_offer_serv_templates(service_template_id);</sql>
-        <sql>CREATE INDEX cat_service_template_bsm_index ON ${db.schema}.cat_service_template(business_service_model_id);</sql>
-        <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema}. billing_service_instance(code);</sql>
-        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema}. cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
-        <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema}. billing_charge_instance(code);</sql>
-        <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema}. billing_wallet (user_account_id);</sql>
-        <sql>CREATE INDEX billing_user_account_id_index ON ${db.schema}. billing_user_account(id);</sql>
-        <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema}.cat_offer_serv_templates(offer_template_id);</sql>
-        <sql>CREATE INDEX bbilling_account_disc_plan_index ON ${db.schema}.billing_billing_account(discount_plan_id);</sql>
-        <sql>CREATE INDEX adm_user_title_index ON ${db.schema}.adm_user(title_id);</sql>
-        <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema}.cat_chrg_edr(charge_tmpl_id);</sql>
-        <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema}.cat_chrg_edr(trigg_edr_id);</sql>
+        <sql>CREATE INDEX customer_code ON ${db.schema.adapted}account_entity(code);</sql>
+        <sql>CREATE INDEX billing_one_shot_charge_inst_subs_serv_inst_id ON ${db.schema.adapted}billing_one_shot_charge_inst(subs_serv_inst_id);</sql>
+        <sql>CREATE INDEX cat_calendar_join_cal_1_id ON ${db.schema.adapted}cat_calendar(join_cal_1_id);</sql>
+        <sql>CREATE INDEX cat_calendar_join_cal_2_id ON ${db.schema.adapted}cat_calendar(join_cal_2_id);</sql>
+        <sql>CREATE INDEX bc_instance_inv_cal_id ON ${db.schema.adapted}billing_charge_instance(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX term_serv_inst_id_index ON ${db.schema.adapted}billing_one_shot_charge_inst(term_serv_inst_id);</sql>
+        <sql>CREATE INDEX billing_usage_charge_inst_index ON ${db.schema.adapted}billing_usage_charge_inst(service_instance_id);</sql>
+        <sql>CREATE INDEX invoicing_calendar_id_index ON ${db.schema.adapted}cat_offer_template(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX cb_product_template_id_index ON ${db.schema.adapted}cat_business_product_model(product_template_id);</sql>
+        <sql>CREATE INDEX cat_product_wallet_template_id_index ON ${db.schema.adapted}cat_product_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX adm_sc_instance_id_index ON ${db.schema.adapted}adm_script_sourc_role(script_instance_id);</sql>
+        <sql>CREATE INDEX adm_sc_role_id_index ON ${db.schema.adapted}adm_script_sourc_role(role_id);</sql>
+        <sql>CREATE INDEX cat_bsm_st_id_index ON ${db.schema.adapted}cat_business_serv_model(service_template_id);</sql>
+        <sql>CREATE INDEX cat_st_inv_cal_id_index ON ${db.schema.adapted}cat_service_template(invoicing_calendar_id);</sql>
+        <sql>CREATE INDEX cat_st_serv_mod_id_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
+        <sql>CREATE INDEX cat_rct_service_template_index ON ${db.schema.adapted}cat_serv_rec_charge_template(service_template_id);</sql>
+        <sql>CREATE INDEX cat_rwt_wallet_template_index ON ${db.schema.adapted}cat_serv_rec_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX cat_su_wallet_template_index ON ${db.schema.adapted}cat_serv_usage_wallet_template(wallet_template_id);</sql>
+        <sql>CREATE INDEX cat_ofrt_bp_model_index ON ${db.schema.adapted}cat_offer_template(business_product_model_id);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_to_index ON ${db.schema.adapted}cat_offer_template(valid_to);</sql>
+        <sql>CREATE INDEX cat_ofrt_valid_from_index ON ${db.schema.adapted}cat_offer_template(valid_from);</sql>
+        <sql>CREATE INDEX cat_ofrt_code_index ON ${db.schema.adapted}cat_offer_template(code);</sql>
+        <sql>CREATE INDEX cat_ofrpt_ofr_template_index ON ${db.schema.adapted}cat_offer_product_template(offer_template_id);</sql>
+        <sql>CREATE INDEX cat_ofrpt_pr_template_index ON ${db.schema.adapted}cat_offer_product_template(product_template_id);</sql>
+        <sql>CREATE INDEX cat_service_template_code_index ON ${db.schema.adapted}cat_service_template(code);</sql>
+        <sql>CREATE INDEX account_entity_bam_id_index ON ${db.schema.adapted}account_entity(bam_id);</sql>
+        <sql>CREATE INDEX account_entity_title_id_index ON ${db.schema.adapted}account_entity(title_id);</sql>
+        <sql>CREATE INDEX account_entity_primary_contact_index ON ${db.schema.adapted}account_entity(primary_contact);</sql>
+        <sql>CREATE INDEX crm_customer_primary_contact_index ON ${db.schema.adapted}crm_customer(customer_category_id);</sql>
+        <sql>CREATE INDEX crm_seller_bam_id_index ON ${db.schema.adapted}crm_seller(bam_id);</sql>
+        <sql>CREATE INDEX cat_charge_template_code_index ON ${db.schema.adapted}cat_charge_template(code);</sql>
+        <sql>CREATE INDEX ord_quote_version_index ON ${db.schema.adapted}ord_quote(version);</sql>
+        <sql>CREATE INDEX billing_invoice_version_index ON ${db.schema.adapted}billing_invoice(version);</sql>
+        <sql>CREATE INDEX ord_order_payment_index ON ${db.schema.adapted}ord_order(payment_method_id);</sql>
+        <sql>CREATE INDEX ord_order_quote_index ON ${db.schema.adapted}ord_order(quote_id);</sql>
+        <sql>CREATE INDEX ord_order_item_ua_index ON ${db.schema.adapted}ord_order_item(user_account_id);</sql>
+        <sql>CREATE INDEX ord_order_item_order_index ON ${db.schema.adapted}ord_order_item(order_id);</sql>
+        <sql>CREATE INDEX ord_order_item_sub_index ON ${db.schema.adapted}ord_order_item(subscription_id);</sql>
+        <sql>CREATE INDEX billing_subscription_code_index ON ${db.schema.adapted} billing_subscription(code);</sql>
+        <sql>CREATE INDEX cat_offer_serv_templates_svtmpte_index ON ${db.schema.adapted} cat_offer_serv_templates(service_template_id);</sql>
+        <sql>CREATE INDEX cat_service_template_bsm_index ON ${db.schema.adapted}cat_service_template(business_service_model_id);</sql>
+        <sql>CREATE INDEX billing_service_instance_code_index ON ${db.schema.adapted} billing_service_instance(code);</sql>
+        <sql>CREATE INDEX cat_serv_sub_wallet_template_srvsubtmp_index ON ${db.schema.adapted} cat_serv_sub_wallet_template(Service_sub_templt_id);</sql>
+        <sql>CREATE INDEX billing_charge_instance_code_index ON ${db.schema.adapted} billing_charge_instance(code);</sql>
+        <sql>CREATE INDEX billing_wallet_ua_index ON ${db.schema.adapted} billing_wallet (user_account_id);</sql>
+        <sql>CREATE INDEX billing_user_account_id_index ON ${db.schema.adapted} billing_user_account(id);</sql>
+        <sql>CREATE INDEX cat_ofr_srv_tmpl_ofrtmpl_id_index ON ${db.schema.adapted}cat_offer_serv_templates(offer_template_id);</sql>
+        <sql>CREATE INDEX bbilling_account_disc_plan_index ON ${db.schema.adapted}billing_billing_account(discount_plan_id);</sql>
+        <sql>CREATE INDEX adm_user_title_index ON ${db.schema.adapted}adm_user(title_id);</sql>
+        <sql>CREATE INDEX cat_chrg_edr_chtmpl_index ON ${db.schema.adapted}cat_chrg_edr(charge_tmpl_id);</sql>
+        <sql>CREATE INDEX cat_chrg_edr_trigg_edr_index ON ${db.schema.adapted}cat_chrg_edr(trigg_edr_id);</sql>
     </changeSet>
 
 

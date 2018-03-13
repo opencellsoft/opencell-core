@@ -3,6 +3,8 @@
  */
 package org.meveo.cache;
 
+import java.io.Serializable;
+
 /**
  * 
  * Represents a composite cache key distinguishing a provider
@@ -10,7 +12,9 @@ package org.meveo.cache;
  * @author Wassim Drira
  *
  */
-public class CacheKeyStr {
+public class CacheKeyStr implements Serializable {
+
+    private static final long serialVersionUID = 435367479253590884L;
 
     /**
      * Provider code

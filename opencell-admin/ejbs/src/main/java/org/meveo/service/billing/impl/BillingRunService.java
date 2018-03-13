@@ -58,6 +58,7 @@ import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.base.PersistenceService;
 
 /**
@@ -583,8 +584,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -628,8 +630,9 @@ public class BillingRunService extends PersistenceService<BillingRun> {
         }
 
         List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+        MeveoUser lastCurrentUser = currentUser.unProxy();
         while (subListCreator.isHasNext()) {
-            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId));
+            asyncReturns.add(invoicingAsync.createAgregatesAndInvoiceAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId, lastCurrentUser));
             try {
                 Thread.sleep(waitingMillis);
             } catch (InterruptedException e) {
@@ -687,9 +690,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
             }
 
             List<Future<String>> asyncReturns = new ArrayList<Future<String>>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                asyncReturns
-                    .add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet(), invoicesToNumberInfo, jobInstanceId));
+                asyncReturns.add(invoicingAsync.assignInvoiceNumberAndIncrementBAInvoiceDatesAsync((List<Long>) subListCreator.getNextWorkSet(), invoicesToNumberInfo,
+                    jobInstanceId, lastCurrentUser));
                 try {
                     Thread.sleep(waitingMillis);
                 } catch (InterruptedException e) {
@@ -793,8 +797,10 @@ public class BillingRunService extends PersistenceService<BillingRun> {
                 int billableBA = 0;
                 SubListCreator subListCreator = new SubListCreator(billingAccountIds, (int) nbRuns);
                 List<Future<Integer>> asyncReturns = new ArrayList<Future<Integer>>();
+                MeveoUser lastCurrentUser = currentUser.unProxy();
                 while (subListCreator.isHasNext()) {
-                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId);
+                    Future<Integer> count = invoicingAsync.updateBillingAccountTotalAmountsAsync((List<Long>) subListCreator.getNextWorkSet(), billingRun, jobInstanceId,
+                        lastCurrentUser);
                     asyncReturns.add(count);
                     try {
                         Thread.sleep(waitingMillis);
