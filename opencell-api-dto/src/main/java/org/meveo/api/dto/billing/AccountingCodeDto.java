@@ -27,6 +27,7 @@ public class AccountingCodeDto extends BusinessEntityDto {
 
     private String reportingAccount;
     private String notes;
+    private boolean migrated = false;
 
     public String getParentAccountingCode() {
         return parentAccountingCode;
@@ -74,6 +75,14 @@ public class AccountingCodeDto extends BusinessEntityDto {
 
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
+    }
+
+    public boolean isMigrated() {
+        return migrated;
+    }
+
+    public void setMigrated(boolean migrated) {
+        this.migrated = migrated;
     }
 
 }

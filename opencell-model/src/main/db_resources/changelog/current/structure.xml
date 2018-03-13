@@ -1630,10 +1630,10 @@
 			<column name="chart_of_account_type" type="varchar(25)" />
 			<column name="reporting_account" type="varchar(50)" />        
 	        <column name="chart_of_account_view_type" type="varchar(25)" />
-	        <column name="status" type="${type.boolean}" defaultValueNumeric="0">
-	            <constraints nullable="false" />
-	        </column>
 	        <column name="notes" type="varchar(2000)" />
+	        <column name="migrated" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
 		</createTable>
         
         <createSequence sequenceName="billing_accounting_code_seq" />

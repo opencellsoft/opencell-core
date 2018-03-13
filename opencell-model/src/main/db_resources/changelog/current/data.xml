@@ -260,6 +260,10 @@
 			<![CDATA[update ar_account_operation set accounting_code_id=(select id from billing_accounting_code where code=account_code);]]>
 		</sql>
 		
+		<sql>
+			<![CDATA[update billing_accounting_code set migrated=1;]]>
+		</sql>
+		
 		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="billing_tax" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="billing_invoice_agregate" columnName="accounting_code"></dropColumn>

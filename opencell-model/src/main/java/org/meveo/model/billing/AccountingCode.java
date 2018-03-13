@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
@@ -48,6 +49,10 @@ public class AccountingCode extends BusinessEntity {
 
     @Column(name = "notes", length = 2000)
     private String notes;
+
+    @Type(type = "numeric_boolean")
+    @Column(name = "migrated", nullable = false)
+    private boolean migrated = false;
 
     public AccountingCode getParentAccountingCode() {
         return parentAccountingCode;
@@ -87,6 +92,14 @@ public class AccountingCode extends BusinessEntity {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public boolean isMigrated() {
+        return migrated;
+    }
+
+    public void setMigrated(boolean migrated) {
+        this.migrated = migrated;
     }
 
 }

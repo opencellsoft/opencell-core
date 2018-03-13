@@ -140,6 +140,7 @@ public class AccountingCodeApi extends BaseApi {
         target.setNotes(source.getNotes());
         target.setReportingAccount(source.getReportingAccount());
         target.setDisabled(source.isDisabled());
+        target.setMigrated(source.isMigrated());
 
         return target;
     }
@@ -156,6 +157,7 @@ public class AccountingCodeApi extends BaseApi {
         target.setNotes(source.getNotes());
         target.setReportingAccount(source.getReportingAccount());
         target.setDisabled(source.isDisabled());
+        target.setMigrated(source.isMigrated());
 
         return target;
     }
