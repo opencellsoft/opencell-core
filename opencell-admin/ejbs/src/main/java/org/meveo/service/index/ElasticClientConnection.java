@@ -37,9 +37,7 @@ public class ElasticClientConnection {
     @Inject
     private ElasticSearchConfiguration esConfiguration;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
+    private ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * The actual ES client
@@ -56,7 +54,7 @@ public class ElasticClientConnection {
      */
     @PostConstruct
     private void initES() {
-        ParamBean paramBean = paramBeanFactory.getInstance();
+
         String clusterName = null;
         String[] hosts = null;
         String portStr = null;
