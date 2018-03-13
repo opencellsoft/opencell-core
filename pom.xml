@@ -679,6 +679,16 @@
 			      </configuration>
 			    -->
 				<version>3.0.0</version>
+				<configuration>
+					<tags>
+						<tag>
+							<name>lastModifiedVersion</name>
+							<!-- tag for all places -->
+							<placement>a</placement>
+							<head>Last Modified Version:</head>
+						</tag>
+					</tags>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
