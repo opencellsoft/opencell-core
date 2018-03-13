@@ -271,6 +271,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return true;
     }
     
+    /**
+     * @param expression EL expression
+     * @param billingAccount billingAccount
+     * @return userMap userMap
+     */    
     private Map<Object, Object> constructElContext(String expression, BillingAccount ba) {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
@@ -291,6 +296,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return userMap;
     }
     
+    /**
+     * @param expression EL expression
+     * @param subscription subscription
+     * @return userMap userMap
+     */    
     private Map<Object, Object> constructElContext(String expression, Subscription subscription) {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
@@ -320,6 +330,11 @@ public class BillingAccountService extends AccountService<BillingAccount> {
         return userMap;
     }
     
+    /**
+     * @param expression EL expression
+     * @param serviceInstance serviceInstance
+     * @return userMap userMap
+     */    
     private Map<Object, Object> constructElContext(String expression, ServiceInstance serviceInstance) {
 
         Map<Object, Object> userMap = new HashMap<Object, Object>();
