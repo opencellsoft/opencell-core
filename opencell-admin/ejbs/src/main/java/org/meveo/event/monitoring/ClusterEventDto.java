@@ -46,7 +46,17 @@ public class ClusterEventDto implements Serializable {
     private String sourceNode;
 
     /**
-     * defaut constructor.
+     * Code of provider, that information belonged to
+     */
+    private String providerCode;
+
+    /**
+     * Username that initiated information publication
+     */
+    private String userName;
+
+    /**
+     * Defaut constructor.
      */
     public ClusterEventDto() {
     }
@@ -58,13 +68,15 @@ public class ClusterEventDto implements Serializable {
      * @param action crud action
      * @param sourceNode
      */
-    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode) {
+    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName) {
         super();
         this.clazz = clazz;
         this.id = id;
         this.code = code;
         this.action = action;
         this.sourceNode = sourceNode;
+        this.providerCode = providerCode;
+        this.userName = userName;
     }
 
     /**
@@ -94,9 +106,17 @@ public class ClusterEventDto implements Serializable {
     public CrudActionEnum getAction() {
         return action;
     }
-    
+
     public String getSourceNode() {
         return sourceNode;
+    }
+
+    public String getProviderCode() {
+        return providerCode;
+    }
+
+    public String getUserName() {
+        return userName;
     }
 
     /**

@@ -38,6 +38,8 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
@@ -59,9 +61,9 @@ public class PDFParametersConstruction {
     protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
-    @ApplicationProvider
-    private Provider appProvider;
-    
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     @Inject
     private InvoiceService invoiceService;
 
@@ -70,7 +72,7 @@ public class PDFParametersConstruction {
 
     private ClassLoader cl = new URLClassLoader(new URL[] { PDFParametersConstruction.class.getClassLoader().getResource("reports/fonts.jar") });
 
-    public Map<String, Object> constructParameters(Invoice invoice) {
+    public Map<String, Object> constructParameters(Invoice invoice, String provider) {
 
         try {
             currencyFormat.setMinimumFractionDigits(2);
@@ -87,8 +89,7 @@ public class PDFParametersConstruction {
             String billingTemplateName = invoiceService.getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
 
             ParamBean paramBean = ParamBean.getInstance();
-            String meveoDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
-            String resDir = meveoDir + File.separator + appProvider.getCode() + File.separator + "jasper";
+            String resDir = paramBean.getChrootDir(provider) + File.separator + "jasper";
             String templateDir = new StringBuilder(resDir).append(File.separator).append(billingTemplateName).append(File.separator).append(PDF_DIR_NAME).toString();
             parameters.put(PdfGeneratorConstants.MESSAGE_PATH_KEY, templateDir + File.separator);
             parameters.put(PdfGeneratorConstants.LOGO_PATH_KEY, templateDir + File.separator);

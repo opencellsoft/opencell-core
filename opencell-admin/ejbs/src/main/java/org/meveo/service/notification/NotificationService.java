@@ -43,7 +43,10 @@ public class NotificationService extends BusinessService<ScriptNotification> {
     @Override
     public ScriptNotification update(ScriptNotification scriptNotification) throws BusinessException {
     	scriptNotification = super.update(scriptNotification);
-        notificationCacheContainerProvider.updateNotificationInCache(scriptNotification);
+    	notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
+        if(scriptNotification.isActive()) {
+            notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
+        }
         return scriptNotification;
     }
 

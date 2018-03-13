@@ -26,7 +26,6 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.CustomerImportHisto;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.crm.Customer;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jaxb.account.BillingAccounts;
 import org.meveo.model.jaxb.customer.ErrorCustomer;
 import org.meveo.model.jaxb.customer.ErrorCustomerAccount;
@@ -39,6 +38,8 @@ import org.meveo.model.jaxb.customer.WarningSeller;
 import org.meveo.model.jaxb.customer.Warnings;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CustomerImportHistoService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
@@ -51,7 +52,6 @@ import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.crm.impl.ImportWarningException;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
-import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
 @Stateless
@@ -90,9 +90,13 @@ public class ImportCustomersJobBean {
     @Inject
     private AccountImportService accountImportService;
 
+    // @Inject
+    // @ApplicationProvider
+    // protected Provider appProvider;
+
     @Inject
-    @ApplicationProvider
-    protected Provider appProvider;
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @Inject
     private JobExecutionService jobExecutionService;
@@ -129,8 +133,7 @@ public class ImportCustomersJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result) {
 
-        String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "customers" + File.separator;
+        String importDir = param.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customers" + File.separator;
         String dirIN = importDir + "input";
         log.info("dirIN=" + dirIN);
         String dirOK = importDir + "output";
@@ -513,8 +516,7 @@ public class ImportCustomersJobBean {
      * @throws Exception exception occurs when genering report
      */
     private void generateReport(String fileName) throws Exception {
-        String importDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "customers" + File.separator;
+        String importDir = param.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customers" + File.separator;
 
         if (sellersWarning.getWarnings() != null) {
             String warningDir = importDir + "output" + File.separator + "warnings";

@@ -614,7 +614,7 @@ public class RatingService extends BusinessService<WalletOperation> {
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId)
             throws BusinessException {
         // FIXME: the price plan properties could be null !
-        log.debug("AKK RS ratePrice line 613");
+//        log.debug("AKK RS ratePrice line 613");
         // log.info("ratePrice rate " + bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
@@ -865,7 +865,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount);
 
-        log.debug("AKK before evaluating expression");
+//        log.debug("AKK before evaluating expression");
         Object res = null;
         try {
             res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);

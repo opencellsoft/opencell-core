@@ -490,8 +490,13 @@ http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>providerSelfDetail</from-outcome>
-		<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml</to-view-id>
-		<redirect include-view-params="true" />
+		<to-view-id>/pages/admin/providers/providerSelfDetail.xhtml?</to-view-id>
+		<redirect include-view-params="true">
+			<view-param>
+				<name>mode</name>
+				<value>appConfiguration</value>
+			</view-param>
+		</redirect>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>providerContacts</from-outcome>

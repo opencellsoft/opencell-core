@@ -6,6 +6,7 @@ import javax.jws.WebService;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.handler.MessageContext;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.CountryIsoApi;
 import org.meveo.api.CurrencyIsoApi;
 import org.meveo.api.LanguageIsoApi;
@@ -17,6 +18,7 @@ import org.meveo.api.dto.CountryIsoDto;
 import org.meveo.api.dto.CurrencyIsoDto;
 import org.meveo.api.dto.LanguageIsoDto;
 import org.meveo.api.dto.ProviderDto;
+import org.meveo.api.dto.ProvidersDto;
 import org.meveo.api.dto.response.GetCountriesIsoResponse;
 import org.meveo.api.dto.response.GetCountryIsoResponse;
 import org.meveo.api.dto.response.GetCurrenciesIsoResponse;
@@ -46,7 +48,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
 
     @Inject
     private ProviderApi providerApi;
-    
+
     @Inject
     private FilesApi filesApi;
 
@@ -55,7 +57,7 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
 
         try {
-            providerApi.create(postData);
+            throw new BusinessException("There should already be a provider setup");
 
         } catch (Exception e) {
             processException(e, result);
@@ -297,9 +299,9 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
         return result;
     }
 
-	@Override
-	public GetLanguagesIsoResponse listIsoLanguages() {
-		GetLanguagesIsoResponse result = new GetLanguagesIsoResponse();
+    @Override
+    public GetLanguagesIsoResponse listIsoLanguages() {
+        GetLanguagesIsoResponse result = new GetLanguagesIsoResponse();
 
         try {
             result.setLanguages(languageIsoApi.list());
@@ -308,11 +310,11 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public GetCountriesIsoResponse listIsoCountries() {
-		GetCountriesIsoResponse result = new GetCountriesIsoResponse();
+    @Override
+    public GetCountriesIsoResponse listIsoCountries() {
+        GetCountriesIsoResponse result = new GetCountriesIsoResponse();
 
         try {
             result.setCountries(countryIsoApi.list());
@@ -321,11 +323,11 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public GetCurrenciesIsoResponse listIsoCurrencies() {
-		GetCurrenciesIsoResponse result = new GetCurrenciesIsoResponse();
+    @Override
+    public GetCurrenciesIsoResponse listIsoCurrencies() {
+        GetCurrenciesIsoResponse result = new GetCurrenciesIsoResponse();
 
         try {
             result.setCurrencies(currencyIsoApi.list());
@@ -334,111 +336,151 @@ public class SuperAdminSettingsWsImpl extends BaseWs implements SuperAdminSettin
         }
 
         return result;
-	}
+    }
 
-	@Override
-	public GetFilesResponseDto listAllFiles() {
-		GetFilesResponseDto result = new GetFilesResponseDto();
+    @Override
+    public GetFilesResponseDto listAllFiles() {
+        GetFilesResponseDto result = new GetFilesResponseDto();
 
-		try {
-			result.setFiles(filesApi.listFiles(null));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+        try {
+            result.setFiles(filesApi.listFiles(null));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public GetFilesResponseDto listFiles(String dir) {
-		GetFilesResponseDto result = new GetFilesResponseDto();
+    @Override
+    public GetFilesResponseDto listFiles(String dir) {
+        GetFilesResponseDto result = new GetFilesResponseDto();
 
-		try {
-			result.setFiles(filesApi.listFiles(dir));
-		} catch (Exception e) {
-			processException(e, result.getActionStatus());
-		}
+        try {
+            result.setFiles(filesApi.listFiles(dir));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus createDir(String dir) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus createDir(String dir) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			filesApi.createDir(dir);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            filesApi.createDir(dir);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus zipFile(String filePath) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus zipFile(String filePath) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			filesApi.zipFile(filePath);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            filesApi.zipFile(filePath);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
+        return result;
+    }
 
-	@Override
-	public ActionStatus zipDir(String dir) {
-		ActionStatus result = new ActionStatus();
+    @Override
+    public ActionStatus zipDir(String dir) {
+        ActionStatus result = new ActionStatus();
 
-		try {
-			filesApi.zipDir(dir);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+        try {
+            filesApi.zipDir(dir);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-		return result;
-	}
-	
-	@Override
-	public ActionStatus suppressFile(String filePath) {
-		ActionStatus result = new ActionStatus();
+        return result;
+    }
 
-		try {
-			filesApi.suppressFile(filePath);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+    @Override
+    public ActionStatus suppressFile(String filePath) {
+        ActionStatus result = new ActionStatus();
 
-		return result;
-	}
+        try {
+            filesApi.suppressFile(filePath);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	@Override
-	public ActionStatus suppressDir(String dir) {
-		ActionStatus result = new ActionStatus();
+        return result;
+    }
 
-		try {
-			filesApi.suppressDir(dir);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+    @Override
+    public ActionStatus suppressDir(String dir) {
+        ActionStatus result = new ActionStatus();
 
-		return result;
-	}
+        try {
+            filesApi.suppressDir(dir);
+        } catch (Exception e) {
+            processException(e, result);
+        }
 
-	@Override
-	public ActionStatus downloadFile(String file) {
-		ActionStatus result = new ActionStatus();
+        return result;
+    }
 
-		try {
-			MessageContext mc = webServiceContext.getMessageContext();
-			HttpServletResponse response = (HttpServletResponse) mc.get(MessageContext.SERVLET_RESPONSE);
-			filesApi.downloadFile(file, response);
-		} catch (Exception e) {
-			processException(e, result);
-		}
+    @Override
+    public ActionStatus downloadFile(String file) {
+        ActionStatus result = new ActionStatus();
 
-		return result;
-	}
+        try {
+            MessageContext mc = webServiceContext.getMessageContext();
+            HttpServletResponse response = (HttpServletResponse) mc.get(MessageContext.SERVLET_RESPONSE);
+            filesApi.downloadFile(file, response);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus createTenant(ProviderDto postData) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            providerApi.createTenant(postData);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
+
+    @Override
+    public ProvidersDto listTenants() {
+
+        ProvidersDto result = new ProvidersDto();
+
+        try {
+            result = providerApi.listTenants();
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public ActionStatus removeTenant(String providerCode) {
+        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
+
+        try {
+            providerApi.removeTenant(providerCode);
+        } catch (Exception e) {
+            processException(e, result);
+        }
+
+        return result;
+    }
 }

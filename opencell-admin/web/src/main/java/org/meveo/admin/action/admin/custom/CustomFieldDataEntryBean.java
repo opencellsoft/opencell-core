@@ -709,7 +709,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             Map<String, Object> rowValues = new HashMap<String, Object>();
 
-            for (CustomFieldMatrixColumn column : cft.getMatrixValueColumns()) {
+            for (CustomFieldMatrixColumn column : cft.getMatrixKeyColumns()) {
 
                 Object newValue = null;
 

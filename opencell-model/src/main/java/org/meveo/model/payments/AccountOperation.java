@@ -112,6 +112,12 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     @Column(name = "amount", precision = 23, scale = 12)
     private BigDecimal amount;
+    
+    @Column(name = "amount_without_tax", precision = 23, scale = 12)
+    private BigDecimal amountWithoutTax;
+
+    @Column(name = "tax_amount", precision = 23, scale = 12)
+    private BigDecimal taxAmount;
 
     @Column(name = "matching_amount", precision = 23, scale = 12)
     private BigDecimal matchingAmount = BigDecimal.ZERO;
@@ -170,6 +176,10 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
+    
+    @Column(name = "payment_method")
+    @Enumerated(EnumType.STRING)
+    private PaymentMethodEnum paymentMethod;
 
     public Date getDueDate() {
         return dueDate;
@@ -414,4 +424,47 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
+
+    /**
+     * @return the amountWithoutTax
+     */
+    public BigDecimal getAmountWithoutTax() {
+        return amountWithoutTax;
+    }
+
+    /**
+     * @param amountWithoutTax the amountWithoutTax to set
+     */
+    public void setAmountWithoutTax(BigDecimal amountWithoutTax) {
+        this.amountWithoutTax = amountWithoutTax;
+    }
+
+    /**
+     * @return the taxAmount
+     */
+    public BigDecimal getTaxAmount() {
+        return taxAmount;
+    }
+
+    /**
+     * @param taxAmount the taxAmount to set
+     */
+    public void setTaxAmount(BigDecimal taxAmount) {
+        this.taxAmount = taxAmount;
+    }
+
+    /**
+     * @return the paymentMethod
+     */
+    public PaymentMethodEnum getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    /**
+     * @param paymentMethod the paymentMethod to set
+     */
+    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+    
 }

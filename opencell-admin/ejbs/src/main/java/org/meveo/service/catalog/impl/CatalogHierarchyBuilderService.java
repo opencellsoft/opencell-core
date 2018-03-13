@@ -225,6 +225,7 @@ public class CatalogHierarchyBuilderService {
                 newProductTemplate.setCfValues(productTemplate.getCfValues());
             }
 
+            productTemplateService.refresh(productTemplate);
             productTemplateService.create(newProductTemplate);
 
             // true on GUI instantiation
@@ -414,6 +415,7 @@ public class CatalogHierarchyBuilderService {
                 newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
             }
 
+            serviceTemplateService.refresh(serviceTemplate);
             serviceTemplateService.create(newServiceTemplate);
 
             // update code if duplicate

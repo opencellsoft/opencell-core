@@ -140,7 +140,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 			// Create a new entity from a rejectPayment template
 		} else if ("loadFromTemplateRejectPayment".equals(initType)) {
 			String occTemplateRejectPaymentCode = paramBean.getProperty(
-					"occ.templateRejectPaymentCode", "IP_PLVT");
+					"occ.rejectedPayment.dd", "IP_PLVT");
 			OCCTemplate occ = occTemplateService.findByCode(
 					occTemplateRejectPaymentCode);
 			copyFromTemplate(occ);

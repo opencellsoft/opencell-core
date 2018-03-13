@@ -54,6 +54,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
@@ -111,6 +112,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private TerminationReasonService terminationReasonService;
+    
+    @Inject
+    private CountryService countryService;
 
     /**
      * Register an order from TMForumApi.
@@ -145,8 +149,7 @@ public class OrderApi extends BaseApi {
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
         if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
-            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null);
-            paymentMethod.updateAudit(currentUser);
+            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
             order.setPaymentMethod(paymentMethod);
         }
 
@@ -248,7 +251,7 @@ public class OrderApi extends BaseApi {
                 shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
                 shippingAddress.setAddress3(productOrderItem.getProduct().getPlace().getAddress().getAddress3());
                 shippingAddress.setCity(productOrderItem.getProduct().getPlace().getAddress().getCity());
-                shippingAddress.setCountry(productOrderItem.getProduct().getPlace().getAddress().getCountry());
+                shippingAddress.setCountry(countryService.findByCode(productOrderItem.getProduct().getPlace().getAddress().getCountry()));
                 shippingAddress.setZipCode(productOrderItem.getProduct().getPlace().getAddress().getZipCode());
                 shippingAddress.setState(productOrderItem.getProduct().getPlace().getAddress().getState());
                 orderItem.setShippingAddress(shippingAddress);

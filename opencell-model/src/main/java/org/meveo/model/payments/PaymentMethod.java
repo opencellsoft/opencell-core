@@ -162,8 +162,8 @@ public abstract class PaymentMethod extends EnableEntity {
     }
 
     public abstract void updateWith(PaymentMethod otherPaymentMethod);
-	
-	public boolean isExpired() {
-	    return false;
-	}
+
+    public boolean isExpired() {
+        return false;
+    }
 }

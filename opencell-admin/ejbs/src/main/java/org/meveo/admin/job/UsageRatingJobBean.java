@@ -54,13 +54,6 @@ public class UsageRatingJobBean {
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
 
-        long startDate = System.currentTimeMillis();
-        for (int i = 0; i < 300000; i++) {
-            jobExecutionService.isJobRunningOnThis(result.getJobInstance());
-        }
-
-        log.debug("Finished cache check: {}", (System.currentTimeMillis() - startDate));
-
         try {
             Long nbRuns = new Long(1);
             Long waitingMillis = new Long(0);
