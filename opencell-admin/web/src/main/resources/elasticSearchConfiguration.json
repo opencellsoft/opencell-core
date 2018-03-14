@@ -52,6 +52,7 @@
 			"address.city": "address.city",
 			"address.country": "address.country.countryCode",
 			"address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
@@ -64,6 +65,7 @@
 			"address.city": "address.city",
 			"address.country": "address.country.countryCode",
 			"address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
@@ -78,6 +80,7 @@
 			"address.city": "address.city",
 			"address.country": "address.country.countryCode",
 			"address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
@@ -90,6 +93,7 @@
 			"address.city": "address.city",
 			"address.country": "address.country.countryCode",
 			"address.state": "address.state",
+            "name.fullName": "getName().getFullName()",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code",
@@ -106,6 +110,7 @@
 		},
 		"Subscription": {
 			"userAccount.code": "getUserAccount().getCode()",
+            "userAccount.name.fullName": "getUserAccount().getName().getFullName()",
 			"userAccount.name.firstName": "getUserAccount().getName().firstName",
 			"userAccount.name.lastName": "getUserAccount().getName().lastName",
 			"userAccount.name.title": "getUserAccount().getName().title.description",
@@ -124,6 +129,7 @@
 			"reference": "reference",
 			"customerAccount.code": "getCustomerAccount().getCode()",
 			"customerAccount.customer": "getCustomerAccount().getCustomer().getCode()",
+            "customerAccount.name.fullName": "getCustomerAccount().getName().getFullName()",
 			"customerAccount.name.firstName": "getCustomerAccount().getName().firstName",
 			"customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
 			"customerAccount.name.title": "getCustomerAccount().getName().title.description",
@@ -132,6 +138,7 @@
 		"RatedTransaction": {
 			"billingRun": "getBillingRun().getId()",
 			"billingAccount.code": "getBillingAccount().getCode()",
+            "billingAccount.name.fullName": "getBillingAccount().getName().getFullName()",
 			"billingAccount.name.firstName": "getBillingAccount().getName().firstName",
 			"billingAccount.name.lastName": "getBillingAccount().getName().lastName",
 			"billingAccount.name.title": "getBillingAccount().getName().title.description",
@@ -206,32 +213,44 @@
 				"Subscription": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"userAccount": {
 							"properties": {
 								"code": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"description": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"billingAccount": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"name": {
 									"properties": {
+										"fullName": {
+											"type": "string",
+											"index": "not_analyzed"
+										},
 										"firstName": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										},
 										"lastName": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										},
 										"title": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										}
 									}
 								}
@@ -240,10 +259,12 @@
 						"offer": {
 							"properties": {
 								"code": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"description": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						}
@@ -409,46 +430,62 @@
 				"Customer": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"address": {
 							"properties": {
 								"address1": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address2": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address3": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"city": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"country": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"zipCode": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"state": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						},
 						"name": {
 							"properties": {
+								"fullName": {
+									"type": "string",
+									"index": "not_analyzed"
+								},
 								"firstName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"lastName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"title": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						}
@@ -457,49 +494,66 @@
 				"CustomerAccount": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"customer": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"address": {
 							"properties": {
 								"address1": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address2": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address3": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"city": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"country": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"zipCode": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"state": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						},
 						"name": {
 							"properties": {
+								"fullName": {
+									"type": "string",
+									"index": "not_analyzed"
+								},
 								"firstName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"lastName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"title": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						},
@@ -511,46 +565,62 @@
 				"BillingAccount": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"address": {
 							"properties": {
 								"address1": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address2": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address3": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"city": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"country": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"zipCode": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"state": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						},
 						"name": {
 							"properties": {
+								"fullName": {
+									"type": "string",
+									"index": "not_analyzed"
+								},
 								"firstName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"lastName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"title": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						}
@@ -559,49 +629,66 @@
 				"UserAccount": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"billingAccount": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"address": {
 							"properties": {
 								"address1": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address2": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"address3": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"city": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"country": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"zipCode": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"state": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						},
 						"name": {
 							"properties": {
+								"fullName": {
+									"type": "string",
+									"index": "not_analyzed"
+								},
 								"firstName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"lastName": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"title": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						}
@@ -610,10 +697,12 @@
 				"Seller": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						}
 					}
 				}
@@ -648,53 +737,71 @@
 				"AccountOperation": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"occCode": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"occDescription": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"transactionCategory": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"type": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"amount": {
 							"type": "double"
 						},
 						"matchingStatus": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"reference": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"customerAccount": {
 							"properties": {
 								"code": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"description": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"customer": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"name": {
 									"properties": {
+										"fullName": {
+											"type": "string",
+											"index": "not_analyzed"
+										},
 										"firstName": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										},
 										"lastName": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										},
 										"title": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										}
 									}
 								}
@@ -705,19 +812,24 @@
 				"RatedTransaction": {
 					"properties": {
 						"code": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"description": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"billingRun": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"invoice": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"status": {
-							"type": "string"
+							"type": "string",
+							"index": "not_analyzed"
 						},
 						"amountWithoutTax": {
 							"type": "double"
@@ -734,31 +846,42 @@
 						"invoiceSubCategory": {
 							"properties": {
 								"code": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"description": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								}
 							}
 						},
 						"billingAccount": {
 							"properties": {
 								"code": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"description": {
-									"type": "string"
+									"type": "string",
+									"index": "not_analyzed"
 								},
 								"name": {
 									"properties": {
+										"fullName": {
+											"type": "string",
+											"index": "not_analyzed"
+										},
 										"firstName": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										},
 										"lastName": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										},
 										"title": {
-											"type": "string"
+											"type": "string",
+											"index": "not_analyzed"
 										}
 									}
 								}
