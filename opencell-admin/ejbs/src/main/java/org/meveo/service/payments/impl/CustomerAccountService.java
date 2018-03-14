@@ -291,10 +291,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         try {
             ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-            String occTransferAccountCredit = param.getProperty("occ.templateTransferAccountCredit", "TRANS_CRED");
-            String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit", "TRANS_DEB");
+            String occTransferAccountCredit = param.getProperty("occ.templateTransferAccountCredit", null);
+            String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit", null);
             String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
-            String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
+            String descTransfertTo = paramBean.getProperty("occ.descTransfertTo", "transfer to");
 
             otherCreditAndChargeService.addOCC(occTransferAccountDebit, descTransfertFrom + " " + toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date());
             otherCreditAndChargeService.addOCC(occTransferAccountCredit, descTransfertTo + " " + fromCustomerAccount.getCode(), toCustomerAccount, amount, new Date());

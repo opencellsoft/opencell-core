@@ -130,5 +130,16 @@
 		<sql>update ${db.schema.adapted}billing_invoice_type set occ_template_id = (select id from ${db.schema.adapted}ar_occ_template where code = 'INV_CRN') where code = 'ADJ'</sql>
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='FA_ADJ'</sql>
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='FA_N_FACT'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_NI_CL'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_ODC'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_ODD'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_CC_CL'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_CL_NI'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='RG_VIRT'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='TRANS_CRED'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='TRANS_DEB'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_EXC'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_IRRE'</sql>
+		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_CL_CC'</sql>				
     </changeSet>
 </databaseChangeLog>
