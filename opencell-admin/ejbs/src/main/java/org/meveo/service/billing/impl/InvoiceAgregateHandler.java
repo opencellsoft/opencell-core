@@ -47,6 +47,10 @@ public class InvoiceAgregateHandler {
 	@Inject 
 	private InvoiceSubCategoryService invoiceSubCategoryService;	
 	
+	@Inject 
+    private BillingAccountService billingAccountService;    
+    
+	
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
@@ -192,9 +196,13 @@ public class InvoiceAgregateHandler {
 			throw new BusinessException("AmountWithoutTax is null");
 		}
 
-        amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
+		if(billingAccountService.isExonerated(billingAccount)) {
+		    amountWithTax = amountWithoutTax;
+		} else {
+		    amountWithTax = getAmountWithTax(currentTax, amountWithoutTax);
+		    amountTax = getAmountTax(amountWithTax, amountWithoutTax);
+		}
         log.trace("addOrRemoveLine amountWithTax {}", amountWithTax);
-        amountTax = getAmountTax(amountWithTax, amountWithoutTax);
         log.trace("addOrRemoveLine amountTax {}", amountTax);
 
         invoiceAmountWithoutTax = addOrSubtract(invoiceAmountWithoutTax, amountWithoutTax, isToAdd);
