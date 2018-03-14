@@ -486,6 +486,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setAmountWithoutTax(accountOp.getAmountWithoutTax());
         accountOperationDto.setOrderNumber(accountOp.getOrderNumber());
         accountOperationDto.setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
+        accountOperationDto.setExcludedFromDunning(accountOp.getExcludedFromDunning());
         List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
         if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
             MatchingAmountDto matchingAmountDto = null;
