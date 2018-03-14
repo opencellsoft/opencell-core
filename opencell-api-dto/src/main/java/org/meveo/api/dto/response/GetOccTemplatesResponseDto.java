@@ -9,13 +9,17 @@ import org.meveo.api.dto.OccTemplatesDto;
 
 @XmlRootElement(name = "GetOccTemplatesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class GetOccTemplatesResponseDto extends BaseResponse {
+public class GetOccTemplatesResponseDto extends SearchResponse {
 
     private static final long serialVersionUID = 4612709775410582280L;
 
     private OccTemplatesDto occTemplates;
 
     public OccTemplatesDto getOccTemplates() {
+        if(occTemplates == null) {
+            occTemplates = new OccTemplatesDto();
+        }
+        
         return occTemplates;
     }
 

@@ -308,7 +308,8 @@ public class WalletApi extends BaseApi {
         walletOperation.setDescription(postData.getDescription());
         walletOperation.setCode(postData.getCode());
         if (subscription != null) {
-            walletOperation.setOfferCode(subscription.getOffer().getCode());
+            // walletOperation.setOfferCode(subscription.getOffer().getCode()); offerCode is set in walletOperation.setOfferTemplate
+            walletOperation.setOfferTemplate(subscription.getOffer());
         }
         walletOperation.setSeller(userAccount.getBillingAccount().getCustomerAccount().getCustomer().getSeller());
         walletOperation.setCurrency(currency);
@@ -386,10 +387,8 @@ public class WalletApi extends BaseApi {
         result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
-        log.error("AKK total found = {} {} {}", totalCount, totalCount > 0, totalCount.intValue() > 0);
         if (totalCount > 0) {
             List<WalletOperation> walletOperations = walletOperationService.list(paginationConfig);
-            log.error("AKK list is {}", walletOperations.size());
             for (WalletOperation wo : walletOperations) {
                 result.getWalletOperations().add(new WalletOperationDto(wo));
             }

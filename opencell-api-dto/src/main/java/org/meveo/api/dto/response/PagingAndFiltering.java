@@ -250,10 +250,11 @@ public class PagingAndFiltering implements Serializable {
         Map<String, Object> filters = new HashMap<String, Object>();
 
         String[] splitByItem = query.split("\\|");
-
         for (String filterItem : splitByItem) {
             String[] filterItems = filterItem.split(":");
-            filters.put(filterItems[0], filterItems[1]);
+            if (filterItems.length >= 2) {
+                filters.put(filterItems[0], filterItems[1]);
+            }
         }
 
         return filters;

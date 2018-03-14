@@ -19,11 +19,14 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.mediation.CDRRejectionCauseEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.medina.impl.CDRParsingException;
@@ -59,6 +62,14 @@ public class MediationJobBean {
     /** The job execution service. */
     @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /** The cdr file name. */
     String cdrFileName;
@@ -97,9 +108,8 @@ public class MediationJobBean {
         log.debug("Running with parameter={}", parameter);
         report = "";
 
-        ParamBean parambean = ParamBean.getInstance();
-        String meteringDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                + "metering" + File.separator;
+        ParamBean parambean = paramBeanFactory.getInstance();
+        String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
 
         outputDir = meteringDir + "output";
         rejectDir = meteringDir + "reject";
@@ -120,15 +130,15 @@ public class MediationJobBean {
             log.info("InputFiles job {} in progress...", file.getName());
 
             cdrFileName = file.getName();
-            File currentFile = FileUtils.addExtension(file, ".processing_"+EjbUtils.getCurrentClusterNode());
+            File currentFile = FileUtils.addExtension(file, ".processing_" + EjbUtils.getCurrentClusterNode());
             BufferedReader cdrReader = null;
             try {
                 addReport("File = " + file.getName());
                 cdrReader = new BufferedReader(new InputStreamReader(new FileInputStream(currentFile)));
                 cdrParser.init(file);
                 String line = null;
-                int processed = 0;               
-                while ((line = cdrReader.readLine()) != null && !wasStoped ) {
+                int processed = 0;
+                while ((line = cdrReader.readLine()) != null && !wasStoped) {
                     wasStoped = !jobExecutionService.isJobRunningOnThis(result.getJobInstance());
                     processed++;
                     try {

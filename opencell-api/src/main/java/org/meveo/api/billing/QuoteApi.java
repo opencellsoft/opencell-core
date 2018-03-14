@@ -2,7 +2,6 @@ package org.meveo.api.billing;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -305,7 +304,7 @@ public class QuoteApi extends BaseApi {
         try {
             populateCustomFields(productQuote.getCustomFields(), quote, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -618,7 +617,7 @@ public class QuoteApi extends BaseApi {
         CustomFieldsDto customFields = extractCustomFields(product, Subscription.class);
         try {
             populateCustomFields(customFields, subscription, true, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException  e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -633,7 +632,7 @@ public class QuoteApi extends BaseApi {
     }
 
     private ProductInstance instantiateVirtualProduct(ProductTemplate productTemplate, Product product, QuoteItem quoteItem, ProductQuoteItem productQuoteItem,
-            Subscription subscription) throws BusinessException, MissingParameterException {
+            Subscription subscription) throws BusinessException, MeveoApiException {
 
         log.debug("Instantiating virtual product from product template {} for quote {} line {}", productTemplate.getCode(), quoteItem.getQuote().getCode(), quoteItem.getItemId());
 
@@ -655,13 +654,14 @@ public class QuoteApi extends BaseApi {
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
             populateCustomFields(customFields, productInstance, true, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
             log.error("Failed to associate custom field instance to an entity", e);
-            throw new BusinessException("Failed to associate custom field instance to an entity", e);
+            throw e;
         }
+        
         productInstanceService.instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, true);
 
         return productInstance;
@@ -783,7 +783,7 @@ public class QuoteApi extends BaseApi {
             CustomFieldsDto customFields = extractCustomFields(serviceProduct, ServiceInstance.class);
             try {
                 populateCustomFields(customFields, serviceInstance, true, true);
-            } catch (MissingParameterException e) {
+            } catch (MissingParameterException | InvalidParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                 throw e;
             } catch (Exception e) {
@@ -846,7 +846,7 @@ public class QuoteApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productQuote.getCustomFields(), quote, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -856,7 +856,7 @@ public class QuoteApi extends BaseApi {
 
         // TODO Need to initiate workflow if there is one
 
-        quote = quoteService.refreshOrRetrieve(quote);
+        quote = quoteService.update(quote);
 
         return quoteToDto(quote);
 

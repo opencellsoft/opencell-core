@@ -21,7 +21,7 @@ import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ExcelToCsv;
 import org.meveo.commons.utils.FileParsers;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.job.JobExecutionService;
@@ -73,6 +73,10 @@ public class FlatFileProcessingJobBean {
 
     /** The username. */
     String username;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Execute.
@@ -155,7 +159,7 @@ public class FlatFileProcessingJobBean {
                 fileParser.setMappingDescriptor(mappingConf);
                 fileParser.setDataName(recordVariableName);
                 fileParser.parsing();
-                boolean continueAfterError = "true".equals(ParamBean.getInstance().getProperty("flatfile.continueOnError", "true"));
+                boolean continueAfterError = "true".equals(paramBeanFactory.getInstance().getProperty("flatfile.continueOnError", "true"));
                 while (fileParser.hasNext() && jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     RecordContext recordContext = null;
                     cpLines++;
@@ -168,7 +172,7 @@ public class FlatFileProcessingJobBean {
                         script.execute(executeParams);
                         outputRecord(recordContext);
                         result.registerSucces();
-                        
+
                     } catch (Throwable e) {
                         String erreur = (recordContext == null || recordContext.getReason() == null) ? e.getMessage() : recordContext.getReason();
                         log.warn("error on reject record ", e);
@@ -201,14 +205,11 @@ public class FlatFileProcessingJobBean {
                     log.error("Failed to close file parser");
                 }
                 try {
-                    if (fileParser != null) {
-                        fileParser.close();
-                    }
                     if (script != null) {
                         script.finalize(context);
                     }
                 } catch (Exception e) {
-                    report += "\r\n error in script finailzation" + e.getMessage();
+                    report += "\r\n error in script finailzation : " + e.getMessage();
                 }
                 try {
                     if (currentFile != null) {

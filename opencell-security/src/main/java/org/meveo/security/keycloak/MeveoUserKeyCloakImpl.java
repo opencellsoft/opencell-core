@@ -41,12 +41,14 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
      * Current user constructor
      * 
      * @param securityContext Current JAAS security context
-     * @param forcedUserName Forced authentication username (when authenticated with @RunAs in job)
+     * @param forcedUserName Forced authentication username (when authenticated with @RunAs in job or any other timer trigger or at server startup)
+     * @param forcedProvider Forced provider (when authenticated with @RunAs in job or any other timer trigger or at server startup)
      * @param additionalRoles Additional roles to assign
      * @param roleToPermissionMapping Role to permission mapping
      */
     @SuppressWarnings("rawtypes")
-    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, Set<String> additionalRoles, Map<String, Set<String>> roleToPermissionMapping) {
+    public MeveoUserKeyCloakImpl(SessionContext securityContext, String forcedUserName, String forcedProvider, Set<String> additionalRoles,
+            Map<String, Set<String>> roleToPermissionMapping) {
 
         if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
@@ -79,7 +81,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
             if (accessToken.getResourceAccess(clientName) != null) {
                 this.roles.addAll(accessToken.getResourceAccess(clientName).getRoles());
             }
-            
+
             this.locale = accessToken.getLocale();
             this.authenticated = true;
 
@@ -92,7 +94,7 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
 
             if (forcedUserName != null) {
                 this.userName = forcedUserName;
-
+                this.providerCode = forcedProvider;
                 forcedAuthentication = true;
                 authenticated = true;
             }
@@ -145,5 +147,19 @@ public class MeveoUserKeyCloakImpl extends MeveoUser {
         } else {
             return forcedUserName;
         }
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected static String extractProviderCode(SessionContext securityContext) {
+
+        if (securityContext.getCallerPrincipal() instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) securityContext.getCallerPrincipal();
+            KeycloakSecurityContext keycloakSecurityContext = keycloakPrincipal.getKeycloakSecurityContext();
+            if (keycloakSecurityContext.getToken().getOtherClaims() != null) {
+                return (String) keycloakSecurityContext.getToken().getOtherClaims().get(CLAIM_PROVIDER);
+            }
+
+        }
+        return null;
     }
 }

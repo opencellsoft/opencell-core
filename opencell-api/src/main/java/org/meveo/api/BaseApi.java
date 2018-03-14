@@ -22,7 +22,6 @@ import javax.ejb.EJB;
 import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-import javax.validation.ValidationException;
 import javax.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;

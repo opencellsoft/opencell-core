@@ -215,6 +215,7 @@ public class CalendarTest {
         CalendarPeriod calendar = new CalendarPeriod();
         calendar.setNbPeriods(1);
         calendar.setPeriodLength(20);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 15, 12, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
@@ -256,6 +257,7 @@ public class CalendarTest {
         calendar.setNbPeriods(1);
         calendar.setPeriodLength(1);
         calendar.setPeriodUnit(java.util.Calendar.MONTH);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 15, 12, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
@@ -297,6 +299,7 @@ public class CalendarTest {
         calendar.setNbPeriods(1);
         calendar.setPeriodLength(3);
         calendar.setPeriodUnit(java.util.Calendar.HOUR_OF_DAY);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 12, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 12, 58));
@@ -338,6 +341,7 @@ public class CalendarTest {
         calendar.setNbPeriods(1);
         calendar.setPeriodLength(3);
         calendar.setPeriodUnit(java.util.Calendar.MINUTE);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 12, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 12, 58));
@@ -379,6 +383,7 @@ public class CalendarTest {
         calendar.setNbPeriods(1);
         calendar.setPeriodLength(3);
         calendar.setPeriodUnit(java.util.Calendar.SECOND);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 12, 50));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 12, 49));
@@ -419,6 +424,7 @@ public class CalendarTest {
         CalendarPeriod calendar = new CalendarPeriod();
         calendar.setNbPeriods(5);
         calendar.setPeriodLength(7);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 15, 12, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
@@ -484,6 +490,7 @@ public class CalendarTest {
         calendar.setNbPeriods(6);
         calendar.setPeriodLength(10);
         calendar.setPeriodUnit(java.util.Calendar.MINUTE);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 10, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 5, 15, 10, 58));
@@ -524,6 +531,7 @@ public class CalendarTest {
         CalendarPeriod calendar = new CalendarPeriod();
         calendar.setNbPeriods(0);
         calendar.setPeriodLength(7);
+        calendar.setLastUnitInDateTruncate(java.util.Calendar.SECOND);
         calendar.setInitDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 2, 15, 12, 59));
 
         Date prevDate = calendar.previousCalendarDate(DateUtils.newDate(2015, java.util.Calendar.FEBRUARY, 1, 0, 0, 0));
@@ -652,7 +660,7 @@ public class CalendarTest {
     }
 
     @Test()
-    public void testfullWeekdayIntervalCalendar() {
+    public void testFullWeekdayIntervalCalendar() {
 
         CalendarInterval calendar = new CalendarInterval();
         calendar.setIntervalType(CalendarIntervalTypeEnum.WDAY);
@@ -686,7 +694,7 @@ public class CalendarTest {
     }
 
     @Test()
-    public void testfullWeekdayIntervalCalendar2() {
+    public void testFullWeekdayIntervalCalendar2() {
 
         CalendarInterval calendar = new CalendarInterval();
         calendar.setIntervalType(CalendarIntervalTypeEnum.WDAY);

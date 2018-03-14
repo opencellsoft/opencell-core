@@ -16,7 +16,7 @@ public class CustomerCategoryDto extends BusinessDto{
 
 	private static final long serialVersionUID = -8778571285967620018L;
 
-	private boolean exoneratedFromTaxes;
+	private Boolean exoneratedFromTaxes;
 	private String exonerationTaxEl;
 	private String exonerationReason;
 	
@@ -35,11 +35,11 @@ public class CustomerCategoryDto extends BusinessDto{
 		return "CustomerCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", exoneratedFromTaxes=" + exoneratedFromTaxes + ", exonerationTaxEl=" + exonerationTaxEl + ", exonerationReason=" + exonerationReason + "]";
 	}
 
-	public boolean isExoneratedFromTaxes() {
+	public Boolean isExoneratedFromTaxes() {
 		return exoneratedFromTaxes;
 	}
 
-	public void setExoneratedFromTaxes(boolean exoneratedFromTaxes) {
+	public void setExoneratedFromTaxes(Boolean exoneratedFromTaxes) {
 		this.exoneratedFromTaxes = exoneratedFromTaxes;
 	}
 

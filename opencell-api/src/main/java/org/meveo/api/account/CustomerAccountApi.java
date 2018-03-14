@@ -25,6 +25,7 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
@@ -73,6 +74,9 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+    
+    @Inject
+    private PaymentMethodApi paymentMethodApi;
 
     @EJB
     private AccountHierarchyApi accountHierarchyApi;
@@ -107,7 +111,8 @@ public class CustomerAccountApi extends AccountEntityApi {
 
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                paymentMethodDto.validate();
+                paymentMethodDto.setCustomerCode(postData.getCustomer());
+                paymentMethodApi.validate(paymentMethodDto,false);
             }
         }
 
@@ -141,7 +146,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             } else {
                 paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.CHECK);
             }
-            paymentMethodDto.validate();
+            paymentMethodApi.validate( paymentMethodDto,false);
             postData.getPaymentMethods().add(paymentMethodDto);
 
         }
@@ -170,9 +175,9 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (postData.getPaymentMethods() != null) {
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                paymentMethodDto.validate();
-                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount));
+            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {                
+                paymentMethodApi.validate( paymentMethodDto,false);
+                customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
             }
         }
 
@@ -183,7 +188,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customerAccount, true, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -298,6 +303,10 @@ public class CustomerAccountApi extends AccountEntityApi {
             customerAccount.setDunningLevel(postData.getDunningLevel());
         }
 
+        if (businessAccountModel != null) {
+            customerAccount.setBusinessAccountModel(businessAccountModel);
+        }
+
         // Synchronize payment methods
         if (postData.getPaymentMethods() != null && !postData.getPaymentMethods().isEmpty()) {
             if (customerAccount.getPaymentMethods() == null) {
@@ -307,7 +316,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             List<PaymentMethod> paymentMethodsFromDto = new ArrayList<PaymentMethod>();
 
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
-                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount);
+                PaymentMethod paymentMethodFromDto = paymentMethodDto.fromDto(customerAccount, currentUser);
 
                 int index = customerAccount.getPaymentMethods().indexOf(paymentMethodFromDto);
                 if (index < 0) {
@@ -343,18 +352,14 @@ public class CustomerAccountApi extends AccountEntityApi {
                     "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
-            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount);
+            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);       
             customerAccount.addPaymentMethod(paymentMethodFromDto);
-        }
-
-        if (businessAccountModel != null) {
-            customerAccount.setBusinessAccountModel(businessAccountModel);
         }
 
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), customerAccount, false, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -409,7 +414,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             if (totalInvoiceBalance == null) {
                 throw new BusinessException("Total invoice balance calculation failed.");
             }
-            
+
             customerAccountDto.setBalance(balanceDue);
             customerAccountDto.setTotalInvoiceBalance(totalInvoiceBalance);
             customerAccountDto.setCreditBalance(creditBalance);

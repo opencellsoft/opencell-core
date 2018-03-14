@@ -9,14 +9,15 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.api.dto.payment.PayByCardResponseDto;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.payments.PaymentGateway;
+import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentService;
-import org.meveo.service.payments.impl.RefundService;
 import org.slf4j.Logger;
 
 /**
@@ -36,13 +37,10 @@ public class UnitPaymentCardJobBean {
     @Inject
     private PaymentService paymentService;
 
-    @Inject
-    private RefundService refundService;
-
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory) {
+    public void execute(JobExecutionResultImpl result, Long aoId, boolean createAO, boolean matchingAO, OperationCategoryEnum operationCategory, PaymentGateway paymentGateway,
+            PaymentMethodEnum paymentMethodType) {
         log.debug("Running with RecordedInvoice ID={}", aoId);
-
         AccountOperation accountOperation = null;
         try {
             accountOperation = accountOperationService.findById(aoId);
@@ -51,17 +49,30 @@ public class UnitPaymentCardJobBean {
             }
             List<Long> listAOids = new ArrayList<>();
             listAOids.add(aoId);
-            PayByCardResponseDto doPaymentResponseDto = new PayByCardResponseDto();
+            PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
             if (operationCategory == OperationCategoryEnum.CREDIT) {
-                doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
-                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+                if (paymentMethodType == PaymentMethodEnum.CARD) {
+                    doPaymentResponseDto = paymentService.payByCardToken(accountOperation.getCustomerAccount(),
+                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                } else {
+                   doPaymentResponseDto = paymentService.payByMandat(accountOperation.getCustomerAccount(),
+                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                }
             } else {
-                doPaymentResponseDto = refundService.refundByCardToken(accountOperation.getCustomerAccount(),
-                    accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO);
+                if (paymentMethodType == PaymentMethodEnum.CARD) {
+                    doPaymentResponseDto = paymentService.refundByCardToken(accountOperation.getCustomerAccount(),
+                        accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                } else {
+                   // doPaymentResponseDto = paymentService.refundByMandat(accountOperation.getCustomerAccount(),
+                       // accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                }
             }
-
-            if (!StringUtils.isBlank(doPaymentResponseDto.getPaymentID())) {
+            if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {
+                result.registerError(aoId, doPaymentResponseDto.getErrorMessage());
+                result.addReport("AccountOperation id : " + aoId + " RejectReason : " + doPaymentResponseDto.getErrorMessage());
+            } else {
                 result.registerSucces();
+
             }
 
         } catch (Exception e) {
@@ -69,5 +80,6 @@ public class UnitPaymentCardJobBean {
             result.registerError(aoId, e.getMessage());
             result.addReport("AccountOperation id : " + aoId + " RejectReason : " + e.getMessage());
         }
+
     }
 }

@@ -42,7 +42,6 @@ import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
-import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -58,6 +57,7 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
+import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 
 @Stateless
@@ -194,8 +194,9 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             throw new BusinessException("Module is not installed");
         }
 
+        ModuleScriptInterface moduleScript = null;
         if (module.getScript() != null) {
-            moduleScriptService.preUninstallModule(module.getScript().getCode(), module);
+            moduleScript = moduleScriptService.preUninstallModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
@@ -242,8 +243,8 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             }
         }
 
-        if (module.getScript() != null) {
-            moduleScriptService.postUninstallModule(module.getScript().getCode(), module);
+        if (moduleScript != null) {
+            moduleScriptService.postUninstallModule(moduleScript, module);
         }
 
         // Remove if it is a child module

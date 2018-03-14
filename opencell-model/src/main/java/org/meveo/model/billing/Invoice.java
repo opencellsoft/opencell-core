@@ -55,6 +55,7 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.order.Order;
+import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
@@ -130,7 +131,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
+    private PaymentMethodEnum paymentMethodType;
 
     @Column(name = "iban", length = 255)
     @Size(max = 255)
@@ -163,11 +164,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "detailed_invoice")
     private boolean isDetailedInvoice = true;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_id")
     private Invoice adjustedInvoice;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_type_id")
     private InvoiceType invoiceType;
 
@@ -189,7 +190,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @JoinTable(name = "billing_invoices_orders", joinColumns = @JoinColumn(name = "invoice_id"), inverseJoinColumns = @JoinColumn(name = "order_id"))
     private List<Order> orders = new ArrayList<Order>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quote_id")
     private Quote quote;
 
@@ -206,6 +207,10 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     @Column(name = "pdf_filename", length = 255)
     @Size(max = 255)
     private String pdfFilename;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_method_id")
+    private PaymentMethod paymentMethod;
 
     @Transient
     private Long invoiceAdjustmentCurrentSellerNb;
@@ -293,12 +298,12 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         this.amountWithTax = amountWithTax;
     }
 
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
+    public PaymentMethodEnum getPaymentMethodType() {
+        return paymentMethodType;
     }
 
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setPaymentMethodType(PaymentMethodEnum paymentMethod) {
+        this.paymentMethodType = paymentMethod;
     }
 
     public String getIban() {
@@ -631,10 +636,11 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
      * @return PDF file name without any subdirectories it might contain.
      */
     public String getPdfFilenameOnly() {
-
-        int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
-        if (pos > -1) {
-            return pdfFilename.substring(pos + 1);
+        if (pdfFilename != null) {
+            int pos = Integer.max(pdfFilename.lastIndexOf("/"), pdfFilename.lastIndexOf("\\"));
+            if (pos > -1) {
+                return pdfFilename.substring(pos + 1);
+            }
         }
         return pdfFilename;
     }
@@ -657,11 +663,34 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
      * 
      * @return XML file name without any subdirectories it might contain.
      */
-    public String getXmlFilenameOnly() {	
-        int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
-        if (pos > -1) {
-            return xmlFilename.substring(pos + 1);
+    public String getXmlFilenameOnly() {
+        if (xmlFilename != null) {
+            int pos = Integer.max(xmlFilename.lastIndexOf("/"), xmlFilename.lastIndexOf("\\"));
+            if (pos > -1) {
+                return xmlFilename.substring(pos + 1);
+            }
         }
         return xmlFilename;
+    }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+    public void assignTemporaryInvoiceNumber() {
+
+        StringBuffer num1 = new StringBuffer("000000000");
+        num1.append(id + "");
+        String invoiceNumber = num1.substring(num1.length() - 9);
+        int key = 0;
+
+        for (int i = 0; i < invoiceNumber.length(); i++) {
+            key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
+        }
+
+        setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
     }
 }

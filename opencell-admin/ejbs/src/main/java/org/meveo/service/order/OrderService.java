@@ -10,7 +10,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
-import org.meveo.model.Auditable;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.hierarchy.UserHierarchyLevel;
 import org.meveo.model.order.Order;
@@ -95,7 +94,7 @@ public class OrderService extends BusinessService<Order> {
 
         // Obtain card payment method token id from a payment gateway
         if (order.getPaymentMethod() != null && order.getPaymentMethod() instanceof CardPaymentMethod && ((CardPaymentMethod) order.getPaymentMethod()).getTokenId() == null) {
-            UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
+            UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
 		if (order.getPaymentMethod() != null) {
@@ -114,7 +113,7 @@ public class OrderService extends BusinessService<Order> {
 
         // Obtain card payment method token id from a payment gateway
         if (order.getPaymentMethod() != null && order.getPaymentMethod() instanceof CardPaymentMethod && ((CardPaymentMethod) order.getPaymentMethod()).getTokenId() == null) {
-            UserAccount userAccount = userAccountService.refreshOrRetrieve(order.getOrderItems().get(0).getUserAccount());
+            UserAccount userAccount = userAccountService.retrieveIfNotManaged(order.getOrderItems().get(0).getUserAccount());
             paymentMethodService.obtainAndSetCardToken((CardPaymentMethod) order.getPaymentMethod(), userAccount.getBillingAccount().getCustomerAccount());
         }
         if (order.getPaymentMethod() != null) {

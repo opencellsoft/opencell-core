@@ -72,9 +72,7 @@ public class RecurringChargeInstance extends ChargeInstance {
             InstanceStatusEnum status) {
 
         super(amountWithoutTax, amountWithTax, recurringChargeTemplate, serviceInstance, status);
-        if (this.status == InstanceStatusEnum.ACTIVE) {
-            this.subscriptionDate = serviceInstance.getSubscriptionDate();
-        }
+
         this.recurringChargeTemplate = recurringChargeTemplate;
         this.quantity = serviceInstance.getQuantity() == null ? BigDecimal.ONE : serviceInstance.getQuantity();
         this.serviceInstance = serviceInstance;

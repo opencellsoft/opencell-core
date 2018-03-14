@@ -22,7 +22,6 @@ import java.util.List;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -39,24 +38,22 @@ public class CountryService extends PersistenceService<Country> {
      * @return found country
      */
     public Country findByCode(String countryCode) {
-        return findByCode(getEntityManager(), countryCode);
-    }
 
-    /**
-     * @param em entity manager
-     * @param countryCode code of country.
-     * @return country
-     */
-    public Country findByCode(EntityManager em, String countryCode) {
         if (countryCode == null || countryCode.trim().length() == 0) {
             return null;
         }
 
         QueryBuilder qb = new QueryBuilder(Country.class, "c");
-        qb.addCriterion("countryCode", "=", countryCode, false);
-
+        if (countryCode.length() <= 3) {
+            qb.addCriterion("countryCode", "=", countryCode, false);
+        } else {
+            qb.startOrClause();
+            qb.addCriterion("description", "=", countryCode, false);
+            qb.addSql("lower(descriptionI18n) like'%" + countryCode.toLowerCase() + "%'");
+            qb.endOrClause();
+        }
         try {
-            return (Country) qb.getQuery(em).getSingleResult();
+            return (Country) qb.getQuery(getEntityManager()).setMaxResults(1).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

@@ -16,7 +16,10 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.UnitUsageRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -32,15 +35,37 @@ public class UsageRatingAsync {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private Logger log;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    /**
+     * Rate usage charges for a list of EDRs. One EDR at a time in a separate transaction.
+     * 
+     * @param ids A list of EDR ids
+     * @param result Job execution result
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return
+     * @throws BusinessException
+     */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result) throws BusinessException {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, MeveoUser lastCurrentUser) throws BusinessException {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         for (Long id : ids) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;
             }
             try {
+                long startDate = System.currentTimeMillis();
                 unitUsageRatingJobBean.execute(result, id);
+                log.debug("Finished processing EDR {}: {}", id, (System.currentTimeMillis() - startDate));
+
             } catch (BusinessException be) {
                 unitUsageRatingJobBean.registerFailedEdr(result, id, be);
             }

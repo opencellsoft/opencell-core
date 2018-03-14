@@ -6,14 +6,18 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
@@ -22,6 +26,10 @@ import org.meveo.model.crm.BusinessAccountModel;
 
 @Stateless
 public class ProductTemplateService extends GenericProductOfferingService<ProductTemplate> {
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     public long countProductTemplateActive(boolean status) {
         long result = 0;
@@ -39,11 +47,13 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
     }
 
     public long countProductTemplateExpiring() {
+        int beforeExpiration = Integer.parseInt(paramBeanFactory.getInstance().getProperty("offer.expiration.before", "30"));
+
         Long result = 0L;
         Query query = getEntityManager().createNamedQuery("ProductTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -1);
-        query.setParameter("nowMinus1Day", c.getTime());
+        c.add(Calendar.DATE, -beforeExpiration);
+        query.setParameter("nowMinusXDay", c.getTime());
 
         try {
             result = (long) query.getSingleResult();
@@ -69,7 +79,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
      * 
      * @param product Product template to create new version for
      * @return A not-persisted copy of Product template
-     * @throws BusinessException  business exception.
+     * @throws BusinessException business exception.
      */
     public synchronized ProductTemplate instantiateNewVersion(ProductTemplate product) throws BusinessException {
 
@@ -102,7 +112,7 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
      * @param product Product template to duplicate
      * @param persist Shall new entity be persisted
      * @return A copy of Product template
-     * @throws BusinessException  business exception.
+     * @throws BusinessException business exception.
      */
     public synchronized ProductTemplate duplicate(ProductTemplate product, boolean persist) throws BusinessException {
 
@@ -194,5 +204,16 @@ public class ProductTemplateService extends GenericProductOfferingService<Produc
         }
 
         return product;
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<ProductTemplate> listByLifeCycleStatus(LifeCycleStatusEnum... statuses) {
+        QueryBuilder qb = new QueryBuilder(ProductTemplate.class, "p");
+        qb.startOrClause();
+        for (LifeCycleStatusEnum status : statuses) {
+            qb.addCriterionEnum("lifeCycleStatus", status);
+        }
+        qb.endOrClause();
+        return qb.getQuery(getEntityManager()).getResultList();
     }
 }

@@ -44,18 +44,21 @@ public class PostInvoicingReportsDTO {
 	private Integer tipInvoicesNumber = 0;
 	private Integer wiretransferInvoicesNumber = 0;
 	private Integer creditDebitCardInvoicesNumber = 0;
+	private Integer npmInvoicesNumber = 0;
 
 	private BigDecimal checkAmuontHT = BigDecimal.ZERO;
 	private BigDecimal directDebitAmuontHT = BigDecimal.ZERO;
 	private BigDecimal tipAmuontHT = BigDecimal.ZERO;
 	private BigDecimal wiretransferAmuontHT = BigDecimal.ZERO;
 	private BigDecimal creditDebitCardAmountHT = BigDecimal.ZERO;
+	private BigDecimal npmAmountHT = BigDecimal.ZERO;	
 
 	private BigDecimal checkAmuont = BigDecimal.ZERO;
 	private BigDecimal directDebitAmuont = BigDecimal.ZERO;
 	private BigDecimal tipAmuont = BigDecimal.ZERO;
 	private BigDecimal wiretransferAmuont = BigDecimal.ZERO;
 	private BigDecimal creditDebitCardAmount = BigDecimal.ZERO;
+	private BigDecimal npmAmount = BigDecimal.ZERO;
 
 	public Integer getInvoicesNumber() {
 		return invoicesNumber;
@@ -273,6 +276,30 @@ public class PostInvoicingReportsDTO {
 	public void setCreditDebitCardAmount(BigDecimal creditDebitCardAmount) {
 		this.creditDebitCardAmount = creditDebitCardAmount;
 	}
+
+    public Integer getNpmInvoicesNumber() {
+        return npmInvoicesNumber;
+    }
+
+    public void setNpmInvoicesNumber(Integer npmInvoicesNumber) {
+        this.npmInvoicesNumber = npmInvoicesNumber;
+    }
+
+    public BigDecimal getNpmAmountHT() {
+        return npmAmountHT;
+    }
+
+    public void setNpmAmountHT(BigDecimal npmAmountHT) {
+        this.npmAmountHT = npmAmountHT;
+    }
+
+    public BigDecimal getNpmAmount() {
+        return npmAmount;
+    }
+
+    public void setNpmAmount(BigDecimal npmAmount) {
+        this.npmAmount = npmAmount;
+    }
 	
 	
 

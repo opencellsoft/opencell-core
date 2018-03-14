@@ -68,7 +68,7 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
 	private StrategyImportTypeEnum strategyImportType;
 
 	CsvBuilder csv = null;
-	private String providerDir = paramBean.getProperty("providers.rootDir", "./opencelldata");
+	private String providerDir;
 	private String existingEntitiesCsvFile = null;
 
 	public JobTriggerBean() {
@@ -142,7 +142,8 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
         csvReader.readHeaders();
 
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+        providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
+        File dir = new File(providerDir + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "JobTriggers_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();

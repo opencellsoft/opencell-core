@@ -19,46 +19,50 @@
 package org.meveo.admin.exception;
 
 import javax.ejb.ApplicationException;
+import javax.inject.Inject;
 
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ApplicationException(rollback = true)
 public class BusinessException extends Exception {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public BusinessException() {
-		super();
-		registerEvent();
-	}
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-	public BusinessException(String message, Throwable cause) {
-		super(message, cause);
-		registerEvent();
-	}
+    public BusinessException() {
+        super();
+        registerEvent();
+    }
 
-	public BusinessException(String message) {
-		super(message);
-		registerEvent();
-	}
+    public BusinessException(String message, Throwable cause) {
+        super(message, cause);
+        registerEvent();
+    }
 
-	public BusinessException(Throwable cause) {
-		super(cause);
-		registerEvent();
-	}
+    public BusinessException(String message) {
+        super(message);
+        registerEvent();
+    }
 
-	public void registerEvent() {
-		if ("true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"))) {
-			try {
-				CreateEventHelper createEventHelper = (CreateEventHelper) EjbUtils.getServiceInterface("CreateEventHelper");
-				createEventHelper.register(this);
-			} catch (Exception e) {
-				Logger log = LoggerFactory.getLogger(this.getClass());
-				log.error("Failed to access event helper", e);
-			}
-		}
-	}
+    public BusinessException(Throwable cause) {
+        super(cause);
+        registerEvent();
+    }
+
+    public void registerEvent() {
+        if ("true".equals(paramBeanFactory.getInstance().getProperty("monitoring.sendException", "true"))) {
+            try {
+                CreateEventHelper createEventHelper = (CreateEventHelper) EjbUtils.getServiceInterface("CreateEventHelper");
+                createEventHelper.register(this);
+            } catch (Exception e) {
+                Logger log = LoggerFactory.getLogger(this.getClass());
+                log.error("Failed to access event helper", e);
+            }
+        }
+    }
 }

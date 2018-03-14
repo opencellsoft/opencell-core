@@ -48,12 +48,22 @@ public abstract class MeveoUser implements Serializable {
      * Roles/permissions held by a user. Contains both role, composite role child role and permission names
      */
     protected Set<String> roles = new HashSet<>();
-    
+
     protected String locale;
-    
+
     protected int authTime;
 
     public MeveoUser() {
+    }
+
+    /**
+     * Clones a user by preserving username and provider properties
+     * 
+     * @param user User to clone
+     */
+    public MeveoUser(MeveoUser user) {
+        this.userName = user.getUserName();
+        this.providerCode = user.getProviderCode();
     }
 
     public String getSubject() {
@@ -112,18 +122,18 @@ public abstract class MeveoUser implements Serializable {
         return false;
     }
 
-    public String getLocale(){
+    public String getLocale() {
         return locale;
     }
-    
+
     @Override
     public String toString() {
         return "MeveoUser [" + " auth=" + authenticated + ", forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", fullName=" + fullName
-                + ", provider=" + providerCode + " roles " + roles + "]";
+                + ", provider=" + providerCode + ", roles " + roles + "]";
     }
 
     public Object toStringShort() {
-        return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + "]";
+        return "MeveoUser [forced=" + forcedAuthentication + ", sub=" + subject + ", userName=" + userName + ", provider=" + providerCode + "]";
     }
 
     public int getAuthTime() {
@@ -132,5 +142,20 @@ public abstract class MeveoUser implements Serializable {
 
     public void setAuthTime(int authTime) {
         this.authTime = authTime;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    /**
+     * Return unproxied instance of MeveoUser - preserving username and provider code only
+     * 
+     * @return MeveoUser instance
+     */
+    public MeveoUser unProxy() {
+        return new MeveoUser(this) {
+            private static final long serialVersionUID = 1864122036421892838L;
+        };
     }
 }

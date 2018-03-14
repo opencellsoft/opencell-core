@@ -146,7 +146,7 @@ public class InvoiceApi extends BaseApi {
 
         PaymentMethod preferedPaymentMethod = billingAccount.getCustomerAccount().getPreferredPaymentMethod();
         if (preferedPaymentMethod != null) {
-            invoice.setPaymentMethod(preferedPaymentMethod.getPaymentType());
+            invoice.setPaymentMethodType(preferedPaymentMethod.getPaymentType());
         }
 
         invoice.setInvoiceType(invoiceType);
@@ -342,7 +342,7 @@ public class InvoiceApi extends BaseApi {
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -442,7 +442,7 @@ public class InvoiceApi extends BaseApi {
     }
 
     /**
-     * Launch all the invoicing process for a given billingAccount, that's mean : 
+     * Launch all the invoicing process for a given billingAccount, that's mean :
      * <ul>
      * <li>Create an exeptionnal billingRun with given dates
      * <li>Validate the preinvoicing resport
@@ -824,7 +824,7 @@ public class InvoiceApi extends BaseApi {
         invoiceDto.setAmountTax(invoice.getAmountTax());
         invoiceDto.setAmountWithTax(invoice.getAmountWithTax());
         invoiceDto.setInvoiceNumber(invoice.getInvoiceNumber());
-        invoiceDto.setPaymentMethod(invoice.getPaymentMethod());
+        invoiceDto.setPaymentMethod(invoice.getPaymentMethodType());
         invoiceDto.setInvoiceType(invoice.getInvoiceType().getCode());
 
         for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {

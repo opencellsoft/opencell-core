@@ -105,7 +105,7 @@ public class UserAccountApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), userAccount, true, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -170,7 +170,7 @@ public class UserAccountApi extends AccountEntityApi {
         // Validate and populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), userAccount, false, checkCustomFields);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -388,8 +388,11 @@ public class UserAccountApi extends AccountEntityApi {
             // Validate and populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), productInstance, true, false);
-            } catch (MissingParameterException e) {
+            } catch (MissingParameterException | InvalidParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
+                throw e;
+            } catch (Exception e) {
+                log.error("Failed to associate custom field instance to an entity", e);
                 throw e;
             }
 

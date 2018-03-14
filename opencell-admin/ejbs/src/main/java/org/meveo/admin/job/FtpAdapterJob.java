@@ -1,6 +1,5 @@
 package org.meveo.admin.job;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,7 +9,7 @@ import javax.interceptor.Interceptors;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
@@ -19,7 +18,6 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
-
 
 /**
  * The Class FtpAdapterJob connect to the given ftp server and get files from the given remote path.
@@ -35,6 +33,9 @@ public class FtpAdapterJob extends Job {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @Override
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -50,8 +51,7 @@ public class FtpAdapterJob extends Job {
         String ftpProtocol = null;
 
         try {
-            distDirectory = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode()
-                    + ((String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
+            distDirectory = paramBeanFactory.getChrootDir() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_distDirectory")).replaceAll("\\..", "");
             remoteServer = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remoteServer");
             remotePort = ((Long) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_remotePort")).intValue();
             removeDistantFile = (String) customFieldInstanceService.getCFValue(jobInstance, "FtpAdapterJob_removeDistantFile");

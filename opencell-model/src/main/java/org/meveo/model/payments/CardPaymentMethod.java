@@ -1,5 +1,6 @@
 package org.meveo.model.payments;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -229,5 +230,16 @@ public class CardPaymentMethod extends PaymentMethod {
             return cardNumber.substring(cardNumber.length() - 4);
         }
         return "invalid";
+    }
+    
+    @Override
+    public boolean isExpired() {
+        Calendar now = Calendar.getInstance();
+        
+        Calendar expiration = Calendar.getInstance();
+        expiration.set(Calendar.MONTH, monthExpiration - 1);
+        expiration.set(Calendar.YEAR, yearExpiration + 2000);
+        
+        return (now.getTime().after(expiration.getTime())) ? true : false;
     }
 }

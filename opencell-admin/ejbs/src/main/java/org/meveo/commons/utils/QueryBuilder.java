@@ -488,17 +488,19 @@ public class QueryBuilder {
         }
         Calendar c = Calendar.getInstance();
         c.setTime(value);
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int date = c.get(Calendar.DATE);
-        c.set(year, month, date, 0, 0, 0);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        
         Date start = c.getTime();
-        c.set(year, month, date, 23, 59, 59);
+        
+        c.add(Calendar.DATE, 1);
         Date end = c.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
         String endDateParameterName = "end" + field.replace(".", "");
-        return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName,
+        return addSqlCriterion(field + ">=:" + startDateParameterName, startDateParameterName, start).addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName,
             end);
     }
 
@@ -513,10 +515,11 @@ public class QueryBuilder {
         }
         Calendar calFrom = Calendar.getInstance();
         calFrom.setTime(valueFrom);
-        int yearFrom = calFrom.get(Calendar.YEAR);
-        int monthFrom = calFrom.get(Calendar.MONTH);
-        int dateFrom = calFrom.get(Calendar.DATE);
-        calFrom.set(yearFrom, monthFrom, dateFrom, 0, 0, 0);
+        calFrom.set(Calendar.HOUR_OF_DAY, 0);
+        calFrom.set(Calendar.MINUTE, 0);
+        calFrom.set(Calendar.SECOND, 0);
+        calFrom.set(Calendar.MILLISECOND, 0);
+        
         Date start = calFrom.getTime();
 
         String startDateParameterName = "start" + field.replace(".", "");
@@ -534,14 +537,16 @@ public class QueryBuilder {
         }
         Calendar calTo = Calendar.getInstance();
         calTo.setTime(valueTo);
-        int yearTo = calTo.get(Calendar.YEAR);
-        int monthTo = calTo.get(Calendar.MONTH);
-        int dateTo = calTo.get(Calendar.DATE);
-        calTo.set(yearTo, monthTo, dateTo, 23, 59, 59);
+        calTo.add(Calendar.DATE, 1);
+        calTo.set(Calendar.HOUR_OF_DAY, 0);
+        calTo.set(Calendar.MINUTE, 0);
+        calTo.set(Calendar.SECOND, 0);
+        calTo.set(Calendar.MILLISECOND, 0);
+        
         Date end = calTo.getTime();
 
         String endDateParameterName = "end" + field.replace(".", "");
-        return addSqlCriterion(field + "<=:" + endDateParameterName, endDateParameterName, end);
+        return addSqlCriterion(field + "<:" + endDateParameterName, endDateParameterName, end);
     }
 
     /**
@@ -559,12 +564,15 @@ public class QueryBuilder {
         int month = cal.get(Calendar.MONTH);
         int date = cal.get(Calendar.DATE);
         cal.set(year, month, date, 0, 0, 0);
-        value = cal.getTime();
-
-        String sql = "((PARAM_START_DATE<='PARAM_VALUE' AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_START_DATE IS NULL AND PARAM_END_DATE IS NULL) OR (PARAM_START_DATE IS NULL AND 'PARAM_VALUE'<=PARAM_END_DATE) OR (PARAM_END_DATE IS NULL AND PARAM_START_DATE<='PARAM_VALUE'))";
-        sql = sql.replaceAll("PARAM_START_DATE", startField).replaceAll("PARAM_END_DATE", endField).replaceAll("PARAM_VALUE", value.toString());
-
-        return addSql(sql);
+        Date start = cal.getTime();
+        cal.set(year, month, date, 23, 59, 59);
+        Date end = cal.getTime();
+        
+        String startDateParameterName = "start" + startField.replace(".", "");
+        String endDateParameterName = "end" + endField.replace(".", "");
+        
+        return addSqlCriterion("(" +startField + ">=:" + startDateParameterName + " OR " + startField + " IS NULL )", startDateParameterName, start)
+                .addSqlCriterion("(" +endField + "<=:" + endDateParameterName  + " OR " + endField + " IS NULL )", endDateParameterName, end);
     }
 
     /**
@@ -579,6 +587,14 @@ public class QueryBuilder {
             q.append(" DESC ");
         }
 
+    }
+
+    /**
+     * @param orderColumn name of column which is used for orderBy
+     * @param ascending true/false
+     */
+    public void addOrderCriterionAsIs(String orderColumn, boolean ascending) {
+        q.append(" ORDER BY ").append(orderColumn).append(ascending ? " ASC " : " DESC ");
     }
 
     /**
@@ -787,7 +803,7 @@ public class QueryBuilder {
     }
 
     /**
-     * @param query query instance 
+     * @param query query instance
      * @param firstRow the index of first row
      * @param numberOfRows number of rows shoud return.
      */
@@ -803,8 +819,9 @@ public class QueryBuilder {
     /* DEBUG */
     public void debug() {
         System.out.println("Requete : " + q.toString());
-        for (Map.Entry<String, Object> e : params.entrySet())
+        for (Map.Entry<String, Object> e : params.entrySet()) {
             System.out.println("Param name:" + e.getKey() + " value:" + e.getValue().toString());
+        }
     }
 
     public String getSqlString() {

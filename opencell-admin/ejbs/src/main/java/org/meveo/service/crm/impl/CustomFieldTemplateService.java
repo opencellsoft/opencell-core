@@ -1,13 +1,14 @@
 package org.meveo.service.crm.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -17,8 +18,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.QueryBuilder;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
@@ -43,7 +43,16 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     @Inject
     private ElasticClient elasticClient;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    static boolean useCFTCache = true;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    @PostConstruct
+    private void init() {
+        useCFTCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCFT", "true"));
+    }
 
     /**
      * Find a list of custom field templates corresponding to a given entity
@@ -62,16 +71,28 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Find a list of custom field templates corresponding to a given entity
+     * Find a list of custom field templates corresponding to a given entity. Custom field templates are looked up in cache or retrieved from DB.
      * 
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @return A list of custom field templates mapped by a template key
      */
     public Map<String, CustomFieldTemplate> findByAppliesTo(String appliesTo) {
 
-        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
-        if (useCache) {
-            return customFieldsCache.getCustomFieldTemplates(appliesTo);
+        if (useCFTCache) {
+
+            Map<String, CustomFieldTemplate> cfts = customFieldsCache.getCustomFieldTemplates(appliesTo);
+
+            // Populate cache if record is not found in cache
+            if (cfts == null) {
+                cfts = findByAppliesToNoCache(appliesTo);
+                if (cfts.isEmpty()) {
+                    customFieldsCache.markNoCustomFieldTemplates(appliesTo);
+                } else {
+                    cfts.forEach((code, cft) -> customFieldsCache.addUpdateCustomFieldTemplate(cft));
+                }
+            }
+
+            return cfts;
 
         } else {
             return findByAppliesToNoCache(appliesTo);
@@ -84,18 +105,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
      * @return A list of custom field templates mapped by a template key
      */
-    @SuppressWarnings("unchecked")
     public Map<String, CustomFieldTemplate> findByAppliesToNoCache(String appliesTo) {
 
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", Arrays.asList("calendar"));
-        qb.addCriterion("c.appliesTo", "=", appliesTo, true);
+        List<CustomFieldTemplate> values = getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByAppliesTo", CustomFieldTemplate.class)
+            .setParameter("appliesTo", appliesTo).getResultList();
 
-        List<CustomFieldTemplate> values = (List<CustomFieldTemplate>) qb.getQuery(getEntityManager()).getResultList();
-
-        Map<String, CustomFieldTemplate> cftMap = new HashMap<String, CustomFieldTemplate>();
-        for (CustomFieldTemplate cft : values) {
-            cftMap.put(cft.getCode(), cft);
-        }
+        Map<String, CustomFieldTemplate> cftMap = values.stream().collect(Collectors.toMap(cft -> cft.getCode(), cft -> cft));
 
         return cftMap;
     }
@@ -105,11 +120,12 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param code Custom field template code
      * @param entity Entity that custom field templates apply to
-     * @return Custom field template
+     * @return Custom field template or NULL if not found
      */
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, ICustomFieldEntity entity) {
         try {
             return findByCodeAndAppliesTo(code, CustomFieldTemplateService.calculateAppliesToValue(entity));
+
         } catch (CustomFieldException e) {
             log.error("Can not determine applicable CFT type for entity of {} class.", entity.getClass().getSimpleName());
         }
@@ -117,17 +133,27 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
     }
 
     /**
-     * Find a specific custom field template by a code - do a lookup in cache if it is enabled
+     * Find a specific custom field template by a code. Custom field template will be looked up from cache or retrieved from DB.
      * 
      * @param code Custom field template code
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
-     * @return Custom field template
+     * @return Custom field template or NULL if not found
      */
     public CustomFieldTemplate findByCodeAndAppliesTo(String code, String appliesTo) {
 
-        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCFT", "true"));
-        if (useCache) {
-            return customFieldsCache.getCustomFieldTemplate(code, appliesTo);
+        if (useCFTCache) {
+
+            CustomFieldTemplate cft = customFieldsCache.getCustomFieldTemplate(code, appliesTo);
+
+            // Populate cache if record is not found in cache
+            if (cft == null) {
+                cft = findByCodeAndAppliesToNoCache(code, appliesTo);
+                if (cft != null) {
+                    customFieldsCache.addUpdateCustomFieldTemplate(cft);
+                }
+            }
+            return cft;
+
         } else {
             return findByCodeAndAppliesToNoCache(code, appliesTo);
         }
@@ -138,15 +164,13 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
      * 
      * @param code Custom field template code
      * @param appliesTo Entity (CFT appliesTo code) that custom field templates apply to
-     * @return Custom field template
+     * @return Custom field template or NULL if not found
      */
     public CustomFieldTemplate findByCodeAndAppliesToNoCache(String code, String appliesTo) {
 
-        QueryBuilder qb = new QueryBuilder(CustomFieldTemplate.class, "c", null);
-        qb.addCriterion("code", "=", code, true);
-        qb.addCriterion("appliesTo", "=", appliesTo, true);
         try {
-            return (CustomFieldTemplate) qb.getQuery(getEntityManager()).getSingleResult();
+            return getEntityManager().createNamedQuery("CustomFieldTemplate.getCFTByCodeAndAppliesTo", CustomFieldTemplate.class).setParameter("code", code)
+                .setParameter("appliesTo", appliesTo).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -164,6 +188,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         super.create(cft);
+
         customFieldsCache.addUpdateCustomFieldTemplate(cft);
         elasticClient.updateCFMapping(cft);
     }
@@ -180,6 +205,7 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             throw new ValidationException("invoice_adjustement_sequence CF must be versionnable, Long, Single value and must have a Calendar");
         }
         CustomFieldTemplate cftUpdated = super.update(cft);
+
         customFieldsCache.addUpdateCustomFieldTemplate(cftUpdated);
         elasticClient.updateCFMapping(cftUpdated);
 
@@ -374,8 +400,6 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
             throw new ValidationException("Custom field template " + cft.getCode() + " already exists in targe entity " + targetAppliesTo,
                 "customFieldTemplate.copyCFT.alreadyExists");
         }
-
-        cft = refreshOrRetrieve(cft);
 
         // Load calendar for lazy loading
         if (cft.getCalendar() != null) {

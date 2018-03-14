@@ -13,6 +13,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.catalog.CounterTemplate;
+import org.meveo.model.notification.HttpProtocol;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
@@ -90,7 +91,13 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         webHook.setParams(postData.getScriptParams());
         webHook.setElFilter(postData.getElFilter());
         webHook.setCounterTemplate(counterTemplate);
-
+        
+        if (!StringUtils.isBlank(postData.getHttpProtocol())) {
+            webHook.setHttpProtocol(postData.getHttpProtocol());
+        } else {
+            webHook.setHttpProtocol(HttpProtocol.HTTP);
+        }
+        
         webHook.setHost(postData.getHost());
         webHook.setPort(postData.getPort());
         webHook.setPage(postData.getPage());
@@ -192,6 +199,9 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         webHook.setElFilter(postData.getElFilter());
         webHook.setCounterTemplate(counterTemplate);
 
+        if (!StringUtils.isBlank(postData.getHttpProtocol())) {
+            webHook.setHttpProtocol(postData.getHttpProtocol());
+        }
         webHook.setHost(postData.getHost());
         webHook.setPort(postData.getPort());
         webHook.setPage(postData.getPage());

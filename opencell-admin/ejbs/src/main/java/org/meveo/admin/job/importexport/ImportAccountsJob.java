@@ -18,6 +18,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
@@ -52,8 +53,10 @@ public class ImportAccountsJob extends Job {
             }
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
+
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             for (int i = 0; i < nbRuns.intValue(); i++) {
-                futures.add(importAccountsAsync.launchAndForget(result));
+                futures.add(importAccountsAsync.launchAndForget(result, lastCurrentUser));
                 if (i > 0) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

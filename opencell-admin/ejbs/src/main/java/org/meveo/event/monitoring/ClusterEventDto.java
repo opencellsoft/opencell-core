@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 /**
  * Synchronization between cluster nodes event information.
+ * 
  * @author Andrius Karpavicius
  *
  */
@@ -40,23 +41,45 @@ public class ClusterEventDto implements Serializable {
     private CrudActionEnum action;
 
     /**
-     * defaut constructor.
+     * Node that published the information
+     */
+    private String sourceNode;
+
+    /**
+     * Code of provider, that information belonged to
+     */
+    private String providerCode;
+
+    /**
+     * Username that initiated information publication
+     */
+    private String userName;
+
+    /**
+     * Defaut constructor.
      */
     public ClusterEventDto() {
     }
 
     /**
      * @param clazz class name
-     * @param id id
-     * @param code code
-     * @param action crud action
+     * @param id Id
+     * @param code Code
+     * @param action Crud action
+     * @param sourceNode Node that published the information
+     * @param providerCode Code of provider, that information belonged to
+     * @param userName Username that initiated information publication
+     * 
      */
-    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action) {
+    public ClusterEventDto(String clazz, Long id, String code, CrudActionEnum action, String sourceNode, String providerCode, String userName) {
         super();
         this.clazz = clazz;
         this.id = id;
         this.code = code;
         this.action = action;
+        this.sourceNode = sourceNode;
+        this.providerCode = providerCode;
+        this.userName = userName;
     }
 
     /**
@@ -88,10 +111,31 @@ public class ClusterEventDto implements Serializable {
     }
 
     /**
+     * @return Node that published the information
+     */
+    public String getSourceNode() {
+        return sourceNode;
+    }
+
+    /**
+     * @return Code of provider, that information belonged to
+     */
+    public String getProviderCode() {
+        return providerCode;
+    }
+
+    /**
+     * @return Username that initiated information publication
+     */
+    public String getUserName() {
+        return userName;
+    }
+
+    /**
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "ClusterEventDto [clazz=" + clazz + ", idOrCode=" + id + ", action=" + action + "]";
+        return "ClusterEventDto [clazz=" + clazz + ", idOrCode=" + id + ", action=" + action + ", sourceNode=" + sourceNode + "]";
     }
 }

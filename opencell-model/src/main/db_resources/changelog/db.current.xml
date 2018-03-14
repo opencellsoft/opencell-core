@@ -17,6 +17,9 @@
     <property name="id.auto" value="false" dbms="postgresql" />
     <property name="id.auto" value="true" dbms="mysql" />
     <property name="migration" value="true" />
+    
+    <property name="db.schema.adapted" value="${db.schema}." dbms="postgresql"/>
+    <property name="db.schema.adapted" value="" dbms="mysql"/>
 
     <include file="current/structure.xml" relativeToChangelogFile="true" />
     <include file="current/data.xml" relativeToChangelogFile="true" />

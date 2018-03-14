@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -29,6 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -53,10 +55,21 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Inject
     private ElasticClient elasticClient;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private static boolean useCETCache = true;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
+    @PostConstruct
+    private void init() {
+        useCETCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCET", "true"));
+    }
 
     @Override
     public void create(CustomEntityTemplate cet) throws BusinessException {
+
+        ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
@@ -73,7 +86,9 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Override
     public CustomEntityTemplate update(CustomEntityTemplate cet) throws BusinessException {
+        ParamBean paramBean = paramBeanFactory.getInstance();
         CustomEntityTemplate cetUpdated = super.update(cet);
+
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
         try {
@@ -102,14 +117,28 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
         customFieldsCache.removeCustomEntityTemplate(cet);
     }
 
+    /**
+     * List custom entity templates, optionally filtering by an active status. Custom entity templates will be looked up in cache or retrieved from DB.
+     * 
+     * @param active Custom entity template's status. Or any if null
+     * @return A list of custom entity templates
+     */
     @Override
     public List<CustomEntityTemplate> list(Boolean active) {
 
-        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
-        if (useCache && (active == null || active)) {
+        if (useCETCache && (active == null || active)) {
 
             List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
             cets.addAll(customFieldsCache.getCustomEntityTemplates());
+
+            // Populate cache if record is not found in cache
+            if (cets.isEmpty()) {
+                cets = super.list(active);
+                if (cets != null) {
+                    cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet));
+                }
+            }
+
             return cets;
 
         } else {
@@ -118,18 +147,25 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     }
 
     public List<CustomEntityTemplate> listNoCache() {
-        return super.list((Boolean)null);
+        return super.list((Boolean) null);
     }
 
     @Override
     public List<CustomEntityTemplate> list(PaginationConfiguration config) {
 
-        boolean useCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
-        if (useCache
-                && (config.getFilters() == null || config.getFilters().isEmpty() || (config.getFilters().size() == 1 && config.getFilters().get("disabled") != null && !(boolean) config
-                    .getFilters().get("disabled")))) {
+        if (useCETCache && (config.getFilters() == null || config.getFilters().isEmpty()
+                || (config.getFilters().size() == 1 && config.getFilters().get("disabled") != null && !(boolean) config.getFilters().get("disabled")))) {
             List<CustomEntityTemplate> cets = new ArrayList<CustomEntityTemplate>();
             cets.addAll(customFieldsCache.getCustomEntityTemplates());
+
+            // Populate cache if record is not found in cache
+            if (cets.isEmpty()) {
+                cets = super.list(config);
+                if (cets != null) {
+                    cets.forEach((cet) -> customFieldsCache.addUpdateCustomEntityTemplate(cet));
+                }
+            }
+
             return cets;
 
         } else {
@@ -145,28 +181,24 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     public List<CustomEntityTemplate> getCETForCache() {
         return getEntityManager().createNamedQuery("CustomEntityTemplate.getCETForCache", CustomEntityTemplate.class).getResultList();
     }
-    
-	/**
-	 * A generic method that returns a filtered list of ICustomFieldEntity given
-	 * an entity class and code.
-	 * 
-	 * @param entityClass
-	 *            - class of an entity. eg. org.meveo.catalog.OfferTemplate
-	 * @param entityCode
-	 *            - code of entity
-	 * @return customer field entity
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public ICustomFieldEntity findByClassAndCode(Class entityClass, String entityCode) {
-		ICustomFieldEntity result = null;
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
-		queryBuilder.addCriterion("code", "=", entityCode, true);
-		List<ICustomFieldEntity> entities = (List<ICustomFieldEntity>) queryBuilder.getQuery(getEntityManager())
-				.getResultList();
-		if (entities != null && !entities.isEmpty()) {
-			result = entities.get(0);
-		}
 
-		return result;
-	}
+    /**
+     * A generic method that returns a filtered list of ICustomFieldEntity given an entity class and code.
+     * 
+     * @param entityClass - class of an entity. eg. org.meveo.catalog.OfferTemplate
+     * @param entityCode - code of entity
+     * @return customer field entity
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public ICustomFieldEntity findByClassAndCode(Class entityClass, String entityCode) {
+        ICustomFieldEntity result = null;
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+        queryBuilder.addCriterion("code", "=", entityCode, true);
+        List<ICustomFieldEntity> entities = (List<ICustomFieldEntity>) queryBuilder.getQuery(getEntityManager()).getResultList();
+        if (entities != null && !entities.isEmpty()) {
+            result = entities.get(0);
+        }
+
+        return result;
+    }
 }

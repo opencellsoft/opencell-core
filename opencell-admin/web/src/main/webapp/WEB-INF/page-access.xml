@@ -46,7 +46,8 @@
 	</page>
 	
 	<page view-id=".+\/reporting\/cache\/.*" >
-		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
+		<constraint>currentUser.hasRole('administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/admin\/providers\/providerSelfDetail">
@@ -83,6 +84,11 @@
 		<constraint>currentUser.hasRole('userManagement')</constraint>
 		<constraint type="READ">currentUser.hasRole('userVisualization')</constraint>
 	</page>
+	
+	<page view-id=".+\/admin\/userGroupHierarchy\/.+" >
+    	<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
+        <constraint type="READ">currentUser.hasRole('marketingCatalogVisualization')</constraint>
+    </page>
 	
 	<page view-id=".+\/admin\/.+">
 		<constraint>currentUser.hasRole('administrationManagement')</constraint>

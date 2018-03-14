@@ -631,6 +631,9 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return Custom field value
      */
     public CustomFieldValue getInheritedCumulativeCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
+        if (cft == null) {
+            return null;
+        }
 
         Object inheritedValue = customFieldInstanceService.getInheritedOnlyCFValueCumulative(entity, cft.getCode());
         if (inheritedValue == null) {
@@ -706,7 +709,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             Map<String, Object> rowValues = new HashMap<String, Object>();
 
-            for (CustomFieldMatrixColumn column : cft.getMatrixValueColumns()) {
+            for (CustomFieldMatrixColumn column : cft.getMatrixKeyColumns()) {
 
                 Object newValue = null;
 
@@ -946,7 +949,7 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
                     if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper.evaluateToBoolean(cft.getApplicableOnEl(), "entity", entity)))) {
+                            || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update

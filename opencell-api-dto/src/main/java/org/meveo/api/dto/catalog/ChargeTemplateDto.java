@@ -38,7 +38,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     private int unitNbDecimal = BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
     private String revenueRecognitionRuleCode;
-    private CustomFieldsDto customFields;
+    private CustomFieldsDto customFields;    
 
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 

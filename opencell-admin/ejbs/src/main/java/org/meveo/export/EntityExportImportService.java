@@ -89,9 +89,8 @@ import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.cache.RatingCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
@@ -105,8 +104,8 @@ import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveo.util.PersistenceUtils;
 import org.primefaces.model.LazyDataModel;
 import org.reflections.Reflections;
@@ -150,17 +149,6 @@ public class EntityExportImportService implements Serializable {
     protected static final String REFERENCE_ID_ATTRIBUTE = "xsId";
 
     @Inject
-    @MeveoJpa
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
-
-    @Inject
     @CurrentUser
     protected MeveoUser currentUser;
 
@@ -168,7 +156,7 @@ public class EntityExportImportService implements Serializable {
     @ApplicationProvider
     protected Provider appProvider;
 
-    private ParamBean param = ParamBean.getInstance();
+    // private ParamBean param = ParamBean.getInstance();
 
     @Inject
     private Logger log;
@@ -181,9 +169,6 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
-
-    @Inject
-    private RatingCacheContainerProvider ratingCacheContainerProvider;
 
     @Inject
     private CustomFieldsCacheContainerProvider customFieldsCacheContainerProvider;
@@ -206,6 +191,21 @@ public class EntityExportImportService implements Serializable {
     private EntityExportImportService entityExportImportService;
 
     private Map<String, ExportTemplate> exportImportTemplates;
+
+    @Inject
+    @MeveoJpaForMultiTenancy
+    private EntityManager em;
+
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager emfForJobs;
+
+    @Inject
+    private Conversation conversation;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @PostConstruct
     private void init() {
@@ -360,30 +360,25 @@ public class EntityExportImportService implements Serializable {
     }
 
     /**
-     * Obtain entity manager for export operations
-     * 
-     * @return
-     */
-    private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        return result;
-    }
-
-    /**
      * Obtain entity manager for import operations in case want to import to another DB
      * 
      * @return
      */
     private EntityManager getEntityManagerForImport() {
         return getEntityManager();
+    }
+
+    public EntityManager getEntityManager() {
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return em;
+            } catch (Exception e) {
+                return emfForJobs;
+            }
+        }
+
+        return emfForJobs;
     }
 
     /**
@@ -458,12 +453,12 @@ public class EntityExportImportService implements Serializable {
         String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
         boolean asZip = (parameters.get(EXPORT_PARAM_ZIP) != null && ((boolean) parameters.get(EXPORT_PARAM_ZIP)));
 
-        String path = param.getProperty("providers.rootDir", "./opencelldata/");
+        String path = paramBeanFactory.getChrootDir();
         if (!path.endsWith(File.separator)) {
             path = path + File.separator;
         }
 
-        path = path + appProvider.getCode() + File.separator;
+        // path = path + appProvider.getCode() + File.separator;
 
         path = path + "exports";
         String filename = path + File.separator + shortFilename + (asZip ? ".zip" : ".xml");
@@ -2159,7 +2154,6 @@ public class EntityExportImportService implements Serializable {
         walletCacheContainerProvider.refreshCache(null);
         cdrEdrProcessingCacheContainerProvider.refreshCache(null);
         notificationCacheContainerProvider.refreshCache(null);
-        ratingCacheContainerProvider.refreshCache(null);
         customFieldsCacheContainerProvider.refreshCache(null);
         jobCacheContainerProvider.refreshCache(null);
     }

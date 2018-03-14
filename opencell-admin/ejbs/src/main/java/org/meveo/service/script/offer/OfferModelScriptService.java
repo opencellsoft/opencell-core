@@ -63,20 +63,19 @@ public class OfferModelScriptService implements Serializable {
         scriptInterface.reactivateSubscription(scriptContext);
     }
 
-    public void beforeCreateOfferFromBOM(List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
+    public OfferScriptInterface beforeCreateOfferFromBOM(List<CustomFieldDto> customFields, String scriptCode) throws BusinessException {
         OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(OfferScript.CONTEXT_PARAMETERS, customFields);
         scriptInterface.beforeCreateOfferFromBOM(scriptContext);
+        return scriptInterface;
     }
 
-    public void afterCreateOfferFromBOM(OfferTemplate entity, List<CustomFieldDto> customFields, String scriptCode)
+    public void afterCreateOfferFromBOM(OfferTemplate entity, List<CustomFieldDto> customFields, OfferScriptInterface scriptInterface)
             throws ElementNotFoundException, InvalidScriptException, BusinessException {
-        OfferScriptInterface scriptInterface = (OfferScriptInterface) scriptInstanceService.getScriptInstance(scriptCode);
         Map<String, Object> scriptContext = new HashMap<String, Object>();
         scriptContext.put(Script.CONTEXT_ENTITY, entity);
         scriptContext.put(OfferScript.CONTEXT_PARAMETERS, customFields);
         scriptInterface.afterCreateOfferFromBOM(scriptContext);
     }
-
 }

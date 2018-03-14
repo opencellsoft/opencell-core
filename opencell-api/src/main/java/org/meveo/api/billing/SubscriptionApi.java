@@ -196,7 +196,7 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -275,7 +275,7 @@ public class SubscriptionApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), subscription, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -423,7 +423,7 @@ public class SubscriptionApi extends BaseApi {
                 // populate customFields
                 try {
                     populateCustomFields(serviceToActivateDto.getCustomFields(), serviceInstance, true);
-                } catch (MissingParameterException e) {
+                } catch (MissingParameterException | InvalidParameterException e) {
                     log.error("Failed to associate custom field instance to an entity: {} {}", serviceToActivateDto.getCode(), e.getMessage());
                     throw e;
                 } catch (Exception e) {
@@ -565,7 +565,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(serviceToInstantiateDto.getCustomFields(), serviceInstance, true);
-            } catch (MissingParameterException e) {
+            } catch (MissingParameterException | InvalidParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {} {}", serviceToInstantiateDto.getCode(), e.getMessage());
                 throw e;
             } catch (Exception e) {
@@ -673,7 +673,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(postData.getCustomFields(), productInstance, true);
-            } catch (MissingParameterException e) {
+            } catch (MissingParameterException | InvalidParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                 throw e;
             }
@@ -1301,7 +1301,7 @@ public class SubscriptionApi extends BaseApi {
             // populate customFields
             try {
                 populateCustomFields(serviceToUpdateDto.getCustomFields(), serviceToUpdate, false);
-            } catch (MissingParameterException e) {
+            } catch (MissingParameterException | InvalidParameterException e) {
                 log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
                 throw e;
             } catch (Exception e) {

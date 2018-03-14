@@ -20,7 +20,6 @@ package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
 import javax.inject.Named;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
 import org.meveo.commons.utils.QueryBuilder;
@@ -34,27 +33,14 @@ import org.meveo.service.base.PersistenceService;
 @Named
 public class CalendarService extends PersistenceService<Calendar> {
 
+    public Calendar findByCode(String code) {
+        QueryBuilder qb = new QueryBuilder(Calendar.class, "c", null);
+        qb.addCriterion("code", "=", code, true);
 
-   public Calendar findByCode(String code) {
-	        QueryBuilder qb = new QueryBuilder(Calendar.class, "c", null);
-	        qb.addCriterion("code", "=", code, true);
-	
-	        try {
-	            return (Calendar) qb.getQuery(getEntityManager()).getSingleResult();
-	        } catch (NoResultException e) {
-	            return null;
-	        }
-	    }
-
-	public Calendar findByCode(EntityManager em, String code) {
-		try {
-			QueryBuilder qb = new QueryBuilder(Calendar.class, "c");
-			qb.addCriterion("code", "=", code, true);
-
-			return (Calendar) qb.getQuery(em).getSingleResult();
-		} catch (NoResultException e) {
-			log.warn("error while getting calendar",e);
-			return null;
-		}
-	}
+        try {
+            return (Calendar) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 }

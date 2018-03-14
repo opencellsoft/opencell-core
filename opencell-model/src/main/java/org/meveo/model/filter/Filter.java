@@ -3,6 +3,7 @@ package org.meveo.model.filter;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +26,7 @@ import org.meveo.model.ModuleItem;
  **/
 @Entity
 @ModuleItem
+@Cacheable
 @ExportIdentifier({ "code"})
 @CustomFieldEntity(cftCodePrefix = "FILTER", cftCodeFields = "code", isManuallyManaged = false)
 @Table(name = "meveo_filter")
