@@ -32,7 +32,7 @@ public class ImageUploadEventHandler<T extends IEntity> {
     private String userProviderCode;
 
     /**
-     * @param appProvider application provider.
+     * @param userProviderCode application provider.
      */
     public ImageUploadEventHandler(String userProviderCode) {
         this.userProviderCode = userProviderCode;
