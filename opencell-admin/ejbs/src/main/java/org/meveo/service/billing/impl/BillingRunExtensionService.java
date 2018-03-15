@@ -29,11 +29,11 @@ public class BillingRunExtensionService extends PersistenceService<BillingRun> {
     private BillingAccountService billingAccountService;
 
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
-    public void updateBRAmounts(BillingRun billingRun) throws BusinessException {
+    public void updateBRAmounts(Long billingRunId) throws BusinessException {
 
-        log.debug("updateBRAmounts for billingRun {} in new transaction", billingRun.getId());
+        log.debug("updateBRAmounts for billingRun {} in new transaction", billingRunId);
 
-        billingRun = findById(billingRun.getId());
+        BillingRun billingRun = findById(billingRunId);
 
         BillingCycle billingCycle = billingRun.getBillingCycle();
 

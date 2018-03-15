@@ -99,7 +99,7 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
                 queryString.append(" AND LOWER(a.address.city) LIKE :city");
             }
             if (!StringUtils.isBlank(address.getCountry())) {
-                queryString.append(" AND LOWER(a.address.country) LIKE :country");
+                queryString.append(" AND a.address.country  = :country");
             }
             if (!StringUtils.isBlank(address.getState())) {
                 queryString.append(" AND LOWER(a.address.state) LIKE :state");
@@ -134,7 +134,7 @@ public abstract class AccountService<P extends AccountEntity> extends BusinessSe
                 query.setParameter("city", "%" + address.getCity().toLowerCase() + "%");
             }
             if (!StringUtils.isBlank(address.getCountry())) {
-                query.setParameter("country", "%" + address.getCountry().toLowerCase() + "%");
+                query.setParameter("country", address.getCountry());
             }
             if (!StringUtils.isBlank(address.getState())) {
                 query.setParameter("state", "%" + address.getState().toLowerCase() + "%");

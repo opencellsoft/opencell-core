@@ -44,6 +44,7 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
+import org.meveo.service.script.module.ModuleScriptInterface;
 import org.meveo.service.script.module.ModuleScriptService;
 
 @Stateless
@@ -137,8 +138,9 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             return module;
         }
 
+        ModuleScriptInterface moduleScript = null;
         if (module.getScript() != null) {
-            moduleScriptService.preDisableModule(module.getScript().getCode(), module);
+            moduleScript = moduleScriptService.preDisableModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
@@ -176,8 +178,8 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             }
         }
 
-        if (module.getScript() != null) {
-            moduleScriptService.postDisableModule(module.getScript().getCode(), module);
+        if (moduleScript != null) {
+            moduleScriptService.postDisableModule(moduleScript, module);
         }
 
         return super.disable(module);
@@ -196,8 +198,9 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             return module;
         }
 
+        ModuleScriptInterface moduleScript = null;
         if (module.getScript() != null) {
-            moduleScriptService.preEnableModule(module.getScript().getCode(), module);
+            moduleScript = moduleScriptService.preEnableModule(module.getScript().getCode(), module);
         }
 
         if (module instanceof BusinessServiceModel) {
@@ -235,8 +238,8 @@ public class GenericModuleService<T extends MeveoModule> extends BusinessService
             }
         }
 
-        if (module.getScript() != null) {
-            moduleScriptService.postEnableModule(module.getScript().getCode(), module);
+        if (moduleScript != null) {
+            moduleScriptService.postEnableModule(moduleScript, module);
         }
 
         return super.enable(module);

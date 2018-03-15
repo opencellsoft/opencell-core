@@ -140,7 +140,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 			// Create a new entity from a rejectPayment template
 		} else if ("loadFromTemplateRejectPayment".equals(initType)) {
 			String occTemplateRejectPaymentCode = paramBean.getProperty(
-					"occ.templateRejectPaymentCode", "IP_PLVT");
+					"occ.rejectedPayment.dd", "REJ_DDT");
 			OCCTemplate occ = occTemplateService.findByCode(
 					occTemplateRejectPaymentCode);
 			copyFromTemplate(occ);
@@ -148,7 +148,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 			// Create a new entity from a paymentCheck template
 		} else if ("loadFromTemplatePaymentCheck".equals(initType)) {
 			String occTemplatePaymentCode = paramBean.getProperty(
-					"occ.templatePaymentCheckCode", "RG_CHQ");
+					"occ.templatePaymentCheckCode", "PAY_CHK");
 			OCCTemplate occ = occTemplateService.findByCode(
 					occTemplatePaymentCode);
 			copyFromTemplate(occ);
@@ -194,7 +194,7 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 	 * @return
 	 */
 	public String loadFromTemplatePaymentCheck(Long customerAccountId){  
-		String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode", "RG_CHQ");
+		String occTemplatePaymentCode = paramBean.getProperty("occ.templatePaymentCheckCode", "PAY_CHK");
 		OCCTemplate occ = occTemplateService.findByCode(
 				occTemplatePaymentCode);
 		if(occ==null){

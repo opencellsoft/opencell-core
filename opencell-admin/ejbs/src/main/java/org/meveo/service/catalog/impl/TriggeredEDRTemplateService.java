@@ -19,39 +19,78 @@
 package org.meveo.service.catalog.impl;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.cache.RatingCacheContainerProvider;
-import org.meveo.model.admin.User;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 import org.meveo.service.base.BusinessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Charge Template service implementation.
  * 
  */
 @Stateless
-public class TriggeredEDRTemplateService extends
-		BusinessService<TriggeredEDRTemplate> {
+public class TriggeredEDRTemplateService extends BusinessService<TriggeredEDRTemplate> {
 
-	@Inject
-	private RatingCacheContainerProvider ratingCacheContainerProvider;
+    public synchronized void duplicate(TriggeredEDRTemplate entity) throws BusinessException {
+        entity = refreshOrRetrieve(entity);
+        String code = findDuplicateCode(entity);
 
-	public synchronized void duplicate(TriggeredEDRTemplate entity) throws BusinessException{
-		entity = refreshOrRetrieve(entity);
-		String code=findDuplicateCode(entity);
-		
-		// Detach and clear ids of entity and related entities
-		detach(entity);
-		entity.setId(null);
-		entity.setCode(code);
-		create(entity);
-	}
-	
-	public TriggeredEDRTemplate update(TriggeredEDRTemplate triggerEDRTemplate,User user) throws BusinessException{
-		TriggeredEDRTemplate result = super.update(triggerEDRTemplate);
-		ratingCacheContainerProvider.updateUsageChargeTemplateInCache(triggerEDRTemplate);
-		return result;	
-	}
+        // Detach and clear ids of entity and related entities
+        detach(entity);
+        entity.setId(null);
+        entity.setCode(code);
+        create(entity);
+    }
+
+    @Override
+    public void create(TriggeredEDRTemplate edrTemplate) throws BusinessException {
+
+        edrTemplate.setSubscriptionEl(StringUtils.stripToNull(edrTemplate.getSubscriptionEl()));
+        edrTemplate.setConditionEl(StringUtils.stripToNull(edrTemplate.getConditionEl()));
+        edrTemplate.setQuantityEl(StringUtils.stripToNull(edrTemplate.getQuantityEl()));
+        edrTemplate.setParam1El(StringUtils.stripToNull(edrTemplate.getParam1El()));
+        edrTemplate.setParam2El(StringUtils.stripToNull(edrTemplate.getParam2El()));
+        edrTemplate.setParam3El(StringUtils.stripToNull(edrTemplate.getParam3El()));
+        edrTemplate.setParam4El(StringUtils.stripToNull(edrTemplate.getParam4El()));
+
+        if (edrTemplate.getQuantityEl() == null) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.error("edrTemplate QuantityEL must be set for triggeredEDRTemplate {}", edrTemplate.getId());
+        }
+
+        if (edrTemplate.getParam1El() == null) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.error("edrTemplate param1El must be set for triggeredEDRTemplate {}", edrTemplate.getId());
+        }
+
+        super.create(edrTemplate);
+    }
+
+    @Override
+    public TriggeredEDRTemplate update(TriggeredEDRTemplate edrTemplate) throws BusinessException {
+
+        edrTemplate.setSubscriptionEl(StringUtils.stripToNull(edrTemplate.getSubscriptionEl()));
+        edrTemplate.setConditionEl(StringUtils.stripToNull(edrTemplate.getConditionEl()));
+        edrTemplate.setQuantityEl(StringUtils.stripToNull(edrTemplate.getQuantityEl()));
+        edrTemplate.setParam1El(StringUtils.stripToNull(edrTemplate.getParam1El()));
+        edrTemplate.setParam2El(StringUtils.stripToNull(edrTemplate.getParam2El()));
+        edrTemplate.setParam3El(StringUtils.stripToNull(edrTemplate.getParam3El()));
+        edrTemplate.setParam4El(StringUtils.stripToNull(edrTemplate.getParam4El()));
+
+        if (edrTemplate.getQuantityEl() == null) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.error("edrTemplate QuantityEL must be set for triggeredEDRTemplate {}", edrTemplate.getId());
+        }
+
+        if (edrTemplate.getParam1El() == null) {
+            Logger log = LoggerFactory.getLogger(this.getClass());
+            log.error("edrTemplate param1El must be set for triggeredEDRTemplate {}", edrTemplate.getId());
+        }
+
+        edrTemplate = super.update(edrTemplate);
+        return edrTemplate;
+    }
 }

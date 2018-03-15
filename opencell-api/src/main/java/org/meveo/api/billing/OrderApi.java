@@ -54,6 +54,7 @@ import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.quote.Quote;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.billing.impl.ProductInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
@@ -111,6 +112,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private TerminationReasonService terminationReasonService;
+    
+    @Inject
+    private CountryService countryService;
 
     /**
      * Register an order from TMForumApi.
@@ -145,8 +149,7 @@ public class OrderApi extends BaseApi {
         order.setDueDateDelayEL(productOrder.getDueDateDelayEL());
 
         if (productOrder.getPaymentMethods() != null && !productOrder.getPaymentMethods().isEmpty()) {
-            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null);
-            paymentMethod.updateAudit(currentUser);
+            PaymentMethod paymentMethod = productOrder.getPaymentMethods().get(0).fromDto(null, currentUser);
             order.setPaymentMethod(paymentMethod);
         }
 
@@ -248,7 +251,7 @@ public class OrderApi extends BaseApi {
                 shippingAddress.setAddress2(productOrderItem.getProduct().getPlace().getAddress().getAddress2());
                 shippingAddress.setAddress3(productOrderItem.getProduct().getPlace().getAddress().getAddress3());
                 shippingAddress.setCity(productOrderItem.getProduct().getPlace().getAddress().getCity());
-                shippingAddress.setCountry(productOrderItem.getProduct().getPlace().getAddress().getCountry());
+                shippingAddress.setCountry(countryService.findByCode(productOrderItem.getProduct().getPlace().getAddress().getCountry()));
                 shippingAddress.setZipCode(productOrderItem.getProduct().getPlace().getAddress().getZipCode());
                 shippingAddress.setState(productOrderItem.getProduct().getPlace().getAddress().getState());
                 orderItem.setShippingAddress(shippingAddress);
@@ -301,7 +304,7 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -364,8 +367,6 @@ public class OrderApi extends BaseApi {
         }
 
         log.info("Processing order {}", order.getCode());
-
-        order = orderService.refreshOrRetrieve(order);
 
         order.setStartDate(new Date());
 
@@ -530,7 +531,7 @@ public class OrderApi extends BaseApi {
         index = 1;
         for (Product productOfProduct : products) {
             ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
-            productOffering = productTemplateService.refreshOrRetrieve(productOffering);
+            productOffering = productTemplateService.retrieveIfNotManaged(productOffering);
             ProductInstance productInstance = instantiateProduct(productOffering, productOfProduct, orderItem, productOrderItem, subscription, orderNumber);
             if (productInstance != null) {
                 orderItem.addProductInstance(productInstance);
@@ -628,7 +629,7 @@ public class OrderApi extends BaseApi {
         try {
             CustomFieldsDto customFields = extractCustomFields(product, ProductInstance.class);
             populateCustomFields(customFields, productInstance, true, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw new BusinessException(e.getMessage());
         } catch (Exception e) {
@@ -826,7 +827,7 @@ public class OrderApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(productOrder.getCustomFields(), order, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -836,7 +837,7 @@ public class OrderApi extends BaseApi {
 
         // TODO Need to initiate workflow if there is one
 
-        order = orderService.refreshOrRetrieve(order);
+        order = orderService.update(order);
 
         return orderToDto(order);
 

@@ -85,7 +85,7 @@ public class ChargeInstance extends BusinessEntity {
     @Column(name = "status_date")
     protected Date statusDate;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "termination_date")
     protected Date terminationDate;
 
@@ -93,11 +93,11 @@ public class ChargeInstance extends BusinessEntity {
     @JoinColumn(name = "charge_template_id")
     protected ChargeTemplate chargeTemplate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     protected Calendar invoicingCalendar;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "charge_date")
     protected Date chargeDate;
 

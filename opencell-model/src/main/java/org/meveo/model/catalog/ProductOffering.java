@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -40,6 +41,7 @@ import org.meveo.model.VersionedEntity;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.annotation.ImageType;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
@@ -49,6 +51,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @ModuleItem
 @ObservableEntity
 @VersionedEntity
+@Cacheable
 @ExportIdentifier({ "code", "validity.from", "validity.to" })
 @Table(name = "cat_offer_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code", "valid_from", "valid_to" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
@@ -89,6 +92,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @Column(name = "life_cycle_status")
     private LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
 
+    @Deprecated
     @ManyToMany
     @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))
     @OrderColumn(name = "INDX")
@@ -110,7 +114,7 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @Type(type = "json")
     @Column(name = "long_description_i18n", columnDefinition = "text")
     private Map<String, String> longDescriptionI18n;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance globalRatingScriptInstance;
@@ -118,6 +122,11 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @ManyToMany
     @JoinTable(name = "cat_product_offer_seller", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "seller_id"))
     private List<Seller> sellers = new ArrayList<>();
+    
+    @ManyToMany
+    @JoinTable(name = "cat_product_offer_customer_category", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "customer_category_id"))
+    @OrderColumn(name = "INDX")
+    private List<CustomerCategory> customerCategories = new ArrayList<>();
 
     public void addOfferTemplateCategory(OfferTemplateCategory offerTemplateCategory) {
         if (getOfferTemplateCategories() == null) {
@@ -227,7 +236,6 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         this.imagePath = imagePath;
     }
 
-    
     /**
      * @return the globalRatingScriptInstance
      */
@@ -324,15 +332,15 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         }
         return longDescriptionI18n;
     }
-    
+
     public List<Seller> getSellers() {
         return sellers;
     }
-    
+
     public void setSellers(List<Seller> sellers) {
         this.sellers = sellers;
     }
-    
+
     public void addSeller(Seller seller) {
         if (sellers == null) {
             sellers = new ArrayList<>();
@@ -340,5 +348,18 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
         if (!sellers.contains(seller)) {
             sellers.add(seller);
         }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s[id=%s, code=%s, validity=%s]", this.getClass().getSimpleName(), id, code, validity);
+    }
+
+    public List<CustomerCategory> getCustomerCategories() {
+        return customerCategories;
+    }
+
+    public void setCustomerCategories(List<CustomerCategory> customerCategories) {
+        this.customerCategories = customerCategories;
     }
 }

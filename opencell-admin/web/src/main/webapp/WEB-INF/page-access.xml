@@ -46,7 +46,8 @@
 	</page>
 	
 	<page view-id=".+\/reporting\/cache\/.*" >
-		<constraint>currentUser.hasRole('superAdminManagement')</constraint>
+		<constraint>currentUser.hasRole('administrationManagement')</constraint>
+		<constraint type="READ">currentUser.hasRole('administrationVisualization')</constraint>
 	</page>
 	
 	<page view-id=".+\/admin\/providers\/providerSelfDetail">
@@ -290,6 +291,7 @@
     <!--  PAGE RULES FOR FULL TEXT SEARCH AND INDEXING PAGES -->
     <page view-id=".+\/index\/index">
         <constraint>currentUser.hasRole('superAdminManagement')</constraint>
+        <constraint>currentUser.hasRole('administrationManagement')</constraint>
     </page>
 	
     <page view-id=".+\/index\/fullTextSearch">

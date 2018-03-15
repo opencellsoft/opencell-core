@@ -29,7 +29,6 @@ import java.util.Map;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -37,11 +36,11 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
-import org.meveo.model.billing.Subscription;
 import org.meveo.model.catalog.Channel;
 import org.meveo.model.catalog.DigitalResource;
 import org.meveo.model.catalog.LifeCycleStatusEnum;
@@ -51,6 +50,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
 
 /**
@@ -66,17 +66,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     @Inject
     private SubscriptionService subscriptionService;
 
-    @SuppressWarnings("unchecked")
-    public List<OfferTemplate> findByServiceTemplate(EntityManager em, ServiceTemplate serviceTemplate) {
-        Query query = em.createQuery("FROM OfferTemplate t WHERE :serviceTemplate MEMBER OF t.serviceTemplates");
-        query.setParameter("serviceTemplate", serviceTemplate);
-
-        try {
-            return (List<OfferTemplate>) query.getResultList();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {
@@ -113,11 +105,13 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     }
 
     public long countExpiring() {
+        int beforeExpiration = Integer.parseInt(paramBeanFactory.getInstance().getProperty("offer.expiration.before", "30"));
+
         Long result = 0L;
         Query query = getEntityManager().createNamedQuery("OfferTemplate.countExpiring");
         Calendar c = Calendar.getInstance();
-        c.add(Calendar.DATE, -1);
-        query.setParameter("nowMinus1Day", c.getTime());
+        c.add(Calendar.DATE, -beforeExpiration);
+        query.setParameter("nowMinusXDay", c.getTime());
 
         try {
             result = (long) query.getSingleResult();
@@ -174,13 +168,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
      * @throws BusinessException exception when error happens
      */
     public synchronized void delete(OfferTemplate entity) throws BusinessException {
-        entity = refreshOrRetrieve(entity);
-        List<Subscription> subscriptionList = this.subscriptionService.findByOfferTemplate(entity);
-        if (entity != null && !entity.isTransient() && (subscriptionList == null || subscriptionList.size() == 0)) {
-            this.remove(entity);
-            this.catalogHierarchyBuilderService.delete(entity);
-        }
 
+        if (entity == null || entity.isTransient() || subscriptionService.hasSubscriptions(entity)) {
+            return;
+        }
+        this.remove(entity);
+        this.catalogHierarchyBuilderService.delete(entity);
     }
 
     /**
@@ -206,6 +199,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getOfferProductTemplates().size();
         offerToDuplicate.getOfferTemplateCategories().size();
         offerToDuplicate.getSellers().size();
+        offerToDuplicate.getCustomerCategories().size();
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -254,6 +248,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         List<Seller> sellers = offer.getSellers();
         offer.setSellers(new ArrayList<>());
+        
+        List<CustomerCategory> customerCategories = offer.getCustomerCategories();
+        offer.setCustomerCategories(new ArrayList<CustomerCategory>());
 
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
@@ -285,6 +282,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             }
         }
         
+        if (customerCategories != null) {
+            for (CustomerCategory customerCategory : customerCategories) {
+                offer.getCustomerCategories().add(customerCategory);
+            }
+        }
+
         if (persist) {
             create(offer);
         }
@@ -346,7 +349,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
         if (StringUtils.isBlank(code) && validFrom == null && validTo == null && lifeCycleStatusEnum == null) {
             listOfferTemplates = list();
-        
+
         } else {
 
             Map<String, Object> filters = new HashMap<String, Object>();

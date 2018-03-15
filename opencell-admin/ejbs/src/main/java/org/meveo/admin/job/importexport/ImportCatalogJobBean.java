@@ -22,6 +22,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -53,6 +54,10 @@ public class ImportCatalogJobBean {
     private String rejectDir;
     private String report;
 
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private String[] colNames = { "Priceplan code", "Priceplan description", "Charge code", "Seller", "Country", "Currency", "Start appli.", "End appli.", "Offer code", "Priority",
             "Amount w/out tax", "Amount with tax", "Min quantity", "Max quantity", "Criteria 1", "Criteria 2", "Criteria 3", "Criteria EL", "Start rating", "End rating",
             "Min subscr age", "Max subscr age", "Validity calendar" };
@@ -64,9 +69,8 @@ public class ImportCatalogJobBean {
         InputStream excelInputStream = null;
         try {
 
-            ParamBean parambean = ParamBean.getInstance();
-            String catalogDir = parambean.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "imports" + File.separator
-                    + "catalog" + File.separator;
+            ParamBean parambean = paramBeanFactory.getInstance();
+            String catalogDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "catalog" + File.separator;
 
             inputDir = catalogDir + "input";
             String fileExtension = parambean.getProperty("catalogImport.extensions", "xls");

@@ -26,9 +26,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.meveo.api.dto.account.AddressDto;
+import org.meveo.api.dto.account.ContactInformationDto;
 import org.meveo.api.dto.account.CustomersDto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.InvoiceTypeSellerSequence;
+import org.meveo.model.shared.Address;
+import org.meveo.model.shared.ContactInformation;
 
 /**
  * @author Edward P. Legaspi
@@ -52,6 +56,9 @@ public class SellerDto extends BusinessDto {
 
 	@XmlElement(name = "businessAccountModel")
 	private BusinessEntityDto businessAccountModel;
+	
+    private ContactInformationDto contactInformation;
+    private AddressDto address;
 
 	public SellerDto() {
 	}
@@ -79,6 +86,31 @@ public class SellerDto extends BusinessDto {
 		if (seller.getSeller() != null) {
 			parentSeller = seller.getSeller().getCode();
 		}
+		
+		ContactInformation sellerContactInformation = seller.getContactInformation();
+		if (sellerContactInformation != null) {
+            if (getContactInformation() == null) {
+                setContactInformation(new ContactInformationDto());
+            }
+            contactInformation.setEmail(sellerContactInformation.getEmail());
+            contactInformation.setPhone(sellerContactInformation.getPhone());
+            contactInformation.setMobile(sellerContactInformation.getMobile());
+            contactInformation.setFax(sellerContactInformation.getFax());
+        }
+		
+		Address sellerAddress = seller.getAddress();
+        if (sellerAddress != null) {
+            if (getAddress() == null) {
+                setAddress(new AddressDto());
+            }
+            address.setAddress1(sellerAddress.getAddress1());
+            address.setAddress2(sellerAddress.getAddress2());
+            address.setAddress3(sellerAddress.getAddress3());
+            address.setCity(sellerAddress.getCity());
+            address.setCountry(sellerAddress.getCountry() == null ? null : sellerAddress.getCountry().getCountryCode());                        
+            address.setState(sellerAddress.getState());
+            address.setZipCode(sellerAddress.getZipCode());
+        }
 		
 		customFields = customFieldInstances;
 	}
@@ -152,9 +184,25 @@ public class SellerDto extends BusinessDto {
 	public void setBusinessAccountModel(BusinessEntityDto businessAccountModel) {
 		this.businessAccountModel = businessAccountModel;
 	}
+	
+	public ContactInformationDto getContactInformation() {
+        return contactInformation;
+    }
 
-	@Override
+    public void setContactInformation(ContactInformationDto contactInformation) {
+        this.contactInformation = contactInformation;
+    }
+
+    public AddressDto getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressDto address) {
+        this.address = address;
+    }
+
+    @Override
 	public String toString() {
-		return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + "]";
+		return "SellerDto [code=" + getCode() + ", description=" + getDescription() + ", currencyCode=" + currencyCode + ", countryCode=" + countryCode + ", languageCode=" + languageCode + ", parentSeller=" + parentSeller + ", customers=" + customers + ", customFields=" + customFields + ", invoiceTypeSequences=" + invoiceTypeSequences + ", businessAccountModel=" + businessAccountModel + ", contactInformation=" + contactInformation + ", address=" + address + "]";
 	}	
 }

@@ -18,6 +18,7 @@
  */
 package org.meveo.model.catalog;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -31,6 +32,7 @@ import org.meveo.model.AuditableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "day", "month" })
 @Table(name = "cat_day_in_year", uniqueConstraints = @UniqueConstraint(columnNames = { "day", "month" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_day_in_year_seq"), })

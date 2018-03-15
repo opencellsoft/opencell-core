@@ -100,7 +100,7 @@
 	width: 210px;
 	padding: 10px 0;
 	display: block;
-	font-family: "Segoe UI", 'Source Sans Pro', "Arial", sans-serif;
+	font-family: "Roboto", 'Source Sans Pro', "Arial", sans-serif;
 	color: #fff;
 	font-size: 18px;
 	font-weight: 700;
@@ -132,7 +132,7 @@
 .OpencellMegaMenu .layout-menu > li ul li a {
 	color: #fff;
 	font-size: 16px;
-	font-family: "Segoe UI", 'Source Sans Pro', "Arial", sans-serif;
+	font-family: "Roboto", 'Source Sans Pro', "Arial", sans-serif;
 	text-decoration: none;
 	padding: 4px 0 2px;
 	display: inline-block;

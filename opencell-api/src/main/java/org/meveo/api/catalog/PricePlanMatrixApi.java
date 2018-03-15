@@ -173,10 +173,11 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+        pricePlanMatrix.setRatingEL(postData.getRatingEL());
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -298,6 +299,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setDescription(postData.getDescription());
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
+        pricePlanMatrix.setRatingEL(postData.getRatingEL());
 
         if (postData.getLanguageDescriptions() != null) {
             pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));
@@ -305,7 +307,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, false);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -359,7 +361,7 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
             handleMissingParameters();
         }
 
-        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByEventCode(eventCode);
+        List<PricePlanMatrix> pricePlanMatrixes = pricePlanMatrixService.listByChargeCode(eventCode);
         if (pricePlanMatrixes == null) {
             throw new EntityDoesNotExistsException(PricePlanMatrix.class, eventCode);
         }

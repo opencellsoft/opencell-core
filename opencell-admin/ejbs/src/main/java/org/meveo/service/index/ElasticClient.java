@@ -37,6 +37,8 @@ import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
 import org.meveo.service.index.ElasticSearchChangeset.ElasticSearchAction;
@@ -79,6 +81,9 @@ public class ElasticClient {
 
     @Inject
     private ElasticClientConnection esConnection;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     /**
      * Store and index entity in Elastic Search. In case of update, a full update will be performed unless it is configured in elasticSearchConfiguration.json to always do upsert.
@@ -505,7 +510,9 @@ public class ElasticClient {
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
-    public Future<ReindexingStatistics> cleanAndReindex() throws BusinessException {
+    public Future<ReindexingStatistics> cleanAndReindex(MeveoUser lastCurrentUser) throws BusinessException {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         ReindexingStatistics statistics = new ReindexingStatistics();
 

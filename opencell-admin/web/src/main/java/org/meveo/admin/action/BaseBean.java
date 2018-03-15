@@ -45,6 +45,7 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.IEntity;
@@ -80,7 +81,7 @@ import org.slf4j.LoggerFactory;
 import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
- * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
+ * Base bean class. Other backing beans extends this class if they need functionality it provides.
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -179,8 +180,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private Map<String, Boolean> writeAccessMap;
 
-    protected ParamBean paramBean = ParamBean.getInstance();
-    protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+    // protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
 
     private UploadedFile uploadedFile;
 
@@ -833,9 +835,9 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     /**
-     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. 
-     * Criteria name consist of [&lt;condition&gt;]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;name&gt; is an entity
-     * attribute name.
+     * Allows to overwrite, or add additional search criteria for filtering a list. Search criteria is a map with filter criteria name as a key and value as a value. Criteria name
+     * consist of [&lt;condition&gt;]&lt;field name&gt; (e.g. "like firstName") where &lt;condition&gt; is a condition to apply to field value comparison and &lt;name&gt; is an
+     * entity attribute name.
      * 
      * @param searchCriteria Search criteria - should be same as filters attribute
      * @return HashMap with filter criteria name as a key and value as a value

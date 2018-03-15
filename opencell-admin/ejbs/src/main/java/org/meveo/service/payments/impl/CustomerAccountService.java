@@ -28,6 +28,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
@@ -39,6 +40,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
@@ -49,6 +51,7 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.service.base.AccountService;
+import org.meveo.util.ApplicationProvider;
 
 /**
  * Customer Account service implementation.
@@ -67,6 +70,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
+    
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+
 
     private ParamBean paramBean = ParamBean.getInstance();
 
@@ -283,10 +291,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         try {
             ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-            String occTransferAccountCredit = param.getProperty("occ.templateTransferAccountCredit", "TRANS_CRED");
-            String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit", "TRANS_DEB");
+            String occTransferAccountCredit = param.getProperty("occ.templateTransferAccountCredit", null);
+            String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit", null);
             String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
-            String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
+            String descTransfertTo = paramBean.getProperty("occ.descTransfertTo", "transfer to");
 
             otherCreditAndChargeService.addOCC(occTransferAccountDebit, descTransfertFrom + " " + toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date());
             otherCreditAndChargeService.addOCC(occTransferAccountCredit, descTransfertTo + " " + fromCustomerAccount.getCode(), toCustomerAccount, amount, new Date());
@@ -469,9 +477,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
-		for(PaymentMethod pm : entity.getPaymentMethods()){
-			pm.updateAudit(currentUser);
-		}
+        for (PaymentMethod pm : entity.getPaymentMethods()) {
+            pm.updateAudit(currentUser);
+        }
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
@@ -487,9 +495,9 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         if (entity.getPreferredPaymentMethod() == null) {
             throw new BusinessException("CustomerAccount does not have a preferred payment method");
         }
-		for(PaymentMethod pm : entity.getPaymentMethods()){
-			pm.updateAudit(currentUser);
-		}
+        for (PaymentMethod pm : entity.getPaymentMethods()) {
+            pm.updateAudit(currentUser);
+        }
         // Register card payment methods in payment gateway and obtain a token id
         for (CardPaymentMethod cardPaymentMethod : entity.getCardPaymentMethods(true)) {
             paymentMethodService.obtainAndSetCardToken(cardPaymentMethod, cardPaymentMethod.getCustomerAccount());
@@ -498,23 +506,37 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         entity.ensureOnePreferredPaymentMethod();
         return super.update(entity);
     }
+
+    public PaymentMethod getPreferredPaymentMethod(Long customerAccountId) {
+        try {
+            TypedQuery<PaymentMethod> query = this.getEntityManager().createNamedQuery("PaymentMethod.getPreferredPaymentMethodForCA", PaymentMethod.class).setMaxResults(1)
+                .setParameter("caId", customerAccountId);
+
+            PaymentMethod paymentMethod = query.getSingleResult();
+            return paymentMethod;
+
+        } catch (NoResultException e) {
+            log.warn("Customer account {} has no preferred payment method", customerAccountId, e);
+            return null;
+        }
+    }
     
     @SuppressWarnings("unchecked")
-	public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
-		long startDate = System.currentTimeMillis();
-		Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
-		query.setParameter("id", billingAccount.getId());
-		try {
-			List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
-			log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
-			return resultList;
-			
-		} catch (NoResultException e) {
-			log.warn("error while getting user account list by billing account",e);
-			return null;
-		}
-	
-	}
+    public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
+        long startDate = System.currentTimeMillis();
+        Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
+        query.setParameter("id", billingAccount.getId());
+        try {
+            List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
+            log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
+            return resultList;
+            
+        } catch (NoResultException e) {
+            log.warn("error while getting user account list by billing account",e);
+            return null;
+        }
+    
+    }
     
     public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to, boolean dunningExclusion) throws BusinessException {
         BigDecimal result = new BigDecimal(0);
@@ -531,5 +553,5 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
         return result;
-    }
+    }   
 }

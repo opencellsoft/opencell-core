@@ -72,7 +72,7 @@ public class ServiceInstance extends BusinessCFEntity {
     @JoinColumn(name = "service_template_id")
     private ServiceTemplate serviceTemplate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
     private Calendar invoicingCalendar;
 

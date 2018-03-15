@@ -20,6 +20,7 @@ package org.meveo.model.catalog;
 
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -28,11 +29,14 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
+@Cacheable
 @ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
 @Table(name = "cat_serv_trm_charge_template")
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_trmchrg_templt_seq"), })
@@ -40,6 +44,7 @@ public class ServiceChargeTemplateTermination extends ServiceChargeTemplate<OneS
 
 	private static final long serialVersionUID = 7811269692204342428L;
 
+	@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "cat_serv_trm_wallet_template", joinColumns = @JoinColumn(name = "service_trm_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
 	@OrderColumn(name = "INDX")

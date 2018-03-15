@@ -1,5 +1,6 @@
 package org.meveo.model.dwh;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +23,7 @@ import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
 
 @Entity
+@Cacheable
 @ModuleItem
 @ExportIdentifier({ "code"})
 @Table(name = "dwh_chart", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
@@ -35,7 +37,7 @@ public class Chart extends BusinessEntity {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "msr_qty_id")
     private MeasurableQuantity measurableQuantity;
 

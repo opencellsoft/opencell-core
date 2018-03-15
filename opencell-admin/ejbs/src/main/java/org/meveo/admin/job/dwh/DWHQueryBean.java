@@ -13,7 +13,6 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -26,6 +25,7 @@ import org.meveo.model.dwh.MeasuredValue;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.meveocrm.services.dwh.MeasurableQuantityService;
 import org.meveocrm.services.dwh.MeasuredValueService;
 import org.slf4j.Logger;
@@ -38,8 +38,9 @@ public class DWHQueryBean {
 
     @Inject
     private MeasuredValueService mvService;
-
-    @PersistenceContext(unitName = "MeveoAdmin")
+    
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
     private EntityManager em;
 
     @Inject
@@ -106,6 +107,7 @@ public class DWHQueryBean {
                 if (mq.getLastMeasureDate() == null) {
                     mq.setLastMeasureDate(mq.getPreviousDate(toDate));
                 }
+    
                 while (mq.getNextMeasureDate().before(toDate)) {
                     log.debug("resolve query:{}, nextMeasureDate={}, lastMeasureDate={}", mq.getSqlQuery(), mq.getNextMeasureDate(), mq.getLastMeasureDate());
                     String queryStr = mq.getSqlQuery().replaceAll("#\\{date\\}", df.format(mq.getLastMeasureDate()));

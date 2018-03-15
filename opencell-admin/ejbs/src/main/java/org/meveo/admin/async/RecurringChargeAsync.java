@@ -16,6 +16,8 @@ import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitRecurringRatingJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
@@ -36,9 +38,24 @@ public class RecurringChargeAsync {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private CurrentUserProvider currentUserProvider;
+
+    /**
+     * Process recurring charges of given recuring charge instances. Once charge instance at a time in a separate transaction.
+     * 
+     * @param ids A list of recurring charge instance ids
+     * @param result Job execution result
+     * @param maxDate Process untill date
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     * @return
+     */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date maxDate) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date maxDate, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
 
         for (Long id : ids) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {

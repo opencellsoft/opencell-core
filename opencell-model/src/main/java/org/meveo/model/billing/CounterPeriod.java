@@ -1,9 +1,11 @@
 package org.meveo.model.billing;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,6 +21,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.Size;
@@ -69,6 +72,9 @@ public class CounterPeriod extends BusinessEntity {
     @Column(name = "notification_levels", length = 100)
     @Size(max = 100)
     private String notificationLevels;
+
+    @Transient
+    private Map<String, BigDecimal> notificationLevelsAsMap;
 
     public CounterInstance getCounterInstance() {
         return counterInstance;
@@ -136,7 +142,11 @@ public class CounterPeriod extends BusinessEntity {
 
         if (StringUtils.isBlank(notificationLevels)) {
             return null;
+
+        } else if (notificationLevelsAsMap != null) {
+            return notificationLevelsAsMap;
         }
+
         Map<String, BigDecimal> bdLevelMap = new LinkedHashMap<>();
 
         Map<String, ?> bdLevelMapObj = JsonUtils.toObject(notificationLevels, LinkedHashMap.class);
@@ -158,6 +168,7 @@ public class CounterPeriod extends BusinessEntity {
             return null;
         }
 
+        notificationLevelsAsMap = bdLevelMap;
         return bdLevelMap;
     }
 
@@ -209,4 +220,25 @@ public class CounterPeriod extends BusinessEntity {
         return !dateToCheck.before(periodStartDate) && !dateToCheck.after(periodEndDate);
     }
 
+    /**
+     * Get a list of counter values for which notification should fire given the counter value change from (exclusive)/to (inclusive) value (NOTE : as TO value is lower, it is
+     * inclusive)
+     * 
+     * @param fromValue Counter changed from value
+     * @param toValue Counter changed to value
+     * @return A list of counter values that match notification levels
+     */
+    public List<Entry<String, BigDecimal>> getMatchedNotificationLevels(BigDecimal fromValue, BigDecimal toValue) {
+        if (notificationLevels == null) {
+            return null;
+        }
+
+        List<Entry<String, BigDecimal>> matchedLevels = new ArrayList<>();
+        for (Entry<String, BigDecimal> notifValue : getNotificationLevelsAsMap().entrySet()) {
+            if (fromValue.compareTo(notifValue.getValue()) > 0 && notifValue.getValue().compareTo(toValue) >= 0) {
+                matchedLevels.add(notifValue);
+            }
+        }
+        return matchedLevels;
+    }
 }

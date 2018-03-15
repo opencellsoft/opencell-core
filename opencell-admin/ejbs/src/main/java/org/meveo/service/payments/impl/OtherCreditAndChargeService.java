@@ -71,9 +71,7 @@ public class OtherCreditAndChargeService extends
 			log.warn("addOCC dueDate is null");
 			throw new BusinessException("dueDate is null");
 		}
-		
-		customerAccount = customerAccountService.refreshOrRetrieve(customerAccount);
-		
+				
 		OCCTemplate occTemplate = occTemplateService.findByCode(
 				codeOCCTemplate);
 		if (occTemplate == null) {

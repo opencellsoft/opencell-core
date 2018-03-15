@@ -17,6 +17,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
@@ -80,6 +81,9 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
     @Inject
     protected BusinessProductModelService businessProductModelService;
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private DualListModel<OfferTemplateCategory> offerTemplateCategoriesDM;
     private DualListModel<DigitalResource> attachmentsDM;
@@ -216,6 +220,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
         if (businessProductModel != null) {
+            businessProductModel = businessProductModelService.refreshOrRetrieve(businessProductModel);
             businessProductModelService.instantiateBPM(entity, businessProductModel);
             return back();
             
@@ -225,7 +230,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
             if (offerTemplateCategoriesDM != null && (offerTemplateCategoriesDM.getSource() != null || offerTemplateCategoriesDM.getTarget() != null)) {
                 entity.getOfferTemplateCategories().clear();
-                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.refreshOrRetrieve(offerTemplateCategoriesDM.getTarget()));
+                entity.getOfferTemplateCategories().addAll(offerTemplateCategoryService.retrieveIfNotManaged(offerTemplateCategoriesDM.getTarget()));
             }
 
             if (attachmentsDM != null && (attachmentsDM.getSource() != null || attachmentsDM.getTarget() != null)) {
@@ -464,7 +469,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "productTemplate.version.exists"),
-                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBeanFactory.getInstance().getDateFormat()));
             return false;
         }
 

@@ -217,7 +217,7 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
         }
 
         if (sortByDate) {
-            queryBuilder.addOrderCriterion("m.date", true);
+            queryBuilder.addOrderCriterionAsIs("m.date", true);
         }
 
         Query query = queryBuilder.getQuery(getEntityManager());

@@ -14,22 +14,23 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.service.job.Job;
 
 /**
- * The Class PaymentCardJob create payment or refund for all opened account operations.
+ * The Class PaymentJob create payment or payout for all opened account operations.
  */
 @Stateless
-public class PaymentCardJob extends Job {
+public class PaymentJob extends Job {
 
-    /** The payment card job bean. */
+    /** The payment job bean. */
     @Inject
-    private PaymentCardJobBean paymentCardJobBean;
+    private PaymentJobBean paymentJobBean;
 
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        paymentCardJobBean.execute(result, jobInstance);
+        paymentJobBean.execute(result, jobInstance);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class PaymentCardJob extends Job {
 
         CustomFieldTemplate nbRuns = new CustomFieldTemplate();
         nbRuns.setCode("nbRuns");
-        nbRuns.setAppliesTo("JOB_PaymentCardJob");
+        nbRuns.setAppliesTo("JOB_PaymentJob");
         nbRuns.setActive(true);
         nbRuns.setDescription(resourceMessages.getString("jobExecution.nbRuns"));
         nbRuns.setFieldType(CustomFieldTypeEnum.LONG);
@@ -54,7 +55,7 @@ public class PaymentCardJob extends Job {
 
         CustomFieldTemplate waitingMillis = new CustomFieldTemplate();
         waitingMillis.setCode("waitingMillis");
-        waitingMillis.setAppliesTo("JOB_PaymentCardJob");
+        waitingMillis.setAppliesTo("JOB_PaymentJob");
         waitingMillis.setActive(true);
         waitingMillis.setDescription(resourceMessages.getString("jobExecution.waitingMillis"));
         waitingMillis.setFieldType(CustomFieldTypeEnum.LONG);
@@ -66,43 +67,68 @@ public class PaymentCardJob extends Job {
         lisValuesYesNo.put("YES", "YES");
         lisValuesYesNo.put("NO", "NO");
 
-        Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
-        lisValuesCreditDebit.put("Credit", "Payment");
-        lisValuesCreditDebit.put("Debit", "Refund");
-
         CustomFieldTemplate createAO = new CustomFieldTemplate();
-        createAO.setCode("PaymentCardJob_createAO");
-        createAO.setAppliesTo("JOB_PaymentCardJob");
+        createAO.setCode("PaymentJob_createAO");
+        createAO.setAppliesTo("JOB_PaymentJob");
         createAO.setActive(true);
         createAO.setDefaultValue("YES");
         createAO.setDescription("Create AO");
         createAO.setFieldType(CustomFieldTypeEnum.LIST);
         createAO.setValueRequired(false);
         createAO.setListValues(lisValuesYesNo);
-        result.put("PaymentCardJob_createAO", createAO);
+        result.put("PaymentJob_createAO", createAO);
 
         CustomFieldTemplate matchingAO = new CustomFieldTemplate();
-        matchingAO.setCode("PaymentCardJob_matchingAO");
-        matchingAO.setAppliesTo("JOB_PaymentCardJob");
+        matchingAO.setCode("PaymentJob_matchingAO");
+        matchingAO.setAppliesTo("JOB_PaymentJob");
         matchingAO.setActive(true);
         matchingAO.setDefaultValue("YES");
         matchingAO.setDescription("Matching AO");
         matchingAO.setFieldType(CustomFieldTypeEnum.LIST);
         matchingAO.setValueRequired(false);
         matchingAO.setListValues(lisValuesYesNo);
-        result.put("PaymentCardJob_matchingAO", matchingAO);
+        result.put("PaymentJob_matchingAO", matchingAO);
 
+        Map<String, String> lisValuesCreditDebit = new HashMap<String, String>();
+        lisValuesCreditDebit.put("Credit", "Payment");
+        lisValuesCreditDebit.put("Debit", "Refund");
+        
         CustomFieldTemplate creditOrDebit = new CustomFieldTemplate();
-        creditOrDebit.setCode("PaymentCardJob_creditOrDebit");
-        creditOrDebit.setAppliesTo("JOB_PaymentCardJob");
+        creditOrDebit.setCode("PaymentJob_creditOrDebit");
+        creditOrDebit.setAppliesTo("JOB_PaymentJob");
         creditOrDebit.setActive(true);
         creditOrDebit.setDefaultValue("Credit");
         creditOrDebit.setDescription(resourceMessages.getString("jobExecution.paymentOrRefund"));
         creditOrDebit.setFieldType(CustomFieldTypeEnum.LIST);
         creditOrDebit.setValueRequired(true);
         creditOrDebit.setListValues(lisValuesCreditDebit);
-        result.put("PaymentCardJob_creditOrDebit", creditOrDebit);
+        result.put("PaymentJob_creditOrDebit", creditOrDebit);
 
+        CustomFieldTemplate payentGatewayCF = new CustomFieldTemplate();
+        payentGatewayCF.setCode("PaymentJob_paymentGateway");
+        payentGatewayCF.setAppliesTo("JOB_PaymentJob");
+        payentGatewayCF.setActive(true);
+        payentGatewayCF.setDescription("Payent gateway");
+        payentGatewayCF.setFieldType(CustomFieldTypeEnum.ENTITY);
+        payentGatewayCF.setEntityClazz(PaymentGateway.class.getName());
+        payentGatewayCF.setValueRequired(false);
+        result.put("PaymentJob_paymentGateway", payentGatewayCF);
+        
+        Map<String, String> lisValuesCardDD = new HashMap<String, String>();
+        lisValuesCardDD.put("CARD", "Card");
+        lisValuesCardDD.put("DIRECTDEBIT", "Sepa");
+        
+        CustomFieldTemplate cardOrDD = new CustomFieldTemplate();
+        cardOrDD.setCode("PaymentJob_cardOrDD");
+        cardOrDD.setAppliesTo("JOB_PaymentJob");
+        cardOrDD.setActive(true);
+        cardOrDD.setDefaultValue("CARD");
+        cardOrDD.setDescription(resourceMessages.getString("jobExecution.cardOrDD"));
+        cardOrDD.setFieldType(CustomFieldTypeEnum.LIST);
+        cardOrDD.setValueRequired(true);
+        cardOrDD.setListValues(lisValuesCardDD);
+        result.put("PaymentJob_cardOrDD", cardOrDD);
+        
         return result;
     }
 

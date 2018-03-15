@@ -96,7 +96,7 @@ public class BordereauRemiseCheque {
 		InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(fileName);
 		parameters.put("date", new Date());
 
-		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes","RG_CHQ,RG_CHQNI").split(",");
+		String[] occCodes = paramBean.getProperty("report.occ.templatePaymentCheckCodes","PAY_CHK,PAY_NID").split(",");
 		try {
 			jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
 			File dataSourceFile = generateDataFile(occCodes);
