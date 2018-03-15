@@ -75,7 +75,7 @@ public class FtpAdapterJobBean {
     /** The src. */
     private FileObject src = null;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

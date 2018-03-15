@@ -2,6 +2,11 @@ package org.meveo.service.index;
 
 import java.io.Serializable;
 
+/**
+ * Tracks reindexing records processed - total and successfull
+ * 
+ * @author Andrius Karpavicius
+ */
 public class ReindexRecordsProcessed implements Serializable {
 
     private static final long serialVersionUID = 5047323028071238082L;
@@ -14,8 +19,14 @@ public class ReindexRecordsProcessed implements Serializable {
         this.successfull = total - failed;
     }
 
+    /**
+     * Total number of records
+     */
     private int total;
 
+    /**
+     * Number of successfull records
+     */
     private int successfull;
 
     public int getTotal() {

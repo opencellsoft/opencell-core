@@ -18,7 +18,7 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
-import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
@@ -45,13 +45,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     static boolean useCFTCache = true;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @PostConstruct
     private void init() {
-        useCFTCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCFT", "true"));
+        useCFTCache = Boolean.parseBoolean(ParamBean.getInstance().getProperty("cache.cacheCFT", "true"));
     }
 
     /**

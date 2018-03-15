@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -136,6 +137,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private ServiceInstance selectedServiceInstance;
 
@@ -258,7 +262,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
-            String datePattern = paramBean.getDateFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateFormat();
             messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidity().toString(datePattern),
                 DateUtils.formatDateWithPattern(entity.getSubscriptionDate(), datePattern));
             FacesContext.getCurrentInstance().validationFailed();
@@ -579,7 +583,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             if (productInstance.getProductTemplate().getValidity() != null
                     && !productInstance.getProductTemplate().getValidity().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
 
-                String datePattern = paramBean.getDateFormat();
+                String datePattern = paramBeanFactory.getInstance().getDateFormat();
                 messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
                     productInstance.getProductTemplate().getValidity().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
                 FacesContext.getCurrentInstance().validationFailed();

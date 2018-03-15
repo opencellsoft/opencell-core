@@ -21,7 +21,7 @@
             <hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
         </hftl:searchPanel>
 
-        <hftl:dataList label="#{messages['provider.title']}" backingBean="#{providerListBean}">
+        <hftl:dataList label="#{messages['provider.title']}" backingBean="#{providerListBean}" exportButton="false" exportXlsxButton="false">
             <hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
             <hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
         </hftl:dataList>

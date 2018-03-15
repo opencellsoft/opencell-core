@@ -38,7 +38,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     @Inject
     OCCTemplateService oCCTemplateService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

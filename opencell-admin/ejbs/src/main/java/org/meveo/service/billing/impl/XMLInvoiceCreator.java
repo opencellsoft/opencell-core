@@ -163,7 +163,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @ApplicationProvider
     private Provider appProvider;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

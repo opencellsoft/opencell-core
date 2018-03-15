@@ -63,7 +63,7 @@ public class SubscriptionImportService extends ImportService {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

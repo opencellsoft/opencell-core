@@ -66,7 +66,7 @@ public class PDFParametersConstruction {
     @Inject
     private InvoiceService invoiceService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

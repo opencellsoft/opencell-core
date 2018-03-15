@@ -56,7 +56,7 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 
     // private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

@@ -9,6 +9,8 @@ import javax.inject.Named;
 
 import org.jboss.seam.international.status.Messages;
 import org.jboss.seam.international.status.builder.BundleKey;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.index.ElasticClient;
 import org.meveo.service.index.ReindexingStatistics;
 import org.slf4j.Logger;
@@ -28,6 +30,10 @@ public class IndexingBean implements Serializable {
     @Inject
     private Logger log;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     private Future<ReindexingStatistics> reindexingFuture;
 
     public void cleanAndReindex() {
@@ -39,7 +45,7 @@ public class IndexingBean implements Serializable {
         }
 
         try {
-            reindexingFuture = elasticClient.cleanAndReindex();
+            reindexingFuture = elasticClient.cleanAndReindex(currentUser.unProxy());
             messages.info(new BundleKey("messages", "indexing.started"));
 
         } catch (Exception e) {

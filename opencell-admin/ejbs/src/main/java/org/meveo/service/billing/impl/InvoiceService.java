@@ -166,7 +166,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
@@ -750,11 +750,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             }
 
-            String path = jasperFile.getPath();
-            JasperReport jasperReport = jasperReportMap.get(path);
+            String fileKey = jasperFile.getPath()+jasperFile.lastModified();
+            JasperReport jasperReport = jasperReportMap.get(fileKey);
             if (jasperReport == null) {
                 jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
-                jasperReportMap.put(path, jasperReport);
+                jasperReportMap.put(fileKey, jasperReport);
             }
 
             JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
