@@ -38,6 +38,7 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -77,8 +78,7 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     @Inject
     private CustomerService customerService;
-    
-    
+
     /**
      * Customer Id passed as a parameter. Used when creating new Customer Account from customer account window, so default customer account will be set on newly created customer
      * Account.
@@ -368,8 +368,8 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
      */
     @ActionMethod
     public void savePaymentMethod() {
-
         try {
+            checkIsBicRequired();
 
             selectedPaymentMethod.updateAudit(currentUser);
             if (selectedPaymentMethod instanceof CardPaymentMethod) {
@@ -477,26 +477,21 @@ public class CustomerAccountBean extends AccountBean<CustomerAccount> {
     }
 
     /**
-     * If Seller country is different from IBAN customer country (two first letter), then the BIC is  mandatory.
-     * If no country on seller, check this on "Application configuration" Bank information Iban two first letters.
-     * If no seller nor system country information, BIC stay mandatory.
-     *
+     * If Seller country is different from IBAN customer country (two first letter), then the BIC is mandatory. If no country on seller, check this on "Application configuration"
+     * Bank information Iban two first letters. If no seller nor system country information, BIC stay mandatory.
+     * 
+     * @throws Exception exception
      */
-    public void checkIsBicRequired() {
-        bicRequired = true;
+    public void checkIsBicRequired() throws Exception {
         if (selectedPaymentMethod instanceof DDPaymentMethod && ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates() != null) {
-            String iban =  ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates().getIban();
-            if(!StringUtils.isBlank(iban) && iban.length() > 1 ) {
-                bicRequired = customerService.isBicRequired(entity.getCustomer(), iban);
-            }            
+            String iban = ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates().getIban();
+            String bic = ((DDPaymentMethod) selectedPaymentMethod).getBankCoordinates().getBic();
+            if (!StringUtils.isBlank(iban) && iban.length() > 1) {
+                if (StringUtils.isBlank(bic) && customerService.isBicRequired(entity.getCustomer(), iban)) {
+                    throw new Exception("Missing BIC.");
+                }
+            }
         }
     }
 
-    /**
-     * 
-     * @return isBicRequired
-     */
-    public boolean isBicRequired() {
-        return bicRequired;
-    }
 }
