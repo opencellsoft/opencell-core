@@ -54,7 +54,8 @@ import org.meveo.service.script.service.ServiceModelScriptService;
  * ServiceInstanceService.
  * 
  * @author anasseh
- *
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -180,12 +181,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
      * @param serviceInstance service instance
      * @param descriptionOverride overridden description
      * @param subscriptionAmount subscription amount
      * @param terminationAmount termination amount
      * @param isVirtual true/false
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
@@ -284,6 +290,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     /**
      * Activate a service, the subscription charges can be applied or not.
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -292,6 +299,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {

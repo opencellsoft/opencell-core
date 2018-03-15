@@ -119,6 +119,10 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
 
@@ -607,9 +611,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Produce invoice.
+     * v5.0 Refresh jasper template without restarting wildfly 
      * 
      * @param invoice invoice to generate pdf
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
         log.debug("Creating pdf for invoice id={} number={}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());

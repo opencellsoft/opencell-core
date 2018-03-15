@@ -83,6 +83,9 @@ import org.primefaces.component.datatable.DataTable;
 /**
  * Standard backing bean for {@link Subscription} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -217,11 +220,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
         return Arrays.asList("productInstances");
     }
 
+    /**
+     * init Service Templates
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     private void initServiceTemplates() {
 
         // Clear existing list value
         serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
-        boolean allowServiceMultiInstantiation = paramBean.isServiceMultiInstantiation();
+        boolean allowServiceMultiInstantiation = paramBeanFactory.getInstance().isServiceMultiInstantiation();
 
         if (entity.getOffer() == null) {
             return;

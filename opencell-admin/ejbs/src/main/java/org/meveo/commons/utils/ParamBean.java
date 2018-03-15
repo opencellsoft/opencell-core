@@ -41,6 +41,8 @@ import org.slf4j.LoggerFactory;
  * Contains application configuration settings
  * 
  * @author anasseh
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 public class ParamBean {
 
@@ -177,7 +179,10 @@ public class ParamBean {
     
     /**
      * Check whether service multi instantiation is allowed
+     * 
      * @return is allowed.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public boolean isServiceMultiInstantiation() {
         return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));

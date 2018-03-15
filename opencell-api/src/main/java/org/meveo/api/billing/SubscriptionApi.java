@@ -90,6 +90,11 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 
+/**
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class SubscriptionApi extends BaseApi {
 
@@ -143,6 +148,14 @@ public class SubscriptionApi extends BaseApi {
     
     private ParamBean paramBean = ParamBean.getInstance();
 
+    
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param SubscriptionDto postData
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUserAccount())) {
@@ -219,6 +232,13 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param SubscriptionDto postData
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -296,6 +316,13 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param SubscriptionDto postData
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void activateServices(ActivateServicesRequestDto activateServicesDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(activateServicesDto.getSubscription())) {
@@ -484,6 +511,13 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param SubscriptionDto postData
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void instantiateServices(InstantiateServicesRequestDto instantiateServicesDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(instantiateServicesDto.getSubscription())) {

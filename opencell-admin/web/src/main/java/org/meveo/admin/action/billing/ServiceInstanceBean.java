@@ -31,6 +31,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.service.base.local.IPersistenceService;
@@ -59,6 +60,10 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     @Inject
     @Param
     private Long offerInstanceId;
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -198,7 +203,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
         String outcome = super.saveOrUpdate(killConversation);
                 
-        boolean allowServiceMultiInstantiation = paramBean.isServiceMultiInstantiation();
+        boolean allowServiceMultiInstantiation = paramBeanFactory.getInstance().isServiceMultiInstantiation();
         if (entity.getStatus() != InstanceStatusEnum.INACTIVE && quantityChanged) {
             messages.warn(new BundleKey("messages", allowServiceMultiInstantiation ? "serviceInstance.quantityChangedMulti" : "serviceInstance.quantityChanged"));
         }
