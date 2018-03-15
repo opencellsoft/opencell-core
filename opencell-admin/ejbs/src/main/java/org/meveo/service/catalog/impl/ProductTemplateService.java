@@ -27,7 +27,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 @Stateless
 public class ProductTemplateService extends GenericProductOfferingService<ProductTemplate> {
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

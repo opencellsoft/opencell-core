@@ -74,7 +74,7 @@ public class FlatFileProcessingJobBean {
     /** The username. */
     String username;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

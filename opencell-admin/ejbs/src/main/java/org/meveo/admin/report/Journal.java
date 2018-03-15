@@ -55,7 +55,7 @@ public class Journal extends FileProducer implements Reporting {
 
     private String separator;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

@@ -99,7 +99,7 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     @Inject
     private ServiceSingleton serviceSingleton;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

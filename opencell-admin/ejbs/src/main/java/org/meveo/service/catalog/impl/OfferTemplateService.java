@@ -66,7 +66,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
     @Inject
     private SubscriptionService subscriptionService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

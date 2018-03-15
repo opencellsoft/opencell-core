@@ -70,7 +70,7 @@ public class SepaFile implements GatewayPaymentInterface {
     @CurrentUser
     private MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

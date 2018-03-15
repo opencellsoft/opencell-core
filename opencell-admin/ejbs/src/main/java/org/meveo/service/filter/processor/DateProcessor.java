@@ -16,7 +16,7 @@ public class DateProcessor extends PrimitiveFilterProcessor {
 
     public static final String PREFIX = "date:";
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

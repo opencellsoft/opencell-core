@@ -57,7 +57,7 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

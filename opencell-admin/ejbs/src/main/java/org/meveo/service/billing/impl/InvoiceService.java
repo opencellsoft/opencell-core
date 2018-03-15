@@ -166,7 +166,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

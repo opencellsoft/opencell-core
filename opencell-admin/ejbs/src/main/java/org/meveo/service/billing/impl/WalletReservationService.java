@@ -37,7 +37,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
     @Inject
     private CalendarService calendarService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

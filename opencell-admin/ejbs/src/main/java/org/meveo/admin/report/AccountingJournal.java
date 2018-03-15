@@ -55,7 +55,7 @@ public class AccountingJournal extends FileProducer implements Reporting {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
