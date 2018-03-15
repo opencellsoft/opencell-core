@@ -152,7 +152,7 @@ public class Seller extends BusinessCFEntity {
     /**
      * Set contact informations
      * 
-     * @param contactInformation
+     * @param contactInformation contactInformation
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */

@@ -245,6 +245,7 @@ public class PaymentMethodDto extends BaseDto {
      * Build entity class from dto class.
      *
      * @param customerAccount the customerAccount.
+     * @param currentUser the currentUser.
      * @return PaymentMethod entity.
      */
     public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {

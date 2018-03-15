@@ -47,6 +47,7 @@ public class NotificationDto extends BusinessDto {
 	/**
      * v5.0: add active field
      * @author akadid abdelmounaim
+     * @param e Notification
      * @lastModifiedVersion 5.0
      */
 	public NotificationDto(Notification e) {
@@ -144,6 +145,7 @@ public class NotificationDto extends BusinessDto {
 	/**
 	 * Getter for active state
 	 * @author akadid abdelmounaim
+	 * @return isActive
 	 * @lastModifiedVersion 5.0
 	 */
     public Boolean isActive() {

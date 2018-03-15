@@ -69,8 +69,8 @@ public class SellerDto extends BusinessDto {
      * Create SellerDto from Seller and CustomFieldsDto
      * v5.0: Added ContactInformation and Address
      * 
-     * @param Seller seller
-     * @param CustomFieldsDto customFieldsDto
+     * @param seller seller
+     * @param customFieldInstances customFieldsDto
      * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0

@@ -527,7 +527,7 @@ public class ProviderApi extends BaseApi {
     /**
      * New tenant/provider creation
      * 
-     * @param postData
+     * @param postData postData Provider Dto
      * @throws MeveoApiException
      * @throws BusinessException
      */
