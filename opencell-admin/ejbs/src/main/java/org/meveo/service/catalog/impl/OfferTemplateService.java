@@ -324,7 +324,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
             }
         }
 
-        ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+        ImageUploadEventHandler<OfferTemplate> offerImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
         try {
             String newImagePath = offerImageUploadEventHandler.duplicateImage(offer, offer.getImagePath());
             offer.setImagePath(newImagePath);

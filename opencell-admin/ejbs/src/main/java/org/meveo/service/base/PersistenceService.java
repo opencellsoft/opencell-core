@@ -313,7 +313,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
             if (entity instanceof IImageUpload) {
                 try {
-                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
+                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(currentUser.getProviderCode());
                     imageUploadEventHandler.deleteImage(entity);
                 } catch (IOException e) {
                     log.error("Failed deleting image file");

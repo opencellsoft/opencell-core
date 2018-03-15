@@ -8,8 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-import javax.inject.Inject;
-
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -21,9 +19,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -34,17 +29,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
     /**
      * application provider.
      */
-    private Provider appProvider;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
+    private String userProviderCode;
 
     /**
      * @param appProvider application provider.
      */
-    public ImageUploadEventHandler(Provider appProvider) {
-        this.appProvider = appProvider;
+    public ImageUploadEventHandler(String userProviderCode) {
+        this.userProviderCode = userProviderCode;
     }
 
     /**
@@ -53,13 +44,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
      */
     public String getPicturePath(T entity) {
         if (entity instanceof OfferTemplateCategory) {
-            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "offerCategory");
+            return ModuleUtil.getPicturePath(userProviderCode, "offerCategory");
         } else if (entity instanceof OfferTemplate) {
-            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "offer");
+            return ModuleUtil.getPicturePath(userProviderCode, "offer");
         } else if (entity instanceof ServiceTemplate) {
-            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "service");
+            return ModuleUtil.getPicturePath(userProviderCode, "service");
         } else if (entity instanceof ProductTemplate) {
-            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "product");
+            return ModuleUtil.getPicturePath(userProviderCode, "product");
         }
 
         return "";

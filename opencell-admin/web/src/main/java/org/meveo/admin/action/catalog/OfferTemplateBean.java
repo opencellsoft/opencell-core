@@ -211,7 +211,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     protected List<String> getFormFieldsToFetch() {
         return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels", "customerCategories");
     }
-    
+
     public List<OfferTemplate> listActiveByDate(Date date) {
         return offerTemplateService.listActiveByDate(date);
     }
@@ -420,7 +420,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
             if (entity.getImagePath() != null) {
                 try {
-                    ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                    ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                     imageUploadEventHandler.deleteImage(entity);
                 } catch (IOException e) {
                     log.error("Failed deleting image file", e);

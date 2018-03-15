@@ -1152,7 +1152,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
         uploadedFile = event.getFile();
 
         try {
-            ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(appProvider);
+            ImageUploadEventHandler<T> uploadHandler = new ImageUploadEventHandler<T>(currentUser.getProviderCode());
             String filename = uploadHandler.handleImageUpload(entity, uploadedFile);
             if (filename != null) {
                 ((IImageUpload) entity).setImagePath(filename);
