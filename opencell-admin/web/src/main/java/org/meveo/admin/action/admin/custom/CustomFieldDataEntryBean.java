@@ -27,6 +27,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessCFEntity;
@@ -107,6 +108,10 @@ public class CustomFieldDataEntryBean implements Serializable {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
+
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @Inject
     protected Messages messages;
@@ -407,7 +412,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             if (cfValue != null) {
                 entityValueHolder.setValuePeriodMatched(true);
-                ParamBean paramBean = ParamBean.getInstance();
+                ParamBean paramBean = paramBeanFactory.getInstance();
                 String datePattern = paramBean.getDateFormat();
 
                 // For a strict match need to edit an existing period
@@ -607,7 +612,6 @@ public class CustomFieldDataEntryBean implements Serializable {
         return customFieldInstanceService.getInheritedOnlyCFValue(entity, cfCode);
     }
 
-
     /**
      * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
      * 
@@ -616,12 +620,12 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return A list of Custom field CFvalues. From all the entities CF entity hierarchy up.
      */
     public List<CustomFieldValue> getInheritedVersionableCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
-        List<CustomFieldValue> values =customFieldInstanceService.getInheritedOnlyAllCFValues(entity, cft.getCode());
-        
+        List<CustomFieldValue> values = customFieldInstanceService.getInheritedOnlyAllCFValues(entity, cft.getCode());
+
         for (CustomFieldValue cfv : values) {
             deserializeForGUI(cfv, cft);
         }
-        
+
         return values;
     }
 
@@ -955,7 +959,8 @@ public class CustomFieldDataEntryBean implements Serializable {
                     // instantiates automatically)
                     // Also don't save if CFT does not apply in a given entity lifecycle or because cft.applicableOnEL evaluates to false
                     if ((cfValue.isValueEmptyForGui() && (cft.getDefaultValue() == null || cft.getStorageType() != CustomFieldStorageTypeEnum.SINGLE) && !cft.isVersionable())
-                            || ((isNewEntity && cft.isHideOnNew()) || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
+                            || ((isNewEntity && cft.isHideOnNew())
+                                    || (entity != null && !ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entity)))) {
                         log.trace("Will ommit from saving cfi {}", cfValue);
 
                         // Existing value update

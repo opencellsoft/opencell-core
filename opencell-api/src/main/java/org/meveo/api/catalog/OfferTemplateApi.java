@@ -35,7 +35,6 @@ import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
 import org.meveo.api.security.parameter.ObjectPropertyParser;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
@@ -87,11 +86,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
     @Inject
     private SubscriptionApi subscriptionApi;
-    
+
     @Inject
     private ScriptInstanceService scriptInstanceService;
-    
-    private ParamBean paramBean = ParamBean.getInstance();
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(property = "sellers", entityClass = Seller.class, parser = ObjectPropertyParser.class))
     public OfferTemplate create(OfferTemplateDto postData) throws MeveoApiException, BusinessException {
@@ -109,8 +106,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException("An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
-                    + ", already exists. Please change the validity dates of an existing offer first.");
+            throw new InvalidParameterException(
+                "An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                        + ", already exists. Please change the validity dates of an existing offer first.");
         }
 
         if (offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
@@ -149,7 +147,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
         if (offerTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / "
                     + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
@@ -157,8 +155,9 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         List<ProductOffering> matchedVersions = offerTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), offerTemplate.getId(),
             true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException("An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
-                    + ", already exists. Please change the validity dates of an existing offer first.");
+            throw new InvalidParameterException(
+                "An offer, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                        + ", already exists. Please change the validity dates of an existing offer first.");
         }
 
         populateFromDto(offerTemplate, postData);
@@ -209,10 +208,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             }
         }
 
-        if(!StringUtils.isBlank(postData.getGlobalRatingScriptInstance())){
+        if (!StringUtils.isBlank(postData.getGlobalRatingScriptInstance())) {
             ScriptInstance scriptInstance = scriptInstanceService.findByCode(postData.getGlobalRatingScriptInstance());
-            if(scriptInstance==null){
-        		throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getGlobalRatingScriptInstance());
+            if (scriptInstance == null) {
+                throw new EntityDoesNotExistsException(ScriptInstance.class, postData.getGlobalRatingScriptInstance());
             }
             offerTemplate.setGlobalRatingScriptInstance(scriptInstance);
         }
@@ -227,7 +226,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 offerTemplate.addSeller(seller);
             }
         }
-        
+
         if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
             offerTemplate.getChannels().clear();
             for (ChannelDto channelDto : postData.getChannels()) {
@@ -422,7 +421,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (offerTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
@@ -441,7 +440,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         OfferTemplate offerTemplate = offerTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (offerTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
@@ -491,8 +490,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 offerProductTemplateDto = new OfferProductTemplateDto();
                 offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
                 if (productTemplate != null) {
-                    offerProductTemplateDto
-                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
+                    offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
                 }
                 offerProductTemplates.add(offerProductTemplateDto);
             }

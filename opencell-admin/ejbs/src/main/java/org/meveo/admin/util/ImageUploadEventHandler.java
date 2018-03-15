@@ -19,7 +19,6 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
-import org.meveo.model.crm.Provider;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -30,13 +29,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
     /**
      * application provider.
      */
-    private Provider appProvider;
+    private String userProviderCode;
 
     /**
      * @param appProvider application provider.
      */
-    public ImageUploadEventHandler(Provider appProvider) {
-        this.appProvider = appProvider;
+    public ImageUploadEventHandler(String userProviderCode) {
+        this.userProviderCode = userProviderCode;
     }
 
     /**
@@ -45,13 +44,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
      */
     public String getPicturePath(T entity) {
         if (entity instanceof OfferTemplateCategory) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "offerCategory");
+            return ModuleUtil.getPicturePath(userProviderCode, "offerCategory");
         } else if (entity instanceof OfferTemplate) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "offer");
+            return ModuleUtil.getPicturePath(userProviderCode, "offer");
         } else if (entity instanceof ServiceTemplate) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "service");
+            return ModuleUtil.getPicturePath(userProviderCode, "service");
         } else if (entity instanceof ProductTemplate) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "product");
+            return ModuleUtil.getPicturePath(userProviderCode, "product");
         }
 
         return "";

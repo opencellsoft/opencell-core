@@ -27,7 +27,6 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
@@ -47,8 +46,6 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
     @Inject
     private ProductTemplateService productTemplateService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     /*
      * (non-Javadoc)
      * 
@@ -67,7 +64,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         ProductTemplate productTemplate = productTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (productTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(ProductTemplate.class,
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
@@ -116,8 +113,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException("A product, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
-                    + ", already exists. Please change the validity dates of an existing product first.");
+            throw new InvalidParameterException(
+                "A product, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                        + ", already exists. Please change the validity dates of an existing product first.");
         }
 
         if (productTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
@@ -137,7 +135,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         } catch (IOException e1) {
             log.error("Invalid image data={}", e1.getMessage());
             throw new InvalidImageData();
-        }        
+        }
 
         productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         productTemplate.setLongDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLongDescriptionsTranslated(), null));
@@ -152,7 +150,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
                 productTemplate.addSeller(seller);
             }
         }
-        
+
         if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
             productTemplate.getChannels().clear();
             for (ChannelDto channelDto : postData.getChannels()) {
@@ -163,7 +161,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
                 productTemplate.addChannel(channel);
             }
         }
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), productTemplate, false);
@@ -205,7 +203,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
         if (productTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / "
                     + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
@@ -213,8 +211,9 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         List<ProductOffering> matchedVersions = productTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(),
             productTemplate.getId(), true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException("A product, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
-                    + ", already exists. Please change the validity dates of an existing product first.");
+            throw new InvalidParameterException(
+                "A product, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                        + ", already exists. Please change the validity dates of an existing product first.");
         }
 
         productTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -238,7 +237,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         }
         if (postData.getAttachments() != null) {
             processDigitalResources(postData, productTemplate);
-        }        
+        }
 
         if (postData.getLanguageDescriptions() != null) {
             productTemplate.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), productTemplate.getDescriptionI18n()));
@@ -257,7 +256,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
                 productTemplate.addSeller(seller);
             }
         }
-        
+
         if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
             productTemplate.getChannels().clear();
             for (ChannelDto channelDto : postData.getChannels()) {
@@ -268,7 +267,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
                 productTemplate.addChannel(channel);
             }
         }
-        
+
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), productTemplate, false);
@@ -279,7 +278,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         productTemplate = productTemplateService.update(productTemplate);
 
         return productTemplate;
@@ -294,7 +293,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
 
         ProductTemplate productTemplate = productTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (productTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(ProductTemplate.class,
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }

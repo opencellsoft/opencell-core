@@ -45,8 +45,6 @@ public class AgedBalance extends FileProducer implements Reporting {
     final static String DEBIT = "0";
     final static String CREDIT = "1";
 
-    private String reportsFolder;
-    private String templateFilename;
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
     protected Logger log;
@@ -119,6 +117,8 @@ public class AgedBalance extends FileProducer implements Reporting {
                 parameters.put("startDate", date);
                 StringBuilder sb = new StringBuilder(getFilename(date));
                 sb.append(".pdf");
+                String jasperTemplatesFolder = paramBeanFactory.getInstance().getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+                String templateFilename = jasperTemplatesFolder + "agedBalance.jasper";
                 generatePDFfile(file, sb.toString(), templateFilename, parameters);
             }
         } catch (IOException e) {
@@ -135,7 +135,8 @@ public class AgedBalance extends FileProducer implements Reporting {
     }
 
     public String getFilename(Date date) {
-
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
@@ -148,9 +149,9 @@ public class AgedBalance extends FileProducer implements Reporting {
 
     public void export(Report report) {
         ParamBean param = paramBeanFactory.getInstance();
-        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
-        templateFilename = jasperTemplatesFolder + "agedBalance.jasper";
+        String templateFilename = jasperTemplatesFolder + "agedBalance.jasper";
         generateAgedBalanceFile(report.getSchedule(), report.getOutputFormat());
     }
 }

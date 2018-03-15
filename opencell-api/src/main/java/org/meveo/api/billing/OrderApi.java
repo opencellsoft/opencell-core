@@ -31,7 +31,6 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
@@ -112,7 +111,7 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private TerminationReasonService terminationReasonService;
-    
+
     @Inject
     private CountryService countryService;
 
@@ -202,8 +201,8 @@ public class OrderApi extends BaseApi {
 
                 mainProductOffering = productOfferingService.findByCode(productOrderItem.getProductOffering().getId(), subscriptionDate);
                 if (mainProductOffering == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class,
-                        productOrderItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                    throw new EntityDoesNotExistsException(ProductOffering.class, productOrderItem.getProductOffering().getId() + " / "
+                            + DateUtils.formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new OrderItemProductOffering(orderItem, mainProductOffering, 0));
 
@@ -211,8 +210,8 @@ public class OrderApi extends BaseApi {
                     for (BundledProductReference bundledProductOffering : productOrderItem.getProductOffering().getBundledProductOffering()) {
                         ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
                         if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class,
-                                bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / "
+                                    + DateUtils.formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new OrderItemProductOffering(orderItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -325,7 +324,7 @@ public class OrderApi extends BaseApi {
     /**
      * Initiate workflow on order. If workflow is enabled on Order class, then execute workflow. If workflow is not enabled - then process the order right away.
      * 
-     * @param order order to create workflow 
+     * @param order order to create workflow
      * @return worked flow order.
      * @throws BusinessException business exception.
      */
@@ -855,7 +854,7 @@ public class OrderApi extends BaseApi {
     /**
      * Convert order stored in DB to order DTO expected by tmForum api.
      * 
-     * @param order Order to convert 
+     * @param order Order to convert
      * @return Order DTO object
      * @throws BusinessException business exception.
      */

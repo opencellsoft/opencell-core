@@ -62,7 +62,6 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
     @Inject
     CounterTemplateService counterTemplateService;
 
-    ParamBean paramBean = ParamBean.getInstance();
     CsvBuilder csv = null;
     private String providerDir;
     private String existingEntitiesCsvFile = null;
@@ -161,6 +160,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
         providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
         File dir = new File(providerDir + File.separator + existingEntitiesCSV);

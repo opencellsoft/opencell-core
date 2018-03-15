@@ -18,6 +18,7 @@
  */
 package org.meveo.commons.utils;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -62,6 +63,8 @@ public class QueryBuilder {
     protected PaginationConfiguration paginationConfiguration;
 
     private String paginationSortAlias;
+    
+    private Class<?> clazz;
 
     public enum QueryLikeStyleEnum {
         MATCH_EQUAL, MATCH_BEGINNING, MATCH_ANYWHERE
@@ -118,6 +121,7 @@ public class QueryBuilder {
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields) {
         this(getInitQuery(clazz, alias, fetchFields), alias);
+        this.clazz = clazz;
     }
 
     /**
@@ -130,6 +134,7 @@ public class QueryBuilder {
      */
     public QueryBuilder(Class<?> clazz, String alias, List<String> fetchFields, List<String> joinFields) {
         this(getInitJoinQuery(clazz, alias, fetchFields, joinFields), alias);
+        this.clazz = clazz;
     }
 
     /**
@@ -587,7 +592,17 @@ public class QueryBuilder {
      * @param ascending true/false
      */
     public void addOrderCriterion(String orderColumn, boolean ascending) {
-        q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
+        if (clazz != null) {
+            Field field = ReflectionUtils.getField(clazz, orderColumn.substring(orderColumn.indexOf(".") + 1));
+            if (field != null && field.getType().isAssignableFrom(String.class)) {
+                q.append(" ORDER BY UPPER(CAST(" + orderColumn + " AS string))");
+            } else {
+                q.append(" ORDER BY " + orderColumn);
+            }
+        } else {
+            q.append(" ORDER BY " + orderColumn);
+        }
+        
         if (ascending) {
             q.append(" ASC ");
         } else {
@@ -841,6 +856,7 @@ public class QueryBuilder {
 
     public QueryBuilder(Class<?> clazz, String alias) {
         this("from " + clazz.getName() + " " + alias, alias);
+        this.clazz = clazz;
     }
 
     public String toString() {

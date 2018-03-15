@@ -294,7 +294,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             String filename = String.format("%s.%s", entity.getCode(), formatname);
             filename.replaceAll(" ", "_");
             log.debug("crop module picture to {}", filename);
-            String dest = ModuleUtil.getModulePicturePath(appProvider.getCode()) + File.separator + filename;
+            String dest = ModuleUtil.getModulePicturePath(currentUser.getProviderCode()) + File.separator + filename;
             ModuleUtil.cropPicture(dest, croppedImage);
             entity.setLogoPicture(filename);
             messages.info(new BundleKey("messages", "meveoModule.cropPictureSuccess"));
@@ -320,7 +320,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
         this.tmpPicture = filename;
         InputStream in = null;
         try {
-            String tmpFolder = ModuleUtil.getTmpRootPath(appProvider.getCode());
+            String tmpFolder = ModuleUtil.getTmpRootPath(currentUser.getProviderCode());
             String dest = tmpFolder + File.separator + filename;
             log.debug("output original module picture file to {}", dest);
             in = event.getFile().getInputstream();
@@ -369,7 +369,7 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
             return;
         }
         try {
-            ModuleUtil.removeModulePicture(appProvider.getCode(), filename);
+            ModuleUtil.removeModulePicture(currentUser.getProviderCode(), filename);
         } catch (Exception e) {
             log.error("failed to remove module picture {}, info {}", filename, e.getMessage(), e);
         }
@@ -377,7 +377,8 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
     /**
      * clean uploaded picture
-     * @throws BusinessException 
+     * 
+     * @throws BusinessException
      */
     @ActionMethod
     @Override
@@ -392,7 +393,8 @@ public abstract class GenericModuleBean<T extends MeveoModule> extends BaseBean<
 
     /**
      * clean uploaded pictures for multi delete
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @ActionMethod
     @Override

@@ -2,6 +2,7 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -319,7 +320,7 @@ public class PaymentApi extends BaseApi {
      * @throws InvalidParameterException invalid parameter exception
      */
     public PaymentHistoriesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, PaymentHistory.class);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering, PaymentHistory.class);
         Long totalCount = paymentHistoryService.count(paginationConfig);
         PaymentHistoriesDto paymentHistoriesDto = new PaymentHistoriesDto();
         paymentHistoriesDto.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());

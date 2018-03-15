@@ -52,7 +52,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -109,13 +109,15 @@ public class UserBean extends CustomFieldBean<User> {
     @Named
     private SellerBean sellerBean;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private DualListModel<Role> rolesDM;
 
     private TreeNode userGroupRootNode;
 
     private TreeNode userGroupSelectedNode;
-
-    private ParamBean param = ParamBean.getInstance();
     private String providerFilePath;
     private String selectedFolder;
     private boolean currentDirEmpty;
@@ -133,7 +135,7 @@ public class UserBean extends CustomFieldBean<User> {
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
 
     private boolean autoUnzipped;
-    
+
     final private String ZIP_FILE_EXTENSION = ".zip";
 
     /**
@@ -145,7 +147,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @PostConstruct
     public void init() {
-    	this.providerFilePath = param.getChrootDir(currentUser.getProviderCode());
+        this.providerFilePath = paramBeanFactory.getInstance().getChrootDir(currentUser.getProviderCode());
         if (conversation.isTransient()) {
             conversation.begin();
             createMissingDirectories();
@@ -156,7 +158,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     @Override
     public User initEntity() {
-    	log.info("initEntity()");
+        log.info("initEntity()");
         super.initEntity();
 
         if (entity.getName() == null) {
@@ -167,7 +169,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public TreeNode getUserGroupRootNode() {
-    	log.info("getUserGroupRootNode()");
+        log.info("getUserGroupRootNode()");
         if (userGroupRootNode == null) {
             userGroupRootNode = new DefaultTreeNode("Root", null);
             List<UserHierarchyLevel> roots;
@@ -278,7 +280,7 @@ public class UserBean extends CustomFieldBean<User> {
 
     public String getFilePath() {
         return providerFilePath;
-        
+
     }
 
     private String getFilePath(String name) {
@@ -290,7 +292,7 @@ public class UserBean extends CustomFieldBean<User> {
     }
 
     public void createMissingDirectories() {
-    	log.info("createMissingDirectories() * ");
+        log.info("createMissingDirectories() * ");
         // log.info("Creating required dirs in "+getFilePath());
         String importDir = getFilePath() + File.separator + "imports" + File.separator + "customers" + File.separator;
         String customerDirIN = importDir + "input";

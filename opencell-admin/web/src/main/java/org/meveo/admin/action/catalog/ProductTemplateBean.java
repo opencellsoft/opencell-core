@@ -115,7 +115,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
                 instantiateNewVersion();
                 setObjectId(entity.getId());
                 newVersion = false;
-            } else if(duplicateProduct) {
+            } else if (duplicateProduct) {
                 duplicateWithoutSave();
             }
 
@@ -165,7 +165,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
         }
     }
-    
+
     @ActionMethod
     public void duplicateWithoutSave() {
         if (entity != null && entity.getId() != null) {
@@ -223,7 +223,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             businessProductModel = businessProductModelService.refreshOrRetrieve(businessProductModel);
             businessProductModelService.instantiateBPM(entity, businessProductModel);
             return back();
-            
+
         } else {
             if (!entity.isTransient()) {
                 productTemplateService.refreshOrRetrieve(entity);

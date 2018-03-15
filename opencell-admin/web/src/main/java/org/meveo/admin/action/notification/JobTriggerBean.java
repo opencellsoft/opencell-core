@@ -41,48 +41,46 @@ import org.primefaces.model.UploadedFile;
 @ViewScoped
 public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
 
-	private static final long serialVersionUID = 6473465285480945644L;
+    private static final long serialVersionUID = 6473465285480945644L;
 
-	@Inject
-	private JobTriggerService jobTriggerService;
-	
-	@Inject
-	private JobInstanceService jobInstanceService;
-	
-	@Inject
-	private ScriptInstanceService scriptInstanceService;
+    @Inject
+    private JobTriggerService jobTriggerService;
 
-	ParamBean paramBean = ParamBean.getInstance();
+    @Inject
+    private JobInstanceService jobInstanceService;
 
-	CsvReader csvReader = null;
-	private UploadedFile file;
+    @Inject
+    private ScriptInstanceService scriptInstanceService;
 
-	private static final int CODE = 0;
-	private static final int CLASS_NAME_FILTER = 1;
-	private static final int EL_FILTER = 2;
-	private static final int ACTIVE = 3;
-	private static final int SCRIPT_INSTANCE_CODE = 4;
-	private static final int EVENT_TYPE_FILTER = 5;
-	private static final int JOB_INSTANCE_CODE = 6;
+    CsvReader csvReader = null;
+    private UploadedFile file;
 
-	private StrategyImportTypeEnum strategyImportType;
+    private static final int CODE = 0;
+    private static final int CLASS_NAME_FILTER = 1;
+    private static final int EL_FILTER = 2;
+    private static final int ACTIVE = 3;
+    private static final int SCRIPT_INSTANCE_CODE = 4;
+    private static final int EVENT_TYPE_FILTER = 5;
+    private static final int JOB_INSTANCE_CODE = 6;
 
-	CsvBuilder csv = null;
-	private String providerDir;
-	private String existingEntitiesCsvFile = null;
+    private StrategyImportTypeEnum strategyImportType;
 
-	public JobTriggerBean() {
-		super(JobTrigger.class);
-	}
+    CsvBuilder csv = null;
+    private String providerDir;
+    private String existingEntitiesCsvFile = null;
 
-	@Override
-	protected IPersistenceService<JobTrigger> getPersistenceService() {
-		return jobTriggerService;
-	}
+    public JobTriggerBean() {
+        super(JobTrigger.class);
+    }
+
+    @Override
+    protected IPersistenceService<JobTrigger> getPersistenceService() {
+        return jobTriggerService;
+    }
 
     @Override
     public JobTrigger initEntity() {
-    	JobTrigger jobTrigger = super.initEntity();
+        JobTrigger jobTrigger = super.initEntity();
         extractMapTypeFieldFromEntity(jobTrigger.getJobParams(), "jobParams");
         extractMapTypeFieldFromEntity(jobTrigger.getParams(), "params");
         return jobTrigger;
@@ -92,35 +90,34 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-    
-       updateMapTypeFieldInEntity(entity.getParams(), "params");
+        updateMapTypeFieldInEntity(entity.getParams(), "params");
 
         return super.saveOrUpdate(killConversation);
     }
-    
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Active");
-		csv.appendValue("Script instance code");
-		csv.appendValue("Event type filter");
-		csv.appendValue("Job instance code");
-		csv.startNewLine();
-		for (JobTrigger jobTrigger :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():jobTriggerService.list()) {
-			csv.appendValue(jobTrigger.getCode());
-			csv.appendValue(jobTrigger.getClassNameFilter());
-			csv.appendValue(jobTrigger.getElFilter());
-			csv.appendValue(jobTrigger.isDisabled() + "");
-			csv.appendValue((jobTrigger.getScriptInstance()==null?"":jobTrigger.getScriptInstance().getCode()));
-			csv.appendValue(jobTrigger.getEventTypeFilter() + "");
-			csv.appendValue((jobTrigger.getJobInstance()==null?"":jobTrigger.getJobInstance().getCode()));
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
-		csv.download(inputStream, "JobTriggers.csv");
-	}
+
+    public void exportToFile() throws Exception {
+        CsvBuilder csv = new CsvBuilder();
+        csv.appendValue("Code");
+        csv.appendValue("Classename filter");
+        csv.appendValue("El filter");
+        csv.appendValue("Active");
+        csv.appendValue("Script instance code");
+        csv.appendValue("Event type filter");
+        csv.appendValue("Job instance code");
+        csv.startNewLine();
+        for (JobTrigger jobTrigger : (!filters.isEmpty() && filters.size() > 0) ? getLazyDataModel() : jobTriggerService.list()) {
+            csv.appendValue(jobTrigger.getCode());
+            csv.appendValue(jobTrigger.getClassNameFilter());
+            csv.appendValue(jobTrigger.getElFilter());
+            csv.appendValue(jobTrigger.isDisabled() + "");
+            csv.appendValue((jobTrigger.getScriptInstance() == null ? "" : jobTrigger.getScriptInstance().getCode()));
+            csv.appendValue(jobTrigger.getEventTypeFilter() + "");
+            csv.appendValue((jobTrigger.getJobInstance() == null ? "" : jobTrigger.getJobInstance().getCode()));
+            csv.startNewLine();
+        }
+        InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
+        csv.download(inputStream, "JobTriggers.csv");
+    }
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
@@ -141,6 +138,7 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
         providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
         File dir = new File(providerDir + File.separator + existingEntitiesCSV);
@@ -159,16 +157,16 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
                 notif.setCode(values[CODE]);
                 notif.setClassNameFilter(values[CLASS_NAME_FILTER]);
                 notif.setElFilter(values[EL_FILTER]);
-                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));                
+                notif.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                     notif.setScriptInstance(scriptInstance);
-                }  
+                }
                 notif.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
                 if (!StringUtils.isBlank(values[JOB_INSTANCE_CODE])) {
-                    JobInstance jobInstance = jobInstanceService.findByCode(values[JOB_INSTANCE_CODE]); 
+                    JobInstance jobInstance = jobInstanceService.findByCode(values[JOB_INSTANCE_CODE]);
                     notif.setJobInstance(jobInstance);
-                }  
+                }
                 jobTriggerService.create(notif);
             }
         }
@@ -178,47 +176,47 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
     }
 
     public void checkSelectedStrategy(String[] values, JobTrigger existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
-		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
-			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
-			existingEntity.setElFilter(values[EL_FILTER]);
-			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+        if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
+            existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+            existingEntity.setElFilter(values[EL_FILTER]);
+            existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                 existingEntity.setScriptInstance(scriptInstance);
-            } 
-			existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
-			jobTriggerService.update(existingEntity);
-		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
-			throw new RejectedImportException("jobTrigger.rejectImport");
-		} else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
-			if (!isEntityAlreadyExist) {
-				csv.appendValue("Code");
-				csv.appendValue("Classename filter");
-				csv.appendValue("El filter");
-				csv.appendValue("Active");
-				csv.appendValue("Script instance code");
-				csv.appendValue("Event type filter");
-				csv.appendValue("Job instance code");
-			}
-			csv.startNewLine();
-			csv.appendValue(values[CODE]);
-			csv.appendValue(values[CLASS_NAME_FILTER]);
-			csv.appendValue(values[EL_FILTER]);
-			csv.appendValue(values[ACTIVE]);
-			csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
-			csv.appendValue(values[EVENT_TYPE_FILTER]);
-			csv.appendValue(values[JOB_INSTANCE_CODE]);
-		}
+            }
+            existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+            jobTriggerService.update(existingEntity);
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+            throw new RejectedImportException("jobTrigger.rejectImport");
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            if (!isEntityAlreadyExist) {
+                csv.appendValue("Code");
+                csv.appendValue("Classename filter");
+                csv.appendValue("El filter");
+                csv.appendValue("Active");
+                csv.appendValue("Script instance code");
+                csv.appendValue("Event type filter");
+                csv.appendValue("Job instance code");
+            }
+            csv.startNewLine();
+            csv.appendValue(values[CODE]);
+            csv.appendValue(values[CLASS_NAME_FILTER]);
+            csv.appendValue(values[EL_FILTER]);
+            csv.appendValue(values[ACTIVE]);
+            csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
+            csv.appendValue(values[EVENT_TYPE_FILTER]);
+            csv.appendValue(values[JOB_INSTANCE_CODE]);
+        }
 
-	}
+    }
 
-	public StrategyImportTypeEnum getStrategyImportType() {
-		return strategyImportType;
-	}
+    public StrategyImportTypeEnum getStrategyImportType() {
+        return strategyImportType;
+    }
 
-	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
-		this.strategyImportType = strategyImportType;
-	}
+    public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+        this.strategyImportType = strategyImportType;
+    }
 
     public Map<String, List<HashMap<String, String>>> getMapTypeFieldValues() {
         return mapTypeFieldValues;
@@ -228,7 +226,7 @@ public class JobTriggerBean extends BaseNotificationBean<JobTrigger> {
         this.mapTypeFieldValues = mapTypeFieldValues;
     }
 
-	/**
+    /**
      * Remove a value from a map type field attribute used to gather field values in GUI
      * 
      * @param fieldName Field name

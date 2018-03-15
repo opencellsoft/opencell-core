@@ -21,6 +21,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.catalog.CalendarDaily;
 import org.meveo.model.catalog.CalendarInterval;
@@ -58,7 +59,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     @EJB
     private CustomEntityTemplateService customEntityTemplateService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     private static boolean useCFTCache = true;
     private static boolean useCETCache = true;
@@ -81,7 +82,7 @@ public class CustomFieldsCacheContainerProvider implements Serializable { // Cac
     protected MeveoUser currentUser;
 
     static {
-        ParamBean tmpParamBean = ParamBean.getInstance();
+        ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         useCFTCache = Boolean.parseBoolean(tmpParamBean.getProperty("cache.cacheCFT", "true"));
         useCETCache = Boolean.parseBoolean(tmpParamBean.getProperty("cache.cacheCET", "true"));
     }
