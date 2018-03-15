@@ -39,6 +39,10 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
 @Named
 @ViewScoped
 public class SellerBean extends CustomFieldBean<Seller> {
@@ -68,6 +72,13 @@ public class SellerBean extends CustomFieldBean<Seller> {
         super(Seller.class);
     }
     
+    /**
+     * Initialize bean's entity 
+     * 
+     * @return entity bean's entity 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     @Override
     public Seller initEntity() {
         super.initEntity();

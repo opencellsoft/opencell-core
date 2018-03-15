@@ -45,6 +45,8 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -76,6 +78,21 @@ public class SellerApi extends BaseApi {
         return create(postData, checkCustomField, null);
     }
 
+    
+    /**
+     * Create Seller
+     * v5.0: Added ContactInformation and Address
+     * 
+     * @param SellerDto sellerDto postData 
+     * @param checkCustomField checkCustomField
+     * @param businessAccountModel businessAccountModel
+     * @return Seller created seller
+     * @throws BusinessException business exception
+     * @throws MeveoApiException MeveoApi exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public Seller create(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -167,6 +184,15 @@ public class SellerApi extends BaseApi {
         return seller;
     }
     
+    /**
+     * ContactInformationDto to ContactInformation
+     * 
+     * @param ContactInformationDto contactInformationDto
+     * @return ContactInformation contactInformation
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     private ContactInformation toContactInformation(ContactInformationDto contactInformationDto) {
         ContactInformation contactInformation = new ContactInformation();
         contactInformation.setEmail(contactInformationDto.getEmail());
@@ -176,7 +202,16 @@ public class SellerApi extends BaseApi {
         return contactInformation;        
     }
     
-    private Address toAddress(AddressDto addressDto) {
+    /**
+     * AddressDto to Address
+     * 
+     * @param AddressDto addressDto
+     * @return Address address
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */ 
+     private Address toAddress(AddressDto addressDto) {
         Address address = new Address();
         address.setAddress1(addressDto.getAddress1());
         address.setAddress2(addressDto.getAddress2());
@@ -190,6 +225,7 @@ public class SellerApi extends BaseApi {
         return address;
     }
 
+    
     public void update(SellerDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
     }
@@ -198,6 +234,20 @@ public class SellerApi extends BaseApi {
         return update(postData, checkCustomField, null);
     }
 
+    /**
+     * Update Seller
+     * v5.0: Added ContactInformation and Address
+     * 
+     * @param SellerDto sellerDto postData 
+     * @param checkCustomField checkCustomField
+     * @param businessAccountModel businessAccountModel
+     * @return Seller created seller
+     * @throws BusinessException business exception
+     * @throws MeveoApiException MeveoApi exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public Seller update(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

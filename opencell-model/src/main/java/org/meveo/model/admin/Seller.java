@@ -49,6 +49,11 @@ import org.meveo.model.crm.Provider;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
+
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SELLER")
@@ -133,10 +138,24 @@ public class Seller extends BusinessCFEntity {
         this.seller = seller;
     }
     
+    /**
+     * Get contact informations
+     * 
+     * @return contactInformation contactInformation
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public ContactInformation getContactInformation() {
         return contactInformation;
     }
 
+    /**
+     * Set contact informations
+     * 
+     * @param contactInformation contactInformation
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void setContactInformation(ContactInformation contactInformation) {
         this.contactInformation = contactInformation;
     }

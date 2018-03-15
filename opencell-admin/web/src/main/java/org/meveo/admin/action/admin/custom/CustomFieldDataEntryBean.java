@@ -62,6 +62,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides support for custom field value data entry
  * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -649,10 +651,14 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     /**
      * Add row to a matrix.
+     * v5.0: Fix for save values on a multi values CF type problem
      * 
      * @param entityValueHolder Entity custom field value holder
      * @param cfValue Map value holder
      * @param cft Custom field definition
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void addMatrixRow(CustomFieldValueHolder entityValueHolder, CustomFieldValue cfValue, CustomFieldTemplate cft) {
 

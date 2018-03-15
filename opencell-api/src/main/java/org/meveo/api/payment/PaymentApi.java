@@ -47,6 +47,10 @@ import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
 @Stateless
 public class PaymentApi extends BaseApi {
 
@@ -167,9 +171,13 @@ public class PaymentApi extends BaseApi {
     }
 
     /**
+     * Get payment list by customer account code
+     * 
      * @param customerAccountCode customer account code
      * @return list of payment dto
      * @throws Exception exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
         List<PaymentDto> result = new ArrayList<PaymentDto>();
