@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
-
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;
 import org.apache.ftpserver.ftplet.Authority;
@@ -18,6 +16,7 @@ import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
 import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -30,10 +29,6 @@ public class MeveoFtpUserManager extends AbstractUserManager {
     private static final String FTPWRITE = "ftpwrite";
     private static final int HOUR = 60 * 60;
     private static final String ADMINISTRATOR = "administrateur";
-
-    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     private Logger log = LoggerFactory.getLogger(MeveoFtpUserManager.class);
 
@@ -121,6 +116,7 @@ public class MeveoFtpUserManager extends AbstractUserManager {
      * @return ftp user
      */
     private User getUserFromMeveoUser(org.meveo.model.admin.User meveoUser) throws FtpException {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         String homeDir = String.format("%s", paramBeanFactory.getChrootDir());
         log.debug("ftp user home {}", homeDir);
         File home = new File(homeDir);

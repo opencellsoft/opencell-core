@@ -26,19 +26,16 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
-import javax.inject.Inject;
 
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 
 @FacesConverter("dateConverter")
 public class DateConverter implements Converter {
 
-    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @Override
     public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         String dateFormat = paramBeanFactory.getInstance().getDateFormat();
         DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
 
@@ -51,6 +48,7 @@ public class DateConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         String dateFormat = paramBeanFactory.getInstance().getDateFormat();
         DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
 
