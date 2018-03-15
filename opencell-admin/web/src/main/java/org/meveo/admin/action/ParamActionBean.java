@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.faces.application.FacesMessage;
@@ -36,18 +35,10 @@ public class ParamActionBean implements Serializable {
     @Inject
     private transient ResourceBundle bundle;
 
-    private ParamBean paramBean;
-
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     private List<ParamProperty> properties = null;
-
-    @PostConstruct
-    private void init() {
-        paramBean = paramBeanFactory.getInstance();
-    }
 
     private void beginConversation() {
         if (conversation.isTransient()) {
@@ -61,6 +52,9 @@ public class ParamActionBean implements Serializable {
 
     public void reset() {
         log.debug("load properties from paramBean");
+
+        ParamBean paramBean = paramBeanFactory.getInstance();
+
         properties = new ArrayList<ParamProperty>();
         Set<Object> keys = paramBean.getProperties().keySet();
         if (keys != null) {
@@ -91,6 +85,8 @@ public class ParamActionBean implements Serializable {
 
     public void save() {
         log.info("update and save paramBean properties " + properties.size());
+        ParamBean paramBean = paramBeanFactory.getInstance();
+
         for (ParamProperty property : properties) {
             log.info(property.getKey() + "->" + property.getValue());
             paramBean.setProperty(property.getKey(), property.getValue(), property.getCategory());

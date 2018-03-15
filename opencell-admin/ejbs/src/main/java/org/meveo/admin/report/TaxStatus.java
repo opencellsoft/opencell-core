@@ -53,7 +53,7 @@ public class TaxStatus extends FileProducer implements Reporting {
     @ApplicationProvider
     private Provider appProvider;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

@@ -79,7 +79,7 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

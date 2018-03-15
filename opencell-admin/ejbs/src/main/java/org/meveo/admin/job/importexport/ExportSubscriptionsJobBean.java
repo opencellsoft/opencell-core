@@ -51,7 +51,7 @@ public class ExportSubscriptionsJobBean {
 
     private Subscriptions subscriptions;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

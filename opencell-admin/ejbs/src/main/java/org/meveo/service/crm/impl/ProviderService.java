@@ -81,6 +81,18 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     /**
+     * Update appProvider's code
+     * 
+     * @param newCode New code to update to
+     * @throws BusinessException Business exception
+     */
+    public void updateProviderCode(String newCode) throws BusinessException {
+        Provider provider = getProvider();
+        provider.setCode(newCode);
+        update(provider);
+    }
+
+    /**
      * Refresh appProvider request scope variable, just in case it is used in some EL expressions within the same request
      * 
      * @param provider New provider data to refresh with

@@ -32,7 +32,13 @@
 			"description": "description"
 		},
 		"AccountEntity": {
-			"address": "address",
+			"address.address1": "address.address1",
+			"address.address2": "address.address2",
+			"address.address3": "address.address3",
+			"address.city": "address.city",
+			"address.countryCode": "address.country.countryCode",
+			"address.country": "address.country.description",
+			"address.zipCode": "address.zipCode",
 			"name.firstName": "name.firstName",
 			"name.lastName": "name.lastName",
 			"name.title": "name.title.code"
@@ -91,7 +97,7 @@
 		}
 	},
 	"dataModel": {
-		"billing_v1": {
+		"<provider>_billing_v1": {
 			"settings": {
 				"index": {
 					"number_of_shards": "5",
@@ -99,7 +105,7 @@
 				}
 			},
 			"aliases": {
-				"billing": {
+				"<provider>_billing": {
 					
 				}
 			},
@@ -117,7 +123,7 @@
 				}
 			}
 		},
-		"users_v1": {
+		"<provider>_users_v1": {
 			"settings": {
 				"index": {
 					"number_of_shards": "5",
@@ -125,7 +131,7 @@
 				}
 			},
 			"aliases": {
-				"users": {
+				"<provider>_users": {
 					
 				}
 			},
@@ -143,7 +149,7 @@
 				}
 			}
 		},
-		"catalog_v1": {
+		"<provider>_catalog_v1": {
 			"settings": {
 				"index": {
 					"number_of_shards": "5",
@@ -151,7 +157,7 @@
 				}
 			},
 			"aliases": {
-				"catalog": {
+				"<provider>_catalog": {
 					
 				}
 			},
@@ -259,7 +265,7 @@
 				}
 			}
 		},
-		"accounts_v1": {
+		"<provider>_accounts_v1": {
 			"settings": {
 				"index": {
 					"number_of_shards": "5",
@@ -267,7 +273,7 @@
 				}
 			},
 			"aliases": {
-				"accounts": {
+				"<provider>_accounts": {
 					
 				}
 			},
@@ -293,6 +299,9 @@
 									"type": "string"
 								},
 								"city": {
+									"type": "string"
+								},
+								"countryCode": {
 									"type": "string"
 								},
 								"country": {
@@ -332,7 +341,7 @@
 				}
 			}
 		},
-		"custom_v1": {
+		"<provider>_custom_v1": {
 			"settings": {
 				"index": {
 					"number_of_shards": "3",
@@ -340,7 +349,7 @@
 				}
 			},
 			"aliases": {
-				"custom": {
+				"<provider>_custom": {
 					
 				}
 			}

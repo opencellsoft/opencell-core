@@ -57,13 +57,12 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     private static boolean useCETCache = true;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     @PostConstruct
     private void init() {
-        useCETCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCET", "true"));
+        useCETCache = Boolean.parseBoolean(ParamBean.getInstance().getProperty("cache.cacheCET", "true"));
     }
 
     @Override

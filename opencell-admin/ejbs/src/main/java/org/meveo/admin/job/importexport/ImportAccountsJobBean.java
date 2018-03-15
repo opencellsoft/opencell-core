@@ -91,7 +91,7 @@ public class ImportAccountsJobBean {
     private int nbUserAccountsUpdated;
     private AccountImportHisto accountImportHisto;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

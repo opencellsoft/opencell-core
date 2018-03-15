@@ -60,7 +60,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
     @Inject
     private RevenueRecognitionScriptService revenueRecognitionScriptService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

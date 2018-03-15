@@ -54,7 +54,7 @@ public class ImportCatalogJobBean {
     private String rejectDir;
     private String report;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

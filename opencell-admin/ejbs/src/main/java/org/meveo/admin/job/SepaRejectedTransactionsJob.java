@@ -46,7 +46,7 @@ public class SepaRejectedTransactionsJob extends Job {
 
     String importDir;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

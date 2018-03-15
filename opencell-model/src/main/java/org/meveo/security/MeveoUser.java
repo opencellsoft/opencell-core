@@ -66,6 +66,11 @@ public abstract class MeveoUser implements Serializable {
         this.providerCode = user.getProviderCode();
     }
 
+    public MeveoUser(String userName, String providerCode) {
+        this.userName = userName;
+        this.providerCode = providerCode;
+    }
+
     public String getSubject() {
         return subject;
     }
@@ -155,6 +160,17 @@ public abstract class MeveoUser implements Serializable {
      */
     public MeveoUser unProxy() {
         return new MeveoUser(this) {
+            private static final long serialVersionUID = 1864122036421892838L;
+        };
+    }
+
+    /**
+     * Return an instance of MeveoUser - with username and provider code only
+     * 
+     * @return MeveoUser instance
+     */
+    public static MeveoUser instantiate(String userName, String providerCode) {
+        return new MeveoUser(userName, providerCode) {
             private static final long serialVersionUID = 1864122036421892838L;
         };
     }

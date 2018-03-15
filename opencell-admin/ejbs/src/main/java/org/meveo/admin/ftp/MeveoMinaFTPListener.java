@@ -16,7 +16,6 @@ import org.apache.ftpserver.impl.FtpServerContext;
 import org.apache.ftpserver.listener.Listener;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
@@ -37,16 +36,11 @@ public class MeveoMinaFTPListener {
     @Inject
     private MeveoDefaultFtplet meveoDefaultFtplet;
 
-    private ParamBean paramBean;
-
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private FtpServer server = null;
 
     @PostConstruct
     public void init() throws FtpException {
-        paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = ParamBean.getInstance();
         String portStr = paramBean.getProperty("ftpserver.port", null);
         if (StringUtils.isBlank(portStr)) {
             return;

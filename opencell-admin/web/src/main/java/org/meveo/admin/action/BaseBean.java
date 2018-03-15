@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -82,7 +81,7 @@ import org.slf4j.LoggerFactory;
 import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
- * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
+ * Base bean class. Other backing beans extends this class if they need functionality it provides.
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 
@@ -181,8 +180,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private Map<String, Boolean> writeAccessMap;
 
-    protected ParamBean paramBean;// = ParamBean.getInstance();
-
     @Inject
     private ParamBeanFactory paramBeanFactory;
     // protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
@@ -204,11 +201,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public BaseBean(Class<T> clazz) {
         super();
         this.clazz = clazz;
-    }
-
-    @PostConstruct
-    void init() {
-        paramBean = paramBeanFactory.getInstance();
     }
 
     /**

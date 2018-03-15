@@ -32,7 +32,6 @@ import javax.persistence.Query;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
@@ -42,21 +41,15 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class EdrService extends PersistenceService<EDR> {
 
-    ParamBean paramBean;
-
     @Inject
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
     static boolean useInMemoryDeduplication = true;
     static boolean inMemoryDeduplicationPrepopulated = false;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @PostConstruct
     private void init() {
-        paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = ParamBean.getInstance();
         useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
         inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
     }

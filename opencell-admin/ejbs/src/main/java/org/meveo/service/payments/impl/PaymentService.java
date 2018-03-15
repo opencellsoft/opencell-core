@@ -474,9 +474,9 @@ public class PaymentService extends PersistenceService<Payment> {
                 }
                 if (accountOperation instanceof Refund) {
                     if (PaymentMethodEnum.CARD == ((Refund) accountOperation).getPaymentMethod()) {
-                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.card", "REJ_REF_CRD");
+                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.card", "REJ_RCR");
                     } else {
-                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.dd", "REJ_REF_DDT");
+                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.dd", "REJ_RDD");
                     }
                 }
                 OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);

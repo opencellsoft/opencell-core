@@ -71,7 +71,7 @@ public class ImportSubscriptionsJobBean {
 
     private SubscriptionImportHisto subscriptionImportHisto;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
