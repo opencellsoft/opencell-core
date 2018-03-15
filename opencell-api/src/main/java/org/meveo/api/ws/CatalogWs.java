@@ -179,6 +179,7 @@ public interface CatalogWs extends IBaseWs {
      * @param code Offer template code for optional filtering
      * @param validFrom Validity range from date.
      * @param validTo Validity range to date.
+     * @param pagingAndFiltering Pagination and filtering criteria.
      * @return A list of offer templates
      */
     @WebMethod
@@ -303,8 +304,8 @@ public interface CatalogWs extends IBaseWs {
     
     /**
      * Instantiates a product from a given BPM.
-     * @param postData
-     * @return
+     * @param postData post Data DTO
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus createProductFromBPM(@WebParam(name = "bpm") BpmProductDto postData);

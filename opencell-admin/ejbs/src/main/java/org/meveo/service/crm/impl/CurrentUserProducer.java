@@ -28,7 +28,7 @@ public class CurrentUserProducer {
     /**
      * produce a current user
      * 
-     * @return
+     * @return MeveoUser
      */
     @Produces
     @RequestScoped

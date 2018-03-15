@@ -147,7 +147,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      *
      * @param paymentGatewayDto the payment gateway dto
      * @throws BusinessException the business exception
-     * @throws MeveoApiException 
+     * @throws MeveoApiException  MeveoApiException
      */
     public void update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
         if (paymentGatewayDto == null) {

@@ -357,7 +357,7 @@ public class PaymentApi extends BaseApi {
 
     /**
      * Build paymentHistory dto from entity
-     * @param paymentHistory
+     * @param paymentHistory payment History
      * @return PaymentHistoryDto
      */
     public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {

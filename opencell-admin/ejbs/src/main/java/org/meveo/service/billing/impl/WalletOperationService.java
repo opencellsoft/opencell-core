@@ -1129,9 +1129,9 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     /**
      * Apply missing recuring charges from the last charge date to the end agreement date  
-     * @param chargeInstance
-     * @param recurringChargeTemplate
-     * @param endAgreementDate
+     * @param chargeInstance charge Instance
+     * @param recurringChargeTemplate recurringCharge Template
+     * @param endAgreementDate end agreement date
      * @throws BusinessException Business exception
      */
     public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate) throws BusinessException {

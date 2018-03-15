@@ -1604,6 +1604,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType &gt; BillingCycle &gt; default.
      * 
+     * @param invoice invoice
      * @param billingCycle Billing cycle
      * @param invoiceType Invoice type
      * @return Invoice template name
