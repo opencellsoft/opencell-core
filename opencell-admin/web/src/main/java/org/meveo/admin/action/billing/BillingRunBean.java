@@ -156,7 +156,7 @@ public class BillingRunBean extends BaseBean<BillingRun> {
         log.info("launchInvoicing billingRun BillingCycle={}, invoicedate={}, lastTransactionDate={}", entity.getBillingCycle(), entity.getInvoiceDate(),
             entity.getLastTransactionDate());
         try {
-            ParamBean param = ParamBean.getInstance();
+            ParamBean param = paramBeanFactory.getInstance();
             String allowManyInvoicing = param.getProperty("billingRun.allowManyInvoicing", "true");
             boolean isAllowed = Boolean.parseBoolean(allowManyInvoicing);
             log.info("launchInvoicing allowManyInvoicing={}", isAllowed);

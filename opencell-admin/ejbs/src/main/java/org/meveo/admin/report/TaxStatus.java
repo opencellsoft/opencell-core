@@ -57,8 +57,6 @@ public class TaxStatus extends FileProducer implements Reporting {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    private String reportsFolder;
-    private String templateFilename;
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
     public void generateTaxStatusFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
@@ -108,6 +106,9 @@ public class TaxStatus extends FileProducer implements Reporting {
                 parameters.put("endDate", endDate);
                 StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
                 sb.append(".pdf");
+                ParamBean param = paramBeanFactory.getInstance();
+                String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+                String templateFilename = jasperTemplatesFolder + "taxStatus.jasper";
                 generatePDFfile(file, sb.toString(), templateFilename, parameters);
             }
         } catch (IOException e) {
@@ -120,6 +121,8 @@ public class TaxStatus extends FileProducer implements Reporting {
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         sb.append(reportsFolder);
         sb.append(appProvider.getCode());
         sb.append("_TAX_");
@@ -130,10 +133,6 @@ public class TaxStatus extends FileProducer implements Reporting {
     }
 
     public void export(Report report) {
-        ParamBean param = paramBeanFactory.getInstance();
-        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
-        String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
-        templateFilename = jasperTemplatesFolder + "taxStatus.jasper";
         generateTaxStatusFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
 
     }

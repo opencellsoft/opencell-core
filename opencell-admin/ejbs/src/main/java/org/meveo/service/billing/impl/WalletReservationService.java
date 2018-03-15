@@ -7,7 +7,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
@@ -36,10 +35,6 @@ public class WalletReservationService extends PersistenceService<WalletReservati
 
     @Inject
     private CalendarService calendarService;
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     public BigDecimal getCurrentBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
         UserAccount userAccount = userAccountService.findByCode(userAccountCode);

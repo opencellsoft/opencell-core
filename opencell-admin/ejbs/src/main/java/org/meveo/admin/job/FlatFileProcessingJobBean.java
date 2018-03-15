@@ -74,7 +74,7 @@ public class FlatFileProcessingJobBean {
     /** The username. */
     String username;
 
-    
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

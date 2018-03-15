@@ -181,7 +181,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     private Map<String, Boolean> writeAccessMap;
 
     @Inject
-    private ParamBeanFactory paramBeanFactory;
+    protected ParamBeanFactory paramBeanFactory;
     // protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
 
     private UploadedFile uploadedFile;
@@ -956,7 +956,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public CSVExportOptions csvOptions() {
-        ParamBean param = ParamBean.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String characterEncoding = param.getProperty("csv.characterEncoding", "iso-8859-1");
         CSVExportOptions csvOption = new CSVExportOptions();
         csvOption.setSeparatorCharacter(';');

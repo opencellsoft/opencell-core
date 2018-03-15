@@ -42,6 +42,7 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -100,6 +101,10 @@ public abstract class BaseApi {
     @CurrentUser
     protected MeveoUser currentUser;
 
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
+
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
@@ -109,7 +114,7 @@ public abstract class BaseApi {
 
     @Inject
     protected BusinessEntityService businessEntityService;
-    
+
     @Inject
     private RoleService roleService;
 
@@ -125,6 +130,7 @@ public abstract class BaseApi {
 
     /**
      * Check if any parameters are missing and throw and exception.
+     * 
      * @param dto base data transfer object.
      * @throws MeveoApiException meveo api exception.
      */
@@ -581,6 +587,7 @@ public abstract class BaseApi {
 
     /**
      * Get a value converted from DTO a proper Map, List, EntityWrapper, Date, Long, Double or String value.
+     * 
      * @param cfDto cf dto.
      * @return custom field converted object.
      */
@@ -935,7 +942,7 @@ public abstract class BaseApi {
      * 
      * @param entityClass JPA Entity class
      * @param throwException Should exception be thrown if API service is not found
-     * @return Persistence service 
+     * @return Persistence service
      * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings("rawtypes")
@@ -1113,7 +1120,7 @@ public abstract class BaseApi {
                     fieldClassType = ReflectionUtils.getFieldGenericsType(field);
                 }
 
-                Object valueConverted = castFilterValue(value, fieldClassType, (condition!=null && condition.contains("inList")) || "overlapOptionalRange".equals(condition));
+                Object valueConverted = castFilterValue(value, fieldClassType, (condition != null && condition.contains("inList")) || "overlapOptionalRange".equals(condition));
                 if (valueConverted != null) {
                     filters.put(key, valueConverted);
                 } else {
@@ -1299,7 +1306,7 @@ public abstract class BaseApi {
                     }
                     return businessEntity;
                 }
-                
+
             } else if (Role.class.isAssignableFrom(targetClass)) {
                 // special case
                 if (stringVal.equals(PersistenceService.SEARCH_IS_NULL) || stringVal.equals(PersistenceService.SEARCH_IS_NOT_NULL)) {

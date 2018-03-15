@@ -26,35 +26,35 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
+import javax.inject.Inject;
 
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 
 @FacesConverter("dateTimeConverter")
 public class DateTimeConverter implements Converter {
 
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-    private ParamBean paramBean=ParamBean.getInstance();
+    @Override
+    public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+        String dateFormat = paramBeanFactory.getInstance().getDateTimeFormat();
+        DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
 
-	@Override
-	public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
-		String dateFormat = paramBean.getDateTimeFormat();
-		DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+        try {
+            return df.parse(str);
+        } catch (ParseException e) {
+            return "";
+        }
+    }
 
-		try {
-			return df.parse(str);
-		} catch (ParseException e) {
-			return "";
-		}
-	}
+    @Override
+    public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
+        String dateFormat = paramBeanFactory.getInstance().getDateTimeFormat();
+        DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
 
-	@Override
-	public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
-		String dateFormat = paramBean.getDateTimeFormat();
-		DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
-
-		return df.format(obj);
-	}
+        return df.format(obj);
+    }
 
 }

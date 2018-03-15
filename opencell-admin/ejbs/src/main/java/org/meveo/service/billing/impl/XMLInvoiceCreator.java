@@ -48,7 +48,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -158,10 +157,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();

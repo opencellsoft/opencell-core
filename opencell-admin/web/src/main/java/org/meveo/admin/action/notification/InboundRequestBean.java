@@ -51,7 +51,6 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
         super(InboundRequest.class);
     }
 
-    ParamBean paramBean = ParamBean.getInstance();
     CsvReader csvReader = null;
     private UploadedFile file;
     CsvBuilder csv = null;
@@ -225,6 +224,7 @@ public class InboundRequestBean extends UpdateMapTypeFieldBean<InboundRequest> {
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
         providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
         File dir = new File(providerDir + File.separator + existingEntitiesCSV);

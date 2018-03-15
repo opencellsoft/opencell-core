@@ -6,12 +6,10 @@ import java.util.Date;
 import java.util.List;
 
 import javax.ejb.Stateless;
-import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
@@ -26,10 +24,6 @@ import org.meveo.model.crm.BusinessAccountModel;
 
 @Stateless
 public class ProductTemplateService extends GenericProductOfferingService<ProductTemplate> {
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     public long countProductTemplateActive(boolean status) {
         long result = 0;

@@ -124,7 +124,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
-    private ParamBeanFactory paramBeanFactory;
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Constructor.
@@ -386,8 +386,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(BusinessEntity entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), paramBeanFactory.getInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-            throw new BusinessException("Invalid characters found in entity code. " + entity.getCode());
+        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+            throw new BusinessException("Invalid characters found in entity code.");
         }
 
         return true;
