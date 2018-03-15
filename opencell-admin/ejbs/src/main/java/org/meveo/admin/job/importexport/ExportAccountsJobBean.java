@@ -52,7 +52,7 @@ public class ExportAccountsJobBean {
 
     private BillingAccounts billingAccounts;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

@@ -48,7 +48,7 @@ public class MediationJob extends Job {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

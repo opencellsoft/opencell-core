@@ -22,7 +22,7 @@ public class ComponentResources implements Serializable {
     @Inject
     private LocaleSelector localeSelector;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

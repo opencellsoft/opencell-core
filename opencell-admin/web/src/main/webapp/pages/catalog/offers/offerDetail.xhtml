@@ -11,10 +11,8 @@
 		<f:metadata>
 			<o:viewParam name="bomId" value="#{offerTemplateBean.bomId}" />
 			<f:viewParam name="objectId" value="#{offerTemplateBean.objectId}" />
-			<f:viewParam name="newVersion"
-				value="#{offerTemplateBean.newVersion}" />
-			<f:viewParam name="duplicateOffer"
-				value="#{offerTemplateBean.duplicateOffer}" />
+			<f:viewParam name="newVersion" value="#{offerTemplateBean.newVersion}" />
+			<f:viewParam name="duplicateOffer" value="#{offerTemplateBean.duplicateOffer}" />
 		</f:metadata>
 	</ui:define>
 
@@ -136,7 +134,7 @@
                     <hftl:formField id="channels" label="#{messages['channels.title']}" field="channels" listType="selectCheckbox" valueLabelField="descriptionOrCode"
                         listBean="#{channelListBean}" newLine="true" componentWidth="100" />
                     <hftl:formField id="customerCategories" label="#{messages['marketingManager.catalog.targetSegment']}" field="customerCategories" listType="selectCheckbox"
-                        valueLabelField="descriptionOrCode" listBean="#{customerCategoryListBean}" newLine="true" componentWidth="100" />
+                        valueLabelField="descriptionOrCode" listBean="#{customerCategoryListBean}" componentWidth="30" />
                     <hftl:formField id="sellers" label="#{messages['offerTemplate.seller']}" field="sellers" listType="selectCheckbox"
                         valueLabelField="descriptionOrCode" listBean="#{sellerListBean}" componentWidth="100" />                        
                 </h:panelGrid>

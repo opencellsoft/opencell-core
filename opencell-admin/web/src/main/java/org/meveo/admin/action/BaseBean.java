@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
 import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
- * Base bean class. Other seam backing beans extends this class if they need functionality it provides.
+ * Base bean class. Other backing beans extends this class if they need functionality it provides.
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 

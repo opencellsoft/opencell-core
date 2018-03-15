@@ -370,9 +370,9 @@ public class PaymentService extends PersistenceService<Payment> {
     public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType,
             List<Long> aoIdsToPay) throws BusinessException {
         ParamBean paramBean = paramBeanFactory.getInstance();
-        String occTemplateCode = paramBean.getProperty("occ.payment.card", "RG_CARD");
+        String occTemplateCode = paramBean.getProperty("occ.payment.card", "PAY_CRD");
         if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
-            occTemplateCode = paramBean.getProperty("occ.payment.dd", "RG_PLVT");
+            occTemplateCode = paramBean.getProperty("occ.payment.dd", "PAY_DDT");
         }
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
@@ -475,17 +475,16 @@ public class PaymentService extends PersistenceService<Payment> {
 
                 if (accountOperation instanceof Payment) {
                     if (PaymentMethodEnum.CARD == ((Payment) accountOperation).getPaymentMethod()) {
-
-                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "IP_CARD");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
                     } else {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "IP_PLVT");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
                     }
                 }
                 if (accountOperation instanceof Refund) {
                     if (PaymentMethodEnum.CARD == ((Refund) accountOperation).getPaymentMethod()) {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "IP_RFD_CARD");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
                     } else {
-                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "IP_RFD_PLVT");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
                     }
                 }
                 OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);

@@ -13,19 +13,27 @@ import java.util.Set;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.util.ApplicationProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Loads Elastic Search configuration
+ * 
+ * @author Andrius Karpavicius
+ */
 @Singleton
 @Lock(LockType.READ)
 public class ElasticSearchConfiguration implements Serializable {
@@ -71,6 +79,10 @@ public class ElasticSearchConfiguration implements Serializable {
 
     // @Inject
     // private Logger log;
+
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
 
     /**
      * Load configuration from elasticSearchConfiguration.json file.
@@ -170,10 +182,12 @@ public class ElasticSearchConfiguration implements Serializable {
     @SuppressWarnings("rawtypes")
     public String getIndex(Class<? extends BusinessEntity> clazzToConvert) {
 
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
         Class clazz = clazzToConvert;
         while (!BusinessEntity.class.equals(clazz)) {
             if (indexMap.containsKey(clazz.getSimpleName())) {
-                return indexMap.get(clazz.getSimpleName());
+                return indexPrefix + "_" + indexMap.get(clazz.getSimpleName());
             }
             clazz = clazz.getSuperclass();
         }
@@ -182,7 +196,7 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes for given entity classes
+     * Get a unique list of indexes for given entity classes. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
      * @param classesInfo A list of entity class information
      * @return A set of index property names
@@ -199,14 +213,19 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes
+     * Get a unique list of indexes. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
      * @return A set of index property names
      */
     public Set<String> getIndexes() {
 
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
         Set<String> indexNames = new HashSet<>();
-        indexNames.addAll(indexMap.values());
+
+        for (String indexName : indexMap.values()) {
+            indexNames.add(indexPrefix + "_" + indexName);
+        }
 
         return indexNames;
     }

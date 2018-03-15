@@ -49,6 +49,7 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
+import org.meveo.model.crm.CustomerCategory;
 import org.meveo.service.billing.impl.SubscriptionService;
 
 /**
@@ -193,6 +194,7 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         offerToDuplicate.getOfferProductTemplates().size();
         offerToDuplicate.getOfferTemplateCategories().size();
         offerToDuplicate.getSellers().size();
+        offerToDuplicate.getCustomerCategories().size();
 
         if (offerToDuplicate.getOfferServiceTemplates() != null) {
             for (OfferServiceTemplate offerServiceTemplate : offerToDuplicate.getOfferServiceTemplates()) {
@@ -242,6 +244,9 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         List<Seller> sellers = offer.getSellers();
         offer.setSellers(new ArrayList<>());
 
+        List<CustomerCategory> customerCategories = offer.getCustomerCategories();
+        offer.setCustomerCategories(new ArrayList<CustomerCategory>());
+
         if (businessAccountModels != null) {
             for (BusinessAccountModel bam : businessAccountModels) {
                 offer.getBusinessAccountModels().add(bam);
@@ -269,6 +274,12 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
         if (sellers != null) {
             for (Seller seller : sellers) {
                 offer.getSellers().add(seller);
+            }
+        }
+
+        if (customerCategories != null) {
+            for (CustomerCategory customerCategory : customerCategories) {
+                offer.getCustomerCategories().add(customerCategory);
             }
         }
 

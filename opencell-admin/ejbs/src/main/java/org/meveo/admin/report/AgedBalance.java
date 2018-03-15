@@ -49,7 +49,7 @@ public class AgedBalance extends FileProducer implements Reporting {
 
     protected Logger log;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

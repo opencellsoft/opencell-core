@@ -105,7 +105,7 @@ public class ImportCustomersJobBean {
     private Sellers sellersWarning;
     private Sellers sellersError;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

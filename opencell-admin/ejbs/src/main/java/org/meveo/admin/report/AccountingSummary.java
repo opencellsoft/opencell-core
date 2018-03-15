@@ -57,7 +57,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
     @Inject
     private DWHAccountOperationService accountOperationTransformationService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

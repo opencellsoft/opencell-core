@@ -41,7 +41,7 @@ public class SepaRejectedTransactionsJob extends Job {
     @Inject
     private PaynumFile paynumFile;
 
-    /** paramBeanFactory */
+    /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

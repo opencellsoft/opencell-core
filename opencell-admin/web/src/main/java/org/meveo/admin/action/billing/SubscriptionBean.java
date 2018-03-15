@@ -40,6 +40,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -136,6 +137,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private ServiceInstance selectedServiceInstance;
 

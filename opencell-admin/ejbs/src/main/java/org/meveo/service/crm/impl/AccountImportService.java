@@ -81,7 +81,7 @@ public class AccountImportService extends ImportService {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
+    /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

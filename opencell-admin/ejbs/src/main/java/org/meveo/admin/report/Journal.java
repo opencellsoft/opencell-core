@@ -51,7 +51,7 @@ public class Journal extends FileProducer implements Reporting {
 
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
-    /** paramBeanFactory */
+    /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

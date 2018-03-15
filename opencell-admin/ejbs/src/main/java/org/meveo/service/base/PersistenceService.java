@@ -123,7 +123,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
-    /** paramBeanFactory */
     @Inject
     protected ParamBeanFactory paramBeanFactory;
 

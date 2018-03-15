@@ -41,6 +41,7 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.DatePeriod;
@@ -79,6 +80,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
@@ -203,10 +207,11 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     /**
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
+    @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels");
+        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels", "customerCategories");
     }
-
+    
     public List<OfferTemplate> listActiveByDate(Date date) {
         return offerTemplateService.listActiveByDate(date);
     }

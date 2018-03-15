@@ -57,7 +57,6 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     private static boolean useCETCache = true;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

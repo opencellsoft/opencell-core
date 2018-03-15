@@ -50,7 +50,7 @@ public class ExportCustomersJobBean {
     @Inject
     private JobExecutionService jobExecutionService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

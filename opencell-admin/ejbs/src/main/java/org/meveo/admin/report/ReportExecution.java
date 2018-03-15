@@ -67,7 +67,7 @@ public class ReportExecution implements Serializable {
     @Inject
     private ReportService reportService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

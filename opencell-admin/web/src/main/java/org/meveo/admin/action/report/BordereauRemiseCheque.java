@@ -78,15 +78,11 @@ public class BordereauRemiseCheque {
     @Inject
     private AccountOperationService accountOperationService;
 
+    public Map<String, Object> parameters = new HashMap<String, Object>();
+
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
-
-    public JasperReport jasperReport;
-
-    public JasperPrint jasperPrint;
-
-    public Map<String, Object> parameters = new HashMap<String, Object>();
 
     private Date date = new Date();
 
@@ -95,9 +91,9 @@ public class BordereauRemiseCheque {
         InputStream reportTemplate = this.getClass().getClassLoader().getResourceAsStream(fileName);
         parameters.put("date", new Date());
 
-        String[] occCodes = paramBeanFactory.getInstance().getProperty("report.occ.templatePaymentCheckCodes", "RG_CHQ,RG_CHQNI").split(",");
+        String[] occCodes = paramBeanFactory.getInstance().getProperty("report.occ.templatePaymentCheckCodes", "PAY_CHK,PAY_NID").split(",");
         try {
-            jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
             File dataSourceFile = generateDataFile(occCodes);
             if (dataSourceFile != null) {
                 FacesContext context = FacesContext.getCurrentInstance();
@@ -106,7 +102,7 @@ public class BordereauRemiseCheque {
                 response.setHeader("Content-disposition", "attachment; filename=" + generateFileName());
 
                 JRCsvDataSource dataSource = createDataSource(dataSourceFile);
-                jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
                 JasperExportManager.exportReportToPdfFile(jasperPrint, generateFileName());
                 messages.info(new BundleKey("messages", "report.reportCreted"));
                 OutputStream os;
