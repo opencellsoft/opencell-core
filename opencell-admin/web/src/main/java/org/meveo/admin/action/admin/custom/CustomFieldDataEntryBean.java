@@ -890,7 +890,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param entity Entity, the fields relate to
      * @param isNewEntity Is it a new entity
-     * @return
+     * @return CustomFieldValue Map
      * @throws BusinessException
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, boolean isNewEntity) throws BusinessException {
@@ -911,7 +911,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @param removedOriginalCFI - When duplicating a CFI, this boolean is true when we want to remove the original CFI. Use specially in offer instantiation where we assigned CFT
      *        values on entity a but then save it on entity b. Entity a is then reverted. This flag is needed because on some part CFI is duplicated first, but is not updated,
      *        instead we duplicate again.
-     * @return
+     * @return CustomFieldValue Map
      * @throws BusinessException
      */
     public Map<String, List<CustomFieldValue>> saveCustomFieldsToEntity(ICustomFieldEntity entity, String uuid, boolean duplicateCFI, boolean isNewEntity,
@@ -995,7 +995,7 @@ public class CustomFieldDataEntryBean implements Serializable {
      * 
      * @param childEntityTypeFieldDefinition Child entity type field definition
      * @param childFieldCode Child entity field code
-     * @return
+     * @return customFieldTemplate
      */
     public CustomFieldTemplate getChildEntityField(CustomFieldTemplate childEntityTypeFieldDefinition, String childFieldCode) {
 

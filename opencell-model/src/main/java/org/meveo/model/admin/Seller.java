@@ -141,7 +141,7 @@ public class Seller extends BusinessCFEntity {
     /**
      * Get contact informations
      * 
-     * @return contactInformation contactInformation
+     * @return contactInformation
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -152,7 +152,7 @@ public class Seller extends BusinessCFEntity {
     /**
      * Set contact informations
      * 
-     * @param contactInformation contactInformation
+     * @param contactInformation
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */

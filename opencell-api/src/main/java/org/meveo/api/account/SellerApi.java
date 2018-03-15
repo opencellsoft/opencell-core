@@ -83,7 +83,7 @@ public class SellerApi extends BaseApi {
      * Create Seller
      * v5.0: Added ContactInformation and Address
      * 
-     * @param SellerDto sellerDto postData 
+     * @param postData postData SellerDto
      * @param checkCustomField checkCustomField
      * @param businessAccountModel businessAccountModel
      * @return Seller created seller
@@ -238,7 +238,7 @@ public class SellerApi extends BaseApi {
      * Update Seller
      * v5.0: Added ContactInformation and Address
      * 
-     * @param SellerDto sellerDto postData 
+     * @param postData postData Seller Dto
      * @param checkCustomField checkCustomField
      * @param businessAccountModel businessAccountModel
      * @return Seller created seller

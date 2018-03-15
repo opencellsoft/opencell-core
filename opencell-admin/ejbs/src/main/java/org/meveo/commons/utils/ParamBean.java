@@ -239,7 +239,6 @@ public class ParamBean {
     /**
      * Initialize/load application configuration property file
      * 
-     * @return true/false
      */
     private void initialize() {
         log.debug("Initialize  from file :" + _propertyFile + "...");

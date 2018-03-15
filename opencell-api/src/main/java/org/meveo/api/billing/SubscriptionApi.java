@@ -152,7 +152,7 @@ public class SubscriptionApi extends BaseApi {
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
-     * @param SubscriptionDto postData
+     * @param postData post Data Dto
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -235,7 +235,7 @@ public class SubscriptionApi extends BaseApi {
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
-     * @param SubscriptionDto postData
+     * @param postData postData Dto
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -319,7 +319,7 @@ public class SubscriptionApi extends BaseApi {
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
-     * @param SubscriptionDto postData
+     * @param activateServicesDto activateServicesDto
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -514,7 +514,7 @@ public class SubscriptionApi extends BaseApi {
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
-     * @param SubscriptionDto postData
+     * @param instantiateServicesDto instantiateServices Dto
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */

@@ -75,7 +75,7 @@ public class SellerBean extends CustomFieldBean<Seller> {
     /**
      * Initialize bean's entity 
      * 
-     * @return entity bean's entity 
+     * @return bean's entity 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
