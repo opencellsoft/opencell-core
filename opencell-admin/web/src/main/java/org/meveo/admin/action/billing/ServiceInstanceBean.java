@@ -60,10 +60,6 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
     @Inject
     @Param
     private Long offerInstanceId;
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
 
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
@@ -74,6 +70,7 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
      * @return service instance.
      */
     @Override
@@ -202,8 +199,8 @@ public class ServiceInstanceBean extends CustomFieldBean<ServiceInstance> {
         boolean quantityChanged = entity.isQuantityChanged();
 
         String outcome = super.saveOrUpdate(killConversation);
-                
-        boolean allowServiceMultiInstantiation = paramBeanFactory.getInstance().isServiceMultiInstantiation();
+
+        boolean allowServiceMultiInstantiation = ParamBeanFactory.getAppScopeInstance().isServiceMultiInstantiation();
         if (entity.getStatus() != InstanceStatusEnum.INACTIVE && quantityChanged) {
             messages.warn(new BundleKey("messages", allowServiceMultiInstantiation ? "serviceInstance.quantityChangedMulti" : "serviceInstance.quantityChanged"));
         }

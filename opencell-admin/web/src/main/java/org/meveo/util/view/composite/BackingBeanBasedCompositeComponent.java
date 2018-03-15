@@ -19,10 +19,10 @@ import java.util.StringTokenizer;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UINamingContainer;
 import javax.faces.event.ValueChangeEvent;
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.action.BaseBean;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.IEntity;
 import org.slf4j.Logger;
@@ -34,10 +34,6 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     @SuppressWarnings("rawtypes")
     private Class entityClass;
-
-    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     Logger log = LoggerFactory.getLogger(this.getClass());
 
@@ -124,6 +120,7 @@ public class BackingBeanBasedCompositeComponent extends UINamingContainer {
      * pattern.
      */
     public String getDatePattern() {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
         if (BOOLEAN_TRUE_STRING.equals(getAttributes().get("time"))) {
             return paramBeanFactory.getInstance().getDateTimeFormat();
         } else {
