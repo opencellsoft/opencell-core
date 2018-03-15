@@ -221,6 +221,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         // Clear existing list value
         serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
+        boolean allowServiceMultiInstantiation = paramBean.isServiceMultiInstantiation();
 
         if (entity.getOffer() == null) {
             return;
@@ -237,7 +238,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             for (ServiceInstance serviceInstance : serviceInstances) {
                 if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
-                        || (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
+                        || (!allowServiceMultiInstantiation && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
                     alreadyInstanciated = true;
                     break;
                 }
