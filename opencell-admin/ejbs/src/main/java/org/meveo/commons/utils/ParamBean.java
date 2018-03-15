@@ -51,11 +51,6 @@ public class ParamBean {
     private String _propertyFile;
 
     /**
-     * True if services can be instantiated and activated multiple times per subscription
-     */
-    public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
-
-    /**
      * Save properties imported from the file.
      */
     private Properties properties = new Properties();
@@ -178,6 +173,14 @@ public class ParamBean {
             log.error("Failed to initialize " + provider + ".properties file.", e);
             return null;
         }
+    }
+    
+    /**
+     * Check whether service multi instantiation is allowed
+     * @return is allowed.
+     */
+    public boolean isServiceMultiInstantiation() {
+        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));
     }
 
     /**
