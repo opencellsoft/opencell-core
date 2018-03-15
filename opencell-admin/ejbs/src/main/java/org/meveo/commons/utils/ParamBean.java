@@ -204,7 +204,7 @@ public class ParamBean {
         }
 
         String dir;
-        dir = getInstanceByProvider(provider).getInheritedProperty("providers.rootDir", "./opencelldata", provider);
+        dir = getInstance().getProperty("providers.rootDir", "./opencelldata");
         dir += File.separator;
         dir += getInstanceByProvider(provider).getProperty("provider.rootDir", provider);
         return dir;

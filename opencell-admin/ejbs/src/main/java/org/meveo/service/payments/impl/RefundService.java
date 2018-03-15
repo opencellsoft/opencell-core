@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
@@ -44,13 +44,15 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class RefundService extends PersistenceService<Refund> {
 
-   
-
     @Inject
     private OCCTemplateService oCCTemplateService;
-    
+
     @Inject
     private AccountOperationService accountOperationService;
+
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @MeveoAudit
     @Override
@@ -58,21 +60,21 @@ public class RefundService extends PersistenceService<Refund> {
         super.create(entity);
     }
 
-
     /**
      * 
      * @param customerAccount customer account
      * @param ctsAmount amount in cent
      * @param doPaymentResponseDto payment by card dto
-     * @param aoIdsToPay  list AO to refunded
+     * @param aoIdsToPay list AO to refunded
      * @return the AO id created
      * @throws BusinessException business exception.
      */
-    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto,PaymentMethodEnum paymentMethodType, List<Long> aoIdsToPay) throws BusinessException {
-       String occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.card", "RF_CARD");
-       if(paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
-           occTemplateCode = ParamBean.getInstance().getProperty("occ.refund.dd", "RB_PLVT");
-       }
+    public Long createRefundAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType, List<Long> aoIdsToPay)
+            throws BusinessException {
+        String occTemplateCode = paramBeanFactory.getInstance().getProperty("occ.refund.card", "RF_CARD");
+        if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
+            occTemplateCode = paramBeanFactory.getInstance().getProperty("occ.refund.dd", "RB_PLVT");
+        }
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
             throw new BusinessException("Cannot find OCC Template with code=" + occTemplateCode);
@@ -111,5 +113,5 @@ public class RefundService extends PersistenceService<Refund> {
         return refund.getId();
 
     }
-  
+
 }

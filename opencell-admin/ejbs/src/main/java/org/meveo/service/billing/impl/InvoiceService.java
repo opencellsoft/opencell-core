@@ -166,10 +166,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
 
@@ -658,8 +654,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
-                            + billingTemplateName + File.separator + "invoice");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
+                            + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice");
                     log.info("default jaspers path :" + vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
@@ -684,8 +680,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
-                            + billingTemplateName + "/invoiceAdjustment");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
+                            + ".war/WEB-INF/classes/jasper/" + billingTemplateName + "/invoiceAdjustment");
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {

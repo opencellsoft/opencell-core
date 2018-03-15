@@ -49,11 +49,7 @@ public class Journal extends FileProducer implements Reporting {
     @Inject
     private JournalEntryService journalEntryService;
 
-    private String reportsFolder;
-    private String templateFilename;
     public Map<String, Object> parameters = new HashMap<String, Object>();
-
-    private String separator;
 
     /** paramBeanFactory */
     @Inject
@@ -82,6 +78,8 @@ public class Journal extends FileProducer implements Reporting {
                 writer.append(row[2] + ";");// invoiceNumber
                 writer.append(row[3] + ";");// customerAccountCode
                 if (row[4] != null) {// accountingCode
+                    ParamBean param = paramBeanFactory.getInstance();
+                    String separator = param.getProperty("reporting.accountingCode.separator", ",");
                     writer.append(row[4].toString().replace(separator.toCharArray()[0], ';') + ";");
                 } else {
                     writer.append("00000;00000;0000;000;0000;00000000;00000;");
@@ -108,6 +106,9 @@ public class Journal extends FileProducer implements Reporting {
                 parameters.put("endDate", endDate);
                 StringBuilder sb = new StringBuilder(getFilename(startDate, endDate));
                 sb.append(".pdf");
+                ParamBean param = paramBeanFactory.getInstance();
+                String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+                String templateFilename = jasperTemplatesFolder + "journal.jasper";
                 generatePDFfile(file, sb.toString(), templateFilename, parameters);
             }
         } catch (IOException e) {
@@ -120,6 +121,8 @@ public class Journal extends FileProducer implements Reporting {
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         sb.append(reportsFolder);
         sb.append(appProvider.getCode() + "_");
         sb.append("JOURNAL_VENTE_");
@@ -132,11 +135,6 @@ public class Journal extends FileProducer implements Reporting {
     }
 
     public void export(Report report) {
-        ParamBean param = paramBeanFactory.getInstance();
-        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
-        separator = param.getProperty("reporting.accountingCode.separator", ",");
-        String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
-        templateFilename = jasperTemplatesFolder + "journal.jasper";
         generateJournalFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
 
     }

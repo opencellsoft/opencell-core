@@ -1,5 +1,6 @@
 package org.meveo.commons.utils;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
@@ -23,7 +24,12 @@ public class ParamBeanFactory {
      */
     public ParamBeanFactory() {
         super();
-        log.info("> ParamBean2 init");
+        log.info("> ParamBeanFactory init");
+    }
+
+    @PostConstruct
+    void init() {
+        log.info("> ParamBeanFactory > init > currentUser > {}", currentUser != null ? "Provider: " + currentUser.getProviderCode() : null);
     }
 
     /**
@@ -35,15 +41,20 @@ public class ParamBeanFactory {
         log.info("> ParamBeanFactory > getInstance");
         ParamBean paramBean = null;
         if (currentUser != null && !StringUtils.isBlank(currentUser.getProviderCode())) {
-            log.info("> ParamBeanFactory > getInstance > ByProvider");
+            log.info("> ParamBeanFactory > getInstance > ByProvider > {}", currentUser.getProviderCode());
             paramBean = ParamBean.getInstanceByProvider(currentUser.getProviderCode());
             return paramBean;
         }
-        log.info("> ParamBeanFactory > getInstance > ByProvider");
+        log.info("> ParamBeanFactory > getInstance > *No* Provider > ");
         paramBean = ParamBean.getInstanceByProvider("");
         return paramBean;
     }
 
+    /**
+     * Return the chroot folder path of the current provider without passing current provider as a parameter
+     * 
+     * @return path
+     */
     public String getChrootDir() {
         ParamBean paramBean = getInstance();
         if (currentUser != null) {
@@ -53,13 +64,12 @@ public class ParamBeanFactory {
         }
     }
 
-    public String getInheritedProperty(String key, String defaultValue) {
-        ParamBean paramBean = getInstance();
-        if (currentUser != null) {
-            return paramBean.getInheritedProperty(key, defaultValue, currentUser.getProviderCode());
-        } else {
-            return paramBean.getInheritedProperty(key, defaultValue, "");
-        }
+    /**
+     * Return the application scope parameter bean
+     * 
+     * @return paramBean
+     */
+    public static ParamBean getAppScopeInstance() {
+        return ParamBean.getInstance();
     }
-
 }

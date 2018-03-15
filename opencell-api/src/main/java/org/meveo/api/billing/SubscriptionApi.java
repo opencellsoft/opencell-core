@@ -170,7 +170,7 @@ public class SubscriptionApi extends BaseApi {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
-                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
         }
 
         if (offerTemplate.isDisabled()) {
@@ -252,7 +252,7 @@ public class SubscriptionApi extends BaseApi {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
             if (offerTemplate == null) {
                 throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
 
             } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
                 throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
@@ -404,7 +404,7 @@ public class SubscriptionApi extends BaseApi {
                 }
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
-                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());                
+                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -651,7 +651,7 @@ public class SubscriptionApi extends BaseApi {
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
         if (productTemplate == null) {
             throw new EntityDoesNotExistsException(ProductTemplate.class,
-                postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), ParamBean.getInstance().getDateTimeFormat()));
+                postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
         }
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
@@ -1224,7 +1224,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * @param postData operation serivices request
-     * @param isToSuspend  true if it is to be suspended.
+     * @param isToSuspend true if it is to be suspended.
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception

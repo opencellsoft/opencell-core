@@ -61,7 +61,6 @@ public class AccountingSummary extends FileProducer implements Reporting {
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    private String reportsFolder;
     private String templateFilename;
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -131,9 +130,10 @@ public class AccountingSummary extends FileProducer implements Reporting {
     }
 
     public String getFilename() {
-
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         StringBuilder sb = new StringBuilder();
         sb.append(reportsFolder);
         sb.append(appProvider.getCode());
@@ -144,7 +144,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
 
     public void export(Report report) {
         ParamBean param = paramBeanFactory.getInstance();
-        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
         templateFilename = jasperTemplatesFolder + "accountingSummary.jasper";
         generateAccountingSummaryFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());

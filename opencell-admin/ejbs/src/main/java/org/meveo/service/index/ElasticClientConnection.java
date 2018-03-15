@@ -37,7 +37,7 @@ public class ElasticClientConnection {
     @Inject
     private ElasticSearchConfiguration esConfiguration;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     /**
      * The actual ES client

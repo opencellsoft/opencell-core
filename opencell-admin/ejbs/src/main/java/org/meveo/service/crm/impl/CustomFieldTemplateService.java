@@ -45,13 +45,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     static boolean useCFTCache = true;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @PostConstruct
     private void init() {
-        useCFTCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCFT", "true"));
+        useCFTCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCFT", "true"));
     }
 
     /**

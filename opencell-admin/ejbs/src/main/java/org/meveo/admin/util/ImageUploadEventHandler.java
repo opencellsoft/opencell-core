@@ -8,6 +8,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import javax.inject.Inject;
+
 import org.apache.commons.io.FilenameUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.BusinessEntity;
@@ -20,6 +22,8 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.primefaces.model.UploadedFile;
 
 /**
@@ -31,6 +35,10 @@ public class ImageUploadEventHandler<T extends IEntity> {
      * application provider.
      */
     private Provider appProvider;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     /**
      * @param appProvider application provider.
@@ -45,13 +53,13 @@ public class ImageUploadEventHandler<T extends IEntity> {
      */
     public String getPicturePath(T entity) {
         if (entity instanceof OfferTemplateCategory) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "offerCategory");
+            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "offerCategory");
         } else if (entity instanceof OfferTemplate) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "offer");
+            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "offer");
         } else if (entity instanceof ServiceTemplate) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "service");
+            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "service");
         } else if (entity instanceof ProductTemplate) {
-            return ModuleUtil.getPicturePath(appProvider.getCode(), "product");
+            return ModuleUtil.getPicturePath(currentUser.getProviderCode(), "product");
         }
 
         return "";

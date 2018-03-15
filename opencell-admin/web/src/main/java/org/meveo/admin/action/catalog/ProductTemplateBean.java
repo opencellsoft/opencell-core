@@ -111,7 +111,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
                 instantiateNewVersion();
                 setObjectId(entity.getId());
                 newVersion = false;
-            } else if(duplicateProduct) {
+            } else if (duplicateProduct) {
                 duplicateWithoutSave();
             }
 
@@ -161,7 +161,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             }
         }
     }
-    
+
     @ActionMethod
     public void duplicateWithoutSave() {
         if (entity != null && entity.getId() != null) {
@@ -219,7 +219,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
             businessProductModel = businessProductModelService.refreshOrRetrieve(businessProductModel);
             businessProductModelService.instantiateBPM(entity, businessProductModel);
             return back();
-            
+
         } else {
             if (!entity.isTransient()) {
                 productTemplateService.refreshOrRetrieve(entity);
@@ -465,7 +465,7 @@ public class ProductTemplateBean extends CustomFieldBean<ProductTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "productTemplate.version.exists"),
-                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBeanFactory.getInstance().getDateFormat()));
             return false;
         }
 

@@ -29,7 +29,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -181,8 +180,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
 
     private Map<String, Boolean> writeAccessMap;
 
-    protected ParamBean paramBean;// = ParamBean.getInstance();
-
     @Inject
     protected ParamBeanFactory paramBeanFactory;
     // protected String providerFilePath = paramBean.getProperty("providers.rootDir", "./opencelldata/");
@@ -204,11 +201,6 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     public BaseBean(Class<T> clazz) {
         super();
         this.clazz = clazz;
-    }
-
-    @PostConstruct
-    void init() {
-        paramBean = paramBeanFactory.getInstance();
     }
 
     /**
@@ -964,7 +956,7 @@ public abstract class BaseBean<T extends IEntity> implements Serializable {
     }
 
     public CSVExportOptions csvOptions() {
-        ParamBean param = ParamBean.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String characterEncoding = param.getProperty("csv.characterEncoding", "iso-8859-1");
         CSVExportOptions csvOption = new CSVExportOptions();
         csvOption.setSeparatorCharacter(';');

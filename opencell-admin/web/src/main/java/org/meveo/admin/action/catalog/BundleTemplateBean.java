@@ -347,7 +347,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "bundleTemplate.version.exists"),
-                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBeanFactory.getInstance().getDateFormat()));
             return false;
         }
 

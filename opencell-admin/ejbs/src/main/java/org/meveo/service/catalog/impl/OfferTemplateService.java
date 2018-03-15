@@ -36,7 +36,6 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.Auditable;
 import org.meveo.model.DatePeriod;
@@ -64,10 +63,6 @@ public class OfferTemplateService extends GenericProductOfferingService<OfferTem
 
     @Inject
     private SubscriptionService subscriptionService;
-
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     @SuppressWarnings("unchecked")
     public List<OfferTemplate> findByServiceTemplate(ServiceTemplate serviceTemplate) {

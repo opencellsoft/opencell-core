@@ -22,7 +22,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.persistence.NoResultException;
@@ -31,8 +30,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Subscription;
 import org.meveo.model.rating.EDR;
@@ -42,24 +39,18 @@ import org.meveo.service.base.PersistenceService;
 @Stateless
 public class EdrService extends PersistenceService<EDR> {
 
-    ParamBean paramBean;
-
     @Inject
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
 
-    static boolean useInMemoryDeduplication = true;
-    static boolean inMemoryDeduplicationPrepopulated = false;
+    // static boolean useInMemoryDeduplication = true;
+    // static boolean inMemoryDeduplicationPrepopulated = false;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
-    @PostConstruct
-    private void init() {
-        paramBean = paramBeanFactory.getInstance();
-        useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
-        inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
-    }
+    // @PostConstruct
+    // private void init() {
+    // paramBean = paramBeanFactory.getInstance();
+    // useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
+    // inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
+    // }
 
     /**
      * Get a list of unprocessed EDRs to rate up to a given date. List is sorted by subscription and ID in ascending order
@@ -122,7 +113,8 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public boolean isDuplicateFound(String originBatch, String originRecord) {
         Boolean isDuplicate = null;
-
+        boolean useInMemoryDeduplication = paramBeanFactory.getInstance().getProperty("mediation.deduplicateInMemory", "true").equals("true");
+        boolean inMemoryDeduplicationPrepopulated = paramBeanFactory.getInstance().getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
         if (useInMemoryDeduplication) {
             isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
             if (isDuplicate == null && !inMemoryDeduplicationPrepopulated) {
@@ -141,6 +133,7 @@ public class EdrService extends PersistenceService<EDR> {
     @Override
     public void create(EDR edr) throws BusinessException {
         super.create(edr);
+        boolean useInMemoryDeduplication = paramBeanFactory.getInstance().getProperty("mediation.deduplicateInMemory", "true").equals("true");
         if (useInMemoryDeduplication) {
             cdrEdrProcessingCacheContainerProvider.setEdrDuplicationStatus(edr.getOriginBatch(), edr.getOriginRecord());
         }

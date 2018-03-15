@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,6 +20,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.EmailNotification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
@@ -46,6 +46,10 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
     @Inject
     private EmailNotificationService emailNotificationService;
 
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     @Inject
     CounterTemplateService counterTemplateService;
 
@@ -53,7 +57,6 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
     ScriptInstanceService scriptInstanceService;
 
     CsvBuilder csv = null;
-    private String providerDir; // = paramBeanFactory.getInheritedProperty("providers.rootDir", "./opencelldata");
     private String existingEntitiesCsvFile = null;
 
     CsvReader csvReader = null;
@@ -79,11 +82,6 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
         super(EmailNotification.class);
     }
 
-    @PostConstruct
-    private void initEmailNotificationBean() {
-        providerDir = paramBeanFactory.getInheritedProperty("providers.rootDir", "./opencelldata");
-    }
-
     @Override
     protected IPersistenceService<EmailNotification> getPersistenceService() {
         return emailNotificationService;
@@ -107,8 +105,8 @@ public class EmailNotificationBean extends BaseNotificationBean<EmailNotificatio
         }
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
-        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+        String existingEntitiesCSV = paramBeanFactory.getInstance().getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "EmailNotifications_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();

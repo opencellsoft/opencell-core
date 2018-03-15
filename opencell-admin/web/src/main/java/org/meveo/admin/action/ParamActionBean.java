@@ -38,9 +38,9 @@ public class ParamActionBean implements Serializable {
 
     private ParamBean paramBean;
 
-    /** paramBeanFactory */
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
-    protected ParamBeanFactory paramBeanFactory;
+    private ParamBeanFactory paramBeanFactory;
 
     private List<ParamProperty> properties = null;
 
