@@ -88,6 +88,7 @@
 	<page view-id=".+\/admin\/userGroupHierarchy\/.+" >
     	<constraint>currentUser.hasRole('marketingCatalogManager')</constraint>
         <constraint type="READ">currentUser.hasRole('marketingCatalogVisualization')</constraint>
+        <constraint>currentUser.hasRole('administrationVisualization')</constraint>
     </page>
 	
 	<page view-id=".+\/admin\/.+">
