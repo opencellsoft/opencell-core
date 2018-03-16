@@ -247,10 +247,10 @@
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.accountOwner']}"
                                                             field="bankCoordinates" childField="accountOwner" size="55" required="true" />                                                        
                                                         <hftl:formField entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.iban']}" field="bankCoordinates"
-                                                            childField="iban" size="45"   listenerUpdate="bicId" actionListenerBean="#{customerAccountBean}"  actionListenerMethod="checkIsBicRequired" required="true" />                                                           
+                                                            childField="iban" size="45"   listenerUpdate="bicId"  required="true" />                                                           
                                                        <h:panelGroup id="bicId">
                                                         <hftl:formField  entity="#{customerAccountBean.selectedPaymentMethod}" label="#{messages['bankCoordinates.bic']}" field="bankCoordinates"
-                                                            childField="bic" size="15"  required="#{customerAccountBean.isBicRequired()}" />  
+                                                            childField="bic" size="15"  />  
                                                             </h:panelGroup>                                                                                                   
                                                     </c:if>
                                                 </p:outputPanel>
