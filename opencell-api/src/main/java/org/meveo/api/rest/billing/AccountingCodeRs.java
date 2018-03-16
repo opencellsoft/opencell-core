@@ -23,6 +23,7 @@ import org.meveo.api.rest.IBaseRs;
 /**
  * @author Edward P. Legaspi
  * @version 23 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Path("/billing/accountingCode")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

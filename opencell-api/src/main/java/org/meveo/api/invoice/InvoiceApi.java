@@ -72,6 +72,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class InvoiceApi extends BaseApi {
 

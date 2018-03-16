@@ -17,8 +17,10 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 
 /**
+ * Use to store Chart of accounts. Previously accounting_code fields.
  * @author Edward P. Legaspi
  * @version 19 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @CustomFieldEntity(cftCodePrefix = "ACCT_CODE")
 @ExportIdentifier({ "code" })

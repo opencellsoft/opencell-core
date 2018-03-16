@@ -8,6 +8,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "OCCTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OccTemplateDto extends BusinessDto {

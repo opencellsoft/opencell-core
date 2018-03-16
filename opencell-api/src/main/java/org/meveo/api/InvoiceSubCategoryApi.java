@@ -22,6 +22,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class InvoiceSubCategoryApi extends BaseApi {

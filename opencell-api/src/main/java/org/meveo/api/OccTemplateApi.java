@@ -21,6 +21,9 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class OccTemplateApi extends BaseApi {
 

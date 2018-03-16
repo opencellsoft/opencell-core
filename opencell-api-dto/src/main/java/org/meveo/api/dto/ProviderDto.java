@@ -12,6 +12,7 @@ import org.meveo.model.crm.Provider;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Provider")
 @XmlAccessorType(XmlAccessType.FIELD)

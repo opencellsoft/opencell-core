@@ -35,6 +35,9 @@ import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class RefundApi extends BaseApi {
 

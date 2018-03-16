@@ -40,6 +40,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Refund service implementation.
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class RefundService extends PersistenceService<Refund> {

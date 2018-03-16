@@ -11,8 +11,11 @@ import org.meveo.api.dto.response.billing.AccountingCodeGetResponseDto;
 import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
 
 /**
+ * REST API to manage AccountingCode or Chart of accounts.
+ *
  * @author Edward P. Legaspi
  * @version 23 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @WebService
 public interface AccountingWs extends IBaseWs {

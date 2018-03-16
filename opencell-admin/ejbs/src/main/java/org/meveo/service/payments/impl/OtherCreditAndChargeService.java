@@ -37,6 +37,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * OtherCreditAndCharge service implementation.
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class OtherCreditAndChargeService extends

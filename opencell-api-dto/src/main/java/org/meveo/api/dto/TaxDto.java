@@ -12,7 +12,8 @@ import org.meveo.model.billing.Tax;
 
 /**
  * @author Edward P. Legaspi
- * @since Oct 11, 2013
+ * @version Oct 11, 2013
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Tax")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -48,6 +48,9 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })

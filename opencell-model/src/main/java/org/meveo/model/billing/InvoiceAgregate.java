@@ -37,6 +37,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
+/**
+ * 
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @Table(name = "billing_invoice_agregate")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

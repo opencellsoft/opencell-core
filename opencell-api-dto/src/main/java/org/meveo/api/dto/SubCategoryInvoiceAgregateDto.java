@@ -33,7 +33,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 /**
  * @author R.AITYAAZZA
- *
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "SubCategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)

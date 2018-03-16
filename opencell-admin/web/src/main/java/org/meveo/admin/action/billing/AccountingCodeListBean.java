@@ -4,8 +4,11 @@ import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
 /**
+ * Controller to manage list view of AccountingCode.
+ * 
  * @author Edward P. Legaspi
  * @created 21 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Named
 @ConversationScoped

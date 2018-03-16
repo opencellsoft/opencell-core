@@ -22,6 +22,7 @@ import org.meveo.service.catalog.impl.TaxService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class TaxApi extends BaseApi {

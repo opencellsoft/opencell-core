@@ -22,8 +22,11 @@ import org.meveo.model.billing.Subscription;
 import org.meveo.service.billing.impl.AccountingCodeService;
 
 /**
+ * API class for AccountingCode CRUD.
+ * 
  * @author Edward P. Legaspi
  * @created 23 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class AccountingCodeApi extends BaseApi {

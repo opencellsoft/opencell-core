@@ -57,6 +57,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Payment service implementation.
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {

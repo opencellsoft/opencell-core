@@ -39,6 +39,9 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
+/*
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 

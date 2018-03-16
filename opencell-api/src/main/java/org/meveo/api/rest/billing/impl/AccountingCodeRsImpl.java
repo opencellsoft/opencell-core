@@ -17,8 +17,11 @@ import org.meveo.api.rest.billing.AccountingCodeRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
+ * REST API to manage AccountingCode or Chart of accounts.
+ * 
  * @author Edward P. Legaspi
  * @version 23 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
