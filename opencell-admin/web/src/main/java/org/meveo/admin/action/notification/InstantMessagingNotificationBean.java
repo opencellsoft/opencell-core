@@ -41,6 +41,10 @@ import org.primefaces.model.UploadedFile;
 /**
  * Standard backing bean for {@link InstantMessagingNotification} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped

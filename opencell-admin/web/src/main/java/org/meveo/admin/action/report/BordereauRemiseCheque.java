@@ -60,6 +60,11 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 public class BordereauRemiseCheque {
 

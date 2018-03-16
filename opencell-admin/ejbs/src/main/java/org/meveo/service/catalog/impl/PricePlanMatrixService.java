@@ -47,6 +47,13 @@ import org.meveo.model.catalog.OfferTemplate;
 import org.meveo.model.catalog.PricePlanMatrix;
 import org.meveo.service.base.BusinessService;
 
+/**
+ * @author Wassim Drira
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
 

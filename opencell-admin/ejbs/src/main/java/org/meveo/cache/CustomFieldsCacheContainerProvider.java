@@ -41,6 +41,9 @@ import org.slf4j.Logger;
  * Provides cache related services (loading, update) for custom field value related operations
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class CustomFieldsCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {

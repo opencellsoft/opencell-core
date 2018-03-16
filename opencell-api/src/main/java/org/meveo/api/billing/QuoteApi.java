@@ -70,6 +70,11 @@ import org.tmf.dsmapi.quote.Characteristic;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class QuoteApi extends BaseApi {
 

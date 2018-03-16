@@ -4,6 +4,11 @@ import javax.ejb.Stateless;
 
 import org.meveo.commons.utils.ParamBean;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class ConfigurationApi extends BaseApi {
 

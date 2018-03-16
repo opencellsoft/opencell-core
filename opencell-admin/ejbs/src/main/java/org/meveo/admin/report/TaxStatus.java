@@ -40,6 +40,11 @@ import org.meveo.service.reporting.impl.JournalEntryService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Named
 public class TaxStatus extends FileProducer implements Reporting {
 
@@ -53,7 +58,6 @@ public class TaxStatus extends FileProducer implements Reporting {
     @ApplicationProvider
     private Provider appProvider;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

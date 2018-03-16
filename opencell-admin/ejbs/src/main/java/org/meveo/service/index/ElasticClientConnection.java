@@ -24,6 +24,8 @@ import org.slf4j.Logger;
  * Establish a connection to Elastic Search cluster
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  *
  */
 @Startup

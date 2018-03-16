@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
  * This will handle the processing of {@link SecuredBusinessEntityMethod} annotated methods.
  * 
  * @author Tony Alejandro
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  *
  */
 public class SecuredBusinessEntityMethodInterceptor implements Serializable {

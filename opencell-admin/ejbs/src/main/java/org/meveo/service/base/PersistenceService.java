@@ -74,6 +74,10 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;

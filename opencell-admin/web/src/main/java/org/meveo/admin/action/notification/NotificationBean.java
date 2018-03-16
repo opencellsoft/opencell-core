@@ -40,6 +40,11 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 @ViewScoped
 public class NotificationBean extends BaseNotificationBean<ScriptNotification> {

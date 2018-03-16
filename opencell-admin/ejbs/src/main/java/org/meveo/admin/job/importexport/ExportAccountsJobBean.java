@@ -32,6 +32,10 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class ExportAccountsJobBean {
 
@@ -52,7 +56,6 @@ public class ExportAccountsJobBean {
 
     private BillingAccounts billingAccounts;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

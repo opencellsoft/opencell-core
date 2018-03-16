@@ -38,6 +38,11 @@ import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.impl.JournalEntryService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 public class Journal extends FileProducer implements Reporting {
 

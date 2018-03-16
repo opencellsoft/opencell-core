@@ -30,6 +30,11 @@ import javax.faces.convert.FacesConverter;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @FacesConverter("dateConverter")
 public class DateConverter implements Converter {
 

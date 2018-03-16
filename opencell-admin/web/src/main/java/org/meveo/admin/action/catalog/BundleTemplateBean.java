@@ -36,6 +36,9 @@ import org.primefaces.model.DualListModel;
 
 /**
  * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped

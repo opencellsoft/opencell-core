@@ -16,6 +16,9 @@ import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  **/
 @FacesValidator("codeValidator")
 public class CodeValidator implements Validator {

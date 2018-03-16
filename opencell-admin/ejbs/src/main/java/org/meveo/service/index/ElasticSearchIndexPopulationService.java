@@ -63,6 +63,9 @@ import org.slf4j.Logger;
  * Takes care of managing and populating Elastic search indexes
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class ElasticSearchIndexPopulationService implements Serializable {

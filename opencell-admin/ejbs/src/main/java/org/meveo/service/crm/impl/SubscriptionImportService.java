@@ -36,6 +36,11 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class SubscriptionImportService extends ImportService {
 
@@ -64,7 +69,6 @@ public class SubscriptionImportService extends ImportService {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

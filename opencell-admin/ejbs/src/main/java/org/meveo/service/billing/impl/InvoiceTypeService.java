@@ -28,6 +28,11 @@ import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class InvoiceTypeService extends BusinessService<InvoiceType> {
 

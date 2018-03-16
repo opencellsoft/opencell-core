@@ -58,6 +58,12 @@ import org.meveo.util.PaymentGatewayClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author anasseh
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @PaymentGatewayClass
 public class SepaFile implements GatewayPaymentInterface {
     Logger log = LoggerFactory.getLogger(SepaFile.class);
@@ -70,7 +76,6 @@ public class SepaFile implements GatewayPaymentInterface {
     @CurrentUser
     private MeveoUser currentUser;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

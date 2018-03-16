@@ -82,6 +82,10 @@ import com.lapis.jsfexporter.csv.CSVExportOptions;
 
 /**
  * Base bean class. Other backing beans extends this class if they need functionality it provides.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public abstract class BaseBean<T extends IEntity> implements Serializable {
 

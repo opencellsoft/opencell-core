@@ -34,6 +34,11 @@ import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {
 

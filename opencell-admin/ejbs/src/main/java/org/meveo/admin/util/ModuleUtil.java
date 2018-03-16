@@ -35,6 +35,9 @@ import org.primefaces.model.CroppedImage;
  * a help class for meveo pictures like provider/media/module/pictures
  * 
  * @author Tyshan(tyshan@manaty.net)
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 
 public class ModuleUtil {

@@ -18,6 +18,11 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class WalletReservationService extends PersistenceService<WalletReservation> {
 

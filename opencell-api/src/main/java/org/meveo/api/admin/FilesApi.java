@@ -23,6 +23,9 @@ import org.meveo.commons.utils.StringUtils;
 
 /**
  * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class FilesApi extends BaseApi {

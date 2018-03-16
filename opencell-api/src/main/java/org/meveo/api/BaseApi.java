@@ -76,7 +76,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Edward P. Legaspi
- * @since Oct 15, 2013
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  **/
 public abstract class BaseApi {
 

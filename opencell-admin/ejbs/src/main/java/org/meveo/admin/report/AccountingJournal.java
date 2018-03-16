@@ -38,6 +38,11 @@ import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Named
 public class AccountingJournal extends FileProducer implements Reporting {
     @Inject
@@ -53,7 +58,6 @@ public class AccountingJournal extends FileProducer implements Reporting {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

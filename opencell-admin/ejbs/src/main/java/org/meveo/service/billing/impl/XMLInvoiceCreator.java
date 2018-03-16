@@ -120,6 +120,7 @@ import org.xml.sax.SAXException;
 
 /**
  * @author akadid abdelmounaim
+ * @author Wassim Drira
  * @lastModifiedVersion 5.0
  **/
 @Stateless
@@ -269,8 +270,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
 
     /**
-     * Create Invoice XML document
-     * v5.0: Added seller tag, vatNo and registrationNo on customerTag
+     * Create Invoice XML document v5.0: Added seller tag, vatNo and registrationNo on customerTag
      * 
      * @param invoice invoice used to create xml
      * @param isVirtual true/false

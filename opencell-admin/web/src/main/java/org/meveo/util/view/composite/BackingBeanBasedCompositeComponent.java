@@ -28,6 +28,11 @@ import org.meveo.model.IEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 public class BackingBeanBasedCompositeComponent extends UINamingContainer {
 
     private static final String BOOLEAN_TRUE_STRING = "true";

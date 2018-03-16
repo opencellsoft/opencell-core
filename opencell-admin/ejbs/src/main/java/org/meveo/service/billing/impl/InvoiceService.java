@@ -121,6 +121,7 @@ import net.sf.jasperreports.engine.util.JRLoader;
 
 /**
  * @author akadid abdelmounaim
+ * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
 @Stateless
@@ -610,8 +611,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
-     * Produce invoice.
-     * v5.0 Refresh jasper template without restarting wildfly 
+     * Produce invoice. v5.0 Refresh jasper template without restarting wildfly
      * 
      * @param invoice invoice to generate pdf
      * @throws BusinessException business exception
@@ -754,7 +754,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             }
 
-            String fileKey = jasperFile.getPath()+jasperFile.lastModified();
+            String fileKey = jasperFile.getPath() + jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(fileKey);
             if (jasperReport == null) {
                 jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);

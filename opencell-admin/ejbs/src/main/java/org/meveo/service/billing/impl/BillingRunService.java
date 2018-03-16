@@ -62,6 +62,10 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * The Class BillingRunService.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {

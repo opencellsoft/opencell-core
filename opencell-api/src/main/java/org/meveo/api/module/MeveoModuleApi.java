@@ -74,6 +74,8 @@ import org.meveo.service.script.module.ModuleScriptService;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  **/
 @Stateless
