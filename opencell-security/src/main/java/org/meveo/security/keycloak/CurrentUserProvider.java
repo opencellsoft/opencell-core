@@ -24,6 +24,7 @@ import org.meveo.model.shared.Name;
 import org.meveo.security.MeveoUser;
 import org.meveo.security.UserAuthTimeProducer;
 import org.slf4j.Logger;
+import org.slf4j.MDC;
 
 @Stateless
 public class CurrentUserProvider {
@@ -64,12 +65,18 @@ public class CurrentUserProvider {
      * @param providerCode Provider code
      */
     public void forceAuthentication(String userName, String providerCode) {
-        log.debug("Force authentication to {}/{}", providerCode, userName);
         // Current user is already authenticated, can't overwrite it
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             log.warn("Current user is already authenticated, can't overwrite it keycloak: {}", ctx.getCallerPrincipal() instanceof KeycloakPrincipal);
             return;
         }
+
+        if (providerCode == null) {
+            MDC.remove("providerCode");
+        } else {
+            MDC.put("providerCode", providerCode);
+        }
+        log.debug("Force authentication to {}/{}", providerCode, userName);
         setForcedUsername(userName);
         setCurrentTenant(providerCode);
     }
@@ -84,6 +91,13 @@ public class CurrentUserProvider {
 
         // Current user is already authenticated, can't overwrite it
         if (!(ctx.getCallerPrincipal() instanceof KeycloakPrincipal)) {
+
+            if (lastCurrentUser.getProviderCode() == null) {
+                MDC.remove("providerCode");
+            } else {
+                MDC.put("providerCode", lastCurrentUser.getProviderCode());
+            }
+
             setForcedUsername(lastCurrentUser.getUserName());
             setCurrentTenant(lastCurrentUser.getProviderCode());
             log.debug("Reestablished authentication to {}/{}", lastCurrentUser.getUserName(), lastCurrentUser.getProviderCode());
@@ -101,12 +115,26 @@ public class CurrentUserProvider {
 
         if (ctx.getCallerPrincipal() instanceof KeycloakPrincipal) {
             providerCode = MeveoUserKeyCloakImpl.extractProviderCode(ctx);
-            log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
+
+            if (providerCode == null) {
+                MDC.remove("providerCode");
+            } else {
+                MDC.put("providerCode", providerCode);
+            }
+
+            // log.trace("Will setting current provider to extracted value from KC token: {}", providerCode);
             setCurrentTenant(providerCode);
 
         } else if (isCurrentTenantSet()) {
             providerCode = getCurrentTenant();
-            log.trace("Current provider is {}", providerCode);
+
+            if (providerCode == null) {
+                MDC.remove("providerCode");
+            } else {
+                MDC.put("providerCode", providerCode);
+            }
+
+            // log.trace("Current provider is {}", providerCode);
 
         } else {
             log.trace("Current provider is not set");
@@ -137,8 +165,8 @@ public class CurrentUserProvider {
         } else {
             user = new MeveoUserKeyCloakImpl(ctx, null, null, getAdditionalRoles(username, em), getRoleToPermissionMapping(providerCode, em));
         }
-        log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
-            getCurrentTenant());
+        // log.trace("getCurrentUser username={}, providerCode={}, forcedAuthentication {}/{} ", username, user != null ? user.getProviderCode() : null, getForcedUsername(),
+        // getCurrentTenant());
         supplementOrCreateUserInApp(user, em);
 
         log.trace("Current user is {}", user);

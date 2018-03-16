@@ -1,0 +1,55 @@
+com.opencellsoft.logger module provides a custom log handler that creates a separate file based on some MDC property value.
+
+Custom logger use requires:
+1. Deploy a module
+2. Configure logging in Wildfly
+
+Deploy a module
+
+To deploy a module to Wildfly server, copy wildfly-mdc-logger\src\deploy\module.xml and wildfly-mdc-logger\target\mdc-logger-1.0-SNAPSHOT.jar files to a <wildfly instalation>\modules\com\opencellsoft\logger\main directory
+
+Configure logging in Wildfly
+
+Logger is configured as a custom log handler under logging component configuration.
+
+Logger is based on Log4j implementation of Date based file rotation.
+The following properties are configurable:
+ - fileName - a full path to a log file. {} symbols specify an area, which should be used only if MDC value is set. Inside {} mdcPropertyName is replaced with a MDC value.
+ - mdcPropertyName -an MDC property name used to customize a file
+ - fileAppend - should logs be apended to an existing file, or existing content be disregarded?
+ - datePattern - file rotation frequency and file suffix when file is rotated.
+
+
+Here is a sample logging component configuration
+
+    <profile>
+        <subsystem xmlns="urn:jboss:domain:logging:3.0">
+            ...
+            <custom-handler name="fileByTenant" class="com.opencellsoft.wildfly.logger.MDCDailyRollingFileAppender" module="com.opencellsoft.logger">                
+                <formatter>
+                    <named-formatter name="PATTERN"/>
+                </formatter>
+                <properties>
+                    <property name="fileName" value="${jboss.server.log.dir}/server{-providerCode}.log"/>
+                    <property name="datePattern" value="yyyy-MM-dd"/>
+                    <property name="fileAppend" value="true"/>
+                    <property name="mdcPropertyName" value="providerCode"/>
+                </properties>           
+            </custom-handler>   
+            <logger category="org.meveo" use-parent-handlers="true">
+                <level name="TRACE"/>
+            </logger>
+            <root-logger>
+                <level name="INFO"/>
+                <handlers>
+                    <handler name="CONSOLE"/>
+                    <handler name="fileByTenant"/>
+                </handlers>
+            </root-logger>
+            <formatter name="PATTERN">
+                <pattern-formatter pattern="%d{yyyy-MM-dd HH:mm:ss,SSS} %-5p [%c] (%t) %X{providerCode} %s%e%n"/>
+            </formatter>
+            <formatter name="COLOR-PATTERN">
+                <pattern-formatter pattern="%K{level}%d{HH:mm:ss,SSS} %-5p [%c] (%t) %X{providerCode} %s%e%n"/>
+            </formatter>
+        </subsystem>

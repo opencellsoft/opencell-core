@@ -44,7 +44,7 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 /**
- * Handles Entity manager instantiation. Based on  https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
+ * Handles Entity manager instantiation. Based on https://www.tomas-dvorak.cz/posts/jpa-multitenancy/
  * 
  * @author Andrius Karpavicius
  */
@@ -180,7 +180,7 @@ public class EntityManagerProvider {
     }
 
     private EntityManager createEntityManager(String providerCode) {
-        log.trace("Create EM for provider {}", providerCode);
+        // log.trace("Create EM for provider {}", providerCode);
         try {
             return entityManagerFactories.get(providerCode).createEntityManager();
         } catch (NullPointerException e) {
@@ -208,7 +208,7 @@ public class EntityManagerProvider {
 
     public void unregisterEntityManagerFactory(String providerCode) {
 
-        log.trace("Removed EMF for provider {}", providerCode);
+        log.trace("Remove EMF for provider {}", providerCode);
 
         entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(providerCode);
 
