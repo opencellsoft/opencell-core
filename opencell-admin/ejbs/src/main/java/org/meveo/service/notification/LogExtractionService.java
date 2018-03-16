@@ -9,7 +9,7 @@ import java.util.Date;
 import java.util.Properties;
 
 import org.joda.time.DateTimeComparator;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +42,7 @@ public class LogExtractionService {
             String logFile = props.getProperty("handler.FILE.fileName");
             String dateFormat = props.getProperty("formatter.FILE.pattern").substring(props.getProperty("formatter.FILE.pattern").indexOf("{") + 1,
                 props.getProperty("formatter.FILE.pattern").indexOf("}"));
-            int length = 0, maxLength = Integer.parseInt(ParamBean.getInstance().getProperty("meveo.notifier.log.lengthInBytes", "100000"));
+            int length = 0, maxLength = Integer.parseInt(ParamBeanFactory.getAppScopeInstance().getProperty("meveo.notifier.log.lengthInBytes", "100000"));
             DateTimeComparator comparator = DateTimeComparator.getTimeOnlyInstance();
             boolean mustBeInToo = false;
             Date dateCurrentLine = null;

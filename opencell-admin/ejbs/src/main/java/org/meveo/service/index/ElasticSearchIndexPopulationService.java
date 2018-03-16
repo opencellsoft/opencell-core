@@ -38,6 +38,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -103,7 +104,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @Inject
     private Conversation conversation;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     /**
      * Populate index with data of a given entity class

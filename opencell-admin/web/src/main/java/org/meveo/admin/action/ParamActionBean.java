@@ -35,6 +35,7 @@ public class ParamActionBean implements Serializable {
     @Inject
     private transient ResourceBundle bundle;
 
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

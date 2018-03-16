@@ -189,6 +189,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * 
      * @param chargeTemplate charge template
      * @param subscriptionDate subscription date
+     * @param offerTemplate offer Template
      * @param chargeInstance charge instance
      * @param applicationType type of application
      * @param applicationDate date of application

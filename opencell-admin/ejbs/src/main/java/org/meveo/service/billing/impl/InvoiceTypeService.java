@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
@@ -37,10 +36,6 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
 
     @Inject
     OCCTemplateService oCCTemplateService;
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
 

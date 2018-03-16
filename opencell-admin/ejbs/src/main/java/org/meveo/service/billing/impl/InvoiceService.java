@@ -119,6 +119,10 @@ import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class InvoiceService extends PersistenceService<Invoice> {
 
@@ -165,10 +169,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
     @Inject
     @CurrentUser
     protected MeveoUser currentUser;
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     /** folder for pdf . */
     private String PDF_DIR_NAME = "pdf";
@@ -611,9 +611,13 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     /**
      * Produce invoice.
+     * v5.0 Refresh jasper template without restarting wildfly 
      * 
      * @param invoice invoice to generate pdf
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void produceInvoicePdfNoUpdate(Invoice invoice) throws BusinessException {
         log.debug("Creating pdf for invoice id={} number={}", invoice.getId(), invoice.getInvoiceNumberOrTemporaryNumber());
@@ -658,8 +662,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
                 File sourceFile = new File(sourcePath);
                 if (!sourceFile.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
-                            + billingTemplateName + File.separator + "invoice");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
+                            + ".war/WEB-INF/classes/jasper/" + billingTemplateName + File.separator + "invoice");
                     log.info("default jaspers path :" + vfDir.getPathName());
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFile = new File(vfPath.getPath());
@@ -684,8 +688,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 String sourcePathInvoiceAdjustment = Thread.currentThread().getContextClassLoader().getResource("./jasper/" + billingTemplateName + "/invoiceAdjustment").getPath();
                 File sourceFileInvoiceAdjustment = new File(sourcePathInvoiceAdjustment);
                 if (!sourceFileInvoiceAdjustment.exists()) {
-                    VirtualFile vfDir = VFS.getChild("content/" + ParamBean.getInstance().getProperty("opencell.moduleName", "opencell") + ".war/WEB-INF/classes/jasper/"
-                            + billingTemplateName + "/invoiceAdjustment");
+                    VirtualFile vfDir = VFS.getChild("content/" + ParamBeanFactory.getAppScopeInstance().getProperty("opencell.moduleName", "opencell")
+                            + ".war/WEB-INF/classes/jasper/" + billingTemplateName + "/invoiceAdjustment");
                     URL vfPath = VFSUtils.getPhysicalURL(vfDir);
                     sourceFileInvoiceAdjustment = new File(vfPath.getPath());
                     if (!sourceFileInvoiceAdjustment.exists()) {
@@ -1600,6 +1604,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
     /**
      * Determine an invoice template to use. Rule for selecting an invoiceTemplate is: InvoiceType &gt; BillingCycle &gt; default.
      * 
+     * @param invoice invoice
      * @param billingCycle Billing cycle
      * @param invoiceType Invoice type
      * @return Invoice template name

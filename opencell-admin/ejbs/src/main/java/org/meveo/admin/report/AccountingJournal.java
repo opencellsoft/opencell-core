@@ -46,8 +46,6 @@ public class AccountingJournal extends FileProducer implements Reporting {
     @Inject
     private DWHAccountOperationService accountOperationService;
 
-    private String reportsFolder;
-
     private String separator;
 
     private String templateFilename;
@@ -143,6 +141,8 @@ public class AccountingJournal extends FileProducer implements Reporting {
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         sb.append(reportsFolder);
         sb.append(appProvider.getCode());
         sb.append("_JOURNAL_TRESO_");
@@ -156,7 +156,6 @@ public class AccountingJournal extends FileProducer implements Reporting {
 
     public void export(Report report) {
         ParamBean param = paramBeanFactory.getInstance();
-        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         separator = param.getProperty("reporting.accountingCode.separator", ",");
         String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
         templateFilename = jasperTemplatesFolder + "accountingJournal.jasper";

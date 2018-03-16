@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
-import javax.inject.Inject;
 import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,6 +22,7 @@ import org.jboss.resteasy.client.ClientRequest;
 import org.jboss.resteasy.client.ClientResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.util.Version;
 import org.slf4j.LoggerFactory;
@@ -42,9 +42,6 @@ public class MonitoringBean implements Serializable {
     private static String macAddress = null;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ");
-
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     public static String getMacAddress() {
         if (macAddress == null) {
@@ -125,6 +122,7 @@ public class MonitoringBean implements Serializable {
             versionOutput = "";
             lastVersionCheckDate = new Date();
             try {
+                ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
                 String meveoInstanceCode = paramBeanFactory.getInstance().getProperty("monitoring.instanceCode", "");
                 String productVersion = Version.appVersion;
                 String macAddress = getMacAddress();
@@ -203,6 +201,7 @@ public class MonitoringBean implements Serializable {
             if (docUrlMap.containsKey(fullURI)) {
                 result = docUrlMap.get(fullURI);
             } else {
+                ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
                 String meveoInstanceCode = paramBeanFactory.getInstance().getProperty("monitoring.instanceCode", "");
                 String macAddress = "";
                 String keyEntreprise = paramBeanFactory.getInstance().getProperty("monitoring.enterpriseKey", "");

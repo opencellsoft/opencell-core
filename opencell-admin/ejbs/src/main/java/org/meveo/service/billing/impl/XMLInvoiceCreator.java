@@ -48,7 +48,6 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.AccountEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -119,6 +118,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
@@ -158,10 +161,6 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     /** transformer factory. */
     private TransformerFactory transfac = TransformerFactory.newInstance();
@@ -270,6 +269,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
 
     /**
+     * Create Invoice XML document
+     * v5.0: Added seller tag, vatNo and registrationNo on customerTag
+     * 
      * @param invoice invoice used to create xml
      * @param isVirtual true/false
      * @return xml document
@@ -277,6 +279,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws ParserConfigurationException parsing exception
      * @throws SAXException sax exception
      * @throws IOException IO exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
         long startDate = System.currentTimeMillis();
@@ -896,10 +901,14 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
 
     /**
+     * Add seller address to seller tag
+     * 
      * @param seller instance of entity
      * @param doc document
      * @param parent parent node
      * @param languageCode code of language
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void addAdress(Seller seller, Document doc, Element parent, String languageCode) {
         log.debug("add address to seller");

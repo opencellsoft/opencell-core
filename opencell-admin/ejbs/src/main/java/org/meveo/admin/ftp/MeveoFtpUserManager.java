@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-
 import org.apache.ftpserver.ftplet.Authentication;
 import org.apache.ftpserver.ftplet.AuthenticationFailedException;
 import org.apache.ftpserver.ftplet.Authority;
@@ -19,6 +16,7 @@ import org.apache.ftpserver.usermanager.impl.BaseUser;
 import org.apache.ftpserver.usermanager.impl.ConcurrentLoginPermission;
 import org.apache.ftpserver.usermanager.impl.TransferRatePermission;
 import org.apache.ftpserver.usermanager.impl.WritePermission;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.security.Permission;
 import org.meveo.model.security.Role;
@@ -32,22 +30,13 @@ public class MeveoFtpUserManager extends AbstractUserManager {
     private static final int HOUR = 60 * 60;
     private static final String ADMINISTRATOR = "administrateur";
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     private Logger log = LoggerFactory.getLogger(MeveoFtpUserManager.class);
-    private static String PREFIX;// = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata");
 
     private UserService userService;
 
     public MeveoFtpUserManager(String adminName, PasswordEncryptor passwordEncryptor, UserService userService) {
         super(adminName, passwordEncryptor);
         this.userService = userService;
-    }
-
-    @PostConstruct
-    void init() {
-        PREFIX = paramBeanFactory.getChrootDir();
     }
 
     @Override
@@ -127,7 +116,8 @@ public class MeveoFtpUserManager extends AbstractUserManager {
      * @return ftp user
      */
     private User getUserFromMeveoUser(org.meveo.model.admin.User meveoUser) throws FtpException {
-        String homeDir = String.format("%s%s%s", PREFIX, File.separator, "appProvider.getCode()");
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        String homeDir = String.format("%s", paramBeanFactory.getChrootDir());
         log.debug("ftp user home {}", homeDir);
         File home = new File(homeDir);
         if (!home.exists()) {

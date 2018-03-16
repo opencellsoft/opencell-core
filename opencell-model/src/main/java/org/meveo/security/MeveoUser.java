@@ -167,6 +167,8 @@ public abstract class MeveoUser implements Serializable {
     /**
      * Return an instance of MeveoUser - with username and provider code only
      * 
+     * @param userName userName
+     * @param providerCode providerCode
      * @return MeveoUser instance
      */
     public static MeveoUser instantiate(String userName, String providerCode) {

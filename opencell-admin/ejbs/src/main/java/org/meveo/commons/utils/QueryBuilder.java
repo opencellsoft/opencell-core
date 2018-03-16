@@ -43,6 +43,8 @@ import org.meveo.admin.util.pagination.PaginationConfiguration;
  * billingStatus).addCriterionEnum("a.networkStatus", networkStatus).addCriterionEntity("a.terminalInstance", terminalInstance) .addPaginationConfiguration(configuration);
  * 
  * @author Richard Hallier
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 public class QueryBuilder {
 
@@ -555,10 +557,15 @@ public class QueryBuilder {
     }
 
     /**
+     * v5.0: Fix for date format problem
+     * 
      * @param startField starting field
      * @param endField ending field
      * @param value date value
      * @return instance of Query builder.
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public QueryBuilder addCriterionDateInRange(String startField, String endField, Date value) {
         if (StringUtils.isBlank(value))

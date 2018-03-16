@@ -49,7 +49,7 @@ public class RecurringChargeAsync {
      * @param maxDate Process untill date
      * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
      *        expirations), current user might be lost, thus there is a need to reestablish.
-     * @return
+     * @return Future String
      */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)

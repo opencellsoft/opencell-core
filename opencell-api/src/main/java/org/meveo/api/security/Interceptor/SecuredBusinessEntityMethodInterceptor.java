@@ -11,7 +11,7 @@ import org.meveo.api.security.filter.SecureMethodResultFilter;
 import org.meveo.api.security.filter.SecureMethodResultFilterFactory;
 import org.meveo.api.security.parameter.SecureMethodParameter;
 import org.meveo.api.security.parameter.SecureMethodParameterHandler;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.admin.User;
 import org.meveo.security.CurrentUser;
@@ -50,7 +50,9 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
     @Inject
     private UserService userService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * This is called before a method that makes use of the {@link SecuredBusinessEntityMethodInterceptor} is called. It contains logic on retrieving the attributes of the
@@ -72,7 +74,7 @@ public class SecuredBusinessEntityMethodInterceptor implements Serializable {
         // log.error("AKK checking secured entities currentUser is {}", currentUser);
 
         // check if secured entities should be checked.
-        String secureSetting = paramBean.getProperty("secured.entities.enabled", "false");
+        String secureSetting = paramBeanFactory.getInstance().getProperty("secured.entities.enabled", "false");
         boolean secureEntitesEnabled = Boolean.parseBoolean(secureSetting);
 
         // if not, immediately return.

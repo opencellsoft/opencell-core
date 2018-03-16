@@ -59,7 +59,6 @@ public class ExportCustomersJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-        // ParamBean param = paramBeanFactory.getInstance();
         String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "customers" + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);

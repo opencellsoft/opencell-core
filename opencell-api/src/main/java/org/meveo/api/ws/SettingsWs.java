@@ -138,7 +138,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * Creates a user in keycloak and core.
      * @param postData
-     * @return
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus createExternalUser(@WebParam(name = "user") UserDto postData);
@@ -146,7 +146,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * Updates a user in keycloak and core given a username.
      * @param postData
-     * @return
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus updateExternalUser(@WebParam(name = "user") UserDto postData);
@@ -154,7 +154,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * Deletes a user in keycloak and core given a username.
      * @param username the username of the user to be deleted.
-     * @return
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus deleteExternalUser(@WebParam(name = "username") String username);
@@ -444,7 +444,7 @@ public interface SettingsWs extends IBaseWs {
      * Provide translation of multi language field values. Deprecated in v.4.7. Use updateTranslations instead
      * 
      * @param postData Translated field values
-     * @return
+     * @return action status.
      */
     @WebMethod
     @Deprecated
@@ -454,7 +454,7 @@ public interface SettingsWs extends IBaseWs {
      * Provide translation of multi language field value. Deprecated in v.4.7. Use updateTranslations instead
      * 
      * @param postData Translated field values
-     * @return
+     * @return action status.
      */
     @WebMethod
     @Deprecated
@@ -504,7 +504,7 @@ public interface SettingsWs extends IBaseWs {
      * @param entityClass Entity class name
      * @param code Entity code
      * @param languageCode 3 letter language code. Optional
-     * @return
+     * @return action status.
      */
     @WebMethod
     @Deprecated
@@ -520,7 +520,7 @@ public interface SettingsWs extends IBaseWs {
      * @param validTo Validity dates - to
      * @param fieldname Field name. Optional
      * @param languageCode 3 letter language code. Optional
-     * @return
+     * @return action status.
      */
     @WebMethod
     public ActionStatus removeTranslations(@WebParam(name = "entityClass") String entityClass, @WebParam(name = "code") String code, @WebParam(name = "validFrom") Date validFrom,
@@ -530,7 +530,7 @@ public interface SettingsWs extends IBaseWs {
      * Provide translation of multi language field values. Deprecated in v.4.7. Use updateTranslations instead
      * 
      * @param postData Translated field values
-     * @return
+     * @return action status.
      */
     @WebMethod
     @Deprecated
@@ -600,8 +600,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * create a providerContact by dto
      * 
-     * @param providerContactDto
-     * @return
+     * @param providerContactDto providerContactDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createProviderContact(@WebParam(name = "providerContact") ProviderContactDto providerContactDto);
@@ -609,8 +609,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * update a providerContact by dto
      * 
-     * @param providerContactDto
-     * @return
+     * @param providerContactDto providerContactDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus updateProviderContact(@WebParam(name = "providerContact") ProviderContactDto providerContactDto);
@@ -618,8 +618,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * find a providerContact by code
      * 
-     * @param providerContactCode
-     * @return
+     * @param providerContactCode providerContactCode
+     * @return action status.
      */
     @WebMethod
     ProviderContactResponseDto findProviderContact(@WebParam(name = "providerContactCode") String providerContactCode);
@@ -627,8 +627,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * remove a providerContact by code
      * 
-     * @param providerContactCode
-     * @return
+     * @param providerContactCode providerContactCode
+     * @return action status.
      */
     @WebMethod
     ActionStatus removeProviderContact(@WebParam(name = "providerContactCode") String providerContactCode);
@@ -636,7 +636,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * list all providerContacts
      * 
-     * @return
+     * @return action status.
      */
     @WebMethod
     ProviderContactsResponseDto listProviderContacts();
@@ -644,8 +644,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * createOrUpdate a providerContact by dto
      * 
-     * @param providerContactDto
-     * @return
+     * @param providerContactDto providerContactDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createOrUpdateProviderContact(@WebParam(name = "providerContact") ProviderContactDto providerContactDto);
@@ -653,8 +653,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * create an emailTemplate by dto
      * 
-     * @param emailTemplateDto
-     * @return
+     * @param emailTemplateDto emailTemplateDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createEmailTemplate(@WebParam(name = "emailTemplate") EmailTemplateDto emailTemplateDto);
@@ -662,8 +662,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * update an emailTemplate by dto
      * 
-     * @param emailTemplateDto
-     * @return
+     * @param emailTemplateDto emailTemplateDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus updateEmailTemplate(@WebParam(name = "emailTemplate") EmailTemplateDto emailTemplateDto);
@@ -671,8 +671,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * find an emailTemplate by code
      * 
-     * @param emailTemplateCode
-     * @return
+     * @param emailTemplateCode emailTemplateCode
+     * @return action status.
      */
     @WebMethod
     EmailTemplateResponseDto findEmailTemplate(@WebParam(name = "emailTemplateCode") String emailTemplateCode);
@@ -680,8 +680,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * remove an emailTemplate by code
      * 
-     * @param emailTemplateCode
-     * @return
+     * @param emailTemplateCode emailTemplateCode
+     * @return action status.
      */
     @WebMethod
     ActionStatus removeEmailTemplate(@WebParam(name = "emailTemplateCode") String emailTemplateCode);
@@ -689,7 +689,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * list emailTemplates
      * 
-     * @return
+     * @return action status.
      */
     @WebMethod
     EmailTemplatesResponseDto listEmailTemplates();
@@ -697,8 +697,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * createOrUpdate an emailTemplate by dto
      * 
-     * @param emailTemplateDto
-     * @return
+     * @param emailTemplateDto emailTemplateDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createOrUpdateEmailTemplate(@WebParam(name = "emailTemplate") EmailTemplateDto emailTemplateDto);
@@ -706,8 +706,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * create a meveoInstance by dto
      * 
-     * @param meveoInstanceDto
-     * @return
+     * @param meveoInstanceDto meveoInstanceDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
@@ -715,8 +715,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * update a mveoInstance by dto
      * 
-     * @param meveoInstanceDto
-     * @return
+     * @param meveoInstanceDto meveoInstanceDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus updateMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
@@ -724,8 +724,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * find a meveoInstance by code
      * 
-     * @param meveoInstanceCode
-     * @return
+     * @param meveoInstanceCode meveoInstanceCode
+     * @return action status.
      */
     @WebMethod
     MeveoInstanceResponseDto findMeveoInstance(@WebParam(name = "meveoInstanceCode") String meveoInstanceCode);
@@ -733,8 +733,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * remove a meveoInstance by code
      * 
-     * @param meveoInstanceCode
-     * @return
+     * @param meveoInstanceCode meveoInstanceCode
+     * @return action status.
      */
     @WebMethod
     ActionStatus removeMeveoInstance(@WebParam(name = "meveoInstanceCode") String meveoInstanceCode);
@@ -742,7 +742,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * list meveoInstances
      * 
-     * @return
+     * @return action status.
      */
     @WebMethod
     MeveoInstancesResponseDto listMeveoInstances();
@@ -750,8 +750,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * createOrUpdate meveoInstance by dto
      * 
-     * @param meveoInstanceDto
-     * @return
+     * @param meveoInstanceDto meveoInstanceDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createOrUpdateMeveoInstance(@WebParam(name = "meveoInstance") MeveoInstanceDto meveoInstanceDto);
@@ -759,8 +759,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * create userHierarchyLevel by dto
      * 
-     * @param userHierarchyLevelDto
-     * @return
+     * @param userHierarchyLevelDto userHierarchyLevelDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus createUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
@@ -768,8 +768,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * update userHierarchyLevel by dto
      * 
-     * @param userHierarchyLevelDto
-     * @return
+     * @param userHierarchyLevelDto userHierarchyLevelDto
+     * @return action status.
      */
     @WebMethod
     ActionStatus updateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
@@ -777,8 +777,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * remove a userHierarchyCode by code
      * 
-     * @param hierarchyLevelCode
-     * @return
+     * @param hierarchyLevelCode hierarchyLevelCode
+     * @return action status.
      */
     @WebMethod
     ActionStatus removeUserHierarchyLevel(@WebParam(name = "hierarchyLevelCode") String hierarchyLevelCode);
@@ -786,8 +786,8 @@ public interface SettingsWs extends IBaseWs {
     /**
      * find a userHierarchyCode by code
      * 
-     * @param hierarchyLevelCode
-     * @return
+     * @param hierarchyLevelCode hierarchyLevelCode
+     * @return action status.
      */
     @WebMethod
     UserHierarchyLevelResponseDto findUserHierarchyLevel(@WebParam(name = "hierarchyLevelCode") String hierarchyLevelCode);
@@ -796,7 +796,7 @@ public interface SettingsWs extends IBaseWs {
      * createOrUpdate userHierarchyLevel by dto
      * 
      * @param userHierarchyLevelDto
-     * @return
+     * @return action status.
      */
     @WebMethod
     ActionStatus createOrUpdateUserHierarchyLevel(@WebParam(name = "userHierarchyLevel") UserHierarchyLevelDto userHierarchyLevelDto);
@@ -815,7 +815,7 @@ public interface SettingsWs extends IBaseWs {
      * 
      * @param property Property key
      * @param value Value to set
-     * @return
+     * @return action status.
      */
     @WebMethod
     public ActionStatus setConfigurationProperty(@WebParam(name = "property") String property, @WebParam(name = "value") String value);
@@ -823,13 +823,13 @@ public interface SettingsWs extends IBaseWs {
     /**
      * Returns a list of OCCTemplate.
      * 
-     * @param query
-     * @param fields
-     * @param offset
-     * @param limit
-     * @param sortBy
-     * @param sortOrder
-     * @return
+     * @param query query
+     * @param fields fields
+     * @param offset offset
+     * @param limit limit
+     * @param sortBy sortBy
+     * @param sortOrder sortOrder
+     * @return GetOccTemplatesResponseDto
      */
     @WebMethod
     GetOccTemplatesResponseDto listOccTemplate(@WebParam(name = "query") String query, @WebParam(name = "fields") String fields, @WebParam(name = "offset") Integer offset, @WebParam(name = "limit")  Integer limit, @WebParam(name = "sortBy")  String sortBy, @WebParam(name = "sortOrder")  SortOrder sortOrder);

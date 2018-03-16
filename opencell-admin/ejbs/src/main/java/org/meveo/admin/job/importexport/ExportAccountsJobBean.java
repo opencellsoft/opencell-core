@@ -51,7 +51,6 @@ public class ExportAccountsJobBean {
     private JobExecutionService jobExecutionService;
 
     private BillingAccounts billingAccounts;
-    private ParamBean param;
 
     
     @Inject
@@ -60,7 +59,7 @@ public class ExportAccountsJobBean {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-        param = paramBeanFactory.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "accounts" + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);

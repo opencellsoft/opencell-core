@@ -30,7 +30,6 @@ import javax.inject.Inject;
 import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.event.qualifier.Rejected;
 import org.meveo.model.billing.BillingWalletTypeEnum;
@@ -59,10 +58,6 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
     @Inject
     private RevenueRecognitionScriptService revenueRecognitionScriptService;
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     @Inject
     @Rejected

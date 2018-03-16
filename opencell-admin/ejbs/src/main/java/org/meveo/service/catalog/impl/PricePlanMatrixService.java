@@ -28,7 +28,6 @@ import java.util.List;
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 
@@ -38,7 +37,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.billing.TradingCountry;
@@ -55,10 +53,6 @@ public class PricePlanMatrixService extends BusinessService<PricePlanMatrix> {
     // private ParamBean param = ParamBean.getInstance();
 
     // private SimpleDateFormat sdf = new SimpleDateFormat(param.getProperty("excelImport.dateFormat", "dd/MM/yyyy"));
-
-    
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     @Override
     public void create(PricePlanMatrix pp) throws BusinessException {
