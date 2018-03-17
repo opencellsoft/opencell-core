@@ -26,7 +26,7 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * @author anasseh
- *
+ * @lastModifiedVersion 5.0
  */
 public class PaymentHistoryService extends PersistenceService<PaymentHistory> {
 

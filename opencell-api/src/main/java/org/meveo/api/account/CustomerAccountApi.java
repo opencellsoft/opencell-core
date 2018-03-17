@@ -52,7 +52,7 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
- * @author Wassim Drira
+ * @author anasseh
  * @lastModifiedVersion 5.0
  *
  */

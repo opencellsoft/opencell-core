@@ -13,7 +13,7 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
-import org.meveo.admin.job.UnitPaymentCardJobBean;
+import org.meveo.admin.job.UnitPaymentJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.model.payments.PaymentGateway;
@@ -24,14 +24,14 @@ import org.meveo.service.job.JobExecutionService;
 
 /**
  * @author anasseh
- * 
+ * @lastModifiedVersion 5.0
  */
 
 @Stateless
-public class PaymentCardAsync {
+public class PaymentAsync {
 
     @Inject
-    private UnitPaymentCardJobBean unitPaymentCardJobBean;
+    private UnitPaymentJobBean unitPaymentJobBean;
 
     /** The JobExecution service. */
     @Inject
@@ -65,7 +65,7 @@ public class PaymentCardAsync {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance().getId())) {
                 break;
             }
-            unitPaymentCardJobBean.execute(result, id, createAO, matchingAO, operationCategory, paymentGateway, paymentMethodType);
+            unitPaymentJobBean.execute(result, id, createAO, matchingAO, operationCategory, paymentGateway, paymentMethodType);
         }
         return new AsyncResult<String>("OK");
     }

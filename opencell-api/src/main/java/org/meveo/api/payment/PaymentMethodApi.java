@@ -29,10 +29,11 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.primefaces.model.SortOrder;
 
-import com.ingenico.connect.gateway.sdk.java.domain.payment.definitions.Customer;
-
 /**
  * The CRUD Api for PaymentMethod.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0 
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {

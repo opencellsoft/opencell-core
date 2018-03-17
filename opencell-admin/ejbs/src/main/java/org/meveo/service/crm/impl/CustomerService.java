@@ -32,6 +32,8 @@ import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.base.AccountService;
 /**
  * Customer service implementation.
+ * 
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class CustomerService extends AccountService<Customer> {

@@ -29,7 +29,7 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
- * @author Wassim Drira
+ * @author anasseh
  * @lastModifiedVersion 5.0
  * 
  */

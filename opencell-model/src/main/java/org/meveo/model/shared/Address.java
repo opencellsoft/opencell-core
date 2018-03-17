@@ -28,6 +28,11 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.billing.Country;
 
+/**
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
 @Embeddable
 public class Address implements Serializable, Cloneable {
 

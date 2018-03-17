@@ -28,6 +28,13 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.rest.IBaseRs;
 
+/**
+ * The Interface PaymentRs.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
+
 @Path("/payment")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

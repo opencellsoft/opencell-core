@@ -38,7 +38,6 @@ import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -60,6 +59,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 /**
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ *  @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped

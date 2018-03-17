@@ -4,8 +4,8 @@
 package org.meveo.model.payments;
 
 /**
- * @author anasseh
- *
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
  */
 public enum PaymentReplayCauseEnum {
     ERROR, REJECT;

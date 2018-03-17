@@ -56,6 +56,9 @@ import org.meveo.util.ApplicationProvider;
 
 /**
  * Customer Account service implementation.
+ * 
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
  */
 @Stateless
 public class CustomerAccountService extends AccountService<CustomerAccount> {

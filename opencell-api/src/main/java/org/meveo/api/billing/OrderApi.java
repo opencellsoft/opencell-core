@@ -74,7 +74,7 @@ import org.tmf.dsmapi.catalog.resource.order.ProductRelationship;
 import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 
 /**
- * @author Wassim Drira
+ * @author Andrius Karpavičius
  * @lastModifiedVersion 5.0
  *
  */

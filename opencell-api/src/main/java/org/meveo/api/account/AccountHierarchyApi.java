@@ -99,6 +99,7 @@ import org.meveo.util.MeveoParamBean;
  * 
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  * 
+ * @lastModifiedVersion 5.0
  */
 
 @SuppressWarnings("deprecation")

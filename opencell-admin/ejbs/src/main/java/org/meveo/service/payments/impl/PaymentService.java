@@ -58,6 +58,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Payment service implementation.
+ * 
+ *   @author anasseh
+ *   @lastModifiedVersion 5.0
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
@@ -161,6 +164,25 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws UnbalanceAmountException balance amount exception.
      */
     public PaymentResponseDto payByMandat(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
+            PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
+    }
+    
+    /**
+     * Refund by sepa.
+     * 
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent.
+     * @param aoIdsToPay list of account operation's id to refund
+     * @param createAO if true refund account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
+     * @param paymentGateway the set this payment gateway will be used.
+     * @return instance of PaymentResponseDto
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws UnbalanceAmountException balance amount exception.
+     */
+    public PaymentResponseDto refundByMandat(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
     }
