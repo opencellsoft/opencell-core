@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:hftl="http://hftl.org"
+	xmlns:f="http://xmlns.jcp.org/jsf/core" template="/layout/template.xhtml"
+			xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+	<ui:define name="metadata">
+		<f:metadata>
+			<f:event type="preRenderView" listener="#{revenueScheduleListBean.preRenderView}" />
+		</f:metadata>
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
+			</p:breadCrumb>
+		</h:form>	
+
+		<hftl:searchPanel label="#{messages['reportExtract.search']}" backingBean="#{reportExtractListBean}">
+			<hftl:searchField label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:searchField label="#{messages['BusinessEntity.description']}" field="description" />
+		</hftl:searchPanel>
+
+		<hftl:dataList backingBean="#{reportExtractListBean}" label="#{messages['reportExtract']}" sortBy="code">
+			<hftl:column label="#{messages['BusinessEntity.code']}" field="code" />
+			<hftl:column label="#{messages['BusinessEntity.description']}" field="description" />
+			<hftl:column label="#{messages['reportExtract.category']}" field="category" />
+			<hftl:column label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
+			<hftl:column label="#{messages['reportExtract.scriptType']}" field="scriptType" />
+			<hftl:column label="#{messages['enableEntity.active']}" field="active" />
+			<hftl:actionsColumn width="10%" renderEnableLink="true">
+				<p:commandButton id="runReport" icon="fa fa-fw fa-play" onclick="PF('dlgRunReport').show();" >
+		            <f:setPropertyActionListener target="#{reportExtractBean.entity}" value="#{entity}" />
+		        </p:commandButton>
+		        <p:tooltip for="runReport" value="#{messages['action.run']}" showEffect="slide" hideEffect="slide" />
+			</hftl:actionsColumn>
+		</hftl:dataList>
+
+		<h:form>
+			<p:dialog header="Run Report" widgetVar="dlgRunReport">
+				<div class="ui-g ui-fluid">
+					<div class="ui-g-4">
+						<p:outputLabel for="startDate" value="#{messages['reportExtract.startDate']}"></p:outputLabel>
+					</div>
+					<div class="ui-g-8">
+						<p:calendar id="startDate" value="#{reportExtractBean.entity.startDate}" pattern="#{paramBean.dateFormat}" />
+					</div>
+					<div class="ui-g-4">
+						<p:outputLabel for="endDate" value="#{messages['reportExtract.endDate']}"></p:outputLabel>
+					</div>
+					<div class="ui-g-8">
+						<p:calendar id="endDate" value="#{reportExtractBean.entity.endDate}" pattern="#{paramBean.dateFormat}" />
+					</div>
+					<div class="ui-g-8"></div>
+					<div class="ui-g-4">
+		    			<p:commandButton id="runReport" value="#{messages['action.run']}" action="#{reportExtractBean.runReportFromList()}" update=":results_panel" onclick="dlgRunReport.hide()">
+		        		</p:commandButton>
+	        		</div>
+		        </div>
+			</p:dialog>
+		</h:form>
+	</ui:define>
+
+</ui:composition>
