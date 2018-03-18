@@ -612,6 +612,7 @@ public class CustomFieldDataEntryBean implements Serializable {
         return customFieldInstanceService.getInheritedOnlyCFValue(entity, cfCode);
     }
 
+
     /**
      * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
      * 
@@ -620,10 +621,13 @@ public class CustomFieldDataEntryBean implements Serializable {
      * @return A list of Custom field CFvalues. From all the entities CF entity hierarchy up.
      */
     public List<CustomFieldValue> getInheritedVersionableCFValue(ICustomFieldEntity entity, CustomFieldTemplate cft) {
-        List<CustomFieldValue> values = customFieldInstanceService.getInheritedOnlyAllCFValues(entity, cft.getCode());
+        List<CustomFieldValue> values = new ArrayList<>();
+        if (cft != null) {
+            values.addAll(customFieldInstanceService.getInheritedOnlyAllCFValues(entity, cft.getCode()));
 
-        for (CustomFieldValue cfv : values) {
-            deserializeForGUI(cfv, cft);
+            for (CustomFieldValue cfv : values) {
+                deserializeForGUI(cfv, cft);
+            }
         }
 
         return values;
@@ -656,11 +660,11 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Add row to a matrix.
      * v5.0: Fix for save values on a multi values CF type problem
-     * 
+     *
      * @param entityValueHolder Entity custom field value holder
      * @param cfValue Map value holder
      * @param cft Custom field definition
-     * 
+     *
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */

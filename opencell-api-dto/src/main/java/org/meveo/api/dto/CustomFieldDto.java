@@ -277,5 +277,24 @@ public class CustomFieldDto {
         this.indexType = indexType;
     }
 
-
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CustomFieldDto{");
+        sb.append("code='").append(code).append('\'');
+        sb.append(", valueDate=").append(valueDate);
+        sb.append(", valuePeriodStartDate=").append(valuePeriodStartDate);
+        sb.append(", valuePeriodEndDate=").append(valuePeriodEndDate);
+        sb.append(", valuePeriodPriority=").append(valuePeriodPriority);
+        sb.append(", stringValue='").append(stringValue).append('\'');
+        sb.append(", dateValue=").append(dateValue);
+        sb.append(", longValue=").append(longValue);
+        sb.append(", doubleValue=").append(doubleValue);
+        sb.append(", listValue=").append(listValue);
+        sb.append(", mapValue=").append(mapValue);
+        sb.append(", entityReferenceValue=").append(entityReferenceValue);
+        sb.append(", valueConverted=").append(valueConverted);
+        sb.append(", indexType=").append(indexType);
+        sb.append('}');
+        return sb.toString();
+    }
 }
