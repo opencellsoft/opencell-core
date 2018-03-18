@@ -24,6 +24,8 @@ import org.meveo.model.crm.EntityReferenceWrapper;
 import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.script.ScriptInstanceService;
@@ -53,6 +55,10 @@ public class FilteringJobBean {
 
     @Inject
     private FiltringJobAsync filtringJobAsync;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     /**
      * Execute the jobInstance.
@@ -112,8 +118,10 @@ public class FilteringJobBean {
             SubListCreator subListCreator = new SubListCreator(filtredEntities, nbRuns.intValue());
             log.debug("NbItemsToProcess:{}, block to run{}, nbThreads:{}.", nbItemsToProcess, subListCreator.getBlocToRun(), nbRuns);
 
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(filtringJobAsync.launchAndForget((List<? extends IEntity>) subListCreator.getNextWorkSet(), result, scriptInterface, recordVariableName));
+                futures
+                    .add(filtringJobAsync.launchAndForget((List<? extends IEntity>) subListCreator.getNextWorkSet(), result, scriptInterface, recordVariableName, lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

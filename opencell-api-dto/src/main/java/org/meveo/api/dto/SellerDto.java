@@ -36,6 +36,8 @@ import org.meveo.model.shared.ContactInformation;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,6 +65,16 @@ public class SellerDto extends BusinessDto {
 	public SellerDto() {
 	}
 
+	/**
+     * Create SellerDto from Seller and CustomFieldsDto
+     * v5.0: Added ContactInformation and Address
+     * 
+     * @param seller seller
+     * @param customFieldInstances customFieldsDto
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
 	public SellerDto(Seller seller, CustomFieldsDto customFieldInstances) {
 		super(seller);
 		if(seller.getInvoiceTypeSequence() != null){

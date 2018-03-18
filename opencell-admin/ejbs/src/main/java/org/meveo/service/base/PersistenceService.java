@@ -44,7 +44,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -86,8 +86,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     @Inject
     @MeveoJpaForMultiTenancy
     private EntityManager em;
@@ -124,6 +122,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Constructor.
@@ -312,7 +313,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
             if (entity instanceof IImageUpload) {
                 try {
-                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
+                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(currentUser.getProviderCode());
                     imageUploadEventHandler.deleteImage(entity);
                 } catch (IOException e) {
                     log.error("Failed deleting image file");
@@ -385,7 +386,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(BusinessEntity entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
             throw new BusinessException("Invalid characters found in entity code.");
         }
 

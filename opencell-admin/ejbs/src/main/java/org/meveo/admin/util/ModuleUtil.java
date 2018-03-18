@@ -33,59 +33,61 @@ import org.primefaces.model.CroppedImage;
 
 /**
  * a help class for meveo pictures like provider/media/module/pictures
+ * 
  * @author Tyshan(tyshan@manaty.net)
  */
 
 public class ModuleUtil {
 
-	public static String getRootPicturePath(String providerCode){
-		// To be checked carefully
-		String path = ParamBean.getInstance().getChrootDir(providerCode)
-			+File.separator+"media";
-		return getPath(path);
-	}
-	
-	public static String getPicturePath(String providerCode,String group){
-		return getPicturePath(providerCode, group, true);
-	}
-	
-	public static String getPicturePath(String providerCode,String group, boolean createDir){
-		String path=getRootPicturePath(providerCode)+File.separator+group+File.separator+"pictures";
-		return getPath(path, createDir);
-	}
-	public static String getModulePicturePath(String providerCode){
-		return getPicturePath(providerCode,"module");
-	}
-	
-	public static String getTmpRootPath(String providerCode) throws IOException{
-		String tmpFolder=System.getProperty("java.io.tmpdir");
-		if(StringUtils.isBlank(tmpFolder)){
-			tmpFolder="/tmp";
-		}
-		return getPath(tmpFolder+File.separator+providerCode);
-	}
-	
-	private static String getPath(String path){
-		return getPath(path, true);
-	}
-	
-	private static String getPath(String path, boolean createDir){
-		File file=new File(path);
-		if(createDir && !file.exists()){
-			file.mkdirs();
-		}
-		return path;
-	}
-	public static byte[] readPicture(String filename) throws IOException{
-		File file=new File(filename);
-		if(!file.exists()){
-			return null;
-		}
-		BufferedImage img=ImageIO.read(file);
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		ImageIO.write(img,filename.substring(filename.indexOf(".")+1), out);
-		return out.toByteArray();
-	}
+    public static String getRootPicturePath(String providerCode) {
+        // To be checked carefully
+        String path = ParamBean.getInstanceByProvider(providerCode).getChrootDir(providerCode) + File.separator + "media";
+        return getPath(path);
+    }
+
+    public static String getPicturePath(String providerCode, String group) {
+        return getPicturePath(providerCode, group, true);
+    }
+
+    public static String getPicturePath(String providerCode, String group, boolean createDir) {
+        String path = getRootPicturePath(providerCode) + File.separator + group + File.separator + "pictures";
+        return getPath(path, createDir);
+    }
+
+    public static String getModulePicturePath(String providerCode) {
+        return getPicturePath(providerCode, "module");
+    }
+
+    public static String getTmpRootPath(String providerCode) throws IOException {
+        String tmpFolder = System.getProperty("java.io.tmpdir");
+        if (StringUtils.isBlank(tmpFolder)) {
+            tmpFolder = "/tmp";
+        }
+        return getPath(tmpFolder + File.separator + providerCode);
+    }
+
+    private static String getPath(String path) {
+        return getPath(path, true);
+    }
+
+    private static String getPath(String path, boolean createDir) {
+        File file = new File(path);
+        if (createDir && !file.exists()) {
+            file.mkdirs();
+        }
+        return path;
+    }
+
+    public static byte[] readPicture(String filename) throws IOException {
+        File file = new File(filename);
+        if (!file.exists()) {
+            return null;
+        }
+        BufferedImage img = ImageIO.read(file);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        ImageIO.write(img, filename.substring(filename.indexOf(".") + 1), out);
+        return out.toByteArray();
+    }
 
     public static void writePicture(String filename, byte[] fileData) throws Exception {
         ByteArrayInputStream in = new ByteArrayInputStream(fileData);
@@ -93,26 +95,30 @@ public class ModuleUtil {
         in.close();
         ImageIO.write(img, filename.substring(filename.indexOf(".") + 1), new File(filename));
     }
-	/**
-	 * read a module picture and save into byte[].
-	 * @param providerCode provider code
-	 * @param filename file name
-	 * @return module picture as bytes
-	 * @throws IOException IO exception
-	 */
+
+    /**
+     * read a module picture and save into byte[].
+     * 
+     * @param providerCode provider code
+     * @param filename file name
+     * @return module picture as bytes
+     * @throws IOException IO exception
+     */
     public static byte[] readModulePicture(String providerCode, String filename) throws IOException {
         String picturePath = getModulePicturePath(providerCode);
         String file = picturePath + File.separator + filename;
         return readPicture(file);
 
     }
-	/**
-	 * save a byte[] data of module picture into file.
-	 * @param providerCode provider code.
-	 * @param filename file name
-	 * @param fileData file data
-	 * @throws Exception exception
-	 */
+
+    /**
+     * save a byte[] data of module picture into file.
+     * 
+     * @param providerCode provider code.
+     * @param filename file name
+     * @param fileData file data
+     * @throws Exception exception
+     */
     public static void writeModulePicture(String providerCode, String filename, byte[] fileData) throws Exception {
         String picturePath = getModulePicturePath(providerCode);
         String file = picturePath + File.separator + filename;

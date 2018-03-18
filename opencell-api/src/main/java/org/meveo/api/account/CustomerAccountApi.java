@@ -29,7 +29,6 @@ import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.parameter.SecureMethodParameter;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
@@ -73,7 +72,7 @@ public class CustomerAccountApi extends AccountEntityApi {
 
     @Inject
     private TradingLanguageService tradingLanguageService;
-    
+
     @Inject
     private PaymentMethodApi paymentMethodApi;
 
@@ -111,7 +110,7 @@ public class CustomerAccountApi extends AccountEntityApi {
         if (postData.getPaymentMethods() != null) {
             for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
                 paymentMethodDto.setCustomerCode(postData.getCustomer());
-                paymentMethodApi.validate(paymentMethodDto,false);
+                paymentMethodApi.validate(paymentMethodDto, false);
             }
         }
 
@@ -145,7 +144,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             } else {
                 paymentMethodDto = new PaymentMethodDto(PaymentMethodEnum.CHECK);
             }
-            paymentMethodApi.validate( paymentMethodDto,false);
+            paymentMethodApi.validate(paymentMethodDto, false);
             postData.getPaymentMethods().add(paymentMethodDto);
 
         }
@@ -174,8 +173,8 @@ public class CustomerAccountApi extends AccountEntityApi {
         }
 
         if (postData.getPaymentMethods() != null) {
-            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {                
-                paymentMethodApi.validate( paymentMethodDto,false);
+            for (PaymentMethodDto paymentMethodDto : postData.getPaymentMethods()) {
+                paymentMethodApi.validate(paymentMethodDto, false);
                 customerAccount.addPaymentMethod(paymentMethodDto.fromDto(customerAccount, currentUser));
             }
         }
@@ -343,7 +342,7 @@ public class CustomerAccountApi extends AccountEntityApi {
             } else if (defaultPaymentMethod == null) {
                 // End of compatibility with pre-4.6 versions
 
-                defaultPaymentMethod = PaymentMethodEnum.valueOf(ParamBean.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
+                defaultPaymentMethod = PaymentMethodEnum.valueOf(paramBeanFactory.getInstance().getProperty("api.default.customerAccount.paymentMethodType", "CHECK"));
             }
 
             if (defaultPaymentMethod == null || !defaultPaymentMethod.isSimple()) {
@@ -351,7 +350,7 @@ public class CustomerAccountApi extends AccountEntityApi {
                     "Please specify payment method, as currently specified default payment method (in api.default.customerAccount.paymentMethodType) is invalid or requires additional information");
             }
 
-            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);       
+            PaymentMethod paymentMethodFromDto = (new PaymentMethodDto(defaultPaymentMethod)).fromDto(customerAccount, currentUser);
             customerAccount.addPaymentMethod(paymentMethodFromDto);
         }
 

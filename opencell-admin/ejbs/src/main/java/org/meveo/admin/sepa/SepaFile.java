@@ -11,33 +11,33 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.sepa.jaxb.Pain008;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.GrpHdr.InitgPty;
+import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.Cdtr;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAcct;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAgt;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAcct.Id;
+import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAgt;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrAgt.FinInstnId;
+import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id.PrvtId;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id.PrvtId.Othr;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.CdtrSchmeId.Id.PrvtId.Othr.SchmeNm;
+import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.Dbtr;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAcct;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DbtrAgt;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DrctDbtTx;
+import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DrctDbtTx.MndtRltdInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.InstdAmt;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.PmtId;
-import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.DrctDbtTxInf.DrctDbtTx.MndtRltdInf;
+import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.LclInstrm;
 import org.meveo.admin.sepa.jaxb.Pain008.CstmrDrctDbtInitn.PmtInf.PmtTpInf.SvcLvl;
 import org.meveo.admin.util.ArConfig;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.commons.utils.JAXBUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -65,17 +65,21 @@ public class SepaFile implements GatewayPaymentInterface {
     @Inject
     @ApplicationProvider
     private Provider appProvider;
-    
+
     @Inject
     @CurrentUser
     private MeveoUser currentUser;
+
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     public String getDDFileName(DDRequestLOT ddRequestLot) {
         String fileName = ArConfig.getDDRequestFileNamePrefix() + ddRequestLot.getId();
         fileName = fileName + "_" + appProvider.getCode();
         fileName = fileName + "_" + DateUtils.formatDateWithPattern(new Date(), "yyyyMMdd") + ArConfig.getDDRequestFileNameExtension();
 
-        String outputDir = ParamBean.getInstance().getChrootDir(currentUser.getProviderCode());
+        String outputDir = paramBeanFactory.getChrootDir();
 
         outputDir = outputDir + File.separator + ArConfig.getDDRequestOutputDirectory();
         outputDir = outputDir.replaceAll("\\..", "");
@@ -99,7 +103,7 @@ public class SepaFile implements GatewayPaymentInterface {
                 addPaymentInformation(Message, ddrequestItem);
             }
         }
-        String schemaLocation = ParamBean.getInstance().getProperty("sepa.schemaLocation.pain008",
+        String schemaLocation = paramBeanFactory.getInstance().getProperty("sepa.schemaLocation.pain008",
             "https://github.com/w2c/sepa-sdd-xml-generator/blob/master/validation_schemes/pain.008.001.02.xsd");
         JAXBUtils.marshaller(document, new File(ddRequestLot.getFileName()), schemaLocation);
 
@@ -125,7 +129,7 @@ public class SepaFile implements GatewayPaymentInterface {
         PmtInf PaymentInformation = new PmtInf();
         Message.getPmtInf().add(PaymentInformation);
         PaymentInformation.setPmtInfId(ArConfig.getDDRequestHeaderReference() + "-" + dDRequestItem.getId());
-        PaymentInformation.setPmtMtd(ParamBean.getInstance().getProperty("sepa.PmtMtd", "TRF"));
+        PaymentInformation.setPmtMtd(paramBeanFactory.getInstance().getProperty("sepa.PmtMtd", "TRF"));
         PaymentInformation.setNbOfTxs(1);
         PaymentInformation.setCtrlSum(dDRequestItem.getAmount().setScale(2, RoundingMode.HALF_UP));
         PmtTpInf PaymentTypeInformation = new PmtTpInf();
@@ -135,7 +139,7 @@ public class SepaFile implements GatewayPaymentInterface {
         ServiceLevel.setCd("SEPA");
         LclInstrm LocalInstrument = new LclInstrm();
         PaymentTypeInformation.setLclInstrm(LocalInstrument);
-        LocalInstrument.setCd(ParamBean.getInstance().getProperty("sepa.LclInstrm", "CORE"));
+        LocalInstrument.setCd(paramBeanFactory.getInstance().getProperty("sepa.LclInstrm", "CORE"));
         PaymentTypeInformation.setSeqTp("FRST");
 
         PaymentInformation.setReqdColltnDt(DateUtils.dateToXMLGregorianCalendar(new Date())); // à revoir
@@ -263,7 +267,7 @@ public class SepaFile implements GatewayPaymentInterface {
     }
 
     @Override
-    public MandatInfoDto checkMandat(String mandatReference,String mandateId) throws BusinessException {
+    public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 
@@ -271,7 +275,6 @@ public class SepaFile implements GatewayPaymentInterface {
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
-
 
     @Override
     public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {

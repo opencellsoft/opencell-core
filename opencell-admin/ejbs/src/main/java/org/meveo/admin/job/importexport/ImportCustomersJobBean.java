@@ -21,6 +21,7 @@ import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ImportFileFiltre;
 import org.meveo.commons.utils.JAXBUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.CustomerImportHisto;
@@ -104,7 +105,9 @@ public class ImportCustomersJobBean {
     private Sellers sellersWarning;
     private Sellers sellersError;
 
-    private ParamBean param = ParamBean.getInstance();
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private int nbCustomers;
     private int nbCustomersError;
@@ -132,14 +135,14 @@ public class ImportCustomersJobBean {
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     public void execute(JobExecutionResultImpl result) {
-
-        String importDir = param.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customers" + File.separator;
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "customers" + File.separator;
         String dirIN = importDir + "input";
         log.info("dirIN=" + dirIN);
         String dirOK = importDir + "output";
         String dirKO = importDir + "reject";
-        String prefix = param.getProperty("connectorCRM.importCustomers.prefix", "CUSTOMER_");
-        String ext = param.getProperty("connectorCRM.importCustomers.extension", "xml");
+        String prefix = paramBean.getProperty("connectorCRM.importCustomers.prefix", "CUSTOMER_");
+        String ext = paramBean.getProperty("connectorCRM.importCustomers.extension", "xml");
 
         File dir = new File(dirIN);
         if (!dir.exists()) {
@@ -516,7 +519,7 @@ public class ImportCustomersJobBean {
      * @throws Exception exception occurs when genering report
      */
     private void generateReport(String fileName) throws Exception {
-        String importDir = param.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "customers" + File.separator;
+        String importDir = paramBeanFactory.getChrootDir() + File.separator + "imports" + File.separator + "customers" + File.separator;
 
         if (sellersWarning.getWarnings() != null) {
             String warningDir = importDir + "output" + File.separator + "warnings";
@@ -543,7 +546,7 @@ public class ImportCustomersJobBean {
      * @param cause cause of having error
      */
     private void createSellerError(org.meveo.model.jaxb.customer.Seller sell, String cause) {
-        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         ErrorSeller errorSeller = new ErrorSeller();
         errorSeller.setCause(cause);
         errorSeller.setCode(sell.getCode());
@@ -565,7 +568,7 @@ public class ImportCustomersJobBean {
      * @param cause erorr
      */
     private void createCustomerError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust, String cause) {
-        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         ErrorCustomer errorCustomer = new ErrorCustomer();
         errorCustomer.setCause(cause);
         errorCustomer.setCode(cust.getCode());
@@ -586,7 +589,7 @@ public class ImportCustomersJobBean {
      * @param cause the reason of having error.
      */
     private void createSellerWarning(org.meveo.model.jaxb.customer.Seller sell, String cause) {
-        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         WarningSeller warningSeller = new WarningSeller();
         warningSeller.setCause(cause);
         warningSeller.setCode(sell == null ? "" : sell.getCode());
@@ -611,7 +614,7 @@ public class ImportCustomersJobBean {
     private void createCustomerAccountError(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
             org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
         log.error("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
-        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         ErrorCustomerAccount errorCustomerAccount = new ErrorCustomerAccount();
         errorCustomerAccount.setCause(cause);
         errorCustomerAccount.setCode(custAccount.getCode());
@@ -637,7 +640,7 @@ public class ImportCustomersJobBean {
     private void createCustomerAccountWarning(org.meveo.model.jaxb.customer.Seller sell, org.meveo.model.jaxb.customer.Customer cust,
             org.meveo.model.jaxb.customer.CustomerAccount custAccount, String cause) {
         log.warn("Seller={}, customer={}, customerAccount={}, cause={}", new Object[] { sell, cust, custAccount, cause });
-        String generateFullCrmReject = param.getProperty("connectorCRM.generateFullCrmReject", "true");
+        String generateFullCrmReject = paramBeanFactory.getInstance().getProperty("connectorCRM.generateFullCrmReject", "true");
         WarningCustomerAccount warningCustomerAccount = new WarningCustomerAccount();
         warningCustomerAccount.setCause(cause);
         warningCustomerAccount.setCode(custAccount.getCode());

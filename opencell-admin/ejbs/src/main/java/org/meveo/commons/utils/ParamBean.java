@@ -34,11 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.inject.Inject;
-
-import org.meveo.security.CurrentUser;
-import org.meveo.security.MeveoUser;
-import org.meveo.security.keycloak.CurrentUserProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +41,8 @@ import org.slf4j.LoggerFactory;
  * Contains application configuration settings
  * 
  * @author anasseh
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 public class ParamBean {
 
@@ -54,11 +51,6 @@ public class ParamBean {
     private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     private String _propertyFile;
-
-    /**
-     * True if services can be instantiated and activated multiple times per subscription
-     */
-    public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
 
     /**
      * Save properties imported from the file.
@@ -99,13 +91,6 @@ public class ParamBean {
      * Reload application configuration properties file.
      */
     private static boolean reload = false;
-
-    @Inject
-    @CurrentUser
-    protected MeveoUser currentUser;
-
-    @Inject
-    private CurrentUserProvider currentUserProvider;
 
     public ParamBean() {
 
@@ -173,7 +158,7 @@ public class ParamBean {
      */
     public static ParamBean getInstanceByProvider(String provider) {
         try {
-            if (!isMultitenancyEnabled() || "".equals(provider)) {
+            if (!isMultitenancyEnabled() || "".equals(provider) || StringUtils.isBlank(provider)) {
                 return getInstance();
             }
 
@@ -190,6 +175,17 @@ public class ParamBean {
             log.error("Failed to initialize " + provider + ".properties file.", e);
             return null;
         }
+    }
+    
+    /**
+     * Check whether service multi instantiation is allowed
+     * 
+     * @return is allowed.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    public boolean isServiceMultiInstantiation() {
+        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));
     }
 
     /**
@@ -243,7 +239,6 @@ public class ParamBean {
     /**
      * Initialize/load application configuration property file
      * 
-     * @return true/false
      */
     private void initialize() {
         log.debug("Initialize  from file :" + _propertyFile + "...");
@@ -411,14 +406,6 @@ public class ParamBean {
      */
     public String getProperty(String key, String defaultValue) {
         String result = null;
-        if (multiTenancyEnabled != null && isMultitenancyEnabled() && currentUserProvider != null && StringUtils.isBlank(currentUserProvider.getCurrentUserProviderCode())) {
-            System.out.println("Inside IF 000  --");
-        }
-        if (multiTenancyEnabled != null && isMultitenancyEnabled() && currentUser != null && StringUtils.isBlank(currentUser.getProviderCode())) {
-            System.out.println("Inside IF --");
-            result = getProperty(key, defaultValue, currentUser.getProviderCode());
-            return result;
-        }
         if (properties.containsKey(key)) {
             result = properties.getProperty(key);
         } else if (defaultValue != null) {

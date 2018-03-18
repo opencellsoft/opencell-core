@@ -31,11 +31,11 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.crm.CustomFieldTemplate;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.security.CurrentUser;
@@ -43,7 +43,6 @@ import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.InvoiceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
-import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,6 +66,10 @@ public class PDFParametersConstruction {
     @Inject
     private InvoiceService invoiceService;
 
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private String PDF_DIR_NAME = "pdf";
     private NumberFormat currencyFormat = NumberFormat.getInstance(new Locale("FR"));
 
@@ -88,7 +91,7 @@ public class PDFParametersConstruction {
 
             String billingTemplateName = invoiceService.getInvoiceTemplateName(invoice, billingCycle, invoice.getInvoiceType());
 
-            ParamBean paramBean = ParamBean.getInstance();
+            ParamBean paramBean = paramBeanFactory.getInstance();
             String resDir = paramBean.getChrootDir(provider) + File.separator + "jasper";
             String templateDir = new StringBuilder(resDir).append(File.separator).append(billingTemplateName).append(File.separator).append(PDF_DIR_NAME).toString();
             parameters.put(PdfGeneratorConstants.MESSAGE_PATH_KEY, templateDir + File.separator);

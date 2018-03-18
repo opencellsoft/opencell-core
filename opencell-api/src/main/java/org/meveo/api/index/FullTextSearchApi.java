@@ -32,7 +32,7 @@ public class FullTextSearchApi extends BaseApi {
             throw new AccessDeniedException("Super administrator permission is required to clean and reindex full text search");
         }
         try {
-            Future<ReindexingStatistics> future = elasticClient.cleanAndReindex();
+            Future<ReindexingStatistics> future = elasticClient.cleanAndReindex(currentUser.unProxy());
             future.get();
         } catch (Exception e) {
             throw new BusinessException(e);
@@ -52,8 +52,7 @@ public class FullTextSearchApi extends BaseApi {
         return elasticClient.search(query, null, from, size, null, null, null, classInfo);
     }
 
-    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,
-            BusinessException {
+    public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException, BusinessException {
 
         if (classnamesOrCetCodes == null || classnamesOrCetCodes.length == 0) {
             missingParameters.add("classnamesOrCetCodes");

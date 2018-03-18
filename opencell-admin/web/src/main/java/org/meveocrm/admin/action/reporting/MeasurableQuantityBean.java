@@ -36,7 +36,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.MeasurableQuantity;
 import org.meveo.model.dwh.MeasurementPeriodEnum;
@@ -51,75 +50,71 @@ import org.primefaces.model.UploadedFile;
 @ViewScoped
 public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
 
-	private static final long serialVersionUID = -1644247310944456827L;
-	
-	
-	@Inject
-	MeasurableQuantityService measurableQuantityService;
-	
-	CsvReader csvReader = null;
-	CsvBuilder csv = null;
-    private UploadedFile file; 
-	ParamBean paramBean=ParamBean.getInstance();
-    private String providerDir=paramBean.getProperty("providers.rootDir","./opencelldata");
-    private String existingEntitiesCsvFile=null;
- 
+    private static final long serialVersionUID = -1644247310944456827L;
+
+    @Inject
+    MeasurableQuantityService measurableQuantityService;
+
+    CsvReader csvReader = null;
+    CsvBuilder csv = null;
+    private UploadedFile file;
+    private String existingEntitiesCsvFile = null;
+
     private StrategyImportTypeEnum strategyImportType;
-    
-    private static final int CODE= 0;
-    private static final int DIMENSION_1= 1;
-    private static final int DIMENSION_2= 2; 
-    private static final int DIMENSION_3= 3;
-    private static final int DIMENSION_4= 4; 
-    private static final int SQL_QUERY= 5;
-    private static final int MEASUREMENT_PERIOD= 6;
-    private static final int LAST_MEASURE_DATE= 7;
-    private static final int EDITABLE= 8;
 
-	public MeasurableQuantityBean() {
-		super(MeasurableQuantity.class);
-	}
+    private static final int CODE = 0;
+    private static final int DIMENSION_1 = 1;
+    private static final int DIMENSION_2 = 2;
+    private static final int DIMENSION_3 = 3;
+    private static final int DIMENSION_4 = 4;
+    private static final int SQL_QUERY = 5;
+    private static final int MEASUREMENT_PERIOD = 6;
+    private static final int LAST_MEASURE_DATE = 7;
+    private static final int EDITABLE = 8;
 
-	@Override
-	protected IPersistenceService<MeasurableQuantity> getPersistenceService() {
-		return measurableQuantityService;
-	}
+    public MeasurableQuantityBean() {
+        super(MeasurableQuantity.class);
+    }
 
-	@Override
-	protected String getListViewName() {
-		return "measurableQuantities";
-	}
-	
-	public void exportToFile() throws Exception {
+    @Override
+    protected IPersistenceService<MeasurableQuantity> getPersistenceService() {
+        return measurableQuantityService;
+    }
 
-		CsvBuilder csv = new CsvBuilder();
-		    
-		csv.appendValue("Code");
-		csv.appendValue("Dimension 1");
-		csv.appendValue("Dimension 2");
-		csv.appendValue("Dimension 3");
-		csv.appendValue("Dimension 4");
-		csv.appendValue("SQL Query ");
-		csv.appendValue("Measurement period");
-		csv.appendValue("Last measure date");
-		csv.appendValue("Editable");
-		csv.startNewLine();
-		for (MeasurableQuantity measurableQuantity :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():measurableQuantityService.list()) {
-			csv.appendValue(measurableQuantity.getCode());
-			csv.appendValue(measurableQuantity.getDimension1());
-			csv.appendValue(measurableQuantity.getDimension2());
-			csv.appendValue(measurableQuantity.getDimension3());
-			csv.appendValue(measurableQuantity.getDimension4());
-			csv.appendValue(measurableQuantity.getSqlQuery());
-			csv.appendValue(measurableQuantity.getMeasurementPeriod()!=null?measurableQuantity.getMeasurementPeriod()+"":null );
-			csv.appendValue(DateUtils.formatDateWithPattern(measurableQuantity.getLastMeasureDate(), "dd/MM/yyyy"));
-			csv.appendValue(measurableQuantity.isEditable()+"");
-			csv.startNewLine();
-		}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
-		csv.download(inputStream, "MeasurableQuantity.csv");
-	}
+    @Override
+    protected String getListViewName() {
+        return "measurableQuantities";
+    }
+
+    public void exportToFile() throws Exception {
+
+        CsvBuilder csv = new CsvBuilder();
+
+        csv.appendValue("Code");
+        csv.appendValue("Dimension 1");
+        csv.appendValue("Dimension 2");
+        csv.appendValue("Dimension 3");
+        csv.appendValue("Dimension 4");
+        csv.appendValue("SQL Query ");
+        csv.appendValue("Measurement period");
+        csv.appendValue("Last measure date");
+        csv.appendValue("Editable");
+        csv.startNewLine();
+        for (MeasurableQuantity measurableQuantity : (!filters.isEmpty() && filters.size() > 0) ? getLazyDataModel() : measurableQuantityService.list()) {
+            csv.appendValue(measurableQuantity.getCode());
+            csv.appendValue(measurableQuantity.getDimension1());
+            csv.appendValue(measurableQuantity.getDimension2());
+            csv.appendValue(measurableQuantity.getDimension3());
+            csv.appendValue(measurableQuantity.getDimension4());
+            csv.appendValue(measurableQuantity.getSqlQuery());
+            csv.appendValue(measurableQuantity.getMeasurementPeriod() != null ? measurableQuantity.getMeasurementPeriod() + "" : null);
+            csv.appendValue(DateUtils.formatDateWithPattern(measurableQuantity.getLastMeasureDate(), "dd/MM/yyyy"));
+            csv.appendValue(measurableQuantity.isEditable() + "");
+            csv.startNewLine();
+        }
+        InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
+        csv.download(inputStream, "MeasurableQuantity.csv");
+    }
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
@@ -133,14 +128,15 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
         }
     }
 
-    private void upload() throws IOException, BusinessException  {
+    private void upload() throws IOException, BusinessException {
         if (file == null) {
             return;
         }
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
-        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+
+        String existingEntitiesCSV = paramBeanFactory.getInstance().getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "MeasurableQuantitys_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
@@ -173,55 +169,52 @@ public class MeasurableQuantityBean extends BaseBean<MeasurableQuantity> {
         }
     }
 
-	public void checkSelectedStrategy(String[] values,
-			MeasurableQuantity existingEntity,boolean isEntityAlreadyExist) throws BusinessException  {
-		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
-			
-			existingEntity.setDimension1(values[DIMENSION_1]);
-			existingEntity.setDimension2(values[DIMENSION_2]);
-			existingEntity.setDimension3(values[DIMENSION_3]);
-			existingEntity.setDimension4(values[DIMENSION_4]);
-			existingEntity.setSqlQuery(values[SQL_QUERY]);
-			if(!StringUtils.isBlank(values[MEASUREMENT_PERIOD])){
-			existingEntity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));
-			}
-			existingEntity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]),"dd/MM/yyyy"));
-			existingEntity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
-			measurableQuantityService.update(existingEntity);
-		}else if (strategyImportType
-				.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
-			throw new RejectedImportException("notification.rejectImport");
-		} 
-		else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {   
-			if(!isEntityAlreadyExist){
-			csv.appendValue("Code");
-			csv.appendValue("Dimension 1");
-			csv.appendValue("Dimension 2");
-			csv.appendValue("Dimension 3");
-			csv.appendValue("Dimension 4");
-			csv.appendValue("SQL Query ");
-			csv.appendValue("Measurement period");
-			csv.appendValue("Last measure date");
-			csv.appendValue("Editable");
-			}
-			csv.startNewLine();
-			csv.appendValue(values[CODE]);
-			csv.appendValue(values[DIMENSION_1]);
-			csv.appendValue(values[DIMENSION_2]);
-			csv.appendValue(values[DIMENSION_3]);
-			csv.appendValue(values[DIMENSION_4]);
-			csv.appendValue(values[SQL_QUERY]);
-			csv.appendValue(values[MEASUREMENT_PERIOD]);
-			csv.appendValue(values[LAST_MEASURE_DATE]);
-			csv.appendValue(values[EDITABLE]);
-		} 
-	}
-	
-	public StrategyImportTypeEnum getStrategyImportType() {
-		return strategyImportType;
-	}
+    public void checkSelectedStrategy(String[] values, MeasurableQuantity existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
+        if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
 
-	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
-		this.strategyImportType = strategyImportType;
-	}
+            existingEntity.setDimension1(values[DIMENSION_1]);
+            existingEntity.setDimension2(values[DIMENSION_2]);
+            existingEntity.setDimension3(values[DIMENSION_3]);
+            existingEntity.setDimension4(values[DIMENSION_4]);
+            existingEntity.setSqlQuery(values[SQL_QUERY]);
+            if (!StringUtils.isBlank(values[MEASUREMENT_PERIOD])) {
+                existingEntity.setMeasurementPeriod(MeasurementPeriodEnum.valueOf(values[MEASUREMENT_PERIOD]));
+            }
+            existingEntity.setLastMeasureDate(DateUtils.parseDateWithPattern((values[LAST_MEASURE_DATE]), "dd/MM/yyyy"));
+            existingEntity.setEditable(Boolean.parseBoolean(values[EDITABLE]));
+            measurableQuantityService.update(existingEntity);
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+            throw new RejectedImportException("notification.rejectImport");
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            if (!isEntityAlreadyExist) {
+                csv.appendValue("Code");
+                csv.appendValue("Dimension 1");
+                csv.appendValue("Dimension 2");
+                csv.appendValue("Dimension 3");
+                csv.appendValue("Dimension 4");
+                csv.appendValue("SQL Query ");
+                csv.appendValue("Measurement period");
+                csv.appendValue("Last measure date");
+                csv.appendValue("Editable");
+            }
+            csv.startNewLine();
+            csv.appendValue(values[CODE]);
+            csv.appendValue(values[DIMENSION_1]);
+            csv.appendValue(values[DIMENSION_2]);
+            csv.appendValue(values[DIMENSION_3]);
+            csv.appendValue(values[DIMENSION_4]);
+            csv.appendValue(values[SQL_QUERY]);
+            csv.appendValue(values[MEASUREMENT_PERIOD]);
+            csv.appendValue(values[LAST_MEASURE_DATE]);
+            csv.appendValue(values[EDITABLE]);
+        }
+    }
+
+    public StrategyImportTypeEnum getStrategyImportType() {
+        return strategyImportType;
+    }
+
+    public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+        this.strategyImportType = strategyImportType;
+    }
 }

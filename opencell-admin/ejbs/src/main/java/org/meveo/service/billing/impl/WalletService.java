@@ -30,7 +30,7 @@ import javax.persistence.NoResultException;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.UsageChargeInstance;
@@ -49,13 +49,11 @@ public class WalletService extends PersistenceService<WalletInstance> {
     @Inject
     private WalletCacheContainerProvider walletCacheContainerProvider;
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     private static boolean usePrepaidBalanceCache = true;
 
     @PostConstruct
     private void init() {
-        usePrepaidBalanceCache = Boolean.parseBoolean(paramBean.getProperty("cache.cachePrepaidBalance", "true"));
+        usePrepaidBalanceCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cachePrepaidBalance", "true"));
     }
 
     @Override

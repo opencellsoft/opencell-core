@@ -90,7 +90,7 @@ import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.XStreamCDATAConverter;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.IEntity;
@@ -156,7 +156,7 @@ public class EntityExportImportService implements Serializable {
     @ApplicationProvider
     protected Provider appProvider;
 
-    private ParamBean param = ParamBean.getInstance();
+    // private ParamBean param = ParamBean.getInstance();
 
     @Inject
     private Logger log;
@@ -202,6 +202,10 @@ public class EntityExportImportService implements Serializable {
 
     @Inject
     private Conversation conversation;
+
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @PostConstruct
     private void init() {
@@ -449,12 +453,12 @@ public class EntityExportImportService implements Serializable {
         String shortFilename = exportTemplate.getName() + DateUtils.formatDateWithPattern(new Date(), "_yyyy-MM-dd_HH-mm-ss");
         boolean asZip = (parameters.get(EXPORT_PARAM_ZIP) != null && ((boolean) parameters.get(EXPORT_PARAM_ZIP)));
 
-        String path = param.getProperty("providers.rootDir", "./opencelldata/");
+        String path = paramBeanFactory.getChrootDir();
         if (!path.endsWith(File.separator)) {
             path = path + File.separator;
         }
 
-        path = path + appProvider.getCode() + File.separator;
+        // path = path + appProvider.getCode() + File.separator;
 
         path = path + "exports";
         String filename = path + File.separator + shortFilename + (asZip ? ".zip" : ".xml");

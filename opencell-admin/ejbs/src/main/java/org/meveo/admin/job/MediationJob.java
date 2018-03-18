@@ -19,6 +19,7 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
@@ -47,6 +48,10 @@ public class MediationJob extends Job {
     @CurrentUser
     protected MeveoUser currentUser;
 
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     @SuppressWarnings("unchecked")
     @Override
     @TransactionAttribute(TransactionAttributeType.NEVER)
@@ -66,7 +71,7 @@ public class MediationJob extends Job {
                 log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
             }
 
-            ParamBean parambean = ParamBean.getInstance();
+            ParamBean parambean = paramBeanFactory.getInstance();
             String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
 
             String inputDir = meteringDir + "input";
@@ -85,8 +90,9 @@ public class MediationJob extends Job {
             SubListCreator subListCreator = new SubListCreator(Arrays.asList(files), nbRuns.intValue());
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres()));
+                futures.add(mediationAsync.launchAndForget((List<File>) subListCreator.getNextWorkSet(), result, jobInstance.getParametres(), lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

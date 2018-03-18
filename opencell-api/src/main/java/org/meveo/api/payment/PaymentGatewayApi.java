@@ -62,7 +62,8 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      *
      * @param paymentGatewayDto the payment gateway dto
      * @return the long
-     * @throws MeveoApiException, BusinessException 
+     * @throws MeveoApiException meveo api exception when error happened.
+     * @throws BusinessException  business exception when error happened.
      */
     public Long create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
         if (paymentGatewayDto == null) {
@@ -146,7 +147,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      *
      * @param paymentGatewayDto the payment gateway dto
      * @throws BusinessException the business exception
-     * @throws MeveoApiException 
+     * @throws MeveoApiException  MeveoApiException
      */
     public void update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
         if (paymentGatewayDto == null) {

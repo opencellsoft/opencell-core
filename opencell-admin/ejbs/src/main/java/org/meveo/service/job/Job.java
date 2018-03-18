@@ -82,11 +82,10 @@ public abstract class Job {
     private JobCacheContainerProvider jobCacheContainerProvider;
 
     protected Logger log = LoggerFactory.getLogger(this.getClass());
-    
- 
 
     /**
      * Execute job instance with results published to a given job execution result entity.
+     * 
      * @param jobInstance Job instance to execute
      * @param executionResult Job execution results
      * @throws BusinessException business exception
@@ -96,7 +95,7 @@ public abstract class Job {
 
         if (executionResult == null) {
             executionResult = new JobExecutionResultImpl();
-            executionResult.setJobInstance(jobInstance);            
+            executionResult.setJobInstance(jobInstance);
         }
 
         JobRunningStatusEnum isRunning = jobCacheContainerProvider.markJobAsRunning(jobInstance.getId(), jobInstance.isLimitToSingleNode());
@@ -116,7 +115,8 @@ public abstract class Job {
                 eventJobProcessed.fire(executionResult);
 
                 if (jobCompleted != null) {
-                    jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted);
+                    MeveoUser lastCurrentUser = currentUser.unProxy();
+                    jobExecutionService.executeNextJob(this, jobInstance, !jobCompleted, lastCurrentUser);
                 }
 
             } catch (Exception e) {
@@ -133,13 +133,14 @@ public abstract class Job {
             if (!executionResult.isTransient()) {
                 executionResult.close();
                 jobExecutionService.persistResult(this, executionResult, jobInstance);
-        }
+            }
         }
 
     }
 
     /**
      * Execute job instance with results published to a given job execution result entity. Executed in Asynchronous mode.
+     * 
      * @param jobInstance Job instance to execute
      * @param result Job execution results
      * @throws BusinessException business exception
@@ -153,6 +154,7 @@ public abstract class Job {
 
     /**
      * The actual job execution logic implementation.
+     * 
      * @param result Job execution results
      * @param jobInstance Job instance to execute
      * @throws BusinessException Any exception
@@ -180,12 +182,15 @@ public abstract class Job {
 
     /**
      * Register/schedule a timer for a job instance.
+     * 
      * @param scheduleExpression Schedule expression
      * @param jobInstance Job instance to execute
      * @return Instantiated timer object
      */
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     public Timer createTimer(ScheduleExpression scheduleExpression, JobInstance jobInstance) {
+
+        jobInstance.setProviderCode(currentUser.getProviderCode());
 
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setInfo(jobInstance);
@@ -196,6 +201,7 @@ public abstract class Job {
 
     /**
      * Trigger job execution uppon scheduler timer expiration.
+     * 
      * @param timer Timer configuration with jobInstance entity as Info attribute
      */
     @Timeout
@@ -223,7 +229,7 @@ public abstract class Job {
 
         return null;
     }
-    
+
     /*
      * those methods will be used later for asynchronous jobs
      * 

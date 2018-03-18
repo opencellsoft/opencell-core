@@ -90,6 +90,11 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 
+/**
+ * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class SubscriptionApi extends BaseApi {
 
@@ -140,7 +145,17 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
+    
+    private ParamBean paramBean = ParamBean.getInstance();
 
+    
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param postData post Data Dto
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void create(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getUserAccount())) {
@@ -170,7 +185,7 @@ public class SubscriptionApi extends BaseApi {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
         if (offerTemplate == null) {
             throw new EntityDoesNotExistsException(OfferTemplate.class,
-                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
+                postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBean.getDateTimeFormat()));
         }
 
         if (offerTemplate.isDisabled()) {
@@ -217,6 +232,13 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param postData postData Dto
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void update(SubscriptionDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -251,12 +273,9 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getOfferTemplate() != null) {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class,
-                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), ParamBean.getInstance().getDateTimeFormat()));
-
+                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBean.getDateTimeFormat()));
             } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
                 throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
-
             } else if (offerTemplate.isDisabled()) {
                 throw new InvalidParameterException("Cannot subscribe to disabled offer");
             }
@@ -297,6 +316,13 @@ public class SubscriptionApi extends BaseApi {
 
     }
 
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param activateServicesDto activateServicesDto
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void activateServices(ActivateServicesRequestDto activateServicesDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(activateServicesDto.getSubscription())) {
@@ -341,7 +367,7 @@ public class SubscriptionApi extends BaseApi {
 
             ServiceInstance serviceInstance = null;
 
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> alreadyInstantiatedServices = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
                     InstanceStatusEnum.INACTIVE);
                 if (alreadyInstantiatedServices != null && !alreadyInstantiatedServices.isEmpty()) {
@@ -404,7 +430,7 @@ public class SubscriptionApi extends BaseApi {
                 }
                 serviceInstance.setServiceTemplate(serviceTemplate);
                 serviceInstance.setSubscription(subscription);
-                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());                
+                serviceInstance.setRateUntilDate(serviceToActivateDto.getRateUntilDate());
                 if (serviceToActivateDto.getSubscriptionDate() == null) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(new Date());
@@ -485,6 +511,13 @@ public class SubscriptionApi extends BaseApi {
         }
     }
 
+    /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
+     * @param instantiateServicesDto instantiateServices Dto
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public void instantiateServices(InstantiateServicesRequestDto instantiateServicesDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(instantiateServicesDto.getSubscription())) {
@@ -525,7 +558,7 @@ public class SubscriptionApi extends BaseApi {
 
             ServiceInstance serviceInstance = null;
 
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> subscriptionServiceInstances = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription,
                     InstanceStatusEnum.INACTIVE);
                 if (!subscriptionServiceInstances.isEmpty()) {
@@ -651,7 +684,7 @@ public class SubscriptionApi extends BaseApi {
         ProductTemplate productTemplate = productTemplateService.findByCode(postData.getProduct(), postData.getOperationDate());
         if (productTemplate == null) {
             throw new EntityDoesNotExistsException(ProductTemplate.class,
-                postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), ParamBean.getInstance().getDateTimeFormat()));
+                postData.getProduct() + "/" + DateUtils.formatDateWithPattern(postData.getOperationDate(), paramBeanFactory.getInstance().getDateTimeFormat()));
         }
 
         Subscription subscription = subscriptionService.findByCode(postData.getSubscription());
@@ -1224,7 +1257,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * @param postData operation serivices request
-     * @param isToSuspend  true if it is to be suspended.
+     * @param isToSuspend true if it is to be suspended.
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception

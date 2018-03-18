@@ -27,34 +27,32 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.FacesConverter;
 
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.ParamBeanFactory;
 
 @FacesConverter("dateTimeConverter")
 public class DateTimeConverter implements Converter {
 
+    @Override
+    public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        String dateFormat = paramBeanFactory.getInstance().getDateTimeFormat();
+        DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
 
-    private ParamBean paramBean=ParamBean.getInstance();
+        try {
+            return df.parse(str);
+        } catch (ParseException e) {
+            return "";
+        }
+    }
 
-	@Override
-	public Object getAsObject(FacesContext facesContext, UIComponent uIComponent, String str) {
-		String dateFormat = paramBean.getDateTimeFormat();
-		DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
+    @Override
+    public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        String dateFormat = paramBeanFactory.getInstance().getDateTimeFormat();
+        DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance().getViewRoot().getLocale());
 
-		try {
-			return df.parse(str);
-		} catch (ParseException e) {
-			return "";
-		}
-	}
-
-	@Override
-	public String getAsString(FacesContext facesContext, UIComponent uIComponent, Object obj) {
-		String dateFormat = paramBean.getDateTimeFormat();
-		DateFormat df = new SimpleDateFormat(dateFormat, FacesContext.getCurrentInstance()
-				.getViewRoot().getLocale());
-
-		return df.format(obj);
-	}
+        return df.format(obj);
+    }
 
 }

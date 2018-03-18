@@ -19,6 +19,7 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobExecutionResultImpl;
@@ -66,6 +67,10 @@ public class MediationJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     /** The cdr file name. */
     String cdrFileName;
 
@@ -103,7 +108,7 @@ public class MediationJobBean {
         log.debug("Running with parameter={}", parameter);
         report = "";
 
-        ParamBean parambean = ParamBean.getInstance();
+        ParamBean parambean = paramBeanFactory.getInstance();
         String meteringDir = parambean.getChrootDir(currentUser.getProviderCode()) + File.separator + "imports" + File.separator + "metering" + File.separator;
 
         outputDir = meteringDir + "output";

@@ -270,7 +270,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate Last transaction date
      * @param isInvoiceAdjustment Is this invoice adjustment
      * @param isVirtual Is this a virtual invoice - invoice is not persisted, rated transactions are not persisted either
-     * @throws BusinessException
+     * @throws BusinessException BusinessException
      */
     @SuppressWarnings({ "unchecked", "unused" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -693,6 +693,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * @param billingAccount billing account
      * @param orderNumber order number.
+     * @param firstTransactionDate firstTransactionDate.
+     * @param lastTransactionDate lastTransactionDate.
      * @return true/false
      */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {

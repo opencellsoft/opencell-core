@@ -67,7 +67,7 @@ public interface EntityCustomizationRs extends IBaseRs {
      * Get custom entity template definition including its fields and applicable actions
      * 
      * @param customEntityTemplateCode
-     * @return
+     * @return customEntityTemplateResponseDto
      */
     @GET
     @Path("/entity/{customEntityTemplateCode}")

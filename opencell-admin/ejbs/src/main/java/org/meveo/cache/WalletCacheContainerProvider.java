@@ -18,6 +18,7 @@ import org.infinispan.Cache;
 import org.infinispan.commons.util.CloseableIterator;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.qualifier.LowBalance;
 import org.meveo.model.billing.BillingWalletTypeEnum;
 import org.meveo.model.billing.UsageChargeInstance;
@@ -74,7 +75,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     @Resource(lookup = "java:jboss/infinispan/cache/opencell/opencell-usageChargeInstanceWallet")
     private Cache<CacheKeyLong, List<Long>> usageChargeInstanceWalletCache;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     private static boolean usePrepaidBalanceCache = true;
 
@@ -83,7 +84,7 @@ public class WalletCacheContainerProvider implements Serializable { // CacheCont
     protected MeveoUser currentUser;
 
     static {
-        ParamBean tmpParamBean = ParamBean.getInstance();
+        ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         usePrepaidBalanceCache = Boolean.parseBoolean(tmpParamBean.getProperty("cache.cachePrepaidBalance", "true"));
     }
 

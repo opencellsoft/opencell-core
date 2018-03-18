@@ -70,7 +70,7 @@ public class TenantRegistry {
         try {
             Provider tenantInfo = (Provider) timer.getInfo();
 
-            applicationInitializer.initializeTenant(tenantInfo, false);
+            applicationInitializer.initializeTenant(tenantInfo, false, true);
 
         } catch (Exception e) {
             log.error("Failed to launch create tenant timer", e);

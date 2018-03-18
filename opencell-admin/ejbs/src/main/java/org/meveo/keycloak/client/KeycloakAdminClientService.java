@@ -40,6 +40,8 @@ import org.slf4j.Logger;
 /**
  * @author Edward P. Legaspi
  * @since 10 Nov 2017
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class KeycloakAdminClientService {
@@ -214,6 +216,24 @@ public class KeycloakAdminClientService {
 
         return userId;
     }
+    
+    /**
+     * Remove a role representation from list of role representation.
+     * @param listRoleRepresentation list of role representation.
+     * @param roleRepresentation role representation to remove.
+     * @throws BusinessException business exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    private List<RoleRepresentation> removeRole(List<RoleRepresentation> listRoleRepresentation, RoleRepresentation roleRepresentation) throws BusinessException {
+        List<RoleRepresentation> updatedListRoleRepresentation = new ArrayList<>();
+        for(RoleRepresentation roleRepresentationItem : listRoleRepresentation) {
+            if(!roleRepresentation.getName().equalsIgnoreCase(roleRepresentationItem.getName())) {
+                updatedListRoleRepresentation.add(roleRepresentationItem);
+            }
+        }
+        return updatedListRoleRepresentation;
+    }
 
     /**
      * Updates a user in keycloak. Also assigns the role.
@@ -221,6 +241,8 @@ public class KeycloakAdminClientService {
      * @param httpServletRequest http request
      * @param postData posted data.
      * @throws BusinessException business exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -240,27 +262,29 @@ public class KeycloakAdminClientService {
             userRepresentation.setEmail(postData.getEmail());
 
             // find realm roles and assign to the newly create user
-            List<RoleRepresentation> externalRolesRepresentation = new ArrayList<>();
+            List<RoleRepresentation> rolesToAdd = new ArrayList<>();
+            List<RoleRepresentation> rolesToDelete = realmResource.roles().list();
+            
             if (postData.getExternalRoles() != null && !postData.getExternalRoles().isEmpty()) {
                 RolesResource rolesResource = realmResource.roles();
 
                 for (RoleDto externalRole : postData.getExternalRoles()) {
                     try {
                         RoleRepresentation tempRole = rolesResource.get(externalRole.getName()).toRepresentation();
-                        externalRolesRepresentation.add(tempRole);
+                        rolesToAdd.add(tempRole);
+                        rolesToDelete = removeRole(rolesToDelete, tempRole);
                     } catch (NotFoundException e) {
                         throw new EntityDoesNotExistsException(RoleRepresentation.class, externalRole.getName());
                     }
                 }
 
             }
-
             userResource.update(userRepresentation);
-
-            // clear all roles
-            usersResource.get(userRepresentation.getId()).roles().realmLevel().remove(realmResource.roles().list());
+            
             // add from posted data
-            usersResource.get(userRepresentation.getId()).roles().realmLevel().add(externalRolesRepresentation);
+            usersResource.get(userRepresentation.getId()).roles().realmLevel().add(rolesToAdd);
+            // delete other roles
+            usersResource.get(userRepresentation.getId()).roles().realmLevel().remove(rolesToDelete);
 
             if (!StringUtils.isBlank(postData.getPassword())) {
                 // Define password credential
@@ -320,6 +344,8 @@ public class KeycloakAdminClientService {
      * @param username user name
      * @return list of role
      * @throws BusinessException business exception
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public List<RoleDto> findUserRoles(HttpServletRequest httpServletRequest, String username) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -372,6 +398,8 @@ public class KeycloakAdminClientService {
      * @param username Username
      * @return User information
      * @throws BusinessException business exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public UserRepresentation getUserRepresentationByUsername(UsersResource usersResource, String username) throws BusinessException {
         UserRepresentation userRepresentation = null;

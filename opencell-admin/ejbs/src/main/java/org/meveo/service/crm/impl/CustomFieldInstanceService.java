@@ -25,7 +25,7 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.event.CFEndPeriodEvent;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.DatePeriod;
@@ -79,7 +79,9 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     // Previous comments
     // /**
@@ -152,7 +154,7 @@ public class CustomFieldInstanceService extends BaseService {
         }
 
         // If value is not found, create a new Custom field with a value taken from configuration parameters
-        value = paramBean.getProperty(cfCode, defaultParamBeanValue);
+        value = paramBeanFactory.getInstance().getProperty(cfCode, defaultParamBeanValue);
         if (value == null) {
             return null;
         }

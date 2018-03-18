@@ -18,6 +18,7 @@ import org.meveo.model.crm.custom.CustomFieldTypeEnum;
 import org.meveo.model.jobs.JobCategoryEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 
@@ -29,7 +30,7 @@ public class ImportCustomersJob extends Job {
 
     @Inject
     private ResourceBundle resourceMessages;
-    
+
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
@@ -45,13 +46,14 @@ public class ImportCustomersJob extends Job {
                     nbRuns = (long) Runtime.getRuntime().availableProcessors();
                 }
             } catch (Exception e) {
-            	nbRuns = new Long(1);
-				waitingMillis = new Long(0);
-                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(),e);
+                nbRuns = new Long(1);
+                waitingMillis = new Long(0);
+                log.warn("Cant get customFields for " + jobInstance.getJobTemplate(), e);
             }
             List<Future<String>> futures = new ArrayList<Future<String>>();
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             for (int i = 0; i < nbRuns.intValue(); i++) {
-                futures.add(importCustomersAsync.launchAndForget(result));
+                futures.add(importCustomersAsync.launchAndForget(result, lastCurrentUser));
                 if (i > 0) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

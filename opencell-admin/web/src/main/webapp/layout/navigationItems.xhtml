@@ -399,9 +399,12 @@
 		<p:menuitem id="cache"
 			rendered="#{currentUser.hasRole('administrationVisualization')}"
 			outcome="caches" value="#{messages['menu.cacheInfo']}" />
-		<p:menuitem id="indexing"
-			rendered="#{currentUser.hasRole('administrationVisualization')}"
-			outcome="indexing" value="#{messages['menu.indexing']}" />
+        <p:submenu id="index" label="#{messages['menu.fullTextSearch']}"
+            rendered="#{currentUser.hasRole('superAdminManagement') || currentUser.hasRole('administrationManagement') || currentUser.hasRole('administrationVisualization')}">
+            <p:menuitem id="ESSearch" rendered="#{currentUser.hasRole('administrationVisualization')}" outcome="fullTextSearch" value="#{messages['menu.fullTextSearch.search']}" />
+            <p:menuitem id="reindexES" rendered="#{currentUser.hasRole('superAdminManagement') || currentUser.hasRole('administrationManagement')}" outcome="indexing" value="#{messages['menu.fullTextSearch.index']}" />
+        </p:submenu>            
+            
         <p:menuitem id="providers" outcome="providers"
             value="#{messages['menu.tenants']}"
             rendered="#{currentUser.hasRole('superAdminManagement') and currentUser.providerCode==null and paramBean.isMultitenancyEnabled()}" />            

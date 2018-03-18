@@ -39,7 +39,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.OneShotChargeInstance;
@@ -137,6 +137,9 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
     @Inject
     private TradingLanguageService tradingLanguageService;
 
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private ServiceInstance selectedServiceInstance;
 
     private ProductInstance productInstance;
@@ -217,6 +220,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         // Clear existing list value
         serviceTemplates = new EntityListDataModelPF<ServiceTemplate>(new ArrayList<ServiceTemplate>());
+        boolean allowServiceMultiInstantiation = ParamBeanFactory.getAppScopeInstance().isServiceMultiInstantiation();
 
         if (entity.getOffer() == null) {
             return;
@@ -233,7 +237,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
             for (ServiceInstance serviceInstance : serviceInstances) {
                 if (serviceTemplate.getCode().equals(serviceInstance.getCode()) && (serviceInstance.getStatus() == InstanceStatusEnum.INACTIVE
-                        || (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
+                        || (!allowServiceMultiInstantiation && serviceInstance.getStatus() == InstanceStatusEnum.ACTIVE))) {
                     alreadyInstanciated = true;
                     break;
                 }
@@ -258,7 +262,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
         if (entity.getOffer().getValidity() != null && !entity.getOffer().getValidity().isCorrespondsToPeriod(entity.getSubscriptionDate())) {
 
-            String datePattern = paramBean.getDateFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateFormat();
             messages.error(new BundleKey("messages", "subscription.error.offerTemplateInvalidVersion"), entity.getOffer().getValidity().toString(datePattern),
                 DateUtils.formatDateWithPattern(entity.getSubscriptionDate(), datePattern));
             FacesContext.getCurrentInstance().validationFailed();
@@ -307,7 +311,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             }
 
             entity = subscriptionService.refreshOrRetrieve(entity);
-            String description = oneShotChargeInstance.getDescription();           
+            String description = oneShotChargeInstance.getDescription();
             OneShotChargeTemplate oneShotChargeTemplate = oneShotChargeTemplateService.findById(oneShotChargeInstance.getChargeTemplate().getId());
             oneShotChargeInstance.setChargeTemplate(oneShotChargeTemplate);
             oneShotChargeInstance.setDescription(description);
@@ -401,17 +405,18 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
 
     public OneShotChargeInstance getOneShotChargeInstance() {
         if (oneShotChargeInstance != null && oneShotChargeInstance.getChargeTemplate() != null) {
-            if(oneShotChargeInstance.getDescription() != null && oneShotChargeInstance.getDescription().equals(oneShotChargeInstance.getChargeTemplate().getDescription())) {
-            if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
-                String languageCode = tradingLanguageService.retrieveIfNotManaged(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage().getLanguageCode();
-                if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
-                    oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode));
+            if (oneShotChargeInstance.getDescription() != null && oneShotChargeInstance.getDescription().equals(oneShotChargeInstance.getChargeTemplate().getDescription())) {
+                if (oneShotChargeInstance.getChargeTemplate().getDescriptionI18n() != null) {
+                    String languageCode = tradingLanguageService.retrieveIfNotManaged(entity.getUserAccount().getBillingAccount().getTradingLanguage()).getLanguage()
+                        .getLanguageCode();
+                    if (!StringUtils.isBlank(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode))) {
+                        oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescriptionI18n().get(languageCode));
+                    }
+                }
+                if (StringUtils.isBlank(oneShotChargeInstance.getDescription())) {
+                    oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescription());
                 }
             }
-            if (StringUtils.isBlank(oneShotChargeInstance.getDescription())) {
-                oneShotChargeInstance.setDescription(oneShotChargeInstance.getChargeTemplate().getDescription());
-            }
-        }
         }
         return oneShotChargeInstance;
     }
@@ -579,7 +584,7 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             if (productInstance.getProductTemplate().getValidity() != null
                     && !productInstance.getProductTemplate().getValidity().isCorrespondsToPeriod(productInstance.getApplicationDate())) {
 
-                String datePattern = paramBean.getDateFormat();
+                String datePattern = paramBeanFactory.getInstance().getDateFormat();
                 messages.error(new BundleKey("messages", "productInstance.error.productTemplateInvalidVersion"),
                     productInstance.getProductTemplate().getValidity().toString(datePattern), DateUtils.formatDateWithPattern(productInstance.getApplicationDate(), datePattern));
                 FacesContext.getCurrentInstance().validationFailed();

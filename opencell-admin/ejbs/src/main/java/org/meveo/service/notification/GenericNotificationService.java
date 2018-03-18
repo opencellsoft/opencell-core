@@ -8,7 +8,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.cache.NotificationCacheContainerProvider;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
 import org.meveo.model.AuditableEntity;
@@ -30,13 +30,15 @@ public class GenericNotificationService extends BusinessService<Notification> {
     @Inject
     private NotificationCacheContainerProvider notificationCacheContainerProvider;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     static boolean useNotificationCache = true;
 
     @PostConstruct
     private void init() {
-        useNotificationCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheNotification", "true"));
+        useNotificationCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheNotification", "true"));
     }
 
     /**

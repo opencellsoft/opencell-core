@@ -25665,7 +25665,7 @@ public class SuspendSubscriptions extends org.meveo.service.script.Script {
                <classNameFilter>org.meveo.model.payments.AccountOperation</classNameFilter>
                <eventTypeFilter>CREATED</eventTypeFilter>
 <!--
-               <elFilter>#{ event.code.equals("IP_PLVT") }</elFilter>
+               <elFilter>#{ event.code.equals("REJ_DDT") }</elFilter>
 -->
                <scriptInstanceCode>org.meveo.service.script.SuspendSubscriptions</scriptInstanceCode>
                <scriptParams>

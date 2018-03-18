@@ -8177,24 +8177,24 @@
     </changeSet>
     <changeSet author="AndriusKarpavicius" id="rebuild-data-decisionRule">
         <sql>
-            INSERT INTO ${db.schema}.wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (1, 0, 0, '2016-08-12 21:02:31.26', NULL,
+            INSERT INTO ${db.schema.adapted}wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (1, 0, 0, '2016-08-12 21:02:31.26', NULL,
             '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'Other', 'OPENCELL.ADMIN', NULL, 1);
         </sql>
         <sql>
-            INSERT INTO ${db.schema}.wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (2, 0, 0, '2016-08-13 22:43:06.214', NULL,
+            INSERT INTO ${db.schema.adapted}wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (2, 0, 0, '2016-08-13 22:43:06.214', NULL,
             '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'south', 'OPENCELL.ADMIN', NULL, 0);
         </sql>
         <sql>
-            INSERT INTO ${db.schema}.wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (3, 0, 0, '2016-08-13 22:43:06.214', NULL,
+            INSERT INTO ${db.schema.adapted}wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (3, 0, 0, '2016-08-13 22:43:06.214', NULL,
             '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'west', 'OPENCELL.ADMIN', NULL, 0);
         </sql>
-        <sql> INSERT INTO ${db.schema}.wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (4, 0, 0, '2016-08-13 22:52:44.007', NULL,
+        <sql> INSERT INTO ${db.schema.adapted}wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (4, 0, 0, '2016-08-13 22:52:44.007', NULL,
             '#{mv:getCFValue(entity,"Territory")==_VALUE_}', 'Territory', 'STRING', 'north', 'OPENCELL.ADMIN', NULL, 0);
         </sql>
-        <sql> INSERT INTO ${db.schema}.wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (5, 0, 0, '2016-08-15 08:09:43.616', NULL,
+        <sql> INSERT INTO ${db.schema.adapted}wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (5, 0, 0, '2016-08-15 08:09:43.616', NULL,
             '#{mv:getCFValue(entity,"SalesAmount")==_VALUE_}', 'Sales amount', 'RANGE_NUMBER', 'Other', 'OPENCELL.ADMIN', NULL, 1);
         </sql>
-        <sql> INSERT INTO ${db.schema}.wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (8, 0, 0, '2016-08-16 07:46:20.404', NULL,
+        <sql> INSERT INTO ${db.schema.adapted}wf_decision_rule (id, version, disabled, created, updated, condition_el, name, type, value, creator, updater, model) VALUES (8, 0, 0, '2016-08-16 07:46:20.404', NULL,
             '#{mv:getCFValue(entity,"AccountType")==_VALUE_}', 'Account Type', 'STRING', 'Other', 'OPENCELL.ADMIN', NULL, 1);
         </sql>
     </changeSet>

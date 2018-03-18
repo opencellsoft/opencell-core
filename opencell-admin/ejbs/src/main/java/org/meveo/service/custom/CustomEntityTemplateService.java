@@ -30,6 +30,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
@@ -54,18 +55,20 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
     @Inject
     private ElasticClient elasticClient;
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     private static boolean useCETCache = true;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @PostConstruct
     private void init() {
-        useCETCache = Boolean.parseBoolean(paramBean.getProperty("cache.cacheCET", "true"));
+        useCETCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCET", "true"));
     }
 
     @Override
     public void create(CustomEntityTemplate cet) throws BusinessException {
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         super.create(cet);
         customFieldsCache.addUpdateCustomEntityTemplate(cet);
 
@@ -82,7 +85,7 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     @Override
     public CustomEntityTemplate update(CustomEntityTemplate cet) throws BusinessException {
-
+        ParamBean paramBean = paramBeanFactory.getInstance();
         CustomEntityTemplate cetUpdated = super.update(cet);
 
         customFieldsCache.addUpdateCustomEntityTemplate(cet);

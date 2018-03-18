@@ -2,10 +2,14 @@ package org.meveo.service.payments.impl;
 
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -51,12 +55,18 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
 
     private static Client client = null;
-    private String merchantId = ParamBean.getInstance().getProperty("ingenico.merchantId", null);
+    // private String merchantId = ParamBean.getInstance().getProperty("ingenico.merchantId", null);
+
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private static void connect() {
+        ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());
+        ParamBean paramBean = paramBeanFactory.getInstance();
         CommunicatorConfiguration communicatorConfiguration = new CommunicatorConfiguration(ParamBean.getInstance().getProperties());
-        communicatorConfiguration.setApiKeyId(ParamBean.getInstance().getProperty("ingenico.ApiKeyId", null));
-        communicatorConfiguration.setSecretApiKey(ParamBean.getInstance().getProperty("ingenico.SecretApiKey", null));
+        communicatorConfiguration.setApiKeyId(paramBean.getProperty("ingenico.ApiKeyId", null));
+        communicatorConfiguration.setSecretApiKey(paramBean.getProperty("ingenico.SecretApiKey", null));
         client = Factory.createClient(communicatorConfiguration);
     }
 
@@ -107,7 +117,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CreateTokenRequest body = new CreateTokenRequest();
             body.setCard(tokenCard);
             body.setPaymentProductId(cardType.getId());
-
+            String merchantId = paramBeanFactory.getInstance().getProperty("ingenico.merchantId", null);
             CreateTokenResponse response = getClient().merchant(merchantId).tokens().create(body);
             if (!response.getIsNewToken()) {
                 throw new BusinessException("A token already exist for card:" + CardPaymentMethod.hideCardNumber(cardNumber));
@@ -164,6 +174,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
             body.setOrder(order);
 
+            String merchantId = paramBeanFactory.getInstance().getProperty("ingenico.merchantId", null);
             CreatePaymentResponse response = getClient().merchant(merchantId).payments().create(body);
             if (response != null) {
                 PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
@@ -191,6 +202,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public void cancelPayment(String paymentID) throws BusinessException {
+        String merchantId = paramBeanFactory.getInstance().getProperty("ingenico.merchantId", null);
         try {
             getClient().merchant(merchantId).payments().cancel(paymentID);
         } catch (ApiException e) {
@@ -201,6 +213,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        String merchantId = paramBeanFactory.getInstance().getProperty("ingenico.merchantId", null);
         try {
             PaymentResponse paymentResponse = getClient().merchant(merchantId).payments().get(paymentID);
             if (paymentResponse != null) {

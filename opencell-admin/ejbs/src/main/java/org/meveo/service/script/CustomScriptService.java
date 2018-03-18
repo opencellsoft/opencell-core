@@ -502,8 +502,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param scriptCode Script code
      * @return A compiled script class
-     * @throws ElementNotFoundException
-     * @throws InvalidScriptException
+     * @throws ElementNotFoundException ElementNotFoundException
+     * @throws InvalidScriptException InvalidScriptException
      */
     public SI getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         SI script = null;

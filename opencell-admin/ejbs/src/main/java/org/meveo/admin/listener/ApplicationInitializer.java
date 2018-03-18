@@ -10,6 +10,7 @@ import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CacheContainerProvider;
 import org.meveo.cache.CdrEdrProcessingCacheContainerProvider;
@@ -18,9 +19,11 @@ import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.NotificationCacheContainerProvider;
 import org.meveo.cache.WalletCacheContainerProvider;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.MeveoUser;
 import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.index.ElasticClient;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.model.SortOrder;
@@ -56,40 +59,56 @@ public class ApplicationInitializer {
     private Logger log;
 
     @Inject
-    WalletCacheContainerProvider walletCache;
+    private WalletCacheContainerProvider walletCache;
 
     @Inject
-    CdrEdrProcessingCacheContainerProvider cdrEdrCache;
+    private CdrEdrProcessingCacheContainerProvider cdrEdrCache;
 
     @Inject
-    NotificationCacheContainerProvider notifCache;
+    private NotificationCacheContainerProvider notifCache;
 
     @Inject
-    CustomFieldsCacheContainerProvider cftCache;
+    private CustomFieldsCacheContainerProvider cftCache;
 
     @Inject
-    JobCacheContainerProvider jobCache;
+    private JobCacheContainerProvider jobCache;
+
+    @Inject
+    private ElasticClient elasticClient;
 
     public void init() {
 
         final List<Provider> providers = providerService.list(new PaginationConfiguration("id", SortOrder.ASCENDING));
 
         int i = 0;
-        for (Provider provider : providers) {
-            Future<Boolean> initProvider = multitenantAppInitializer.initializeTenant(provider, i == 0);
 
-            // Wait for each provider to initialize
+        // Wait for each provider to initialize.
+        for (Provider provider : providers) {
+
+            Future<Boolean> initProvider;
+
             try {
+                initProvider = multitenantAppInitializer.initializeTenant(provider, i == 0, false);
+
                 initProvider.get();
-            } catch (InterruptedException | ExecutionException e) {
+
+            } catch (InterruptedException | ExecutionException | BusinessException e) {
                 log.error("Failed to initialize a provider {}", provider.getCode());
             }
             i++;
         }
     }
 
+    /**
+     * Initialize tenant information: establish EMF for secondary tenants/providers, schedule jobs, compile scripts, preload caches
+     * 
+     * @param provider Tenant/provider to initialize
+     * @param isMainProvider Is it a main tenant/provider.
+     * @return A future with value of True
+     * @throws BusinessException Business exception
+     */
     @Asynchronous
-    public Future<Boolean> initializeTenant(Provider provider, boolean isMainProvider) {
+    public Future<Boolean> initializeTenant(Provider provider, boolean isMainProvider, boolean createESIndex) throws BusinessException {
 
         log.debug("Will initialize application for provider {}", provider.getCode());
 
@@ -97,7 +116,12 @@ public class ApplicationInitializer {
             entityManagerProvider.registerEntityManagerFactory(provider.getCode());
         }
 
-        currentUserProvider.forceAuthentication(provider.getAuditable().getCreator(), isMainProvider ? null : provider.getCode());
+        currentUserProvider.forceAuthentication("applicationInitializer", isMainProvider ? null : provider.getCode());
+
+        // Ensure that provider code in secondary provider schema matches the tenant/provider code as it was lister in main provider's secondary tenant/provider record
+        if (!isMainProvider) {
+            providerService.updateProviderCode(provider.getCode());
+        }
 
         // Register jobs
         jobInstanceService.registerJobs();
@@ -111,6 +135,10 @@ public class ApplicationInitializer {
         notifCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         cftCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
         jobCache.populateCache(System.getProperty(CacheContainerProvider.SYSTEM_PROPERTY_CACHES_TO_LOAD));
+
+        if (createESIndex) {
+            elasticClient.cleanAndReindex(MeveoUser.instantiate("applicationInitializer", isMainProvider ? null : provider.getCode()));
+        }
 
         log.info("Initialized application for provider {}", provider.getCode());
 

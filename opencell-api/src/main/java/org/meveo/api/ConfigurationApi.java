@@ -7,8 +7,6 @@ import org.meveo.commons.utils.ParamBean;
 @Stateless
 public class ConfigurationApi extends BaseApi {
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     /**
      * Set configuration/settings property
      * 
@@ -16,7 +14,7 @@ public class ConfigurationApi extends BaseApi {
      * @param value Property value as string
      */
     public void setProperty(String property, String value) {
-
+        ParamBean paramBean = paramBeanFactory.getInstance();
         paramBean.setProperty(property, value);
         paramBean.saveProperties();
     }

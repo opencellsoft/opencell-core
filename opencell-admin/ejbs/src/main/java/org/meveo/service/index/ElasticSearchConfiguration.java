@@ -13,20 +13,28 @@ import java.util.Set;
 import javax.ejb.Lock;
 import javax.ejb.LockType;
 import javax.ejb.Singleton;
+import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.base.ValueExpressionWrapper;
+import org.meveo.util.ApplicationProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Loads Elastic Search configuration
+ *
+ * @author Andrius Karpavicius
+ */
 @Singleton
 @Lock(LockType.READ)
 public class ElasticSearchConfiguration implements Serializable {
@@ -73,10 +81,14 @@ public class ElasticSearchConfiguration implements Serializable {
     // @Inject
     // private Logger log;
 
+    @Inject
+    @ApplicationProvider
+    private Provider appProvider;
+
     /**
      * Load configuration from elasticSearchConfiguration.json file.
-     *
-     * @throws IOException             I/O exception
+     * 
+     * @throws IOException I/O exception
      * @throws JsonProcessingException Json processing exception.
      */
     public void loadConfiguration() throws JsonProcessingException, IOException {
@@ -171,10 +183,12 @@ public class ElasticSearchConfiguration implements Serializable {
     @SuppressWarnings("rawtypes")
     public String getIndex(Class<? extends ISearchable> clazzToConvert) {
 
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
         Class clazz = clazzToConvert;
         while (clazz != null && !ISearchable.class.equals(clazz)) {
             if (indexMap.containsKey(clazz.getSimpleName())) {
-                return indexMap.get(clazz.getSimpleName());
+                return indexPrefix + "_" + indexMap.get(clazz.getSimpleName());
             }
             clazz = clazz.getSuperclass();
         }
@@ -183,8 +197,8 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes for given entity classes
-     *
+     * Get a unique list of indexes for given entity classes. Index names are prefixed by provider code (removed spaces and lowercase).
+     * 
      * @param classesInfo A list of entity class information
      * @return A set of index property names
      */
@@ -200,21 +214,26 @@ public class ElasticSearchConfiguration implements Serializable {
     }
 
     /**
-     * Get a unique list of indexes
-     *
+     * Get a unique list of indexes. Index names are prefixed by provider code (removed spaces and lowercase).
+     * 
      * @return A set of index property names
      */
     public Set<String> getIndexes() {
 
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
         Set<String> indexNames = new HashSet<>();
-        indexNames.addAll(indexMap.values());
+
+        for (String indexName : indexMap.values()) {
+            indexNames.add(indexPrefix + "_" + indexName);
+        }
 
         return indexNames;
     }
 
     /**
      * Determine Type value for Elastic Search for a given entity. If nothing found in configuration, a default value - classname will be used
-     *
+     * 
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return Type property name
      */
@@ -228,9 +247,9 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Determine Type value for Elastic Search for a given class. If nothing found in configuration, a default value - classname will be used
-     *
+     * 
      * @param clazzToConvert Entity class
-     * @param cetCode        cet code
+     * @param cetCode cet code
      * @return Type property name
      */
     @SuppressWarnings("rawtypes")
@@ -256,7 +275,7 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Get a unique list of types for given entity classes
-     *
+     * 
      * @param classesInfo A list of entity class information
      * @return A set of Type property names
      */
@@ -274,7 +293,7 @@ public class ElasticSearchConfiguration implements Serializable {
     /**
      * Determine if upsert (update if exist or create is not exist) should be done instead of just update in Elastic Search for a given entity. Assume False if nothing found in
      * configuration.
-     *
+     * 
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return True if upsert should be used
      */
@@ -295,10 +314,10 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Get a list of fields to be stored in Elastic search for a given entity
-     *
+     * 
      * @param entity Business entity to be stored/indexed in Elastic Search
      * @return A map of fields with key being fieldname in Json and value being a fieldname in entity. Fieldnames can be simple e.g. "company" or nested e.g.
-     * "company.address.street"
+     *         "company.address.street"
      */
     @SuppressWarnings("rawtypes")
     public Map<String, String> getFields(ISearchable entity) {
@@ -323,7 +342,7 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Get a list of entity classes that is managed by Elastic Search
-     *
+     * 
      * @return A list of entity simple classnames
      */
     public Set<String> getEntityClassesManaged() {
@@ -336,7 +355,7 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Get a field mapping configuration for a given custom field template
-     *
+     * 
      * @param cft Custom field template
      * @return Field mapping JSON string
      */
@@ -358,7 +377,7 @@ public class ElasticSearchConfiguration implements Serializable {
 
     /**
      * Get a field mapping configuration for a given custom entity template
-     *
+     * 
      * @param cet Custom entity template
      * @return Field mapping JSON string
      */

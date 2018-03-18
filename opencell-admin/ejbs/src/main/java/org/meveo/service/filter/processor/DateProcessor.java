@@ -5,8 +5,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.meveo.admin.exception.FilterException;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.FilteredQueryBuilder;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
 public class DateProcessor extends PrimitiveFilterProcessor {
@@ -21,7 +23,9 @@ public class DateProcessor extends PrimitiveFilterProcessor {
     @Override
     public void process(FilteredQueryBuilder queryBuilder, String alias, PrimitiveFilterCondition condition) throws FilterException {
         try {
-            ParamBean parameters = ParamBean.getInstance();
+            ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");
+
+            ParamBean parameters = paramBeanFactory.getInstance();
             String strDateValue = condition.getOperand().substring(PREFIX.length());
             Date dateValue = null;
 
@@ -38,11 +42,11 @@ public class DateProcessor extends PrimitiveFilterProcessor {
             }
             buildQuery(queryBuilder, condition, dateValue);
         } catch (Exception e) {
-            throw new FilterException(e.getMessage());
+            throw new FilterException(e);
         }
     }
 
-    protected void buildQuery(FilteredQueryBuilder queryBuilder, PrimitiveFilterCondition condition, Date dateValue){
+    protected void buildQuery(FilteredQueryBuilder queryBuilder, PrimitiveFilterCondition condition, Date dateValue) {
         if ("=".equals(condition.getOperator())) {
             queryBuilder.addCriterionDateTruncatedToDay(condition.getFieldName(), dateValue);
         } else if (">=".equals(condition.getOperator())) {

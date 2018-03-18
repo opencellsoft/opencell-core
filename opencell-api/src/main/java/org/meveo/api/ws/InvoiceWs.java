@@ -26,7 +26,7 @@ public interface InvoiceWs extends IBaseWs {
      * Create invoice. Invoice number depends on invoice type
      * 
      * @param invoiceDto invoice dto
-     * @return
+     * @return CreateInvoiceResponseDto
      */
     @WebMethod
     public CreateInvoiceResponseDto createInvoice(@WebParam(name = "invoice") InvoiceDto invoiceDto);
@@ -37,7 +37,7 @@ public interface InvoiceWs extends IBaseWs {
      * Deprecated in v.4.7.2, use "list()" instead
      * 
      * @param customerAccountCode Customer account code
-     * @return
+     * @return CustomerInvoicesResponse
      */
     @Deprecated
     @WebMethod
@@ -60,6 +60,7 @@ public interface InvoiceWs extends IBaseWs {
     /**
      * Finds an invoice based on its invoice number and return it as xml string
      * 
+     * @param invoiceId invoiceId
      * @param invoiceNumber Invoice number
      * @return get xmk invoice response/
      */
@@ -69,6 +70,7 @@ public interface InvoiceWs extends IBaseWs {
     /**
      * Finds an invoice based on invoice number and invoice type. It returns the result as xml string
      * 
+     * @param invoiceId invoice Id
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
      * @return xml invoice response dtpO
@@ -80,6 +82,7 @@ public interface InvoiceWs extends IBaseWs {
     /**
      * Finds an invoice based on invoice number and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
+     * @param invoiceId invoice Id
      * @param invoiceNumber Invoice number
      * @return get pdf invoice response
      */
@@ -89,6 +92,7 @@ public interface InvoiceWs extends IBaseWs {
     /**
      * Finds an invoice based on invoice number and invoice type and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
+     * @param invoiceId Invoice Id
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
      * @return get pdf reponse dto.
@@ -101,7 +105,7 @@ public interface InvoiceWs extends IBaseWs {
      * Cancel an invoice based on invoice id
      * 
      * @param invoiceId Invoice id
-     * @return
+     * @return ActionStatus
      */
     @WebMethod
     public ActionStatus cancelInvoice(@WebParam(name = "invoiceId") Long invoiceId);
@@ -134,6 +138,7 @@ public interface InvoiceWs extends IBaseWs {
      * Deprecated in v.4.8. Use list() instead with criteria "recordedInvoice=IS_NOT_NULL and billingAccount.customerAccount.code=xxx"
      * 
      * @param customerAccountCode Customer account code
+     * @param includePdf include Pdf true/false
      * @return List of invoices
      */
     @WebMethod

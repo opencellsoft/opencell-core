@@ -23,7 +23,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.InvoiceType;
 import org.meveo.model.payments.OperationCategoryEnum;
 import org.meveo.service.base.BusinessService;
@@ -38,8 +37,6 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     @Inject
     OCCTemplateService oCCTemplateService;
 
-    ParamBean param = ParamBean.getInstance();
-
     public InvoiceType getDefaultType(String invoiceTypeCode) throws BusinessException {
 
         InvoiceType defaultInvoiceType = findByCode(invoiceTypeCode);
@@ -48,11 +45,11 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
         }
 
         String occCode = "accountOperationsGenerationJob.occCode";
-        String occCodeDefaultValue = "FA_FACT";
+        String occCodeDefaultValue = "INV_STD";
         OperationCategoryEnum operationCategory = OperationCategoryEnum.DEBIT;
         if (getAdjustementCode().equals(invoiceTypeCode)) {
             occCode = "accountOperationsGenerationJob.occCodeAdjustement";
-            occCodeDefaultValue = "FA_ADJ";
+            occCodeDefaultValue = "INV_CRN";
             operationCategory = OperationCategoryEnum.CREDIT;
         }
 
@@ -83,15 +80,15 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
     }
 
     public String getCommercialCode() {
-        return param.getProperty("invoiceType.commercial.code", "COM");
+        return paramBeanFactory.getInstance().getProperty("invoiceType.commercial.code", "COM");
     }
 
     public String getAdjustementCode() {
-        return param.getProperty("invoiceType.adjustement.code", "ADJ");
+        return paramBeanFactory.getInstance().getProperty("invoiceType.adjustement.code", "ADJ");
     }
 
     public String getQuoteCode() {
-        return param.getProperty("invoiceType.quote.code", "QUOTE");
+        return paramBeanFactory.getInstance().getProperty("invoiceType.quote.code", "QUOTE");
     }
 
     /**
@@ -101,7 +98,7 @@ public class InvoiceTypeService extends BusinessService<InvoiceType> {
      * @return A custom field code
      */
     public String getCustomFieldCode(InvoiceType invoiceType) {
-    	
+
         // LAMPIRIS CUSTOM
         String invoiceTypeCode = invoiceType.getCode().toUpperCase();
         if (invoiceTypeCode.equals("INSTALMENT_INVOICE") || invoiceTypeCode.equals("REGULARIZATION_INVOICE")) {

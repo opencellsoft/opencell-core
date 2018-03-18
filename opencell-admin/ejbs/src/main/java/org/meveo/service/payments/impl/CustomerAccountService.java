@@ -34,6 +34,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.billing.BillingAccount;
@@ -70,14 +71,14 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     @Inject
     private PaymentMethodService paymentMethodService;
-    
+
     @Inject
     @ApplicationProvider
     private Provider appProvider;
 
-
-    private ParamBean paramBean = ParamBean.getInstance();
-
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * @param id id of customer to be checking
@@ -156,7 +157,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
                 balanceCredit = BigDecimal.ZERO;
             }
             balance = balanceDebit.subtract(balanceCredit);
-            ParamBean param = ParamBean.getInstance();
+            ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
             balance = balance.multiply(new BigDecimal(balanceFlag));
             log.debug("end computeBalance customerAccount code:{} , balance:{}", customerAccount.getCode(), balance);
@@ -171,7 +172,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, true, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
     }
-    
 
     /**
      * @param customerAccountId customer account id
@@ -193,8 +193,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
     public BigDecimal customerAccountBalanceDueWithoutLitigation(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
         log.info("customerAccountBalanceDueWithoutLitigation with id" + customerAccountId + ",code:" + customerAccountCode + ",toDate:" + to);
         return customerAccountBalanceDueWithoutLitigation(findCustomerAccount(customerAccountId, customerAccountCode), to);
-    }    
-    
+    }
+
     public BigDecimal customerAccountBalance(CustomerAccount customerAccount, Date to) throws BusinessException {
         log.info("customerAccountBalanceDue  customerAccount:" + (customerAccount == null ? "null" : customerAccount.getCode()) + " toDate:" + to);
         return computeBalance(customerAccount, to, false, false, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
@@ -216,12 +216,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return computeBalance(customerAccount, to, true, true, MatchingStatusEnum.O, MatchingStatusEnum.P);
     }
 
-
     /**
      * @param customerAccountId customer account id
      * @param customerAccountCode customer account code
      * @param to until date
-     * @return customer account balance exigible 
+     * @return customer account balance exigible
      * @throws BusinessException business exception.
      */
     public BigDecimal customerAccountBalanceExigible(Long customerAccountId, String customerAccountCode, Date to) throws BusinessException {
@@ -243,7 +242,8 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
         try {
             log.debug("closeCustomerAccount  update customerAccount ok");
-            ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+            // ParamBean param = ParamBean.getInstance("meveo-admin.properties");
+            ParamBean param = paramBeanFactory.getInstance();
             String codeOCCTemplate = param.getProperty("occ.codeOccCloseAccount", "CLOSE_ACC");
             BigDecimal balanceDue = customerAccountBalanceDue(customerAccount, new Date());
             if (balanceDue == null) {
@@ -290,11 +290,11 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             throw new BusinessException("amount is null");
         }
         try {
-            ParamBean param = ParamBean.getInstance("meveo-admin.properties");
-            String occTransferAccountCredit = param.getProperty("occ.templateTransferAccountCredit", "TRANS_CRED");
-            String occTransferAccountDebit = param.getProperty("occ.templateTransferAccountDebit", "TRANS_DEB");
+            ParamBean paramBean = paramBeanFactory.getInstance();
+            String occTransferAccountCredit = paramBean.getProperty("occ.templateTransferAccountCredit", null);
+            String occTransferAccountDebit = paramBean.getProperty("occ.templateTransferAccountDebit", null);
             String descTransfertFrom = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
-            String descTransfertTo = paramBean.getProperty("occ.descTransfertFrom", "transfer from");
+            String descTransfertTo = paramBean.getProperty("occ.descTransfertTo", "transfer to");
 
             otherCreditAndChargeService.addOCC(occTransferAccountDebit, descTransfertFrom + " " + toCustomerAccount.getCode(), fromCustomerAccount, amount, new Date());
             otherCreditAndChargeService.addOCC(occTransferAccountCredit, descTransfertTo + " " + fromCustomerAccount.getCode(), toCustomerAccount, amount, new Date());
@@ -306,11 +306,10 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     }
 
-
     /**
      * @param fromCustomerAccountId customer account id
      * @param fromCustomerAccountCode customer account code
-     * @param toCustomerAccountId  customer account  of transfer's destination
+     * @param toCustomerAccountId customer account of transfer's destination
      * @param toCustomerAccountCode customer account code of transfer's destination
      * @param amount transfer's amount
      * @throws BusinessException business exception
@@ -327,7 +326,6 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         return findCustomerAccount(id, code);
     }
 
- 
     /**
      * @param id id of customer account
      * @param code code of customer account
@@ -351,6 +349,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     /**
      * update dunningLevel for one existed customer account by id or code
+     * 
      * @param id id of customer account
      * @param code code of customer account
      * @param dunningLevel dunning level
@@ -372,6 +371,7 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
 
     /**
      * get operations from one existed customerAccount by id or code.
+     * 
      * @param id customer account
      * @param code customer account code
      * @param from date from
@@ -520,30 +520,31 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
             return null;
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public List<PaymentMethod> getPaymentMethods(BillingAccount billingAccount) {
         long startDate = System.currentTimeMillis();
-        Query query = this.getEntityManager().createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
+        Query query = this.getEntityManager()
+            .createQuery("select m from PaymentMethod m where m.customerAccount.id in (select b.customerAccount.id from BillingAccount b where b.id=:id)", PaymentMethod.class);
         query.setParameter("id", billingAccount.getId());
         try {
             List<PaymentMethod> resultList = (List<PaymentMethod>) (query.getResultList());
             log.info("PaymentMethod time: " + (System.currentTimeMillis() - startDate));
             return resultList;
-            
+
         } catch (NoResultException e) {
-            log.warn("error while getting user account list by billing account",e);
+            log.warn("error while getting user account list by billing account", e);
             return null;
         }
-    
+
     }
-    
+
     public BigDecimal computeCreditBalance(CustomerAccount customerAccount, boolean isDue, Date to, boolean dunningExclusion) throws BusinessException {
         BigDecimal result = new BigDecimal(0);
         try {
             result = computeOccAmount(customerAccount, OperationCategoryEnum.CREDIT, isDue, to, dunningExclusion, MatchingStatusEnum.O, MatchingStatusEnum.P, MatchingStatusEnum.I);
             result = result == null ? new BigDecimal(0) : result;
-            ParamBean param = ParamBean.getInstance();
+            ParamBean param = paramBeanFactory.getInstance();
             int balanceFlag = Integer.parseInt(param.getProperty("balance.multiplier", "1"));
             balanceFlag = Math.negateExact(balanceFlag);
             result = result.multiply(new BigDecimal(balanceFlag));
@@ -553,5 +554,5 @@ public class CustomerAccountService extends AccountService<CustomerAccount> {
         }
 
         return result;
-    }   
+    }
 }

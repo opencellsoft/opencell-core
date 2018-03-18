@@ -29,9 +29,7 @@ import org.apache.commons.vfs2.provider.local.LocalFile;
 import org.apache.commons.vfs2.provider.sftp.SftpFileSystemConfigBuilder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
-import org.meveo.cache.JobCacheContainerProvider;
-import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.FtpImportedFile;
@@ -40,7 +38,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.FtpImportedFileService;
 import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
-
 
 /**
  * The Class FtpAdapterJobBean.
@@ -62,21 +59,25 @@ public class FtpAdapterJobBean {
 
     /** The local dir file. */
     private File localDirFile;
-    
+
     /** The file pattern. */
     private Pattern filePattern;
-    
+
     /** The fs manager. */
     private FileSystemManager fsManager = null;
-    
+
     /** The opts. */
     private FileSystemOptions opts = null;
-    
+
     /** The sftp file. */
     private FileObject sftpFile;
-    
+
     /** The src. */
     private FileObject src = null;
+
+    
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Execute.
@@ -255,7 +256,7 @@ public class FtpAdapterJobBean {
         } catch (FileSystemException ex) {
             throw new RuntimeException("setUserAuthenticator failed", ex);
         }
-        if ("false".equals(ParamBean.getInstance().getProperty("ftpAdapter.useExtentionAsRegex", "false"))) {
+        if ("false".equals(paramBeanFactory.getInstance().getProperty("ftpAdapter.useExtentionAsRegex", "false"))) {
             filePattern = Pattern.compile(".*" + filePatternString);
         } else {
             filePattern = Pattern.compile(filePatternString);

@@ -56,8 +56,8 @@ public interface PaymentWs extends IBaseWs {
     /**
      * create a ddrequestLotOp by dto
      * 
-     * @param ddrequestLotOp
-     * @return
+     * @param ddrequestLotOp ddrequestLotOp
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus createDDRequestLotOp(@WebParam(name = "ddrequestLotOp") DDRequestLotOpDto ddrequestLotOp);
@@ -65,10 +65,10 @@ public interface PaymentWs extends IBaseWs {
     /**
      * list ddrequestLotOps by fromDueDate,toDueDate,status
      * 
-     * @param fromDueDate
-     * @param toDueDate
-     * @param status
-     * @return
+     * @param fromDueDate fromDueDate
+     * @param toDueDate toDueDate
+     * @param status status
+     * @return DDRequestLotOpsResponseDto
      */
     @WebMethod
     DDRequestLotOpsResponseDto listDDRequestLotops(@WebParam(name = "fromDueDate") Date fromDueDate, @WebParam(name = "toDueDate") Date toDueDate,
@@ -171,7 +171,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * List payment methods on searching by any payment method field in addition to paging and sorting.
      * 
-     * @param pagingAndFiltering
+     * @param pagingAndFiltering Paging and filtering criteria.
      * @return List payment methods matching
      */
     @WebMethod
@@ -188,6 +188,9 @@ public interface PaymentWs extends IBaseWs {
 
     /**
      * Credit Category
+     * 
+     * @param postData credit category Dto
+     * @return ActionStatus
      */
     @WebMethod
     ActionStatus createCreditCategory(@WebParam(name = "postData") CreditCategoryDto postData);
@@ -266,6 +269,7 @@ public interface PaymentWs extends IBaseWs {
     /**
      * List payment gateways on searching by any payment gateway fields in addition to paging and sorting.
      * 
+     * @param  pagingAndFiltering Paging and filtering criteria.
      * @return A list of payment gateways
      */
     @WebMethod
