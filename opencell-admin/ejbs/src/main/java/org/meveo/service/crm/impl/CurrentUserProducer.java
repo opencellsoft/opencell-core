@@ -28,19 +28,17 @@ public class CurrentUserProducer {
     /**
      * produce a current user
      * 
-     * @return
+     * @return MeveoUser
      */
     @Produces
     @RequestScoped
     @Named("currentUser")
     @CurrentUser
     public MeveoUser getCurrentUser() {
-        // log.error("AKK start to produce current user");
         String providerCode = currentUserProvider.getCurrentUserProviderCode();
         EntityManager em = entityManagerProvider.getEntityManager(providerCode);
         MeveoUser meveoUser = currentUserProvider.getCurrentUser(providerCode, em);
 
-        // log.error("AKK end to produce current user");
         return meveoUser;
     }
 }

@@ -38,7 +38,6 @@ import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ResourceBundle;
 import org.meveo.commons.utils.ParamBean;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
@@ -63,6 +62,10 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * The Class BillingRunService.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class BillingRunService extends PersistenceService<BillingRun> {
@@ -98,10 +101,6 @@ public class BillingRunService extends PersistenceService<BillingRun> {
     /** The service singleton. */
     @Inject
     private ServiceSingleton serviceSingleton;
-
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Generate pre invoicing reports.

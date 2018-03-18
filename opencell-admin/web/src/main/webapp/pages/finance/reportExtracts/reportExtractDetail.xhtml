@@ -1,0 +1,64 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:hftl="http://hftl.org" xmlns:pe="http://primefaces.org/ui/extensions"
+	template="/layout/template.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="objectId" value="#{reportExtractBean.objectId}" />
+        </f:metadata>
+    </ui:define>
+	<ui:define name="body">
+		<p:importEnum type="org.meveo.model.finance.ReportExtractScriptTypeEnum" var="ReportExtractScriptTypeEnum"></p:importEnum>
+		
+		<hftl:entityPopup id="scriptInstancePopup"
+			header="#{messages['scriptInstance.title']}" backingBean="#{scriptInstanceBean}"
+			searchField1Label="#{messages['BusinessEntity.code']}"
+			searchField1="code" column1Label="#{messages['BusinessEntity.code']}"
+			column1="code" selection="#{reportExtractBean.entity.scriptInstance}"
+			column2Label="#{messages['BusinessEntity.description']}"
+			column2="description"
+			updateField=":reportExtractForm:scriptInstanceSelectId :reportExtractForm:scriptInstanceSelectId_text">
+		</hftl:entityPopup>
+		
+		<h:form id="crumbmenuForm">
+			<p:breadCrumb homeDisplay="text" id="crumbmenu">
+				<p:menuitem value="#{messages['menu.finance']}" disabled="true" />
+				<p:menuitem outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />
+				<p:menuitem value="#{messages['commons.new']} #{messages['reportExtract']}"
+					disabled="true" rendered="#{reportExtractBean.entity.transient}" />
+				<p:menuitem
+					value="#{messages['reportExtract']} #{messages['commons.configuration']} - #{reportExtractBean.entity.code}"
+					disabled="true" rendered="#{!reportExtractBean.entity.transient}" />
+			</p:breadCrumb>
+		</h:form>
+	
+		<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" showEnableDisableButton="true">
+			<hftl:formField label="#{messages['businessEntity.code']}" field="code" />
+			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
+			<hftl:formField label="#{messages['reportExtract.scriptType']}" field="scriptType" listenerUpdate="scriptTypeJava scriptTypeSQL" />
+			<p:outputPanel id="scriptTypeJava">
+				<hftl:formField id="scriptInstanceSelectId" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.JAVA}"
+					label="#{messages['entity.notification.scriptInstance']}" field="scriptInstance"
+					valueLabelField="code" required="true" popup="true"
+					popupId="scriptInstancePopup" />
+			</p:outputPanel>
+			<hftl:formField label="#{messages['reportExtract.category']}" field="category" />
+			<hftl:formField label="#{messages['reportExtract.filenameFormat']}" field="filenameFormat" />
+			<p:outputPanel id="scriptTypeSQL">			
+				<hftl:decorateFormField label="#{messages['reportExtract.sqlQuery']}" fieldId="sqlQuery" componentWidth="100" rendered="#{reportExtractBean.entity.scriptType eq ReportExtractScriptTypeEnum.SQL}">
+	                <pe:codeMirror required="true" id="sqlQuery" theme="eclipse" mode="sql" value="#{reportExtractBean.entity.sqlQuery}" lineNumbers="true" />
+	            </hftl:decorateFormField>
+            </p:outputPanel>
+            <hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
+            <ui:param name="buttons" value="true" />
+            <ui:define name="buttons">
+            	<p:commandButton id="runReport" icon="fa fa-fw fa-play" value="#{messages['action.execute']}" action="#{reportExtractBean.runReport}"></p:commandButton>
+            </ui:define>
+		</hftl:formPanel>
+	</ui:define>
+
+</ui:composition>

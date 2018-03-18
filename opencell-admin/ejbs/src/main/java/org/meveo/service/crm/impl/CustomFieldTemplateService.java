@@ -34,6 +34,11 @@ import org.meveo.util.PersistenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class CustomFieldTemplateService extends BusinessService<CustomFieldTemplate> {
 
@@ -45,13 +50,9 @@ public class CustomFieldTemplateService extends BusinessService<CustomFieldTempl
 
     static boolean useCFTCache = true;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @PostConstruct
     private void init() {
-        useCFTCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCFT", "true"));
+        useCFTCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCFT", "true"));
     }
 
     /**

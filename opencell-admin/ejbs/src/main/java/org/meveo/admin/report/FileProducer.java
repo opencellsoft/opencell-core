@@ -39,15 +39,14 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRCsvDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 /**
- *This file producer class is used to generate PDF file
+ * This file producer class is used to generate PDF file
  */
 @Named
 public class FileProducer {
-	@Inject
+    @Inject
     protected Logger log;
 
     public Map<String, Object> parameters = new HashMap<String, Object>();
@@ -56,24 +55,17 @@ public class FileProducer {
 
     public JasperPrint jasperPrint;
 
-    public JasperDesign jasperDesign;
-    
     @Inject
     @ApplicationProvider
     protected Provider appProvider;
 
     /**
-     *@param dataSourceFile
-     *            Data source CSV file
-     *@param fileName
-     *            Filename of new file
-     *@param reportFileName
-     *            Report template
-     * @param parameters
-     *            template parameters
+     * @param dataSourceFile Data source CSV file
+     * @param fileName Filename of new file
+     * @param reportFileName Report template
+     * @param parameters template parameters
      */
-    public void generatePDFfile(File dataSourceFile, String fileName, String reportFileName,
-            Map<String, Object> parameters) {
+    public void generatePDFfile(File dataSourceFile, String fileName, String reportFileName, Map<String, Object> parameters) {
 
         try {
             InputStream reportTemplate = new FileInputStream(reportFileName);
@@ -84,7 +76,7 @@ public class FileProducer {
                 JasperExportManager.exportReportToPdfFile(jasperPrint, fileName);
             }
         } catch (JRException e) {
-            log.error("failed to generate PDF file",e);
+            log.error("failed to generate PDF file", e);
         } catch (FileNotFoundException e) {
             throw new NoTemplateException();
         }
@@ -92,9 +84,9 @@ public class FileProducer {
 
     public JRCsvDataSource createDataSource(File dataSourceFile) throws FileNotFoundException {
         JRCsvDataSource ds = new JRCsvDataSource(dataSourceFile);
-//        DecimalFormat df = new DecimalFormat("0.00");
-//        NumberFormat nf = NumberFormat.getInstance(Locale.US);
-//        ds.setNumberFormat(nf);
+        // DecimalFormat df = new DecimalFormat("0.00");
+        // NumberFormat nf = NumberFormat.getInstance(Locale.US);
+        // ds.setNumberFormat(nf);
         ds.setFieldDelimiter(';');
         ds.setRecordDelimiter("\n");
         ds.setUseFirstRowAsHeader(true);

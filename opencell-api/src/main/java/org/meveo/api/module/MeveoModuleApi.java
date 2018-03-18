@@ -45,7 +45,6 @@ import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
@@ -75,6 +74,8 @@ import org.meveo.service.script.module.ModuleScriptService;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  **/
 @Stateless
@@ -109,23 +110,23 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
     @Inject
     private ModuleScriptService moduleScriptService;
-    
+
     @Inject
     private ProductTemplateApi productTemplateApi;
-    
+
     @Inject
     private ProductTemplateService productTemplateService;
 
     private static JAXBContext jaxbCxt;
-	static {
-		try {
-			jaxbCxt = JAXBContext.newInstance(MeveoModuleDto.class);
-		} catch (JAXBException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	
+    static {
+        try {
+            jaxbCxt = JAXBContext.newInstance(MeveoModuleDto.class);
+        } catch (JAXBException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
     public MeveoModule create(MeveoModuleDto moduleDto) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(moduleDto.getCode())) {
@@ -145,7 +146,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         } else if (moduleDto instanceof BusinessServiceModelDto && (((BusinessServiceModelDto) moduleDto).getServiceTemplate() == null
                 || StringUtils.isBlank(((BusinessServiceModelDto) moduleDto).getServiceTemplate().getCode()))) {
             missingParameters.add("serviceTemplate.code");
-            
+
         } else if (moduleDto instanceof BusinessProductModelDto && (((BusinessProductModelDto) moduleDto).getProductTemplate() == null
                 || StringUtils.isBlank(((BusinessProductModelDto) moduleDto).getProductTemplate().getCode()))) {
             missingParameters.add("productTemplate.code");
@@ -339,7 +340,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         if (meveoModule == null) {
             create(moduleDto);
             meveoModule = meveoModuleService.findByCode(moduleDto.getCode());
-            
+
         } else {
             if (!meveoModule.isDownloaded()) {
                 throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install",
@@ -347,9 +348,9 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             }
 
             if (meveoModule.isInstalled()) {
-                //throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is already installed");
+                // throw new ActionForbiddenException(meveoModule.getClass(), moduleDto.getCode(), "install", "Module is already installed");
                 installed = true;
-                
+
             } else {
                 try {
                     moduleDto = MeveoModuleService.moduleSourceToDto(meveoModule);
@@ -371,11 +372,11 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
             meveoModule.setInstalled(true);
             meveoModule = meveoModuleService.update(meveoModule);
 
-            if (moduleScript!= null) {
+            if (moduleScript != null) {
                 moduleScriptService.postInstallModule(moduleScript, meveoModule);
             }
         }
-        
+
         return meveoModule;
     }
 
@@ -414,7 +415,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         OfferTemplate offerTemplate = offerTemplateService.findByCode(bomDto.getOfferTemplate().getCode(), bomDto.getOfferTemplate().getValidFrom(),
             bomDto.getOfferTemplate().getValidTo());
         if (offerTemplate == null) {
-            String datePattern = ParamBean.getInstance().getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 bomDto.getOfferTemplate().getCode() + " / " + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidFrom(), datePattern) + " / "
                         + DateUtils.formatDateWithPattern(bomDto.getOfferTemplate().getValidTo(), datePattern));
@@ -455,7 +456,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
     private void parseModuleInfoOnlyFromDtoBPM(BusinessProductModel bm, BusinessProductModelDto dto) {
         // nothing to do for now
     }
-    
+
     private void unpackAndInstallBPMItems(BusinessProductModel businessModel, BusinessProductModelDto dto) throws MeveoApiException, BusinessException {
         // Should create it or update productTemplate only if it has full information only
         if (!dto.getProductTemplate().isCodeOnly()) {
@@ -464,7 +465,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
         ProductTemplate productTemplate = productTemplateService.findByCode(dto.getProductTemplate().getCode(), dto.getProductTemplate().getValidFrom(),
             dto.getProductTemplate().getValidTo());
         if (productTemplate == null) {
-            String datePattern = ParamBean.getInstance().getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class,
                 dto.getProductTemplate().getCode() + " / " + DateUtils.formatDateWithPattern(dto.getProductTemplate().getValidFrom(), datePattern) + " / "
                         + DateUtils.formatDateWithPattern(dto.getProductTemplate().getValidTo(), datePattern));
@@ -494,7 +495,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         } else if (moduleDto instanceof BusinessAccountModelDto) {
             parseModuleInfoOnlyFromDtoBAM((BusinessAccountModel) meveoModule, (BusinessAccountModelDto) moduleDto);
-        
+
         } else if (moduleDto instanceof BusinessProductModelDto) {
             parseModuleInfoOnlyFromDtoBPM((BusinessProductModel) meveoModule, (BusinessProductModelDto) moduleDto);
         }
@@ -613,15 +614,15 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         } else if (moduleDto instanceof BusinessAccountModelDto) {
             unpackAndInstallBAMItems((BusinessAccountModel) meveoModule, (BusinessAccountModelDto) moduleDto);
-            
+
         } else if (moduleDto instanceof BusinessProductModelDto) {
             unpackAndInstallBPMItems((BusinessProductModel) meveoModule, (BusinessProductModelDto) moduleDto);
         }
-    }    
+    }
 
     private void writeModulePicture(String filename, byte[] fileData) {
         try {
-            ModuleUtil.writeModulePicture(appProvider.getCode(), filename, fileData);
+            ModuleUtil.writeModulePicture(currentUser.getProviderCode(), filename, fileData);
         } catch (Exception e) {
             log.error("error when export module picture {}, info {}", filename, e.getMessage(), e);
         }
@@ -629,7 +630,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
     private void removeModulePicture(String filename) {
         try {
-            ModuleUtil.removeModulePicture(appProvider.getCode(), filename);
+            ModuleUtil.removeModulePicture(currentUser.getProviderCode(), filename);
         } catch (Exception e) {
             log.error("error when delete module picture {}, info {}", filename, (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()), e);
         }
@@ -720,7 +721,7 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         if (!StringUtils.isBlank(module.getLogoPicture())) {
             try {
-                moduleDto.setLogoPictureFile(ModuleUtil.readModulePicture(appProvider.getCode(), module.getLogoPicture()));
+                moduleDto.setLogoPictureFile(ModuleUtil.readModulePicture(currentUser.getProviderCode(), module.getLogoPicture()));
             } catch (Exception e) {
                 log.error("Failed to read module files {}, info {}", module.getLogoPicture(), e.getMessage(), e);
             }
@@ -777,14 +778,14 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
 
         } else if (module instanceof BusinessAccountModel) {
             businessAccountModelToDto((BusinessAccountModel) module, (BusinessAccountModelDto) moduleDto);
-            
+
         } else if (module instanceof BusinessProductModel) {
             businessProductModelToDto((BusinessProductModel) module, (BusinessProductModelDto) moduleDto);
         }
 
         return moduleDto;
     }
-    
+
     /**
      * Convert BusinessProductModel object to DTO representation
      * 

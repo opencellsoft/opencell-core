@@ -2,6 +2,7 @@ package org.meveo.api.payment;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +48,10 @@ import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ **/
 @Stateless
 public class PaymentApi extends BaseApi {
 
@@ -167,9 +172,13 @@ public class PaymentApi extends BaseApi {
     }
 
     /**
+     * Get payment list by customer account code
+     * 
      * @param customerAccountCode customer account code
      * @return list of payment dto
      * @throws Exception exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public List<PaymentDto> getPaymentList(String customerAccountCode) throws Exception {
         List<PaymentDto> result = new ArrayList<PaymentDto>();
@@ -311,7 +320,7 @@ public class PaymentApi extends BaseApi {
      * @throws InvalidParameterException invalid parameter exception
      */
     public PaymentHistoriesDto list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
-        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, null, pagingAndFiltering, PaymentHistory.class);
+        PaginationConfiguration paginationConfig = toPaginationConfiguration("id", SortOrder.ASCENDING, Arrays.asList("payment", "refund"), pagingAndFiltering, PaymentHistory.class);
         Long totalCount = paymentHistoryService.count(paginationConfig);
         PaymentHistoriesDto paymentHistoriesDto = new PaymentHistoriesDto();
         paymentHistoriesDto.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
@@ -348,7 +357,7 @@ public class PaymentApi extends BaseApi {
 
     /**
      * Build paymentHistory dto from entity
-     * @param paymentHistory
+     * @param paymentHistory payment History
      * @return PaymentHistoryDto
      */
     public PaymentHistoryDto fromEntity(PaymentHistory paymentHistory) {

@@ -22,11 +22,12 @@ import org.slf4j.Logger;
 
 /**
  * 
- * @author anasseh
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
  */
 
 @Stateless
-public class UnitPaymentCardJobBean {
+public class UnitPaymentJobBean {
 
     @Inject
     private Logger log;
@@ -63,8 +64,8 @@ public class UnitPaymentCardJobBean {
                     doPaymentResponseDto = paymentService.refundByCardToken(accountOperation.getCustomerAccount(),
                         accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 } else {
-                   // doPaymentResponseDto = paymentService.refundByMandat(accountOperation.getCustomerAccount(),
-                       // accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
+                    doPaymentResponseDto = paymentService.refundByMandat(accountOperation.getCustomerAccount(),
+                       accountOperation.getUnMatchingAmount().multiply(new BigDecimal("100")).longValue(), listAOids, createAO, matchingAO, paymentGateway);
                 }
             }
             if (PaymentStatusEnum.ERROR == doPaymentResponseDto.getPaymentStatus() || PaymentStatusEnum.REJECTED == doPaymentResponseDto.getPaymentStatus()) {

@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.slf4j.Logger;
 
 /**
@@ -39,200 +40,196 @@ import org.slf4j.Logger;
 @ConversationScoped
 public class Management implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Inject
-	protected Logger log;
+    @Inject
+    protected Logger log;
 
-	private ParamBean paramBean = ParamBean.getInstance();
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-	/**
-	 * Application name for daemon to know what application info to send back.
-	 */
-	private static String application;
+    /**
+     * Application name for daemon to know what application info to send back.
+     */
+    private static String application;
 
-	/**
-	 * Output stream for network communication.
-	 */
-	private transient ObjectOutputStream oos = null;
+    /**
+     * Output stream for network communication.
+     */
+    private transient ObjectOutputStream oos = null;
 
-	/**
-	 * Input stream for network communication.
-	 */
-	private transient ObjectInputStream ois = null;
+    /**
+     * Input stream for network communication.
+     */
+    private transient ObjectInputStream ois = null;
 
-	/**
-	 * Client socket. (A socket is an endpoint for communication between two
-	 * machines. )
-	 */
-	private transient Socket socket = null;
+    /**
+     * Client socket. (A socket is an endpoint for communication between two machines. )
+     */
+    private transient Socket socket = null;
 
-	/**
-	 * Is connection established flag.
-	 */
-	private boolean connectionEstablished;
+    /**
+     * Is connection established flag.
+     */
+    private boolean connectionEstablished;
 
-	/**
-	 * Connects to socket server.
-	 */
-	public void connect() {
+    /**
+     * Connects to socket server.
+     */
+    public void connect() {
 
-		String connectionUrl = paramBean.getProperty("connectionUrl",
-				"127.0.0.1");
-		int connectionPort = Integer.parseInt(paramBean.getProperty(
-				"connectionPort", "3000"));
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String connectionUrl = paramBean.getProperty("connectionUrl", "127.0.0.1");
+        int connectionPort = Integer.parseInt(paramBean.getProperty("connectionPort", "3000"));
 
-		connectionEstablished = false;
-		// open a socket connection
-		try {
-			socket = new Socket(connectionUrl, connectionPort);
-			connectionEstablished = true;
-			// open I/O streams for objects
-			oos = new ObjectOutputStream(socket.getOutputStream());
-			ois = new ObjectInputStream(socket.getInputStream());
+        connectionEstablished = false;
+        // open a socket connection
+        try {
+            socket = new Socket(connectionUrl, connectionPort);
+            connectionEstablished = true;
+            // open I/O streams for objects
+            oos = new ObjectOutputStream(socket.getOutputStream());
+            ois = new ObjectInputStream(socket.getInputStream());
 
-		} catch (UnknownHostException e) {
-			log.error("Unknown Host Exception", e);
-		} catch (IOException e) {
-			log.error("IOException", e);
-		}
-	}
+        } catch (UnknownHostException e) {
+            log.error("Unknown Host Exception", e);
+        } catch (IOException e) {
+            log.error("IOException", e);
+        }
+    }
 
-	/**
-	 * Checks if connection is available.
-	 */
-	public boolean checkConnection() {
-		connect();
-		try {
-			if (connectionEstablished)
-				oos.writeObject("check");
-		} catch (IOException e) {
-			log.error("IOException", e);
-		} finally {
-			close();
-		}
-		return connectionEstablished;
+    /**
+     * Checks if connection is available.
+     */
+    public boolean checkConnection() {
+        connect();
+        try {
+            if (connectionEstablished)
+                oos.writeObject("check");
+        } catch (IOException e) {
+            log.error("IOException", e);
+        } finally {
+            close();
+        }
+        return connectionEstablished;
 
-	}
+    }
 
-	/**
-	 * Closes connection.
-	 * 
-	 */
-	public void close() {
-		try {
-			if (oos != null)
-				oos.close();
-			if (ois != null) {
-				ois.close();
-			}
-		} catch (IOException e) {
-			log.error("IOException", e);
+    /**
+     * Closes connection.
+     * 
+     */
+    public void close() {
+        try {
+            if (oos != null)
+                oos.close();
+            if (ois != null) {
+                ois.close();
+            }
+        } catch (IOException e) {
+            log.error("IOException", e);
 
-		}
+        }
 
-	}
+    }
 
-	/**
-	 * Checks application status.
-	 * @return true if enabled.
-	 */
-	public boolean isEnabled() {
-		try {
-			connect();
-			oos.writeObject("status");
-			oos.writeObject(application);
-			String text = (String) ois.readObject();
-			close();
-			if (text.equals("true")) {
-				return true;
-			} else
-				return false;
-		} catch (IOException e) {
-			log.error("IOException", e);
+    /**
+     * Checks application status.
+     * 
+     * @return true if enabled.
+     */
+    public boolean isEnabled() {
+        try {
+            connect();
+            oos.writeObject("status");
+            oos.writeObject(application);
+            String text = (String) ois.readObject();
+            close();
+            if (text.equals("true")) {
+                return true;
+            } else
+                return false;
+        } catch (IOException e) {
+            log.error("IOException", e);
 
-			return false;
-		} catch (ClassNotFoundException e1) {
-			log.error("ClassNotFoundException", e1);
-			return false;
-		}
-	}
+            return false;
+        } catch (ClassNotFoundException e1) {
+            log.error("ClassNotFoundException", e1);
+            return false;
+        }
+    }
 
-	/**
-	 * Converts Logging Events list to string list.
-	 * 
-	 * @param tempLogList
-	 *            Logging Events List.
-	 */
-	/*
-	 * public void convertLogs(List<LoggingEvent> tempLogList) {
-	 * 
-	 * for (Object o : tempLogList) { if (o instanceof LoggingEvent) { final
-	 * LoggingEvent logEvent = (LoggingEvent) o; logs.add("[" +
-	 * logEvent.getLevel() + "] " + logEvent.getRenderedMessage()); } } }
-	 */
+    /**
+     * Converts Logging Events list to string list.
+     * 
+     * @param tempLogList Logging Events List.
+     */
+    /*
+     * public void convertLogs(List<LoggingEvent> tempLogList) {
+     * 
+     * for (Object o : tempLogList) { if (o instanceof LoggingEvent) { final LoggingEvent logEvent = (LoggingEvent) o; logs.add("[" + logEvent.getLevel() + "] " +
+     * logEvent.getRenderedMessage()); } } }
+     */
 
-	/**
-	 * Get logs from application (what it does at the time).
-	 */
-	/*
-	 * @SuppressWarnings("unchecked") public List<String> getLogs() { connect();
-	 * try { oos.writeObject("log"); logs.clear(); List<LoggingEvent>
-	 * tempLogList = (List<LoggingEvent>) ois.readObject();
-	 * convertLogs(tempLogList); close(); } catch (IOException e) {
-	 * log.error(e.getMessage()); } catch (ClassNotFoundException e) {
-	 * log.error(e.getMessage()); } return logs; }
-	 */
+    /**
+     * Get logs from application (what it does at the time).
+     */
+    /*
+     * @SuppressWarnings("unchecked") public List<String> getLogs() { connect(); try { oos.writeObject("log"); logs.clear(); List<LoggingEvent> tempLogList = (List<LoggingEvent>)
+     * ois.readObject(); convertLogs(tempLogList); close(); } catch (IOException e) { log.error(e.getMessage()); } catch (ClassNotFoundException e) { log.error(e.getMessage()); }
+     * return logs; }
+     */
 
-	/**
-	 * Sends application kill signal to socket server.
-	 */
-	public void kill() {
-		try {
-			connect();
-			oos.writeObject("kill");
-			oos.writeObject(application);
-			close();
-		} catch (IOException e) {
-			log.error("IOException", e);
+    /**
+     * Sends application kill signal to socket server.
+     */
+    public void kill() {
+        try {
+            connect();
+            oos.writeObject("kill");
+            oos.writeObject(application);
+            close();
+        } catch (IOException e) {
+            log.error("IOException", e);
 
-		}
+        }
 
-	}
+    }
 
-	/**
-	 * Sends restart signal to socket server
-	 * 
-	 */
-	public void restart() {
-		kill();
-		init();
-	}
+    /**
+     * Sends restart signal to socket server
+     * 
+     */
+    public void restart() {
+        kill();
+        init();
+    }
 
-	/**
-	 * Sends "Turn On" signal to socket server.
-	 */
-	public void init() {
-		try {
-			connect();
-			oos.writeObject("init");
-			oos.writeObject(application);
-			String text = (String) ois.readObject();
-			System.out.println(text);
-			close();
+    /**
+     * Sends "Turn On" signal to socket server.
+     */
+    public void init() {
+        try {
+            connect();
+            oos.writeObject("init");
+            oos.writeObject(application);
+            String text = (String) ois.readObject();
+            System.out.println(text);
+            close();
 
-		} catch (Exception e) {
-			log.error("IOException", e);
-		}
-	}
+        } catch (Exception e) {
+            log.error("IOException", e);
+        }
+    }
 
-	public String getApplication() {
-		return application;
-	}
+    public String getApplication() {
+        return application;
+    }
 
-	@SuppressWarnings("static-access")
-	public void setApplication(String application) {
-		this.application = application;
-	}
+    @SuppressWarnings("static-access")
+    public void setApplication(String application) {
+        this.application = application;
+    }
 
 }

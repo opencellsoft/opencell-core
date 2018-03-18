@@ -73,6 +73,9 @@ import org.primefaces.model.LazyDataModel;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -581,6 +584,14 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         return adjustedInvoiceIdParam;
     }
     
+    /**
+     * Saves or Update an invoice
+     * 
+     * @param killConversation kill Conversation
+     * @return outcome page outcome
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
       
         String outcome = super.saveOrUpdate(killConversation);

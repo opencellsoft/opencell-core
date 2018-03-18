@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 
 /**
  * The Class FlatFileProcessingJobBean.
+ * 
  */
 @Stateless
 public class FlatFileProcessingJobBean {
@@ -74,7 +75,7 @@ public class FlatFileProcessingJobBean {
     /** The username. */
     String username;
 
-    /** paramBeanFactory */
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

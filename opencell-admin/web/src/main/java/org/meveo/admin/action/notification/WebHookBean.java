@@ -23,7 +23,6 @@ import org.meveo.admin.exception.RejectedImportException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.CsvBuilder;
 import org.meveo.commons.utils.CsvReader;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.model.notification.StrategyImportTypeEnum;
@@ -38,10 +37,12 @@ import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.UploadedFile;
 
 /**
- * Standard backing bean for {@link WebHook} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components.
+ * Standard backing bean for {@link WebHook} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
+ * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -51,39 +52,35 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
 
     @Inject
     WebHookService webHookService;
-    
+
     @Inject
     CounterTemplateService counterTemplateService;
-    
+
     @Inject
     ScriptInstanceService scriptInstanceService;
-    
-    ParamBean paramBean = ParamBean.getInstance();
-    
+
     private StrategyImportTypeEnum strategyImportType;
     CsvBuilder csv = null;
-	private String providerDir=paramBean.getProperty("providers.rootDir","./opencelldata");
-	private String existingEntitiesCsvFile=null;
+    private String existingEntitiesCsvFile = null;
 
     CsvReader csvReader = null;
-    private UploadedFile file; 
-    
-    private static final int CODE= 0;
-    private static final int CLASS_NAME_FILTER= 1;
-    private static final int EVENT_TYPE_FILTER= 2;
-    private static final int EL_FILTER=3;
-    private static final int ACTIVE= 4; 
-    private static final int SCRIPT_INSTANCE_CODE= 5; 
-    private static final int HOST= 6; 
-    private static final int PORT= 7; 
-    private static final int PAGE= 8; 
-    private static final int HTTP_METHOD= 9; 
-    private static final int USERNAME= 10; 
-    private static final int PASSWORD= 11;
-    private static final int HEADERS= 12;
-    private static final int PARAMS= 13;
-    private static final int COUNTER_TEMPLATE= 14;
-    
+    private UploadedFile file;
+
+    private static final int CODE = 0;
+    private static final int CLASS_NAME_FILTER = 1;
+    private static final int EVENT_TYPE_FILTER = 2;
+    private static final int EL_FILTER = 3;
+    private static final int ACTIVE = 4;
+    private static final int SCRIPT_INSTANCE_CODE = 5;
+    private static final int HOST = 6;
+    private static final int PORT = 7;
+    private static final int PAGE = 8;
+    private static final int HTTP_METHOD = 9;
+    private static final int USERNAME = 10;
+    private static final int PASSWORD = 11;
+    private static final int HEADERS = 12;
+    private static final int PARAMS = 13;
+    private static final int COUNTER_TEMPLATE = 14;
 
     public WebHookBean() {
         super(WebHook.class);
@@ -114,66 +111,65 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
 
         return super.saveOrUpdate(killConversation);
     }
-    
-	public void exportToFile() throws Exception {
-		CsvBuilder csv = new CsvBuilder();
-		csv.appendValue("Code");
-		csv.appendValue("Classename filter");
-		csv.appendValue("Event type filter");
-		csv.appendValue("El filter");
-		csv.appendValue("Active");
-		csv.appendValue("El action");
-		csv.appendValue("Host");
-		csv.appendValue("Port");
-		csv.appendValue("Page");
-		csv.appendValue("HTTP method");
-		csv.appendValue("Username");
-		csv.appendValue("Password");
-		csv.appendValue("Headers");
-		csv.appendValue("Parameters");
-		csv.appendValue("Counter template");
-		csv.startNewLine();
-		for (WebHook webHook :(!filters.isEmpty()&& filters.size()>0) ? getLazyDataModel():webHookService.list()) {
-			csv.appendValue(webHook.getCode());
-			csv.appendValue(webHook.getClassNameFilter());
-			csv.appendValue(webHook.getEventTypeFilter() + "");
-			csv.appendValue(webHook.getElFilter());
-			csv.appendValue(webHook.isDisabled() + "");
-			csv.appendValue((webHook.getScriptInstance()==null?"":webHook.getScriptInstance().getCode()));
-			csv.appendValue(webHook.getHost());
-			csv.appendValue(webHook.getPort() + "");
-			csv.appendValue(webHook.getPage());
-			csv.appendValue(webHook.getHttpMethod() + "");
-			csv.appendValue(webHook.getUsername());
-			csv.appendValue(webHook.getPassword());
-			
-			StringBuffer headers=new StringBuffer();
-			if(webHook.getHeaders()!=null){
-				String sep="";
-				for(String key:webHook.getHeaders().keySet()){
-					String valueHeaders=webHook.getHeaders().get(key);
-					headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
-					sep="|";
-					}
-				csv.appendValue(headers.toString());	
-			}
-			StringBuffer params=new StringBuffer(); 
-			if(webHook.getParams()!=null){
-				String sep="";
-				for(String key:webHook.getParams().keySet()){
-					String valueParams=webHook.getParams().get(key);
-					params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
-					sep="|";
-					}
-				csv.appendValue(params.toString());
-			    }
-				csv.appendValue(webHook.getCounterTemplate()!=null?  webHook.getCounterTemplate().getCode(): null);
-				csv.startNewLine();
-			}
-		InputStream inputStream = new ByteArrayInputStream(csv.toString()
-				.getBytes());
-		csv.download(inputStream, "WebHooks.csv");
-	}
+
+    public void exportToFile() throws Exception {
+        CsvBuilder csv = new CsvBuilder();
+        csv.appendValue("Code");
+        csv.appendValue("Classename filter");
+        csv.appendValue("Event type filter");
+        csv.appendValue("El filter");
+        csv.appendValue("Active");
+        csv.appendValue("El action");
+        csv.appendValue("Host");
+        csv.appendValue("Port");
+        csv.appendValue("Page");
+        csv.appendValue("HTTP method");
+        csv.appendValue("Username");
+        csv.appendValue("Password");
+        csv.appendValue("Headers");
+        csv.appendValue("Parameters");
+        csv.appendValue("Counter template");
+        csv.startNewLine();
+        for (WebHook webHook : (!filters.isEmpty() && filters.size() > 0) ? getLazyDataModel() : webHookService.list()) {
+            csv.appendValue(webHook.getCode());
+            csv.appendValue(webHook.getClassNameFilter());
+            csv.appendValue(webHook.getEventTypeFilter() + "");
+            csv.appendValue(webHook.getElFilter());
+            csv.appendValue(webHook.isDisabled() + "");
+            csv.appendValue((webHook.getScriptInstance() == null ? "" : webHook.getScriptInstance().getCode()));
+            csv.appendValue(webHook.getHost());
+            csv.appendValue(webHook.getPort() + "");
+            csv.appendValue(webHook.getPage());
+            csv.appendValue(webHook.getHttpMethod() + "");
+            csv.appendValue(webHook.getUsername());
+            csv.appendValue(webHook.getPassword());
+
+            StringBuffer headers = new StringBuffer();
+            if (webHook.getHeaders() != null) {
+                String sep = "";
+                for (String key : webHook.getHeaders().keySet()) {
+                    String valueHeaders = webHook.getHeaders().get(key);
+                    headers.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueHeaders.getBytes()));
+                    sep = "|";
+                }
+                csv.appendValue(headers.toString());
+            }
+            StringBuffer params = new StringBuffer();
+            if (webHook.getParams() != null) {
+                String sep = "";
+                for (String key : webHook.getParams().keySet()) {
+                    String valueParams = webHook.getParams().get(key);
+                    params.append(sep).append(key).append(":").append(Base64.encodeBase64String(valueParams.getBytes()));
+                    sep = "|";
+                }
+                csv.appendValue(params.toString());
+            }
+            csv.appendValue(webHook.getCounterTemplate() != null ? webHook.getCounterTemplate().getCode() : null);
+            csv.startNewLine();
+        }
+        InputStream inputStream = new ByteArrayInputStream(csv.toString().getBytes());
+        csv.download(inputStream, "WebHooks.csv");
+    }
 
     public void handleFileUpload(FileUploadEvent event) throws Exception {
         try {
@@ -194,8 +190,8 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
-        String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
-        File dir = new File(providerDir + File.separator + appProvider.getCode() + File.separator + existingEntitiesCSV);
+        String existingEntitiesCSV = paramBeanFactory.getInstance().getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
+        File dir = new File(paramBeanFactory.getChrootDir() + File.separator + existingEntitiesCSV);
         dir.mkdirs();
         existingEntitiesCsvFile = dir.getAbsolutePath() + File.separator + "WebHooks_" + new SimpleDateFormat("ddMMyyyyHHmmSS").format(new Date()) + ".csv";
         csv = new CsvBuilder();
@@ -214,9 +210,9 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
                 webHook.setElFilter(values[EL_FILTER]);
                 webHook.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
                 if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
+                    ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                     webHook.setScriptInstance(scriptInstance);
-                } 
+                }
                 webHook.setHost(values[HOST]);
                 webHook.setPort(Integer.parseInt(values[PORT]));
                 webHook.setPage(values[PAGE]);
@@ -261,101 +257,94 @@ public class WebHookBean extends BaseNotificationBean<WebHook> {
     }
 
     public void checkSelectedStrategy(String[] values, WebHook existingEntity, boolean isEntityAlreadyExist) throws BusinessException {
-		if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
-			existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
-			existingEntity.setEventTypeFilter(NotificationEventTypeEnum
-					.valueOf(values[EVENT_TYPE_FILTER]));
-			existingEntity.setElFilter(values[EL_FILTER]);
-			existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
+        if (strategyImportType.equals(StrategyImportTypeEnum.UPDATED)) {
+            existingEntity.setClassNameFilter(values[CLASS_NAME_FILTER]);
+            existingEntity.setEventTypeFilter(NotificationEventTypeEnum.valueOf(values[EVENT_TYPE_FILTER]));
+            existingEntity.setElFilter(values[EL_FILTER]);
+            existingEntity.setDisabled(Boolean.parseBoolean(values[ACTIVE]));
             if (!StringUtils.isBlank(values[SCRIPT_INSTANCE_CODE])) {
-                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]); 
+                ScriptInstance scriptInstance = scriptInstanceService.findByCode(values[SCRIPT_INSTANCE_CODE]);
                 existingEntity.setScriptInstance(scriptInstance);
-            } 
-			existingEntity.setHost(values[HOST]);
-			existingEntity.setPort(Integer.parseInt(values[PORT]));
-			existingEntity.setPage(values[PAGE]);
-			existingEntity.setHttpMethod(WebHookMethodEnum
-					.valueOf(values[HTTP_METHOD]));
-			existingEntity.setUsername(values[USERNAME]);
-			existingEntity.setPassword(values[PASSWORD]);
-			if(values[HEADERS]!=null && values[HEADERS].length()>0){
-				String[] mapElements=values[HEADERS].split("\\|");
-				if(mapElements!=null && mapElements.length>0){
-					Map<String,String> headers = new HashMap<String, String>();
-					for(String element:mapElements){
-						String[] param=element.split(":");
-						String value=new String(Base64.decodeBase64(param[1]));
-						headers.put(param[0],value);
-						
-					}
-					existingEntity.setHeaders(headers);
-				  }
-				}
-				if(values[PARAMS]!=null && values[PARAMS].length()>0){
-					String[] mapElements=values[PARAMS].split("\\|");
-					if(mapElements!=null && mapElements.length>0){
-						Map<String,String> params = new HashMap<String, String>();
-						for(String element:mapElements){
-							String[] param=element.split(":");
-							String value=new String(Base64.decodeBase64(param[1]));
-							params.put(param[0],value);
-						}
-						existingEntity.setParams(params);
-					  }
-					}
-			if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
-				CounterTemplate counterTemplate = counterTemplateService
-						.findByCode(values[COUNTER_TEMPLATE]);
-				existingEntity
-						.setCounterTemplate(counterTemplate != null ? counterTemplate
-								: null);
-			}
-			webHookService.update(existingEntity);
-			
-		}else if (strategyImportType
-					.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
-				throw new RejectedImportException("notification.rejectImport");
-			}
-			else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
-			if(!isEntityAlreadyExist){		
-				csv.appendValue("Code");
-				csv.appendValue("Classename filter");
-				csv.appendValue("Event type filter");
-				csv.appendValue("El filter");
-				csv.appendValue("Active");
-				csv.appendValue("Script instance code");
-				csv.appendValue("Host");
-				csv.appendValue("Port");
-				csv.appendValue("Page");
-				csv.appendValue("HTTP method");
-				csv.appendValue("Username");
-				csv.appendValue("Password");
-				csv.appendValue("Headers");
-				csv.appendValue("Parameters");
-				csv.appendValue("Counter template");
-			}
-			csv.startNewLine();
-			csv.appendValue(values[CODE]);
-			csv.appendValue(values[CLASS_NAME_FILTER]);
-			csv.appendValue(values[EVENT_TYPE_FILTER]);
-			csv.appendValue(values[EL_FILTER]);
-			csv.appendValue(values[ACTIVE]);
-			csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
-			csv.appendValue(values[HOST]);
-			csv.appendValue(values[PORT]);
-			csv.appendValue(values[PAGE]);
-			csv.appendValue(values[HTTP_METHOD]);
-			csv.appendValue(values[USERNAME]);
-			csv.appendValue(values[PASSWORD]);
-			csv.appendValue(values[COUNTER_TEMPLATE]);
-			}	
-	}
+            }
+            existingEntity.setHost(values[HOST]);
+            existingEntity.setPort(Integer.parseInt(values[PORT]));
+            existingEntity.setPage(values[PAGE]);
+            existingEntity.setHttpMethod(WebHookMethodEnum.valueOf(values[HTTP_METHOD]));
+            existingEntity.setUsername(values[USERNAME]);
+            existingEntity.setPassword(values[PASSWORD]);
+            if (values[HEADERS] != null && values[HEADERS].length() > 0) {
+                String[] mapElements = values[HEADERS].split("\\|");
+                if (mapElements != null && mapElements.length > 0) {
+                    Map<String, String> headers = new HashMap<String, String>();
+                    for (String element : mapElements) {
+                        String[] param = element.split(":");
+                        String value = new String(Base64.decodeBase64(param[1]));
+                        headers.put(param[0], value);
 
-	public StrategyImportTypeEnum getStrategyImportType() {
-		return strategyImportType;
-	}
+                    }
+                    existingEntity.setHeaders(headers);
+                }
+            }
+            if (values[PARAMS] != null && values[PARAMS].length() > 0) {
+                String[] mapElements = values[PARAMS].split("\\|");
+                if (mapElements != null && mapElements.length > 0) {
+                    Map<String, String> params = new HashMap<String, String>();
+                    for (String element : mapElements) {
+                        String[] param = element.split(":");
+                        String value = new String(Base64.decodeBase64(param[1]));
+                        params.put(param[0], value);
+                    }
+                    existingEntity.setParams(params);
+                }
+            }
+            if (!StringUtils.isBlank(values[COUNTER_TEMPLATE])) {
+                CounterTemplate counterTemplate = counterTemplateService.findByCode(values[COUNTER_TEMPLATE]);
+                existingEntity.setCounterTemplate(counterTemplate != null ? counterTemplate : null);
+            }
+            webHookService.update(existingEntity);
 
-	public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
-		this.strategyImportType = strategyImportType;
-	}
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECTE_IMPORT)) {
+            throw new RejectedImportException("notification.rejectImport");
+        } else if (strategyImportType.equals(StrategyImportTypeEnum.REJECT_EXISTING_RECORDS)) {
+            if (!isEntityAlreadyExist) {
+                csv.appendValue("Code");
+                csv.appendValue("Classename filter");
+                csv.appendValue("Event type filter");
+                csv.appendValue("El filter");
+                csv.appendValue("Active");
+                csv.appendValue("Script instance code");
+                csv.appendValue("Host");
+                csv.appendValue("Port");
+                csv.appendValue("Page");
+                csv.appendValue("HTTP method");
+                csv.appendValue("Username");
+                csv.appendValue("Password");
+                csv.appendValue("Headers");
+                csv.appendValue("Parameters");
+                csv.appendValue("Counter template");
+            }
+            csv.startNewLine();
+            csv.appendValue(values[CODE]);
+            csv.appendValue(values[CLASS_NAME_FILTER]);
+            csv.appendValue(values[EVENT_TYPE_FILTER]);
+            csv.appendValue(values[EL_FILTER]);
+            csv.appendValue(values[ACTIVE]);
+            csv.appendValue(values[SCRIPT_INSTANCE_CODE]);
+            csv.appendValue(values[HOST]);
+            csv.appendValue(values[PORT]);
+            csv.appendValue(values[PAGE]);
+            csv.appendValue(values[HTTP_METHOD]);
+            csv.appendValue(values[USERNAME]);
+            csv.appendValue(values[PASSWORD]);
+            csv.appendValue(values[COUNTER_TEMPLATE]);
+        }
+    }
+
+    public StrategyImportTypeEnum getStrategyImportType() {
+        return strategyImportType;
+    }
+
+    public void setStrategyImportType(StrategyImportTypeEnum strategyImportType) {
+        this.strategyImportType = strategyImportType;
+    }
 }

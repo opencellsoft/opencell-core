@@ -16,6 +16,11 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.model.crm.Customer;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ **/
+
 @XmlRootElement(name = "AccountHierarchy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccountHierarchyDto implements Serializable {

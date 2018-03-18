@@ -34090,7 +34090,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>12</con:value>
+        <con:value>13</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36721,7 +36721,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>58</con:value>
+        <con:value>59</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -37862,7 +37862,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
          <PaymentDto>\r
             <type>P</type>\r
             <description>Payment</description>\r
-            <occTemplateCode>FA_FACT</occTemplateCode>\r
+            <occTemplateCode>INV_STD</occTemplateCode>\r
             <amount>120</amount>\r
             <customerAccountCode>${#Project#entityPrefix}_${#TestSuite#index}_CA</customerAccountCode>\r
             <reference>123</reference>\r
@@ -38141,7 +38141,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>18</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39364,7 +39364,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>13</con:value>
+        <con:value>14</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>

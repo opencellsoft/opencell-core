@@ -32,6 +32,8 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> {
@@ -51,6 +53,13 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     @Inject
     private InboundRequestService inboundRequestService;
 
+    /**
+     * Create notification
+     * v5.0: Add script disable and check for ScriptInstanceCode
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public Notification create(NotificationDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
@@ -136,6 +145,13 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         return result;
     }
 
+    /**
+     * Update notification
+     * v5.0: Add script disable and check for ScriptInstanceCode
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public Notification update(NotificationDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

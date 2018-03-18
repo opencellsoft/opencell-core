@@ -132,6 +132,11 @@ import com.thoughtworks.xstream.io.xml.XppReader;
 import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Lock(LockType.READ)
 @Singleton
 public class EntityExportImportService implements Serializable {
@@ -203,7 +208,6 @@ public class EntityExportImportService implements Serializable {
     @Inject
     private Conversation conversation;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

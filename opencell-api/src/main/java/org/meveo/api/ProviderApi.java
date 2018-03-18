@@ -527,9 +527,9 @@ public class ProviderApi extends BaseApi {
     /**
      * New tenant/provider creation
      * 
-     * @param postData
-     * @throws MeveoApiException
-     * @throws BusinessException
+     * @param postData postData Provider Dto
+     * @throws MeveoApiException MeveoApiException
+     * @throws BusinessException BusinessException
      */
     public void createTenant(ProviderDto postData) throws MeveoApiException, BusinessException {
 
@@ -603,8 +603,8 @@ public class ProviderApi extends BaseApi {
     /**
      * Remove tenant/provider
      * 
-     * @param providerCode
-     * @throws MeveoApiException
+     * @param providerCode providerCode
+     * @throws MeveoApiException MeveoApiException
      */
     public void removeTenant(String providerCode) throws MeveoApiException {
 

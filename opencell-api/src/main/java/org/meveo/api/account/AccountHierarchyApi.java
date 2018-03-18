@@ -94,12 +94,13 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
 
 /**
- *
+ * 
  * Creates the customer hierarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer Account -
  * Billing Account - User Account
- *
+ * 
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  *
+ * @lastModifiedVersion 5.0
  */
 
 @SuppressWarnings("deprecation")
@@ -191,10 +192,10 @@ public class AccountHierarchyApi extends BaseApi {
     public static final int UA = 8;
 
     /**
-     *
+     * 
      * Creates the customer heirarchy including : - Trading Country - Trading Currency - Trading Language - Customer Brand - Customer Category - Seller - Customer - Customer
      * Account - Billing Account - User Account
-     *
+     * 
      * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastName if title provided,languageCode,billingCycleCode
      * @param postData posted data to API to create CRM
      * @throws MeveoApiException meveo api exception
@@ -370,14 +371,14 @@ public class AccountHierarchyApi extends BaseApi {
         userAccountDto.setCode(userAccountCode);
         userAccountDto.setAddress(address);
         userAccountDto.setJobTitle(postData.getJobTitle());
-
+        
         userAccountApi.create(userAccountDto);
     }
 
     /**
-     *
+     * 
      * @param postData posted data to API
-     *
+     * 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
@@ -585,9 +586,9 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     *
+     * 
      * @param postData posted data
-     *
+     * 
      * @return a wrapper of customer.
      * @throws MeveoApiException meveo api exception.
      */
@@ -701,9 +702,9 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     *
+     * 
      * @param postData posted data to API
-     *
+     * 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
      */
@@ -816,9 +817,9 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     *
+     * 
      * @param postData posted data to API
-     *
+     * 
      * @return account hierarchy response
      * @throws MeveoApiException meveo api exception.
      */
@@ -898,9 +899,9 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     *
+     * 
      * @param postData posted data to API
-     *
+     * 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
@@ -1140,9 +1141,9 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     *
+     * 
      * update CRM hierarchy.
-     *
+     * 
      * @param postData posted data to API
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
@@ -1383,7 +1384,7 @@ public class AccountHierarchyApi extends BaseApi {
 
     /**
      * Create or update Account Hierarchy based on code.
-     *
+     * 
      * @param postData posted data to API
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
@@ -1407,7 +1408,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     *
+     * 
      * @param postData posted data to API
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
@@ -1559,7 +1560,7 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     /**
-     * @param result get account hierarchy response
+     * @param result get account hierarchy response 
      * @param billingAccount billing account.
      */
     private void addBillingAccount(GetAccountHierarchyResponseDto result, BillingAccount billingAccount) {

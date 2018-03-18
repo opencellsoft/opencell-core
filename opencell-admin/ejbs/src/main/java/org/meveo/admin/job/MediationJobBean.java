@@ -38,6 +38,9 @@ import org.slf4j.Logger;
  * The Class MediationJobBean.
  *
  * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class MediationJobBean {
@@ -67,7 +70,6 @@ public class MediationJobBean {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

@@ -41,6 +41,9 @@ import org.slf4j.Logger;
 
 /**
  * The Class FtpAdapterJobBean.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class FtpAdapterJobBean {
@@ -75,7 +78,6 @@ public class FtpAdapterJobBean {
     /** The src. */
     private FileObject src = null;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

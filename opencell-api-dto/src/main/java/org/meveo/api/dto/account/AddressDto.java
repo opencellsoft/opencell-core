@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Address")
 @XmlAccessorType(XmlAccessType.FIELD)

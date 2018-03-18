@@ -20,7 +20,7 @@ import org.meveo.model.payments.PaymentStatusEnum;
  * Class to represent payments that was initiated from OC, we find payment done, ,pending,rejected and  error.
  *
  * @author anasseh
- * 
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)

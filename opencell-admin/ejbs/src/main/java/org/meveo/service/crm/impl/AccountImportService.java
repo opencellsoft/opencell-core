@@ -11,6 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.admin.SubscriptionImportHisto;
@@ -31,6 +32,8 @@ import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.model.shared.Title;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingCycleService;
@@ -41,6 +44,11 @@ import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class AccountImportService extends ImportService {
 
@@ -74,19 +82,23 @@ public class AccountImportService extends ImportService {
     @Inject
     private CountryService countryService;
 
-    /** paramBeanFactory */
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
+    /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    private Map<String, Title> map = new HashMap<>();
+    private Map<CacheKeyStr, Title> map = new HashMap<>();
 
-    private Map<String, TradingCountry> tradingCountryMap = new HashMap<>();
+    private Map<CacheKeyStr, TradingCountry> tradingCountryMap = new HashMap<>();
 
-    private Map<String, TradingLanguage> tradingLanguageMap = new HashMap<>();
+    private Map<CacheKeyStr, TradingLanguage> tradingLanguageMap = new HashMap<>();
 
-    private Map<String, BillingCycle> billingCycleMap = new HashMap<>();
+    private Map<CacheKeyStr, BillingCycle> billingCycleMap = new HashMap<>();
 
-    private Map<String, CustomerAccount> customerAccountMap = new HashMap<>();
+    private Map<CacheKeyStr, CustomerAccount> customerAccountMap = new HashMap<>();
 
     private Subscriptions subscriptionsError;
 
@@ -106,10 +118,10 @@ public class AccountImportService extends ImportService {
         CustomerAccount customerAccount = createdCustomerAccount;
         BillingCycle billingCycle = null;
 
-        billingCycle = billingCycleMap.get(billAccount.getBillingCycle());
+        billingCycle = billingCycleMap.get(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getBillingCycle()));
         if (billingCycle == null) {
             billingCycle = billingCycleService.findByCode(billAccount.getBillingCycle());
-            billingCycleMap.put(billAccount.getBillingCycle(), billingCycle);
+            billingCycleMap.put(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getBillingCycle()), billingCycle);
         }
 
         /**
@@ -122,7 +134,7 @@ public class AccountImportService extends ImportService {
 
         if (customerAccount == null) {
 
-            customerAccount = customerAccountMap.get(billAccount.getCustomerAccountId());
+            customerAccount = customerAccountMap.get(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getCustomerAccountId()));
 
             if (customerAccount == null) {
                 try {
@@ -134,7 +146,7 @@ public class AccountImportService extends ImportService {
                         }
                     }
 
-                    customerAccountMap.put(billAccount.getCustomerAccountId(), customerAccount);
+                    customerAccountMap.put(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getCustomerAccountId()), customerAccount);
                 } catch (Exception e) {
                     log.warn("failed to find customer account", e);
                 }
@@ -184,10 +196,10 @@ public class AccountImportService extends ImportService {
             // name.setTitle(titleService.findByCode(billAccount.getName().getTitle().trim()));
 
             String tilteCode = billAccount.getName().getTitle();
-            Title existingTitle = map.get(tilteCode);
+            Title existingTitle = map.get(new CacheKeyStr(currentUser.getProviderCode(), tilteCode));
             if (existingTitle == null) {
                 Title title = titleService.findByCode(tilteCode);
-                map.put(tilteCode, title);
+                map.put(new CacheKeyStr(currentUser.getProviderCode(), tilteCode), title);
                 name.setTitle(title);
             } else {
                 name.setTitle(existingTitle);
@@ -199,10 +211,10 @@ public class AccountImportService extends ImportService {
         // billingAccount.setTradingCountry(tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode()));
         // billingAccount.setTradingLanguage(tradingLanguageService.findByTradingLanguageCode(billAccount.getTradingLanguageCode()));
 
-        TradingCountry tradingCountry = tradingCountryMap.get(billAccount.getTradingCountryCode());
+        TradingCountry tradingCountry = tradingCountryMap.get(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getTradingCountryCode()));
         if (tradingCountry == null) {
             TradingCountry findByTradingCountryCode = tradingCountryService.findByTradingCountryCode(billAccount.getTradingCountryCode());
-            tradingCountryMap.put(billAccount.getTradingCountryCode(), findByTradingCountryCode);
+            tradingCountryMap.put(new CacheKeyStr(currentUser.getProviderCode(), billAccount.getTradingCountryCode()), findByTradingCountryCode);
             findByTradingCountryCode.getCountry().getCountryCode();
             billingAccount.setTradingCountry(findByTradingCountryCode);
         } else {
@@ -210,11 +222,11 @@ public class AccountImportService extends ImportService {
         }
 
         String tradingLanguageCode = billAccount.getTradingLanguageCode();
-        TradingLanguage tradingLanguage = tradingLanguageMap.get(tradingLanguageCode);
+        TradingLanguage tradingLanguage = tradingLanguageMap.get(new CacheKeyStr(currentUser.getProviderCode(), tradingLanguageCode));
         if (tradingLanguage == null) {
             TradingLanguage findByTradingLanguageCode = tradingLanguageService.findByTradingLanguageCode(tradingLanguageCode);
             findByTradingLanguageCode.getLanguage().getLanguageCode();
-            tradingLanguageMap.put(tradingLanguageCode, findByTradingLanguageCode);
+            tradingLanguageMap.put(new CacheKeyStr(currentUser.getProviderCode(), tradingLanguageCode), findByTradingLanguageCode);
             billingAccount.setTradingLanguage(findByTradingLanguageCode);
         } else {
             billingAccount.setTradingLanguage(tradingLanguage);
@@ -342,10 +354,10 @@ public class AccountImportService extends ImportService {
             nameUA.setLastName(uAccount.getName().getLastName());
             // nameUA.setTitle(titleService.findByCode(uAccount.getName().getTitle().trim()));
             String tilteCode = billAccount.getName().getTitle();
-            Title existingTitle = map.get(tilteCode);
+            Title existingTitle = map.get(new CacheKeyStr(currentUser.getProviderCode(), tilteCode));
             if (existingTitle != null) {
                 Title title = titleService.findByCode(tilteCode);
-                map.put(tilteCode, title);
+                map.put(new CacheKeyStr(currentUser.getProviderCode(), tilteCode), title);
                 nameUA.setTitle(title);
             } else {
                 nameUA.setTitle(existingTitle);

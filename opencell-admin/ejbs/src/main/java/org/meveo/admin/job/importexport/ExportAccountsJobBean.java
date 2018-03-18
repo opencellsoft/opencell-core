@@ -32,6 +32,10 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class ExportAccountsJobBean {
 
@@ -51,16 +55,14 @@ public class ExportAccountsJobBean {
     private JobExecutionService jobExecutionService;
 
     private BillingAccounts billingAccounts;
-    private ParamBean param;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-        param = paramBeanFactory.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "accounts" + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);

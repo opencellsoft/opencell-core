@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
@@ -40,11 +41,18 @@ import org.meveo.model.bi.Report;
 import org.meveo.model.datawarehouse.DWHAccountOperation;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 public class AccountingDetail extends FileProducer implements Reporting {
     @Inject
@@ -59,15 +67,16 @@ public class AccountingDetail extends FileProducer implements Reporting {
     @Inject
     private AccountOperationService accountOperationService;
 
-    private String reportsFolder;
-    private String templateFilename;
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     public Map<String, Object> parameters = new HashMap<String, Object>();
-    public HashMap<String, BigDecimal> balances = new HashMap<String, BigDecimal>();
-    public HashMap<String, String> customerNames = new HashMap<String, String>();
+    public HashMap<CacheKeyStr, BigDecimal> balances = new HashMap<CacheKeyStr, BigDecimal>();
+    public HashMap<CacheKeyStr, String> customerNames = new HashMap<CacheKeyStr, String>();
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
@@ -142,6 +151,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
                 StringBuilder sb = new StringBuilder(getFilename());
                 sb.append(".pdf");
+                String jasperTemplatesFolder = paramBeanFactory.getInstance().getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
+                String templateFilename = jasperTemplatesFolder + "accountingDetail.jasper";
                 generatePDFfile(file, sb.toString(), templateFilename, parameters);
             }
         } catch (IOException e) {
@@ -152,8 +163,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
     public String getCustomerName(String customerAccountCode) {
         String result = "";
-        if (customerNames.containsKey(customerAccountCode)) {
-            result = customerNames.get(customerAccountCode);
+        if (customerNames.containsKey(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode))) {
+            result = customerNames.get(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode));
         } else {
             CustomerAccount account = customerAccountService.findByCode(customerAccountCode);
             if (account.getName() != null) {
@@ -171,12 +182,12 @@ public class AccountingDetail extends FileProducer implements Reporting {
 
     public BigDecimal getCustomerBalanceDue(String customerAccountCode, Date atDate) {
         BigDecimal result = BigDecimal.ZERO;
-        if (balances.containsKey(customerAccountCode)) {
-            result = balances.get(customerAccountCode);
+        if (balances.containsKey(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode))) {
+            result = balances.get(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode));
         } else {
             try {
                 result = customerAccountService.customerAccountBalanceDue(null, customerAccountCode, atDate);
-                balances.put(customerAccountCode, result);
+                balances.put(new CacheKeyStr(currentUser.getProviderCode(), customerAccountCode), result);
             } catch (BusinessException e) {
                 log.error("Error while getting balance dues", e);
             }
@@ -189,6 +200,8 @@ public class AccountingDetail extends FileProducer implements Reporting {
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
         StringBuilder sb = new StringBuilder();
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         sb.append(reportsFolder);
         sb.append(appProvider.getCode() + "_");
         sb.append("INVENTAIRE_CCLIENT_");
@@ -197,10 +210,7 @@ public class AccountingDetail extends FileProducer implements Reporting {
     }
 
     public void export(Report report) {
-        ParamBean param = paramBeanFactory.getInstance();
-        reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
-        String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
-        templateFilename = jasperTemplatesFolder + "accountingDetail.jasper";
+
         accountOperationTransformationService = null;
         customerAccountService = null;
         accountOperationService = null;

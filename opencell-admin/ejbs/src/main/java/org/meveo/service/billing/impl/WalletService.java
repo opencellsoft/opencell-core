@@ -42,6 +42,9 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Wallet service implementation.
  * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {
@@ -51,13 +54,9 @@ public class WalletService extends PersistenceService<WalletInstance> {
 
     private static boolean usePrepaidBalanceCache = true;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @PostConstruct
     private void init() {
-        usePrepaidBalanceCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cachePrepaidBalance", "true"));
+        usePrepaidBalanceCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cachePrepaidBalance", "true"));
     }
 
     @Override

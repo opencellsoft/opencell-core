@@ -589,6 +589,7 @@
 			<artifactId>keycloak-admin-client</artifactId>
 			<version>${version.keycloak}</version>
 		</dependency>
+
 		<dependency>
 			<groupId>com.slimpay</groupId>
 			<artifactId>hapiclient</artifactId>
@@ -600,6 +601,13 @@
 			<version>1.0.4</version>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>1.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<profiles>

@@ -50,6 +50,11 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class CustomFieldInstanceService extends BaseService {
 
@@ -79,7 +84,6 @@ public class CustomFieldInstanceService extends BaseService {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

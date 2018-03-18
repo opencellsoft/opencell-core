@@ -30,6 +30,9 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * OCCTemplate service implementation.
+ * 
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
  */
 @Stateless
 public class OCCTemplateService extends BusinessService<OCCTemplate> {

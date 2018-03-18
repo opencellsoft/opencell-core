@@ -40,6 +40,11 @@ import org.meveo.service.base.BusinessService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.index.ElasticClient;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class CustomEntityTemplateService extends BusinessService<CustomEntityTemplate> {
 
@@ -57,13 +62,12 @@ public class CustomEntityTemplateService extends BusinessService<CustomEntityTem
 
     private static boolean useCETCache = true;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     @PostConstruct
     private void init() {
-        useCETCache = Boolean.parseBoolean(paramBeanFactory.getInstance().getProperty("cache.cacheCET", "true"));
+        useCETCache = Boolean.parseBoolean(ParamBeanFactory.getAppScopeInstance().getProperty("cache.cacheCET", "true"));
     }
 
     @Override

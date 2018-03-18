@@ -18,6 +18,11 @@ import org.slf4j.Logger;
 
 /**
  * Manages providers connection to DB
+ * 
+ * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class TenantRegistry {
@@ -70,7 +75,7 @@ public class TenantRegistry {
         try {
             Provider tenantInfo = (Provider) timer.getInfo();
 
-            applicationInitializer.initializeTenant(tenantInfo, false);
+            applicationInitializer.initializeTenant(tenantInfo, false, true);
 
         } catch (Exception e) {
             log.error("Failed to launch create tenant timer", e);

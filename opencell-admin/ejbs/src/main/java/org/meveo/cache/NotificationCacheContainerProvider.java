@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.event.IEvent;
 import org.meveo.model.AuditableEntity;
@@ -34,6 +35,9 @@ import org.slf4j.Logger;
  * Provides cache related services (loading, update) for event notification related operations
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class NotificationCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {
@@ -46,7 +50,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     @EJB
     private NotificationService notificationService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     private static boolean useNotificationCache = true;
 
@@ -61,7 +65,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     protected MeveoUser currentUser;
 
     static {
-        ParamBean tmpParamBean = ParamBean.getInstance();
+        ParamBean tmpParamBean = ParamBeanFactory.getAppScopeInstance();
         useNotificationCache = Boolean.parseBoolean(tmpParamBean.getProperty("cache.cacheNotification", "true"));
     }
 

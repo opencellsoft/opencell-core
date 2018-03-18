@@ -32,6 +32,7 @@ import org.meveo.admin.exception.UnbalanceAmountException;
 import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.audit.logging.annotations.MeveoAudit;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -57,6 +58,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * Payment service implementation.
+ * 
+ *   @author anasseh
+ *   @lastModifiedVersion 5.0
  */
 @Stateless
 public class PaymentService extends PersistenceService<Payment> {
@@ -87,6 +91,10 @@ public class PaymentService extends PersistenceService<Payment> {
 
     @Inject
     private RefundService refundService;
+
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @MeveoAudit
     @Override
@@ -126,7 +134,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param cardType card type
      * @param aoIdsToPay list of account operation's id to pay
      * @param createAO if true payment account operation will be created.
-     * @param matchingAO  if true matching account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
      * @param paymentGateway the set this payment gateway will be used.
      * @return instance of PaymentResponseDto
      * @throws BusinessException business exception
@@ -143,11 +151,12 @@ public class PaymentService extends PersistenceService<Payment> {
 
     /**
      * Pay by sepa.
+     * 
      * @param customerAccount customer account
      * @param ctsAmount amount in cent.
      * @param aoIdsToPay list of account operation's id to pay
      * @param createAO if true payment account operation will be created.
-     * @param matchingAO  if true matching account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
      * @param paymentGateway the set this payment gateway will be used.
      * @return instance of PaymentResponseDto
      * @throws BusinessException business exception
@@ -155,6 +164,25 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws UnbalanceAmountException balance amount exception.
      */
     public PaymentResponseDto payByMandat(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
+            PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
+        return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
+    }
+    
+    /**
+     * Refund by sepa.
+     * 
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent.
+     * @param aoIdsToPay list of account operation's id to refund
+     * @param createAO if true refund account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
+     * @param paymentGateway the set this payment gateway will be used.
+     * @return instance of PaymentResponseDto
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws UnbalanceAmountException balance amount exception.
+     */
+    public PaymentResponseDto refundByMandat(CustomerAccount customerAccount, long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO,
             PaymentGateway paymentGateway) throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
         return doPayment(customerAccount, ctsAmount, aoIdsToPay, createAO, matchingAO, paymentGateway, null, null, null, null, null, true, PaymentMethodEnum.DIRECTDEBIT);
     }
@@ -167,7 +195,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param ctsAmount Amount to refund
      * @param aoIdsToRefund list of account operations ids to be refund
      * @param createAO if true payment account operation will be created.
-     * @param matchingAO  if true matching account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
      * @param paymentGateway if set, this paymentGateway will be used
      * @return instance of PaymentResponseDto
      * @throws BusinessException business exception
@@ -191,7 +219,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param cardType card type
      * @param aoToRefund list of account operation's id to refund
      * @param createAO if true payment account operation will be created.
-     * @param matchingAO  if true matching account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
      * @param paymentGateway the set this payment gateway will be used.
      * @return instance of PaymentResponseDto
      * @throws BusinessException business exception
@@ -201,30 +229,31 @@ public class PaymentService extends PersistenceService<Payment> {
     public PaymentResponseDto refundByCard(CustomerAccount customerAccount, Long ctsAmount, String cardNumber, String ownerName, String cvv, String expiryDate,
             CreditCardTypeEnum cardType, List<Long> aoToRefund, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
-        return doPayment(customerAccount, ctsAmount, aoToRefund, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, false, PaymentMethodEnum.CARD);
+        return doPayment(customerAccount, ctsAmount, aoToRefund, createAO, matchingAO, paymentGateway, cardNumber, ownerName, cvv, expiryDate, cardType, false,
+            PaymentMethodEnum.CARD);
     }
 
-   /**
-    * Do payment or refund by token or card
-    * 
-    * @param customerAccount customer account
-    * @param ctsAmount amount in cent.
-    * @param cardNumber card's number
-    * @param ownerName card's owner name
-    * @param cvv cvv number
-    * @param expiryDate expiry date
-    * @param cardType card type
-    * @param aoIdsToPay list of account operation's id to refund
-    * @param createAO if true payment account operation will be created.
-    * @param matchingAO  if true matching account operation will be created.
-    * @param paymentGateway the set this payment gateway will be used.
-    * @param isPayment if true is a payment else is a refund.
-    * @param paymentMethodType payment method to use, CARD or DIRECTDEIBT.
-    * @return instance of PaymentResponseDto
-    * @throws BusinessException business exception
-    * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
-    * @throws UnbalanceAmountException balance amount exception.
-    */
+    /**
+     * Do payment or refund by token or card
+     * 
+     * @param customerAccount customer account
+     * @param ctsAmount amount in cent.
+     * @param cardNumber card's number
+     * @param ownerName card's owner name
+     * @param cvv cvv number
+     * @param expiryDate expiry date
+     * @param cardType card type
+     * @param aoIdsToPay list of account operation's id to refund
+     * @param createAO if true payment account operation will be created.
+     * @param matchingAO if true matching account operation will be created.
+     * @param paymentGateway the set this payment gateway will be used.
+     * @param isPayment if true is a payment else is a refund.
+     * @param paymentMethodType payment method to use, CARD or DIRECTDEIBT.
+     * @return instance of PaymentResponseDto
+     * @throws BusinessException business exception
+     * @throws NoAllOperationUnmatchedException exception thrown when not all operations are matched.
+     * @throws UnbalanceAmountException balance amount exception.
+     */
     public PaymentResponseDto doPayment(CustomerAccount customerAccount, Long ctsAmount, List<Long> aoIdsToPay, boolean createAO, boolean matchingAO, PaymentGateway paymentGateway,
             String cardNumber, String ownerName, String cvv, String expiryDate, CreditCardTypeEnum cardType, boolean isPayment, PaymentMethodEnum paymentMethodType)
             throws BusinessException, NoAllOperationUnmatchedException, UnbalanceAmountException {
@@ -356,15 +385,16 @@ public class PaymentService extends PersistenceService<Payment> {
      * @param ctsAmount amount in cent.
      * @param doPaymentResponseDto payment responsse dto
      * @param paymentMethodType payment method used
-     * @param aoIdsToPay  list AO to paid
+     * @param aoIdsToPay list AO to paid
      * @return the AO id created
      * @throws BusinessException business exception.
      */
     public Long createPaymentAO(CustomerAccount customerAccount, Long ctsAmount, PaymentResponseDto doPaymentResponseDto, PaymentMethodEnum paymentMethodType,
             List<Long> aoIdsToPay) throws BusinessException {
-        String occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.card", "PAY_CRD");
+        ParamBean paramBean = paramBeanFactory.getInstance();
+        String occTemplateCode = paramBean.getProperty("occ.payment.card", "PAY_CRD");
         if (paymentMethodType == PaymentMethodEnum.DIRECTDEBIT) {
-            occTemplateCode = ParamBean.getInstance().getProperty("occ.payment.dd", "PAY_DDT");
+            occTemplateCode = paramBean.getProperty("occ.payment.dd", "PAY_DDT");
         }
         OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
         if (occTemplate == null) {
@@ -444,6 +474,7 @@ public class PaymentService extends PersistenceService<Payment> {
      * @throws BusinessException Business Exception
      */
     public void paymentCallback(String paymentId, PaymentStatusEnum paymentStatus, String errorCode, String errorMessage) throws BusinessException {
+        ParamBean paramBean = paramBeanFactory.getInstance();
         try {
             if (paymentStatus == null) {
                 throw new BusinessException("paymentStatus is required");
@@ -466,17 +497,16 @@ public class PaymentService extends PersistenceService<Payment> {
 
                 if (accountOperation instanceof Payment) {
                     if (PaymentMethodEnum.CARD == ((Payment) accountOperation).getPaymentMethod()) {
-
-                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedPayment.card", "REJ_CRD");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.card", "REJ_CRD");
                     } else {
-                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedPayment.dd", "REJ_DDT");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedPayment.dd", "REJ_DDT");
                     }
                 }
                 if (accountOperation instanceof Refund) {
                     if (PaymentMethodEnum.CARD == ((Refund) accountOperation).getPaymentMethod()) {
-                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.card", "REJ_RCR");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.card", "REJ_RCR");
                     } else {
-                        occTemplateCode = ParamBean.getInstance().getProperty("occ.rejectedRefund.dd", "REJ_RDD");
+                        occTemplateCode = paramBean.getProperty("occ.rejectedRefund.dd", "REJ_RDD");
                     }
                 }
                 OCCTemplate occTemplate = oCCTemplateService.findByCode(occTemplateCode);
@@ -537,9 +567,9 @@ public class PaymentService extends PersistenceService<Payment> {
     /**
      * Retrieve the account Operation that was paid.
      * 
-     * @param paymentOrRefund  the payment or refund.
-     * @return  the account Operation that was paid
-     * @throws  BusinessException Business Exception
+     * @param paymentOrRefund the payment or refund.
+     * @return the account Operation that was paid
+     * @throws BusinessException Business Exception
      */
     private AccountOperation getAccountOperationThatWasPaid(AccountOperation paymentOrRefund) throws BusinessException {
         List<MatchingAmount> matchingAmounts = paymentOrRefund.getMatchingAmounts();

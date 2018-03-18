@@ -141,7 +141,7 @@ public class OccTemplateApi extends BaseApi {
 
     /**
      * retrieve a list of occ templates.
-     * @param pagingAndFiltering 
+     * @param pagingAndFiltering pagingAndFiltering
      * @return OCCTemplateDto.
      * @throws MeveoApiException meveo api exception.
      */

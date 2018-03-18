@@ -55,6 +55,11 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class ImportCustomersJobBean {
 
@@ -105,7 +110,6 @@ public class ImportCustomersJobBean {
     private Sellers sellersWarning;
     private Sellers sellersError;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

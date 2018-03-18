@@ -2,6 +2,7 @@ package org.meveo.service.payments.impl;
 
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -10,7 +11,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CreditCardTypeEnum;
@@ -28,7 +29,6 @@ import org.slf4j.LoggerFactory;
 import com.slimpay.hapiclient.exception.HttpException;
 import com.slimpay.hapiclient.hal.CustomRel;
 import com.slimpay.hapiclient.hal.Link;
-import com.slimpay.hapiclient.hal.Rel;
 import com.slimpay.hapiclient.hal.Resource;
 import com.slimpay.hapiclient.http.Follow;
 import com.slimpay.hapiclient.http.Follow.Builder;
@@ -41,81 +41,80 @@ import com.slimpay.hapiclient.util.EntityConverter;
 /**
  * 
  * @author anasseh
+ * @lastModifiedVersion 5.0
  *
  */
 @PaymentGatewayClass
 public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     protected Logger log = LoggerFactory.getLogger(SlimpayGatewayPayment.class);
-    private String API_URL = ParamBean.getInstance().getProperty("slimPay.apiURL", null);
-    private String PROFILE = ParamBean.getInstance().getProperty("slimPay.profile", null);
-    private String TOKEN_END_POINT = ParamBean.getInstance().getProperty("slimPay.tokenEndPoint", "/oauth/token");
-    private String USER_ID = ParamBean.getInstance().getProperty("slimPay.userId", null);
-    private String SECRET_KEY = ParamBean.getInstance().getProperty("slimPay.secretKey", null);
-    private String SCOPE = ParamBean.getInstance().getProperty("slimPay.scope", "api");
-    private String RELNS = ParamBean.getInstance().getProperty("slimPay.relns", null);
-    private boolean isCheckMandatBeforePayment = "true".equals(ParamBean.getInstance().getProperty("slimPay.checkMandatBeforePayment", "true"));
-    private String SCHEME = ParamBean.getInstance().getProperty("slimPay.scheme", "SEPA.DIRECT_DEBIT.CORE");
 
-    private HapiClient client = null;
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-    private void connect() {
-        client = new HapiClient.Builder().setApiUrl(API_URL).setProfile(PROFILE).setAuthenticationMethod(
-            new Oauth2BasicAuthentication.Builder().setTokenEndPointUrl(TOKEN_END_POINT).setUserid(USER_ID).setPassword(SECRET_KEY).setScope(SCOPE).build()).build();
+    private String getApiUrl() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.apiURL", null);
+    }
+
+    private String getProfile() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.profile", null);
+    }
+
+    private String getTokenEndPoint() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.tokenEndPoint", "/oauth/token");
+    }
+
+    private String getUserId() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.userId", null);
+    }
+
+    private String getSecretKey() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.secretKey", null);
+    }
+
+    private String getScope() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.scope", "api");
+    }
+
+    private String getRelns() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.relns", null);
+    }
+
+    private boolean isCheckMandatBeforePayment() {
+        return "true".equals(paramBeanFactory.getInstance().getProperty("slimPay.checkMandatBeforePayment", "true"));
+    }
+
+    private String getScheme() {
+        return paramBeanFactory.getInstance().getProperty("slimPay.scheme", "SEPA.DIRECT_DEBIT.CORE");
+    }
+
+    private HapiClient connect() {
+        HapiClient client = new HapiClient.Builder().setApiUrl(getApiUrl()).setProfile(getProfile())
+            .setAuthenticationMethod(
+                new Oauth2BasicAuthentication.Builder().setTokenEndPointUrl(getTokenEndPoint()).setUserid(getUserId()).setPassword(getSecretKey()).setScope(getScope()).build())
+            .build();
+        return client;
     }
 
     private HapiClient getClient() {
-        // if (client == null) {
-        connect();
-        // }
-        return client;
+        return connect();
     }
 
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
-        try {
-            String label = additionalParams != null ? (String) additionalParams.get("invoiceNumber") : null;
-            log.trace("doPaymentSepa request:" + (getSepaPaymentRequest(USER_ID, paymentToken.getMandateIdentification(), ctsAmount,
-                paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), SCHEME, label).toString()));
+        return doPaymentSepaOrRefundSepa(paymentToken, ctsAmount, additionalParams, true);
+    }
 
-            if (isCheckMandatBeforePayment) {
-                MandatInfoDto mandatInfo = checkMandat(paymentToken.getMandateIdentification(), null);
-                if (MandatStateEnum.active != mandatInfo.getState()) {
-                    doPaymentResponseDto.setErrorMessage("Mandate " + paymentToken.getMandateIdentification() + " not active");
-                    doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
-                    return doPaymentResponseDto;
-                }
-            }
-
-            Follow follow = new Follow.Builder(new CustomRel(RELNS + "create-payins")).setMethod(Method.POST)
-                .setMessageBody(EntityConverter.jsonToStringEntity(getSepaPaymentRequest(USER_ID, paymentToken.getMandateIdentification(), ctsAmount,
-                    paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), SCHEME, label)))
-                .build();
-
-            try {
-                Resource response = getClient().send(follow);
-                JsonObject body = response.getState();
-                doPaymentResponseDto.setPaymentID(body.getString("id"));
-                doPaymentResponseDto.setPaymentStatus(mappingStatus(body.getString("executionStatus")));
-            } catch (HttpException e) {
-                doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
-                doPaymentResponseDto.setErrorMessage(e.getResponseBody());
-                doPaymentResponseDto.setErrorCode("" + e.getStatusCode());
-                log.error("Error on slimpay sepa payment:", e);
-            }
-        } catch (Exception e) {
-            doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
-            doPaymentResponseDto.setErrorMessage(e.getMessage());
-        }
-        log.trace("doPaymentSepa response:" + doPaymentResponseDto.toString());
-        return doPaymentResponseDto;
+    @Override
+    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
+        return doPaymentSepaOrRefundSepa(paymentToken, ctsAmount, additionalParams, false);
     }
 
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
-        log.trace("checkMandat request:" + (getCheckMandatRequest(USER_ID, mandatReference, mandateId).toString()));
-        Builder builder = new Follow.Builder(new CustomRel(RELNS + "get-mandates")).setMethod(Method.GET).setUrlVariable("creditorReference", USER_ID);
+        log.trace("checkMandat request:" + (getCheckMandatRequest(getUserId(), mandatReference, mandateId).toString()));
+        Builder builder = new Follow.Builder(new CustomRel(getRelns() + "get-mandates")).setMethod(Method.GET).setUrlVariable("creditorReference", getUserId());
         if (!StringUtils.isBlank(mandatReference)) {
             builder = builder.setUrlVariable("reference", mandatReference);
         }
@@ -127,7 +126,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
         try {
             Resource response = getClient().send(follow);
             JsonObject body = response.getState();
-            Link bankAccountLink = response.getLink(new CustomRel(RELNS + "get-bank-account"));
+            Link bankAccountLink = response.getLink(new CustomRel(getRelns() + "get-bank-account"));
             Request request = new Request.Builder(bankAccountLink.getHref()).setMethod(Method.GET).build();
             Resource bankAccountResponse = getClient().send(request);
             mandatInfoDto = getMandateFromJson(body, bankAccountResponse.getState());
@@ -142,7 +141,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     @Override
     public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
         log.trace("checkPayment request:" + (getCheckPaymentRequest(paymentID, paymentMethodType).toString()));
-        Follow follow = new Follow.Builder(new CustomRel(RELNS + "get-direct-debits")).setMethod(Method.GET).setUrlVariable("id", paymentID).build();
+        Follow follow = new Follow.Builder(new CustomRel(getRelns() + "get-direct-debits")).setMethod(Method.GET).setUrlVariable("id", paymentID).build();
         PaymentResponseDto paymentResponseDto = new PaymentResponseDto();
         try {
             Resource response = getClient().send(follow);
@@ -160,7 +159,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     /**
      * Retrieve the subscriber as a customerAccount from the signMandate order.
      * 
-     * @param referenceOrder Order reference 
+     * @param referenceOrder Order reference
      * @return Customer account dto
      * @throws BusinessException Business Exception
      */
@@ -181,7 +180,59 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     /**
+     * Initiate a payment or refund sepa whit valid mandat.
+     * 
+     * @param paymentToken payment token(mandat)
+     * @param ctsAmount amount in cent
+     * @param additionalParams additional params
+     * @param isPayment true for payment ,false for payout(refund)
+     * @return payment response dto
+     * @throws BusinessException business exception.
+     */
+    private PaymentResponseDto doPaymentSepaOrRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams, boolean isPayment)
+            throws BusinessException {
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        try {
+            String label = additionalParams != null ? (String) additionalParams.get("invoiceNumber") : null;
+            log.trace("doPaymentSepaOrRefundSepa request:" + (getSepaPaymentRequest(getUserId(), paymentToken.getMandateIdentification(), ctsAmount,
+                paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), getScheme(), label).toString()));
+
+            if (isCheckMandatBeforePayment()) {
+                MandatInfoDto mandatInfo = checkMandat(paymentToken.getMandateIdentification(), null);
+                if (MandatStateEnum.active != mandatInfo.getState()) {
+                    doPaymentResponseDto.setErrorMessage("Mandate " + paymentToken.getMandateIdentification() + " not active");
+                    doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+                    return doPaymentResponseDto;
+                }
+            }
+            String operationName = isPayment ? "create-payins" : "create-payouts";
+            Follow follow = new Follow.Builder(new CustomRel(getRelns() + operationName)).setMethod(Method.POST)
+                .setMessageBody(EntityConverter.jsonToStringEntity(getSepaPaymentRequest(getUserId(), paymentToken.getMandateIdentification(), ctsAmount,
+                    paymentToken.getCustomerAccount().getTradingCurrency().getCurrencyCode(), getScheme(), label)))
+                .build();
+
+            try {
+                Resource response = getClient().send(follow);
+                JsonObject body = response.getState();
+                doPaymentResponseDto.setPaymentID(body.getString("id"));
+                doPaymentResponseDto.setPaymentStatus(mappingStatus(body.getString("executionStatus")));
+            } catch (HttpException e) {
+                doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+                doPaymentResponseDto.setErrorMessage(e.getResponseBody());
+                doPaymentResponseDto.setErrorCode("" + e.getStatusCode());
+                log.error("Error on slimpay sepa payment/refund:", e);
+            }
+        } catch (Exception e) {
+            doPaymentResponseDto.setPaymentStatus(PaymentStatusEnum.ERROR);
+            doPaymentResponseDto.setErrorMessage(e.getMessage());
+        }
+        log.trace("doPaymentSepaOrRefundSepa response:" + doPaymentResponseDto.toString());
+        return doPaymentResponseDto;
+    }
+
+    /**
      * Build check payment request
+     * 
      * @param paymentID The payment id
      * @param paymentMethodType The payment Method Type
      * @return
@@ -324,11 +375,6 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public void doBulkPaymentAsService(DDRequestLOT ddRequestLot) throws BusinessException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         throw new UnsupportedOperationException();
     }
 }

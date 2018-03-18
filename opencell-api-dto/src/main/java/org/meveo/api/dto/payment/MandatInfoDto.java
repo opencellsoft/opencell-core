@@ -14,7 +14,7 @@ import org.meveo.model.payments.MandatStateEnum;
 
 /**
  * @author anasseh
- *
+ * @lastModifiedVersion 5.0
  */
 
 @XmlRootElement(name = "MandatInfo")

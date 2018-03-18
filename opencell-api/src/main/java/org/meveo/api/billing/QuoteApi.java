@@ -26,7 +26,6 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.invoice.InvoiceApi;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.ProductInstance;
@@ -71,6 +70,11 @@ import org.tmf.dsmapi.quote.Characteristic;
 import org.tmf.dsmapi.quote.ProductQuote;
 import org.tmf.dsmapi.quote.ProductQuoteItem;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class QuoteApi extends BaseApi {
 
@@ -129,20 +133,20 @@ public class QuoteApi extends BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     public ProductQuote createQuote(ProductQuote productQuote) throws MeveoApiException, BusinessException {
-    	
+
         List<ProductQuoteItem> quoteItem1 = productQuote.getQuoteItem();
-		if (quoteItem1 == null || quoteItem1.isEmpty()) {
+        if (quoteItem1 == null || quoteItem1.isEmpty()) {
             missingParameters.add("quoteItem");
         }
-		
+
         if (productQuote.getQuoteDate() == null) {
             missingParameters.add("quoteDate");
         }
         handleMissingParameters();
-        
+
         List<Characteristic> characteristic = productQuote.getCharacteristic();
-        
-		if (characteristic.size() > 0) {
+
+        if (characteristic.size() > 0) {
             for (Characteristic quoteCharacteristic : characteristic) {
                 if (quoteCharacteristic.getName().equals(OrderProductCharacteristicEnum.PRE_QUOTE_SCRIPT.getCharacteristicName())) {
                     String scriptCode = quoteCharacteristic.getValue();
@@ -165,27 +169,26 @@ public class QuoteApi extends BaseApi {
         quote.setQuoteDate(productQuote.getQuoteDate() != null ? productQuote.getQuoteDate() : new Date());
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
-        
+
         if (productQuote.getValidFor() != null) {
             quote.setValidity(productQuote.getValidFor().toDatePeriod());
         }
-        
+
         if (productQuote.getState() != null) {
             quote.setStatus(QuoteStatusEnum.valueByApiState(productQuote.getState()));
         } else {
             quote.setStatus(QuoteStatusEnum.IN_PROGRESS);
         }
-        
+
         UserAccount quoteLevelUserAccount = null;
         org.meveo.model.billing.BillingAccount billingAccount = null; // used for validation only
-        
+
         if (productQuote.getBillingAccount() != null && !productQuote.getBillingAccount().isEmpty()) {
             String billingAccountId = productQuote.getBillingAccount().get(0).getId();
             if (!StringUtils.isEmpty(billingAccountId)) {
-                //quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
-            	quoteLevelUserAccount = (UserAccount) userAccountService.getEntityManager()
-            			.createNamedQuery("UserAccount.findByCode")
-            			.setParameter("code", billingAccountId).getSingleResult();
+                // quoteLevelUserAccount = userAccountService.findByCode(billingAccountId);
+                quoteLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
+                    .getSingleResult();
                 if (quoteLevelUserAccount == null) {
                     throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                 }
@@ -198,14 +201,15 @@ public class QuoteApi extends BaseApi {
             if (productQuoteItem.getBillingAccount() != null && !productQuoteItem.getBillingAccount().isEmpty()) {
                 String billingAccountId = productQuoteItem.getBillingAccount().get(0).getId();
                 if (!StringUtils.isEmpty(billingAccountId)) {
-                    //itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
-                	itemLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId).getSingleResult();
-                	if (itemLevelUserAccount == null) {
+                    // itemLevelUserAccount = userAccountService.findByCode(billingAccountId);
+                    itemLevelUserAccount = (UserAccount) userAccountService.getEntityManager().createNamedQuery("UserAccount.findByCode").setParameter("code", billingAccountId)
+                        .getSingleResult();
+                    if (itemLevelUserAccount == null) {
                         throw new EntityDoesNotExistsException(UserAccount.class, billingAccountId);
                     }
-                    
+
                     BillingAccount billingAccount2 = itemLevelUserAccount.getBillingAccount();
-					if (billingAccount != null && !billingAccount.equals(billingAccount2)) {
+                    if (billingAccount != null && !billingAccount.equals(billingAccount2)) {
                         throw new InvalidParameterException("Accounts declared on quote level and item levels don't belong to the same billing account");
                     }
                 }
@@ -217,32 +221,32 @@ public class QuoteApi extends BaseApi {
             } else if (itemLevelUserAccount == null && quoteLevelUserAccount != null) {
                 productQuoteItem.addBillingAccount(quoteLevelUserAccount.getCode());
             }
-            
+
             handleMissingParameters();
 
             QuoteItem quoteItem = new QuoteItem();
             List<QuoteItemProductOffering> productOfferings = new ArrayList<>();
             ProductOffering mainProductOffering = null;
-            
+
             // For modify and delete actions, product offering might not be specified
             if (productQuoteItem.getProductOffering() != null) {
                 Date subscriptionDate = ((Date) getProductCharacteristic(productQuoteItem.getProduct(), OrderProductCharacteristicEnum.SUBSCRIPTION_DATE.getCharacteristicName(),
                     Date.class, DateUtils.setTimeToZero(quote.getQuoteDate())));
 
                 mainProductOffering = productOfferingService.findByCode(productQuoteItem.getProductOffering().getId(), subscriptionDate);
-                                
+
                 if (mainProductOffering == null) {
-                    throw new EntityDoesNotExistsException(ProductOffering.class,
-                        productQuoteItem.getProductOffering().getId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                    throw new EntityDoesNotExistsException(ProductOffering.class, productQuoteItem.getProductOffering().getId() + " / "
+                            + DateUtils.formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
                 }
                 productOfferings.add(new QuoteItemProductOffering(quoteItem, mainProductOffering, 0));
 
                 if (productQuoteItem.getProductOffering().getBundledProductOffering() != null) {
                     for (BundledProductReference bundledProductOffering : productQuoteItem.getProductOffering().getBundledProductOffering()) {
-                    	ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
-                    	if (productOfferingInDB == null) {
-                            throw new EntityDoesNotExistsException(ProductOffering.class,
-                                bundledProductOffering.getReferencedId() + " / " + DateUtils.formatDateWithPattern(subscriptionDate, ParamBean.getInstance().getDateTimeFormat()));
+                        ProductOffering productOfferingInDB = productOfferingService.findByCode(bundledProductOffering.getReferencedId(), subscriptionDate);
+                        if (productOfferingInDB == null) {
+                            throw new EntityDoesNotExistsException(ProductOffering.class, bundledProductOffering.getReferencedId() + " / "
+                                    + DateUtils.formatDateWithPattern(subscriptionDate, paramBeanFactory.getInstance().getDateTimeFormat()));
                         }
                         productOfferings.add(new QuoteItemProductOffering(quoteItem, productOfferingInDB, productOfferings.size()));
                     }
@@ -332,7 +336,7 @@ public class QuoteApi extends BaseApi {
         quote = initiateWorkflow(quote);
 
         ProductQuote quoteToDto = quoteToDto(quote);
-		return quoteToDto;
+        return quoteToDto;
     }
 
     /**
@@ -421,7 +425,7 @@ public class QuoteApi extends BaseApi {
                 }
                 quoteInvoiceInfos.get(baCode).add(preInvoiceQuoteItem(quote, quoteItem));
             }
-            
+
             List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos);
             List<QuoteInvoiceInfo> quoteInvoiceInfosAll = new ArrayList<>();
 
@@ -617,7 +621,7 @@ public class QuoteApi extends BaseApi {
         CustomFieldsDto customFields = extractCustomFields(product, Subscription.class);
         try {
             populateCustomFields(customFields, subscription, true, true);
-        } catch (MissingParameterException | InvalidParameterException  e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -661,7 +665,7 @@ public class QuoteApi extends BaseApi {
             log.error("Failed to associate custom field instance to an entity", e);
             throw e;
         }
-        
+
         productInstanceService.instantiateProductInstance(productInstance, criteria1, criteria2, criteria3, true);
 
         return productInstance;
@@ -746,8 +750,8 @@ public class QuoteApi extends BaseApi {
                 Date.class, subscription.getSubscriptionDate()));
             serviceInstance.setEndAgreementDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(),
                 Date.class, subscription.getEndAgreementDate()));
-            serviceInstance.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(),
-                    Date.class, subscription.getEndAgreementDate()));
+            serviceInstance.setRateUntilDate((Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.RATE_UNTIL_DATE.getCharacteristicName(), Date.class,
+                subscription.getEndAgreementDate()));
 
             String terminationReasonCode = (String) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(),
                 String.class, null);
@@ -879,6 +883,7 @@ public class QuoteApi extends BaseApi {
 
     /**
      * Convert quote stored in DB to quote DTO expected by tmForum api.
+     * 
      * @param quote Quote to convert
      * @return Quote DTO object
      * @throws BusinessException business exception
@@ -921,6 +926,7 @@ public class QuoteApi extends BaseApi {
 
     /**
      * Convert quote item stored in DB to quoteItem dto expected by tmForum api. As actual dto was serialized earlier, all need to do is to deserialize it and update the status.
+     * 
      * @param quoteItem Quote item to convert to dto
      * @return Quote item Dto
      * @throws BusinessException business exception
@@ -936,6 +942,7 @@ public class QuoteApi extends BaseApi {
 
     /**
      * Distinguish bundled products which could be either services or products.
+     * 
      * @param productQuoteItem Product order item DTO
      * @param quoteItem Order item entity
      * @return An array of List&lt;Product&gt; elements, first being list of products, and second - list of services
@@ -958,11 +965,12 @@ public class QuoteApi extends BaseApi {
                 }
             }
         }
-        return new List[] {products, services};
+        return new List[] { products, services };
     }
 
     /**
      * Place an order from a quote.
+     * 
      * @param quoteCode code of quote to convert to an order
      * @return Product order DTO object
      * @throws BusinessException business exception

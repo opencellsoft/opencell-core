@@ -21,7 +21,7 @@ import org.meveo.model.EnableEntity;
 
 /**
  * @author anasseh
- *
+ * @lastModifiedVersion 5.0
  */
 
 @Entity

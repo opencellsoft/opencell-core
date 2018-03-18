@@ -18,6 +18,12 @@ import org.meveo.service.script.payment.PaymentScriptInterface;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * 
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
+ */
+
 public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
     protected Logger log = LoggerFactory.getLogger(CustomApiGatewayPayment.class);

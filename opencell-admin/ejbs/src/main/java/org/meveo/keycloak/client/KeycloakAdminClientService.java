@@ -40,6 +40,8 @@ import org.slf4j.Logger;
 /**
  * @author Edward P. Legaspi
  * @since 10 Nov 2017
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class KeycloakAdminClientService {
@@ -220,6 +222,8 @@ public class KeycloakAdminClientService {
      * @param listRoleRepresentation list of role representation.
      * @param roleRepresentation role representation to remove.
      * @throws BusinessException business exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     private List<RoleRepresentation> removeRole(List<RoleRepresentation> listRoleRepresentation, RoleRepresentation roleRepresentation) throws BusinessException {
         List<RoleRepresentation> updatedListRoleRepresentation = new ArrayList<>();
@@ -237,6 +241,8 @@ public class KeycloakAdminClientService {
      * @param httpServletRequest http request
      * @param postData posted data.
      * @throws BusinessException business exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void updateUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -338,6 +344,8 @@ public class KeycloakAdminClientService {
      * @param username user name
      * @return list of role
      * @throws BusinessException business exception
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public List<RoleDto> findUserRoles(HttpServletRequest httpServletRequest, String username) throws BusinessException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
@@ -390,6 +398,8 @@ public class KeycloakAdminClientService {
      * @param username Username
      * @return User information
      * @throws BusinessException business exception.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public UserRepresentation getUserRepresentationByUsername(UsersResource usersResource, String username) throws BusinessException {
         UserRepresentation userRepresentation = null;

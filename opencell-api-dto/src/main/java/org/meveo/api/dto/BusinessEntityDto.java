@@ -17,6 +17,7 @@ public class BusinessEntityDto  implements Serializable {
 
     @XmlAttribute()
     private String code;
+    
     @XmlAttribute()
     private String description;
 

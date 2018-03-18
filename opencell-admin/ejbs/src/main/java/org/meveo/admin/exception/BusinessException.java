@@ -19,20 +19,26 @@
 package org.meveo.admin.exception;
 
 import javax.ejb.ApplicationException;
-import javax.inject.Inject;
 
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.commons.utils.ParamBeanFactory;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @ApplicationException(rollback = true)
 public class BusinessException extends Exception {
     private static final long serialVersionUID = 1L;
 
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
+    private static final boolean sendException;
+
+    static {
+        sendException = "true".equals(ParamBean.getInstance().getProperty("monitoring.sendException", "true"));
+    }
 
     public BusinessException() {
         super();
@@ -55,7 +61,7 @@ public class BusinessException extends Exception {
     }
 
     public void registerEvent() {
-        if ("true".equals(paramBeanFactory.getInstance().getProperty("monitoring.sendException", "true"))) {
+        if (sendException) {
             try {
                 CreateEventHelper createEventHelper = (CreateEventHelper) EjbUtils.getServiceInterface("CreateEventHelper");
                 createEventHelper.register(this);

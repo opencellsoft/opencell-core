@@ -39,10 +39,12 @@ import org.meveo.model.rating.EDR;
 import org.meveo.model.rating.EDRStatusEnum;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class EdrService extends PersistenceService<EDR> {
-
-    ParamBean paramBean;
 
     @Inject
     private CdrEdrProcessingCacheContainerProvider cdrEdrProcessingCacheContainerProvider;
@@ -50,13 +52,9 @@ public class EdrService extends PersistenceService<EDR> {
     static boolean useInMemoryDeduplication = true;
     static boolean inMemoryDeduplicationPrepopulated = false;
 
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
-
     @PostConstruct
     private void init() {
-        paramBean = paramBeanFactory.getInstance();
+        ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
         useInMemoryDeduplication = paramBean.getProperty("mediation.deduplicateInMemory", "true").equals("true");
         inMemoryDeduplicationPrepopulated = paramBean.getProperty("mediation.deduplicateInMemory.prepopulate", "false").equals("true");
     }
@@ -122,7 +120,6 @@ public class EdrService extends PersistenceService<EDR> {
      */
     public boolean isDuplicateFound(String originBatch, String originRecord) {
         Boolean isDuplicate = null;
-
         if (useInMemoryDeduplication) {
             isDuplicate = cdrEdrProcessingCacheContainerProvider.getEdrDuplicationStatus(originBatch, originRecord);
             if (isDuplicate == null && !inMemoryDeduplicationPrepopulated) {

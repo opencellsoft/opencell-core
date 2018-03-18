@@ -29,6 +29,11 @@ import org.meveo.service.payments.impl.DDRequestItemService;
 
 /**
  * The Class SepaRejectedTransactionsJob consume sepa/paynum rejected files (sepa/paynum callBacks).
+ * 
+ * @author anasseh
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class SepaRejectedTransactionsJob extends Job {
@@ -41,12 +46,7 @@ public class SepaRejectedTransactionsJob extends Job {
     @Inject
     private PaynumFile paynumFile;
 
-    /** The param. */
-    private ParamBean param;
-
-    String importDir;
-
-    /** paramBeanFactory */
+    /** paramBeanFactory to instantiate adequate ParamBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
@@ -57,12 +57,12 @@ public class SepaRejectedTransactionsJob extends Job {
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @Override
     protected void execute(JobExecutionResultImpl result, JobInstance jobInstance) throws BusinessException {
-        param = paramBeanFactory.getInstance();
+        ParamBean param = paramBeanFactory.getInstance();
         String fileFormat = (String) customFieldInstanceService.getCFValue(jobInstance, "fileFormat");
         String defaultPrefix = "PAYNUM".equalsIgnoreCase(fileFormat) ? "*" : "Pain002_";
         String defaultExtension = "PAYNUM".equalsIgnoreCase(fileFormat) ? "csv" : "xml";
 
-        importDir = param.getChrootDir(currentUser.getProviderCode());
+        String importDir = param.getChrootDir(currentUser.getProviderCode());
 
         String dirIN = importDir + File.separator + "rejectedSepaTransactions" + File.separator + "input";
         log.info("dirIN=" + dirIN);

@@ -47,13 +47,15 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRXmlDataSource;
-import net.sf.jasperreports.engine.design.JasperDesign;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 /**
  * Class to generate PDF reports.
  * 
  * @author Gediminas Ubartas
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 public class ReportExecution implements Serializable {
@@ -68,18 +70,17 @@ public class ReportExecution implements Serializable {
     @Inject
     private ReportService reportService;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
     // @In(create=true)
     // private RecurringChargeCron recurringChargeCron;
 
-    public JasperReport jasperReport;
-
-    public JasperPrint jasperPrint;
-
-    public JasperDesign jasperDesign;
+    // public JasperReport jasperReport;
+    //
+    // public JasperPrint jasperPrint;
+    //
+    // public JasperDesign jasperDesign;
 
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
@@ -101,8 +102,8 @@ public class ReportExecution implements Serializable {
 
             JRXmlDataSource dataSource = new JRXmlDataSource(xmlDS, recordPath);
             dataSource.setDatePattern(DATE_PATERN);
-            jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
-            jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             JasperExportManager.exportReportToPdfFile(jasperPrint, generateFileName(reportName, executionDate));
             log.info("Created file: " + generateFileName(reportName, executionDate));
         } catch (JRException e) {
@@ -128,8 +129,8 @@ public class ReportExecution implements Serializable {
         try {
             JRXmlDataSource dataSource = new JRXmlDataSource(xmlDS, recordPath);
             dataSource.setDatePattern(DATE_PATERN);
-            jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
-            jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+            JasperReport jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);
+            JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
             JasperExportManager.exportReportToPdfFile(jasperPrint, generateFileName(exportFileName, executionDate));
             log.info("Created file: " + generateFileName(exportFileName, executionDate));
         } catch (JRException e) {

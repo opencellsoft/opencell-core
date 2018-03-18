@@ -11,7 +11,7 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.meveo.admin.async.PaymentCardAsync;
+import org.meveo.admin.async.PaymentAsync;
 import org.meveo.admin.async.SubListCreator;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
@@ -28,6 +28,12 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.PaymentGatewayService;
 import org.slf4j.Logger;
 
+/**
+ * The Class PaymentJobBean, PaymentJob  implementation.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class PaymentJobBean {
 
@@ -38,7 +44,7 @@ public class PaymentJobBean {
     private AccountOperationService accountOperationService;
 
     @Inject
-    private PaymentCardAsync paymentCardAsync;
+    private PaymentAsync paymentAsync;
 
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
@@ -102,7 +108,7 @@ public class PaymentJobBean {
             log.debug("nbThreads:" + nbRuns);
             MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(paymentCardAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
+                futures.add(paymentAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, createAO, matchingAO, paymentGateway, operationCategory,
                     paymentMethodType, lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {

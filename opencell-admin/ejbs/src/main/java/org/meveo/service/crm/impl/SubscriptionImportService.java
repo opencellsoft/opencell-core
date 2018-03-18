@@ -12,6 +12,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.BaseEntity;
@@ -35,6 +36,11 @@ import org.meveo.service.catalog.impl.OfferTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.medina.impl.AccessService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class SubscriptionImportService extends ImportService {
 
@@ -63,13 +69,12 @@ public class SubscriptionImportService extends ImportService {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    /** paramBeanFactory */
     @Inject
     private ParamBeanFactory paramBeanFactory;
 
-    private Map<String, OfferTemplate> offerMap = new HashedMap();
+    private Map<CacheKeyStr, OfferTemplate> offerMap = new HashedMap();
 
-    private Map<String, UserAccount> userAccountMap = new HashedMap();
+    private Map<CacheKeyStr, UserAccount> userAccountMap = new HashedMap();
 
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public int importSubscription(CheckedSubscription checkSubscription, org.meveo.model.jaxb.subscription.Subscription jaxbSubscription, String fileName, int i)
@@ -78,13 +83,13 @@ public class SubscriptionImportService extends ImportService {
         ParamBean paramBean = paramBeanFactory.getInstance();
 
         OfferTemplate offerTemplate = null;
-        offerTemplate = offerMap.get(jaxbSubscription.getOfferCode().toUpperCase());
+        offerTemplate = offerMap.get(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getOfferCode().toUpperCase()));
         if (offerTemplate == null) {
 
             try {
                 offerTemplate = offerTemplateService.findByCode(jaxbSubscription.getOfferCode().toUpperCase(),
                     DateUtils.parseDateWithPattern(jaxbSubscription.getSubscriptionDate(), paramBean.getProperty("connectorCRM.dateFormat", "dd/MM/yyyy")));
-                offerMap.put(jaxbSubscription.getOfferCode().toUpperCase(), offerTemplate);
+                offerMap.put(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getOfferCode().toUpperCase()), offerTemplate);
             } catch (Exception e) {
                 log.warn("failed to find offerTemplate ", e);
             }
@@ -93,11 +98,11 @@ public class SubscriptionImportService extends ImportService {
 
         UserAccount userAccount = checkSubscription.userAccount;
         if (userAccount == null) {
-            userAccount = userAccountMap.get(jaxbSubscription.getUserAccountId());
+            userAccount = userAccountMap.get(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getUserAccountId()));
             if (userAccount == null) {
                 try {
                     userAccount = userAccountService.findByCode(jaxbSubscription.getUserAccountId());
-                    userAccountMap.put(jaxbSubscription.getUserAccountId(), userAccount);
+                    userAccountMap.put(new CacheKeyStr(currentUser.getProviderCode(), jaxbSubscription.getUserAccountId()), userAccount);
                 } catch (Exception e) {
                     log.error("failed to find userAccount", e);
                 }

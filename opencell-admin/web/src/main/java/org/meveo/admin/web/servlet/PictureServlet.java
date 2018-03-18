@@ -26,6 +26,8 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.crm.Provider;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.catalog.impl.OfferTemplateCategoryService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
@@ -77,6 +79,10 @@ public class PictureServlet extends HttpServlet {
     @ApplicationProvider
     protected Provider appProvider;
 
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         showPicture(req, resp);
@@ -97,7 +103,7 @@ public class PictureServlet extends HttpServlet {
         String filename = null;
         String mimeType = null;
         // String provider = path[3];
-        String provider = appProvider.getCode();
+        String provider = currentUser.getProviderCode();
         String groupname = path[4];
         try {
             if (path.length == 7 && path[5].equals("tmp")) {

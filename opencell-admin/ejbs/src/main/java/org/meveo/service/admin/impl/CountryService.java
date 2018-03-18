@@ -29,6 +29,11 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
+
 @Stateless
 @Named
 public class CountryService extends PersistenceService<Country> {

@@ -33,7 +33,7 @@ public class FtpAdapterJob extends Job {
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
 
-    /** paramBeanFactory */
+    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

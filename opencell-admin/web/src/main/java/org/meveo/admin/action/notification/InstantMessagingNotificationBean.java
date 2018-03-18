@@ -41,6 +41,10 @@ import org.primefaces.model.UploadedFile;
 /**
  * Standard backing bean for {@link InstantMessagingNotification} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in
  * datatable, their create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -62,7 +66,6 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
     @Inject
     CounterTemplateService counterTemplateService;
 
-    ParamBean paramBean = ParamBean.getInstance();
     CsvBuilder csv = null;
     private String providerDir;
     private String existingEntitiesCsvFile = null;
@@ -161,6 +164,7 @@ public class InstantMessagingNotificationBean extends BaseBean<InstantMessagingN
         csvReader = new CsvReader(file.getInputstream(), ';', Charset.forName("ISO-8859-1"));
         csvReader.readHeaders();
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String existingEntitiesCSV = paramBean.getProperty("existingEntities.csv.dir", "existingEntitiesCSV");
         providerDir = paramBean.getChrootDir(currentUser.getProviderCode());
         File dir = new File(providerDir + File.separator + existingEntitiesCSV);

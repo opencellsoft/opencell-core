@@ -16,6 +16,7 @@ import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.BundleProductTemplate;
 import org.meveo.model.catalog.BundleTemplate;
@@ -35,6 +36,9 @@ import org.primefaces.model.DualListModel;
 
 /**
  * @author Edward P. Legaspi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 @ViewScoped
@@ -56,6 +60,9 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
     @Inject
     private DigitalResourceService digitalResourceService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     private BigDecimal salesPrice;
     private BigDecimal catalogPrice;
@@ -90,7 +97,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
             instantiateNewVersion();
             setObjectId(entity.getId());
             newVersion = false;
-        } else if(duplicateBundle) {
+        } else if (duplicateBundle) {
             duplicateWithoutSave();
         }
 
@@ -300,7 +307,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
             }
         }
     }
-    
+
     @ActionMethod
     public void duplicateWithoutSave() {
         if (entity != null && entity.getId() != null) {
@@ -347,7 +354,7 @@ public class BundleTemplateBean extends CustomFieldBean<BundleTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "bundleTemplate.version.exists"),
-                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBeanFactory.getInstance().getDateFormat()));
             return false;
         }
 

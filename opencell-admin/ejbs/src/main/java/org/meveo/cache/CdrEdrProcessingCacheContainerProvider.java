@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import org.infinispan.Cache;
 import org.infinispan.context.Flag;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
@@ -28,6 +29,8 @@ import org.slf4j.Logger;
  * Provides cache related services (loading, update) for CDR and EDR processing related operations
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  */
 @Stateless
@@ -41,7 +44,7 @@ public class CdrEdrProcessingCacheContainerProvider implements Serializable { //
     @EJB
     private EdrService edrService;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
     /**
      * Stores a list of processed EDR's. Key format: &lt;originBatch&gt;_&lt;originRecord&gt;, value: 0 (no meaning, only keys are used)

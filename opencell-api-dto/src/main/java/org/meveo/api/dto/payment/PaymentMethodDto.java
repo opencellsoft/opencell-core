@@ -26,6 +26,7 @@ import org.meveo.security.MeveoUser;
  * The PaymentMethod Dto.
  *
  * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "PaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -245,6 +246,7 @@ public class PaymentMethodDto extends BaseDto {
      * Build entity class from dto class.
      *
      * @param customerAccount the customerAccount.
+     * @param currentUser the currentUser.
      * @return PaymentMethod entity.
      */
     public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {

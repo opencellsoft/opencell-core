@@ -54,7 +54,8 @@ import org.meveo.service.script.service.ServiceModelScriptService;
  * ServiceInstanceService.
  * 
  * @author anasseh
- *
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -93,6 +94,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     @Inject
     ServiceTemplateService serviceTemplateService;
+    
+    
+    ParamBean paramBean = ParamBean.getInstance();
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -177,12 +181,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
      * @param serviceInstance service instance
      * @param descriptionOverride overridden description
      * @param subscriptionAmount subscription amount
      * @param terminationAmount termination amount
      * @param isVirtual true/false
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
@@ -198,7 +207,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("Subscription is not active");
         }
         if (!isVirtual) {
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
                     throw new IncorrectServiceInstanceException(
@@ -281,6 +290,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
     /**
      * Activate a service, the subscription charges can be applied or not.
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -289,6 +299,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -310,7 +323,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("Can not activate a ServiceInstance that is " + serviceInstance.getStatus());
         }
 
-        if (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+        if (!paramBean.isServiceMultiInstantiation()) {
             List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceInstance.getCode(), subscription, InstanceStatusEnum.ACTIVE);
             if (serviceInstances != null && !serviceInstances.isEmpty()) {
                 throw new IncorrectServiceInstanceException(

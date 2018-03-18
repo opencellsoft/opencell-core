@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.annotation.PostConstruct;
 import javax.ejb.EJB;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.event.Event;
@@ -41,11 +40,13 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
@@ -76,6 +77,10 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
@@ -87,8 +92,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_SQL = "SQL";
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
-
-    private ParamBean paramBean;
 
     @Inject
     @MeveoJpaForMultiTenancy
@@ -127,9 +130,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
 
-    /** paramBeanFactory */
     @Inject
-    private ParamBeanFactory paramBeanFactory;
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Constructor.
@@ -147,11 +149,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         } else {
             this.entityClass = (Class<E>) o;
         }
-    }
-
-    @PostConstruct
-    private void init() {
-        paramBean = paramBeanFactory.getInstance();
     }
 
     /**
@@ -323,7 +320,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
             if (entity instanceof IImageUpload) {
                 try {
-                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
+                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(currentUser.getProviderCode());
                     imageUploadEventHandler.deleteImage(entity);
                 } catch (IOException e) {
                     log.error("Failed deleting image file");
@@ -396,7 +393,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(BusinessEntity entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
             throw new BusinessException("Invalid characters found in entity code.");
         }
 
@@ -1074,5 +1071,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         return emfForJobs;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery q = session.createSQLQuery(query);
+
+        q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        List<Map<String, Object>> aliasToValueMapList = q.list();
+
+        return aliasToValueMapList;
     }
 }

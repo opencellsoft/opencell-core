@@ -29,7 +29,6 @@ import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethodInterceptor;
 import org.meveo.api.security.filter.ListFilter;
 import org.meveo.api.security.filter.ObjectFilter;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.admin.Seller;
@@ -45,6 +44,11 @@ import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, BundleTemplateDto> {
@@ -54,8 +58,6 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
     @Inject
     private ProductTemplateService productTemplateService;
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     /*
      * (non-Javadoc)
@@ -75,7 +77,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (bundleTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(BundleTemplate.class,
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
@@ -100,8 +102,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleProductTemplateDto.setQuantity(bundleProductTemplate.getQuantity());
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
-                    bundleProductTemplateDto
-                        .setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
+                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }
@@ -136,8 +137,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(), null, true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException("A bundle, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
-                    + ", already exists. Please change the validity dates of an existing bundle first.");
+            throw new InvalidParameterException(
+                "A bundle, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                        + ", already exists. Please change the validity dates of an existing bundle first.");
         }
 
         if (bundleTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo()) != null) {
@@ -171,7 +173,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleTemplate.addSeller(seller);
             }
         }
-        
+
         if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
             bundleTemplate.getChannels().clear();
             for (ChannelDto channelDto : postData.getChannels()) {
@@ -216,7 +218,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         BundleTemplate bundleTemplate = bundleTemplateService.findByCode(postData.getCode(), postData.getValidFrom(), postData.getValidTo());
         if (bundleTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getCode() + " / " + DateUtils.formatDateWithPattern(postData.getValidFrom(), datePattern) + " / "
                     + DateUtils.formatDateWithPattern(postData.getValidTo(), datePattern));
         }
@@ -224,8 +226,9 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         List<ProductOffering> matchedVersions = bundleTemplateService.getMatchingVersions(postData.getCode(), postData.getValidFrom(), postData.getValidTo(),
             bundleTemplate.getId(), true);
         if (!matchedVersions.isEmpty()) {
-            throw new InvalidParameterException("A bundle, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBean.getDateFormat())
-                    + ", already exists. Please change the validity dates of an existing bundle first.");
+            throw new InvalidParameterException(
+                "A bundle, valid on " + new DatePeriod(postData.getValidFrom(), postData.getValidTo()).toString(paramBeanFactory.getInstance().getDateFormat())
+                        + ", already exists. Please change the validity dates of an existing bundle first.");
         }
 
         bundleTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -258,7 +261,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleTemplate.addSeller(seller);
             }
         }
-        
+
         if (postData.getChannels() != null && !postData.getChannels().isEmpty()) {
             bundleTemplate.getChannels().clear();
             for (ChannelDto channelDto : postData.getChannels()) {
@@ -292,7 +295,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
 
         BundleTemplate bundleTemplate = bundleTemplateService.findByCodeBestValidityMatch(code, validFrom, validTo);
         if (bundleTemplate == null) {
-            String datePattern = paramBean.getDateTimeFormat();
+            String datePattern = paramBeanFactory.getInstance().getDateTimeFormat();
             throw new EntityDoesNotExistsException(BundleTemplate.class,
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }

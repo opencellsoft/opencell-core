@@ -33,7 +33,6 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.JobCacheContainerProvider;
 import org.meveo.cache.JobRunningStatusEnum;
-import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
@@ -43,6 +42,10 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * The Class JobExecutionService.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {
@@ -56,10 +59,6 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
     /** The job cache container provider. */
     @Inject
     private JobCacheContainerProvider jobCacheContainerProvider;
-
-    /** paramBeanFactory */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
 
     @Inject
     private CurrentUserProvider currentUserProvider;

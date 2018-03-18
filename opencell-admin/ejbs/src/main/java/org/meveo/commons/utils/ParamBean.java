@@ -41,6 +41,10 @@ import org.slf4j.LoggerFactory;
  * Contains application configuration settings
  * 
  * @author anasseh
+ * @author akadid abdelmounaim
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public class ParamBean {
 
@@ -49,11 +53,6 @@ public class ParamBean {
     private static final char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
 
     private String _propertyFile;
-
-    /**
-     * True if services can be instantiated and activated multiple times per subscription
-     */
-    public static boolean ALLOW_SERVICE_MULTI_INSTANTIATION = false;
 
     /**
      * Save properties imported from the file.
@@ -181,6 +180,17 @@ public class ParamBean {
     }
 
     /**
+     * Check whether service multi instantiation is allowed
+     * 
+     * @return is allowed.
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    public boolean isServiceMultiInstantiation() {
+        return "true".equalsIgnoreCase(getProperty("service.allowMultiInstantiation", "false"));
+    }
+
+    /**
      * Checks if multitenancy is enabled. Flag is consulted in a main provider's/tenant's property file
      * 
      * @return True of multitenancy is enabled
@@ -231,7 +241,6 @@ public class ParamBean {
     /**
      * Initialize/load application configuration property file
      * 
-     * @return true/false
      */
     private void initialize() {
         log.debug("Initialize  from file :" + _propertyFile + "...");

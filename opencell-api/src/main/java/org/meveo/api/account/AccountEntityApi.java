@@ -17,6 +17,7 @@ import org.meveo.service.catalog.impl.TitleService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class AccountEntityApi extends BaseApi {

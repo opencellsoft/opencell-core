@@ -10,6 +10,7 @@ import java.io.Serializable;
  * Represents a composite cache key distinguishing a provider
  * 
  * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  *
  */
 public class CacheKeyStr implements Serializable {
