@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 
 /**
  * The Class FlatFileProcessingJobBean.
+ * 
  */
 @Stateless
 public class FlatFileProcessingJobBean {

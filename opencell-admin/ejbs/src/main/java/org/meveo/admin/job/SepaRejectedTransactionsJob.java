@@ -29,6 +29,11 @@ import org.meveo.service.payments.impl.DDRequestItemService;
 
 /**
  * The Class SepaRejectedTransactionsJob consume sepa/paynum rejected files (sepa/paynum callBacks).
+ * 
+ * @author anasseh
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class SepaRejectedTransactionsJob extends Job {

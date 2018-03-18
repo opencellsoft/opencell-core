@@ -27,6 +27,11 @@ import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.util.Version;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @SuppressWarnings("deprecation")
 @Named
 public class MonitoringBean implements Serializable {

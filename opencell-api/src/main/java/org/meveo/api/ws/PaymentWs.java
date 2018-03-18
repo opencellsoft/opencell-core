@@ -31,6 +31,9 @@ import org.meveo.model.payments.DDRequestOpStatusEnum;
 
 /**
  * The Interface PaymentWs.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @WebService
 public interface PaymentWs extends IBaseWs {

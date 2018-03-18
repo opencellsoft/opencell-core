@@ -18,7 +18,10 @@ import org.meveo.model.payments.PaymentGateway;
 import org.meveo.service.job.Job;
 
 /**
- * The Class PaymentJob create payment or payout for all opened account operations.
+ * The Class PaymentJob, create payment or payout for all opened account operations.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class PaymentJob extends Job {

@@ -44,6 +44,11 @@ import org.meveo.service.catalog.impl.BundleTemplateService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, BundleTemplateDto> {

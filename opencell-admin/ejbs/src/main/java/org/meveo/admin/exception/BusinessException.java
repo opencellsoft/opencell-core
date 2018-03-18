@@ -26,6 +26,10 @@ import org.meveo.event.monitoring.CreateEventHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ */
 @ApplicationException(rollback = true)
 public class BusinessException extends Exception {
     private static final long serialVersionUID = 1L;

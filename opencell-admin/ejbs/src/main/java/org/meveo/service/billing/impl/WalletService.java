@@ -42,6 +42,9 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Wallet service implementation.
  * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class WalletService extends PersistenceService<WalletInstance> {

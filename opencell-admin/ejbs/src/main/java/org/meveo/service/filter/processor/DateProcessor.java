@@ -11,6 +11,11 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.filter.PrimitiveFilterCondition;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 public class DateProcessor extends PrimitiveFilterProcessor {
 
     public static final String PREFIX = "date:";

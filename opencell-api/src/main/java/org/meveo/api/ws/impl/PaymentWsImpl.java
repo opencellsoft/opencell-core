@@ -36,6 +36,13 @@ import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
+
+/**
+ * The implementation for PaymentWs.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class PaymentWsImpl extends BaseWs implements PaymentWs {

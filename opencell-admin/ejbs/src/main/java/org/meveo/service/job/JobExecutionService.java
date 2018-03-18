@@ -42,6 +42,10 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * The Class JobExecutionService.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class JobExecutionService extends PersistenceService<JobExecutionResultImpl> {

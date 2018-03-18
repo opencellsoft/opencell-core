@@ -93,6 +93,7 @@ import org.meveo.service.order.OrderService;
 /**
  * 
  * @author akadid abdelmounaim
+ * @author Wassim Drira
  * @lastModifiedVersion 5.0
  */
 @Stateless
@@ -145,10 +146,9 @@ public class SubscriptionApi extends BaseApi {
 
     @Inject
     private OrderService orderService;
-    
+
     private ParamBean paramBean = ParamBean.getInstance();
 
-    
     /**
      * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
@@ -273,7 +273,8 @@ public class SubscriptionApi extends BaseApi {
         if (postData.getOfferTemplate() != null) {
             OfferTemplate offerTemplate = offerTemplateService.findByCode(postData.getOfferTemplate(), postData.getSubscriptionDate());
             if (offerTemplate == null) {
-                throw new EntityDoesNotExistsException(OfferTemplate.class, postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBean.getDateTimeFormat()));
+                throw new EntityDoesNotExistsException(OfferTemplate.class,
+                    postData.getOfferTemplate() + " / " + DateUtils.formatDateWithPattern(postData.getSubscriptionDate(), paramBean.getDateTimeFormat()));
             } else if (subscription.getServiceInstances() != null && !subscription.getServiceInstances().isEmpty() && !subscription.getOffer().equals(offerTemplate)) {
                 throw new InvalidParameterException("Cannot change the offer of subscription once the services are instantiated");
             } else if (offerTemplate.isDisabled()) {

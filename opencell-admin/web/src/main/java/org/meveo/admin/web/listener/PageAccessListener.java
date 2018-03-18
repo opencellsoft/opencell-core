@@ -12,6 +12,7 @@ import org.meveo.security.MeveoUser;
 import org.meveo.util.view.PagePermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class PageAccessListener implements PhaseListener {
 
@@ -24,39 +25,49 @@ public class PageAccessListener implements PhaseListener {
 
     @Override
     public void afterPhase(PhaseEvent event) {
+
         FacesContext context = FacesContext.getCurrentInstance();
         HttpServletRequest request = (HttpServletRequest) context.getExternalContext().getRequest();
         NavigationHandler navigationHandler = null;
         String requestURI = request.getRequestURI();
-        logger.trace("Checking access to page: {}", requestURI);
 
-		boolean isPageProtected = PagePermission.getInstance().isPageProtected(request);
-		if (!isPageProtected) {
-			navigationHandler = context.getApplication().getNavigationHandler();
-			navigationHandler.handleNavigation(context, null, NOT_FOUND);
-			return;
-		}
+        boolean isPageProtected = PagePermission.getInstance().isPageProtected(request);
+        if (!isPageProtected) {
 
-		boolean allowed = false;
-		try {
-			MeveoUser currentUser = context.getApplication().evaluateExpressionGet(context, CURRENT_USER, MeveoUser.class);
-			if (currentUser != null && currentUser.isAuthenticated()) {
-				allowed = PagePermission.getInstance().hasAccessToPage(request, currentUser);
-			} else {
-				// if user is not logged in, allow session handler to redirect to session expired page.
-				return;
-			}
-		} catch (BusinessException e) {
-			logger.error("Failed to check access to page: {}. Access will be denied.", requestURI, e);
-			allowed = false;
-		}
-		if (!allowed) {
-			logger.warn("Denied access to page: {}", requestURI);
-			navigationHandler = context.getApplication().getNavigationHandler();
-			navigationHandler.handleNavigation(context, null, FORBIDDEN);
-			return;
-		}
-	}
+            logger.error("Access to page {} has no rules defined and will be rejected", requestURI);
+            navigationHandler = context.getApplication().getNavigationHandler();
+            navigationHandler.handleNavigation(context, null, NOT_FOUND);
+            return;
+        }
+
+        boolean allowed = false;
+        try {
+            MeveoUser currentUser = context.getApplication().evaluateExpressionGet(context, CURRENT_USER, MeveoUser.class);
+            if (currentUser != null && currentUser.isAuthenticated()) {
+
+                if (currentUser.getProviderCode() == null) {
+                    MDC.remove("providerCode");
+                } else {
+                    MDC.put("providerCode", currentUser.getProviderCode());
+                }
+
+                logger.trace("Checking access to page: {}", requestURI);
+                allowed = PagePermission.getInstance().hasAccessToPage(request, currentUser);
+            } else {
+                // if user is not logged in, allow session handler to redirect to session expired page.
+                return;
+            }
+        } catch (BusinessException e) {
+            logger.error("Failed to check access to page: {}. Access will be denied.", requestURI, e);
+            allowed = false;
+        }
+        if (!allowed) {
+            logger.warn("Denied access to page: {}", requestURI);
+            navigationHandler = context.getApplication().getNavigationHandler();
+            navigationHandler.handleNavigation(context, null, FORBIDDEN);
+            return;
+        }
+    }
 
     @Override
     public void beforePhase(PhaseEvent event) {

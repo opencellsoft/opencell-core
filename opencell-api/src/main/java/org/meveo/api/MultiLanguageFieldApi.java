@@ -34,6 +34,11 @@ import org.meveo.service.base.MultiLanguageFieldService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.billing.impl.TradingLanguageService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 public class MultiLanguageFieldApi extends BaseApi {
 
     @Inject

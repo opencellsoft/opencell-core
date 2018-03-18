@@ -20,6 +20,11 @@ import org.meveo.model.ParamProperty;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.CellEditEvent;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 @ConversationScoped
 public class ParamActionBean implements Serializable {

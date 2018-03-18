@@ -46,6 +46,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * RecordedInvoice service implementation.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 4.8
  */
 @Stateless
 public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> {

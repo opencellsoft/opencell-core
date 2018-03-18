@@ -42,6 +42,11 @@ import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.primefaces.event.TabChangeEvent;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 @ViewScoped
 public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {

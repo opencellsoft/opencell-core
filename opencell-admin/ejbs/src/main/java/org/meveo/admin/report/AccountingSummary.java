@@ -42,6 +42,11 @@ import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Named
 public class AccountingSummary extends FileProducer implements Reporting {
 
@@ -57,7 +62,6 @@ public class AccountingSummary extends FileProducer implements Reporting {
     @Inject
     private DWHAccountOperationService accountOperationTransformationService;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

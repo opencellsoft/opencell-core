@@ -42,7 +42,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author anasseh
  * @author akadid abdelmounaim
+ * @author Wassim Drira
  * @lastModifiedVersion 5.0
+ * 
  */
 public class ParamBean {
 
@@ -176,7 +178,7 @@ public class ParamBean {
             return null;
         }
     }
-    
+
     /**
      * Check whether service multi instantiation is allowed
      * 

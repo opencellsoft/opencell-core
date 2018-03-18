@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  */
 public class MeveoFunctionMapper extends FunctionMapper {

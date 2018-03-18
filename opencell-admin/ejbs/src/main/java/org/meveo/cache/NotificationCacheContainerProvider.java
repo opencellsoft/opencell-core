@@ -35,6 +35,9 @@ import org.slf4j.Logger;
  * Provides cache related services (loading, update) for event notification related operations
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class NotificationCacheContainerProvider implements Serializable { // CacheContainerProvider, Serializable {

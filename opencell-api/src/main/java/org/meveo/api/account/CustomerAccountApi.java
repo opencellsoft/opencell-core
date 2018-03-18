@@ -51,6 +51,11 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+/**
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class CustomerAccountApi extends AccountEntityApi {

@@ -48,6 +48,11 @@ import org.slf4j.LoggerFactory;
 
 import net.sf.jasperreports.engine.JRParameter;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class PDFParametersConstruction {
 
@@ -66,7 +71,6 @@ public class PDFParametersConstruction {
     @Inject
     private InvoiceService invoiceService;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

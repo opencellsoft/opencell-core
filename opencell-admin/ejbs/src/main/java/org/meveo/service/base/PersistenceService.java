@@ -40,6 +40,9 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -74,6 +77,10 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
@@ -1064,5 +1071,22 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         }
 
         return emfForJobs;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery q = session.createSQLQuery(query);
+
+        q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        List<Map<String, Object>> aliasToValueMapList = q.list();
+
+        return aliasToValueMapList;
     }
 }

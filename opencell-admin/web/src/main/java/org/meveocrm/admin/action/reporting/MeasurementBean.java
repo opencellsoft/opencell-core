@@ -57,6 +57,11 @@ import org.meveocrm.services.dwh.MeasuredValueService;
 import org.omnifaces.util.Messages;
 import org.primefaces.event.CellEditEvent;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Named
 @ViewScoped
 public class MeasurementBean extends BaseBean<MeasuredValue> {

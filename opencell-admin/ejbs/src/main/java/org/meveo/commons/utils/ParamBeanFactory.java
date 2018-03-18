@@ -10,7 +10,8 @@ import org.slf4j.Logger;
 /**
  * 
  * @author Wassim Drira
- *
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class ParamBeanFactory {

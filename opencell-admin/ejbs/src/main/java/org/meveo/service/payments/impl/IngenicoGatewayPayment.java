@@ -49,14 +49,19 @@ import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.PersonalNa
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCard;
 import com.ingenico.connect.gateway.sdk.java.domain.token.definitions.TokenCardData;
 
+/**
+ * 
+ * @author anasseh
+ * 
+ * @lastModifiedVersion 5.0
+ */
 @PaymentGatewayClass
 public class IngenicoGatewayPayment implements GatewayPaymentInterface {
 
     protected Logger log = LoggerFactory.getLogger(IngenicoGatewayPayment.class);
 
     private static Client client = null;
-    // private String merchantId = ParamBean.getInstance().getProperty("ingenico.merchantId", null);
-
+    
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
     @Inject
     private ParamBeanFactory paramBeanFactory;
@@ -142,7 +147,8 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
             CreditCardTypeEnum cardType, String countryCode, Map<String, Object> additionalParams) throws BusinessException {
         return doPayment(null, null, ctsAmount, customerAccount, cardNumber, ownerName, cvv, expirayDate, cardType, countryCode, additionalParams);
     }
-
+    
+    @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod ddPaymentMethod, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
         return doPayment(ddPaymentMethod, null, ctsAmount, ddPaymentMethod.getCustomerAccount(), null, null, null, null, null, null, additionalParams);
     }

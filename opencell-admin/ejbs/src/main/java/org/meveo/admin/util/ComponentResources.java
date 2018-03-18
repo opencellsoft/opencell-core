@@ -13,6 +13,11 @@ import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.util.MeveoParamBean;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 public class ComponentResources implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -22,7 +27,6 @@ public class ComponentResources implements Serializable {
     @Inject
     private LocaleSelector localeSelector;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

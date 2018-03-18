@@ -55,6 +55,9 @@ import org.meveo.service.billing.impl.SubscriptionService;
 /**
  * Offer Template service implementation.
  * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class OfferTemplateService extends GenericProductOfferingService<OfferTemplate> {

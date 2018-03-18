@@ -7,6 +7,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.response.BaseResponse;
 import org.meveo.model.payments.PaymentStatusEnum;
 
+/**
+ * 
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "PaymentResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PaymentResponseDto extends BaseResponse{

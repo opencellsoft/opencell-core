@@ -44,6 +44,11 @@ import org.meveo.service.billing.impl.WalletService;
 import org.meveo.service.catalog.impl.TitleService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 public class AccountImportService extends ImportService {
 

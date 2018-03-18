@@ -18,6 +18,11 @@ import org.slf4j.Logger;
 
 /**
  * Manages providers connection to DB
+ * 
+ * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class TenantRegistry {

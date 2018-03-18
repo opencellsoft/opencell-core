@@ -32,6 +32,10 @@ import org.meveo.service.job.Job;
 
 /**
  * The Class MediationJob consume standard cdr files.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Stateless
 public class MediationJob extends Job {
@@ -48,7 +52,6 @@ public class MediationJob extends Job {
     @CurrentUser
     protected MeveoUser currentUser;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

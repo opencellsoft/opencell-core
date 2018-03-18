@@ -36,6 +36,8 @@ import org.slf4j.Logger;
  * Provides cache related services (loading, update) for wallet related operations
  * 
  * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  */
 @Stateless

@@ -53,6 +53,9 @@ import net.sf.jasperreports.engine.util.JRLoader;
  * Class to generate PDF reports.
  * 
  * @author Gediminas Ubartas
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 @Named
 public class ReportExecution implements Serializable {
@@ -67,7 +70,6 @@ public class ReportExecution implements Serializable {
     @Inject
     private ReportService reportService;
 
-    
     @Inject
     private ParamBeanFactory paramBeanFactory;
 

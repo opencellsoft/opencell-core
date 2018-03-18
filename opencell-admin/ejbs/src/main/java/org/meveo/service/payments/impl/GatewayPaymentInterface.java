@@ -14,6 +14,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author anasseh
+ * @lastModifiedVersion 5.0
  *
  */
 public interface GatewayPaymentInterface {

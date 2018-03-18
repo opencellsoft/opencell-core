@@ -24,6 +24,11 @@ import org.meveo.service.admin.impl.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 public class MeveoFtpUserManager extends AbstractUserManager {
     private static final String FTPREAD = "ftpread";
     private static final String FTPWRITE = "ftpwrite";

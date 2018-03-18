@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 /**
  * 
  * @author Tyshan Shi
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  *
  */
 // @Startup

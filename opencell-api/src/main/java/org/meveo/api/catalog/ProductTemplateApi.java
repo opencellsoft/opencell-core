@@ -39,6 +39,11 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ *
+ */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
 public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, ProductTemplateDto> {
