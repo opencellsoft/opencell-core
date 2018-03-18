@@ -447,6 +447,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
             ResteasyWebTarget target = client.target(uri + "/" + indexName);
 
+            log.debug("Creating index for entity: {}", indexName);
+            log.debug("Index settings: {}", modelJson);
+
             Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
             if (response.getStatus() != HttpURLConnection.HTTP_OK) {
 
