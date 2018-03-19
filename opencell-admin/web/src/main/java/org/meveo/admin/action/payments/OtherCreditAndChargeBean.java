@@ -202,20 +202,20 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 
     }
 
-    /**
-     * @param occ
-     * @param customerAccountId
-     */
-    private void copyFromTemplate(OCCTemplate occ) {
-        entity = new OtherCreditAndCharge();
-        entity.setCustomerAccount(customerAccount);
-        if (occ != null) {
-            entity.setOccCode(occ.getCode());
-            entity.setOccDescription(occ.getDescription());
-            entity.setAccountCode(occ.getAccountCode());
-            entity.setTransactionCategory(occ.getOccCategory());
-            entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
-        }
+	/**
+	 * @param occ
+	 * @param customerAccountId
+	 */
+	private void copyFromTemplate(OCCTemplate occ) {
+		entity = new OtherCreditAndCharge();
+		entity.setCustomerAccount(customerAccount);
+		if (occ != null) {
+			entity.setOccCode(occ.getCode());
+			entity.setOccDescription(occ.getDescription());
+			entity.setAccountingCode(occ.getAccountingCode());
+			entity.setTransactionCategory(occ.getOccCategory());
+			entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
+		}
 
         entity.setMatchingStatus(MatchingStatusEnum.O);
         entity.setDueDate(new Date());

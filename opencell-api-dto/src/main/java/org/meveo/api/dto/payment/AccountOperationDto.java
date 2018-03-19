@@ -24,7 +24,10 @@ public class AccountOperationDto extends BaseDto {
 	private Date transactionDate;
 	private OperationCategoryEnum transactionCategory;
 	private String reference;
+	@Deprecated
 	private String accountCode;
+	private String accountingCode;
+	@Deprecated
 	private String accountCodeClientSide;
 	private BigDecimal amount;
 	private BigDecimal amountWithoutTax;
@@ -104,14 +107,6 @@ public class AccountOperationDto extends BaseDto {
 
 	public void setReference(String reference) {
 		this.reference = reference;
-	}
-
-	public String getAccountCode() {
-		return accountCode;
-	}
-
-	public void setAccountCode(String accountCode) {
-		this.accountCode = accountCode;
 	}
 
 	public String getAccountCodeClientSide() {
@@ -257,6 +252,22 @@ public class AccountOperationDto extends BaseDto {
 	public void setDepositDate(Date depositDate) {
 		this.depositDate = depositDate;
 	}
+
+    public String getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
+
+    public String getAccountCode() {
+        return accountCode;
+    }
+
+    public void setAccountCode(String accountCode) {
+        this.accountCode = accountCode;
+    }
 
     /**
      * @return the amountWithoutTax

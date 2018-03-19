@@ -230,7 +230,7 @@
 			value="#{messages['menu.importedFiles']}"
 			rendered="#{currentUser.hasRole('billingManagement')}" />
 	</p:submenu>
-
+	
 	<p:submenu id="invoicing" label="#{messages['menu.invoicing']}"
 		rendered="#{currentUser.hasRole('billingVisualization') or currentUser.hasRole('billingManagement')  or currentUser.hasRole('createInvoice')}">
 		<p:submenu id="rating" label="#{messages['menu.rating']}"
@@ -280,6 +280,7 @@
 	</p:submenu>		
 	
 	<p:submenu id="finance" label="#{messages['menu.finance']}" rendered="#{currentUser.hasRole('financeVisualization') or currentUser.hasRole('financeManagement') }">
+		<p:menuitem id="chartOfAccounts" outcome="accountingCodes" value="#{messages['menu.chartOfAccounts']}" rendered="#{currentUser.hasRole('financeVisualization')}" />
 		<p:menuitem id="revenueRecognitionRules" outcome="revenueRecognitionRules" value="#{messages['menu.revenueRecognitionRules']}" />				
 		<p:menuitem id="revenueSchedules" outcome="revenueSchedules" value="#{messages['menu.revenueSchedules']}" />
 		<p:menuitem id="reportExtracts" outcome="reportExtracts" value="#{messages['menu.reportExtracts']}" />

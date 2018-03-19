@@ -301,5 +301,70 @@
         </createTable>
         <addPrimaryKey columnNames="reportextract_id, params_key" constraintName="pk_report_extract_params" tableName="dwh_report_extract_params" />
     </changeSet>
+
+    <changeSet id="#1705_20180219" author="EdwardPLegaspi">
+    	<createTable tableName="billing_accounting_code">
+	    	<column name="id" type="bigint" autoIncrement="${id.auto}">
+	            <constraints nullable="false" primaryKey="true" primaryKeyName="billing_accounting_code_pkey" />
+	        </column>
+	        <column name="version" type="int4" />
+	        <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="created" type="datetime">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="updated" type="datetime" />
+	        <column name="code" type="varchar(255)">
+	            <constraints nullable="false" />
+	        </column>
+	        <column name="description" type="varchar(255)" />
+	        <column name="creator" type="varchar(100)" />
+	        <column name="updater" type="varchar(100)" />
+	        <column name="parent_accounting_code_id" type="bigint" />
+			<column name="chart_of_account_type" type="varchar(25)" />
+			<column name="reporting_account" type="varchar(50)" />        
+	        <column name="chart_of_account_view_type" type="varchar(25)" />
+	        <column name="notes" type="varchar(2000)" />
+	        <column name="migrated" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+		</createTable>
+        
+        <createSequence sequenceName="billing_accounting_code_seq" />
+        <addUniqueConstraint columnNames="code" constraintName="uk_billing_accounting_code" deferrable="false" disabled="false" initiallyDeferred="false" tableName="billing_accounting_code" />
+        <addForeignKeyConstraint baseColumnNames="parent_accounting_code_id" baseTableName="billing_accounting_code" constraintName="fk_billing_accounting_code_parent" deferrable="false" initiallyDeferred="false"
+            onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_accounting_code" />
+            
+        <addColumn tableName="billing_invoice_sub_cat">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="billing_tax">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="billing_invoice_agregate">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="dwh_account_operation">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="dwh_journal_entries">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="ar_occ_template">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        <addColumn tableName="ar_account_operation">
+        	<column name="accounting_code_id" type="bigint"></column>
+        </addColumn>
+        
+        <addForeignKeyConstraint constraintName="fk_billing_invoice_sub_cat_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_invoice_sub_cat" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_tax_accounting_code" referencedTableName="billing_accounting_code" baseColumnNames="accounting_code_id" baseTableName="billing_tax" referencedColumnNames="id"/>
+        <addForeignKeyConstraint constraintName="fk_billing_invoice_aggregate_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="billing_invoice_agregate" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_dwh_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_account_operation" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_dwh_journal_entries_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="dwh_journal_entries" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_occ_template_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_occ_template" baseColumnNames="accounting_code_id" />
+        <addForeignKeyConstraint constraintName="fk_ar_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_account_operation" baseColumnNames="accounting_code_id" />
+    </changeSet> 
         
 </databaseChangeLog> 

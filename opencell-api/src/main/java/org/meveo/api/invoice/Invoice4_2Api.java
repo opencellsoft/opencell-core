@@ -29,6 +29,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingProcessTypesEnum;
 import org.meveo.model.billing.BillingRun;
@@ -48,6 +49,7 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
 import org.meveo.model.payments.PaymentMethod;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.BillingRunService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -109,6 +111,9 @@ public class Invoice4_2Api extends BaseApi {
     @Inject
     @MeveoParamBean
     private ParamBean paramBean;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public String create(Invoice4_2Dto invoiceDTO) throws MeveoApiException, BusinessException {
 
@@ -251,7 +256,15 @@ public class Invoice4_2Api extends BaseApi {
             subCategoryInvoiceAgregate.setAmountWithoutTax(subCategoryInvoiceAgregateDTO.getAmountWithoutTax());
             subCategoryInvoiceAgregate.setAmountWithTax(subCategoryInvoiceAgregateDTO.getAmountWithTax());
             subCategoryInvoiceAgregate.setAmountTax(subCategoryInvoiceAgregateDTO.getAmountTax());
-            subCategoryInvoiceAgregate.setAccountingCode(subCategoryInvoiceAgregateDTO.getAccountingCode());
+            
+            if (!StringUtils.isBlank(subCategoryInvoiceAgregateDTO.getAccountingCode())) {
+                AccountingCode accountingCode = accountingCodeService.findByCode(subCategoryInvoiceAgregateDTO.getAccountingCode());
+                if (accountingCode == null) {
+                    throw new EntityDoesNotExistsException(AccountingCode.class, subCategoryInvoiceAgregateDTO.getAccountingCode());
+                }
+                subCategoryInvoiceAgregate.setAccountingCode(accountingCode);
+            }
+            
             subCategoryInvoiceAgregate.setBillingAccount(billingAccount);
             subCategoryInvoiceAgregate.setUserAccount(billingAccountUserAccount);
             subCategoryInvoiceAgregate.setInvoice(invoice);
@@ -342,7 +355,15 @@ public class Invoice4_2Api extends BaseApi {
                     }
 
                     subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                    
+                    if (!StringUtils.isBlank(subCategoryInvoiceAgregateDto.getAccountingCode())) {
+                        AccountingCode accountingCode = accountingCodeService.findByCode(subCategoryInvoiceAgregateDto.getAccountingCode());
+                        if (accountingCode == null) {
+                            throw new EntityDoesNotExistsException(AccountingCode.class, subCategoryInvoiceAgregateDto.getAccountingCode());
+                        }
+                        invoiceAgregate.setAccountingCode(accountingCode);
+                    }
+                    
                     subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                     subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                     subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
@@ -542,9 +563,12 @@ public class Invoice4_2Api extends BaseApi {
             } else if (invoiceAgregate instanceof TaxInvoiceAgregate) {
                 subCategoryInvoiceAgregateDto.setType("T");
             }
-
+            
+            if (invoiceAgregate.getAccountingCode() != null) {
+                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+            }
+            
             subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-            subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
             subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
             subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
             subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
@@ -564,7 +588,7 @@ public class Invoice4_2Api extends BaseApi {
             accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
             accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
             accountOperationDto.setReference(accountOp.getReference());
-            accountOperationDto.setAccountCode(accountOp.getAccountCode());
+            accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
             accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
             accountOperationDto.setAmount(accountOp.getAmount());
             accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());

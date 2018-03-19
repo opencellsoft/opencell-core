@@ -13,13 +13,16 @@ import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.InvoiceCategory;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class InvoiceSubCategoryApi extends BaseApi {
@@ -29,6 +32,9 @@ public class InvoiceSubCategoryApi extends BaseApi {
 
     @Inject
     private InvoiceCategoryService invoiceCategoryService;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public void create(InvoiceSubCategoryDto postData) throws MeveoApiException, BusinessException {
 
@@ -55,7 +61,13 @@ public class InvoiceSubCategoryApi extends BaseApi {
         invoiceSubCategory.setInvoiceCategory(invoiceCategory);
         invoiceSubCategory.setCode(postData.getCode());
         invoiceSubCategory.setDescription(postData.getDescription());
-        invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            invoiceSubCategory.setAccountingCode(accountingCode);
+        }
 
         // populate customFields
         try {
@@ -98,7 +110,13 @@ public class InvoiceSubCategoryApi extends BaseApi {
         invoiceSubCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         invoiceSubCategory.setInvoiceCategory(invoiceCategory);
         invoiceSubCategory.setDescription(postData.getDescription());
-        invoiceSubCategory.setAccountingCode(postData.getAccountingCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            invoiceSubCategory.setAccountingCode(accountingCode);
+        }
 
         if (postData.getLanguageDescriptions() != null) {
             invoiceSubCategory.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), invoiceSubCategory.getDescriptionI18n()));

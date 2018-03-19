@@ -12,6 +12,7 @@ import org.meveo.model.crm.Provider;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Provider")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -35,6 +36,7 @@ public class ProviderDto extends BaseDto {
 	private Boolean levelDuplication;	
 	private Integer rounding;
 	private Long prepaidReservationExpirationDelayinMillisec;
+	@Deprecated
 	private String discountAccountingCode;
 	private String email;
 	private BankCoordinatesDto bankCoordinates = new BankCoordinatesDto();

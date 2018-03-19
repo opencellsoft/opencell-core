@@ -33,6 +33,7 @@ public class DiscountPlanItemDto extends BaseDto {
     private String invoiceCategoryCode;
     private String invoiceSubCategoryCode;
     private BigDecimal percent;
+    @Deprecated // until further analysis
     private String accountingCode;
     private String expressionEl;
     private String discountPercentEl;

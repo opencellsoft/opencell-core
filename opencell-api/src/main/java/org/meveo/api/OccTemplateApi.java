@@ -15,22 +15,30 @@ import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.OCCTemplate;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class OccTemplateApi extends BaseApi {
 
     @Inject
     private OCCTemplateService occTemplateService;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public void create(OccTemplateDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getAccountCode())) {
-            missingParameters.add("accountCode");
+        if (StringUtils.isBlank(postData.getAccountingCode()) && StringUtils.isBlank(postData.getAccountCode())) {
+            missingParameters.add("accountCode / accountingCode");
         }
         if (StringUtils.isBlank(postData.getOccCategory())) {
             missingParameters.add("occCategory");
@@ -47,7 +55,21 @@ public class OccTemplateApi extends BaseApi {
         OCCTemplate occTemplate = new OCCTemplate();
         occTemplate.setCode(postData.getCode());
         occTemplate.setDescription(postData.getDescription());
-        occTemplate.setAccountCode(postData.getAccountCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            occTemplate.setAccountingCode(accountingCode);
+        } else {
+            if (!StringUtils.isBlank(postData.getAccountCode())) {
+                AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountCode());
+                if (accountingCode == null) {
+                    throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountCode());
+                }
+                occTemplate.setAccountingCode(accountingCode);
+            }
+        }
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
 
@@ -59,8 +81,8 @@ public class OccTemplateApi extends BaseApi {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        if (StringUtils.isBlank(postData.getAccountCode())) {
-            missingParameters.add("accountCode");
+        if (StringUtils.isBlank(postData.getAccountingCode()) && StringUtils.isBlank(postData.getAccountCode())) {
+            missingParameters.add("accountCode / accountingCode");
         }
         if (StringUtils.isBlank(postData.getOccCategory())) {
             missingParameters.add("occCategory");
@@ -76,7 +98,21 @@ public class OccTemplateApi extends BaseApi {
         }
         occTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         occTemplate.setDescription(postData.getDescription());
-        occTemplate.setAccountCode(postData.getAccountCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            occTemplate.setAccountingCode(accountingCode);
+        } else {
+            if (!StringUtils.isBlank(postData.getAccountCode())) {
+                AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountCode());
+                if (accountingCode == null) {
+                    throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountCode());
+                }
+                occTemplate.setAccountingCode(accountingCode);
+            }
+        }
         occTemplate.setAccountCodeClientSide(postData.getAccountCodeClientSide());
         occTemplate.setOccCategory(postData.getOccCategory());
 

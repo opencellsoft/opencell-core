@@ -142,4 +142,71 @@
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_IRRE'</sql>
 		<sql>delete from ${db.schema.adapted}ar_occ_template where code ='OD_CL_CC'</sql>				
     </changeSet>
+    
+    <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi">
+    	<sql>
+			<![CDATA[
+			insert into billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, nextval('billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from billing_accounting_code where code=accounting_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			update billing_invoice_sub_cat set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, nextval('billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from billing_tax where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from billing_accounting_code where code=accounting_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update billing_tax set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.account_code, nextval('billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct account_code from ar_occ_template where account_code is not null and account_code<>'' 
+					and not exists(select * from billing_accounting_code where code=account_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update ar_occ_template set accounting_code_id=(select id from billing_accounting_code where code=account_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update billing_invoice_agregate set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update dwh_account_operation set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update dwh_journal_entries set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ar_account_operation set accounting_code_id=(select id from billing_accounting_code where code=account_code);]]>
+		</sql>
+		
+		<sql>
+			<![CDATA[update billing_accounting_code set migrated=1;]]>
+		</sql>
+		
+		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="billing_tax" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="billing_invoice_agregate" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="dwh_account_operation" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="dwh_journal_entries" columnName="accounting_code"></dropColumn>
+		<dropColumn tableName="ar_occ_template" columnName="account_code"></dropColumn>
+		<dropColumn tableName="ar_account_operation" columnName="account_code"></dropColumn>
+		
+		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
+    </changeSet>
 </databaseChangeLog>
