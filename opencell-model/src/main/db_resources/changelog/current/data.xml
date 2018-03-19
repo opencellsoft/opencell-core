@@ -79,4 +79,9 @@
    		 <sql>delete from ${db.schema.adapted}crm_provider_pay_methods where payment_method='NONE'</sql>   
     </changeSet>
     
+    <changeSet author="anasseh" id="#3167_20022018_2">
+	    <sql>update ${db.schema.adapted}ar_payment_gateway set country_id = 70, trading_currency_id = null where id =-1 </sql> 
+	    <sql>update ${db.schema.adapted}ar_payment_gateway set country_id = 102, trading_currency_id = null where id =-2</sql> 
+	</changeSet>
+    
 </databaseChangeLog>
