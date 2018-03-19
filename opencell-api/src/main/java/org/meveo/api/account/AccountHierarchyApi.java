@@ -801,7 +801,7 @@ public class AccountHierarchyApi extends BaseApi {
                                                     } else {
                                                         subscriptionDto.setUserAccount(userAccountDto.getCode());
                                                     }
-                                                    subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null);
+                                                    subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null, null, null);
                                                 }
                                             }
                                         }

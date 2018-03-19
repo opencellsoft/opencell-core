@@ -382,5 +382,28 @@
             <column name="raw_amount_with_tax" type="numeric(23, 12)" />
     	</addColumn>
     </changeSet>
+    
+    <changeSet id="#3213_20180312 - add order history table" author="EdwardPLegaspi">
+    	<createTable tableName="ord_order_history">
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="ord_order_history_pkey" />
+            </column>
+            <column name="version" type="int4" />
+            <column name="order_item_id" type="bigint" />
+            <column name="service_instance_id" type="bigint" />
+            <column name="action" type="varchar(25)">
+            	<constraints nullable="false" />
+            </column>
+            <column name="event_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="order_number" type="varchar(100)" />            
+		</createTable>
+		<createSequence sequenceName="ord_order_history_seq" />
+        <addForeignKeyConstraint baseColumnNames="order_item_id" baseTableName="ord_order_history" constraintName="fk_order_history_order_item" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="ord_order_item" />
+       	<addForeignKeyConstraint baseColumnNames="service_instance_id" baseTableName="ord_order_history" constraintName="fk_order_history_billing_service_instance" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
+        	onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="billing_service_instance" />
+    </changeSet>
         
 </databaseChangeLog> 

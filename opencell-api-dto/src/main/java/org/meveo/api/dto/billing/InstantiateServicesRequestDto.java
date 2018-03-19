@@ -6,6 +6,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.order.OrderItemActionEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -23,6 +24,8 @@ public class InstantiateServicesRequestDto extends BaseDto {
     private ServicesToInstantiateDto servicesToInstantiate = new ServicesToInstantiateDto();
 
     private String orderNumber;
+    private Long orderItemId;
+    private OrderItemActionEnum orderItemAction;
 
     public String getSubscription() {
         return subscription;
@@ -51,5 +54,21 @@ public class InstantiateServicesRequestDto extends BaseDto {
     @Override
     public String toString() {
         return "InstantiateServicesRequestDto [subscription=" + subscription + ", servicesToInstantiate=" + servicesToInstantiate + ", orderNumber=" + orderNumber + "]";
+    }
+
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public OrderItemActionEnum getOrderItemAction() {
+        return orderItemAction;
+    }
+
+    public void setOrderItemAction(OrderItemActionEnum action) {
+        this.orderItemAction = action;
     }
 }
