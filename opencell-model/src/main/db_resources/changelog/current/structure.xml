@@ -366,5 +366,21 @@
         <addForeignKeyConstraint constraintName="fk_ar_occ_template_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_occ_template" baseColumnNames="accounting_code_id" />
         <addForeignKeyConstraint constraintName="fk_ar_account_operation_accounting_code" referencedTableName="billing_accounting_code" referencedColumnNames="id" baseTableName="ar_account_operation" baseColumnNames="accounting_code_id" />
     </changeSet> 
+    
+    <changeSet id="#3029_20180213 - Rating minimum on priceplan" author="EdwardPLegaspi">
+    	<addColumn tableName="cat_price_plan_matrix">
+    		<column name="minimum_amount_without_tax_el" type="varchar(2000)">
+                <constraints nullable="true" />
+            </column>
+            <column name="minimum_amount_with_tax_el" type="varchar(2000)">
+                <constraints nullable="true" />
+            </column>
+    	</addColumn>
+    	
+    	<addColumn tableName="billing_wallet_operation">
+    		<column name="raw_amount_without_tax" type="numeric(23, 12)" />
+            <column name="raw_amount_with_tax" type="numeric(23, 12)" />
+    	</addColumn>
+    </changeSet>
         
 </databaseChangeLog> 
