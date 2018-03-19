@@ -42975,6 +42975,86 @@ public class ForgotPassword extends ModuleScript{
     </con:testCase>
     <con:testCase id="3b6f54ff-b6e7-4634-86e9-01a7bcf8a8dd" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Account Operations" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="Create accounting code 1" id="61956cd8-5707-4a85-982c-436dee75418d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accounting code 1" id="994c345b-70c8-41cd-be9f-5c938ddedb91">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="90590_41115_00000_000_0000_00000000_00000" description="90590_41115_00000_000_0000_00000000_00000">\r
+            <!--Optional:-->
+            <chartOfAccountTypeEnum>EXPENSE</chartOfAccountTypeEnum>
+            <!--Optional:-->
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <reportingAccount>sales</reportingAccount>
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bc023018-5882-4c7e-a95f-5a4b9926c732"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create accounting code 2" id="01104703-3cff-49f5-8627-b1855d109b8f">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accounting code 2" id="994c345b-70c8-41cd-be9f-5c938ddedb91">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="90590_41115_00000_000_0000_00000000_00000" description="90590_41115_00000_000_0000_00000000_00000">\r
+            <!--Optional:-->
+            <chartOfAccountTypeEnum>EXPENSE</chartOfAccountTypeEnum>
+            <!--Optional:-->
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>
+            <disabled>false</disabled>
+            <!--Optional:-->
+            <reportingAccount>sales</reportingAccount>
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="bc023018-5882-4c7e-a95f-5a4b9926c732"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="Payment for Invoice 1" id="31c2263e-b67a-4fa1-90c8-ac58a3bdc1a3">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -43000,7 +43080,7 @@ public class ForgotPassword extends ModuleScript{
 		  <transactionDate>${#TestSuite#THIS_MONTH}-10</transactionDate>
 		  <transactionCategory>CREDIT</transactionCategory>
 		  <reference>${#TestSuite#invoice1_number}</reference>
-		  <accountCode>90590,41115,00000,000,0000,00000000,00000</accountCode>
+		  <accountCode>90590_41115_00000_000_0000_00000000_00000</accountCode>
 		  <accountCodeClientSide>90590,51214170,00000,000,0000,00000000,00000</accountCodeClientSide>
 		  <occCode>RG_PLVT</occCode>
 		  <otherCreditAndCharge>
@@ -43159,7 +43239,7 @@ public class ForgotPassword extends ModuleScript{
 		  <transactionDate>${#TestSuite#THIS_MONTH}-10</transactionDate>
 		  <transactionCategory>CREDIT</transactionCategory>
 		  <reference>${#TestSuite#invoice2_number}</reference>
-		  <accountCode>90590,41115,00000,000,0000,00000000,00000</accountCode>
+		  <accountCode>90590_41115_00000_000_0000_00000000_00000</accountCode>
 		  <accountCodeClientSide>90590,51214170,00000,000,0000,00000000,00000</accountCodeClientSide>
 		  <occCode>RG_PLVT</occCode>
 		  <otherCreditAndCharge>
