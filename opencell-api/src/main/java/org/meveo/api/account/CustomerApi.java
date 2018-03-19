@@ -442,6 +442,22 @@ public class CustomerApi extends AccountEntityApi {
             customerCategoryService.update(customerCategory);
         }
     }
+    
+    public CustomerCategoryDto findCategory(String customerCategoryCode) throws MeveoApiException {
+
+        if (StringUtils.isBlank(customerCategoryCode)) {
+            missingParameters.add("customerCategoryCode");
+            handleMissingParameters();
+        }
+
+        CustomerCategory customerCategory = customerCategoryService.findByCode(customerCategoryCode);
+        if (customerCategory == null) {
+            throw new EntityDoesNotExistsException(CustomerCategory.class, customerCategoryCode);
+        }
+
+        return new CustomerCategoryDto(customerCategory);
+    }
+
 
     public void createOrUpdateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 

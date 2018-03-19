@@ -14,6 +14,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
+import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -164,6 +165,19 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
             customerApi.createOrUpdateCategory(postData);
         } catch (Exception e) {
             processException(e, result);
+        }
+
+        return result;
+    }
+    
+    @Override
+    public GetCustomerCategoryResponseDto findCategory(String categoryCode) {
+        GetCustomerCategoryResponseDto result = new GetCustomerCategoryResponseDto();
+
+        try {
+            result.setCustomerCategory(customerApi.findCategory(categoryCode));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
         }
 
         return result;
