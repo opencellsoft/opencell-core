@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides support for custom field value data entry
  * 
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0
  */

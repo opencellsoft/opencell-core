@@ -47,6 +47,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * RecordedInvoice service implementation.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 4.8
  */

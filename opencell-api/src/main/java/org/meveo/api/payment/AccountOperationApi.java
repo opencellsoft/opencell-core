@@ -49,6 +49,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
  * The Class AccountOperationApi.
  *
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {

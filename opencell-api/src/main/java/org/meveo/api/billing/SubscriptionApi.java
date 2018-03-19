@@ -92,7 +92,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 
 /**
- * 
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0

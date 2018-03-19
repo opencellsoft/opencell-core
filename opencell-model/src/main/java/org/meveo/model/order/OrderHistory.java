@@ -21,6 +21,7 @@ import org.meveo.model.billing.ServiceInstance;
 /**
  * @author Edward P. Legaspi
  * @version 12 Mar 2018
+ * @lastModifiedVersion 5.0
  **/
 @Entity
 @Table(name = "ord_order_history")

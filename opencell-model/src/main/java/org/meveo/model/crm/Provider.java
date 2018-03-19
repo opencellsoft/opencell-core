@@ -66,6 +66,10 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @Cacheable

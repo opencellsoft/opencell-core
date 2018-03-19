@@ -9,6 +9,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.model.BusinessEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "BusinessEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class BusinessEntityDto  implements Serializable {

@@ -16,6 +16,8 @@ import org.meveo.model.crm.custom.EntityCustomAction;
 
 /**
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 
 @XmlRootElement(name = "EntityCustomization")

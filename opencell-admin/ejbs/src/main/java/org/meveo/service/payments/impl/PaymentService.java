@@ -59,6 +59,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Payment service implementation.
  * 
+ * @author Edward P. Legaspi
  *   @author anasseh
  *   @lastModifiedVersion 5.0
  */

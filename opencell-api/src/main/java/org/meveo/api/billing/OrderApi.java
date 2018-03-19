@@ -75,6 +75,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 
 /**
  * @author Andrius Karpavičius
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  *
  */

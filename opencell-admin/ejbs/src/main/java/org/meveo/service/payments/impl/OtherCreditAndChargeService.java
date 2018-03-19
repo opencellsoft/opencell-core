@@ -37,6 +37,8 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * OtherCreditAndCharge service implementation.
+ * 
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Stateless

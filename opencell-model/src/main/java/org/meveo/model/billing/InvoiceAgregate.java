@@ -38,7 +38,7 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
 /**
- * 
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Entity

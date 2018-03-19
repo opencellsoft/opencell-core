@@ -19,6 +19,7 @@ import org.meveo.api.rest.IBaseRs;
 /**
  * @author Edward P. Legaspi
  * @created 7 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Path("/finance/reportExtracts")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

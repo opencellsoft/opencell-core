@@ -40,6 +40,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
 /*
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Stateless

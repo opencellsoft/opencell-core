@@ -3,8 +3,10 @@ package org.meveo.admin.action.billing;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
+import org.meveo.model.billing.AccountingCode;
+
 /**
- * Controller to manage list view of AccountingCode.
+ * Controller to manage list view of {@link AccountingCode}.
  * 
  * @author Edward P. Legaspi
  * @created 21 Feb 2018

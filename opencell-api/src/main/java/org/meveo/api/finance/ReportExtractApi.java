@@ -24,6 +24,7 @@ import org.meveo.service.script.ScriptInstanceService;
 /**
  * @author Edward P. Legaspi
  * @created 7 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class ReportExtractApi extends BaseApi {

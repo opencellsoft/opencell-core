@@ -35,6 +35,8 @@ import org.meveo.util.EntityCustomizationUtils;
 
 /**
  * @author Andrius Karpavicius
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, CustomEntityTemplateDto> {

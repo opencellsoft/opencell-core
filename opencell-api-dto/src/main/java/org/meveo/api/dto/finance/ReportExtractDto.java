@@ -12,6 +12,7 @@ import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 /**
  * @author Edward P. Legaspi
  * @created 7 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 public class ReportExtractDto extends BusinessEntityDto {
 

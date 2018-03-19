@@ -47,6 +47,10 @@ import org.meveo.model.IEntity;
 import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.billing.AccountingCode;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Deprecated
 @Entity
 @Table(name = "dwh_journal_entries", uniqueConstraints = @UniqueConstraint(columnNames = {

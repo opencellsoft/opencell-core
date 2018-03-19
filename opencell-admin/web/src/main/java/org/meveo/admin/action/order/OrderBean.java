@@ -91,6 +91,8 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 /**
  * Standard backing bean for {@link Order} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped

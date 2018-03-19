@@ -105,7 +105,8 @@ import org.meveo.api.ws.SettingsWs;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @SuppressWarnings("deprecation")
 @WebService(serviceName = "SettingsWs", endpointInterface = "org.meveo.api.ws.SettingsWs")
 @Interceptors({ WsRestApiInterceptor.class })

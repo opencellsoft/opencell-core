@@ -14,6 +14,12 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
+/**
+ *  DTO for {@link PricePlanMatrix}.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixDto extends BusinessDto {

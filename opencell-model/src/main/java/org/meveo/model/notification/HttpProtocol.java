@@ -3,6 +3,7 @@ package org.meveo.model.notification;
 /**
  * @author Edward P. Legaspi
  * @version 5 Jan 2018
+ * @lastModifiedVersion 5.0
  **/
 public enum HttpProtocol {
     HTTPS("HTTPS"), HTTP("HTTP");

@@ -12,6 +12,10 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.OperationCategoryEnum;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "AccountOperation")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AccountOperationDto extends BaseDto {

@@ -6,7 +6,7 @@ import org.meveo.model.billing.AccountingCode;
 import org.meveo.service.base.BusinessService;
 
 /**
- * Service for managing AccountingCode.
+ * Service for managing {@link AccountingCode}.
  * 
  * @author Edward P. Legaspi
  * @created 21 Feb 2018

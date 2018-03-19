@@ -29,6 +29,10 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.SubscriptionWs;
 import org.meveo.model.billing.ChargeInstance;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "SubscriptionWs", endpointInterface = "org.meveo.api.ws.SubscriptionWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class SubscriptionWsImpl extends BaseWs implements SubscriptionWs {

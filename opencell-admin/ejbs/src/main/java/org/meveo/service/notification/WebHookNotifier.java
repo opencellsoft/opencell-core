@@ -28,6 +28,10 @@ import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class WebHookNotifier {
 

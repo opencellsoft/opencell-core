@@ -20,6 +20,7 @@ import org.meveo.model.ICustomFieldEntity;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT")

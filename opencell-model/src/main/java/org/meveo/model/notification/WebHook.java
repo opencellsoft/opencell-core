@@ -21,6 +21,10 @@ import javax.validation.constraints.Size;
 import org.apache.commons.codec.binary.Base64;
 import org.meveo.model.ModuleItem;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ModuleItem
 @Table(name = "adm_notif_webhooks")

@@ -73,6 +73,9 @@ import org.meveo.util.MeveoParamBean;
 import org.primefaces.model.SortOrder;
 
 /**
+ * CRUD API for managing {@link Invoice}.
+ * 
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Stateless

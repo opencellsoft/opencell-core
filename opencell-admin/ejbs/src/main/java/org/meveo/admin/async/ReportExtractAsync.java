@@ -20,6 +20,7 @@ import org.meveo.service.job.JobExecutionService;
 /**
  * @author Edward P. Legaspi
  * @created 2 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class ReportExtractAsync {

@@ -119,6 +119,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0

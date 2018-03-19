@@ -18,6 +18,7 @@ import org.meveo.api.rest.impl.BaseRs;
 /**
  * @author Edward P. Legaspi
  * @created 7 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

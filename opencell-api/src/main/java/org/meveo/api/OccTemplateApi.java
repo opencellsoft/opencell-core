@@ -22,6 +22,7 @@ import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.payments.impl.OCCTemplateService;
 
 /**
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Stateless

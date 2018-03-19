@@ -55,6 +55,10 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.order.OrderHistory;
 import org.meveo.model.order.OrderItemActionEnum;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")

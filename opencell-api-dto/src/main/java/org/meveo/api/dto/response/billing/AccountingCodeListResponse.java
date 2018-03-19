@@ -9,6 +9,7 @@ import org.meveo.api.dto.response.SearchResponse;
 /**
  * @author Edward P. Legaspi
  * @version 26 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 public class AccountingCodeListResponse extends SearchResponse {
 

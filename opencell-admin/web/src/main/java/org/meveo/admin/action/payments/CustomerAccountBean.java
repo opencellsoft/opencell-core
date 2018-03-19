@@ -60,7 +60,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
  * Standard backing bean for {@link CustomerAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
- *  @lastModifiedVersion 5.0
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped

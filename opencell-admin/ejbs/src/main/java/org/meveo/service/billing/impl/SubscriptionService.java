@@ -47,6 +47,10 @@ import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.offer.OfferModelScriptService;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class SubscriptionService extends BusinessService<Subscription> {
 

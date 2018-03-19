@@ -20,6 +20,10 @@ package org.meveo.model.billing;
 
 import java.math.BigDecimal;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 public class PostInvoicingReportsDTO {
 
 	private Integer invoicesNumber = 0;

@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 /**
+ * @author Edward P. Legaspi
  * @author R.AITYAAZZA
  * @lastModifiedVersion 5.0
  */

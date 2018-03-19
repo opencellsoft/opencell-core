@@ -99,6 +99,7 @@ import org.meveo.util.MeveoParamBean;
  * 
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  * 
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 

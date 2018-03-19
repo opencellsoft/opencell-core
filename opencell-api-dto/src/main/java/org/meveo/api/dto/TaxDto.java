@@ -11,8 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.Tax;
 
 /**
+ * DTO for {@link Tax}.
+ * 
  * @author Edward P. Legaspi
- * @version Oct 11, 2013
  * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Tax")

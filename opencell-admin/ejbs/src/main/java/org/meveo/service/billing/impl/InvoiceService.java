@@ -120,6 +120,7 @@ import net.sf.jasperreports.engine.data.JRXmlDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0

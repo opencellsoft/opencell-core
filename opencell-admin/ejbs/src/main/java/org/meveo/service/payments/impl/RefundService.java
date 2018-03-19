@@ -41,6 +41,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Refund service implementation.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
  */
 @Stateless

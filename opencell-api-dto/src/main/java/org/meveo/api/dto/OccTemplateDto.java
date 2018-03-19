@@ -9,6 +9,7 @@ import org.meveo.model.payments.OCCTemplate;
 import org.meveo.model.payments.OperationCategoryEnum;
 
 /**
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "OCCTemplate")

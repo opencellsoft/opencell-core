@@ -6,6 +6,7 @@ import org.meveo.api.dto.response.BaseResponse;
 /**
  * @author Edward P. Legaspi
  * @version 26 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 public class AccountingCodeGetResponseDto extends BaseResponse {
 

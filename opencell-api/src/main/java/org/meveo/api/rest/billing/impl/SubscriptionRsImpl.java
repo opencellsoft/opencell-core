@@ -35,6 +35,7 @@ import org.meveo.model.billing.ChargeInstance;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

@@ -57,6 +57,10 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Account Transaction.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+
  */
 @Entity
 @ObservableEntity

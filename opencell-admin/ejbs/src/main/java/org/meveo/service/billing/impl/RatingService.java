@@ -73,6 +73,13 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
+/**
+ * Rate charges such as {@link OneShotChargeTemplate}, {@link RecurringChargeTemplate} and {@link UsageChargeTemplate}. 
+ * Generate the {@link WalletOperation} with the appropriate values.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
 

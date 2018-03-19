@@ -58,6 +58,10 @@ import org.meveo.util.ApplicationProvider;
 import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class UsageRatingService implements Serializable {
 

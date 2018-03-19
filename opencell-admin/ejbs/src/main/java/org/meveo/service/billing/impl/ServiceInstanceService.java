@@ -54,6 +54,7 @@ import org.meveo.service.script.service.ServiceModelScriptService;
 /**
  * ServiceInstanceService.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0

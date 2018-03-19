@@ -15,7 +15,8 @@ import org.meveo.model.jobs.JobExecutionResultImpl;
  * Contains information about job execution status and history once job is completed
  * 
  * @author Andrius Karpavicius
- *
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "JobExecutionResult")
 @XmlAccessorType(XmlAccessType.FIELD)

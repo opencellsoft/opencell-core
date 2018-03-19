@@ -36,6 +36,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.meveo.service.payments.impl.RefundService;
 
 /**
+ *  @author Edward P. Legaspi
  *  @author anasseh
  *  @lastModifiedVersion 5.0
  */

@@ -25,6 +25,7 @@ import org.meveo.service.script.finance.ReportExtractScript;
 /**
  * @author Edward P. Legaspi
  * @created 29 Jan 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class ReportExtractService extends BusinessService<ReportExtract> {

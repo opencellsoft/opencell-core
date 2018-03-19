@@ -10,6 +10,7 @@ import org.meveo.model.order.OrderItemActionEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "ActivateServicesRequest")
 @XmlAccessorType(XmlAccessType.FIELD)

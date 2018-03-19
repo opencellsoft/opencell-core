@@ -21,6 +21,8 @@ import org.meveo.service.catalog.impl.InvoiceCategoryService;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 
 /**
+ * CRUD API for managing {@link InvoiceSubCategory}.
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  **/

@@ -36,6 +36,10 @@ import org.hibernate.annotations.Parameter;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.billing.AccountingCode;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Deprecated
 @Entity
 @Table(name = "dwh_account_operation")

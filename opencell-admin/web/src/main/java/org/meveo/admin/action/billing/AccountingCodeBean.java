@@ -10,7 +10,7 @@ import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.AccountingCodeService;
 
 /**
- * Controller to manage detail view of AccountingCode.
+ * Controller to manage detail view of {@link AccountingCode}.
  * 
  * @author Edward P. Legaspi
  * @created 21 Feb 2018
