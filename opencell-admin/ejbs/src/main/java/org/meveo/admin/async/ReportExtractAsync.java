@@ -13,11 +13,14 @@ import javax.inject.Inject;
 
 import org.meveo.admin.job.UnitReportExtractJobBean;
 import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.job.JobExecutionService;
 
 /**
  * @author Edward P. Legaspi
  * @created 2 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class ReportExtractAsync {
@@ -27,10 +30,16 @@ public class ReportExtractAsync {
 
     @Inject
     private JobExecutionService jobExecutionService;
+    
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date startDate, Date endDate) {
+    public Future<String> launchAndForget(List<Long> ids, JobExecutionResultImpl result, Date startDate, Date endDate, MeveoUser lastCurrentUser) {
+        
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        
         for (Long id : ids) {
             if (!jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                 break;

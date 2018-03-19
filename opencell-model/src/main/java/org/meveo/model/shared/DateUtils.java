@@ -34,6 +34,10 @@ import javax.xml.datatype.XMLGregorianCalendar;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 public class DateUtils {
 
     private static long lastTime = System.currentTimeMillis() / 1000;

@@ -50,7 +50,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * A service that duplicate a hierarchy such as {@link OfferTemplate} and {@link ServiceTemplate}.
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class CatalogHierarchyBuilderService {

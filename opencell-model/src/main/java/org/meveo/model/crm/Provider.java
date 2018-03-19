@@ -66,6 +66,10 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 import org.meveo.model.shared.InterBankTitle;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @Cacheable
@@ -179,6 +183,7 @@ public class Provider extends AuditableEntity implements ICustomFieldEntity {
     @NotNull
     private String uuid = UUID.randomUUID().toString();
 
+    @Deprecated
     @Column(name = "discount_accounting_code", length = 255)
     @Size(max = 255)
     private String discountAccountingCode;

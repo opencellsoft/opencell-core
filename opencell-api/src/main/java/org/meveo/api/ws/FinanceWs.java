@@ -13,6 +13,10 @@ import org.meveo.api.dto.response.finance.RunReportExtractDto;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtoResponse;
 import org.meveo.api.dto.response.payment.RevenueRecognitionRuleDtosResponse;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @WebService
 public interface FinanceWs extends IBaseWs {
 

@@ -16,6 +16,8 @@ import org.meveo.model.catalog.DiscountPlanItem;
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
  * @since Aug 1, 2016 9:34:34 PM
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  *
  */
 @XmlRootElement(name = "DiscountPlanItem")
@@ -33,6 +35,7 @@ public class DiscountPlanItemDto extends BaseDto {
     private String invoiceCategoryCode;
     private String invoiceSubCategoryCode;
     private BigDecimal percent;
+    @Deprecated // until further analysis
     private String accountingCode;
     private String expressionEl;
     private String discountPercentEl;

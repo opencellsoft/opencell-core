@@ -39,9 +39,8 @@ import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
 /**
- * @author Wassim Drira
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
- * 
  */
 @Named
 public class AccountingJournal extends FileProducer implements Reporting {

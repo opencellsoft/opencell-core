@@ -12,7 +12,8 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "OneShotChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OneShotChargeTemplateDto extends ChargeTemplateDto {

@@ -22,6 +22,7 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Path("/job")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })

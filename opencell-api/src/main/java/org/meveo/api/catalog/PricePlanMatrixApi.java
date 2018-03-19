@@ -176,6 +176,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), null));
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
         pricePlanMatrix.setRatingEL(postData.getRatingEL());
+        pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
+        pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
 
         try {
             populateCustomFields(postData.getCustomFields(), pricePlanMatrix, true);
@@ -302,6 +304,8 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         pricePlanMatrix.setCriteriaEL(postData.getCriteriaEL());
         pricePlanMatrix.setWoDescriptionEL(postData.getWoDescriptionEL());
         pricePlanMatrix.setRatingEL(postData.getRatingEL());
+        pricePlanMatrix.setMinimumAmountWithoutTaxEl(postData.getMinimumAmountWithoutTaxEl());
+        pricePlanMatrix.setMinimumAmountWithTaxEl(postData.getMinimumAmountWithTaxEl());
 
         if (postData.getLanguageDescriptions() != null) {
             pricePlanMatrix.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), pricePlanMatrix.getDescriptionI18n()));

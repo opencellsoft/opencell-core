@@ -15,6 +15,7 @@ import org.meveo.model.notification.WebHookMethodEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "WebhookNotification")
 @XmlAccessorType(XmlAccessType.FIELD)

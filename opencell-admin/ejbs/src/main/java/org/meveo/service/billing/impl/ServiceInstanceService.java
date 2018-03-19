@@ -48,11 +48,13 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
  * ServiceInstanceService.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0
@@ -97,6 +99,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     
     
     ParamBean paramBean = ParamBean.getInstance();
+
+    @Inject
+    private OrderHistoryService orderHistoryService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -271,6 +276,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
             }
         }
+        
+        if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
     }
 
     /**
@@ -284,7 +293,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws BusinessException {
         serviceActivation(serviceInstance, true, amountWithoutTax, amountWithoutTax2);
     }
 
@@ -388,6 +397,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
         }
+        
+        if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
     }
 
     /**
@@ -424,7 +437,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-            String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            String orderNumber, SubscriptionTerminationReason terminationReason) throws BusinessException {
 
         if (serviceInstance.getId() != null) {
             log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);

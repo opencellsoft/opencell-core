@@ -29,6 +29,7 @@ import org.meveo.model.scripts.ScriptInstance;
 /**
  * @author Edward P. Legaspi
  * @created 29 Jan 2018
+ * @lastModifiedVersion 5.0
  **/
 @Entity
 @CustomFieldEntity(cftCodePrefix = "REPORT")

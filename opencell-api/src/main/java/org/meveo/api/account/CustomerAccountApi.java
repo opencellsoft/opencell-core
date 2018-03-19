@@ -53,9 +53,11 @@ import org.meveo.service.payments.impl.CreditCategoryService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
+ * CRUD API for {@link CustomerAccount}.
+ *  
+ * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.0
- *
  */
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)

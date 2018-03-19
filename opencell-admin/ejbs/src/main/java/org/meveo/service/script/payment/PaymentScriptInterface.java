@@ -9,6 +9,7 @@ import org.meveo.service.script.ScriptInterface;
  * The Interface PaymentScriptInterface.
  *
  * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 public interface PaymentScriptInterface extends ScriptInterface {
 
@@ -59,4 +60,36 @@ public interface PaymentScriptInterface extends ScriptInterface {
      * @throws BusinessException the business exception
      */
     void doRefundCard(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Do payment with mandat.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void doPaymentSepa(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Do refund with mandat.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void doRefundSepa(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Check payment.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void checkPayment(Map<String, Object> methodContext) throws BusinessException;
+    
+    /**
+     * Check mandat.
+     *
+     * @param methodContext the method context
+     * @throws BusinessException the business exception
+     */
+    void checkMandat(Map<String, Object> methodContext) throws BusinessException;
 }

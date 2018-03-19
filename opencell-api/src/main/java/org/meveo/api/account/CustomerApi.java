@@ -44,6 +44,8 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -454,6 +456,32 @@ public class CustomerApi extends AccountEntityApi {
             customerCategoryService.update(customerCategory);
         }
     }
+    
+    /**
+     * Find customer category by customer category code
+     * 
+     * @param customerCategoryCode customer category code
+     * @return customer category dto
+     * @throws MeveoApiException Meveo Api Exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
+    public CustomerCategoryDto findCategory(String customerCategoryCode) throws MeveoApiException {
+
+        if (StringUtils.isBlank(customerCategoryCode)) {
+            missingParameters.add("customerCategoryCode");
+            handleMissingParameters();
+        }
+
+        CustomerCategory customerCategory = customerCategoryService.findByCode(customerCategoryCode);
+        if (customerCategory == null) {
+            throw new EntityDoesNotExistsException(CustomerCategory.class, customerCategoryCode);
+        }
+
+        return new CustomerCategoryDto(customerCategory);
+    }
+
 
     public void createOrUpdateCategory(CustomerCategoryDto postData) throws MeveoApiException, BusinessException {
 

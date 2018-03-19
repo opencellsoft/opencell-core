@@ -8,12 +8,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.order.OrderItemActionEnum;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "TerminateSubscriptionRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties({ "orderItemId", "orderItemAction" })
 public class TerminateSubscriptionRequestDto extends BaseDto {
 
 	private static final long serialVersionUID = -4477259461644796968L;
@@ -26,6 +31,9 @@ public class TerminateSubscriptionRequestDto extends BaseDto {
 
 	@XmlElement(required = true)
 	private Date terminationDate;
+	
+    private Long orderItemId;
+    private OrderItemActionEnum orderItemAction;
 
 	public String getSubscriptionCode() {
 		return subscriptionCode;
@@ -56,5 +64,21 @@ public class TerminateSubscriptionRequestDto extends BaseDto {
 		return "TerminateSubscriptionDto [subscriptionCode=" + subscriptionCode + ", terminationReason="
 				+ terminationReason + ", terminationDate=" + terminationDate + "]";
 	}
+
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public OrderItemActionEnum getOrderItemAction() {
+        return orderItemAction;
+    }
+
+    public void setOrderItemAction(OrderItemActionEnum action) {
+        this.orderItemAction = action;
+    }
 
 }

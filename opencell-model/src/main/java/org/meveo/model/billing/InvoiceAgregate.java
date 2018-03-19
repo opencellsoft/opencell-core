@@ -37,6 +37,10 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @Table(name = "billing_invoice_agregate")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -65,9 +69,9 @@ public abstract class InvoiceAgregate extends EnableEntity {
 	@Column(name = "item_number")
 	private Integer itemNumber;
 
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
 	@Column(name = "description", length = 255)
     @Size(max = 255)
@@ -180,11 +184,11 @@ public abstract class InvoiceAgregate extends EnableEntity {
 		this.itemNumber = itemNumber;
 	}
 
-	public String getAccountingCode() {
+	public AccountingCode getAccountingCode() {
 		return accountingCode;
 	}
 
-	public void setAccountingCode(String accountingCode) {
+	public void setAccountingCode(AccountingCode accountingCode) {
 		this.accountingCode = accountingCode;
 	}
 

@@ -11,8 +11,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.Tax;
 
 /**
+ * DTO for {@link Tax}.
+ * 
  * @author Edward P. Legaspi
- * @since Oct 11, 2013
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Tax")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -35,7 +37,9 @@ public class TaxDto extends BusinessDto {
 	public TaxDto(Tax tax,CustomFieldsDto customFieldInstances) {
 		super(tax);
 		percent = tax.getPercent();
-		accountingCode = tax.getAccountingCode();
+        if (tax.getAccountingCode() != null) {
+            accountingCode = tax.getAccountingCode().getCode();
+        }
 		customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(tax.getDescriptionI18n()));
 	}

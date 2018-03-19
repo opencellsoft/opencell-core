@@ -2,7 +2,6 @@ package org.meveo.service.payments.impl;
 
 import java.util.Map;
 
-import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
@@ -11,6 +10,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.account.CustomerAccountDto;
 import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.api.dto.payment.PaymentResponseDto;
+import org.meveo.commons.utils.EjbUtils;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -50,8 +50,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     protected Logger log = LoggerFactory.getLogger(SlimpayGatewayPayment.class);
 
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
+    private ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");
 
     private String getApiUrl() {
         return paramBeanFactory.getInstance().getProperty("slimPay.apiURL", null);

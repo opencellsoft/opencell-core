@@ -73,6 +73,13 @@ import org.meveo.service.script.Script;
 import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
+/**
+ * Rate charges such as {@link OneShotChargeTemplate}, {@link RecurringChargeTemplate} and {@link UsageChargeTemplate}. 
+ * Generate the {@link WalletOperation} with the appropriate values.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class RatingService extends BusinessService<WalletOperation> {
 
@@ -491,6 +498,24 @@ public class RatingService extends BusinessService<WalletOperation> {
         log.debug("After getChargeInstance:" + (System.currentTimeMillis() - startDate));
 
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
+
+        if (pricePlan != null) {
+            if (appProvider.isEntreprise() && !StringUtils.isBlank(pricePlan.getMinimumAmountWithoutTaxEl())) {
+                BigDecimal minimumAmount = new BigDecimal(
+                    evaluateDoubleExpression(pricePlan.getMinimumAmountWithoutTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
+                if (bareWalletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
+                    bareWalletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
+                    bareWalletOperation.setAmountWithoutTax(minimumAmount);
+                }
+            } else if (!StringUtils.isBlank(pricePlan.getMinimumAmountWithTaxEl())) {
+                BigDecimal minimumAmount = new BigDecimal(
+                    evaluateDoubleExpression(pricePlan.getMinimumAmountWithTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
+                if (bareWalletOperation.getAmountWithTax().compareTo(minimumAmount) < 0) {
+                    bareWalletOperation.setRawAmountWithTax(pricePlan.getAmountWithTax());
+                    bareWalletOperation.setAmountWithTax(minimumAmount);
+                }
+            }
+        }
 
         // calculate WO description based on EL from Price plan
         if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {

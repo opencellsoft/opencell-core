@@ -41,6 +41,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -218,6 +219,14 @@ public class WalletOperation extends BusinessEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
+    
+    @Column(name = "raw_amount_without_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithoutTax;
+    
+    @Column(name = "raw_amount_with_tax", precision = 23, scale = 12)
+    @Digits(integer = 23, fraction = 12)
+    private BigDecimal rawAmountWithTax;
 
     @Transient
     private BillingAccount billingAccount;
@@ -594,6 +603,22 @@ public class WalletOperation extends BusinessEntity {
                 + ", inputUnitDescription=" + inputUnitDescription + ", ratingUnitDescription=" + ratingUnitDescription + ", inputQuantity=" + inputQuantity + ", billingAccount="
                 + billingAccount + ", invoiceSubCategory=" + invoiceSubCategory + ", billingRun=" + billingRun + ", offerTemplate=" + offerTemplate + ", orderNumber=" + orderNumber
                 + "]";
+    }
+
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
     }
 
 }

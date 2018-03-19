@@ -10,7 +10,8 @@ import org.meveo.model.catalog.UsageChargeTemplate;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "UsageChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class UsageChargeTemplateDto extends ChargeTemplateDto {

@@ -46,6 +46,7 @@ import org.meveo.model.scripts.ScriptInstance;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Entity
 @ModuleItem

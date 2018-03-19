@@ -15,6 +15,10 @@ import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.OccTemplateRs;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class OccTemplateRsImpl extends BaseRs implements OccTemplateRs {

@@ -33,6 +33,7 @@ import org.meveo.service.base.AccountService;
 /**
  * Customer service implementation.
  * 
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 @Stateless

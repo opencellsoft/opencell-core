@@ -1,5 +1,6 @@
 package org.meveo.service.payments.impl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.DDRequestLOT;
+import org.meveo.model.payments.MandatStateEnum;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.payments.PaymentStatusEnum;
 import org.meveo.service.script.payment.PaymentScript;
@@ -140,29 +142,85 @@ public class CustomApiGatewayPayment implements GatewayPaymentInterface {
 
     @Override
     public PaymentResponseDto doPaymentSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
+        scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
 
+        paymentScriptInterface.doPaymentSepa(scriptContext);
+
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
+        doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+        doPaymentResponseDto.setErrorMessage((String) scriptContext.get(PaymentScript.RESULT_ERROR_MSG));
+        doPaymentResponseDto.setCodeClientSide((String) scriptContext.get(PaymentScript.RESULT_CODE_CLIENT_SIDE));
+        doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
+        doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
+        return doPaymentResponseDto;
+    }
+    
     @Override
     public MandatInfoDto checkMandat(String mandatReference, String mandateId) throws BusinessException {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_MANDAT_REF, mandatReference);
+        scriptContext.put(PaymentScript.CONTEXT_MANDAT_ID, mandateId);
+
+        paymentScriptInterface.checkMandat(scriptContext);
+
+        MandatInfoDto mandatInfoDto = new MandatInfoDto();
+        mandatInfoDto.setId((String) scriptContext.get(PaymentScript.RESULT_MANDAT_ID));
+        mandatInfoDto.setReference((String) scriptContext.get(PaymentScript.RESULT_MANDAT_REF));
+        mandatInfoDto.setState((MandatStateEnum) scriptContext.get(PaymentScript.RESULT_STATE));
+        mandatInfoDto.setStandard((String) scriptContext.get(PaymentScript.RESULT_STANDARD));
+        mandatInfoDto.setInitialScore((int) scriptContext.get(PaymentScript.RESULT_INT_SCORE));
+        mandatInfoDto.setDateCreated((Date) scriptContext.get(PaymentScript.RESULT_DATE_CREATED));
+        mandatInfoDto.setDateSigned((Date) scriptContext.get(PaymentScript.RESULT_DATE_SIGNED));
+        mandatInfoDto.setPaymentScheme((String) scriptContext.get(PaymentScript.RESULT_SCHEME));
+        mandatInfoDto.setBic((String) scriptContext.get(PaymentScript.RESULT_BIC));
+        mandatInfoDto.setIban((String) scriptContext.get(PaymentScript.RESULT_IBAN));
+        mandatInfoDto.setBankName((String) scriptContext.get(PaymentScript.RESULT_BANK_NAME));
+        return mandatInfoDto;        
     }
 
     @Override
     public PaymentResponseDto doRefundSepa(DDPaymentMethod paymentToken, Long ctsAmount, Map<String, Object> additionalParams) throws BusinessException {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_TOKEN, paymentToken);
+        scriptContext.put(PaymentScript.CONTEXT_AMOUNT_CTS, ctsAmount);
+        scriptContext.put(PaymentScript.CONTEXT_ADDITIONAL_INFOS, additionalParams);
+
+        paymentScriptInterface.doRefundSepa(scriptContext);
+
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
+        doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+        doPaymentResponseDto.setErrorMessage((String) scriptContext.get(PaymentScript.RESULT_ERROR_MSG));
+        doPaymentResponseDto.setCodeClientSide((String) scriptContext.get(PaymentScript.RESULT_CODE_CLIENT_SIDE));
+        doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
+        doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
+        return doPaymentResponseDto;    
     }
 
-    /* (non-Javadoc)
-     * @see org.meveo.service.payments.impl.GatewayPaymentInterface#checkPayment(java.lang.String, org.meveo.model.payments.PaymentMethodEnum)
-     */
+
     @Override
     public PaymentResponseDto checkPayment(String paymentID, PaymentMethodEnum paymentMethodType) throws BusinessException {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, Object> scriptContext = new HashMap<String, Object>();
+        scriptContext.put(PaymentScript.CONTEXT_PAYMENT_ID, paymentID); 
+        scriptContext.put(PaymentScript.CONTEXT_PAYMENT_METHOD_TYPE, paymentMethodType);
+
+        paymentScriptInterface.checkPayment(scriptContext);
+
+        PaymentResponseDto doPaymentResponseDto = new PaymentResponseDto();
+        doPaymentResponseDto.setPaymentID((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_ID));
+        doPaymentResponseDto.setTransactionId((String) scriptContext.get(PaymentScript.RESULT_TRANSACTION_ID));
+        doPaymentResponseDto.setPaymentStatus((PaymentStatusEnum) scriptContext.get(PaymentScript.RESULT_PAYMENT_STATUS));
+        doPaymentResponseDto.setErrorMessage((String) scriptContext.get(PaymentScript.RESULT_ERROR_MSG));
+        doPaymentResponseDto.setCodeClientSide((String) scriptContext.get(PaymentScript.RESULT_CODE_CLIENT_SIDE));
+        doPaymentResponseDto.setBankRefenrence((String) scriptContext.get(PaymentScript.RESULT_BANK_REFERENCE));
+        doPaymentResponseDto.setPaymentBrand((String) scriptContext.get(PaymentScript.RESULT_PAYMENT_BRAND));
+        return doPaymentResponseDto;    
     }
 
 }

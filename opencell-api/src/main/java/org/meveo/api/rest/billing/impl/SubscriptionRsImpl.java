@@ -36,6 +36,7 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -209,7 +210,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     public ActionStatus createOrUpdateSubscriptionPartial(SubscriptionDto subscriptionDto) {
         ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
         try {
-            subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null);
+            subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null, null, null);
         } catch (Exception e) {
             processException(e, result);
         }

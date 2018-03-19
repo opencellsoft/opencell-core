@@ -35,6 +35,9 @@ import org.meveo.service.catalog.impl.TaxService;
 /**
  * Standard backing bean for {@link Tax} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
@@ -92,23 +95,24 @@ public class TaxBean extends CustomFieldBean<Tax> {
                 + accountingCodeFields[4] + separator + accountingCodeFields[5] + separator + accountingCodeFields[6];
     }
 
-    /**
-     * Parses cost accounting code
-     * 
-     */
-    public void parseAccountingCode() {
-        if (entity.getAccountingCode() != null) {
-            String[] accountingCodeValues = entity.getAccountingCode().split(separator);
-            if (accountingCodeValues != null) {
-                for (int i = 0; i < accountingCodeFields.length; i++) {
-                    if (i < accountingCodeValues.length) {
-                        accountingCodeFields[i] = accountingCodeValues[i];
-                    }
-                }
-            }
-        }
-    }
-
+	/**
+	 * Parses cost accounting code
+	 * 
+	 */
+	public void parseAccountingCode() {
+		if (entity.getAccountingCode() != null) {
+			String[] accountingCodeValues = entity.getAccountingCode().getCode().split(
+					separator);
+			if (accountingCodeValues != null) {
+				for (int i = 0; i < accountingCodeFields.length; i++) {
+					if (i < accountingCodeValues.length) {
+						accountingCodeFields[i] = accountingCodeValues[i];
+					}
+				}
+			}
+		}
+	}
+	
     public String getAccountingCodeField1() {
         return accountingCodeFields[0];
     }

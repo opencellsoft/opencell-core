@@ -37,6 +37,9 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * OtherCreditAndCharge service implementation.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class OtherCreditAndChargeService extends
@@ -96,7 +99,7 @@ public class OtherCreditAndChargeService extends
 			otherCreditAndCharge
 					.setOccDescription(occTemplate.getDescription());
 		}
-		otherCreditAndCharge.setAccountCode(occTemplate.getAccountCode());
+		otherCreditAndCharge.setAccountingCode(occTemplate.getAccountingCode());
 		otherCreditAndCharge.setAccountCodeClientSide(occTemplate
 				.getAccountCodeClientSide());
 		otherCreditAndCharge.setTransactionCategory(occTemplate

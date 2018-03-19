@@ -49,6 +49,7 @@ import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.0
  **/
@@ -119,7 +120,7 @@ public class PaymentApi extends BaseApi {
         payment.setAmount(paymentDto.getAmount());
         payment.setUnMatchingAmount(paymentDto.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setAccountCode(occTemplate.getAccountCode());
+        payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setOccCode(occTemplate.getCode());
         payment.setOccDescription(StringUtils.isBlank(paymentDto.getDescription()) ? occTemplate.getDescription() : paymentDto.getDescription());
         payment.setTransactionCategory(occTemplate.getOccCategory());

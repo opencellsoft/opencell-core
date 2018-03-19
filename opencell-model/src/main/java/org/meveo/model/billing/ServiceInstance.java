@@ -52,7 +52,13 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.catalog.Calendar;
 import org.meveo.model.catalog.ServiceTemplate;
+import org.meveo.model.order.OrderHistory;
+import org.meveo.model.order.OrderItemActionEnum;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "SERVICE_INSTANCE")
@@ -136,6 +142,18 @@ public class ServiceInstance extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
+    
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
+    private List<OrderHistory> orderHistories;
+    
+    /**
+     * PK of OrderItem.id.
+     */
+    @Transient
+    private Long orderItemId;
+    
+    @Transient
+    private OrderItemActionEnum orderItemAction;
 
     public Date getEndAgreementDate() {
         return endAgreementDate;
@@ -314,5 +332,29 @@ public class ServiceInstance extends BusinessCFEntity {
 
     public BigDecimal getPreviousQuantity() {
         return previousQuantity;
+    }
+
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public OrderItemActionEnum getOrderItemAction() {
+        return orderItemAction;
+    }
+
+    public void setOrderItemAction(OrderItemActionEnum orderItemAction) {
+        this.orderItemAction = orderItemAction;
+    }
+
+    public List<OrderHistory> getOrderHistories() {
+        return orderHistories;
+    }
+
+    public void setOrderHistories(List<OrderHistory> orderHistories) {
+        this.orderHistories = orderHistories;
     }
 }

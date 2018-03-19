@@ -14,6 +14,12 @@ import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.catalog.PricePlanMatrix;
 
+/**
+ *  DTO for {@link PricePlanMatrix}.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "PricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PricePlanMatrixDto extends BusinessDto {
@@ -43,6 +49,9 @@ public class PricePlanMatrixDto extends BusinessDto {
     private BigDecimal amountWithTax;
     private String amountWithoutTaxEL;
     private String amountWithTaxEL;
+    
+    private String minimumAmountWithoutTaxEl ;
+    private String minimumAmountWithTaxEl ;
 
     private int priority;
 
@@ -111,6 +120,8 @@ public class PricePlanMatrixDto extends BusinessDto {
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(pricePlan.getDescriptionI18n()));
         woDescriptionEL = pricePlan.getWoDescriptionEL();
         ratingEL = pricePlan.getRatingEL();
+        minimumAmountWithoutTaxEl = pricePlan.getMinimumAmountWithoutTaxEl();
+        minimumAmountWithTaxEl = pricePlan.getMinimumAmountWithTaxEl();
     }
 
     public String getEventCode() {
@@ -353,5 +364,21 @@ public class PricePlanMatrixDto extends BusinessDto {
 
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
+    }
+
+    public String getMinimumAmountWithoutTaxEl() {
+        return minimumAmountWithoutTaxEl;
+    }
+
+    public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
+        this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
+    }
+
+    public String getMinimumAmountWithTaxEl() {
+        return minimumAmountWithTaxEl;
+    }
+
+    public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
+        this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
     }
 }
