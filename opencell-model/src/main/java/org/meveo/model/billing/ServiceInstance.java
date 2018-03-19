@@ -143,9 +143,12 @@ public class ServiceInstance extends BusinessCFEntity {
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
     
-    @OneToMany(mappedBy = "serviceInstance")
+    @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<OrderHistory> orderHistories;
     
+    /**
+     * PK of OrderItem.id.
+     */
     @Transient
     private Long orderItemId;
     
