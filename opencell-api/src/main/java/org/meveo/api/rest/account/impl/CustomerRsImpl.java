@@ -21,6 +21,8 @@ import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -170,6 +172,15 @@ public class CustomerRsImpl extends BaseRs implements CustomerRs {
         return result;
     }
     
+    /**
+     * Find customer category by customer category code
+     * 
+     * @param categoryCode customer category code
+     * @return GetCustomerCategoryResponseDto
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     @Override
     public GetCustomerCategoryResponseDto findCategory(String categoryCode) {
         GetCustomerCategoryResponseDto result = new GetCustomerCategoryResponseDto();

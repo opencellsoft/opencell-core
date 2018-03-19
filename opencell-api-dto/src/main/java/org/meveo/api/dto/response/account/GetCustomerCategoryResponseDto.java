@@ -7,6 +7,11 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.account.CustomerCategoryDto;
 import org.meveo.api.dto.response.BaseResponse;
 
+/**
+ * GetCustomerCategoryResponse Dto
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
 @XmlRootElement(name = "GetCustomerCategoryResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetCustomerCategoryResponseDto extends BaseResponse {

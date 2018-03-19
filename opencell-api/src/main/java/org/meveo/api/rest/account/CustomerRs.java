@@ -25,6 +25,8 @@ import org.meveo.api.rest.IBaseRs;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Path("/account/customer")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -171,6 +173,8 @@ public interface CustomerRs extends IBaseRs {
      * 
      * @param categoryCode The customer category's code
      * @return The customer category's data
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     @GET
     @Path("/category/{categoryCode}")

@@ -43,6 +43,8 @@ import org.primefaces.model.SortOrder;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -443,6 +445,16 @@ public class CustomerApi extends AccountEntityApi {
         }
     }
     
+    /**
+     * Find customer category by customer category code
+     * 
+     * @param customerCategoryCode customer category code
+     * @return customer category dto
+     * @throws MeveoApiException Meveo Api Exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public CustomerCategoryDto findCategory(String customerCategoryCode) throws MeveoApiException {
 
         if (StringUtils.isBlank(customerCategoryCode)) {
