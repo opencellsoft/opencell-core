@@ -10,12 +10,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 import org.meveo.model.order.OrderItemActionEnum;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "TerminateSubscriptionRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties({ "orderItemId", "orderItemAction" })
 public class TerminateSubscriptionRequestDto extends BaseDto {
 
 	private static final long serialVersionUID = -4477259461644796968L;
