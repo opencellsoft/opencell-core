@@ -62,6 +62,10 @@
     <c:if test="${empty isMessage}">
         <c:set var="isMessage" value="false" />
     </c:if>
+    
+    <c:if test="${empty isDiabledMessage}">
+        <c:set var="isDiabledMessage}" value="false" />
+    </c:if>
 
     <c:if test="${!empty messagePrefix}">
         <c:set var="messagePrefix" value="${messagePrefix.concat('.')}" />
@@ -149,7 +153,7 @@
         <c:set var="showSortLinks" value="true" />
     </c:if>
 
-    <p:column exportable="#{exportable}" rendered="#{rendered}">
+    <p:column exportable="#{exportable}" rendered="#{rendered}" filterable="false">
         <f:facet name="header">
             <h:outputText value="#{label}" />
         </f:facet>
@@ -185,13 +189,19 @@
         <!-- If field is not list, then it means it is either another entity or enum. -->
         <c:if test="#{not isList}">
             <c:if test="#{empty entityView}">
+            	<!--  fix for order by active column for disabled field in EnableEntity -->
+            	<c:if test="#{isDisabledMessage}">
+                    <h:outputText rendered="#{valueField != null and valueField.toString() == 'true'}" value="#{messages['commons.no']}" />
+                    <h:outputText rendered="#{valueField != null and valueField.toString() == 'false'}" value="#{messages['commons.yes']}" />
+                </c:if>
+                <!-- end of fix -->
                 <c:if test="#{isMessage}">
                     <h:outputText rendered="#{valueField != null and valueField.toString() == 'true'}" value="#{messages['commons.yes']}" />
                     <h:outputText rendered="#{valueField != null and valueField.toString() == 'false'}" value="#{messages['commons.no']}" />
                     <h:outputText rendered="#{valueField != null and valueField.toString() != 'true' and valueField.toString() != 'false'}"
                         value="#{messages[''.concat(messagePrefix).concat(valueField)]}" />
                 </c:if>
-                <c:if test="#{not isMessage and not isMap}">
+                <c:if test="#{not isMessage and not isMap and not isDisabledMessage}">
                     <!-- If there is date field, show date in specified pattern 
 		    	 If isDate is not set then it basically means it is not a date. Also if time is not set it basically means that time=true
 		    	 -->

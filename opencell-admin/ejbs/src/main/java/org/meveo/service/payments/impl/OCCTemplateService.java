@@ -30,6 +30,9 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 
 /**
  * OCCTemplate service implementation.
+ * 
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0
  */
 @Stateless
 public class OCCTemplateService extends BusinessService<OCCTemplate> {
@@ -51,7 +54,7 @@ public class OCCTemplateService extends BusinessService<OCCTemplate> {
 	}
 
 	public OCCTemplate getDunningOCCTemplate() throws Exception {
-		String occCodeDefaultValue = "OD_PREL";				
+		String occCodeDefaultValue = "INV_FEE";				
 		return getOccTemplateByCFKeyOrProperty(DUNNING_OCC_CODE, occCodeDefaultValue);
 	}
 

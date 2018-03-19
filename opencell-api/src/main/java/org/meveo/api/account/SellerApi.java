@@ -20,6 +20,7 @@ import org.meveo.api.dto.response.SellerCodesResponseDto;
 import org.meveo.api.exception.DeleteReferencedEntityException;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.security.Interceptor.SecuredBusinessEntityMethod;
@@ -35,6 +36,7 @@ import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.shared.Address;
 import org.meveo.model.shared.ContactInformation;
+import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.admin.impl.TradingCurrencyService;
 import org.meveo.service.billing.impl.InvoiceTypeService;
@@ -43,6 +45,8 @@ import org.meveo.service.billing.impl.TradingLanguageService;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 @Interceptors(SecuredBusinessEntityMethodInterceptor.class)
@@ -62,6 +66,9 @@ public class SellerApi extends BaseApi {
 
     @Inject
     private InvoiceTypeService invoiceTypeService;
+    
+    @Inject
+    private CountryService countryService;
 
     public void create(SellerDto postData) throws MeveoApiException, BusinessException {
         create(postData, true);
@@ -71,6 +78,21 @@ public class SellerApi extends BaseApi {
         return create(postData, checkCustomField, null);
     }
 
+    
+    /**
+     * Create Seller
+     * v5.0: Added ContactInformation and Address
+     * 
+     * @param postData postData SellerDto
+     * @param checkCustomField checkCustomField
+     * @param businessAccountModel businessAccountModel
+     * @return Seller created seller
+     * @throws BusinessException business exception
+     * @throws MeveoApiException MeveoApi exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public Seller create(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -149,7 +171,7 @@ public class SellerApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, true, checkCustomField);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -162,6 +184,15 @@ public class SellerApi extends BaseApi {
         return seller;
     }
     
+    /**
+     * ContactInformationDto to ContactInformation
+     * 
+     * @param ContactInformationDto contactInformationDto
+     * @return ContactInformation contactInformation
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     private ContactInformation toContactInformation(ContactInformationDto contactInformationDto) {
         ContactInformation contactInformation = new ContactInformation();
         contactInformation.setEmail(contactInformationDto.getEmail());
@@ -171,18 +202,30 @@ public class SellerApi extends BaseApi {
         return contactInformation;        
     }
     
-    private Address toAddress(AddressDto addressDto) {
+    /**
+     * AddressDto to Address
+     * 
+     * @param AddressDto addressDto
+     * @return Address address
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */ 
+     private Address toAddress(AddressDto addressDto) {
         Address address = new Address();
         address.setAddress1(addressDto.getAddress1());
         address.setAddress2(addressDto.getAddress2());
         address.setAddress3(addressDto.getAddress3());
-        address.setCity(addressDto.getCity());
-        address.setCountry(addressDto.getCountry());
+        address.setCity(addressDto.getCity());        
+        if (!StringUtils.isBlank(addressDto.getCountry())) {
+            address.setCountry(countryService.findByCode(addressDto.getCountry()));
+        }
         address.setState(addressDto.getState());
         address.setZipCode(addressDto.getZipCode());
         return address;
     }
 
+    
     public void update(SellerDto postData) throws MeveoApiException, BusinessException {
         update(postData, true);
     }
@@ -191,6 +234,20 @@ public class SellerApi extends BaseApi {
         return update(postData, checkCustomField, null);
     }
 
+    /**
+     * Update Seller
+     * v5.0: Added ContactInformation and Address
+     * 
+     * @param postData postData Seller Dto
+     * @param checkCustomField checkCustomField
+     * @param businessAccountModel businessAccountModel
+     * @return Seller created seller
+     * @throws BusinessException business exception
+     * @throws MeveoApiException MeveoApi exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public Seller update(SellerDto postData, boolean checkCustomField, BusinessAccountModel businessAccountModel) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
@@ -286,7 +343,7 @@ public class SellerApi extends BaseApi {
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), seller, false, checkCustomField);
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

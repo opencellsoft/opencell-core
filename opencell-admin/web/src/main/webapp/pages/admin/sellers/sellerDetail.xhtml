@@ -84,8 +84,7 @@
 							popup="false" newLine="true" />
 						<hftl:formField label="#{messages['address.city']}" id="city"
 							field="address" childField="city" popup="false" />
-						<hftl:formField label="#{messages['address.country']}"
-							field="address" childField="country" />
+						<hftl:formField id="countryID" label="#{messages['address.country']}" fkToEntity="false" field="address" childField="country" valueLabelField="description" listBean="#{countryBean}"/>
 					</p:fieldset>
 				</p:tab>
 

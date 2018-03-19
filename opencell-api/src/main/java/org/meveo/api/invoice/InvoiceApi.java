@@ -72,6 +72,9 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.util.MeveoParamBean;
 import org.primefaces.model.SortOrder;
 
+/**
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class InvoiceApi extends BaseApi {
 
@@ -342,7 +345,7 @@ public class InvoiceApi extends BaseApi {
         try {
             populateCustomFields(invoiceDTO.getCustomFields(), invoice, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -489,7 +492,7 @@ public class InvoiceApi extends BaseApi {
         if (billingAccount == null) {
             throw new EntityDoesNotExistsException(BillingAccount.class, generateInvoiceRequestDto.getBillingAccountCode());
         }
-        
+
         Filter ratedTransactionFilter = null;
         if (generateInvoiceRequestDto.getFilter() != null) {
             ratedTransactionFilter = filteredListApi.getFilterFromDto(generateInvoiceRequestDto.getFilter());
@@ -838,7 +841,9 @@ public class InvoiceApi extends BaseApi {
                 SubCategoryInvoiceAgregateDto subCategoryInvoiceAgregateDto = new SubCategoryInvoiceAgregateDto();
                 subCategoryInvoiceAgregateDto.setType("R");
                 subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                if(invoiceAgregate.getAccountingCode() != null) {
+                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                }
                 subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                 subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                 subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());
@@ -856,7 +861,9 @@ public class InvoiceApi extends BaseApi {
                     subCategoryInvoiceAgregateDto.setType("F");
                     subCategoryInvoiceAgregateDto.setInvoiceSubCategoryCode(subCategoryAggregate.getInvoiceSubCategory().getCode());
                     subCategoryInvoiceAgregateDto.setItemNumber(invoiceAgregate.getItemNumber());
-                    subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode());
+                    if(invoiceAgregate.getAccountingCode() != null) {
+                        subCategoryInvoiceAgregateDto.setAccountingCode(invoiceAgregate.getAccountingCode().getCode());
+                    }
                     subCategoryInvoiceAgregateDto.setDescription(invoiceAgregate.getDescription());
                     subCategoryInvoiceAgregateDto.setQuantity(invoiceAgregate.getQuantity());
                     subCategoryInvoiceAgregateDto.setDiscount(invoiceAgregate.getDiscount());

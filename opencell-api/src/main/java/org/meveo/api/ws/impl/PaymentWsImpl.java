@@ -14,10 +14,11 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokenDto;
 import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.DDRequestLotOpDto;
 import org.meveo.api.dto.payment.PayByCardDto;
-import org.meveo.api.dto.payment.PayByCardResponseDto;
+import org.meveo.api.dto.payment.PaymentResponseDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
@@ -35,6 +36,13 @@ import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.ws.PaymentWs;
 import org.meveo.model.payments.DDRequestOpStatusEnum;
 
+
+/**
+ * The implementation for PaymentWs.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "PaymentWs", endpointInterface = "org.meveo.api.ws.PaymentWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class PaymentWsImpl extends BaseWs implements PaymentWs {
@@ -107,8 +115,8 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
     }
 
     @Override
-    public PayByCardResponseDto payByCard(PayByCardDto doPaymentRequestDto) {
-        PayByCardResponseDto response = new PayByCardResponseDto();
+    public PaymentResponseDto payByCard(PayByCardDto doPaymentRequestDto) {
+        PaymentResponseDto response = new PaymentResponseDto();
         response.setActionStatus(new ActionStatus(ActionStatusEnum.FAIL, ""));
         try {
             response = paymentApi.payByCard(doPaymentRequestDto);
@@ -424,5 +432,18 @@ public class PaymentWsImpl extends BaseWs implements PaymentWs {
         }
 
         return response;
+    }
+
+    @Override
+    public PaymentHistoriesDto listHistory(PagingAndFiltering pagingAndFiltering) {
+        PaymentHistoriesDto result = new PaymentHistoriesDto();
+
+        try {
+            result = paymentApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
     }
 }

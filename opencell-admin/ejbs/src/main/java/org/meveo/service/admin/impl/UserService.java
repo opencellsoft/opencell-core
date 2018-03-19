@@ -30,7 +30,6 @@ import javax.persistence.Query;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.UsernameAlreadyExistsException;
-import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.admin.User;
 import org.meveo.model.security.Role;
@@ -44,8 +43,6 @@ import org.meveo.service.base.PersistenceService;
 public class UserService extends PersistenceService<User> {
 
     static User systemUser = null;
-
-    private ParamBean paramBean = ParamBean.getInstance();
 
     @Override
     @RolesAllowed({ "userManagement", "userSelfManagement" })
@@ -134,7 +131,7 @@ public class UserService extends PersistenceService<User> {
 
     public void saveActivity(User user, String objectId, String action, String uri) {
         // String sequenceValue = "ADM_USER_LOG_SEQ.nextval";
-        String sequenceValueTest = paramBean.getProperty("sequence.test", "false");
+        String sequenceValueTest = paramBeanFactory.getInstance().getProperty("sequence.test", "false");
         if (!sequenceValueTest.equals("true")) {
 
             String stringQuery = "INSERT INTO ADM_USER_LOG (USER_NAME, USER_ID, DATE_EXECUTED, ACTION, URL, OBJECT_ID) VALUES ( ?, ?, ?, ?, ?, ?)";

@@ -25,21 +25,31 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.ValidationException;
+import org.meveo.api.dto.payment.MandatInfoDto;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.BankCoordinates;
 import org.meveo.model.payments.CardPaymentMethod;
 import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.DDPaymentMethod;
+import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * PaymentMethod service implementation.
+ * 
+ *  @author anasseh
+ *  @lastModifiedVersion 5.0 
  */
 @Stateless
 public class PaymentMethodService extends PersistenceService<PaymentMethod> {
 
     @Inject
     private GatewayPaymentFactory gatewayPaymentFactory;
+    
+    @Inject
+    private PaymentGatewayService paymentGatewayService;
 
     @Override
     public void create(PaymentMethod paymentMethod) throws BusinessException {
@@ -112,12 +122,11 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (!StringUtils.isBlank(cardPaymentMethod.getTokenId())) {
             return;
         }
-        String cardNumber = cardPaymentMethod.getCardNumber();
-
-        String coutryCode = null; // TODO : waiting #2830
+        String cardNumber = cardPaymentMethod.getCardNumber();       
         GatewayPaymentInterface gatewayPaymentInterface = null;
+        PaymentGateway paymentGateway = paymentGatewayService.getPaymentGateway(customerAccount, cardPaymentMethod,null);
         try {
-            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(customerAccount, cardPaymentMethod);
+            gatewayPaymentInterface = gatewayPaymentFactory.getInstance(paymentGateway);
         } catch (Exception e) {
             // Create the card even if there no payment gateway
             log.warn("Cant find payment gateway");
@@ -126,7 +135,7 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         if (gatewayPaymentInterface != null) {
             String tockenID = gatewayPaymentInterface.createCardToken(customerAccount, cardPaymentMethod.getAlias(), cardNumber, cardPaymentMethod.getOwner(),
                 StringUtils.getLongAsNChar(cardPaymentMethod.getMonthExpiration(), 2) + StringUtils.getLongAsNChar(cardPaymentMethod.getYearExpiration(), 2),
-                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType(), coutryCode);
+                cardPaymentMethod.getIssueNumber(), cardPaymentMethod.getCardType());
 
             cardPaymentMethod.setTokenId(tockenID);
         } else {
@@ -143,5 +152,28 @@ public class PaymentMethodService extends PersistenceService<PaymentMethod> {
         QueryBuilder queryBuilder = new QueryBuilder(CardPaymentMethod.class, "a", null);
         queryBuilder.addCriterion("tokenId", "=", tokenId, true);
         return (CardPaymentMethod) queryBuilder.getQuery(getEntityManager()).getSingleResult();
+    }
+    
+    /**
+     * Create a new DDPaymentMethod from the createMandate callBback.
+     * 
+     * @param customerAccount Customer Account
+     * @param mandatInfoDto Mandat info dto
+     * @throws BusinessException Business Exception
+     */
+    public void createMandateCallBack(CustomerAccount customerAccount,MandatInfoDto mandatInfoDto) throws BusinessException {
+       log.debug("createMandateCallBack customerAccount:{} mandatInfoDto:{}",customerAccount,mandatInfoDto);
+        DDPaymentMethod ddPaymentMethod = new DDPaymentMethod();
+        ddPaymentMethod.setCustomerAccount(customerAccount);
+        ddPaymentMethod.setMandateIdentification(mandatInfoDto.getReference());  
+        ddPaymentMethod.setMandateDate(mandatInfoDto.getDateSigned());
+        ddPaymentMethod.setPreferred(true);
+        ddPaymentMethod.setAlias(mandatInfoDto.getReference());
+        BankCoordinates bankCoordinates = new BankCoordinates();
+        bankCoordinates.setBankName(mandatInfoDto.getBankName());
+        bankCoordinates.setIban(mandatInfoDto.getIban());
+        bankCoordinates.setBic(mandatInfoDto.getBic());
+        ddPaymentMethod.setBankCoordinates(bankCoordinates);
+        create(ddPaymentMethod);
     }
 }

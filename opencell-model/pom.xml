@@ -89,10 +89,14 @@
                         <changeLogFile>${liquibase.changeLogFile}</changeLogFile>
                         <driver>${db.driver}</driver>
                         <url>${db.url}</url>
+                        <defaultSchemaName>${db.schema}</defaultSchemaName>
                         <username>${db.username}</username>
                         <password>${db.password}</password>
                         <!-- <referenceUrl>hibernate:ejb3:MeveoAdmin</referenceUrl> -->
                         <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+                        <expressionVariables>
+                            <db.schema>${db.schema}</db.schema>
+                        </expressionVariables>
                     </configuration>
                     <!-- <dependencies> -->
                     <!-- <dependency> -->

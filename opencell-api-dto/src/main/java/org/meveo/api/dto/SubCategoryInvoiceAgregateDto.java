@@ -33,7 +33,7 @@ import org.meveo.model.billing.SubCategoryInvoiceAgregate;
 
 /**
  * @author R.AITYAAZZA
- *
+ * @lastModifiedVersion 5.0
  */
 @XmlRootElement(name = "SubCategoryInvoiceAgregate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -70,7 +70,9 @@ public class SubCategoryInvoiceAgregateDto implements Serializable {
 			discountPlanItemCode = e.getDiscountPlanItemCode();
 			discountPercent = e.getDiscountPercent();
 			itemNumber = e.getItemNumber();
-			accountingCode = e.getAccountingCode();
+            if (e.getAccountingCode() != null) {
+                accountingCode = e.getAccountingCode().getCode();
+            }
 			description = e.getDescription();
 			taxPercent = e.getTaxPercent();
 			quantity = e.getQuantity();

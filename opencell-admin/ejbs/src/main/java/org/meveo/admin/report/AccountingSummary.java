@@ -36,11 +36,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.bi.OutputFormatEnum;
 import org.meveo.model.bi.Report;
 import org.meveo.service.reporting.impl.DWHAccountOperationService;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Named
 public class AccountingSummary extends FileProducer implements Reporting {
 
@@ -54,14 +60,15 @@ public class AccountingSummary extends FileProducer implements Reporting {
     protected Logger log;
 
     @Inject
-	private DWHAccountOperationService accountOperationTransformationService;
+    private DWHAccountOperationService accountOperationTransformationService;
 
-    private String reportsFolder;
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private String templateFilename;
     public Map<String, Object> parameters = new HashMap<String, Object>();
 
-    public void generateAccountingSummaryFile(Date startDate, Date endDate,
-            OutputFormatEnum outputFormat) {
+    public void generateAccountingSummaryFile(Date startDate, Date endDate, OutputFormatEnum outputFormat) {
         try {
             File file = null;
             if (outputFormat == OutputFormatEnum.PDF) {
@@ -74,10 +81,8 @@ public class AccountingSummary extends FileProducer implements Reporting {
             FileWriter writer = new FileWriter(file);
             writer.append("Code opération;Libellé de l'opération;Débit;Crédit");
             writer.append('\n');
-            List<Object> listCategory1 = accountOperationTransformationService.getAccountingSummaryRecords(
-                    new Date(), 1);
-            List<Object> listCategory0 = accountOperationTransformationService.getAccountingSummaryRecords(
-                    new Date(), 0);
+            List<Object> listCategory1 = accountOperationTransformationService.getAccountingSummaryRecords(new Date(), 1);
+            List<Object> listCategory0 = accountOperationTransformationService.getAccountingSummaryRecords(new Date(), 0);
             List<AccountingSummaryObject> list = new ArrayList<AccountingSummaryObject>();
             list.addAll(parseObjectList(listCategory0, 0));
             list.addAll(parseObjectList(listCategory1, 1));
@@ -108,7 +113,7 @@ public class AccountingSummary extends FileProducer implements Reporting {
                 generatePDFfile(file, sb.toString(), templateFilename, parameters);
             }
         } catch (IOException e) {
-            log.error("failed to generate accounting summary file",e);
+            log.error("failed to generate accounting summary file", e);
         }
     }
 
@@ -129,9 +134,10 @@ public class AccountingSummary extends FileProducer implements Reporting {
     }
 
     public String getFilename() {
-
         String DATE_FORMAT = "dd-MM-yyyy";
         SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
         StringBuilder sb = new StringBuilder();
         sb.append(reportsFolder);
         sb.append(appProvider.getCode());
@@ -141,9 +147,9 @@ public class AccountingSummary extends FileProducer implements Reporting {
     }
 
     public void export(Report report) {
-        ParamBean param = ParamBean.getInstance();
-		reportsFolder = param.getProperty("reportsURL","/opt/jboss/files/reports/");
-		String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder","/opt/jboss/files/reports/JasperTemplates/");
+        ParamBean param = paramBeanFactory.getInstance();
+        String reportsFolder = param.getProperty("reportsURL", "/opt/jboss/files/reports/");
+        String jasperTemplatesFolder = param.getProperty("reports.jasperTemplatesFolder", "/opt/jboss/files/reports/JasperTemplates/");
         templateFilename = jasperTemplatesFolder + "accountingSummary.jasper";
         generateAccountingSummaryFile(report.getStartDate(), report.getEndDate(), report.getOutputFormat());
     }

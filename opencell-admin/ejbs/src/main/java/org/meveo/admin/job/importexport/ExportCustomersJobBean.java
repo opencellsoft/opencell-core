@@ -14,7 +14,7 @@ import javax.xml.bind.JAXBException;
 
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.utils.JAXBUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.crm.Customer;
@@ -32,6 +32,11 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
 
+/**
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class ExportCustomersJobBean {
 
@@ -50,15 +55,15 @@ public class ExportCustomersJobBean {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private Sellers sellers;
-    private ParamBean param = ParamBean.getInstance();
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void execute(JobExecutionResultImpl result, String parameter) {
-
-        String exportDir = param.getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode() + File.separator + "exports" + File.separator
-                + "customers" + File.separator;
+        String exportDir = paramBeanFactory.getChrootDir() + File.separator + "exports" + File.separator + "customers" + File.separator;
         log.info("exportDir=" + exportDir);
         File dir = new File(exportDir);
         if (!dir.exists()) {

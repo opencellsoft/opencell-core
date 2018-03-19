@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.model.order.OrderItemActionEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -36,6 +37,8 @@ public class TerminateSubscriptionServicesRequestDto extends BaseDto {
     private Date terminationDate;
 
     private String orderNumber;
+    private Long orderItemId;
+    private OrderItemActionEnum orderItemAction;
 
     public List<Long> getServiceIds() {
         return serviceIds;
@@ -103,5 +106,21 @@ public class TerminateSubscriptionServicesRequestDto extends BaseDto {
     public String toString() {
         return "TerminateSubscriptionServicesRequestDto [services=" + services + ", serviceIds=" + serviceIds + ", subscriptionCode=" + subscriptionCode + ", terminationReason="
                 + terminationReason + ", terminationDate=" + terminationDate + ", orderNumber=" + orderNumber + "]";
+    }
+
+    public Long getOrderItemId() {
+        return orderItemId;
+    }
+
+    public void setOrderItemId(Long orderItemId) {
+        this.orderItemId = orderItemId;
+    }
+
+    public OrderItemActionEnum getOrderItemAction() {
+        return orderItemAction;
+    }
+
+    public void setAction(OrderItemActionEnum action) {
+        this.orderItemAction = action;
     }
 }

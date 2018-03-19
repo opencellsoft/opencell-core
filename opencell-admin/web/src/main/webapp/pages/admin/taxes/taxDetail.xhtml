@@ -23,7 +23,7 @@
                     <hftl:formField label="#{messages['tax.code']}" field="code" required="true" />
                     <hftl:formLanguageFields field="description"/>
                     <hftl:formField label="#{messages['tax.percent']}" field="percent" required="true" />
-                    <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" />
+                    <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" listenerUpdate="@this" />
                 </p:tab>
                 <hftl:customFields backingBean="#{taxBean}" messagesId=":taxFormId:messages" />
             </p:tabView>

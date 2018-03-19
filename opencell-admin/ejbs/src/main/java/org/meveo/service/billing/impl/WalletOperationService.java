@@ -543,7 +543,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param nextChargeDate Next charge date
      * @param preRateOnly Pre-rate only
      * @return Created wallet operation
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     public WalletOperation applyFirstRecurringCharge(RecurringChargeInstance chargeInstance, Date nextChargeDate, boolean preRateOnly) throws BusinessException {
 
@@ -643,7 +643,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * Calculate nextChargeDate field of recurring charge instance and apply a first charge if charge template is configured to be applied in advance
      * 
      * @param chargeInstance Recurring charge instance
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     public void initializeAndApplyFirstRecuringCharge(RecurringChargeInstance chargeInstance) throws BusinessException {
 
@@ -682,7 +682,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * Reimburse already applied recurring charges
      * 
      * @param chargeInstance Recurring charge instance
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     public void applyReimbursment(RecurringChargeInstance chargeInstance) throws BusinessException {
         if (chargeInstance == null) {
@@ -807,7 +807,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param recurringChargeTemplate recurring charge template
      * @param forSchedule true/false
      * @return List of created wallet operations
-     * @throws BusinessException business exeption.
+     * @throws BusinessException business exception.
      */
     public List<WalletOperation> applyReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate,
             boolean forSchedule) throws BusinessException {
@@ -991,7 +991,7 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
      * @param reimbursement Is it a reimbursemet
      * @param recurringChargeTemplate Recurring charge template
      * @return List of created wallet operations
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     public List<WalletOperation> applyNotAppliedinAdvanceReccuringCharge(RecurringChargeInstance chargeInstance, boolean reimbursement, RecurringChargeTemplate recurringChargeTemplate)
             throws BusinessException {
@@ -1129,10 +1129,10 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
     /**
      * Apply missing recuring charges from the last charge date to the end agreement date  
-     * @param chargeInstance
-     * @param recurringChargeTemplate
-     * @param endAgreementDate
-     * @throws BusinessException
+     * @param chargeInstance charge Instance
+     * @param recurringChargeTemplate recurringCharge Template
+     * @param endAgreementDate end agreement date
+     * @throws BusinessException Business exception
      */
     public void applyChargeAgreement(RecurringChargeInstance chargeInstance, RecurringChargeTemplate recurringChargeTemplate, Date endAgreementDate) throws BusinessException {
 

@@ -35,8 +35,8 @@ public class AccessService extends PersistenceService<Access> {
     /**
      * Get a list of Accesses matching a given accessUserId value
      * 
-     * @param accessUserId
-     * @return
+     * @param accessUserId accessUserId
+     * @return List of Access
      */
     public List<Access> getActiveAccessByUserId(String accessUserId) {
         return getEntityManager().createNamedQuery("Access.getAccessesByUserId", Access.class).setParameter("accessUserId", accessUserId).getResultList();

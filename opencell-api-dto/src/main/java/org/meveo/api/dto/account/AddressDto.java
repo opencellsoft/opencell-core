@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "Address")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,7 +35,7 @@ public class AddressDto implements Serializable {
 			address3 = e.getAddress3();
 			zipCode = e.getZipCode();
 			city = e.getCity();
-			country = e.getCountry();
+			country = e.getCountry() == null ? null : e.getCountry().getCountryCode();
 			state = e.getState();
 		}
 	}

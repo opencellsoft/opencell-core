@@ -20,6 +20,7 @@ import org.meveo.service.job.JobInstanceService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class JobApi extends BaseApi {
@@ -62,9 +63,10 @@ public class JobApi extends BaseApi {
 
         return findJobExecutionResult(null, executionId);
     }
-    
+
     /**
      * Stop running job
+     * 
      * @param jobInstanceCode job instance code to stop
      * @throws MeveoApiException
      */
@@ -82,12 +84,13 @@ public class JobApi extends BaseApi {
             jobExecutionService.stopJob(jobInstance);
         } catch (BusinessException e) {
             throw new MeveoApiException(e.getMessage());
-        }       
-    }    
+        }
+    }
 
     /**
      * Retrieve job execution result.
-     * @param code 
+     * 
+     * @param code
      * 
      * @param id Job execution result identifier
      * @return Job execution result DTO

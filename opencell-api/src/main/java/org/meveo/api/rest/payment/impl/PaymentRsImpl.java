@@ -14,6 +14,7 @@ import org.meveo.api.dto.payment.CardPaymentMethodTokensDto;
 import org.meveo.api.dto.payment.PaymentDto;
 import org.meveo.api.dto.payment.PaymentGatewayDto;
 import org.meveo.api.dto.payment.PaymentGatewayResponseDto;
+import org.meveo.api.dto.payment.PaymentHistoriesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokenDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
@@ -22,14 +23,16 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.PaymentApi;
-import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.payment.PaymentGatewayApi;
+import org.meveo.api.payment.PaymentMethodApi;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.api.rest.payment.PaymentRs;
 
 /**
- * @author R.AITYAAZZA
+ * The implementation for PaymentRs.
  * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0
  */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -321,4 +324,31 @@ public class PaymentRsImpl extends BaseRs implements PaymentRs {
         }
         return result;
     }
+
+    @Override
+    public PaymentHistoriesDto listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
+
+        PaymentHistoriesDto result = new PaymentHistoriesDto();
+
+        try {
+            result = paymentApi.list(new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public PaymentHistoriesDto listPost(PagingAndFiltering pagingAndFiltering) {
+        PaymentHistoriesDto result = new PaymentHistoriesDto();
+
+        try {
+            result = paymentApi.list(pagingAndFiltering);
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }   
 }

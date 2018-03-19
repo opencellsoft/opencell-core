@@ -48,13 +48,15 @@ import org.meveo.model.catalog.ServiceChargeTemplateUsage;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.service.base.BusinessService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
+import org.meveo.service.order.OrderHistoryService;
 import org.meveo.service.script.service.ServiceModelScriptService;
 
 /**
  * ServiceInstanceService.
  * 
  * @author anasseh
- *
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
  */
 @Stateless
 public class ServiceInstanceService extends BusinessService<ServiceInstance> {
@@ -93,6 +95,12 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      */
     @Inject
     ServiceTemplateService serviceTemplateService;
+    
+    
+    ParamBean paramBean = ParamBean.getInstance();
+
+    @Inject
+    private OrderHistoryService orderHistoryService;
 
     /**
      * Find a service instance list by subscription entity, service template code and service instance status list.
@@ -177,12 +185,17 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
     }
 
     /**
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
+     * 
      * @param serviceInstance service instance
      * @param descriptionOverride overridden description
      * @param subscriptionAmount subscription amount
      * @param terminationAmount termination amount
      * @param isVirtual true/false
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceInstanciation(ServiceInstance serviceInstance, String descriptionOverride, BigDecimal subscriptionAmount, BigDecimal terminationAmount, boolean isVirtual)
             throws BusinessException {
@@ -198,7 +211,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectSusbcriptionException("Subscription is not active");
         }
         if (!isVirtual) {
-            if (ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+            if (paramBean.isServiceMultiInstantiation()) {
                 List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceTemplate.getCode(), subscription, InstanceStatusEnum.INACTIVE);
                 if (serviceInstances != null && !serviceInstances.isEmpty()) {
                     throw new IncorrectServiceInstanceException(
@@ -262,6 +275,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
                 serviceModelScriptService.instantiateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
             }
         }
+        
+        if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
     }
 
     /**
@@ -275,12 +292,13 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void serviceActivation(ServiceInstance serviceInstance, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
-            throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            throws BusinessException {
         serviceActivation(serviceInstance, true, amountWithoutTax, amountWithoutTax2);
     }
 
     /**
      * Activate a service, the subscription charges can be applied or not.
+     * v5.0 admin parameter to authorize/bare the multiactivation of an instantiated service
      * 
      * @param serviceInstance service instance
      * @param applySubscriptionCharges true/false
@@ -289,6 +307,9 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void serviceActivation(ServiceInstance serviceInstance, boolean applySubscriptionCharges, BigDecimal amountWithoutTax, BigDecimal amountWithoutTax2)
             throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
@@ -310,7 +331,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
             throw new IncorrectServiceInstanceException("Can not activate a ServiceInstance that is " + serviceInstance.getStatus());
         }
 
-        if (!ParamBean.ALLOW_SERVICE_MULTI_INSTANTIATION) {
+        if (!paramBean.isServiceMultiInstantiation()) {
             List<ServiceInstance> serviceInstances = findByCodeSubscriptionAndStatus(serviceInstance.getCode(), subscription, InstanceStatusEnum.ACTIVE);
             if (serviceInstances != null && !serviceInstances.isEmpty()) {
                 throw new IncorrectServiceInstanceException(
@@ -375,6 +396,10 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
         if (serviceInstance.getServiceTemplate().getBusinessServiceModel() != null && serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript() != null) {
             serviceModelScriptService.activateServiceInstance(serviceInstance, serviceInstance.getServiceTemplate().getBusinessServiceModel().getScript().getCode());
         }
+        
+        if(serviceInstance.getOrderItemId() != null && serviceInstance.getOrderItemAction() != null) {
+            orderHistoryService.create(serviceInstance.getOrderNumber(), serviceInstance.getOrderItemId(), serviceInstance, serviceInstance.getOrderItemAction());
+        }
     }
 
     /**
@@ -411,7 +436,7 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
      * @throws BusinessException business exception
      */
     public void terminateService(ServiceInstance serviceInstance, Date terminationDate, boolean applyAgreement, boolean applyReimbursment, boolean applyTerminationCharges,
-            String orderNumber, SubscriptionTerminationReason terminationReason) throws IncorrectSusbcriptionException, IncorrectServiceInstanceException, BusinessException {
+            String orderNumber, SubscriptionTerminationReason terminationReason) throws BusinessException {
 
         if (serviceInstance.getId() != null) {
             log.info("Terminating service {} for {}", serviceInstance.getId(), terminationDate);

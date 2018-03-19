@@ -24,12 +24,10 @@ import javax.jms.MessageListener;
 import javax.jms.ObjectMessage;
 
 import org.meveo.commons.utils.EjbUtils;
-import org.meveo.model.crm.Provider;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.security.Role;
 import org.meveo.security.keycloak.CurrentUserProvider;
-import org.meveo.service.crm.impl.ProviderService;
 import org.meveo.service.job.JobInstanceService;
 import org.meveo.service.script.ScriptInstanceService;
 import org.slf4j.Logger;
@@ -58,9 +56,6 @@ public class ClusterEventMonitor implements MessageListener {
     @Inject
     private CurrentUserProvider currentUserProvider;
 
-    @Inject
-    private ProviderService providerService;
-
     /**
      * @see MessageListener#onMessage(Message)
      */
@@ -68,7 +63,7 @@ public class ClusterEventMonitor implements MessageListener {
         try {
             if (rcvMessage instanceof ObjectMessage) {
                 ClusterEventDto eventDto = (ClusterEventDto) ((ObjectMessage) rcvMessage).getObject();
-                if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())){
+                if (EjbUtils.getCurrentClusterNode().equals(eventDto.getSourceNode())) {
                     return;
                 }
                 log.info("Received cluster synchronization event message {}", eventDto);
@@ -90,6 +85,8 @@ public class ClusterEventMonitor implements MessageListener {
      */
     private void processClusterEvent(ClusterEventDto eventDto) {
 
+        currentUserProvider.forceAuthentication(eventDto.getUserName(), eventDto.getProviderCode());
+
         if (eventDto.getClazz().equals(ScriptInstance.class.getSimpleName())) {
             scriptInstanceService.clearCompiledScripts(eventDto.getCode());
 
@@ -99,9 +96,6 @@ public class ClusterEventMonitor implements MessageListener {
         } else if (eventDto.getClazz().equals(Role.class.getSimpleName())) {
             currentUserProvider.invalidateRoleToPermissionMapping();
 
-        } else if (eventDto.getClazz().equals(Provider.class.getSimpleName())) {
-            providerService.refreshAppProvider();
         }
-
     }
 }

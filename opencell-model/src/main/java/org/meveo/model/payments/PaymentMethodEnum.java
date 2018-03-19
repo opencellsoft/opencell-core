@@ -23,7 +23,7 @@ package org.meveo.model.payments;
  */
 public enum PaymentMethodEnum {
 
-    CHECK, DIRECTDEBIT, WIRETRANSFER, CARD, NONE;
+    CHECK, DIRECTDEBIT, WIRETRANSFER, CARD;
 
     /**
      * @return label

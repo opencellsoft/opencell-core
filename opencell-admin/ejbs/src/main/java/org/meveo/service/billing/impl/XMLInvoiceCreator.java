@@ -105,7 +105,6 @@ import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
-import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
@@ -120,17 +119,16 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
+/**
+ * @author akadid abdelmounaim
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
-    /** Configuration parameter bean. */
-    private ParamBean paramBean = ParamBean.getInstance();
-
     @Inject
     private InvoiceService invoiceService;
-
-    @Inject
-    private CountryService countryService;
 
     @Inject
     private RatedTransactionService ratedTransactionService;
@@ -273,6 +271,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     }
 
     /**
+     * Create Invoice XML document v5.0: Added seller tag, vatNo and registrationNo on customerTag
+     * 
      * @param invoice invoice used to create xml
      * @param isVirtual true/false
      * @return xml document
@@ -280,6 +280,9 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
      * @throws ParserConfigurationException parsing exception
      * @throws SAXException sax exception
      * @throws IOException IO exception
+     * 
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public Document createDocument(Invoice invoice, boolean isVirtual) throws BusinessException, ParserConfigurationException, SAXException, IOException {
         long startDate = System.currentTimeMillis();
@@ -312,6 +315,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         log.debug("Creating xml for invoice id={} number={}. {}", id, invoiceNumber != null ? invoiceNumber : invoice.getTemporaryInvoiceNumber());
 
+        ParamBean paramBean = paramBeanFactory.getInstance();
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         serviceIds = new ArrayList<>();
         offerIds = new ArrayList<>();
@@ -706,6 +710,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
     private List<ServiceInstance> addSubscriptions(UserAccount userAccount, Document doc, Element userAccountTag, Element invoiceTag, List<Subscription> subscriptions) {
         long startDate = System.currentTimeMillis();
         List<ServiceInstance> allServiceInstances = new ArrayList<>();
+        ParamBean paramBean = paramBeanFactory.getInstance();
         // List<Subscription> subscriptions = userAccountService.listByUserAccount(userAccount);//userAccount.getSubscriptions();//
         if (subscriptions != null && subscriptions.size() > 0) {
             log.info(" :" + (System.currentTimeMillis() - startDate));
@@ -913,12 +918,16 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             }
         }
     }
-    
+
     /**
+     * Add seller address to seller tag
+     * 
      * @param seller instance of entity
      * @param doc document
      * @param parent parent node
      * @param languageCode code of language
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
      */
     public void addAdress(Seller seller, Document doc, Element parent, String languageCode) {
         log.debug("add address to seller");
@@ -965,18 +974,15 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (seller.getAddress() != null && seller.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry() : "");
+            Text countryTxt = doc.createTextNode(seller.getAddress().getCountry() != null ? seller.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
-
-            Country countrybyCode = countryService.findByCode(seller.getAddress().getCountry());
+            Country countryEntity = seller.getAddress().getCountry();
             Text countryNameTxt;
-            if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
+            if (countryEntity.getDescriptionI18n() != null && countryEntity.getDescriptionI18n().get(languageCode) != null) {
                 // get country description by language code
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescriptionI18n().get(languageCode));
-            } else if (countrybyCode != null) {
-                countryNameTxt = doc.createTextNode(countrybyCode.getDescription());
+                countryNameTxt = doc.createTextNode(countryEntity.getDescriptionI18n().get(languageCode));
             } else {
-                countryNameTxt = doc.createTextNode("");
+                countryNameTxt = doc.createTextNode(countryEntity.getDescription());
             }
             countryName.appendChild(countryNameTxt);
         }
@@ -1072,13 +1078,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         Element country = doc.createElement("country");
         Element countryName = doc.createElement("countryName");
         if (account.getAddress() != null && account.getAddress().getCountry() != null) {
-            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry() : "");
+            Text countryTxt = doc.createTextNode(account.getAddress().getCountry() != null ? account.getAddress().getCountry().getCountryCode() : "");
             country.appendChild(countryTxt);
 
             String translationKey = "C_" + account.getAddress().getCountry() + "_" + languageCode;
             String descTranslated = descriptionMap.get(translationKey);
             if (descTranslated == null) {
-                Country countrybyCode = countryService.findByCode(account.getAddress().getCountry());
+                Country countrybyCode = account.getAddress().getCountry();
                 if (countrybyCode != null && countrybyCode.getDescriptionI18n() != null && countrybyCode.getDescriptionI18n().get(languageCode) != null) {
                     // get country description by language code
                     descTranslated = countrybyCode.getDescriptionI18n().get(languageCode);
@@ -1263,6 +1269,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             boolean isVirtual, List<InvoiceAgregate> invoiceAgregates, boolean hasInvoiceAgregates, List<ServiceInstance> allServiceInstances,
             List<RatedTransaction> ratedTransactions, List<SubCategoryInvoiceAgregate> subCategoryInvoiceAgregates) throws BusinessException {
         long startDate = System.currentTimeMillis();
+        ParamBean paramBean = paramBeanFactory.getInstance();
 
         String invoiceDateFormat = paramBean.getProperty("invoice.dateFormat", DEFAULT_DATE_PATTERN);
         String invoiceDateTimeFormat = paramBean.getProperty("invoice.dateTimeFormat", DEFAULT_DATE_TIME_PATTERN);
@@ -1276,15 +1283,11 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
         List<CategoryInvoiceAgregate> categoryInvoiceAgregates = new ArrayList<CategoryInvoiceAgregate>();
 
-        Long id = userAccount.getId();
-
         if (hasInvoiceAgregates) {
             for (InvoiceAgregate invoiceAgregate : invoiceAgregates) {
-                if (invoiceAgregate.getUserAccount().getId() == id) {
-                    if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
-                        CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
-                        categoryInvoiceAgregates.add(categoryInvoiceAgregate);
-                    }
+                if (invoiceAgregate instanceof CategoryInvoiceAgregate) {
+                    CategoryInvoiceAgregate categoryInvoiceAgregate = (CategoryInvoiceAgregate) invoiceAgregate;
+                    categoryInvoiceAgregates.add(categoryInvoiceAgregate);
                 }
             }
         }

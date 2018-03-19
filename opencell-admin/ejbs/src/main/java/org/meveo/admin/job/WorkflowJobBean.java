@@ -21,6 +21,8 @@ import org.meveo.model.filter.Filter;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
 import org.meveo.model.wf.Workflow;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.wf.WorkflowService;
@@ -43,6 +45,10 @@ public class WorkflowJobBean {
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -82,8 +88,10 @@ public class WorkflowJobBean {
             SubListCreator subListCreator = new SubListCreator(entities, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
+
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(workflowAsync.launchAndForget((List<BusinessEntity>) subListCreator.getNextWorkSet(), workflow, result));
+                futures.add(workflowAsync.launchAndForget((List<BusinessEntity>) subListCreator.getNextWorkSet(), workflow, result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {

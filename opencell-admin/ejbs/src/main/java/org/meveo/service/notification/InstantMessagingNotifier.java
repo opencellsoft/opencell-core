@@ -14,6 +14,8 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.InstantMessagingNotification;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.slf4j.Logger;
 
@@ -31,11 +33,27 @@ public class InstantMessagingNotifier {
 
     @Inject
     NotificationHistoryService notificationHistoryService;
+    
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     // Jabber jabber = new Jabber();
 
+    /**
+     * Send instant message as fired notification result
+     * 
+     * @param notification Instant message type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     @Asynchronous
-    public void sendInstantMessage(InstantMessagingNotification notification, Object entityOrEvent) {
+    public void sendInstantMessage(InstantMessagingNotification notification, Object entityOrEvent, MeveoUser lastCurrentUser) {
+        
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+        
         try {
             HashMap<Object, Object> userMap = new HashMap<Object, Object>();
             userMap.put("event", entityOrEvent);

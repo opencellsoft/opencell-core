@@ -166,7 +166,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param initDate Initial date, used for period start/end date calculation
      * @param usageChargeInstance Usage charge instance to associate counter with
      * @return CounterPeriod instance
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     // we must make sure the counter period is persisted in db before storing it in cache
     // @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW) - problem with MariaDB. See #2393 - Issue with counter period creation in MariaDB
@@ -192,7 +192,7 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * @param initDate Initial date, used for period start/end date calculation
      * @param usageChargeInstance Usage charge instance to associate counter with
      * @return CounterPeriod instance
-     * @throws BusinessException business exception
+     * @throws BusinessException Business exception
      */
     public CounterPeriod instantiateCounterPeriod(CounterTemplate counterTemplate, Date chargeDate, Date initDate, UsageChargeInstance usageChargeInstance)
             throws BusinessException {
@@ -308,10 +308,10 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
      * Decrease counter period by a given value. If given amount exceeds current value, only partial amount will be deduced. NOTE: counterPeriod passed to the method will become
      * stale if it happens to be updated in this method
      * 
-     * @param CounterPeriod Counter period
+     * @param counterPeriod Counter period
      * @param deduceBy Amount to decrease by
      * @param isVirtual Is this a virtual operation - no counter period entity exists nor should be persisted
-     * @return Previous, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
+     * @return CounterValueChangeInfo, the actual deduced value and new counter value. or NULL if value is not tracked (initial counter value is not set)
      * @throws BusinessException business exception
      */
     public CounterValueChangeInfo deduceCounterValue(CounterPeriod counterPeriod, BigDecimal deduceBy, boolean isVirtual) throws BusinessException {

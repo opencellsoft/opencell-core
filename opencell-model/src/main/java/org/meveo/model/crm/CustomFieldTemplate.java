@@ -50,6 +50,10 @@ import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ **/
 @Entity
 @ModuleItem
 @Cacheable
@@ -673,6 +677,14 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         return descriptionI18n;
     }
 
+    /**
+     * Get description in a given language. Will return default description if not found for the language
+     * 
+     * @param language language code
+     * @return descriptionI18n value or instantiated descriptionI18n field value
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     public String getDescription(String language) {
 
         if (language == null || descriptionI18n == null || descriptionI18n.isEmpty()) {

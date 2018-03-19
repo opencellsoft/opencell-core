@@ -22,10 +22,10 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.notification.NotificationHistoryStatusEnum;
 import org.meveo.model.notification.WebHook;
 import org.meveo.model.notification.WebHookMethodEnum;
+import org.meveo.security.MeveoUser;
+import org.meveo.security.keycloak.CurrentUserProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.script.ScriptInstanceService;
-import org.primefaces.json.JSONException;
-import org.primefaces.json.JSONObject;
 import org.slf4j.Logger;
 
 @Stateless
@@ -39,6 +39,9 @@ public class WebHookNotifier {
 
     @Inject
     ScriptInstanceService scriptInstanceService;
+
+    @Inject
+    private CurrentUserProvider currentUserProvider;
 
     private String evaluate(String expression, Object entityOrEvent, Map<String, Object> context) throws BusinessException {
         HashMap<Object, Object> userMap = new HashMap<Object, Object>();
@@ -60,8 +63,20 @@ public class WebHookNotifier {
         return result;
     }
 
+    /**
+     * Access web URL as fired notification result
+     * 
+     * @param webHook Webhook type notification that was fired
+     * @param entityOrEvent Entity or event that triggered notification
+     * @param context Execution context
+     * @param lastCurrentUser Current user. In case of multitenancy, when user authentication is forced as result of a fired trigger (scheduled jobs, other timed event
+     *        expirations), current user might be lost, thus there is a need to reestablish.
+     */
     @Asynchronous
-    public void sendRequest(WebHook webHook, Object entityOrEvent, Map<String, Object> context) {
+    public void sendRequest(WebHook webHook, Object entityOrEvent, Map<String, Object> context, MeveoUser lastCurrentUser) {
+
+        currentUserProvider.reestablishAuthentication(lastCurrentUser);
+
         log.debug("webhook sendRequest");
         String result = "";
 
@@ -173,27 +188,12 @@ public class WebHookNotifier {
         } catch (Exception e) {
             try {
                 log.debug("webhook business error : ", e);
-                notificationHistoryService.create(webHook, entityOrEvent, e.getMessage(), e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY
-                        : NotificationHistoryStatusEnum.FAILED);
+                notificationHistoryService.create(webHook, entityOrEvent, e.getMessage(),
+                    e instanceof IOException ? NotificationHistoryStatusEnum.TO_RETRY : NotificationHistoryStatusEnum.FAILED);
             } catch (BusinessException e2) {
                 log.error("Failed to create notification history", e2);
 
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        String test = "{  \"sid\": \"CLb2f57233976448368708c754b3c1efb7\",  \"date_created\": \"Sat, 21 Feb 2015 18:37:49 +0000\","
-                + "  \"date_updated\": \"Sat, 21 Feb 2015 18:37:49 +0000\",  \"account_sid\": \"ACae6e420f425248d6a26948c17a9e2acf\","
-                + "  \"api_version\": \"2012-04-24\",  \"friendly_name\": \"RC_A1\",  \"login\": \"RC_A1\","
-                + "  \"password\": \"toto\",  \"status\": \"1\",  \"voice_method\": \"POST\",  \"voice_fallback_method\": \"POST\","
-                + "  \"uri\": \"/restcomm/2012-04-24/Accounts/ACae6e420f425248d6a26948c17a9e2acf/Clients/CLb2f57233976448368708c754b3c1efb7.json\"}";
-        try {
-            JSONObject json = new JSONObject(test);
-            System.out.println(json.getString("sid"));
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 }

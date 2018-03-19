@@ -18,37 +18,13 @@
  */
 package org.meveo.model.payments;
 
-import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @Entity
 @DiscriminatorValue(value = "RF")
 public class Refund extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
-
-    @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
-
-    /**
-     * @return the paymentMethod
-     */
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    /**
-     * @param paymentMethod the paymentMethod to set
-     */
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-   
-    
-    
 
 }

@@ -12,6 +12,10 @@ import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.ScriptNotification;
 import org.meveo.service.base.BusinessService;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class NotificationService extends BusinessService<ScriptNotification> {
 
@@ -40,10 +44,22 @@ public class NotificationService extends BusinessService<ScriptNotification> {
         notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
     }
 
+    /**
+     * Update scriptNotification
+     * v5.0: adding notification to cache only when notification is active
+     * 
+     * @param scriptNotification scriptNotification
+     * @return scriptNotification scriptNotification
+     * @author akadid abdelmounaim
+     * @lastModifiedVersion 5.0
+     */
     @Override
     public ScriptNotification update(ScriptNotification scriptNotification) throws BusinessException {
     	scriptNotification = super.update(scriptNotification);
-        notificationCacheContainerProvider.updateNotificationInCache(scriptNotification);
+    	notificationCacheContainerProvider.removeNotificationFromCache(scriptNotification);
+        if(scriptNotification.isActive()) {
+            notificationCacheContainerProvider.addNotificationToCache(scriptNotification);
+        }
         return scriptNotification;
     }
 

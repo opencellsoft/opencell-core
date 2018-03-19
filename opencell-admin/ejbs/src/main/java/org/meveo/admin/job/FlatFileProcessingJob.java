@@ -12,7 +12,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.FileUtils;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.custom.CustomFieldMapKeyEnum;
 import org.meveo.model.crm.custom.CustomFieldStorageTypeEnum;
@@ -23,7 +23,6 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
-
 
 /**
  * The Class FlatFileProcessingJob consume any flat file and execute the given script for each line/record, the beanIO is used to describe file format.
@@ -38,10 +37,13 @@ public class FlatFileProcessingJob extends Job {
     /** The custom field instance service. */
     @Inject
     private CustomFieldInstanceService customFieldInstanceService;
-    
+
     /** The job execution service . */
     @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -60,8 +62,7 @@ public class FlatFileProcessingJob extends Job {
                 recordVariableName = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_recordVariableName");
                 originFilename = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_originFilename");
                 mappingConf = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_mappingConf");
-                inputDir = ParamBean.getInstance().getProperty("providers.rootDir", "./opencelldata/") + File.separator + appProvider.getCode()
-                        + ((String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
+                inputDir = paramBeanFactory.getChrootDir() + ((String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_inputDir")).replaceAll("\\..", "");
                 fileNameExtension = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_fileNameExtension");
                 scriptInstanceFlowCode = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_scriptsFlow");
                 formatTransfo = (String) customFieldInstanceService.getCFValue(jobInstance, "FlatFileProcessingJob_formatTransfo");

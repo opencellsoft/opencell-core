@@ -22,6 +22,8 @@ import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.RecurringChargeInstanceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.slf4j.Logger;
@@ -29,9 +31,6 @@ import org.slf4j.Logger;
 @Stateless
 public class RecurringRatingJobBean implements Serializable {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 2226065462536318643L;
 
     @Inject
@@ -41,14 +40,18 @@ public class RecurringRatingJobBean implements Serializable {
     private RecurringChargeInstanceService recurringChargeInstanceService;
 
     @Inject
-    protected Logger log;
+    private Logger log;
 
     @Inject
     @Rejected
-    Event<Serializable> rejectededChargeProducer;
+    private Event<Serializable> rejectededChargeProducer;
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -74,7 +77,7 @@ public class RecurringRatingJobBean implements Serializable {
             if (rateUntilDate == null) {
                 rateUntilDate = new Date();
             }
-            
+
             List<Long> ids = recurringChargeInstanceService.findIdsByStatus(InstanceStatusEnum.ACTIVE, rateUntilDate, false);
             int inputSize = ids.size();
             result.setNbItemsToProcess(inputSize);
@@ -82,8 +85,9 @@ public class RecurringRatingJobBean implements Serializable {
 
             List<Future<String>> futures = new ArrayList<Future<String>>();
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, rateUntilDate));
+                futures.add(recurringChargeAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, rateUntilDate, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {

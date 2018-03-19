@@ -55,7 +55,7 @@ import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
 import org.meveo.service.catalog.impl.PricePlanMatrixService;
 import org.meveo.service.communication.impl.MeveoInstanceService;
 import org.meveo.util.ApplicationProvider;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
 @Stateless
@@ -64,7 +64,7 @@ public class UsageRatingService implements Serializable {
     private static final long serialVersionUID = 1411446109227299227L;
 
     @Inject
-    @MeveoJpaForJobs
+    @MeveoJpaForMultiTenancyForJobs
     private EntityManager em;
 
     @Inject
@@ -141,7 +141,7 @@ public class UsageRatingService implements Serializable {
      * @param counterInstance Counter instance in case of virtual operation
      * @param offerCode Offer code in case of virtual operation
      * 
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private void rateEDRwithMatchingCharge(WalletOperation walletOperation, EDR edr, BigDecimal quantityToCharge, UsageChargeInstance usageChargeInstance, boolean isVirtual)
             throws BusinessException {
@@ -175,16 +175,16 @@ public class UsageRatingService implements Serializable {
         walletOperation.setOrderNumber(chargeInstance.getOrderNumber());
         walletOperation.setEdr(edr);
 
-        log.debug("AKK URS line 193");
+        // log.debug("AKK URS line 193");
         UserAccount userAccount = chargeInstance.getUserAccount();
         BillingAccount billingAccount = userAccount.getBillingAccount();
-        log.debug("AKK URS line 196");
+        // log.debug("AKK URS line 196");
 
         TradingCountry tradingCountry = chargeInstance.getCountry();
 
         ChargeTemplate chargeTemplate = usageChargeInstance.getChargeTemplate();// em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplateId());
 
-        log.debug("AKK URS line 202");
+        // log.debug("AKK URS line 202");
         InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountry(chargeTemplate.getInvoiceSubCategory(),
             tradingCountry, edr.getEventDate());
 
@@ -193,9 +193,9 @@ public class UsageRatingService implements Serializable {
                 "No tax defined for country=" + tradingCountry.getCountryCode() + " in invoice Sub-Category=" + chargeTemplate.getInvoiceSubCategory().getCode());
         }
 
-        log.debug("AKK URS line 211");
+        // log.debug("AKK URS line 211");
         boolean isExonerated = billingAccountService.isExonerated(billingAccount);
-        log.debug("AKK URS line 213");
+        // log.debug("AKK URS line 213");
 
         walletOperation.setSeller(chargeInstance.getSeller());
 
@@ -214,7 +214,7 @@ public class UsageRatingService implements Serializable {
         walletOperation.setBillingAccount(billingAccount);
         walletOperation.setCode(chargeTemplate.getCode());
 
-        log.debug("AKK URS line 232 descriptionMap is empty {}", descriptionMap.isEmpty());
+        // log.debug("AKK URS line 232 descriptionMap is empty {}", descriptionMap.isEmpty());
         String languageCode = billingAccount.getTradingLanguage().getLanguageCode();
 
         String translationKey = "CT_" + chargeTemplate.getCode() + languageCode;
@@ -227,7 +227,7 @@ public class UsageRatingService implements Serializable {
             descriptionMap.put(translationKey, descTranslated);
         }
 
-        log.debug("AKK URS line 245");
+        // log.debug("AKK URS line 245");
         walletOperation.setDescription(descTranslated);
 
         walletOperation.setInputQuantity(quantityToCharge);
@@ -243,9 +243,9 @@ public class UsageRatingService implements Serializable {
         // walletOperation.setOfferCode(subscription.getOffer().getCode()); Offer code is set in walletOperation.setOfferTemplate()
         walletOperation.setOfferTemplate(subscription.getOffer());
 
-        log.debug("AKK URS line 261 offer id is {}", subscription.getOffer().getId());
+        // log.debug("AKK URS line 261 offer id is {}", subscription.getOffer().getId());
         ratingService.rateBareWalletOperation(walletOperation, usageChargeInstance.getAmountWithoutTax(), usageChargeInstance.getAmountWithTax(), tradingCountry.getId(), currency);
-        log.debug("AKK URS line 263");
+        // log.debug("AKK URS line 263");
     }
 
     /**
@@ -256,7 +256,7 @@ public class UsageRatingService implements Serializable {
      * @param reservation Is charge event part of reservation
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * @return if EDR quantity fits partially in the counter, returns the remaining quantity. NOTE: counter and EDR units might differ - translation is performed.
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private BigDecimal deduceCounter(EDR edr, UsageChargeInstance usageChargeInstance, Reservation reservation, boolean isVirtual) throws BusinessException {
 
@@ -353,7 +353,7 @@ public class UsageRatingService implements Serializable {
      * @param isVirtual Is charge event a virtual operation? If so, no entities should be created/updated/persisted in DB
      * 
      * @return returns true if the charge has been fully rated (either because it has no counter or because the counter can be fully decremented with the EDR content)
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private boolean rateEDRonChargeAndCounters(WalletOperation walletOperation, EDR edr, UsageChargeInstance usageChargeInstance, boolean isVirtual) throws BusinessException {
         boolean stopEDRRating = false;
@@ -367,17 +367,17 @@ public class UsageRatingService implements Serializable {
             if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
                 stopEDRRating = true;
                 stopAfterApplication = true;
-            
+
             } else {
                 if (edr.getQuantity().compareTo(deducedQuantity) == 0) {
                     stopEDRRating = true;
                 }
             }
-            
+
         } else {
             stopEDRRating = true;
         }
-        
+
         if (deducedQuantity != null && deducedQuantity.compareTo(BigDecimal.ZERO) == 0) {
             // we continue the rating to have a WO that its needed in pricePlan.script
             log.warn("deduceQuantity is BigDecimal.ZERO, will continue rating");
@@ -387,12 +387,12 @@ public class UsageRatingService implements Serializable {
         BigDecimal quantityToCharge = null;
         if (deducedQuantity == null) {
             quantityToCharge = edr.getQuantity();
-        
+
         } else {
             edr.setQuantity(edr.getQuantity().subtract(deducedQuantity));
             quantityToCharge = deducedQuantity;
         }
-        
+
         rateEDRwithMatchingCharge(walletOperation, edr, quantityToCharge, usageChargeInstance, isVirtual);
 
         if (!isVirtual) {
@@ -407,7 +407,7 @@ public class UsageRatingService implements Serializable {
         UsageChargeTemplate chargeTemplate = null;
         if (usageChargeInstance.getChargeTemplate() instanceof UsageChargeTemplate) {
             chargeTemplate = (UsageChargeTemplate) usageChargeInstance.getChargeTemplate();
-            
+
         } else {
             chargeTemplate = em.find(UsageChargeTemplate.class, usageChargeInstance.getChargeTemplate().getId());
         }
@@ -460,12 +460,12 @@ public class UsageRatingService implements Serializable {
                 }
             }
         }
-        
+
         // will only happen if edr.quantity = 0
-        if(stopAfterApplication) {
+        if (stopAfterApplication) {
             stopEDRRating = true;
         }
-        
+
         return stopEDRRating;
     }
 
@@ -477,7 +477,7 @@ public class UsageRatingService implements Serializable {
      * @param edr EDR to reserve
      * @param usageChargeInstance Associated charge
      * @return True EDR was rated fully - either no counter used, or quantity remaining in a counter was greater or equal to the quantity to rate
-     * @throws BusinessException
+     * @throws BusinessException Business exception
      */
     private boolean reserveEDRonChargeAndCounters(Reservation reservation, EDR edr, UsageChargeInstance usageChargeInstance) throws BusinessException {
         boolean stopEDRRating = false;

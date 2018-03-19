@@ -29,7 +29,7 @@
 		<hftl:formPanel label="#{messages['occTemplate.title']}" backingBean="#{occTemplateBean}" >
 			<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
 			<hftl:formField label="#{messages['businessEntity.description']}" field="description" />
-			<hftl:formField label="#{messages['occTemplate.accountCode']}" field="accountCode" required="true" />
+			<hftl:formField label="#{messages['accountingCode']}" field="accountingCode" valueLabelField="code" listBean="#{accountingCodeListBean}" listenerUpdate="@this" required="true" />
 			<hftl:formField label="#{messages['occTemplate.accountCodeClientSide']}" field="accountCodeClientSide" />
 			<hftl:formField label="#{messages['occTemplate.occCategory']}" field="occCategory" required="true"/>
 		</hftl:formPanel>

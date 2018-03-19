@@ -21,9 +21,10 @@ import org.meveo.event.qualifier.Rejected;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.EdrService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
-import org.meveo.service.job.JobExecutionService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -40,26 +41,20 @@ public class UsageRatingJobBean {
 
     @Inject
     @Rejected
-    Event<Serializable> rejectededEdrProducer;
+    private Event<Serializable> rejectededEdrProducer;
 
     @Inject
     protected CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
-    private JobExecutionService jobExecutionService;
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NEVER)
     public void execute(JobExecutionResultImpl result, JobInstance jobInstance) {
         log.debug("Running with parameter={}", jobInstance.getParametres());
-
-        long startDate = System.currentTimeMillis();
-        for (int i = 0; i < 300000; i++) {
-            jobExecutionService.isJobRunningOnThis(result.getJobInstance());
-        }
-
-        log.debug("Finished cache check: {}", (System.currentTimeMillis() - startDate));
 
         try {
             Long nbRuns = new Long(1);
@@ -84,8 +79,10 @@ public class UsageRatingJobBean {
             SubListCreator subListCreator = new SubListCreator(ids, nbRuns.intValue());
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
+
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result));
+                futures.add(usageRatingAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, lastCurrentUser));
 
                 if (subListCreator.isHasNext()) {
                     try {

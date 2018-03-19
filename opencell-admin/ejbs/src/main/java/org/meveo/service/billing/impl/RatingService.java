@@ -189,7 +189,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * 
      * @param chargeTemplate charge template
      * @param subscriptionDate subscription date
-     * @param offerCode code of offer
+     * @param offerTemplate offer Template
      * @param chargeInstance charge instance
      * @param applicationType type of application
      * @param applicationDate date of application
@@ -492,6 +492,24 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
+        if (pricePlan != null) {
+            if (appProvider.isEntreprise() && !StringUtils.isBlank(pricePlan.getMinimumAmountWithoutTaxEl())) {
+                BigDecimal minimumAmount = new BigDecimal(
+                    evaluateDoubleExpression(pricePlan.getMinimumAmountWithoutTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
+                if (bareWalletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
+                    bareWalletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
+                    bareWalletOperation.setAmountWithoutTax(minimumAmount);
+                }
+            } else if (!StringUtils.isBlank(pricePlan.getMinimumAmountWithTaxEl())) {
+                BigDecimal minimumAmount = new BigDecimal(
+                    evaluateDoubleExpression(pricePlan.getMinimumAmountWithTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
+                if (bareWalletOperation.getAmountWithTax().compareTo(minimumAmount) < 0) {
+                    bareWalletOperation.setRawAmountWithTax(pricePlan.getAmountWithTax());
+                    bareWalletOperation.setAmountWithTax(minimumAmount);
+                }
+            }
+        }
+
         // calculate WO description based on EL from Price plan
         if (pricePlan != null && pricePlan.getWoDescriptionEL() != null) {
             String woDescription = evaluateStringExpression(pricePlan.getWoDescriptionEL(), bareWalletOperation, null);
@@ -532,7 +550,7 @@ public class RatingService extends BusinessService<WalletOperation> {
      * @param walletOperation Wallet operation
      * @param unitPriceWithoutTax Unit price without tax. Used in B2B (provider.isEnterise=true) as base to calculate taxes and price/amount with tax.
      * @param unitPriceWithTax Unit price with tax. Used in B2C (provider.isEnterise=false) as base to calculate taxes and price/amount without tax.
-     * @throws BusinessException 
+     * @throws BusinessException Business exception
      */
     public void calculateAmounts(WalletOperation walletOperation, BigDecimal unitPriceWithoutTax, BigDecimal unitPriceWithTax) throws BusinessException {
 
@@ -615,7 +633,7 @@ public class RatingService extends BusinessService<WalletOperation> {
     private PricePlanMatrix ratePrice(List<PricePlanMatrix> listPricePlan, WalletOperation bareOperation, Long countryId, TradingCurrency tcurrency, Long sellerId)
             throws BusinessException {
         // FIXME: the price plan properties could be null !
-        log.debug("AKK RS ratePrice line 613");
+//        log.debug("AKK RS ratePrice line 613");
         // log.info("ratePrice rate " + bareOperation);
         for (PricePlanMatrix pricePlan : listPricePlan) {
 
@@ -866,7 +884,7 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         Map<Object, Object> userMap = constructElContext(expression, priceplan, walletOperation, ua, amount);
 
-        log.debug("AKK before evaluating expression");
+//        log.debug("AKK before evaluating expression");
         Object res = null;
         try {
             res = ValueExpressionWrapper.evaluateExpression(expression, userMap, BigDecimal.class);

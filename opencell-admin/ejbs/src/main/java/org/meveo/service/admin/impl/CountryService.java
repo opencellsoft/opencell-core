@@ -29,6 +29,11 @@ import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.model.billing.Country;
 import org.meveo.service.base.PersistenceService;
 
+/**
+ * @author anasseh
+ * @lastModifiedVersion 5.0
+ */
+
 @Stateless
 @Named
 public class CountryService extends PersistenceService<Country> {
@@ -37,48 +42,54 @@ public class CountryService extends PersistenceService<Country> {
      * @param countryCode country code
      * @return found country
      */
-	public Country findByCode(String countryCode) {
-	    
-		if (countryCode == null || countryCode.trim().length()==0) {
-			return null;
-		}
+    public Country findByCode(String countryCode) {
 
-		QueryBuilder qb = new QueryBuilder(Country.class, "c");
-		qb.addCriterion("countryCode", "=", countryCode, false);
+        if (countryCode == null || countryCode.trim().length() == 0) {
+            return null;
+        }
 
-		try {
-			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
+        QueryBuilder qb = new QueryBuilder(Country.class, "c");
+        if (countryCode.length() <= 3) {
+            qb.addCriterion("countryCode", "=", countryCode, false);
+        } else {
+            qb.startOrClause();
+            qb.addCriterion("description", "=", countryCode, false);
+            qb.addSql("lower(descriptionI18n) like'%" + countryCode.toLowerCase() + "%'");
+            qb.endOrClause();
+        }
+        try {
+            return (Country) qb.getQuery(getEntityManager()).setMaxResults(1).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     /**
      * @param countryName countryName
      * @return country
      */
-	public Country findByName(String countryName) {				
-		QueryBuilder qb = new QueryBuilder(Country.class, "c");
-		qb.startOrClause();
+    public Country findByName(String countryName) {
+        QueryBuilder qb = new QueryBuilder(Country.class, "c");
+        qb.startOrClause();
         qb.addCriterion("description", "=", countryName, false);
-		qb.endOrClause();
-		try {
-			return (Country) qb.getQuery(getEntityManager()).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}	
-	}
+        qb.endOrClause();
+        try {
+            return (Country) qb.getQuery(getEntityManager()).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     /**
      * @return list of country
      * @see org.meveo.service.base.PersistenceService#list()
      */
-	@SuppressWarnings("unchecked")
-	public List<Country> list() {
-		QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
+    @SuppressWarnings("unchecked")
+    public List<Country> list() {
+        QueryBuilder queryBuilder = new QueryBuilder(entityClass, "a", null);
         queryBuilder.addOrderCriterion("a.description", true);
-		Query query = queryBuilder.getQuery(getEntityManager());
-		return query.getResultList();
-	}
+        Query query = queryBuilder.getQuery(getEntityManager());
+        return query.getResultList();
+    }
 
 }

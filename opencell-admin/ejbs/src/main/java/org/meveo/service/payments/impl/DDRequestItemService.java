@@ -39,6 +39,9 @@ import org.meveo.model.payments.RecordedInvoice;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 
+/*
+ * @lastModifiedVersion 5.0
+ */
 @Stateless
 public class DDRequestItemService extends PersistenceService<DDRequestItem> {
 
@@ -202,7 +205,7 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
         automatedPayment.setAmount(amount);
         automatedPayment.setUnMatchingAmount(amount);
         automatedPayment.setMatchingAmount(BigDecimal.ZERO);
-        automatedPayment.setAccountCode(occTemplate.getAccountCode());
+        automatedPayment.setAccountingCode(occTemplate.getAccountingCode());
         automatedPayment.setOccCode(occTemplate.getCode());
         automatedPayment.setOccDescription(occTemplate.getDescription());
         automatedPayment.setTransactionCategory(occTemplate.getOccCategory());
@@ -263,13 +266,11 @@ public class DDRequestItemService extends PersistenceService<DDRequestItem> {
     public void rejectPayment(RecordedInvoice recordedInvoice, String rejectCause) throws BusinessException {
 
         AutomatedPayment automatedPayment = recordedInvoice.getPayedDDRequestItem().getAutomatedPayment();
-        log.debug("automatedPayment.getAccountCode():" + automatedPayment.getAccountCode());
+        log.debug("automatedPayment.getAccountingCode():" + automatedPayment.getAccountingCode().getCode());
         matchingCodeService.unmatching(recordedInvoice.getMatchingAmounts().get(0).getMatchingCode().getId());
 
-        if (automatedPayment != null) {
-            automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
-            automatedPaymentService.updateNoCheck(automatedPayment);
-        }
+        automatedPayment.setMatchingStatus(MatchingStatusEnum.R);
+        automatedPaymentService.updateNoCheck(automatedPayment);
     }
 
     // TODO remove coupling between busines rules and file format

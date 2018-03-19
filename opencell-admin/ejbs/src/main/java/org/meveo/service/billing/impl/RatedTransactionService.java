@@ -248,7 +248,6 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param billingAccount Billing Account
      * @param invoice Invoice to append invoice aggregates to
      * @param ratedTransactionFilter Filter to use to filter rated transactions.
-     * @param ratedTransactions A list of rated transactions - used in conjunction with isVirtual=true
      * @param orderNumber Order number used to retrieve rated transactions
      * @param firstTransactionDate First transaction date
      * @param lastTransactionDate Last transaction date
@@ -271,7 +270,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
      * @param lastTransactionDate Last transaction date
      * @param isInvoiceAdjustment Is this invoice adjustment
      * @param isVirtual Is this a virtual invoice - invoice is not persisted, rated transactions are not persisted either
-     * @throws BusinessException
+     * @throws BusinessException BusinessException
      */
     @SuppressWarnings({ "unchecked", "unused" })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -333,11 +332,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
                     record[3] = ratedTransaction.getAmountTax();
                     record[4] = ratedTransaction.getQuantity();
 
-                    ratedTransaction.setStatus(RatedTransactionStatusEnum.BILLED);
-                    ratedTransaction.setInvoice(invoice);
-                    if (isVirtual) {
-                        invoice.getRatedTransactions().add(ratedTransaction);
-                    }
+                    invoice.getRatedTransactions().add(ratedTransaction);
 
                     boolean foundRecordForSameId = false;
                     for (Object[] existingRecord : invoiceSubCats) {
@@ -698,12 +693,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     /**
      * @param billingAccount billing account
      * @param orderNumber order number.
+     * @param firstTransactionDate firstTransactionDate.
+     * @param lastTransactionDate lastTransactionDate.
      * @return true/false
      */
     public Boolean isBillingAccountBillable(BillingAccount billingAccount, String orderNumber, Date firstTransactionDate, Date lastTransactionDate) {
         long count = 0;
         TypedQuery<Long> q = getEntityManager().createNamedQuery("RatedTransaction.countListToInvoiceByOrderNumber", Long.class);
-        count = q.setParameter("orderNumber", orderNumber).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate).getSingleResult();
+        count = q.setParameter("orderNumber", orderNumber).setParameter("firstTransactionDate", firstTransactionDate).setParameter("lastTransactionDate", lastTransactionDate)
+            .getSingleResult();
         log.debug("isBillingAccountBillable code={},orderNumber={}) : {}", billingAccount.getCode(), orderNumber, count);
         return count > 0 ? true : false;
     }

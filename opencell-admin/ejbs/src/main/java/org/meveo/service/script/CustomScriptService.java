@@ -45,6 +45,7 @@ import org.meveo.admin.exception.ElementNotFoundException;
 import org.meveo.admin.exception.InvalidPermissionException;
 import org.meveo.admin.exception.InvalidScriptException;
 import org.meveo.admin.util.ResourceBundle;
+import org.meveo.cache.CacheKeyStr;
 import org.meveo.commons.utils.FileUtils;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.event.monitoring.ClusterEventDto.CrudActionEnum;
@@ -65,11 +66,11 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     protected final Class<SI> scriptInterfaceClass;
 
-    private Map<String, List<String>> allLogs = new HashMap<String, List<String>>();
+    private Map<CacheKeyStr, List<String>> allLogs = new HashMap<>();
 
-    protected Map<String, Class<SI>> allScriptInterfaces = new HashMap<String, Class<SI>>();
+    private Map<CacheKeyStr, Class<SI>> allScriptInterfaces = new HashMap<>();
 
-    private Map<String, SI> cachedScriptInstances = new HashMap<String, SI>();
+    private Map<CacheKeyStr, SI> cachedScriptInstances = new HashMap<>();
 
     private CharSequenceCompiler<SI> compiler;
 
@@ -183,8 +184,9 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     /**
      * Check full class name is existed class path or not.
+     * 
      * @param fullClassName full class name
-     * @return true i class is overridden 
+     * @return true i class is overridden
      */
     public static boolean isOverwritesJavaClass(String fullClassName) {
         try {
@@ -241,6 +243,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
     /**
      * Build the classpath and compile all scripts.
+     * 
      * @param scripts list of scripts
      */
     protected void compile(List<T> scripts) {
@@ -311,7 +314,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
 
             if (!testCompile && isActive) {
 
-                allScriptInterfaces.put(scriptCode, compiledScript);
+                allScriptInterfaces.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), compiledScript);
 
                 log.debug("Compiled script {} added to compiled interface map", scriptCode);
             }
@@ -425,7 +428,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     public Class<SI> getScriptInterface(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
 
-        result = allScriptInterfaces.get(scriptCode);
+        result = allScriptInterfaces.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
 
         if (result == null) {
             result = getScriptInterfaceWCompile(scriptCode);
@@ -436,8 +439,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     }
 
     /**
-     * Compile the script class for a given script code and compile it. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT, so there would be only one attempt to compile a
-     * new script class
+     * Compile the script class for a given script code if it is not compile yet. NOTE: method is executed synchronously due to WRITE lock. DO NOT CHANGE IT, so there would be only
+     * one attempt to compile a new script class
      * 
      * @param scriptCode Script code
      * @return Script interface Class
@@ -447,9 +450,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
     @Lock(LockType.WRITE)
     protected Class<SI> getScriptInterfaceWCompile(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         Class<SI> result = null;
-        
 
-        result = allScriptInterfaces.get(scriptCode);
+        result = allScriptInterfaces.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
 
         if (result == null) {
             T script = findByCode(scriptCode);
@@ -462,7 +464,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
                 log.debug("ScriptInstance {} failed to compile. Errors: {}", scriptCode, script.getScriptErrors());
                 throw new InvalidScriptException(scriptCode, getEntityClass().getName());
             }
-            result = allScriptInterfaces.get(scriptCode);
+            result = allScriptInterfaces.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
         }
 
         if (result == null) {
@@ -500,16 +502,16 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * 
      * @param scriptCode Script code
      * @return A compiled script class
-     * @throws ElementNotFoundException
-     * @throws InvalidScriptException
+     * @throws ElementNotFoundException ElementNotFoundException
+     * @throws InvalidScriptException InvalidScriptException
      */
     public SI getCachedScriptInstance(String scriptCode) throws ElementNotFoundException, InvalidScriptException {
         SI script = null;
-        script = cachedScriptInstances.get(scriptCode);
-        if (script == null){
+        script = cachedScriptInstances.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+        if (script == null) {
             script = getScriptInstance(scriptCode);
 
-            cachedScriptInstances.put(scriptCode, script);
+            cachedScriptInstances.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), script);
         }
         return script;
     }
@@ -522,10 +524,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     public void addLog(String message, String scriptCode) {
 
-        if (!allLogs.containsKey(scriptCode)) {
-            allLogs.put(scriptCode, new ArrayList<String>());
+        if (!allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
+            allLogs.put(new CacheKeyStr(currentUser.getProviderCode(), scriptCode), new ArrayList<String>());
         }
-        allLogs.get(scriptCode).add(message);
+        allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode)).add(message);
     }
 
     /**
@@ -536,10 +538,10 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      */
     public List<String> getLogs(String scriptCode) {
 
-        if (!allLogs.containsKey(scriptCode)) {
+        if (!allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
             return new ArrayList<String>();
         }
-        return allLogs.get(scriptCode);
+        return allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
     }
 
     /**
@@ -548,8 +550,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode script's code
      */
     public void clearLogs(String scriptCode) {
-        if (allLogs.containsKey(scriptCode)) {
-            allLogs.get(scriptCode).clear();
+        if (allLogs.containsKey(new CacheKeyStr(currentUser.getProviderCode(), scriptCode))) {
+            allLogs.get(new CacheKeyStr(currentUser.getProviderCode(), scriptCode)).clear();
         }
     }
 
@@ -701,8 +703,8 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @param scriptCode Script code
      */
     public void clearCompiledScripts(String scriptCode) {
-        cachedScriptInstances.remove(scriptCode);
-        allScriptInterfaces.remove(scriptCode);
-        allLogs.remove(scriptCode);
+        cachedScriptInstances.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+        allScriptInterfaces.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
+        allLogs.remove(new CacheKeyStr(currentUser.getProviderCode(), scriptCode));
     }
 }

@@ -41,6 +41,7 @@ import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.catalog.ServiceConfigurationDto;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.export.EntityExportImportService;
 import org.meveo.export.ExportTemplate;
 import org.meveo.model.DatePeriod;
@@ -61,15 +62,17 @@ import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.catalog.impl.BOMInstantiationParameters;
 import org.meveo.service.catalog.impl.BusinessOfferModelService;
 import org.meveo.service.catalog.impl.OfferTemplateService;
+import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.primefaces.model.DualListModel;
 
 /**
- * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean}
- * that provides almost all common methods to handle entities filtering/sorting
- * in datatable, their create, edit, view, delete operations). It works with
- * Manaty custom JSF components. s
+ * Standard backing bean for {@link OfferTemplate} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
+ * create, edit, view, delete operations). It works with Manaty custom JSF components. s
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
  * 
  */
 @Named
@@ -80,6 +83,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
     /**
      * Injected @{link OfferTemplate} service. Extends {@link PersistenceService}.
@@ -102,20 +108,22 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Inject
     private EntityExportImportService entityExportImportService;
 
+    @Inject
+    private ProductTemplateService productTemplateService;
+
     private Long bomId;
 
     private boolean newVersion;
     private boolean duplicateOffer;
 
-	/**
-	 * These configurations are used to show / hide the checkbox to select the service templates as well
-	 * as the custom fields for each service.
-	 */
-	private boolean visibleServiceCheckbox;
-	private boolean visibleServiceCF;
-	private boolean instantiatedFromBom;
-	private boolean newVersionFlag;
-	private boolean duplicateOfferFlag;
+    /**
+     * These configurations are used to show / hide the checkbox to select the service templates as well as the custom fields for each service.
+     */
+    private boolean visibleServiceCheckbox;
+    private boolean visibleServiceCF;
+    private boolean instantiatedFromBom;
+    private boolean newVersionFlag;
+    private boolean duplicateOfferFlag;
 
     private DualListModel<ServiceTemplate> incompatibleServices;
     private OfferServiceTemplate offerServiceTemplate;
@@ -123,13 +131,12 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     private BusinessOfferModel businessOfferModel;
     private List<ProductTemplate> productTemplatesLookup;
     private List<OfferServiceTemplate> sortedOfferServiceTemplates;
-	private List<OfferServiceTemplate> bsmServiceTemplates;
-	private List<BusinessServiceModel> businessServiceModels;
-	private List<BusinessServiceModel> selectedBsms;
+    private List<OfferServiceTemplate> bsmServiceTemplates;
+    private List<BusinessServiceModel> businessServiceModels;
+    private List<BusinessServiceModel> selectedBsms;
 
     /**
-	 * Constructor. Invokes super constructor and provides class type of this bean
-	 * for {@link BaseBean}.
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public OfferTemplateBean() {
         super(OfferTemplate.class);
@@ -138,54 +145,52 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @Override
     public OfferTemplate initEntity() {
 
-		visibleServiceCF = true;
-		visibleServiceCheckbox = false;
-		instantiatedFromBom = false;
-		
-		// offer instantiation
+        visibleServiceCF = true;
+        visibleServiceCheckbox = false;
+        instantiatedFromBom = false;
+
+        // offer instantiation
         if (bomId != null) {
             duplicateFromBom();
 
-            productTemplatesLookup = new ArrayList<>();
-            if (entity.getOfferProductTemplates() != null && !entity.getOfferProductTemplates().isEmpty()) {
-                for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
-                    productTemplatesLookup.add(opt.getProductTemplate());
-                }
-            }
             bomId = null;
-			visibleServiceCheckbox = true;
-			instantiatedFromBom = true;
+            visibleServiceCheckbox = true;
+            instantiatedFromBom = true;
 
         } else if (newVersion) {
-			// creates a new version by setting new validity date
+            // creates a new version by setting new validity date
             instantiateNewVersion();
             newVersion = false;
-			visibleServiceCheckbox = true;
-			newVersionFlag = true;
+            visibleServiceCheckbox = true;
+            newVersionFlag = true;
 
         } else if (duplicateOffer) {
-			// duplicate the offer, detach and set id to null
-			duplicateAndSave();
+            // duplicate the offer, detach and set id to null
+            duplicateAndSave();
             duplicateOffer = false;
-			duplicateOfferFlag = true;
+            duplicateOfferFlag = true;
 
         } else {
-			// creates new entity
+            // creates new entity
             super.initEntity();
         }
 
-		// lazy loading service templates
-        for (OfferServiceTemplate offerServiceTemplate : entity.getOfferServiceTemplates()) {
-            offerServiceTemplate.getServiceTemplate().getCode();
-            for (ServiceTemplate serviceTemplate : offerServiceTemplate.getIncompatibleServices()) {
+        // lazy loading service templates
+        for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
+            ost.getServiceTemplate().getCode();
+            for (ServiceTemplate serviceTemplate : ost.getIncompatibleServices()) {
                 serviceTemplate.getCode();
             }
         }
 
-		// lazy loading product templates
-        for (OfferProductTemplate offerProductTemplate : entity.getOfferProductTemplates()) {
-            offerProductTemplate.getProductTemplate();
+        // lazy loading product templates
+        List<ProductTemplate> productTemplates = new ArrayList<>();
+        for (OfferProductTemplate opt : entity.getOfferProductTemplates()) {
+            productTemplates.add(opt.getProductTemplate());
         }
+
+        productTemplatesLookup = productTemplateService.listByLifeCycleStatus(LifeCycleStatusEnum.ACTIVE);
+        productTemplatesLookup.removeAll(productTemplates);
 
         if (entity.getValidity() == null) {
             entity.setValidity(new DatePeriod());
@@ -205,8 +210,9 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     /**
      * @see org.meveo.admin.action.BaseBean#getFormFieldsToFetch()
      */
+    @Override
     protected List<String> getFormFieldsToFetch() {
-        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels");
+        return Arrays.asList("offerTemplateCategories", "channels", "businessAccountModels", "customerCategories");
     }
 
     public List<OfferTemplate> listActiveByDate(Date date) {
@@ -248,8 +254,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     }
 
     /**
-	 * @param givenEntity
-	 *            entity to check
+     * @param givenEntity entity to check
      * @return true/false
      */
     public boolean isUsedInSubscription(OfferTemplate givenEntity) {
@@ -285,7 +290,7 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             OfferTemplate offer = offerTemplateService.findById(getObjectId());
             if (offer != null) {
                 try {
-					businessOfferModel = offer.getBusinessOfferModel();
+                    businessOfferModel = offer.getBusinessOfferModel();
                     entity = offerTemplateService.instantiateNewVersion(offer);
 
                     setObjectId(null);
@@ -310,39 +315,38 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         if (sortedOfferServiceTemplates == null) {
             if (entity != null) {
                 sortedOfferServiceTemplates = new ArrayList<>();
-				
-				// add all offer service templates
+
+                // add all offer service templates
                 sortedOfferServiceTemplates.addAll(entity.getOfferServiceTemplates());
 
-				// duplication, new version
-				if (entity.isTransient() && entity.getBusinessOfferModel() != null) {
-					for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
-						ostOffer.getServiceTemplate().setSelected(true);
-					}
+                // duplication, new version
+                if (entity.isTransient() && entity.getBusinessOfferModel() != null) {
+                    for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
+                        ostOffer.getServiceTemplate().setSelected(true);
+                    }
 
-					// add services from BOM offer
-					// this is not used anymore?
-					if (!newVersionFlag && !duplicateOfferFlag) {
-						for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate()
-								.getOfferServiceTemplates()) {
-							boolean found = false;
-							for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
-								if (ostOffer.getServiceTemplate().equals(ostBom.getServiceTemplate())) {
-									found = true;
-									break;
-								}
-							}
+                    // add services from BOM offer
+                    // this is not used anymore?
+                    if (!newVersionFlag && !duplicateOfferFlag) {
+                        for (OfferServiceTemplate ostBom : entity.getBusinessOfferModel().getOfferTemplate().getOfferServiceTemplates()) {
+                            boolean found = false;
+                            for (OfferServiceTemplate ostOffer : sortedOfferServiceTemplates) {
+                                if (ostOffer.getServiceTemplate().equals(ostBom.getServiceTemplate())) {
+                                    found = true;
+                                    break;
+                                }
+                            }
 
-							if (!found) {
-								sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
-							}
-						}
-					}
-				}
+                            if (!found) {
+                                sortedOfferServiceTemplates.add(ostBom.duplicate(entity));
+                            }
+                        }
+                    }
+                }
 
                 Collections.sort(sortedOfferServiceTemplates, new DescriptionComparator());
-			}
-		}
+            }
+        }
 
         return sortedOfferServiceTemplates;
     }
@@ -357,27 +361,27 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
     @ActionMethod
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
-		// Instantiating a new offer from BOM by using the data (only the data) entered in offer
-		// template that was duplicated in initEntity() method
-	    if (instantiatedFromBom) {
-			Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
-			CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
+        // Instantiating a new offer from BOM by using the data (only the data) entered in offer
+        // template that was duplicated in initEntity() method
+        if (instantiatedFromBom) {
+            Map<String, List<CustomFieldValue>> offerCfValues = customFieldDataEntryBean.getFieldValueHolderByUUID(entity.getUuid()).getValuesByCode();
+            CustomFieldsDto offerCfs = entityToDtoConverter.getCustomFieldsDTO(entity, offerCfValues, false, false);
 
             List<ServiceConfigurationDto> servicesConfigurations = new ArrayList<>();
             // process the services
-			for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
+            for (OfferServiceTemplate ost : getSortedOfferServiceTemplates()) {
                 ServiceTemplate st = ost.getServiceTemplate();
                 if (st.isSelected()) {
-					Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true);
+                    Map<String, List<CustomFieldValue>> stCfValues = customFieldDataEntryBean.saveCustomFieldsToEntity(null, st.getUuid(), false, true);
 
                     ServiceConfigurationDto serviceConfigurationDto = new ServiceConfigurationDto();
                     serviceConfigurationDto.setCode(st.getCode());
                     serviceConfigurationDto.setDescription(st.getDescription());
                     serviceConfigurationDto.setMandatory(ost.isMandatory());
-					serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
+                    serviceConfigurationDto.setInstantiatedFromBSM(st.isInstantiatedFromBSM());
                     servicesConfigurations.add(serviceConfigurationDto);
-					if (stCfValues != null) {
-						serviceConfigurationDto.setCfValues(stCfValues);
+                    if (stCfValues != null) {
+                        serviceConfigurationDto.setCfValues(stCfValues);
                     }
                 }
             }
@@ -393,33 +397,33 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             }
 
             businessOfferModel = businessOfferModelService.refreshOrRetrieve(businessOfferModel);
-            
-			BOMInstantiationParameters bomParams = new BOMInstantiationParameters();
-			
-			bomParams.setBusinessOfferModel(businessOfferModel);
-			bomParams.setCustomFields(offerCfs != null ? offerCfs.getCustomField() : null);
-			bomParams.setCode(entity.getCode());
-			bomParams.setName(entity.getName());
-			bomParams.setOfferDescription(entity.getDescription());
-			bomParams.setServiceCodes(servicesConfigurations);
-			bomParams.setProductCodes(productsConfigurations);
-			bomParams.setChannels(entity.getChannels());
-			bomParams.setBams(entity.getBusinessAccountModels());
-			bomParams.setOfferTemplateCategories(entity.getOfferTemplateCategories());
-			bomParams.setLifeCycleStatusEnum(entity.getLifeCycleStatus());
-			bomParams.setImagePath(entity.getImagePath());
-			bomParams.setValidFrom(entity.getValidity() != null ? entity.getValidity().getFrom() : null);
-			bomParams.setValidTo(entity.getValidity() != null ? entity.getValidity().getTo() : null);
-			bomParams.setDescriptionI18n(entity.getDescriptionI18n());
-			bomParams.setLongDescription(entity.getLongDescription());
-			bomParams.setLongDescriptionI18n(entity.getLongDescriptionI18n());
-			bomParams.setOfferCfValue(offerCfValues);
 
-			businessOfferModelService.instantiateFromBOM(bomParams);
+            BOMInstantiationParameters bomParams = new BOMInstantiationParameters();
+
+            bomParams.setBusinessOfferModel(businessOfferModel);
+            bomParams.setCustomFields(offerCfs != null ? offerCfs.getCustomField() : null);
+            bomParams.setCode(entity.getCode());
+            bomParams.setName(entity.getName());
+            bomParams.setOfferDescription(entity.getDescription());
+            bomParams.setServiceCodes(servicesConfigurations);
+            bomParams.setProductCodes(productsConfigurations);
+            bomParams.setChannels(entity.getChannels());
+            bomParams.setBams(entity.getBusinessAccountModels());
+            bomParams.setOfferTemplateCategories(entity.getOfferTemplateCategories());
+            bomParams.setLifeCycleStatusEnum(entity.getLifeCycleStatus());
+            bomParams.setImagePath(entity.getImagePath());
+            bomParams.setValidFrom(entity.getValidity() != null ? entity.getValidity().getFrom() : null);
+            bomParams.setValidTo(entity.getValidity() != null ? entity.getValidity().getTo() : null);
+            bomParams.setDescriptionI18n(entity.getDescriptionI18n());
+            bomParams.setLongDescription(entity.getLongDescription());
+            bomParams.setLongDescriptionI18n(entity.getLongDescriptionI18n());
+            bomParams.setOfferCfValue(offerCfValues);
+
+            businessOfferModelService.instantiateFromBOM(bomParams);
 
             if (entity.getImagePath() != null) {
                 try {
-					ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                    ImageUploadEventHandler<OfferTemplate> imageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                     imageUploadEventHandler.deleteImage(entity);
                 } catch (IOException e) {
                     log.error("Failed deleting image file", e);
@@ -436,16 +440,16 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             if (outcome != null) {
 
                 if (outcome.equals("mm_offers")) {
-					if (isNewEntity) {
-					    entity.getOfferServiceTemplates().clear();
-						for (OfferServiceTemplate ostGui : sortedOfferServiceTemplates) {
-							if (ostGui.getServiceTemplate().isSelected()) {
-								entity.addOfferServiceTemplate(ostGui);
-							}
-						}
+                    if (isNewEntity) {
+                        entity.getOfferServiceTemplates().clear();
+                        for (OfferServiceTemplate ostGui : sortedOfferServiceTemplates) {
+                            if (ostGui.getServiceTemplate().isSelected()) {
+                                entity.addOfferServiceTemplate(ostGui);
+                            }
+                        }
 
-						entity = offerTemplateService.update(entity);
-					}
+                        entity = offerTemplateService.update(entity);
+                    }
 
                     // populate service custom fields
                     for (OfferServiceTemplate ost : entity.getOfferServiceTemplates()) {
@@ -454,8 +458,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
                             .getValuesByCode();
                         if (stCustomFieldInstances != null) {
                             // populate offer cf
-							customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
-							serviceTemplate = serviceTemplateService.update(serviceTemplate);
+                            customFieldDataEntryBean.saveCustomFieldsToEntity(serviceTemplate, serviceTemplate.getUuid(), true, false, false);
+                            serviceTemplate = serviceTemplateService.update(serviceTemplate);
                         }
                     }
                 }
@@ -645,13 +649,13 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         return newVersion;
     }
 
-	public List<OfferServiceTemplate> getBsmServiceTemplates() {
-		return bsmServiceTemplates;
-	}
+    public List<OfferServiceTemplate> getBsmServiceTemplates() {
+        return bsmServiceTemplates;
+    }
 
-	public void setBsmServiceTemplates(List<OfferServiceTemplate> bsmServiceTemplates) {
-		this.bsmServiceTemplates = bsmServiceTemplates;
-	}
+    public void setBsmServiceTemplates(List<OfferServiceTemplate> bsmServiceTemplates) {
+        this.bsmServiceTemplates = bsmServiceTemplates;
+    }
 
     public ExportTemplate getMarketingCatalogExportTemplate() {
         return entityExportImportService.getExportImportTemplate("Offers");
@@ -717,21 +721,21 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
 
         if (!matchedVersions.isEmpty()) {
             messages.error(new BundleKey("messages", "offerTemplate.version.exists"),
-                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBean.getDateFormat()));
+                matchedVersions.get(0).getValidity() == null ? " / " : matchedVersions.get(0).getValidity().toString(paramBeanFactory.getInstance().getDateFormat()));
             return false;
         }
 
         return true;
     }
 
-	private void duplicateAndSave() {
+    private void duplicateAndSave() {
 
         if (getObjectId() != null) {
             OfferTemplate offer = offerTemplateService.findById(getObjectId());
             if (offer != null) {
                 try {
-					entity = offerTemplateService.duplicate(offer, true, true, false);
-					businessOfferModel = entity.getBusinessOfferModel();					
+                    entity = offerTemplateService.duplicate(offer, true, true, false);
+                    businessOfferModel = entity.getBusinessOfferModel();
                     setObjectId(null);
 
                     messages.info(new BundleKey("messages", "message.duplicate.ok"));
@@ -757,8 +761,8 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
             entity = offerTemplateService.duplicate(offer, false);
             // Preserve the offer template original code
             entity.setCode(code);
-			// the new offer should be in design
-			entity.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
+            // the new offer should be in design
+            entity.setLifeCycleStatus(LifeCycleStatusEnum.IN_DESIGN);
             setObjectId(null);
 
         } catch (BusinessException e) {
@@ -766,90 +770,90 @@ public class OfferTemplateBean extends CustomFieldBean<OfferTemplate> {
         }
     }
 
-	public void instantiateBSM() {		
-		if (selectedBsms != null && !selectedBsms.isEmpty()) {
-			for (BusinessServiceModel bsm : selectedBsms) {
-				OfferServiceTemplate ost = new OfferServiceTemplate();
-				ServiceTemplate stSource = bsm.getServiceTemplate();
-				
-				ServiceTemplate stTarget = new ServiceTemplate();
-				stTarget.setCode(stSource.getCode());
+    public void instantiateBSM() {
+        if (selectedBsms != null && !selectedBsms.isEmpty()) {
+            for (BusinessServiceModel bsm : selectedBsms) {
+                OfferServiceTemplate ost = new OfferServiceTemplate();
+                ServiceTemplate stSource = bsm.getServiceTemplate();
+
+                ServiceTemplate stTarget = new ServiceTemplate();
+                stTarget.setCode(stSource.getCode());
                 stTarget.setDescription(stSource.getDescription() + " (" + bsm.getDescriptionOrCode() + ")");
                 stTarget.setSelected(true);
                 stTarget.clearUuid();
-				stTarget.clearCfValues();
-				stTarget.setInstantiatedFromBSM(true);
-				
-				ost.setServiceTemplate(stTarget);
-				ost.setOfferTemplate(entity);
-				
-				sortedOfferServiceTemplates.add(ost);				
-			}
-		}
-	}
-	
-	public void resetBsm() {
-		sortedOfferServiceTemplates = null;
-	}
+                stTarget.clearCfValues();
+                stTarget.setInstantiatedFromBSM(true);
 
-	public boolean isVisibleServiceCF() {
-		return visibleServiceCF;
-	}
+                ost.setServiceTemplate(stTarget);
+                ost.setOfferTemplate(entity);
 
-	public void setVisibleServiceCF(boolean visibleServiceCF) {
-		this.visibleServiceCF = visibleServiceCF;
-	}
+                sortedOfferServiceTemplates.add(ost);
+            }
+        }
+    }
 
-	public boolean isVisibleServiceCheckbox() {
-		return visibleServiceCheckbox;
-	}
+    public void resetBsm() {
+        sortedOfferServiceTemplates = null;
+    }
 
-	public void setVisibleServiceCheckbox(boolean visibleServiceCheckbox) {
-		this.visibleServiceCheckbox = visibleServiceCheckbox;
-	}
+    public boolean isVisibleServiceCF() {
+        return visibleServiceCF;
+    }
 
-	public boolean isInstantiatedFromBom() {
-		return instantiatedFromBom;
-	}
+    public void setVisibleServiceCF(boolean visibleServiceCF) {
+        this.visibleServiceCF = visibleServiceCF;
+    }
 
-	public void setInstantiatedFromBom(boolean instantiatedFromBom) {
-		this.instantiatedFromBom = instantiatedFromBom;
-	}
+    public boolean isVisibleServiceCheckbox() {
+        return visibleServiceCheckbox;
+    }
 
-	public boolean isNewVersionFlag() {
-		return newVersionFlag;
-	}
+    public void setVisibleServiceCheckbox(boolean visibleServiceCheckbox) {
+        this.visibleServiceCheckbox = visibleServiceCheckbox;
+    }
 
-	public void setNewVersionFlag(boolean newVersionFlag) {
-		this.newVersionFlag = newVersionFlag;
-	}
+    public boolean isInstantiatedFromBom() {
+        return instantiatedFromBom;
+    }
 
-	public List<BusinessServiceModel> getBusinessServiceModels() {
-		if (businessOfferModel != null && businessServiceModels == null) {
-			businessServiceModels = businessOfferModelService.getBusinessServiceModels(businessOfferModel);
-		}
+    public void setInstantiatedFromBom(boolean instantiatedFromBom) {
+        this.instantiatedFromBom = instantiatedFromBom;
+    }
 
-		return businessServiceModels;
-	}
+    public boolean isNewVersionFlag() {
+        return newVersionFlag;
+    }
 
-	public void setBusinessServiceModels(List<BusinessServiceModel> businessServiceModels) {
-		this.businessServiceModels = businessServiceModels;
-	}
+    public void setNewVersionFlag(boolean newVersionFlag) {
+        this.newVersionFlag = newVersionFlag;
+    }
 
-	public List<BusinessServiceModel> getSelectedBsms() {
-		return selectedBsms;
-	}
+    public List<BusinessServiceModel> getBusinessServiceModels() {
+        if (businessOfferModel != null && businessServiceModels == null) {
+            businessServiceModels = businessOfferModelService.getBusinessServiceModels(businessOfferModel);
+        }
 
-	public void setSelectedBsms(List<BusinessServiceModel> selectedBsms) {
-		this.selectedBsms = selectedBsms;
-	}
+        return businessServiceModels;
+    }
 
-	public boolean isDuplicateOfferFlag() {
-		return duplicateOfferFlag;
-	}
+    public void setBusinessServiceModels(List<BusinessServiceModel> businessServiceModels) {
+        this.businessServiceModels = businessServiceModels;
+    }
 
-	public void setDuplicateOfferFlag(boolean duplicateOfferFlag) {
-		this.duplicateOfferFlag = duplicateOfferFlag;
-	}
+    public List<BusinessServiceModel> getSelectedBsms() {
+        return selectedBsms;
+    }
+
+    public void setSelectedBsms(List<BusinessServiceModel> selectedBsms) {
+        this.selectedBsms = selectedBsms;
+    }
+
+    public boolean isDuplicateOfferFlag() {
+        return duplicateOfferFlag;
+    }
+
+    public void setDuplicateOfferFlag(boolean duplicateOfferFlag) {
+        this.duplicateOfferFlag = duplicateOfferFlag;
+    }
 
 }

@@ -11,20 +11,27 @@ import org.meveo.api.dto.TaxDto;
 import org.meveo.api.dto.TaxesDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.Tax;
+import org.meveo.service.billing.impl.AccountingCodeService;
 import org.meveo.service.catalog.impl.TaxService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class TaxApi extends BaseApi {
 
     @Inject
     private TaxService taxService;
+    
+    @Inject
+    private AccountingCodeService accountingCodeService;
 
     public ActionStatus create(TaxDto postData) throws MeveoApiException, BusinessException {
 
@@ -49,13 +56,18 @@ public class TaxApi extends BaseApi {
         tax.setCode(postData.getCode());
         tax.setDescription(postData.getDescription());
         tax.setPercent(postData.getPercent());
-        tax.setAccountingCode(postData.getAccountingCode());
-
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            tax.setAccountingCode(accountingCode);
+        }
         // populate customFields
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {
@@ -92,7 +104,13 @@ public class TaxApi extends BaseApi {
         tax.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         tax.setDescription(postData.getDescription());
         tax.setPercent(postData.getPercent());
-        tax.setAccountingCode(postData.getAccountingCode());
+        if (!StringUtils.isBlank(postData.getAccountingCode())) {
+            AccountingCode accountingCode = accountingCodeService.findByCode(postData.getAccountingCode());
+            if (accountingCode == null) {
+                throw new EntityDoesNotExistsException(AccountingCode.class, postData.getAccountingCode());
+            }
+            tax.setAccountingCode(accountingCode);
+        }
 
         if (postData.getLanguageDescriptions() != null) {
             tax.setDescriptionI18n(convertMultiLanguageToMapOfValues(postData.getLanguageDescriptions(), tax.getDescriptionI18n()));
@@ -102,7 +120,7 @@ public class TaxApi extends BaseApi {
         try {
             populateCustomFields(postData.getCustomFields(), tax, true, true);
 
-        } catch (MissingParameterException e) {
+        } catch (MissingParameterException | InvalidParameterException e) {
             log.error("Failed to associate custom field instance to an entity: {}", e.getMessage());
             throw e;
         } catch (Exception e) {

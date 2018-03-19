@@ -40,11 +40,14 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.commons.utils.FilteredQueryBuilder;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.QueryBuilder;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.commons.utils.StringUtils;
@@ -69,11 +72,15 @@ import org.meveo.model.filter.Filter;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
+ * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
  */
 public abstract class PersistenceService<E extends IEntity> extends BaseService implements IPersistenceService<E> {
     protected Class<E> entityClass;
@@ -86,14 +93,12 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public static String SEARCH_FILTER = "$FILTER";
     public static String SEARCH_FILTER_PARAMETERS = "$FILTER_PARAMETERS";
 
-    private ParamBean paramBean = ParamBean.getInstance();
-
     @Inject
-    @MeveoJpa
+    @MeveoJpaForMultiTenancy
     private EntityManager em;
 
     @Inject
-    @MeveoJpaForJobs
+    @MeveoJpaForMultiTenancyForJobs
     private EntityManager emfForJobs;
 
     @Inject
@@ -101,9 +106,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @Inject
     private Conversation conversation;
-    //
-    // @Resource
-    // protected TransactionSynchronizationRegistry txReg;
 
     @Inject
     @Created
@@ -127,6 +129,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
     @EJB
     private CustomFieldInstanceService customFieldInstanceService;
+
+    @Inject
+    protected ParamBeanFactory paramBeanFactory;
 
     /**
      * Constructor.
@@ -295,28 +300,31 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     @Override
     public void remove(E entity) throws BusinessException {
         log.debug("start of remove {} entity (id={}) ..", getEntityClass().getSimpleName(), entity.getId());
-        getEntityManager().remove(entity);
-        if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
-            entityRemovedEventProducer.fire((BaseEntity) entity);
-        }
-        // getEntityManager().flush();
+        entity = findById((Long) entity.getId());
+        if (entity != null) {
+            getEntityManager().remove(entity);
+            if (entity instanceof BaseEntity && entity.getClass().isAnnotationPresent(ObservableEntity.class)) {
+                entityRemovedEventProducer.fire((BaseEntity) entity);
+            }
+            // getEntityManager().flush();
 
-        // Remove entity from Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.remove((BusinessEntity) entity);
-        }
+            // Remove entity from Elastic Search
+            if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
+                elasticClient.remove((BusinessEntity) entity);
+            }
 
-        // Remove custom field values from cache if applicable
-        if (entity instanceof ICustomFieldEntity) {
-            customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
-        }
+            // Remove custom field values from cache if applicable
+            if (entity instanceof ICustomFieldEntity) {
+                customFieldInstanceService.removeCFValues((ICustomFieldEntity) entity);
+            }
 
-        if (entity instanceof IImageUpload) {
-            try {
-                ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(appProvider);
-                imageUploadEventHandler.deleteImage(entity);
-            } catch (IOException e) {
-                log.error("Failed deleting image file");
+            if (entity instanceof IImageUpload) {
+                try {
+                    ImageUploadEventHandler<E> imageUploadEventHandler = new ImageUploadEventHandler<E>(currentUser.getProviderCode());
+                    imageUploadEventHandler.deleteImage(entity);
+                } catch (IOException e) {
+                    log.error("Failed deleting image file");
+                }
             }
         }
 
@@ -385,7 +393,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(BusinessEntity entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), paramBean.getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
             throw new BusinessException("Invalid characters found in entity code.");
         }
 
@@ -644,7 +652,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
 
         return refreshedEntities;
     }
-    
+
     /**
      * Creates query to filter entities according data provided in pagination configuration.
      * 
@@ -1026,19 +1034,6 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return false;
     }
 
-    public EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
-        if (conversation != null) {
-            try {
-                conversation.isTransient();
-                result = em;
-            } catch (Exception e) {
-            }
-        }
-
-        return result;
-    }
-
     public void updateAudit(E e) {
         if (e instanceof IAuditable) {
             ((IAuditable) e).updateAudit(currentUser);
@@ -1063,5 +1058,35 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
             }
         }
         return q.getResultList();
+    }
+
+    public EntityManager getEntityManager() {
+        if (conversation != null) {
+            try {
+                conversation.isTransient();
+                return em;
+            } catch (Exception e) {
+                return emfForJobs;
+            }
+        }
+
+        return emfForJobs;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> executeNativeSelectQuery(String query, Map<String, Object> params) {
+        Session session = getEntityManager().unwrap(Session.class);
+        SQLQuery q = session.createSQLQuery(query);
+
+        q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+
+        if (params != null) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                q.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        List<Map<String, Object>> aliasToValueMapList = q.list();
+
+        return aliasToValueMapList;
     }
 }

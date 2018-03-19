@@ -679,6 +679,16 @@
 			      </configuration>
 			    -->
 				<version>3.0.0</version>
+				<configuration>
+					<tags>
+						<tag>
+							<name>lastModifiedVersion</name>
+							<!-- tag for all places -->
+							<placement>a</placement>
+							<head>Last Modified Version:</head>
+						</tag>
+					</tags>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -694,9 +704,10 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2 -->
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 			</properties>
@@ -726,7 +737,7 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.mariadb.jdbc.Driver</db.driver>
 				<db.url>jdbc:mariadb://localhost:3306/meveo</db.url>
 				<db.username>root</db.username>
@@ -751,9 +762,10 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.postgresql.Driver</db.driver>
 				<db.url>jdbc:postgresql://localhost/integrmeveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>integrmeveo</db.username>
 				<db.password>integrmeveo</db.password>
 			</properties>
@@ -781,9 +793,10 @@
 				</property>
 			</activation>
 			<properties>
-				<!-- Properties for liquibase plugin -->
+				<!-- Properties for liquibase plugin. Can be passed from a command line: mvn -Ddb.schema=ten2  -->
 				<db.driver>org.postgresql.Driver </db.driver>
 				<db.url>jdbc:postgresql://localhost/meveo</db.url>
+                <db.schema>public</db.schema>
 				<db.username>meveo</db.username>
 				<db.password>meveo</db.password>
 			</properties>

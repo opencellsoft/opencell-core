@@ -31,12 +31,14 @@ import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequestBuilder;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
+import org.hibernate.proxy.HibernateProxy;
 import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
@@ -44,32 +46,33 @@ import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
+import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityTemplateService;
+import org.meveo.util.ApplicationProvider;
 import org.meveo.util.EntityCustomizationUtils;
-import org.meveo.util.MeveoJpa;
-import org.meveo.util.MeveoJpaForJobs;
+import org.meveo.util.MeveoJpaForMultiTenancy;
+import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 import org.slf4j.Logger;
 
+/**
+ * Takes care of managing and populating Elastic search indexes
+ * 
+ * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0
+ * 
+ */
 @Stateless
 public class ElasticSearchIndexPopulationService implements Serializable {
 
     private static final long serialVersionUID = 6177817839276664632L;
 
-    @Inject
-    @MeveoJpa
-    private EntityManager em;
-
-    @Inject
-    @MeveoJpaForJobs
-    private EntityManager emfForJobs;
-
-    @Inject
-    private Conversation conversation;
+    private static String INDEX_PROVIDER_PREFIX = "<provider>";
 
     @Inject
     private ElasticSearchConfiguration esConfiguration;
@@ -89,8 +92,31 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     @Inject
     private Logger log;
 
-    private ParamBean paramBean = ParamBean.getInstance();
+    @Inject
+    @ApplicationProvider
+    protected Provider appProvider;
 
+    @Inject
+    @MeveoJpaForMultiTenancy
+    private EntityManager em;
+
+    @Inject
+    @MeveoJpaForMultiTenancyForJobs
+    private EntityManager emfForJobs;
+
+    @Inject
+    private Conversation conversation;
+
+    private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
+
+    /**
+     * Populate index with data of a given entity class
+     * 
+     * @param classname Entity classname
+     * @param from Populate starting record number
+     * @param statistics Statistics to add progress info to
+     * @return Number of items added
+     */
     @SuppressWarnings("unchecked")
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public int populateIndex(String classname, int from, ReindexingStatistics statistics) {
@@ -147,20 +173,17 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         return found;
     }
 
-    /**
-     * @return entity manager
-     */
-    private EntityManager getEntityManager() {
-        EntityManager result = emfForJobs;
+    public EntityManager getEntityManager() {
         if (conversation != null) {
             try {
                 conversation.isTransient();
-                result = em;
+                return em;
             } catch (Exception e) {
+                return emfForJobs;
             }
         }
 
-        return result;
+        return emfForJobs;
     }
 
     /**
@@ -196,6 +219,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         value = FieldUtils.readField(entity, fieldNameFrom, true);
                     }
 
+                    if (value != null && value instanceof HibernateProxy) {
+                        value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
+                    }
+
                 } else {
                     String[] fieldNames = fieldNameFrom.split("\\.");
 
@@ -208,6 +235,9 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         }
                         if (fieldValue == null) {
                             break;
+                        }
+                        if (fieldValue instanceof HibernateProxy) {
+                            fieldValue = ((HibernateProxy) fieldValue).getHibernateLazyInitializer().getImplementation();
                         }
                     }
                     value = fieldValue;
@@ -303,6 +333,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
             Object value = FieldUtils.readField(field, valueToConvert, true);
 
+            if (value != null && value instanceof HibernateProxy) {
+                value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
+            }
+
             if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
                 fieldValueMap.put(field.getName(), convertObjectToFieldMap(value));
             } else {
@@ -313,11 +347,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
     }
 
     /**
-     * Make a REST call to drop all indexes.
+     * Make a REST call to drop all indexes (all providers).
      * 
      * @throws BusinessException business exception
      */
-    public void dropIndexes() throws BusinessException {
+    public void dropAllIndexes() throws BusinessException {
 
         log.debug("Dropping all Elastic Search indexes");
         String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
@@ -327,41 +361,89 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
         Response response = target.request().delete();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+
+            String deleteIndexResponse = response.readEntity(String.class);
+            response.close();
+            log.error("Failed to delete all indexes in URL {}. Response {}", target.getUri(), deleteIndexResponse);
+
             throw new BusinessException(
                 "Failed to communicate or process data in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         }
     }
 
     /**
-     * Recreate index.
+     * Make a REST call to drop all indexes of a current provider. Index names are prefixed by provider code (removed spaces and lowercase).
+     * 
+     * @throws BusinessException business exception
+     */
+    public void dropIndexes() throws BusinessException {
+
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
+        log.debug("Dropping all Elastic Search indexes with prefix {}", indexPrefix);
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+
+        ResteasyClient client = new ResteasyClientBuilder().build();
+
+        // Create indexes
+        for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
+            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, indexPrefix);
+
+            ResteasyWebTarget target = client.target(uri + "/" + indexName + "/");
+
+            Response response = target.request().delete();
+            if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+                String deleteIndexResponse = response.readEntity(String.class);
+                // Index might not exist yet
+                if (deleteIndexResponse == null || !deleteIndexResponse.contains("index_not_found_exception")) {
+
+                    log.error("Failed to delete an index in URL {}. Response {}", target.getUri(), deleteIndexResponse);
+
+                    response.close();
+                    throw new BusinessException("Failed to communicate or process data in Elastic Search. Url: " + target.getUri() + " Http status " + response.getStatus() + " "
+                            + response.getStatusInfo().getReasonPhrase());
+                }
+            }
+            response.close();
+        }
+    }
+
+    /**
+     * Recreate indexes for a current provider. Index names are prefixed by provider code (removed spaces and lowercase).
      * 
      * @throws BusinessException business exception.
      */
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void createIndexes() throws BusinessException {
 
-        log.debug("Creating Elastic Search indexes");
+        String indexPrefix = ElasticClient.cleanUpAndLowercaseCode(appProvider.getCode());
+
+        log.debug("Creating Elastic Search indexes with prefix {}", indexPrefix);
+        String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
 
         // Create indexes
         for (Entry<String, String> model : esConfiguration.getDataModel().entrySet()) {
-            String indexName = model.getKey();
-            String modelJson = model.getValue();
-
-            String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
+            String indexName = model.getKey().replace(INDEX_PROVIDER_PREFIX, indexPrefix);
+            String modelJson = model.getValue().replace(INDEX_PROVIDER_PREFIX, indexPrefix);
 
             ResteasyWebTarget target = client.target(uri + "/" + indexName);
 
             Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
             response.close();
             if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+
+                String createIndexResponse = response.readEntity(String.class);
+                response.close();
+                log.error("Failed to create an index in URL {}. Response {}", target.getUri(), createIndexResponse);
+
                 throw new BusinessException(
                     "Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
             }
         }
 
-        log.trace("Creating Elastic Search mappings for CETs");
+        log.trace("Creating Elastic Search mappings for CETs with prefix {}", indexPrefix);
 
         // Create mappings for custom entity templates
         List<CustomEntityTemplate> cets = customEntityTemplateService.listNoCache();
@@ -369,7 +451,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             createCETMapping(cet);
         }
 
-        log.trace("Updating Elastic Search mappings for CFTs");
+        log.trace("Updating Elastic Search mappings for CFTs with prefix {}", indexPrefix);
 
         // Update model mapping with custom fields
         List<CustomFieldTemplate> cfts = customFieldTemplateService.getCFTForIndex();
@@ -410,6 +492,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
         response.close();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
+
+            String updateIndexResponse = response.readEntity(String.class);
+            response.close();
+            log.error("Failed to update an index in URL {}. Response {}", target.getUri(), updateIndexResponse);
+
             log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
             throw new BusinessException(
                 "Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
@@ -474,7 +561,11 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
         response.close();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+
+            String updateIndexResponse = response.readEntity(String.class);
+            response.close();
+
+            log.error("Failed to update {}/{} mapping in Elastic Search with field mapping {}. Response {}", index, type, fieldMappingJson, updateIndexResponse);
             throw new BusinessException(
                 "Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         } else {

@@ -183,7 +183,7 @@ public class EntityToDtoConverter {
         dto.setListValue(customFieldValueToDTO(cfValue.getListValue(), isChildEntityTypeField));
         dto.setMapValue(customFieldValueToDTO(cfValue.getMapValue()));
 
-        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && !dto.getMapValue().isEmpty() && !dto.getMapValue().containsKey(CustomFieldValue.MAP_KEY)) {
+        if (cft.getStorageType() == CustomFieldStorageTypeEnum.MATRIX && dto.getMapValue() != null && !dto.getMapValue().isEmpty() && !dto.getMapValue().containsKey(CustomFieldValue.MAP_KEY)) {
             dto.getMapValue().put(CustomFieldValue.MAP_KEY,
                 new CustomFieldValueDto(StringUtils.concatenate(CustomFieldValue.MATRIX_COLUMN_NAME_SEPARATOR, cft.getMatrixColumnCodes())));
         }

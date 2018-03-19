@@ -32,6 +32,7 @@ import org.meveo.admin.action.CustomFieldBean;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.web.interceptor.ActionMethod;
 import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubcategoryCountry;
 import org.meveo.model.shared.DateUtils;
@@ -77,6 +78,10 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
     @Param
     private Long invoiceCategoryId;
 
+    /** paramBeanFactory */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
+
     private InvoiceSubcategoryCountry invoiceSubcategoryCountry = new InvoiceSubcategoryCountry();
 
     public void newInvoiceSubcategoryCountryInstance() {
@@ -88,7 +93,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
         try {
             if (invoiceSubcategoryCountry != null) {
-                ParamBean paramBean = ParamBean.getInstance();
+                ParamBean paramBean = paramBeanFactory.getInstance();
                 String datePattern = paramBean.getProperty("meveo.dateFormat", "dd/MM/yyyy");
 
                 if (invoiceSubcategoryCountry.getId() != null) {
@@ -160,6 +165,7 @@ public class InvoiceSubCategoryBean extends CustomFieldBean<InvoiceSubCategory> 
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
+     * 
      * @return invoice sub category
      */
     @Override

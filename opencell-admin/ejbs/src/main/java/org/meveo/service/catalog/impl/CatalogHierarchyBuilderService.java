@@ -42,6 +42,8 @@ import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Provider;
 import org.meveo.model.crm.custom.CustomFieldValue;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
@@ -97,6 +99,10 @@ public class CatalogHierarchyBuilderService {
 
     @Inject
     private SubscriptionService subscriptionService;
+
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     public void duplicateOfferServiceTemplate(OfferTemplate entity, List<OfferServiceTemplate> offerServiceTemplates, String prefix) throws BusinessException {
         List<OfferServiceTemplate> newOfferServiceTemplates = new ArrayList<>();
@@ -166,7 +172,7 @@ public class CatalogHierarchyBuilderService {
         duplicateProductTemplate(prefix, serviceConfiguration != null ? serviceConfiguration.getDescription() : "", productTemplate, newProductTemplate, pricePlansInMemory,
             chargeTemplateInMemory, serviceConfiguration != null ? serviceConfiguration.getCfValues() : null);
         newOfferProductTemplate.setProductTemplate(newProductTemplate);
-        
+
         return newOfferProductTemplate;
     }
 
@@ -211,7 +217,7 @@ public class CatalogHierarchyBuilderService {
             }
 
             try {
-                ImageUploadEventHandler<ProductTemplate> productImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                ImageUploadEventHandler<ProductTemplate> productImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                 String newImagePath = productImageUploadEventHandler.duplicateImage(newProductTemplate, productTemplate.getImagePath());
                 newProductTemplate.setImagePath(newImagePath);
             } catch (IOException e1) {
@@ -225,6 +231,7 @@ public class CatalogHierarchyBuilderService {
                 newProductTemplate.setCfValues(productTemplate.getCfValues());
             }
 
+            productTemplateService.refresh(productTemplate);
             productTemplateService.create(newProductTemplate);
 
             // true on GUI instantiation
@@ -400,7 +407,7 @@ public class CatalogHierarchyBuilderService {
             newServiceTemplate.setServiceSubscriptionCharges(new ArrayList<ServiceChargeTemplateSubscription>());
             newServiceTemplate.setServiceUsageCharges(new ArrayList<ServiceChargeTemplateUsage>());
             try {
-                ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(appProvider);
+                ImageUploadEventHandler<ServiceTemplate> serviceImageUploadEventHandler = new ImageUploadEventHandler<>(currentUser.getProviderCode());
                 String newImagePath = serviceImageUploadEventHandler.duplicateImage(newServiceTemplate, serviceTemplate.getImagePath());
                 newServiceTemplate.setImagePath(newImagePath);
             } catch (IOException e1) {
@@ -414,6 +421,7 @@ public class CatalogHierarchyBuilderService {
                 newServiceTemplate.setCfValues(serviceTemplate.getCfValues());
             }
 
+            serviceTemplateService.refresh(serviceTemplate);
             serviceTemplateService.create(newServiceTemplate);
 
             // update code if duplicate
@@ -749,7 +757,7 @@ public class CatalogHierarchyBuilderService {
      * @throws BusinessException exception when deletion causes some errors
      */
     public synchronized void delete(OfferTemplate entity) throws BusinessException {
-        
+
         if (entity == null || entity.isTransient() || subscriptionService.hasSubscriptions(entity)) {
             return;
         }

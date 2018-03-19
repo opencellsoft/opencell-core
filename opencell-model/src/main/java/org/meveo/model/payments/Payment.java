@@ -23,18 +23,12 @@ import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 
 @Entity
 @DiscriminatorValue(value = "P")
 public class Payment extends AccountOperation {
 
     private static final long serialVersionUID = 1L;
-
-    @Column(name = "payment_method")
-    @Enumerated(EnumType.STRING)
-    private PaymentMethodEnum paymentMethod;
    
     /**
      * Number assigned by the Operator bank
@@ -54,13 +48,6 @@ public class Payment extends AccountOperation {
     @Column(name = "comment", columnDefinition = "LONGTEXT")
     private String comment;
     
-    public PaymentMethodEnum getPaymentMethod() {
-        return paymentMethod;
-    }
-
-    public void setPaymentMethod(PaymentMethodEnum paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
 
 	/**
 	 * @return the paymentOrder

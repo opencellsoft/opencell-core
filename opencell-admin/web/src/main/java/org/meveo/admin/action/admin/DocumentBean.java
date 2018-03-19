@@ -43,7 +43,7 @@ import javax.inject.Named;
 import javax.servlet.http.HttpServletResponse;
 
 import org.meveo.admin.action.BaseBean;
-import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.model.Document;
 import org.meveo.model.crm.Provider;
 import org.meveo.util.ApplicationProvider;
@@ -53,272 +53,258 @@ import org.slf4j.Logger;
 @ConversationScoped
 public class DocumentBean implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-
-	@Inject
-	private Logger log;
-
-	// TODO: DataModel. @DataModel
-	private List<Document> documents;
+    private static final long serialVersionUID = 1L;
 
     @Inject
-	@ApplicationProvider
+    private Logger log;
+
+    // TODO: DataModel. @DataModel
+    private List<Document> documents;
+
+    @Inject
+    @ApplicationProvider
     private Provider appProvider;
 
-	private String filename;
-	private Date fromDate;
-	private Date toDate;
+    private String filename;
+    private Date fromDate;
+    private Date toDate;
 
-	private static String savePath = null;
-	private static String tmpPath = null;
-	static {
-		ParamBean param = ParamBean.getInstance();
-		savePath = param.getProperty("document.path", "/tmp/docs");
-		tmpPath = param.getProperty("document.tmp.path", "/tmp");
-	}
-	private String sortOrder = "desc";
+    /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
+    @Inject
+    private ParamBeanFactory paramBeanFactory;
 
-	/**
-	 * Constructor. Invokes super constructor and provides class type of this
-	 * bean for {@link BaseBean}.
-	 */
-	public DocumentBean() {
-	}
+    private String sortOrder = "desc";
 
-	/**
-	 * Factory method, that is invoked if data model is empty. Invokes
-	 * BaseBean.list() method that handles all data model loading. Overriding is
-	 * needed only to put factory name on it.
-	 * 
-	 */
-	@Produces
-	@Named("documents")
-	@ConversationScoped
-	// @Begin(join = true)
-	public List<Document> list() {
-		documents = new ArrayList<Document>();
-		File path = new File(savePath);
-		if (!path.exists()) {
-			path.mkdirs();
-		}
-		File[] files = path.listFiles(new FileNameDateFilter(this.filename,
-				this.fromDate, this.toDate));
-		if (files != null) {
-			Document d = null;
-			for (File file : files) {
-				d = new Document();
-				d.setFilename(file.getName());
-				log.info("add file #0", file.getName());
-				d.setSize(file.length());
-				d.setCreateDate(new Date(file.lastModified()));
-				d.setAbsolutePath(file.getAbsolutePath());
-				documents.add(d);
-			}
-		}
-		Comparator<Document> comparator = null;
-		if (sortOrder.equals("asc")) {
-			comparator = new DocumetCreateDateASCComparator();
-		} else {
-			comparator = new DocumetCreateDateDESCComparator();
-		}
-		Collections.sort(documents, comparator);
+    /**
+     * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
+     */
+    public DocumentBean() {
+    }
 
-		return documents;
-	}
+    /**
+     * Factory method, that is invoked if data model is empty. Invokes BaseBean.list() method that handles all data model loading. Overriding is needed only to put factory name on
+     * it.
+     * 
+     */
+    @Produces
+    @Named("documents")
+    @ConversationScoped
+    // @Begin(join = true)
+    public List<Document> list() {
+        documents = new ArrayList<Document>();
+        String savePath = paramBeanFactory.getInstance().getProperty("document.path", "/tmp/docs");
+        File path = new File(savePath);
+        if (!path.exists()) {
+            path.mkdirs();
+        }
+        File[] files = path.listFiles(new FileNameDateFilter(this.filename, this.fromDate, this.toDate));
+        if (files != null) {
+            Document d = null;
+            for (File file : files) {
+                d = new Document();
+                d.setFilename(file.getName());
+                log.info("add file #0", file.getName());
+                d.setSize(file.length());
+                d.setCreateDate(new Date(file.lastModified()));
+                d.setAbsolutePath(file.getAbsolutePath());
+                documents.add(d);
+            }
+        }
+        Comparator<Document> comparator = null;
+        if (sortOrder.equals("asc")) {
+            comparator = new DocumetCreateDateASCComparator();
+        } else {
+            comparator = new DocumetCreateDateDESCComparator();
+        }
+        Collections.sort(documents, comparator);
 
-	public synchronized String compress(Document document) {
+        return documents;
+    }
 
-		log.info("start to compress: #0", document.getAbsolutePath());
-		File tmp = new File(tmpPath);
-		if (!tmp.exists()) {
-			tmp.mkdirs();
-		}
+    public synchronized String compress(Document document) {
 
-		File tmpFile = new File(tmpPath + File.separator
-				+ UUID.randomUUID().toString());
+        log.info("start to compress: #0", document.getAbsolutePath());
+        String tmpPath = paramBeanFactory.getInstance().getProperty("document.tmp.path", "/tmp");
+        File tmp = new File(tmpPath);
+        if (!tmp.exists()) {
+            tmp.mkdirs();
+        }
 
-		try {
-			FileOutputStream fout = new FileOutputStream(tmpFile);
-			CheckedOutputStream csum = new CheckedOutputStream(fout,
-					new CRC32());
-			GZIPOutputStream out = new GZIPOutputStream(
-					new BufferedOutputStream(csum));
-			InputStream in = new FileInputStream(new File(
-					document.getAbsolutePath()));
-			int sig = 0;
-			byte[] buf = new byte[1024];
-			while ((sig = in.read(buf, 0, 1024)) != -1)
-				out.write(buf, 0, sig);
-			in.close();
-			out.finish();
-			out.close();
-			csum.close();
-			fout.close();
-			File createdFile = new File(savePath + File.separator
-					+ document.getFilename() + ".gzip");
-			if (createdFile.exists()) {
-				createdFile.delete();
-			}
-			tmpFile.renameTo(createdFile);
-		} catch (Exception e) {
-			log.error("Error:#0, when compress file:#1", e,
-					document.getAbsolutePath());
-		}
-		list();
-		log.info("end compress...");
-		return null;
-	}
+        File tmpFile = new File(tmpPath + File.separator + UUID.randomUUID().toString());
 
-	public String download(Document document) {
-		log.info("start to download...");
-		File f = new File(document.getAbsolutePath());
+        try {
+            FileOutputStream fout = new FileOutputStream(tmpFile);
+            CheckedOutputStream csum = new CheckedOutputStream(fout, new CRC32());
+            GZIPOutputStream out = new GZIPOutputStream(new BufferedOutputStream(csum));
+            InputStream in = new FileInputStream(new File(document.getAbsolutePath()));
+            int sig = 0;
+            byte[] buf = new byte[1024];
+            while ((sig = in.read(buf, 0, 1024)) != -1)
+                out.write(buf, 0, sig);
+            in.close();
+            out.finish();
+            out.close();
+            csum.close();
+            fout.close();
+            String savePath = paramBeanFactory.getInstance().getProperty("document.path", "/tmp/docs");
+            File createdFile = new File(savePath + File.separator + document.getFilename() + ".gzip");
+            if (createdFile.exists()) {
+                createdFile.delete();
+            }
+            tmpFile.renameTo(createdFile);
+        } catch (Exception e) {
+            log.error("Error:#0, when compress file:#1", e, document.getAbsolutePath());
+        }
+        list();
+        log.info("end compress...");
+        return null;
+    }
 
-		try {
-			javax.faces.context.FacesContext context = javax.faces.context.FacesContext
-					.getCurrentInstance();
-			HttpServletResponse res = (HttpServletResponse) context
-					.getExternalContext().getResponse();
-			res.setContentType("application/force-download");
-			res.setContentLength(document.getSize().intValue());
-			res.addHeader("Content-disposition", "attachment;filename=\""
-					+ document.getFilename() + "\"");
+    public String download(Document document) {
+        log.info("start to download...");
+        File f = new File(document.getAbsolutePath());
 
-			OutputStream out = res.getOutputStream();
-			InputStream fin = new FileInputStream(f);
+        try {
+            javax.faces.context.FacesContext context = javax.faces.context.FacesContext.getCurrentInstance();
+            HttpServletResponse res = (HttpServletResponse) context.getExternalContext().getResponse();
+            res.setContentType("application/force-download");
+            res.setContentLength(document.getSize().intValue());
+            res.addHeader("Content-disposition", "attachment;filename=\"" + document.getFilename() + "\"");
 
-			byte[] buf = new byte[1024];
-			int sig = 0;
-			while ((sig = fin.read(buf, 0, 1024)) != -1) {
-				out.write(buf, 0, sig);
-			}
-			fin.close();
-			out.flush();
-			out.close();
-			context.responseComplete();
-			log.info("download over!");
-		} catch (Exception e) {
-			log.error("Error:#0, when dowload file: #1", e,
-					document.getAbsolutePath());
-		}
-		log.info("downloaded successfully!");
-		return null;
-	}
+            OutputStream out = res.getOutputStream();
+            InputStream fin = new FileInputStream(f);
 
-	public String getSortOrder() {
-		return sortOrder;
-	}
+            byte[] buf = new byte[1024];
+            int sig = 0;
+            while ((sig = fin.read(buf, 0, 1024)) != -1) {
+                out.write(buf, 0, sig);
+            }
+            fin.close();
+            out.flush();
+            out.close();
+            context.responseComplete();
+            log.info("download over!");
+        } catch (Exception e) {
+            log.error("Error:#0, when dowload file: #1", e, document.getAbsolutePath());
+        }
+        log.info("downloaded successfully!");
+        return null;
+    }
 
-	public void setSortOrder(String sortOrder) {
-		this.sortOrder = sortOrder;
-	}
+    public String getSortOrder() {
+        return sortOrder;
+    }
 
-	public String delete(Document document) {
-		log.info("start delete...");
-		File file = new File(document.getAbsolutePath());
-		if (file.exists()) {
-			file.delete();
-		}
-		list();
-		log.info("end delete...");
-		return null;
-	}
+    public void setSortOrder(String sortOrder) {
+        this.sortOrder = sortOrder;
+    }
 
-	public void clean() {
-		this.filename = null;
-		this.fromDate = null;
-		this.toDate = null;
-	}
+    public String delete(Document document) {
+        log.info("start delete...");
+        File file = new File(document.getAbsolutePath());
+        if (file.exists()) {
+            file.delete();
+        }
+        list();
+        log.info("end delete...");
+        return null;
+    }
 
-	public String getFilename() {
-		return filename;
-	}
+    public void clean() {
+        this.filename = null;
+        this.fromDate = null;
+        this.toDate = null;
+    }
 
-	public void setFilename(String filename) {
-		this.filename = filename;
-	}
+    public String getFilename() {
+        return filename;
+    }
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public Date getToDate() {
+        return toDate;
+    }
 
-	class DocumetCreateDateDESCComparator implements Comparator<Document> {
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
 
-		public int compare(Document d1, Document d2) {
-			if (d1.getCreateDate().before(d2.getCreateDate())) {
-				return 1;
-			} else if (d1.getCreateDate().equals(d2.getCreateDate())) {
-				return 0;
-			} else
-				return -1;
-		}
+    class DocumetCreateDateDESCComparator implements Comparator<Document> {
 
-	}
+        public int compare(Document d1, Document d2) {
+            if (d1.getCreateDate().before(d2.getCreateDate())) {
+                return 1;
+            } else if (d1.getCreateDate().equals(d2.getCreateDate())) {
+                return 0;
+            } else
+                return -1;
+        }
 
-	class DocumetCreateDateASCComparator implements Comparator<Document> {
+    }
 
-		public int compare(Document d1, Document d2) {
-			if (d1.getCreateDate().before(d2.getCreateDate())) {
-				return -1;
-			} else if (d1.getCreateDate().equals(d2.getCreateDate())) {
-				return 0;
-			} else
-				return 1;
-		}
+    class DocumetCreateDateASCComparator implements Comparator<Document> {
 
-	}
+        public int compare(Document d1, Document d2) {
+            if (d1.getCreateDate().before(d2.getCreateDate())) {
+                return -1;
+            } else if (d1.getCreateDate().equals(d2.getCreateDate())) {
+                return 0;
+            } else
+                return 1;
+        }
 
-	class FileNameDateFilter implements FilenameFilter {
+    }
 
-		private String filename;
-		private Date fromDate;
-		private Date toDate;
+    class FileNameDateFilter implements FilenameFilter {
 
-		FileNameDateFilter(String filename, Date fromDate, Date toDate) {
-			this.filename = filename;
-			this.toDate = toDate;
-			this.fromDate = fromDate;
-		}
+        private String filename;
+        private Date fromDate;
+        private Date toDate;
 
-		public boolean accept(File dir, String name) {
-			log.info("accept file path #0, name #1.", dir.getPath(), name);
-			File file = new File(dir.getAbsoluteFile() + File.separator + name);
-			boolean result = true;
-			if (name == null) {
-				result = false;
-			}
+        FileNameDateFilter(String filename, Date fromDate, Date toDate) {
+            this.filename = filename;
+            this.toDate = toDate;
+            this.fromDate = fromDate;
+        }
 
-			if (!name.startsWith(appProvider.getCode())) {
-				result = false;
-			}
-			if (this.filename != null && !this.filename.equals("")
-					&& name.indexOf(filename) < 0) {
-				result = false;
-			}
-			if (this.fromDate != null) {
-				if (fromDate.after(new Date(file.lastModified()))) {
-					result = false;
-				}
-			}
-			if (this.toDate != null) {
-				if (toDate.before(new Date(file.lastModified()))) {
-					result = false;
-				}
-			}
-			return result;
-		}
+        public boolean accept(File dir, String name) {
+            log.info("accept file path #0, name #1.", dir.getPath(), name);
+            File file = new File(dir.getAbsoluteFile() + File.separator + name);
+            boolean result = true;
+            if (name == null) {
+                result = false;
+            }
 
-	}
+            if (!name.startsWith(appProvider.getCode())) {
+                result = false;
+            }
+            if (this.filename != null && !this.filename.equals("") && name.indexOf(filename) < 0) {
+                result = false;
+            }
+            if (this.fromDate != null) {
+                if (fromDate.after(new Date(file.lastModified()))) {
+                    result = false;
+                }
+            }
+            if (this.toDate != null) {
+                if (toDate.before(new Date(file.lastModified()))) {
+                    result = false;
+                }
+            }
+            return result;
+        }
+
+    }
 
 }

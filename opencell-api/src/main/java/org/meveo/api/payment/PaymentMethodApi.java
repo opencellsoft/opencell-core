@@ -10,23 +10,30 @@ import org.apache.commons.collections4.map.HashedMap;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.BaseApi;
+import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.api.dto.payment.PaymentMethodDto;
 import org.meveo.api.dto.payment.PaymentMethodTokensDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.exception.EntityDoesNotExistsException;
 import org.meveo.api.exception.InvalidParameterException;
 import org.meveo.api.exception.MissingParameterException;
+import org.meveo.api.message.exception.InvalidDTOException;
 import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
+import org.meveo.service.crm.impl.CustomerService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.PaymentMethodService;
 import org.primefaces.model.SortOrder;
 
 /**
  * The CRUD Api for PaymentMethod.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion 5.0 
  */
 @Stateless
 public class PaymentMethodApi extends BaseApi {
@@ -34,6 +41,11 @@ public class PaymentMethodApi extends BaseApi {
     /** The customer account service. */
     @Inject
     private CustomerAccountService customerAccountService;
+    
+    /** The customer service. */
+    @Inject
+    private CustomerService customerService;
+
 
     /** The payment method service. */
     @Inject
@@ -50,13 +62,13 @@ public class PaymentMethodApi extends BaseApi {
      * @throws BusinessException the business exception
      */
     public Long create(PaymentMethodDto paymentMethodDto) throws InvalidParameterException, MissingParameterException, EntityDoesNotExistsException, BusinessException {
-        paymentMethodDto.validate(true);
+        validate(paymentMethodDto,true);
         CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
         if (customerAccount == null) {
             throw new EntityDoesNotExistsException(CustomerAccount.class, paymentMethodDto.getCustomerAccountCode());
         }
 
-        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount);
+        PaymentMethod paymentMethod = paymentMethodDto.fromDto(customerAccount, currentUser);
         paymentMethodService.create(paymentMethod);
         return paymentMethod.getId();
     }
@@ -173,6 +185,91 @@ public class PaymentMethodApi extends BaseApi {
             throw new EntityDoesNotExistsException(PaymentMethod.class, id);
         }
         return new PaymentMethodDto(paymentMethod);
+
+    }
+    
+    /**
+     * Validate the PaymentMethodDto.
+     * @param paymentMethodDto paymentMethodDto to check.
+     * @param isRoot is the root Dto or sub Dto.
+     */
+    public void validate(PaymentMethodDto paymentMethodDto,boolean isRoot) {
+        PaymentMethodEnum type = paymentMethodDto.getPaymentMethodType();
+        if (type == null) {
+            throw new InvalidDTOException("Missing payment method type");
+        }
+        if (isRoot && StringUtils.isBlank(paymentMethodDto.getCustomerAccountCode())) {
+            throw new InvalidDTOException("Missing customerAccountCode");
+        }
+        if (type == PaymentMethodEnum.CARD) {
+            int numberLength = paymentMethodDto.getCardNumber().length();
+            CreditCardTypeEnum cardType = paymentMethodDto.getCardType();
+            if (StringUtils.isBlank(paymentMethodDto.getCardNumber()) || (numberLength != 16 && cardType != CreditCardTypeEnum.AMERICAN_EXPRESS)
+                    || (numberLength != 15 && cardType == CreditCardTypeEnum.AMERICAN_EXPRESS)) {
+                throw new InvalidDTOException("Invalid cardNumber");
+            }
+            if (StringUtils.isBlank(paymentMethodDto.getOwner())) {
+                throw new InvalidDTOException("Missing Owner");
+            }
+            if (StringUtils.isBlank(paymentMethodDto.getMonthExpiration()) || StringUtils.isBlank(paymentMethodDto.getYearExpiration())) {
+                throw new InvalidDTOException("Missing expiryDate");
+            }
+
+            return;
+        }
+        if (type == PaymentMethodEnum.DIRECTDEBIT) {
+            validateBankCoordinates(paymentMethodDto);
+            return;
+        }
+
+    }
+
+    /**
+     * Check bank coordinates fields.
+     *
+     * @param paymentMethodDto the paymentMethodDto to check.
+     */
+    private void validateBankCoordinates(PaymentMethodDto paymentMethodDto) {
+        BankCoordinatesDto bankCoordinates = paymentMethodDto.getBankCoordinates();
+
+        if (paymentMethodDto.getPaymentMethodType() == PaymentMethodEnum.DIRECTDEBIT) {
+            // Start compatibility with pre-4.6 versions
+            if ( paymentMethodDto.getMandateIdentification() == null && bankCoordinates == null) {
+                throw new InvalidDTOException("Missing Bank coordinates or MandateIdentification.");
+            }
+
+            if (bankCoordinates != null) {
+                if (StringUtils.isBlank(bankCoordinates.getAccountOwner())) {
+                    throw new InvalidDTOException("Missing account owner.");
+                }
+
+                if (StringUtils.isBlank(bankCoordinates.getBankName())) {
+                    throw new InvalidDTOException("Missing bank name.");
+                }               
+                CustomerAccount customerAccount = customerAccountService.findByCode(paymentMethodDto.getCustomerAccountCode());
+                org.meveo.model.crm.Customer cust = null;
+                if(customerAccount == null) {                    
+                    cust = customerService.findByCode(paymentMethodDto.getCustomerCode());
+                }else {
+                    cust = customerAccount.getCustomer();
+                }                
+                if (StringUtils.isBlank(bankCoordinates.getBic()) && customerService.isBicRequired(cust, bankCoordinates.getIban())) {
+                    throw new InvalidDTOException("Missing BIC.");
+                }
+
+                if (StringUtils.isBlank(bankCoordinates.getIban())) {
+                    throw new InvalidDTOException("Missing IBAN.");
+                }
+            } else {
+                if (StringUtils.isBlank(paymentMethodDto.getMandateIdentification())) {
+                    throw new InvalidDTOException("Missing mandate identification.");
+                }
+                if (paymentMethodDto.getMandateDate() == null) {
+                    throw new InvalidDTOException("Missing mandate date.");
+                }
+            }
+            // End of compatibility with pre-4.6 versions
+        }
 
     }
 }
