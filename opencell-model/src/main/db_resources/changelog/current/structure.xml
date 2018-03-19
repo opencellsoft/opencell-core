@@ -461,7 +461,7 @@
 		</sql>
 		<sql>
 			<![CDATA[
-			update billing_invoice_sub_cat set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);
+			update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
 			]]>
 		</sql>
 		<sql>
