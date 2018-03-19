@@ -32,6 +32,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.RoleDto;
 import org.meveo.api.dto.UserDto;
 import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
@@ -134,7 +135,10 @@ public class KeycloakAdminClientService {
 
         Map<String, List<String>> attributes = new HashMap<>();
         attributes.put("origin", Arrays.asList("OPENCELL-API"));
-        attributes.put("provider", Arrays.asList(currentUser.getProviderCode()));
+        if(ParamBean.isMultitenancyEnabled() && ! StringUtils.isBlank(currentUser.getProviderCode())) {
+        	attributes.put("provider", Arrays.asList(currentUser.getProviderCode()));
+        }
+        
         user.setAttributes(attributes);
 
         // Get realm
