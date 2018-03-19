@@ -53,6 +53,23 @@
                         valueLabelField="descriptionOrCode" rendered="#{not empty serviceInstanceBean.entity.subscriptionTerminationReason}" />
                      <hftl:formField label="#{messages['serviceInstance.rateUntilDate']}" field="rateUntilDate" />    
                 </p:tab>
+                <p:tab title="#{messages['order.history']}">
+                	<p:dataTable id="selectedEntitiesDatatable" var="ohEntity" value="#{serviceInstanceBean.entity.orderHistories}" paginator="true" rows="10"
+						paginatorAlwaysVisible="false" paginatorTemplate="{RowsPerPageDropdown} {FirstPageLink} {PreviousPageLink} {CurrentPageReport} {NextPageLink} {LastPageLink}" lazy="false"
+						styleClass="custom-grid" rowsPerPageTemplate="10, 20, 50" reflow="true">
+						<p:column headerText="#{messages['order.number']}">
+							<h:outputText value="#{ohEntity.orderNumber}" styleClass="field-value" />
+						</p:column>
+						<p:column headerText="#{messages['order.action']}">
+							<h:outputText value="#{ohEntity.action}" styleClass="field-value" />
+						</p:column>
+						<p:column headerText="#{messages['orderHistory.eventDate']}">
+							<h:outputText value="#{ohEntity.eventDate}" styleClass="field-value">
+								<f:convertDateTime pattern="#{paramBean.dateTimeFormat}" />
+							</h:outputText>
+						</p:column>
+					</p:dataTable>
+                </p:tab>
 
                 <hftl:customFields backingBean="#{serviceInstanceBean}" messagesId=":formId:messages" />
             </p:tabView>

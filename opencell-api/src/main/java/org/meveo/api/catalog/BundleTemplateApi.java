@@ -45,6 +45,7 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  *

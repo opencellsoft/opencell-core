@@ -63,6 +63,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * The Class BillingRunService.
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  * 

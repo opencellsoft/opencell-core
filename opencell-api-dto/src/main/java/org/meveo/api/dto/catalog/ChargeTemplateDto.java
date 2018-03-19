@@ -17,6 +17,10 @@ import org.meveo.model.catalog.ChargeTemplate;
 import org.meveo.model.catalog.RoundingModeEnum;
 import org.meveo.model.catalog.TriggeredEDRTemplate;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChargeTemplateDto extends BusinessDto implements Serializable {

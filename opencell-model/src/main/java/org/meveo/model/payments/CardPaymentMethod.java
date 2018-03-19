@@ -16,6 +16,10 @@ import javax.validation.constraints.NotNull;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.shared.DateUtils;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @DiscriminatorValue(value = "CARD")
 public class CardPaymentMethod extends PaymentMethod {

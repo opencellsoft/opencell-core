@@ -2,7 +2,6 @@ package org.meveo.service.payments.impl;
 
 import java.util.Map;
 
-import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.dto.payment.MandatInfoDto;
@@ -63,8 +62,7 @@ public class IngenicoGatewayPayment implements GatewayPaymentInterface {
     private static Client client = null;
     
     /** paramBean Factory allows to get application scope paramBean or provider specific paramBean */
-    @Inject
-    private ParamBeanFactory paramBeanFactory;
+    private ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");
 
     private static void connect() {
         ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface(ParamBeanFactory.class.getSimpleName());

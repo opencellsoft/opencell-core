@@ -55,6 +55,7 @@ import org.meveo.service.billing.impl.SubscriptionService;
 /**
  * Offer Template service implementation.
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  * 

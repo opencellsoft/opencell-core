@@ -32,6 +32,7 @@ import org.primefaces.model.SortOrder;
 /**
  * The CRUD Api for PaymentMethod.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.0 
  */

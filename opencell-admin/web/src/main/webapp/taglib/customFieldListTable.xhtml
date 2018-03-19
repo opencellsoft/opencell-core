@@ -178,32 +178,34 @@
                     <f:facet name="footer" layout="block">
 
                         <p:messages id="cfNewFieldsMessage" globalOnly="false" redisplay="false" rendered="#{edit and !disabled}" />
+                        
+                        <div><span class="text-red">#{messages['message.allFields.areRequired']}</span></div>
 
                         <hf:namingContainer id="addNewFields" rendered="#{edit and !disabled}">
 
                             <c:forEach items="#{cft.matrixColumns}" var="column">
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.STRING}">
-                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" placeholder="#{column.label}" label="#{column.label}" size="30"
+                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" placeholder="#{column.label}" label="#{column.label}" size="30"
                                         maxlength="50" />
                                 </c:if>
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.LONG}">
-                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Long" placeholder="#{column.label}"
+                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Long" placeholder="#{column.label}"
                                         label="#{column.label}" size="9" maxlength="15" />
                                 </c:if>
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.DOUBLE}">
-                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Double" placeholder="#{column.label}"
+                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code)]}" converter="javax.faces.Double" placeholder="#{column.label}"
                                         label="#{column.label}" size="9" maxlength="15" />
                                 </c:if>
 
                                 <c:if test="#{column.keyType eq CustomFieldMapKeyEnum.RON}">
 
-                                    <p:inputText value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_from')]}" converter="javax.faces.Double"
+                                    <p:inputText required="true" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_from')]}" converter="javax.faces.Double"
                                         placeholder="#{column.label}" label="#{column.label}" size="9" maxlength="15" />
                                     <h:outputText value=" - " />
-                                    <p:inputText id="newRonKeyTo" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_to')]}" converter="javax.faces.Double"
+                                    <p:inputText required="true" id="newRonKeyTo" value="#{cfValueHolder.newValues[cft.code.concat('_').concat(column.code).concat('_to')]}" converter="javax.faces.Double"
                                         placeholder="#{column.label}" label="#{column.label}" size="9" maxlength="15" />
                                 </c:if>
 

@@ -63,6 +63,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides support for custom field value data entry
  * 
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @lastModifiedVersion 5.0
  */
@@ -719,7 +720,7 @@ public class CustomFieldDataEntryBean implements Serializable {
 
             Map<String, Object> rowValues = new HashMap<String, Object>();
 
-            for (CustomFieldMatrixColumn column : cft.getMatrixKeyColumns()) {
+            for (CustomFieldMatrixColumn column : cft.getMatrixValueColumns()) {
 
                 Object newValue = null;
 

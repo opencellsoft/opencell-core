@@ -73,6 +73,7 @@ import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
+import org.meveo.model.order.OrderItemActionEnum;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.ChargeInstanceService;
 import org.meveo.service.billing.impl.InvoiceService;
@@ -91,7 +92,7 @@ import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 
 /**
- * 
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
@@ -445,6 +446,8 @@ public class SubscriptionApi extends BaseApi {
                 }
                 serviceInstance.setQuantity(serviceToActivateDto.getQuantity());
                 serviceInstance.setOrderNumber(activateServicesDto.getOrderNumber());
+                serviceInstance.setOrderItemId(activateServicesDto.getOrderItemId());
+                serviceInstance.setOrderItemAction(activateServicesDto.getOrderItemAction());
 
                 // populate customFields
                 try {
@@ -583,7 +586,9 @@ public class SubscriptionApi extends BaseApi {
             serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
             serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
             serviceInstance.setOrderNumber(instantiateServicesDto.getOrderNumber());
-
+            serviceInstance.setOrderItemId(instantiateServicesDto.getOrderItemId());
+            serviceInstance.setOrderItemAction(instantiateServicesDto.getOrderItemAction());
+            
             if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(new Date());
@@ -754,7 +759,7 @@ public class SubscriptionApi extends BaseApi {
 
         try {
             subscriptionService.terminateSubscription(subscription, postData.getTerminationDate(), subscriptionTerminationReason,
-                ChargeInstance.NO_ORDER_NUMBER.equals(orderNumber) ? subscription.getOrderNumber() : orderNumber);
+                ChargeInstance.NO_ORDER_NUMBER.equals(orderNumber) ? subscription.getOrderNumber() : orderNumber, postData.getOrderItemId(), postData.getOrderItemAction());
         } catch (BusinessException e) {
             log.error("error while setting subscription termination", e);
             throw new MeveoApiException(e.getMessage());
@@ -792,6 +797,8 @@ public class SubscriptionApi extends BaseApi {
         if (terminateSubscriptionDto.getServices() != null) {
             for (String serviceInstanceCode : terminateSubscriptionDto.getServices()) {
                 ServiceInstance serviceInstance = getSingleServiceInstance(null, serviceInstanceCode, subscription, InstanceStatusEnum.ACTIVE);
+                serviceInstance.setOrderItemId(terminateSubscriptionDto.getOrderItemId());
+                serviceInstance.setOrderItemAction(terminateSubscriptionDto.getOrderItemAction());
                 try {
                     serviceInstanceService.terminateService(serviceInstance, terminateSubscriptionDto.getTerminationDate(), serviceTerminationReason,
                         ChargeInstance.NO_ORDER_NUMBER.equals(terminateSubscriptionDto.getOrderNumber()) ? serviceInstance.getOrderNumber()
@@ -806,6 +813,8 @@ public class SubscriptionApi extends BaseApi {
         if (terminateSubscriptionDto.getServiceIds() != null) {
             for (Long serviceInstanceId : terminateSubscriptionDto.getServiceIds()) {
                 ServiceInstance serviceInstance = getSingleServiceInstance(serviceInstanceId, null, subscription, InstanceStatusEnum.ACTIVE);
+                serviceInstance.setOrderItemId(terminateSubscriptionDto.getOrderItemId());
+                serviceInstance.setOrderItemAction(terminateSubscriptionDto.getOrderItemAction());
                 try {
                     serviceInstanceService.terminateService(serviceInstance, terminateSubscriptionDto.getTerminationDate(), serviceTerminationReason,
                         ChargeInstance.NO_ORDER_NUMBER.equals(terminateSubscriptionDto.getOrderNumber()) ? serviceInstance.getOrderNumber()
@@ -1007,7 +1016,7 @@ public class SubscriptionApi extends BaseApi {
         return dto;
     }
 
-    public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber) throws MeveoApiException, BusinessException {
+    public void createOrUpdatePartialWithAccessAndServices(SubscriptionDto subscriptionDto, String orderNumber, Long orderItemId, OrderItemActionEnum orderItemAction) throws MeveoApiException, BusinessException {
 
         SubscriptionDto existedSubscriptionDto = null;
         try {
@@ -1025,6 +1034,8 @@ public class SubscriptionApi extends BaseApi {
             terminateSubscriptionDto.setSubscriptionCode(subscriptionDto.getCode());
             terminateSubscriptionDto.setTerminationDate(subscriptionDto.getTerminationDate());
             terminateSubscriptionDto.setTerminationReason(subscriptionDto.getTerminationReason());
+            terminateSubscriptionDto.setOrderItemId(orderItemId);
+            terminateSubscriptionDto.setOrderItemAction(orderItemAction);
             terminateSubscription(terminateSubscriptionDto, orderNumber != null ? orderNumber : existedSubscriptionDto.getOrderNumber());
             return;
 
@@ -1082,14 +1093,21 @@ public class SubscriptionApi extends BaseApi {
             InstantiateServicesRequestDto instantiateServicesDto = new InstantiateServicesRequestDto();
             instantiateServicesDto.setSubscription(subscriptionDto.getCode());
             instantiateServicesDto.setOrderNumber(orderNumber);
+            instantiateServicesDto.setOrderItemId(orderItemId);
+            instantiateServicesDto.setOrderItemAction(orderItemAction);
             List<ServiceToInstantiateDto> serviceToInstantiates = instantiateServicesDto.getServicesToInstantiate().getService();
 
             ActivateServicesRequestDto activateServicesDto = new ActivateServicesRequestDto();
             activateServicesDto.setSubscription(subscriptionDto.getCode());
             activateServicesDto.setOrderNumber(orderNumber);
+            activateServicesDto.setOrderItemId(orderItemId);
+            activateServicesDto.setOrderItemAction(orderItemAction);
 
             UpdateServicesRequestDto updateServicesRequestDto = new UpdateServicesRequestDto();
             updateServicesRequestDto.setSubscriptionCode(subscriptionDto.getCode());
+            updateServicesRequestDto.setOrderNumber(orderNumber);
+            updateServicesRequestDto.setOrderItemId(orderItemId);
+            updateServicesRequestDto.setOrderItemAction(orderItemAction);
 
             List<TerminateSubscriptionServicesRequestDto> servicesToTerminate = new ArrayList<>();
 
@@ -1114,6 +1132,8 @@ public class SubscriptionApi extends BaseApi {
                     terminateServiceDto.setTerminationDate(serviceInstanceDto.getTerminationDate());
                     terminateServiceDto.setTerminationReason(serviceInstanceDto.getTerminationReason());
                     terminateServiceDto.setOrderNumber(orderNumber != null ? orderNumber : serviceInstanceDto.getOrderNumber());
+                    terminateServiceDto.setOrderItemId(orderItemId);
+                    terminateServiceDto.setAction(orderItemAction);
                     servicesToTerminate.add(terminateServiceDto);
 
                     // Service will be updated

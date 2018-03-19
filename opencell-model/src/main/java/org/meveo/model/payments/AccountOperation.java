@@ -53,11 +53,16 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.ISearchable;
 import org.meveo.model.ObservableEntity;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.crm.custom.CustomFieldValues;
 import org.meveo.model.persistence.CustomFieldValuesConverter;
 
 /**
  * Account Transaction.
+ *
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+
  */
 @Entity
 @ObservableEntity
@@ -102,10 +107,11 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Size(max = 255)
     private String reference;
 
-    @Column(name = "account_code", length = 255)
-    @Size(max = 255)
-    private String accountCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
+    @Deprecated
     @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
     private String accountCodeClientSide;
@@ -176,7 +182,7 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
-
+    
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
@@ -249,14 +255,6 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     public void setCustomerAccount(CustomerAccount customerAccount) {
         this.customerAccount = customerAccount;
-    }
-
-    public void setAccountCode(String accountCode) {
-        this.accountCode = accountCode;
-    }
-
-    public String getAccountCode() {
-        return accountCode;
     }
 
     public String getAccountCodeClientSide() {
@@ -429,6 +427,14 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     public void setBankCollectionDate(Date bankCollectionDate) {
         this.bankCollectionDate = bankCollectionDate;
+    }
+
+    public AccountingCode getAccountingCode() {
+        return accountingCode;
+    }
+
+    public void setAccountingCode(AccountingCode accountingCode) {
+        this.accountingCode = accountingCode;
     }
 
     /**

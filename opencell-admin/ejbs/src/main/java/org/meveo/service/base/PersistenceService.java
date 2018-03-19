@@ -78,6 +78,7 @@ import org.meveo.util.MeveoJpaForMultiTenancyForJobs;
 /**
  * Generic implementation that provides the default implementation for persistence methods declared in the {@link IPersistenceService} interface.
  * 
+ * @author Edward P. Legaspi
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  * 

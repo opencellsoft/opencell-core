@@ -19,6 +19,7 @@ import org.meveo.service.job.Job;
 /**
  * @author Edward P. Legaspi
  * @created 30 Jan 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class ReportExtractJob extends Job {

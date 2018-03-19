@@ -20,6 +20,10 @@ import org.hibernate.annotations.Type;
 import org.meveo.model.EnableEntity;
 import org.meveo.model.ObservableEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @ObservableEntity
 @Table(name = "ar_payment_token")

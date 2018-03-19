@@ -59,6 +59,7 @@ import org.meveo.service.base.PersistenceService;
 /**
  * Payment service implementation.
  * 
+ * @author Edward P. Legaspi
  *   @author anasseh
  *   @lastModifiedVersion 5.0
  */
@@ -405,7 +406,7 @@ public class PaymentService extends PersistenceService<Payment> {
         payment.setAmount((new BigDecimal(ctsAmount).divide(new BigDecimal(100))));
         payment.setUnMatchingAmount(payment.getAmount());
         payment.setMatchingAmount(BigDecimal.ZERO);
-        payment.setAccountCode(occTemplate.getAccountCode());
+        payment.setAccountingCode(occTemplate.getAccountingCode());
         payment.setOccCode(occTemplate.getCode());
         payment.setOccDescription(occTemplate.getDescription());
         payment.setType(doPaymentResponseDto.getPaymentBrand());
@@ -527,7 +528,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 rejectedPayment.setAmount(aoThatShouldePaid.getUnMatchingAmount());
                 rejectedPayment.setReference("r_" + paymentId);
                 rejectedPayment.setCustomerAccount(ca);
-                rejectedPayment.setAccountCode(occTemplate.getAccountCode());
+                rejectedPayment.setAccountingCode(occTemplate.getAccountingCode());
                 rejectedPayment.setOccCode(occTemplate.getCode());
                 rejectedPayment.setOccDescription(occTemplate.getDescription());
                 rejectedPayment.setTransactionCategory(occTemplate.getOccCategory());
@@ -544,7 +545,7 @@ public class PaymentService extends PersistenceService<Payment> {
                 accountOperationService.create(rejectedPayment);
                 Long oARejectPaymentID = rejectedPayment.getId();
 
-                List<Long> aos = new ArrayList<Long>();
+                List<Long> aos = new ArrayList<>();
                 aos.add(aoPaymentIdWasRejected);
                 aos.add(oARejectPaymentID);
 

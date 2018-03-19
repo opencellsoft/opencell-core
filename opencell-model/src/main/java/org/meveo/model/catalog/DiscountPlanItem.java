@@ -25,6 +25,7 @@ import org.meveo.model.billing.InvoiceSubCategory;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Entity
 @Cacheable
@@ -59,6 +60,7 @@ public class DiscountPlanItem extends EnableEntity {
 	@Max(100)
 	private BigDecimal percent = new BigDecimal(0);
 
+	@Deprecated // until further analysis
 	@Column(name = "accounting_code", length = 255)
 	@Size(max = 255)
 	private String accountingCode;

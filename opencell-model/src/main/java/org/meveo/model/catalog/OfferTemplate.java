@@ -42,6 +42,10 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.billing.SubscriptionRenewal;
 import org.meveo.model.catalog.ChargeTemplate.ChargeTypeEnum;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @CustomFieldEntity(cftCodePrefix = "OFFER")
 @DiscriminatorValue("OFFER")

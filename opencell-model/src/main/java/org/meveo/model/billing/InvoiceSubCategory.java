@@ -37,7 +37,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.QueryHint;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -49,6 +48,10 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @Entity
 @Cacheable
 @ExportIdentifier({ "code" })
@@ -67,10 +70,6 @@ public class InvoiceSubCategory extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
 
-    @Column(name = "accounting_code", length = 255)
-    @Size(max = 255)
-    private String accountingCode;
-
     @Column(name = "discount")
     private BigDecimal discount;
 
@@ -85,6 +84,10 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
     public List<InvoiceSubcategoryCountry> getInvoiceSubcategoryCountries() {
         return invoiceSubcategoryCountries;
@@ -94,11 +97,11 @@ public class InvoiceSubCategory extends BusinessCFEntity {
         this.invoiceSubcategoryCountries = invoiceSubcategoryCountries;
     }
 
-    public String getAccountingCode() {
+    public AccountingCode getAccountingCode() {
         return accountingCode;
     }
 
-    public void setAccountingCode(String accountingCode) {
+    public void setAccountingCode(AccountingCode accountingCode) {
         this.accountingCode = accountingCode;
     }
 

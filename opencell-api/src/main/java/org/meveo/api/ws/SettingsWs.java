@@ -75,7 +75,8 @@ import org.meveo.api.dto.response.communication.MeveoInstancesResponseDto;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @SuppressWarnings("deprecation")
 @WebService
 public interface SettingsWs extends IBaseWs {

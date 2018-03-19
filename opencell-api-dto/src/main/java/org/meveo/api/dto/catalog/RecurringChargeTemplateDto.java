@@ -11,7 +11,8 @@ import org.meveo.model.catalog.RecurringChargeTemplate;
 
 /**
  * @author Edward P. Legaspi
- **/
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "RecurringChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecurringChargeTemplateDto extends ChargeTemplateDto {

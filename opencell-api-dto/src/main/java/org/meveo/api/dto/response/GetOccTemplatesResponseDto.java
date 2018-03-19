@@ -6,7 +6,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.OccTemplatesDto;
 
-
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "GetOccTemplatesResponse")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetOccTemplatesResponseDto extends SearchResponse {

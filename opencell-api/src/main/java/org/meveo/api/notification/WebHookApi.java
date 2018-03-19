@@ -22,6 +22,7 @@ import org.meveo.service.script.ScriptInstanceService;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {

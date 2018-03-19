@@ -75,6 +75,7 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 
 /**
  * @author Andrius Karpavičius
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  *
  */
@@ -524,7 +525,7 @@ public class OrderApi extends BaseApi {
         // instantiate and activate services
         extractServices(subscriptionDto, services);
 
-        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
+        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber, orderItem.getId(), OrderItemActionEnum.ADD);
 
         Subscription subscription = subscriptionService.findByCode(subscriptionCode);
         orderItem.setSubscription(subscription);
@@ -583,7 +584,7 @@ public class OrderApi extends BaseApi {
 
         extractServices(subscriptionDto, services);
 
-        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
+        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber, orderItem.getId(), OrderItemActionEnum.MODIFY);
 
         subscriptionService.refresh(subscription);
         orderItem.setSubscription(subscription);
@@ -609,7 +610,7 @@ public class OrderApi extends BaseApi {
             Date.class, DateUtils.setTimeToZero(orderItem.getOrder().getOrderDate())));
         subscriptionDto.setTerminationReason(
             (String) getProductCharacteristic(productOrderItem.getProduct(), OrderProductCharacteristicEnum.TERMINATION_REASON.getCharacteristicName(), String.class, null));
-        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber);
+        subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, orderNumber, orderItem.getId(), OrderItemActionEnum.DELETE);
     }
 
     private ProductInstance instantiateProduct(ProductTemplate productTemplate, Product product, org.meveo.model.order.OrderItem orderItem, ProductOrderItem productOrderItem,

@@ -3,6 +3,7 @@ package org.meveo.model.finance;
 /**
  * @author Edward P. Legaspi
  * @created 30 Jan 2018
+ * @lastModifiedVersion 5.0
  **/
 public enum ReportExtractScriptTypeEnum {
 

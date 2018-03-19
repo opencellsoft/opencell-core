@@ -99,6 +99,7 @@ import org.meveo.util.MeveoParamBean;
  * 
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  * 
+ * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
 
@@ -801,7 +802,7 @@ public class AccountHierarchyApi extends BaseApi {
                                                     } else {
                                                         subscriptionDto.setUserAccount(userAccountDto.getCode());
                                                     }
-                                                    subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null);
+                                                    subscriptionApi.createOrUpdatePartialWithAccessAndServices(subscriptionDto, null, null, null);
                                                 }
                                             }
                                         }

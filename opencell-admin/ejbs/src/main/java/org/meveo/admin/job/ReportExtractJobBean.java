@@ -19,6 +19,8 @@ import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.jobs.JobInstance;
+import org.meveo.security.CurrentUser;
+import org.meveo.security.MeveoUser;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.finance.ReportExtractService;
 import org.slf4j.Logger;
@@ -26,6 +28,7 @@ import org.slf4j.Logger;
 /**
  * @author Edward P. Legaspi
  * @created 1 Feb 2018
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 public class ReportExtractJobBean implements Serializable {
@@ -43,6 +46,10 @@ public class ReportExtractJobBean implements Serializable {
 
     @Inject
     private ReportExtractAsync reportExtractAsync;
+    
+    @Inject
+    @CurrentUser
+    protected MeveoUser currentUser;
 
     @SuppressWarnings("unchecked")
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
@@ -75,8 +82,9 @@ public class ReportExtractJobBean implements Serializable {
 
             log.debug("block to run:" + subListCreator.getBlocToRun());
             log.debug("nbThreads:" + nbRuns);
+            MeveoUser lastCurrentUser = currentUser.unProxy();
             while (subListCreator.isHasNext()) {
-                futures.add(reportExtractAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, startDate, endDate));
+                futures.add(reportExtractAsync.launchAndForget((List<Long>) subListCreator.getNextWorkSet(), result, startDate, endDate, lastCurrentUser));
                 if (subListCreator.isHasNext()) {
                     try {
                         Thread.sleep(waitingMillis.longValue());

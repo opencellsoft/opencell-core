@@ -57,6 +57,7 @@ import org.meveo.util.ApplicationProvider;
 /**
  * Customer Account service implementation.
  * 
+ *  @author Edward P. Legaspi
  *  @author anasseh
  *  @lastModifiedVersion 5.0
  */

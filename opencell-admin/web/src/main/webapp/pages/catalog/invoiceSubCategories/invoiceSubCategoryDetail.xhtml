@@ -60,7 +60,7 @@
 
                         <hftl:formField label="#{messages['invoiceSubCategory.code']}" field="code" required="true" validateUnique="true" useConverter="false" />
 
-                        <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" />
+                        <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" listenerUpdate="@this" />
 
                         <hftl:formLanguageFields field="description" />
                     </hftl:formPanel>

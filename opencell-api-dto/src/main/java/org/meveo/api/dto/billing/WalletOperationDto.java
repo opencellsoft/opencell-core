@@ -62,6 +62,8 @@ public class WalletOperationDto extends BaseDto {
     private Date operationDate;
     private Date subscriptionDate;
     private String offerCode;
+    private BigDecimal rawAmountWithoutTax;
+    private BigDecimal rawAmountWithTax;
 
     public WalletOperationDto() {
 
@@ -101,6 +103,8 @@ public class WalletOperationDto extends BaseDto {
         offerCode = wo.getOfferCode();
         chargeInstance = wo.getChargeInstance().getCode();
         chargeInstanceId = wo.getChargeInstance().getId();
+        rawAmountWithoutTax = wo.getRawAmountWithoutTax();
+        rawAmountWithTax = wo.getRawAmountWithTax();
     }
 
     public String getCode() {
@@ -352,6 +356,22 @@ public class WalletOperationDto extends BaseDto {
 
     public void setOfferCode(String offerCode) {
         this.offerCode = offerCode;
+    }
+
+    public BigDecimal getRawAmountWithoutTax() {
+        return rawAmountWithoutTax;
+    }
+
+    public void setRawAmountWithoutTax(BigDecimal rawAmountWithoutTax) {
+        this.rawAmountWithoutTax = rawAmountWithoutTax;
+    }
+
+    public BigDecimal getRawAmountWithTax() {
+        return rawAmountWithTax;
+    }
+
+    public void setRawAmountWithTax(BigDecimal rawAmountWithTax) {
+        this.rawAmountWithTax = rawAmountWithTax;
     }
 
 }

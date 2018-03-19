@@ -175,10 +175,18 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Column(name = "wo_description_el", length = 2000)
     @Size(max = 2000)
     private String woDescriptionEL;
-    
+
     @Column(name = "rating_el", length = 2000)
     @Size(max = 2000)
     private String ratingEL;
+
+    @Column(name = "minimum_amount_without_tax_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountWithoutTaxEl;
+
+    @Column(name = "minimum_amount_with_tax_el", length = 2000)
+    @Size(max = 2000)
+    private String minimumAmountWithTaxEl;
 
     public String getEventCode() {
         return eventCode;
@@ -543,4 +551,21 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     public void setRatingEL(String ratingEL) {
         this.ratingEL = ratingEL;
     }
+
+    public String getMinimumAmountWithoutTaxEl() {
+        return minimumAmountWithoutTaxEl;
+    }
+
+    public void setMinimumAmountWithoutTaxEl(String minimumAmountWithoutTaxEl) {
+        this.minimumAmountWithoutTaxEl = minimumAmountWithoutTaxEl;
+    }
+
+    public String getMinimumAmountWithTaxEl() {
+        return minimumAmountWithTaxEl;
+    }
+
+    public void setMinimumAmountWithTaxEl(String minimumAmountWithTaxEl) {
+        this.minimumAmountWithTaxEl = minimumAmountWithTaxEl;
+    }
+
 }

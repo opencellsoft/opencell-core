@@ -20,6 +20,9 @@ package org.meveo.model.payments;
 
 /**
  * Payment Method types.
+ * 
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 public enum PaymentMethodEnum {
 

@@ -20,6 +20,10 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.payment.RevenueRecognitionRuleApi;
 import org.meveo.api.ws.FinanceWs;
 
+/**
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
+ */
 @WebService(serviceName = "FinanceWs", endpointInterface = "org.meveo.api.ws.FinanceWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class FinanceWSImpl extends BaseWs implements FinanceWs {

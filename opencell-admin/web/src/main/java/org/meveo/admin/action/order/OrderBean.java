@@ -72,6 +72,7 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.UserService;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
+import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
@@ -90,12 +91,17 @@ import org.tmf.dsmapi.catalog.resource.product.BundledProductReference;
 /**
  * Standard backing bean for {@link Order} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create, edit,
  * view, delete operations). It works with Manaty custom JSF components.
+ * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  */
 @Named
 @ViewScoped
 public class OrderBean extends CustomFieldBean<Order> {
 
     private static final long serialVersionUID = 7399464661886086329L;
+    
+    @Inject
+    private SubscriptionService subscriptionService;
 
     /**
      * Injected @{link Order} service. Extends {@link PersistenceService}.
@@ -262,7 +268,9 @@ public class OrderBean extends CustomFieldBean<Order> {
             List<BillingAccount> billingAccountDtos = new ArrayList<>();
             BillingAccount billingAccountDto = new BillingAccount();
             if (selectedOrderItem.getAction() != OrderItemActionEnum.ADD) {
-                billingAccountDto.setId(selectedOrderItem.getSubscription().getUserAccount().getCode());
+                Subscription subscription = selectedOrderItem.getSubscription();
+                subscription = subscriptionService.refreshOrRetrieve(subscription);
+                billingAccountDto.setId(subscription.getUserAccount().getCode());
             } else if (selectedOrderItem.getUserAccount() != null) {
                 billingAccountDto.setId(selectedOrderItem.getUserAccount().getCode());
             }

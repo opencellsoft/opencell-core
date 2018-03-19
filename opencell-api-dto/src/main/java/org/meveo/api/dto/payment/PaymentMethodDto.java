@@ -24,7 +24,8 @@ import org.meveo.security.MeveoUser;
 
 /**
  * The PaymentMethod Dto.
- *
+ * 
+ * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.0
  */

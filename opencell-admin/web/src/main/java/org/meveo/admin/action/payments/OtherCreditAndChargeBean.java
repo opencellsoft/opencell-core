@@ -45,6 +45,7 @@ import org.omnifaces.cdi.Param;
  * Standard backing bean for {@link OtherCreditAndCharge} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
  * 
+ * @author Edward P. Legaspi
  * @author anasseh
  * @lastModifiedVersion 5.0
  * 
@@ -202,20 +203,20 @@ public class OtherCreditAndChargeBean extends CustomFieldBean<OtherCreditAndChar
 
     }
 
-    /**
-     * @param occ
-     * @param customerAccountId
-     */
-    private void copyFromTemplate(OCCTemplate occ) {
-        entity = new OtherCreditAndCharge();
-        entity.setCustomerAccount(customerAccount);
-        if (occ != null) {
-            entity.setOccCode(occ.getCode());
-            entity.setOccDescription(occ.getDescription());
-            entity.setAccountCode(occ.getAccountCode());
-            entity.setTransactionCategory(occ.getOccCategory());
-            entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
-        }
+	/**
+	 * @param occ
+	 * @param customerAccountId
+	 */
+	private void copyFromTemplate(OCCTemplate occ) {
+		entity = new OtherCreditAndCharge();
+		entity.setCustomerAccount(customerAccount);
+		if (occ != null) {
+			entity.setOccCode(occ.getCode());
+			entity.setOccDescription(occ.getDescription());
+			entity.setAccountingCode(occ.getAccountingCode());
+			entity.setTransactionCategory(occ.getOccCategory());
+			entity.setAccountCodeClientSide(occ.getAccountCodeClientSide());
+		}
 
         entity.setMatchingStatus(MatchingStatusEnum.O);
         entity.setDueDate(new Date());

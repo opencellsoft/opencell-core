@@ -103,6 +103,7 @@ import org.meveo.model.payments.DDPaymentMethod;
 import org.meveo.model.payments.PaymentMethod;
 import org.meveo.model.payments.PaymentMethodEnum;
 import org.meveo.model.rating.EDR;
+import org.meveo.model.shared.ContactInformation;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.UsageChargeTemplateService;
@@ -119,6 +120,7 @@ import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
 /**
+ * @author Edward P. Legaspi
  * @author akadid abdelmounaim
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
@@ -395,6 +397,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String externalRef2 = customer.getExternalRef2();
         String vatNo = customer.getVatNo();
         String registrationNo = customer.getRegistrationNo();
+        String jobTitle = customer.getJobTitle();
         CustomerBrand customerBrand = customer.getCustomerBrand();
         Seller seller = customer.getSeller();
         CustomerCategory customerCategory = customer.getCustomerCategory();
@@ -408,6 +411,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerTag.setAttribute("category", customerCategory != null ? customerCategory.getCode() : "");
         customerTag.setAttribute("vatNo", vatNo != null ? vatNo : "");
         customerTag.setAttribute("registrationNo", registrationNo != null ? registrationNo : "");
+        customerTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
 
         PaymentMethod preferedPaymentMethod = customerAccount.getPreferredPaymentMethod();
 
@@ -418,17 +422,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         }
 
         addCustomFields(customer, doc, customerTag);
-
         addNameAndAdress(customer, doc, customerTag, billingAccountLanguage);
-
+        customerTag.appendChild(toContactTag(doc, customer.getContactInformation()));
+        header.appendChild(customerTag);
+        
         Element sellerTag = doc.createElement("seller");
         sellerTag.setAttribute("code", seller.getCode() != null ? seller.getCode() : "");
         sellerTag.setAttribute("description", seller.getDescription() != null ? seller.getDescription() : "");
         addCustomFields(seller, doc, sellerTag);
         addAdress(seller, doc, sellerTag, billingAccountLanguage);
+        sellerTag.appendChild(toContactTag(doc, seller.getContactInformation()));
         header.appendChild(sellerTag);
-
-        header.appendChild(customerTag);
 
         // log.debug("creating ca");
         // CustomerAccount customerAccount = customerAccount;
@@ -436,6 +440,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         String currencyCode = tradingCurrency.getCurrencyCode();
         String externalRef12 = customerAccount.getExternalRef1();
         String externalRef22 = customerAccount.getExternalRef2();
+        String jobTitleCA = customerAccount.getJobTitle();
         TradingLanguage tradingLanguage = customerAccount.getTradingLanguage();
         String prDescription = null;
         if (tradingLanguage != null) {
@@ -449,11 +454,13 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         customerAccountTag.setAttribute("externalRef2", externalRef22 != null ? externalRef22 : "");
         customerAccountTag.setAttribute("currency", currencyCode != null ? currencyCode : "");
         customerAccountTag.setAttribute("language", prDescription != null ? prDescription : "");
+        customerAccountTag.setAttribute("jobTitle", jobTitleCA != null ? jobTitleCA : "");
 
         if (preferedPaymentMethod != null && preferedPaymentMethod instanceof DDPaymentMethod) {
             customerAccountTag.setAttribute("mandateIdentification", mandateIdentification != null ? mandateIdentification : "");
         }
         addCustomFields(customerAccount, doc, customerAccountTag);
+        customerAccountTag.appendChild(toContactTag(doc, customerAccount.getContactInformation()));
         header.appendChild(customerAccountTag);
 
         /*
@@ -628,6 +635,17 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         return doc;
 
     }
+    
+    public Element toContactTag(Document doc, ContactInformation contactInfo) {
+        Element contactTag = doc.createElement("contact");
+        if(contactInfo != null) {
+            contactTag.setAttribute("email", contactInfo.getEmail() == null ? "" : contactInfo.getEmail());
+            contactTag.setAttribute("fax", contactInfo.getFax() == null ? "" : contactInfo.getFax());
+            contactTag.setAttribute("mobile", contactInfo.getMobile() == null ? "" : contactInfo.getMobile());
+            contactTag.setAttribute("phone", contactInfo.getPhone() == null ? "" : contactInfo.getPhone());
+        }
+        return contactTag;
+    }
 
     /**
      * @param invoice invoice used to build xml
@@ -663,6 +681,8 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
             userAccountTag.setAttribute("id", userAccount.getId() + "");
             String code = userAccount.getCode();
             userAccountTag.setAttribute("code", code != null ? code : "");
+            String jobTitle = userAccount.getCode();
+            userAccountTag.setAttribute("jobTitle", jobTitle != null ? jobTitle : "");
             String description = userAccount.getDescription();
             userAccountTag.setAttribute("description", description != null ? description : "");
             addCustomFields(userAccount, doc, userAccountTag);
