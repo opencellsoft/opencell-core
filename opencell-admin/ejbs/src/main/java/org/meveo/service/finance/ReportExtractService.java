@@ -24,7 +24,8 @@ import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
  * @author Edward P. Legaspi
- * @created 29 Jan 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Stateless

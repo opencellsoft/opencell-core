@@ -60,6 +60,9 @@ public class DiscountPlanItem extends EnableEntity {
 	@Max(100)
 	private BigDecimal percent = new BigDecimal(0);
 
+	/**
+	 * @deprecated As of version 5.0. No replacement.
+	 */
 	@Deprecated // until further analysis
 	@Column(name = "accounting_code", length = 255)
 	@Size(max = 255)

@@ -34,7 +34,7 @@ public interface JobRs extends IBaseRs {
      * Execute a given job instance info 
      * 
      * @param postData job instance info's data
-     * @return Request processing status
+     * @return request processing status
      */
     @POST
     @Path("/execute")
@@ -44,7 +44,7 @@ public interface JobRs extends IBaseRs {
      * Stop a given job instance info 
      * 
      * @param jobInstanceCode job instance code
-     * @return Request processing status
+     * @return request processing status
      */
     @POST
     @Path("/stop")
@@ -53,7 +53,7 @@ public interface JobRs extends IBaseRs {
      * Create a new job instance
      * 
      * @param postData The job instance's data
-     * @return Request processing status
+     * @return request processing status
      */
     @Path("/create")
     @POST
@@ -63,7 +63,7 @@ public interface JobRs extends IBaseRs {
      * Update an existing job instance
      * 
      * @param postData The job instance's data
-     * @return Request processing status
+     * @return request processing status
      */
     @Path("/")
     @PUT
@@ -73,7 +73,7 @@ public interface JobRs extends IBaseRs {
      * Create new or update an existing job instance with a given code
      * 
      * @param postData The job instance's data
-     * @return Request processing status
+     * @return request processing status
      */
     @POST
     @Path("/createOrUpdate")
@@ -82,8 +82,8 @@ public interface JobRs extends IBaseRs {
     /**
      * Find a job instance with a given code 
      * 
-     * @param jobInstanceCode The job instance's code
-     * @return
+     * @param jobInstanceCode string to match the code of JobInstance
+     * @return object containing the matched JobInstance
      */
     @GET
     @Path("/")
@@ -93,7 +93,7 @@ public interface JobRs extends IBaseRs {
      * Remove an existing job instance with a given code 
      * 
      * @param jobInstanceCode The job instance's code
-     * @return Request processing status
+     * @return request processing status
      */
     @DELETE
     @Path("/{jobInstanceCode}")
@@ -105,7 +105,7 @@ public interface JobRs extends IBaseRs {
      * Create a new timer entity
      * 
      * @param postData The timer entity's data
-     * @return Request processing status
+     * @return request processing status
      */
     @Path("/timer/")
     @POST
@@ -115,7 +115,7 @@ public interface JobRs extends IBaseRs {
      * Update an existing timer entity
      * 
      * @param postData The timer entity's data
-     * @return Request processing status
+     * @return request processing status
      */
     @Path("/timer/")
     @PUT
@@ -125,7 +125,7 @@ public interface JobRs extends IBaseRs {
      * Create new or update an existing timer entity with a given code
      * 
      * @param postData The timer entity's data
-     * @return Request processing status
+     * @return request processing status
      */
     @Path("/timer/createOrUpdate/")
     @POST
@@ -135,7 +135,7 @@ public interface JobRs extends IBaseRs {
      * Find a timer with a given code 
      * 
      * @param timerCode The timer's code
-     * @return
+     * @return request processing status
      */
     @GET
     @Path("/timer/")
@@ -145,7 +145,7 @@ public interface JobRs extends IBaseRs {
      * Remove an existing timer with a given code 
      * 
      * @param timerCode The timer's code
-     * @return Request processing status
+     * @return request processing status
      */
     @DELETE
     @Path("/timer/{timerCode}")
@@ -154,8 +154,9 @@ public interface JobRs extends IBaseRs {
     /**
      * Find a job execution result with a given id 
      * 
+     * @param code string to match the code of the JobInstance
      * @param jobExecutionResultId A jobExecutionResultId
-     * @return
+     * @return object containing the JobExecutionResultImpl
      */
     @GET
     @Path("/jobReport")

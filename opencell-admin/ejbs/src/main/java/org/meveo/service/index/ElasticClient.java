@@ -321,9 +321,9 @@ public class ElasticClient {
      * Execute a search on all fields (_all field)
      * 
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
-     * @param category - search by category that is directly taken from the name of the entity found in entityMapping <br />
-     *                 property of elasticSearchConfiguration.json <br />
-     *                 e.g. Customer, CustomerAccount, AccountOperation, etc. <br />
+     * @param category - search by category that is directly taken from the name of the entity found in entityMapping.
+     *                 property of elasticSearchConfiguration.json.
+     *                 e.g. Customer, CustomerAccount, AccountOperation, etc.
      *                 See elasticSearchConfiguration.json entityMapping keys for a list of categories.
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page

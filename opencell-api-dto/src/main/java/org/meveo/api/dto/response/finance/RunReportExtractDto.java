@@ -7,7 +7,8 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author Edward P. Legaspi
- * @created 8 Feb 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 public class RunReportExtractDto {

@@ -53,6 +53,9 @@ public class OCCTemplate extends BusinessEntity {
 	@JoinColumn(name = "accounting_code_id")
 	private AccountingCode accountingCode;
 
+	/**
+     * @deprecated As of version 5.0. All accountingCode now use {@link #accountingCode}
+     */
 	@Deprecated
 	@Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)

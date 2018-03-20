@@ -48,6 +48,8 @@ import org.meveo.model.IJPAVersionedEntity;
 import org.meveo.model.billing.AccountingCode;
 
 /**
+ * @deprecated As of version 5.0. Not used anymore.
+ * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */

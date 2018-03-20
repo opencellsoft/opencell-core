@@ -104,6 +104,7 @@ public class ApplicationInitializer {
      * 
      * @param provider Tenant/provider to initialize
      * @param isMainProvider Is it a main tenant/provider.
+     * @param createESIndex boolean that determines whether to create or not the index
      * @return A future with value of True
      * @throws BusinessException Business exception
      */
