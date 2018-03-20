@@ -57,7 +57,6 @@ import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.InvoiceSubCategoryDTO;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.SubCategoryInvoiceAgregate;
-import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.billing.impl.BillingAccountService;
 import org.meveo.service.billing.impl.InvoiceAgregateService;
@@ -74,6 +73,9 @@ import org.primefaces.model.LazyDataModel;
 /**
  * Standard backing bean for {@link Invoice} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ *
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  */
 @Named
 @ViewScoped
@@ -237,7 +239,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
         
         ///
         InvoiceCategoryDTO headerCat = new InvoiceCategoryDTO();
-        headerCat.setDescription("min amount");
+        headerCat.setDescription("-");
         headerCat.setCode("min_amount");
         
         LinkedHashMap<String, InvoiceSubCategoryDTO> headerSubCategories = new LinkedHashMap<String, InvoiceSubCategoryDTO>();

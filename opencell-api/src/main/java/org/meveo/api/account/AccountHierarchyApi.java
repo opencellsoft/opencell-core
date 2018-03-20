@@ -97,6 +97,8 @@ import org.meveo.util.MeveoParamBean;
  * 
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
  * 
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  */
 
 @SuppressWarnings("deprecation")
@@ -1757,6 +1759,8 @@ public class AccountHierarchyApi extends BaseApi {
         dto.setStatus(ba.getStatus());
         dto.setStatusDate(ba.getStatusDate());
         dto.setPhone(ba.getPhone());
+        dto.setMinimumAmountEl(ba.getMinimumAmountEl());
+        dto.setMinimumLabelEl(ba.getMinimumLabelEl());
         if (ba.getTerminationReason() != null) {
             dto.setTerminationReason(ba.getTerminationReason().getCode());
         }

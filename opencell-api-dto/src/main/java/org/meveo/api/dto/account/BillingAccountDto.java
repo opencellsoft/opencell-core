@@ -16,6 +16,8 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  **/
 @XmlRootElement()
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -71,6 +73,10 @@ public class BillingAccountDto extends AccountDto {
      * Use for GET / LIST only.
      */
     private UserAccountsDto userAccounts = new UserAccountsDto();
+    
+    private String minimumAmountEl;
+
+    private String minimumLabelEl;
 
     public BillingAccountDto() {
 
@@ -246,4 +252,21 @@ public class BillingAccountDto extends AccountDto {
 	public void setPhone(String phone) {
 		this.phone = phone;
 	}
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
 }

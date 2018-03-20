@@ -90,6 +90,10 @@ import org.meveo.service.catalog.impl.ProductTemplateService;
 import org.meveo.service.catalog.impl.ServiceTemplateService;
 import org.meveo.service.order.OrderService;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
+ **/
 @Stateless
 public class SubscriptionApi extends BaseApi {
 
@@ -182,6 +186,8 @@ public class SubscriptionApi extends BaseApi {
         subscription.setDescription(postData.getDescription());
         subscription.setUserAccount(userAccount);
         subscription.setOffer(offerTemplate);
+        subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
+        subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -261,6 +267,8 @@ public class SubscriptionApi extends BaseApi {
                 throw new InvalidParameterException("Cannot subscribe to disabled offer");
             }
             subscription.setOffer(offerTemplate);
+            subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
+            subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -549,6 +557,9 @@ public class SubscriptionApi extends BaseApi {
             serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
             serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
             serviceInstance.setOrderNumber(instantiateServicesDto.getOrderNumber());
+            serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
+            serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
+
 
             if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                 Calendar calendar = Calendar.getInstance();

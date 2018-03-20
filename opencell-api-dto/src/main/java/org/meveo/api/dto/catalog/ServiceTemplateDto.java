@@ -16,7 +16,8 @@ import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * @author Edward P. Legaspi
- * @since Oct 11, 2013
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  **/
 @XmlRootElement(name = "ServiceTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -44,6 +45,10 @@ public class ServiceTemplateDto extends BusinessDto {
     private String somCode;
     private String imagePath;
     private String imageBase64;
+    
+    private String minimumAmountEl;
+    
+    private String minimumLabelEl;
 
     public ServiceTemplateDto() {
     }
@@ -54,6 +59,8 @@ public class ServiceTemplateDto extends BusinessDto {
         longDescription = serviceTemplate.getLongDescription();
         invoicingCalendar = serviceTemplate.getInvoicingCalendar() == null ? null : serviceTemplate.getInvoicingCalendar().getCode();
         imagePath = serviceTemplate.getImagePath();
+        minimumAmountEl = serviceTemplate.getMinimumAmountEl();
+        minimumLabelEl = serviceTemplate.getMinimumLabelEl();
 
         if (serviceTemplate.getBusinessServiceModel() != null) {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
@@ -237,4 +244,21 @@ public class ServiceTemplateDto extends BusinessDto {
 	public void setImageBase64(String imageBase64) {
 		this.imageBase64 = imageBase64;
 	}
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
 }

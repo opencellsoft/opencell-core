@@ -52,6 +52,8 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  **/
 
 @Stateless
@@ -157,6 +159,8 @@ public class BillingAccountApi extends AccountEntityApi {
         billingAccount.setTerminationDate(postData.getTerminationDate());
         billingAccount.setInvoicingThreshold(postData.getInvoicingThreshold());
         billingAccount.setPhone(postData.getPhone());
+        billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
 
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -301,6 +305,12 @@ public class BillingAccountApi extends AccountEntityApi {
         }
         if (!StringUtils.isBlank(postData.getPhone())) {
             billingAccount.setPhone(postData.getPhone());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+            billingAccount.setMinimumAmountEl(postData.getMinimumAmountEl());
+        }
+        if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+            billingAccount.setMinimumLabelEl(postData.getMinimumLabelEl());
         }
         if (!StringUtils.isBlank(postData.getDiscountPlan())) {
             DiscountPlan discountPlan = discountPlanService.findByCode(postData.getDiscountPlan());
@@ -519,6 +529,12 @@ public class BillingAccountApi extends AccountEntityApi {
                 }
                 if (!StringUtils.isBlank(postData.getEmail())) {
                     existedBillingAccountDto.setEmail(postData.getEmail());
+                }
+                if (!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+                    existedBillingAccountDto.setMinimumAmountEl(postData.getMinimumAmountEl());
+                }
+                if (!StringUtils.isBlank(postData.getMinimumLabelEl())) {
+                    existedBillingAccountDto.setMinimumLabelEl(postData.getMinimumLabelEl());
                 }
                 if (postData.getInvoicingThreshold() != null) {
                     existedBillingAccountDto.setInvoicingThreshold(postData.getInvoicingThreshold());

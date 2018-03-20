@@ -119,6 +119,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.SAXException;
 
+/**
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
+ **/
 @Stateless
 public class XMLInvoiceCreator extends PersistenceService<Invoice> {
 
@@ -1544,7 +1548,7 @@ public class XMLInvoiceCreator extends PersistenceService<Invoice> {
         
         if(hasMinAmountRT) {
             Element category = doc.createElement("category");
-            category.setAttribute("label", "Min amounts");
+            category.setAttribute("label", "-");
             category.setAttribute("code", "min_amount");
             category.appendChild(subCategories);
             categories.appendChild(category);

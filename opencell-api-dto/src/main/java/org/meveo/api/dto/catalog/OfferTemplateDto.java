@@ -15,6 +15,8 @@ import org.meveo.model.catalog.OfferTemplate;
 
 /**
  * @author Edward P. Legaspi
+ * @author akadid abdelmounaim
+ * @lastModifiedVersion 5.0.1
  **/
 @XmlRootElement(name = "OfferTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -36,6 +38,10 @@ public class OfferTemplateDto extends ProductOfferingDto {
     private List<OfferProductTemplateDto> offerProductTemplates;
 
     private SubscriptionRenewalDto renewalRule;
+    
+    private String minimumAmountEl;
+    
+    private String minimumLabelEl;
 
     public OfferTemplateDto() {
 
@@ -127,4 +133,21 @@ public class OfferTemplateDto extends ProductOfferingDto {
     public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
         this.renewalRule = renewalRule;
     }
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+
 }
