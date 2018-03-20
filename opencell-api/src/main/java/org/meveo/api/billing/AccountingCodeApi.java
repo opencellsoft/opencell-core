@@ -25,7 +25,8 @@ import org.meveo.service.billing.impl.AccountingCodeService;
  * API class for AccountingCode CRUD.
  * 
  * @author Edward P. Legaspi
- * @created 23 Feb 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Stateless

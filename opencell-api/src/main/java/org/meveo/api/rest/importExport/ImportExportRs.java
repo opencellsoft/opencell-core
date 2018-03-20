@@ -26,7 +26,7 @@ public interface ImportExportRs extends IBaseRs {
     /**
      * Send a file to be imported. ImportExportResponseDto.executionId contains
      * 
-     * @param input
+     * @param input file containing a list of object for import
      * @return As import is async process, ImportExportResponseDto.executionId contains and ID to be used to query for execution results via a call to
      *         /importExport/checkImportDataResult?id=..
      */
@@ -39,7 +39,7 @@ public interface ImportExportRs extends IBaseRs {
      * Check for execution results for a given execution identifier
      * 
      * @param executionId Returned in /importExport/importData call
-     * @return
+     * @return the execution result
      */
     @GET
     @Path("/checkImportDataResult")

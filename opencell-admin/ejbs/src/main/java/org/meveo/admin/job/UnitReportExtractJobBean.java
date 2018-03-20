@@ -20,7 +20,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
- * @created 2 Feb 2018
+ * @version %I%, %G%
+ * @since 5.0
  **/
 @Stateless
 public class UnitReportExtractJobBean {

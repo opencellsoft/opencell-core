@@ -52,8 +52,8 @@ public interface UserHierarchyLevelRs extends IBaseRs {
     /**
      * Search for a user group level with a given code.
      * 
-     * @param hierarchyLevelCode
-     * @return
+     * @param hierarchyLevelCode the code to string
+     * @return the UserHierarchyLevel given the hierarchyCode
      */
     @GET
     @Path("/")

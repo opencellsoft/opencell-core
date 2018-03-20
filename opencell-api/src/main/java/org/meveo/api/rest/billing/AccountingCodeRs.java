@@ -33,18 +33,18 @@ public interface AccountingCodeRs extends IBaseRs {
     /**
      * Creates a new AccountingCode.
      * 
-     * @param postData
-     * @return
+     * @param postData object representation of AccountingCode
+     * @return request processing status
      */
     @POST
     @Path("/")
     ActionStatus create(AccountingCodeDto postData);
 
     /**
-     * Updates AccountingCode.
+     * Updates AccountingCode. An existing AccountingCode is search using the code field. 
      * 
-     * @param postData
-     * @return
+     * @param postData object representation of AccountingCode
+     * @return request processing status
      */
     @PUT
     @Path("/")
@@ -53,8 +53,8 @@ public interface AccountingCodeRs extends IBaseRs {
     /**
      * Create or update an AccountingCode. Checks if the code already exists.
      * 
-     * @param postData
-     * @return
+     * @param postData object representation of AccountingCode
+     * @return request processing status
      */
     @POST
     @Path("/createOrUpdate")
@@ -63,18 +63,33 @@ public interface AccountingCodeRs extends IBaseRs {
     /**
      * Finds an AccountingCode.
      * 
-     * @param accountingCode
-     * @return
+     * @param accountingCode the string to search
+     * @return request processing status
      */
     @GET
     @Path("/{accountingCode}")
     AccountingCodeGetResponseDto find(@QueryParam("accountingCode") String accountingCode);
 
+    /**
+     * List AccountingCode matching the given criteria.
+     * 
+     * @param offset Pagination - from record number
+     * @param limit Pagination - number of records to retrieve
+     * @param sortBy Sorting - field to sort by - a field from a main entity being searched. See Data model for a list of fields.
+     * @param sortOrder Sorting - sort order.
+     * @return list of AccountingCode
+     */
     @GET
     @Path("/list")
     AccountingCodeListResponse listGet(@QueryParam("offset") Integer offset, @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy,
             @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
 
+    /**
+     * List AccountingCode matching the given criteria.
+     * 
+     * @param pagingAndFiltering Pagination and filtering criteria
+     * @return list of AccountingCode
+     */
     @POST
     @Path("/list")
     AccountingCodeListResponse listPost(PagingAndFiltering pagingAndFiltering);
@@ -82,8 +97,8 @@ public interface AccountingCodeRs extends IBaseRs {
     /**
      * Removes an AccountingCode entity.
      * 
-     * @param accountingCode
-     * @return
+     * @param accountingCode the string to search
+     * @return request processing status
      */
     @DELETE
     @Path("/{accountingCode}")

@@ -9,7 +9,8 @@ import org.meveo.service.base.BusinessService;
  * Service for managing {@link AccountingCode}.
  * 
  * @author Edward P. Legaspi
- * @created 21 Feb 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Stateless

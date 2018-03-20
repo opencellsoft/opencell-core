@@ -32,8 +32,8 @@ public interface Invoice4_2Rs extends IBaseRs {
     /**
      * Create invoice. Invoice number depends on invoice type
      * 
-     * @param invoiceDto
-     * @return
+     * @param invoiceDto object that contains Invoice information
+     * @return the Invoice object matching the given criteria
      */
     @POST
     @Path("/")
@@ -43,7 +43,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      * Search for a list of invoice given a customer account's code.
      * 
      * @param customerAccountCode Customer account's code
-     * @return
+     * @return the Invoice object matching the given criteria
      */
     @GET
     @Path("/")
@@ -53,7 +53,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      * This operation generates rated transaction given a billing account and invoicing date, updates billing account amounts and generates aggregates and invoice.
      * 
      * @param generateInvoiceRequestDto Contains the code of the billing account, invoicing and last transaction date
-     * @return
+     * @return the Invoice object matching the given criteria
      */
     @POST
     @Path("/generateInvoice")
@@ -63,7 +63,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      * Finds an invoice and return it as xml string
      * 
      * @param invoiceNumber Invoice number
-     * @return
+     * @return the Invoice object matching the given criteria
      */
     @POST
     @Path("/getXMLInvoice")
@@ -74,7 +74,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      * 
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
-     * @return
+     * @return the Invoice object matching the given criteria
      */
     @POST
     @Path("/getXMLInvoiceWithType")
@@ -84,7 +84,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      * Finds an invoice and return it as pdf as byte []. Invoice is not recreated, instead invoice stored as pdf in database is returned.
      * 
      * @param invoiceNumber Invoice number
-     * @return
+     * @return Invoice object in PDF format matching the given search criteria
      */
     @POST
     @Path("/getPdfInvoice")
@@ -95,7 +95,7 @@ public interface Invoice4_2Rs extends IBaseRs {
      * 
      * @param invoiceNumber Invoice number
      * @param invoiceType Invoice type
-     * @return
+     * @return Invoice object in PDF format matching the given search criteria
      */
     @POST
     @Path("/getPdfInvoiceWithType")

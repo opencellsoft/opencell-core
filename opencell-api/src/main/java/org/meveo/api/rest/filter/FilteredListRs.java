@@ -61,7 +61,8 @@ public interface FilteredListRs extends IBaseRs {
      * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return
+     * @param info provides request URI information
+     * @return 
      */
     @Path("/searchByField")
     @GET
@@ -71,7 +72,7 @@ public interface FilteredListRs extends IBaseRs {
     /**
      * Clean and reindex Elastic Search repository
      *
-     * @return
+     * @return Request processing status
      */
     @Path("/reindex")
     @GET
@@ -81,6 +82,10 @@ public interface FilteredListRs extends IBaseRs {
      * Execute a search in Elastic Search on all fields (_all field) and all entity types
      *
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param category search by category that is directly taken from the name of the entity found in entityMapping.
+     *                 property of elasticSearchConfiguration.json.
+     *                 e.g. Customer, CustomerAccount, AccountOperation, etc.
+     *                 See elasticSearchConfiguration.json entityMapping keys for a list of categories.
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @param sortField Pagination - field used to sort the results

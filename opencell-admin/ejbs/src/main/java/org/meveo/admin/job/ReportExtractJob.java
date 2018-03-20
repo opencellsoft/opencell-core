@@ -18,7 +18,8 @@ import org.meveo.service.job.Job;
 
 /**
  * @author Edward P. Legaspi
- * @created 30 Jan 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Stateless

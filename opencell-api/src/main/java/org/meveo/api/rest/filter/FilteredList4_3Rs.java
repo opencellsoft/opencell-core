@@ -35,7 +35,7 @@ public interface FilteredList4_3Rs extends IBaseRs {
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return
+     * @return Request processing status
      */
     @Path("/search")
     @GET
@@ -47,7 +47,8 @@ public interface FilteredList4_3Rs extends IBaseRs {
      * @param classnamesOrCetCodes Entity classes to match - full class name
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
-     * @return
+     * @param info provides request URI information
+     * @return Request processing status
      */
     @Path("/searchByField")
     @GET

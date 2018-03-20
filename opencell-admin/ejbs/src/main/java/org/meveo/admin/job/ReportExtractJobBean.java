@@ -27,7 +27,8 @@ import org.slf4j.Logger;
 
 /**
  * @author Edward P. Legaspi
- * @created 1 Feb 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Stateless

@@ -72,9 +72,9 @@ public class FullTextSearchApi extends BaseApi {
     /**
      *
      * @param query string term to be searched
-     * @param category  search by category that is directly taken from the name of the entity found in entityMapping <br />
-     *                 property of elasticSearchConfiguration.json <br />
-     *                 e.g. Customer, CustomerAccount, AccountOperation, etc. <br />
+     * @param category  search by category that is directly taken from the name of the entity found in entityMapping.
+     *                 property of elasticSearchConfiguration.json.
+     *                 e.g. Customer, CustomerAccount, AccountOperation, etc.
      *                 See elasticSearchConfiguration.json entityMapping keys for a list of categories.
      * @param from  number the index where search results will start from, used in pagination
      * @param size number the maximum number of results to return

@@ -17,7 +17,8 @@ import org.meveo.api.rest.impl.BaseRs;
 
 /**
  * @author Edward P. Legaspi
- * @created 7 Feb 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @RequestScoped
