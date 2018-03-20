@@ -21,7 +21,6 @@ import org.meveo.commons.utils.StringUtils;
 import org.meveo.interceptor.PerformanceInterceptor;
 import org.meveo.model.jobs.JobExecutionResultImpl;
 import org.meveo.model.notification.Notification;
-import org.meveo.service.base.EntityManagerProvider;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.notification.NotificationService;
@@ -60,14 +59,11 @@ public class InternalNotificationJobBean {
 
     /** The notification service. */
     @Inject
-    NotificationService notificationService;
+    private NotificationService notificationService;
 
     /** The script instance service. */
     @Inject
-    ScriptInstanceService scriptInstanceService;
-
-    @Inject
-    EntityManagerProvider entityManagerProvider;
+    private ScriptInstanceService scriptInstanceService;
 
     /**
      * Execute.
