@@ -42,7 +42,7 @@ import org.slf4j.Logger;
  * @author Edward P. Legaspi
  * @since 10 Nov 2017
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.1
  **/
 @Stateless
 public class KeycloakAdminClientService {
@@ -111,11 +111,13 @@ public class KeycloakAdminClientService {
      * 
      * @param httpServletRequest http request
      * @param postData posted data to API
+     * @param provider provider code to be added as attribute
      * @return user created id.
      * @throws BusinessException business exception
      * @throws EntityDoesNotExistsException entity does not exist exception.
+     * @lastModifiedVersion 5.0.1
      */
-    public String createUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, EntityDoesNotExistsException {
+    public String createUser(HttpServletRequest httpServletRequest, UserDto postData, String provider) throws BusinessException, EntityDoesNotExistsException {
         KeycloakSecurityContext session = (KeycloakSecurityContext) httpServletRequest.getAttribute(KeycloakSecurityContext.class.getName());
         KeycloakAdminClientConfig keycloakAdminClientConfig = loadConfig();
         Keycloak keycloak = getKeycloakClient(session, keycloakAdminClientConfig);
@@ -135,10 +137,10 @@ public class KeycloakAdminClientService {
 
         Map<String, List<String>> attributes = new HashMap<>();
         attributes.put("origin", Arrays.asList("OPENCELL-API"));
-        if(ParamBean.isMultitenancyEnabled() && ! StringUtils.isBlank(currentUser.getProviderCode())) {
-        	attributes.put("provider", Arrays.asList(currentUser.getProviderCode()));
+        if (ParamBean.isMultitenancyEnabled() && !StringUtils.isBlank(provider)) {
+            attributes.put("provider", Arrays.asList(provider));
         }
-        
+
         user.setAttributes(attributes);
 
         // Get realm
@@ -220,9 +222,10 @@ public class KeycloakAdminClientService {
 
         return userId;
     }
-    
+
     /**
      * Remove a role representation from list of role representation.
+     * 
      * @param listRoleRepresentation list of role representation.
      * @param roleRepresentation role representation to remove.
      * @throws BusinessException business exception.
@@ -231,8 +234,8 @@ public class KeycloakAdminClientService {
      */
     private List<RoleRepresentation> removeRole(List<RoleRepresentation> listRoleRepresentation, RoleRepresentation roleRepresentation) throws BusinessException {
         List<RoleRepresentation> updatedListRoleRepresentation = new ArrayList<>();
-        for(RoleRepresentation roleRepresentationItem : listRoleRepresentation) {
-            if(!roleRepresentation.getName().equalsIgnoreCase(roleRepresentationItem.getName())) {
+        for (RoleRepresentation roleRepresentationItem : listRoleRepresentation) {
+            if (!roleRepresentation.getName().equalsIgnoreCase(roleRepresentationItem.getName())) {
                 updatedListRoleRepresentation.add(roleRepresentationItem);
             }
         }
@@ -268,7 +271,7 @@ public class KeycloakAdminClientService {
             // find realm roles and assign to the newly create user
             List<RoleRepresentation> rolesToAdd = new ArrayList<>();
             List<RoleRepresentation> rolesToDelete = realmResource.roles().list();
-            
+
             if (postData.getExternalRoles() != null && !postData.getExternalRoles().isEmpty()) {
                 RolesResource rolesResource = realmResource.roles();
 
@@ -284,7 +287,7 @@ public class KeycloakAdminClientService {
 
             }
             userResource.update(userRepresentation);
-            
+
             // add from posted data
             usersResource.get(userRepresentation.getId()).roles().realmLevel().add(rolesToAdd);
             // delete other roles
@@ -419,5 +422,23 @@ public class KeycloakAdminClientService {
         }
 
         return userRepresentation;
+    }
+
+    /**
+     * Creates a user in keycloak. Also assigns the role. It will add a provider code attribute to the user if multitenancy is activated. The provider will be the same as the
+     * current user.
+     * 
+     * @param httpServletRequest http request
+     * @param postData posted data to API
+     * @return user created id.
+     * @throws BusinessException business exception
+     * @throws EntityDoesNotExistsException entity does not exist exception.
+     * @lastModifiedVersion 5.0.1
+     */
+    public String createUser(HttpServletRequest httpServletRequest, UserDto postData) throws BusinessException, EntityDoesNotExistsException {
+        if (ParamBean.isMultitenancyEnabled() && !StringUtils.isBlank(currentUser.getProviderCode())) {
+            return createUser(httpServletRequest, postData, currentUser.getProviderCode());
+        }
+        return createUser(httpServletRequest, postData, null);
     }
 }
