@@ -6,29 +6,32 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.FilterDto;
 
 /**
+ * Return DTO for FilteredList API that includes the FilterDto in the response.
+ *
  * @author Tony Alejandro
+ * @lastModifiedVersion 5.0
  **/
 @XmlRootElement(name = "GetFilterResponseDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetFilterResponseDto extends BaseResponse {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private FilterDto filter;
+    private FilterDto filter;
 
-	public FilterDto getFilter() {
-		return filter;
-	}
+    public FilterDto getFilter() {
+        return filter;
+    }
 
-	public void setFilter(FilterDto filter) {
-		this.filter = filter;
-	}
+    public void setFilter(FilterDto filter) {
+        this.filter = filter;
+    }
 
-	@Override
-	public String toString() {
-		final StringBuilder sb = new StringBuilder("GetFilterResponseDto{");
-		sb.append("filter=").append(filter);
-		sb.append('}');
-		return sb.toString();
-	}
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("GetFilterResponseDto{");
+        sb.append("filter=").append(filter);
+        sb.append('}');
+        return sb.toString();
+    }
 }
