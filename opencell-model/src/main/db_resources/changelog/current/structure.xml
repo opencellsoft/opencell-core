@@ -449,11 +449,11 @@
         <sql>insert into ${db.schema.adapted}billing_accounting_code_seq values(1)</sql>
     </changeSet>
     
-    <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi">
+    <changeSet id="#1705_20180220-migration" author="EdwardPLegaspi" dbms="postgresql">
     	<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.accounting_code, nextval('billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
 			    from 
 			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
@@ -461,13 +461,13 @@
 		</sql>
 		<sql>
 			<![CDATA[
-			update billing_invoice_sub_cat set accounting_code_id=(select id from billing_accounting_code where code=accounting_code);
+			update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
 			]]>
 		</sql>
 		<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.accounting_code, nextval('billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+				select a.accounting_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
 			    from 
 			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
@@ -479,7 +479,7 @@
 		<sql>
 			<![CDATA[
 			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
-				select a.account_code, nextval('billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+				select a.account_code, nextval('${db.schema.adapted}billing_accounting_code_seq'), 0, 0, now(), null, 'ASSETS', 'REGULAR' 
 			    from 
 			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
 					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
@@ -504,7 +504,9 @@
 		<sql>
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
 		</sql>
-		
+	</changeSet>
+    
+    <changeSet id="#1705_20180220-migration-end" author="EdwardPLegaspi" >        
 		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="billing_tax" columnName="accounting_code"></dropColumn>
 		<dropColumn tableName="billing_invoice_agregate" columnName="accounting_code"></dropColumn>
