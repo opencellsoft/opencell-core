@@ -21,6 +21,7 @@ import org.meveo.service.index.ElasticSearchClassInfo;
 
 /**
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0
  **/
 @Stateless
 @Deprecated
@@ -125,7 +126,7 @@ public class FilteredList4_3Api extends BaseApi {
 
         List<ElasticSearchClassInfo> classInfo = elasticClient.getSearchScopeInfo(classnamesOrCetCodes, false);
 
-        return elasticClient.search(query, from, size, null, null, null, classInfo);
+        return elasticClient.search(query, null, from, size, null, null, null, classInfo);
     }
 
     public String search(String[] classnamesOrCetCodes, Map<String, String> queryValues, Integer from, Integer size) throws MissingParameterException,
