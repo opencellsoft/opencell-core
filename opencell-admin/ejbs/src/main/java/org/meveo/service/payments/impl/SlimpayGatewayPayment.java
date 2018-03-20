@@ -53,11 +53,11 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     private ParamBeanFactory paramBeanFactory = (ParamBeanFactory) EjbUtils.getServiceInterface("ParamBeanFactory");
 
     private String getApiUrl() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.apiURL", null);
+        return paramBeanFactory.getInstance().getProperty("slimPay.apiURL", "changeIt");
     }
 
     private String getProfile() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.profile", null);
+        return paramBeanFactory.getInstance().getProperty("slimPay.profile", "changeIt");
     }
 
     private String getTokenEndPoint() {
@@ -65,11 +65,11 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     private String getUserId() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.userId", null);
+        return paramBeanFactory.getInstance().getProperty("slimPay.userId", "changeIt");
     }
 
     private String getSecretKey() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.secretKey", null);
+        return paramBeanFactory.getInstance().getProperty("slimPay.secretKey", "changeIt");
     }
 
     private String getScope() {
@@ -77,7 +77,7 @@ public class SlimpayGatewayPayment implements GatewayPaymentInterface {
     }
 
     private String getRelns() {
-        return paramBeanFactory.getInstance().getProperty("slimPay.relns", null);
+        return paramBeanFactory.getInstance().getProperty("slimPay.relns", "changeIt");
     }
 
     private boolean isCheckMandatBeforePayment() {
