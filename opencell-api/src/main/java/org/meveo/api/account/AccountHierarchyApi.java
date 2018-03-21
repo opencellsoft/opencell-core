@@ -69,6 +69,7 @@ import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.CustomerAccountStatusEnum;
 import org.meveo.model.payments.DDPaymentMethod;
@@ -98,7 +99,7 @@ import org.meveo.util.MeveoParamBean;
  * Billing Account - User Account
  * 
  * Required Parameters :customerId, customerCategoryCode, sellerCode ,currencyCode,countryCode,lastname if title provided, languageCode,billingCycleCode
- * 
+ *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
  */
@@ -1626,7 +1627,7 @@ public class AccountHierarchyApi extends BaseApi {
         }
     }
 
-    public void accountEntityToDto(AccountDto dto, AccountEntity account) {
+    public void accountEntityToDto(AccountDto dto, AccountEntity account, CustomFieldInheritanceEnum inheritCF) {
         dto.setCode(account.getCode());
         dto.setDescription(account.getDescription());
         dto.setExternalRef1(account.getExternalRef1());
@@ -1646,12 +1647,16 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setBusinessAccountModel(new BusinessEntityDto(businessAccountModel));
         }
 
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account, true));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(account, inheritCF));
     }
 
     public CustomerDto customerToDto(Customer customer) {
+        return customerToDto(customer, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    public CustomerDto customerToDto(Customer customer, CustomFieldInheritanceEnum inheritCF) {
         CustomerDto dto = new CustomerDto();
-        accountEntityToDto(dto, customer);
+        accountEntityToDto(dto, customer, inheritCF);
 
         dto.setVatNo(customer.getVatNo());
         dto.setRegistrationNo(customer.getRegistrationNo());
@@ -1676,7 +1681,7 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setCustomerAccounts(new CustomerAccountsDto());
 
             for (CustomerAccount ca : customer.getCustomerAccounts()) {
-                dto.getCustomerAccounts().getCustomerAccount().add(customerAccountToDto(ca));
+                dto.getCustomerAccounts().getCustomerAccount().add(customerAccountToDto(ca, inheritCF));
             }
         }
 
@@ -1685,8 +1690,12 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public CustomerAccountDto customerAccountToDto(CustomerAccount ca) {
+        return customerAccountToDto(ca, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    public CustomerAccountDto customerAccountToDto(CustomerAccount ca, CustomFieldInheritanceEnum inheritCF) {
         CustomerAccountDto dto = new CustomerAccountDto();
-        accountEntityToDto(dto, ca);
+        accountEntityToDto(dto, ca, inheritCF);
 
         if (ca.getCustomer() != null) {
             dto.setCustomer(ca.getCustomer().getCode());
@@ -1718,7 +1727,7 @@ public class AccountHierarchyApi extends BaseApi {
             dto.setBillingAccounts(new BillingAccountsDto());
 
             for (BillingAccount ba : ca.getBillingAccounts()) {
-                dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba));
+                dto.getBillingAccounts().getBillingAccount().add(billingAccountToDto(ba, inheritCF));
             }
         }
 
@@ -1739,9 +1748,13 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public BillingAccountDto billingAccountToDto(BillingAccount ba) {
+        return billingAccountToDto(ba, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    public BillingAccountDto billingAccountToDto(BillingAccount ba, CustomFieldInheritanceEnum inheritCF) {
 
         BillingAccountDto dto = new BillingAccountDto();
-        accountEntityToDto(dto, ba);
+        accountEntityToDto(dto, ba, inheritCF);
 
         if (ba.getCustomerAccount() != null) {
             dto.setCustomerAccount(ba.getCustomerAccount().getCode());
@@ -1771,7 +1784,7 @@ public class AccountHierarchyApi extends BaseApi {
 
         if (!dto.isLoaded() && ba.getUsersAccounts() != null) {
             for (UserAccount userAccount : ba.getUsersAccounts()) {
-                dto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount));
+                dto.getUserAccounts().getUserAccount().add(userAccountToDto(userAccount, inheritCF));
             }
         }
 
@@ -1797,9 +1810,13 @@ public class AccountHierarchyApi extends BaseApi {
     }
 
     public UserAccountDto userAccountToDto(UserAccount ua) {
+        return userAccountToDto(ua, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    public UserAccountDto userAccountToDto(UserAccount ua, CustomFieldInheritanceEnum inheritCF) {
 
         UserAccountDto dto = new UserAccountDto();
-        accountEntityToDto(dto, ua);
+        accountEntityToDto(dto, ua, inheritCF);
 
         if (ua.getBillingAccount() != null) {
             dto.setBillingAccount(ua.getBillingAccount().getCode());

@@ -32,6 +32,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.SubscriptionRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -150,7 +151,7 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
 
     @Override
     public SubscriptionsListResponseDto listGet(String userAccountCode, Boolean mergedCF, String query, String fields, Integer offset, Integer limit, String sortBy,
-            SortOrder sortOrder) {
+        SortOrder sortOrder, CustomFieldInheritanceEnum inheritCF) {
 
         SubscriptionsListResponseDto result = new SubscriptionsListResponseDto();
 
@@ -180,11 +181,11 @@ public class SubscriptionRsImpl extends BaseRs implements SubscriptionRs {
     }
 
     @Override
-    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF) {
+    public GetSubscriptionResponseDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) {
         GetSubscriptionResponseDto result = new GetSubscriptionResponseDto();
 
         try {
-            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF));
+            result.setSubscription(subscriptionApi.findSubscription(subscriptionCode, mergedCF, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

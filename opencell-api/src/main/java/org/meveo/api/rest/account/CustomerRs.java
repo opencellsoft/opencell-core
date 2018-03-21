@@ -22,6 +22,7 @@ import org.meveo.api.dto.response.account.CustomersResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerCategoryResponseDto;
 import org.meveo.api.rest.IBaseRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -36,7 +37,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Create a new customer
-     * 
+     *
      * @param postData The customer's data
      * @return Request processing status
      */
@@ -46,7 +47,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Update an existing customer
-     * 
+     *
      * @param postData The customer's data
      * @return Request processing status
      */
@@ -56,17 +57,17 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Search for a customer with a given code
-     * 
+     *
      * @param customerCode The customer's code
      * @return The customer's data
      */
     @GET
     @Path("/")
-    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode);
+    GetCustomerResponseDto find(@QueryParam("customerCode") String customerCode, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove customer with a given code
-     * 
+     *
      * @param customerCode The customer's code
      * @return Request processing status
      */
@@ -76,7 +77,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Filters are: category, seller, brand and provider.
-     * 
+     *
      * @param postData The customer's data
      * @param firstRow Pagination - from record number. Deprecated in v.4.7, use "from" instead
      * @param numberOfRows Pagination - number of records to retrieve. Deprecated in v.4.7, use "limit" instead
@@ -94,7 +95,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * List customers matching a given criteria
-     * 
+     *
      * @param query Search criteria
      * @param fields Data retrieval options/fieldnames separated by a comma
      * @param offset Pagination - from record number
@@ -106,11 +107,12 @@ public interface CustomerRs extends IBaseRs {
     @GET
     @Path("/list")
     public CustomersResponseDto listGet(@QueryParam("query") String query, @QueryParam("fields") String fields, @QueryParam("offset") Integer offset,
-            @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder);
+            @QueryParam("limit") Integer limit, @DefaultValue("code") @QueryParam("sortBy") String sortBy, @DefaultValue("ASCENDING") @QueryParam("sortOrder") SortOrder sortOrder,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * List customers matching a given criteria
-     * 
+     *
      * @param pagingAndFiltering Pagination and filtering criteria
      * @return List of customers
      */
@@ -120,7 +122,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Create a new customer brand
-     * 
+     *
      * @param postData The customer brand's data
      * @return Request processing status
      */
@@ -130,7 +132,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Update an existing customer brand
-     * 
+     *
      * @param postData The customer brand's data
      * @return Request processing status
      */
@@ -140,7 +142,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Create new or update an existing customer brand
-     * 
+     *
      * @param postData The customer brand's data
      * @return Request processing status
      */
@@ -150,7 +152,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Create a new customer category
-     * 
+     *
      * @param postData The customer category's data
      * @return Request processing status
      */
@@ -160,7 +162,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Update an existing customer category
-     * 
+     *
      * @param postData The customer category's data
      * @return Request processing status
      */
@@ -182,7 +184,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Create new or update an existing customer category
-     * 
+     *
      * @param postData The customer category's data
      * @return Request processing status
      */
@@ -192,7 +194,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Remove existing customer brand with a given brand code
-     * 
+     *
      * @param brandCode The brand's code
      * @return Request processing status
      */
@@ -202,7 +204,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Remove an existing customer category with a given category code
-     * 
+     *
      * @param categoryCode The category's code
      * @return Request processing status
      */
@@ -212,7 +214,7 @@ public interface CustomerRs extends IBaseRs {
 
     /**
      * Create new or update existing customer
-     * 
+     *
      * @param postData The customer's data
      * @return Request processing status
      */

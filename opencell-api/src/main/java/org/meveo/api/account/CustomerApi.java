@@ -34,6 +34,7 @@ import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.crm.Customer;
 import org.meveo.model.crm.CustomerBrand;
 import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.shared.ContactInformation;
 import org.meveo.service.admin.impl.SellerService;
 import org.meveo.service.crm.impl.CustomerBrandService;
@@ -266,6 +267,11 @@ public class CustomerApi extends AccountEntityApi {
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
     public CustomerDto find(String customerCode) throws MeveoApiException {
+        return find(customerCode, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
+    public CustomerDto find(String customerCode, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
         if (StringUtils.isBlank(customerCode)) {
             missingParameters.add("customerCode");
         }
@@ -276,7 +282,7 @@ public class CustomerApi extends AccountEntityApi {
             throw new EntityDoesNotExistsException(Customer.class, customerCode);
         }
 
-        return accountHierarchyApi.customerToDto(customer);
+        return accountHierarchyApi.customerToDto(customer, inheritCF);
     }
 
     @SecuredBusinessEntityMethod(validate = @SecureMethodParameter(entityClass = Customer.class))
@@ -303,6 +309,12 @@ public class CustomerApi extends AccountEntityApi {
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
     public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        return list(postData, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    }
+
+    @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
+    @FilterResults(propertyToFilter = "customers.customer", itemPropertiesToFilter = { @FilterProperty(property = "code", entityClass = Customer.class) })
+    public CustomersResponseDto list(CustomerDto postData, PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         if (pagingAndFiltering == null) {
             pagingAndFiltering = new PagingAndFiltering();
@@ -329,7 +341,7 @@ public class CustomerApi extends AccountEntityApi {
         if (totalCount > 0) {
             List<Customer> customers = customerService.list(paginationConfig);
             for (Customer c : customers) {
-                customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c));
+                customerDtos.getCustomer().add(accountHierarchyApi.customerToDto(c, inheritCF));
             }
         }
 

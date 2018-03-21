@@ -51,7 +51,7 @@ public class CustomFieldsDto implements Serializable {
     }
 
     public boolean isEmpty() {
-        return customField == null || customField.isEmpty();
+        return (customField == null || customField.isEmpty()) && (inheritedCustomField == null || inheritedCustomField.isEmpty());
     }
 
 	public List<CustomFieldDto> getInheritedCustomField() {

@@ -20,6 +20,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.UserAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -55,11 +56,11 @@ public class UserAccountRsImpl extends BaseRs implements UserAccountRs {
     }
 
     @Override
-    public GetUserAccountResponseDto find(String userAccountCode) {
+    public GetUserAccountResponseDto find(String userAccountCode, CustomFieldInheritanceEnum inheritCF) {
         GetUserAccountResponseDto result = new GetUserAccountResponseDto();
 
         try {
-            result.setUserAccount(userAccountApi.find(userAccountCode));
+            result.setUserAccount(userAccountApi.find(userAccountCode, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

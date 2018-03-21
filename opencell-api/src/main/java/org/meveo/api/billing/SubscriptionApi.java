@@ -71,6 +71,7 @@ import org.meveo.model.catalog.OneShotChargeTemplateTypeEnum;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.ServiceTemplate;
 import org.meveo.model.catalog.WalletTemplate;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 import org.meveo.model.mediation.Access;
 import org.meveo.model.order.Order;
 import org.meveo.model.order.OrderItemActionEnum;
@@ -852,7 +853,7 @@ public class SubscriptionApi extends BaseApi {
             sortOrder != null ? org.primefaces.model.SortOrder.valueOf(sortOrder.name()) : org.primefaces.model.SortOrder.ASCENDING);
         if (subscriptions != null) {
             for (Subscription s : subscriptions) {
-                result.getSubscription().add(subscriptionToDto(s, mergedCF));
+                result.getSubscription().add(subscriptionToDto(s, CustomFieldInheritanceEnum.getInheritCF(true, mergedCF)));
             }
         }
 
@@ -867,6 +868,12 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionsListResponseDto list(Boolean mergedCF, PagingAndFiltering pagingAndFiltering) throws MeveoApiException {
+        boolean inherit = pagingAndFiltering != null && pagingAndFiltering.hasFieldOption("inheritedCF");
+        boolean merge = mergedCF != null && mergedCF;
+        return list(pagingAndFiltering, CustomFieldInheritanceEnum.getInheritCF(inherit, merge));
+    }
+
+    public SubscriptionsListResponseDto list(PagingAndFiltering pagingAndFiltering, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
 
         PaginationConfiguration paginationConfiguration = toPaginationConfiguration("id", org.primefaces.model.SortOrder.ASCENDING, null, pagingAndFiltering, Subscription.class);
 
@@ -881,8 +888,7 @@ public class SubscriptionApi extends BaseApi {
             List<Subscription> subscriptions = subscriptionService.list(paginationConfiguration);
             if (subscriptions != null) {
                 for (Subscription subscription : subscriptions) {
-                    result.getSubscriptions().getSubscription()
-                        .add(subscriptionToDto(subscription, mergedCF != null ? mergedCF : pagingAndFiltering != null ? pagingAndFiltering.hasFieldOption("inheritedCF") : false));
+                    result.getSubscriptions().getSubscription().add(subscriptionToDto(subscription, inheritCF));
                 }
             }
         }
@@ -897,7 +903,7 @@ public class SubscriptionApi extends BaseApi {
      * @throws MeveoApiException meveo api exception
      */
     public SubscriptionDto findSubscription(String subscriptionCode) throws MeveoApiException {
-        return this.findSubscription(subscriptionCode, false);
+        return this.findSubscription(subscriptionCode, false, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 
     /**
@@ -906,7 +912,7 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionsListDto which contains list of Subscription DTO
      * @throws MeveoApiException meveo api exception
      */
-    public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF) throws MeveoApiException {
+    public SubscriptionDto findSubscription(String subscriptionCode, boolean mergedCF, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
         SubscriptionDto result = new SubscriptionDto();
 
         if (StringUtils.isBlank(subscriptionCode)) {
@@ -918,16 +924,18 @@ public class SubscriptionApi extends BaseApi {
             throw new EntityDoesNotExistsException(Subscription.class, subscriptionCode);
         }
 
-        result = subscriptionToDto(subscription, mergedCF);
+        CustomFieldInheritanceEnum inherit = (inheritCF != null && !mergedCF) ? inheritCF : CustomFieldInheritanceEnum.getInheritCF(true, mergedCF);
+
+        result = subscriptionToDto(subscription, inherit);
 
         return result;
     }
 
     /**
      * Create or update Subscription based on subscription code.
-     * 
+     *
      * @param postData posted data to API
-     * 
+     *
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
@@ -944,15 +952,15 @@ public class SubscriptionApi extends BaseApi {
      * @return instance of SubscriptionDto.
      */
     public SubscriptionDto subscriptionToDto(Subscription subscription) {
-        return this.subscriptionToDto(subscription, false);
+        return this.subscriptionToDto(subscription, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 
     /**
      * @param subscription instance of Subscription to be mapped
-     * @param mergedCF true/false
+     * @param inheritCF choose whether CF values are inherited and/or merged
      * @return instance of SubscriptionDto
      */
-    public SubscriptionDto subscriptionToDto(Subscription subscription, boolean mergedCF) {
+    public SubscriptionDto subscriptionToDto(Subscription subscription, CustomFieldInheritanceEnum inheritCF) {
         SubscriptionDto dto = new SubscriptionDto();
         dto.setCode(subscription.getCode());
         dto.setDescription(subscription.getDescription());
@@ -978,14 +986,14 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getAccessPoints() != null) {
             for (Access ac : subscription.getAccessPoints()) {
                 CustomFieldsDto customFieldsDTO = null;
-                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, true, mergedCF);
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(ac, inheritCF);
 
                 AccessDto accessDto = new AccessDto(ac, customFieldsDTO);
                 dto.getAccesses().getAccess().add(accessDto);
             }
         }
 
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription, true, true));
+        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(subscription, inheritCF));
         dto.setSubscribedTillDate(subscription.getSubscribedTillDate());
         dto.setRenewed(subscription.isRenewed());
         dto.setRenewalNotifiedDate(subscription.getRenewalNotifiedDate());
@@ -996,7 +1004,7 @@ public class SubscriptionApi extends BaseApi {
             for (ServiceInstance serviceInstance : subscription.getServiceInstances()) {
                 ServiceInstanceDto serviceInstanceDto = null;
                 CustomFieldsDto customFieldsDTO = null;
-                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, true, mergedCF);
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(serviceInstance, inheritCF);
 
                 serviceInstanceDto = new ServiceInstanceDto(serviceInstance, customFieldsDTO);
                 dto.getServices().addServiceInstance(serviceInstanceDto);
@@ -1006,7 +1014,7 @@ public class SubscriptionApi extends BaseApi {
         if (subscription.getProductInstances() != null) {
             for (ProductInstance productInstance : subscription.getProductInstances()) {
                 CustomFieldsDto customFieldsDTO = null;
-                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, true, mergedCF);
+                customFieldsDTO = entityToDtoConverter.getCustomFieldsDTO(productInstance, inheritCF);
 
                 dto.getProductInstances().add(new ProductInstanceDto(productInstance, customFieldsDTO));
 
@@ -1228,7 +1236,7 @@ public class SubscriptionApi extends BaseApi {
     }
 
     /**
-     * 
+     *
      * @param subscriptionCode subscription code
      * @param suspensionDate suspension data
      * @throws MissingParameterException missiong parameter exeption
@@ -1252,7 +1260,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * @param provisionningServicesRequestDto provisioning service request.
-     * 
+     *
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
@@ -1265,7 +1273,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * @param provisionningServicesRequestDto provisioning service request.
-     * 
+     *
      * @throws IncorrectSusbcriptionException incorrect subscription exception
      * @throws IncorrectServiceInstanceException incorrect service instance exception
      * @throws BusinessException business exception
@@ -1440,7 +1448,7 @@ public class SubscriptionApi extends BaseApi {
     /**
      * @param type of one shot charge (SUBSCRIPTION, TERMINATION, OTHER)
      * @return list of one shot charge template type other.s
-     * 
+     *
      */
     private List<OneShotChargeTemplateDto> getOneShotCharges(OneShotChargeTemplateTypeEnum type) {
         List<OneShotChargeTemplateDto> results = new ArrayList<OneShotChargeTemplateDto>();
@@ -1468,7 +1476,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Convert SubscriptionRenewalDto to an entity and validate the data converted.
-     * 
+     *
      * @param renewalInfo Entity object to populate. Will instantiate a new object if null.
      * @param renewalInfoDto SubscriptionRenewalDto
      * @param subscriptionRenewed is subscription renewed already. If true, allows to update only daysNotifyRenewal, endOfTermAction, extendAgreementPeriod fields.
@@ -1540,7 +1548,7 @@ public class SubscriptionApi extends BaseApi {
 
     /**
      * Find a service instance matching id or code for a given subscription and optional statuses. I
-     * 
+     *
      * @param serviceId Service instance id
      * @param serviceCode Service instance code
      * @param subscription Subscription containing service instance

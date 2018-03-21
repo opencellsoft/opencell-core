@@ -19,6 +19,7 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.BillingAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.billing.CounterInstance;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -57,11 +58,11 @@ public class BillingAccountRsImpl extends BaseRs implements BillingAccountRs {
     }
 
     @Override
-    public GetBillingAccountResponseDto find(String billingAccountCode) {
+    public GetBillingAccountResponseDto find(String billingAccountCode, CustomFieldInheritanceEnum inheritCF) {
         GetBillingAccountResponseDto result = new GetBillingAccountResponseDto();
 
         try {
-            result.setBillingAccount(billingAccountApi.find(billingAccountCode));
+            result.setBillingAccount(billingAccountApi.find(billingAccountCode, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

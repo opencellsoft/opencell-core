@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -20,6 +21,7 @@ import org.meveo.api.dto.response.account.GetBillingAccountResponseDto;
 import org.meveo.api.dto.response.billing.GetCountersInstancesResponseDto;
 import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -58,7 +60,8 @@ public interface BillingAccountRs extends IBaseRs {
      */
     @GET
     @Path("/")
-    GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode);
+    GetBillingAccountResponseDto find(@QueryParam("billingAccountCode") String billingAccountCode,
+            @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
 
     /**
      * Remove a billing account with a Billing Account Code.

@@ -15,6 +15,7 @@ import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.account.CustomerAccountRs;
 import org.meveo.api.rest.impl.BaseRs;
+import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
 
 /**
  * @author Edward P. Legaspi
@@ -54,11 +55,11 @@ public class CustomerAccountRsImpl extends BaseRs implements CustomerAccountRs {
     }
 
     @Override
-    public GetCustomerAccountResponseDto find(String customerAccountCode, Boolean calculateBalances) {
+    public GetCustomerAccountResponseDto find(String customerAccountCode, Boolean calculateBalances, CustomFieldInheritanceEnum inheritCF) {
         GetCustomerAccountResponseDto result = new GetCustomerAccountResponseDto();
 
         try {
-            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances));
+            result.setCustomerAccount(customerAccountApi.find(customerAccountCode, calculateBalances, inheritCF));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
