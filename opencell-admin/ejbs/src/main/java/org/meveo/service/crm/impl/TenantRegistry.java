@@ -3,12 +3,14 @@ package org.meveo.service.crm.impl;
 import java.util.Date;
 
 import javax.annotation.Resource;
+import javax.ejb.SessionContext;
 import javax.ejb.Stateless;
 import javax.ejb.Timeout;
 import javax.ejb.Timer;
 import javax.ejb.TimerConfig;
 import javax.ejb.TimerService;
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.meveo.admin.listener.ApplicationInitializer;
@@ -21,7 +23,7 @@ import org.slf4j.Logger;
  * 
  * @author Andrius Karpavicius
  * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.1
  * 
  */
 @Stateless
@@ -39,6 +41,15 @@ public class TenantRegistry {
     @Inject
     private Logger log;
 
+    @Resource
+    private SessionContext sessionContext;
+
+    @Resource
+    private HttpServletRequest request1;
+
+    @Inject
+    private HttpServletRequest request2;
+
     /**
      * Unregister a tenant/provider
      * 
@@ -49,15 +60,32 @@ public class TenantRegistry {
     }
 
     /**
-     * Register a new tenant/provider
+     * Register a new tenant/provider and create a default $providerCode$.superadmin user.
      * 
      * @param provider Provider to register as a new tenant
+     * @lastModifiedVersion 5.0.1
      */
     public void addTenant(Provider provider) {
 
         // Create a timer to be triggered instantly, that way we can force authentication to a new tenant, as timer has no security context and can be overriden
         TimerConfig timerConfig = new TimerConfig();
         timerConfig.setInfo(provider);
+
+        /* -- Add Keycloak superadmin user for this new tenant -- */
+        /*
+         * HttpServletRequest request = (HttpServletRequest) (FacesContext.getCurrentInstance().getExternalContext().getRequest()); KeycloakSecurityContext session =
+         * (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName()); log.info("> addTenant > getTokenString : " + session.getTokenString());
+         * 
+         * // Create user UserDto userDto = new UserDto(); String name = (provider.getCode() + "." + "superadmin").toLowerCase(); log.info("> addTenant > name " + name);
+         * userDto.setUsername(name); userDto.setPassword(name); if (!StringUtils.isBlank(provider.getEmail())) { userDto.setEmail(provider.getEmail()); } else {
+         * userDto.setEmail(name + "@" + provider.getCode().toLowerCase() + ".com"); } userDto.setRoles(Arrays.asList("CUSTOMER_CARE_USER", "superAdministrateur"));
+         * userDto.setExternalRoles(Arrays.asList(new RoleDto("CC_ADMIN"), new RoleDto("SUPER_ADMIN")));
+         * 
+         * // Get services KeycloakAdminClientService kc = (KeycloakAdminClientService) EjbUtils.getServiceInterface(KeycloakAdminClientService.class.getSimpleName()); try {
+         * kc.createUser(request, userDto, provider.getCode()); } catch (EntityDoesNotExistsException e) { // TODO Auto-generated catch block e.printStackTrace(); } catch
+         * (BusinessException e) { // TODO Auto-generated catch block e.printStackTrace(); }
+         */
+        /* -- END of user creation in keycloak -- */
 
         Date expireOn = new Date();
         expireOn = DateUtils.addMilliseconds(expireOn, 30);
