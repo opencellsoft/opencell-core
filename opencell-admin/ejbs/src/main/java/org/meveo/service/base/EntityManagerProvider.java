@@ -197,7 +197,7 @@ public class EntityManagerProvider {
         }
 
         Map<String, String> props = new TreeMap<>();
-        props.put("hibernate.default_schema", providerCode);
+        props.put("hibernate.default_schema", convertToSchemaName(providerCode));
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("MeveoAdminMultiTenant", props);
 
@@ -213,5 +213,15 @@ public class EntityManagerProvider {
         entityManagerFactories.getAdvancedCache().withFlags(Flag.IGNORE_RETURN_VALUES).remove(providerCode);
 
         log.debug("Removed EMF for provider {}", providerCode);
+    }
+
+    /**
+     * Convert/normalize provider code to a valid schema name: replace spaces with _ and lowercase it.
+     * 
+     * @param providerCode Provider code
+     * @return Schema name corresponding to a provider code
+     */
+    private String convertToSchemaName(String providerCode) {
+        return providerCode.replace(' ', '_').toLowerCase();
     }
 }

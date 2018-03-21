@@ -118,7 +118,7 @@ public class ApplicationInitializer {
 
         currentUserProvider.forceAuthentication("applicationInitializer", isMainProvider ? null : provider.getCode());
 
-        // Ensure that provider code in secondary provider schema matches the tenant/provider code as it was lister in main provider's secondary tenant/provider record
+        // Ensure that provider code in secondary provider schema matches the tenant/provider code as it was listed in main provider's secondary tenant/provider record
         if (!isMainProvider) {
             providerService.updateProviderCode(provider.getCode());
         }
