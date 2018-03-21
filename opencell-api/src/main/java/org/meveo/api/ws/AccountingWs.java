@@ -59,7 +59,7 @@ public interface AccountingWs extends IBaseWs {
     /**
      * Returns a list of AccountingCode.
      * 
-     * @param accountingCode - Paging and Filtering criteria
+     * @param pagingAndFiltering - Paging and Filtering criteria
      * @return
      */
     @WebMethod

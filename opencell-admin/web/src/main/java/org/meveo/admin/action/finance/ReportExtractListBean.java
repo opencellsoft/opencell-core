@@ -5,7 +5,8 @@ import javax.inject.Named;
 
 /**
  * @author Edward P. Legaspi
- * @created 29 Jan 2018
+ * @version %I%, %G%
+ * @since 5.0
  * @lastModifiedVersion 5.0
  **/
 @Named

@@ -10,6 +10,7 @@ import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import org.elasticsearch.search.sort.SortOrder;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.MeveoApiErrorCodeEnum;
 import org.meveo.api.dto.ActionStatus;
@@ -24,6 +25,14 @@ import org.meveo.api.rest.filter.FilteredListRs;
 import org.meveo.api.rest.impl.BaseRs;
 import org.slf4j.Logger;
 
+/**
+ * Provides APIs for conducting Full Text Search.
+ *
+ * @author Edward P. Legaspi
+ * @author Andrius Karpavicius
+ * @author Tony Alejandro
+ * @lastModifiedVersion 5.0
+ **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
@@ -126,6 +135,30 @@ public class FilteredListRsImpl extends BaseRs implements FilteredListRs {
             fullTextSearchApi.cleanAndReindex();
             responseBuilder = Response.status(Response.Status.OK).entity(new ActionStatus(ActionStatusEnum.SUCCESS, ""));
 
+        } catch (MeveoApiException e) {
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));
+        } catch (Exception e) {
+            log.error("Failed to execute API", e);
+            responseBuilder = Response.status(Response.Status.BAD_REQUEST);
+            responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e instanceof BusinessException ? MeveoApiErrorCodeEnum.BUSINESS_API_EXCEPTION
+                    : MeveoApiErrorCodeEnum.GENERIC_API_EXCEPTION, e.getMessage()));
+        }
+
+        Response response = responseBuilder.build();
+        log.debug("RESPONSE={}", response.getEntity());
+        return response;
+    }
+
+    @Override
+    public Response fullSearch(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder) {
+        Response.ResponseBuilder responseBuilder = null;
+
+        try {
+            String searchResults = fullTextSearchApi.fullSearch(query, category, from, size, sortField, sortOrder);
+            FilteredListResponseDto result = new FilteredListResponseDto();
+            result.setSearchResults(searchResults);
+            responseBuilder = Response.status(Response.Status.OK).entity(result);
         } catch (MeveoApiException e) {
             responseBuilder = Response.status(Response.Status.BAD_REQUEST);
             responseBuilder.entity(new ActionStatus(ActionStatusEnum.FAIL, e.getErrorCode(), e.getMessage()));

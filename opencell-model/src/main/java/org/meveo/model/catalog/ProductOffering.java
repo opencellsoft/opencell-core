@@ -93,7 +93,10 @@ public abstract class ProductOffering extends BusinessCFEntity implements IImage
     @Column(name = "life_cycle_status")
     private LifeCycleStatusEnum lifeCycleStatus = LifeCycleStatusEnum.IN_DESIGN;
 
-    @Deprecated
+    /**
+     * @deprecated As of v 5.0, replaced by ${@link #customerCategories}}
+     */
+    @Deprecated 
     @ManyToMany
     @JoinTable(name = "cat_product_offer_bam", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "bam_id"))
     @OrderColumn(name = "INDX")

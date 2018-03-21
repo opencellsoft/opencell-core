@@ -40,6 +40,7 @@ import org.meveo.commons.utils.JsonUtils;
 import org.meveo.commons.utils.ParamBean;
 import org.meveo.commons.utils.ParamBeanFactory;
 import org.meveo.commons.utils.ReflectionUtils;
+import org.meveo.model.ISearchable;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ICustomFieldEntity;
@@ -61,8 +62,9 @@ import org.slf4j.Logger;
 
 /**
  * Takes care of managing and populating Elastic search indexes
- * 
+ *
  * @author Andrius Karpavicius
+ * @author Tony Alejandro
  * @author Wassim Drira
  * @lastModifiedVersion 5.0
  * 
@@ -111,7 +113,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Populate index with data of a given entity class
-     * 
+     *
      * @param classname Entity classname
      * @param from Populate starting record number
      * @param statistics Statistics to add progress info to
@@ -147,10 +149,14 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         BulkRequestBuilder bulkRequest = esConnection.getClient().prepareBulk();
 
         // Convert entities to map of values and supplement it with custom field values if applicable and add to a bulk request
-        for (BusinessEntity entity : entities) {
+        for (ISearchable entity : entities) {
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            if(entity instanceof BusinessEntity) {
+                id = ElasticClient.cleanUpCode(entity.getCode());
+            } else {
+                id = ElasticClient.cleanUpCode(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()) + entity.getId());
+            }
 
             Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable);
 
@@ -195,7 +201,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
      * @return A map of values
      */
     @SuppressWarnings("unchecked")
-    public Map<String, Object> convertEntityToJson(BusinessEntity entity, Set<String> cftIndexable, Set<String> cftNotIndexable) {
+    public Map<String, Object> convertEntityToJson(ISearchable entity, Set<String> cftIndexable, Set<String> cftNotIndexable) {
 
         Map<String, Object> jsonValueMap = new HashMap<String, Object>();
 
@@ -204,17 +210,24 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         String fieldNameTo = null;
         String fieldNameFrom = null;
 
+        log.debug("############################################");
+        log.debug("Processing entity: {}", entity);
+
         for (Entry<String, String> fieldInfo : fields.entrySet()) {
 
             fieldNameTo = fieldInfo.getKey();
             fieldNameFrom = fieldInfo.getValue();
 
+            log.debug("Mapping {} to {}", fieldNameFrom, fieldNameTo);
+
             Object value = null;
             try {
                 // Obtain field value from entity
                 if (!fieldNameFrom.contains(".")) {
+                    log.debug("value {}", value);
+                    log.debug("Fetching value of property {}", fieldNameFrom);
                     if (fieldNameFrom.endsWith("()")) {
-                        value = MethodUtils.invokeMethod(value, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
+                        value = MethodUtils.invokeMethod(entity, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
                     } else {
                         value = FieldUtils.readField(entity, fieldNameFrom, true);
                     }
@@ -223,16 +236,19 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
                     }
 
+                    log.debug("Value retrieved: {}", value);
                 } else {
                     String[] fieldNames = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
+                        log.debug("Fetching value of property {}", fieldName);
                         if (fieldName.endsWith("()")) {
                             fieldValue = MethodUtils.invokeMethod(fieldValue, fieldName.substring(0, fieldName.length() - 2));
                         } else {
                             fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
                         }
+                        log.debug("Value retrieved: {}", fieldValue);
                         if (fieldValue == null) {
                             break;
                         }
@@ -241,6 +257,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         }
                     }
                     value = fieldValue;
+                    log.debug("Final value retrieved, {}: {}", fieldNameFrom, value);
                 }
 
                 if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
@@ -310,6 +327,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 }
             }
         }
+        log.debug("############################################");
         return jsonValueMap;
     }
 
@@ -373,7 +391,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
     /**
      * Make a REST call to drop all indexes of a current provider. Index names are prefixed by provider code (removed spaces and lowercase).
-     * 
+     *
      * @throws BusinessException business exception
      */
     public void dropIndexes() throws BusinessException {
@@ -430,8 +448,10 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
             ResteasyWebTarget target = client.target(uri + "/" + indexName);
 
+            log.debug("Creating index for entity: {}", indexName);
+            log.debug("Index settings: {}", modelJson);
+
             Response response = target.request().put(javax.ws.rs.client.Entity.entity(modelJson, MediaType.APPLICATION_JSON_TYPE));
-            response.close();
             if (response.getStatus() != HttpURLConnection.HTTP_OK) {
 
                 String createIndexResponse = response.readEntity(String.class);
@@ -440,6 +460,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
 
                 throw new BusinessException(
                     "Failed to create index " + indexName + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
+            } else {
+                response.close();
             }
         }
 
@@ -484,15 +506,15 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             return;
         }
 
+        log.debug("fieldMappingJson: {}", fieldMappingJson);
+
         String uri = paramBean.getProperty("elasticsearch.restUri", "http://localhost:9200");
 
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget target = client.target(uri + "/" + index + "/_mapping/" + type);
 
         Response response = target.request().put(javax.ws.rs.client.Entity.entity(fieldMappingJson, MediaType.APPLICATION_JSON_TYPE));
-        response.close();
         if (response.getStatus() != HttpURLConnection.HTTP_OK) {
-
             String updateIndexResponse = response.readEntity(String.class);
             response.close();
             log.error("Failed to update an index in URL {}. Response {}", target.getUri(), updateIndexResponse);
@@ -501,7 +523,8 @@ public class ElasticSearchIndexPopulationService implements Serializable {
             throw new BusinessException(
                 "Failed to update " + index + "/_mapping/" + type + " in Elastic Search. Http status " + response.getStatus() + " " + response.getStatusInfo().getReasonPhrase());
         } else {
-            log.error("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
+            response.close();
+            log.info("Updated {}/{} mapping in Elastic Search with field mapping {}", index, type, fieldMappingJson);
         }
 
     }

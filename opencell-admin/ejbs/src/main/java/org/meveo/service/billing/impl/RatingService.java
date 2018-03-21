@@ -74,8 +74,8 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.ScriptInterface;
 
 /**
- * Rate charges such as {@link OneShotChargeTemplate}, {@link RecurringChargeTemplate} and {@link UsageChargeTemplate}. 
- * Generate the {@link WalletOperation} with the appropriate values.
+ * Rate charges such as {@link org.meveo.model.catalog.OneShotChargeTemplate}, {@link org.meveo.model.catalog.RecurringChargeTemplate} and {@link org.meveo.model.catalog.UsageChargeTemplate}. 
+ * Generate the {@link org.meveo.model.billing.WalletOperation} with the appropriate values.
  * 
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0

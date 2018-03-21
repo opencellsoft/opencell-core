@@ -48,6 +48,7 @@ import org.slf4j.Logger;
  * Provides functionality to interact with Elastic Search cluster
  * 
  * @author Andrius Karpavicius
+ * @lastModifiedVersion 5.0
  * 
  */
 @Stateless
@@ -311,8 +312,8 @@ public class ElasticClient {
             return search(paginationConfig.getFilters(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
                 returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         } else {
-            return search(paginationConfig.getFullTextFilter(), paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(), sortOrder,
-                returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
+            return search(paginationConfig.getFullTextFilter(), null, paginationConfig.getFirstRow(), paginationConfig.getNumberOfRows(), paginationConfig.getSortField(),
+                    sortOrder, returnFields, getSearchScopeInfo(classnamesOrCetCodes, true));
         }
     }
 
@@ -320,6 +321,10 @@ public class ElasticClient {
      * Execute a search on all fields (_all field)
      * 
      * @param query Query - words (will be joined by AND) or query expression (+word1 - word2)
+     * @param category - search by category that is directly taken from the name of the entity found in entityMapping.
+     *                 property of elasticSearchConfiguration.json.
+     *                 e.g. Customer, CustomerAccount, AccountOperation, etc.
+     *                 See elasticSearchConfiguration.json entityMapping keys for a list of categories.
      * @param from Pagination - starting record
      * @param size Pagination - number of records per page
      * @param sortField - Field to sort by. If omitted, will sort by score.
@@ -329,8 +334,8 @@ public class ElasticClient {
      * @return Json result
      * @throws BusinessException business exception
      */
-    public String search(String query, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields, List<ElasticSearchClassInfo> classInfo)
-            throws BusinessException {
+    public String search(String query, String category, Integer from, Integer size, String sortField, SortOrder sortOrder, String[] returnFields,
+                         List<ElasticSearchClassInfo> classInfo) throws BusinessException {
 
         if (!esConnection.isEnabled()) {
             return "{}";
@@ -365,7 +370,10 @@ public class ElasticClient {
 
         SearchRequestBuilder reqBuilder = esConnection.getClient().prepareSearch(indexes.toArray(new String[0]));
 
-        if (types != null) {
+        if (!StringUtils.isBlank(category)){
+            String[] categories = new String[]{category};
+            reqBuilder.setTypes(categories);
+        } else if (types != null) {
             reqBuilder.setTypes(types.toArray(new String[0]));
         }
 
@@ -388,7 +396,7 @@ public class ElasticClient {
         if (StringUtils.isBlank(query)) {
             reqBuilder.setQuery(QueryBuilders.matchAllQuery());
         } else {
-            reqBuilder.setQuery(QueryBuilders.simpleQueryStringQuery(query).defaultOperator(Operator.AND));
+            reqBuilder.setQuery(QueryBuilders.queryStringQuery(query).lenient(true));
         }
         SearchResponse response = reqBuilder.execute().actionGet();
 
