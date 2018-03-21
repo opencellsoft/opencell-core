@@ -225,6 +225,7 @@ public class RecurringChargeInstanceService extends BusinessService<RecurringCha
 
             if (!walletOperationService.isChargeMatch(activeRecurringChargeInstance, activeRecurringChargeInstance.getRecurringChargeTemplate().getFilterExpression())) {
                 log.debug("not rating chargeInstance with code={}, filter expression not evaluated to true", activeRecurringChargeInstance.getCode());
+                walletOperationService.updateChargeDate(activeRecurringChargeInstance);
                 return nbRating;
             }
 
