@@ -117,7 +117,7 @@
                     </hftl:decorateFormField>
                 </p:outputPanel>
                 <h:panelGroup layout="block" styleClass="form-panel-actions">
-                    <p:commandButton action="#{sellerBean.saveOrUpdateSequence}" value="#{messages['action.save']}ppp" update="@form :sellerFormId:tabView:sellerSequenceTable :sellerFormId:messages"
+                    <p:commandButton action="#{sellerBean.saveOrUpdateSequence}" value="#{messages['action.save']}" update="@form :sellerFormId:tabView:sellerSequenceTable :sellerFormId:messages"
                         oncomplete="if (args &amp;&amp; !args.validationFailed) PF('dlg_sellerSequenceChgPopup').hide()" />
                 </h:panelGroup>
             </h:form>
