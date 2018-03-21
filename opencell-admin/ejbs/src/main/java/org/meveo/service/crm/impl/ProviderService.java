@@ -19,26 +19,53 @@
 package org.meveo.service.crm.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import javax.ejb.EJB;
 import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.beanutils.BeanUtils;
+import org.keycloak.KeycloakSecurityContext;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.api.dto.RoleDto;
+import org.meveo.api.dto.UserDto;
+import org.meveo.api.exception.EntityDoesNotExistsException;
+import org.meveo.commons.utils.EjbUtils;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.keycloak.client.KeycloakAdminClientService;
 import org.meveo.model.crm.Provider;
 import org.meveo.service.base.PersistenceService;
 
 /**
  * Provider service implementation.
+ * 
+ * @author Andrius Karpavicius
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0.1
+ * 
  */
 @Stateless
 public class ProviderService extends PersistenceService<Provider> {
 
+    /**
+     * The tenant registry to add or remove a new tenant.
+     */
     @EJB
     private TenantRegistry providerRegistry;
 
+    /**
+     * The request information, it will be used to get current user credentials to be able to add new tenant user on keycloak.
+     */
+    @Inject
+    private HttpServletRequest request;
+
+    /**
+     * @return provider
+     */
     public Provider getProvider() {
 
         Provider provider = getEntityManager().createNamedQuery("Provider.first", Provider.class).getResultList().get(0);
@@ -63,6 +90,7 @@ public class ProviderService extends PersistenceService<Provider> {
     public void create(Provider provider) throws BusinessException {
         super.create(provider);
         providerRegistry.addTenant(provider);
+        createProviderUser(provider);
     }
 
     @Override
@@ -81,7 +109,7 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     /**
-     * Update appProvider's code
+     * Update appProvider's code.
      * 
      * @param newCode New code to update to
      * @throws BusinessException Business exception
@@ -93,7 +121,7 @@ public class ProviderService extends PersistenceService<Provider> {
     }
 
     /**
-     * Refresh appProvider request scope variable, just in case it is used in some EL expressions within the same request
+     * Refresh appProvider request scope variable, just in case it is used in some EL expressions within the same request.
      * 
      * @param provider New provider data to refresh with
      */
@@ -133,6 +161,41 @@ public class ProviderService extends PersistenceService<Provider> {
         } catch (NoResultException e) {
             log.debug("No Provider of code {} found", code);
             return null;
+        }
+    }
+
+    /**
+     * Create the superadmin user of a new provider.
+     * 
+     * @param provider the tenant information
+     */
+    private void createProviderUser(Provider provider) {
+        KeycloakSecurityContext session = (KeycloakSecurityContext) request.getAttribute(KeycloakSecurityContext.class.getName());
+        log.info("> addTenant > getTokenString : " + session.getTokenString());
+
+        // Create user
+        UserDto userDto = new UserDto();
+        String name = (provider.getCode() + "." + "superadmin").toLowerCase();
+        log.info("> addTenant > name " + name);
+        userDto.setUsername(name);
+        userDto.setPassword(name);
+        if (!StringUtils.isBlank(provider.getEmail())) {
+            userDto.setEmail(provider.getEmail());
+        } else {
+            userDto.setEmail(name + "@" + provider.getCode().toLowerCase() + ".com");
+        }
+        userDto.setRoles(Arrays.asList("CUSTOMER_CARE_USER", "superAdministrateur"));
+        userDto.setExternalRoles(Arrays.asList(new RoleDto("CC_ADMIN"), new RoleDto("SUPER_ADMIN")));
+
+        // Get services
+        KeycloakAdminClientService kc = (KeycloakAdminClientService) EjbUtils.getServiceInterface(KeycloakAdminClientService.class.getSimpleName());
+        try {
+            kc.createUser(request, userDto, provider.getCode());
+        } catch (EntityDoesNotExistsException e) {
+            e.printStackTrace();
+        } catch (BusinessException e) {
+            e.printStackTrace();
+
         }
     }
 }
