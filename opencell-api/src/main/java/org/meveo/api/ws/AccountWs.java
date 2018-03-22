@@ -23,7 +23,6 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
@@ -55,6 +54,9 @@ import org.meveo.model.payments.PaymentMethodEnum;
 
 /**
  * @author Edward P. Legaspi
+ * @author anasseh
+ * 
+ * @lastModifiedVersion willBeSetHere
  **/
 @WebService
 public interface AccountWs extends IBaseWs {
@@ -433,11 +435,6 @@ public interface AccountWs extends IBaseWs {
     @WebMethod
     ActionStatus updatePaymentMethod(@WebParam(name = "customerAccountCode") String customerAccountCode, @WebParam(name = "aoId") Long aoId,
             @WebParam(name = "paymentMethod") PaymentMethodEnum paymentMethod);
-
-    // dunning
-
-    @WebMethod
-    ActionStatus dunningInclusionExclusion(@WebParam(name = "dunningInclusionExclusion") DunningInclusionExclusionDto dunningDto);
 
     // title
 

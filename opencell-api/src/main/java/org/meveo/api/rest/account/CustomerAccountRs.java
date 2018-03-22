@@ -15,7 +15,6 @@ import javax.ws.rs.core.MediaType;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.account.CreditCategoryDto;
 import org.meveo.api.dto.account.CustomerAccountDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.response.account.CustomerAccountsResponseDto;
 import org.meveo.api.dto.response.account.GetCustomerAccountResponseDto;
 import org.meveo.api.rest.IBaseRs;
@@ -25,6 +24,9 @@ import org.meveo.model.crm.custom.CustomFieldInheritanceEnum;
  * Web service for managing customer account.
  * 
  * @author R.AITYAAZZA
+ * @author anasseh
+ * 
+ * @lastModifiedVersion willBeSetHere
  */
 @Path("/account/customerAccount")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
@@ -83,16 +85,6 @@ public interface CustomerAccountRs extends IBaseRs {
     @GET
     @Path("/list")
     CustomerAccountsResponseDto listByCustomer(@QueryParam("customerCode") String customerCode);
-
-    /**
-     * Performs dunning exclusion to customer account.
-     * 
-     * @param DunningInclusionExclusionDto dunning information
-     * @return action status
-     */
-    @PUT
-    @Path("/dunningInclusionExclusion")
-    ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto DunningInclusionExclusionDto);
 
     /**
      * Create a new credit category.

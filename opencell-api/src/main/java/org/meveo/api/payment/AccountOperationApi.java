@@ -42,14 +42,15 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
  * The Class AccountOperationApi.
  *
  * @author Edward P. Legaspi
- * @lastModifiedVersion 5.0
+ * @author anasseh
+ * 
+ * @lastModifiedVersion willBeSetHere
  */
 @Stateless
 public class AccountOperationApi extends BaseApi {
@@ -163,11 +164,6 @@ public class AccountOperationApi extends BaseApi {
         accountOperation.setTaxAmount(postData.getTaxAmount());
         accountOperation.setAmountWithoutTax(postData.getAmountWithoutTax());
         accountOperation.setOrderNumber(postData.getOrderNumber());
-        if (!StringUtils.isBlank(postData.getExcludedFromDunning())) {
-            accountOperation.setExcludedFromDunning(postData.getExcludedFromDunning());
-        } else {
-            accountOperation.setExcludedFromDunning(false);
-        }
 
         // populate customFields
         try {
@@ -509,7 +505,7 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setAmountWithoutTax(accountOp.getAmountWithoutTax());
         accountOperationDto.setOrderNumber(accountOp.getOrderNumber());
         accountOperationDto.setPaymentMethod(accountOp.getPaymentMethod() != null ? accountOp.getPaymentMethod().name() : null );
-        accountOperationDto.setExcludedFromDunning(accountOp.getExcludedFromDunning());
+        accountOperationDto.setExcludedFromDunning(accountOp.getMatchingStatus() == MatchingStatusEnum.I);
         List<MatchingAmount> matchingAmounts = accountOp.getMatchingAmounts();
         if (matchingAmounts != null && !matchingAmounts.isEmpty()) {
             MatchingAmountDto matchingAmountDto = null;

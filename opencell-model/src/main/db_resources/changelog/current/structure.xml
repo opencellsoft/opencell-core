@@ -566,4 +566,8 @@
 		<sql>insert into ${db.schema.adapted}ord_order_history_seq values(1)</sql>
     </changeSet>
         
+    <changeSet id="#2577_20180322" author="anasseh">
+        <sql>update ${db.schema.adapted}ar_account_operation set matching_status ='I' where excluded_from_dunning = 1</sql>
+        <dropColumn tableName="ar_account_operation" columnName="excluded_from_dunning" />
+    </changeSet>        
 </databaseChangeLog> 

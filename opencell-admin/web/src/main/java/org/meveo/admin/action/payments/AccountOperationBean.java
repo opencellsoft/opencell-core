@@ -31,7 +31,6 @@ import javax.inject.Named;
 import org.jboss.seam.international.status.builder.BundleKey;
 import org.meveo.admin.action.BaseBean;
 import org.meveo.admin.action.CustomFieldBean;
-import org.meveo.admin.exception.BusinessEntityException;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.NoAllOperationUnmatchedException;
 import org.meveo.admin.web.interceptor.ActionMethod;
@@ -41,7 +40,6 @@ import org.meveo.model.payments.AccountOperation;
 import org.meveo.model.payments.AutomatedPayment;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.payments.MatchingAmount;
-import org.meveo.model.payments.MatchingCode;
 import org.meveo.model.payments.MatchingStatusEnum;
 import org.meveo.model.payments.Payment;
 import org.meveo.model.payments.RecordedInvoice;
@@ -49,11 +47,15 @@ import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.MatchingCodeService;
+import org.meveo.service.payments.impl.RecordedInvoiceService;
 import org.primefaces.model.LazyDataModel;
 
 /**
  * Standard backing bean for {@link AccountOperation} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their
  * create, edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion willBeSetHere
  */
 @Named
 @ViewScoped
@@ -73,6 +75,9 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
     @Inject
     private AccountOperationListBean accountOperationListBean;
 
+    @Inject
+    private RecordedInvoiceService recordedInvoiceService;
+
     private List<MatchingAmount> matchingAmounts = new ArrayList<MatchingAmount>();
 
     /**
@@ -84,7 +89,8 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
 
     /**
      * Factory method for entity to edit. If objectId param set load that entity from database, otherwise create new.
-     * @return account operation 
+     * 
+     * @return account operation
      */
     @Produces
     @Named("accountOperation")
@@ -154,90 +160,15 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
         return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
     }
 
-    /**
-     * Consult Matching code page
-     * 
-     * @return the URL of the matching code page containing the selected operation
-     * @throws BusinessException
-     */
-
-    private void dunningInclusionExclusionPartial(AccountOperation accountOperation, Boolean exclude) throws BusinessException {
-        for (MatchingAmount matchingAmount : accountOperation.getMatchingAmounts()) {
-            MatchingCode matchingCode = matchingAmount.getMatchingCode();
-            for (MatchingAmount ma : matchingCode.getMatchingAmounts()) {
-                AccountOperation accountop = ma.getAccountOperation();
-                accountop.setExcludedFromDunning(exclude);
-                accountOperationService.update(accountop);
-            }
-        }
-    }
-
-    public String dunningInclusionExclusion(long customerAccountId, boolean exclude) {
-        try {
-            if (getSelectedEntities() == null || getSelectedEntities().isEmpty()) {
-                throw new BusinessEntityException("consultMatching.noOperationSelected");
-            } else {
-                log.info(" excludedFromDunning operationIds " + getSelectedEntities().size());
-                for (IEntity operation : getSelectedEntities()) {
-                    AccountOperation accountOperation = (AccountOperation) operation;
-                    if (!accountOperation.getExcludedFromDunning() == exclude) {
-                        if (accountOperation instanceof RecordedInvoice) {
-                            accountOperation.setExcludedFromDunning(exclude);
-                            accountOperationService.update(accountOperation);
-                        } else {
-                            throw new BusinessEntityException("excludedFromDunning.selectOperations.notInvoice");
-                        }
-                        if (accountOperation.getMatchingStatus() == MatchingStatusEnum.P) {
-                            dunningInclusionExclusionPartial(accountOperation, exclude);
-                        }
-                    }
-                }
-            }
-            messages.info(new BundleKey("messages", exclude ? "accountOperation.excludFromDunning" : "accountOperation.includFromDunning"));
-        } catch (BusinessException e) {
-            messages.error(new BundleKey("messages", e.getMessage()));
-        }
-
-        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=true&mainTab=1&faces-redirect=true";
-    }
-
-    public boolean isSelectedOperationIncluded() {
-        boolean included = true;
-        if (getSelectedEntities() != null) {
-            for (IEntity operation : getSelectedEntities()) {
-                AccountOperation accountOperation = (AccountOperation) operation;
-                if (accountOperation.getExcludedFromDunning()) {
-                    included = false;
-                    break;
-                }
-            }
-        }
-        return included;
-    }
-
-    public boolean isSelectedOperationExcluded() {
-        boolean excluded = true;
-        if (getSelectedEntities() != null) {
-            for (IEntity operation : getSelectedEntities()) {
-                AccountOperation accountOperation = (AccountOperation) operation;
-                if (!accountOperation.getExcludedFromDunning()) {
-                    excluded = false;
-                    break;
-                }
-            }
-        }
-        return excluded;
-    }
-
     public String consultMatching(long customerAccountId) {
         List<Long> operationIds = new ArrayList<Long>();
         log.debug("getChecked():" + getSelectedEntities());
         for (IEntity operation : getSelectedEntities()) {
             operationIds.add((Long) operation.getId());
         }
-        log.info(" consultMatching operationIds " + operationIds);
+        log.trace(" consultMatching operationIds " + operationIds);
         if (operationIds.isEmpty() || operationIds.size() > 1) {
-            messages.info(new BundleKey("messages", "consultMatching.noOperationSelected"));
+            messages.warn(new BundleKey("messages", "consultMatching.noOperationSelected"));
 
             return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
         }
@@ -252,6 +183,52 @@ public class AccountOperationBean extends CustomFieldBean<AccountOperation> {
             return "/pages/payments/matchingCode/matchingCodeDetail.xhtml?objectId=" + matchingAmounts.get(0).getMatchingCode().getId() + "&edit=false&faces-redirect=true";
         }
         return "/pages/payments/matchingCode/selectMatchingCode.xhtml?objectId=" + accountOperation.getId() + "&edit=false&faces-redirect=true";
+    }
+    
+    /**
+     * Add Litigation 
+     * 
+     * @param customerAccountId customer account id
+     * @return outcome
+     */
+    public String addLitigation(long customerAccountId) {
+        try {            
+            log.debug("getChecked():" + getSelectedEntities());
+            if (getSelectedEntities() != null && getSelectedEntities().isEmpty()) {
+                messages.warn(new BundleKey("messages", "accountOperation.selectTypeOCC"));
+                return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
+            }
+            for (IEntity operation : getSelectedEntities()) {
+                recordedInvoiceService.addLitigation((Long) operation.getId());
+            }
+            messages.info(new BundleKey("messages", "save.successful"));
+        } catch (Exception e) {
+            messages.error(e.getMessage());
+        }
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
+    }
+    
+    /**
+     * Cancel Litigation 
+     * 
+     * @param customerAccountId customer account id
+     * @return outcome
+     */
+    public String cancelLitigation(long customerAccountId) {
+        try {            
+            log.debug("getChecked():" + getSelectedEntities());
+            if (getSelectedEntities() != null && getSelectedEntities().isEmpty()) {
+                messages.warn(new BundleKey("messages", "accountOperation.selectTypeOCC"));
+                return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
+            }
+            for (IEntity operation : getSelectedEntities()) {
+                recordedInvoiceService.cancelLitigation((Long) operation.getId());
+            }
+            messages.info(new BundleKey("messages", "save.successful"));
+        } catch (Exception e) {
+            messages.error(e.getMessage());
+        }
+        return "/pages/payments/customerAccounts/customerAccountDetail.xhtml?customerAccountId=" + customerAccountId + "&edit=false&mainTab=1&faces-redirect=true";
     }
 
     public List<MatchingAmount> getMatchingAmounts() {

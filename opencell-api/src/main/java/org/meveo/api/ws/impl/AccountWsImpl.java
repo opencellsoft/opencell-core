@@ -34,7 +34,6 @@ import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
 import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
-import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
 import org.meveo.api.dto.payment.MatchOperationRequestDto;
 import org.meveo.api.dto.payment.UnMatchingOperationRequestDto;
@@ -70,6 +69,12 @@ import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.crm.BusinessAccountModel;
 import org.meveo.model.payments.PaymentMethodEnum;
 
+/**
+ * Accounts webservice soap implimentation.
+ * 
+ * @author anasseh
+ * @lastModifiedVersion willBeSetHere
+ */
 @WebService(serviceName = "AccountWs", endpointInterface = "org.meveo.api.ws.AccountWs")
 @Interceptors({ WsRestApiInterceptor.class })
 public class AccountWsImpl extends BaseWs implements AccountWs {
@@ -672,17 +677,6 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
         return result;
     }
 
-    @Override
-    public ActionStatus dunningInclusionExclusion(DunningInclusionExclusionDto dunningDto) {
-        ActionStatus result = new ActionStatus(ActionStatusEnum.SUCCESS, "");
-        try {
-            customerAccountApi.dunningExclusionInclusion(dunningDto);
-        } catch (Exception e) {
-            processException(e, result);
-        }
-
-        return result;
-    }
 
     @Override
     public GetAccountHierarchyResponseDto findAccountHierarchy2(FindAccountHierachyRequestDto postData) {
