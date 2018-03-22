@@ -62,7 +62,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @NamedQueries({
         @NamedQuery(name = "ProductOffering.findLatestVersion", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code order by e.validity.from desc, e.validity.to desc"),
         @NamedQuery(name = "ProductOffering.findMatchingVersions", query = "select e from ProductOffering e where type(e)= :clazz and e.code = :code and e.id !=:id order by id"),
-        @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))") })
+        @NamedQuery(name = "ProductOffering.findActiveByDate", query = "select e from ProductOffering e where e.lifeCycleStatus='ACTIVE' AND type(e)= :clazz and ((e.validity.from IS NULL and e.validity.to IS NULL) or (e.validity.from<=:date and :date<e.validity.to) or (e.validity.from<=:date and e.validity.to IS NULL) or (e.validity.from IS NULL and :date<e.validity.to))") })
 public abstract class ProductOffering extends BusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 6877386866687396135L;
