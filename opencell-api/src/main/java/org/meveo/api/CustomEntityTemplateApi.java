@@ -335,6 +335,15 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 		return result;
 	}
 
+    /**
+     * Finds an entity that match the given criterion. Evaluates applicableEL on custom fields and actions of the entity, if false it will not be included in the resulting object.
+     * 
+     * @param appliesTo type of entity
+     * @param entityCode code of the entity
+     * @return an object with a list of custom fields and actions
+     * @throws MissingParameterException when there is a missing parameter
+     * @throws BusinessException business logic is violated
+     */
 	public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode)
 			throws MissingParameterException, BusinessException {
 		EntityCustomizationDto result = new EntityCustomizationDto();

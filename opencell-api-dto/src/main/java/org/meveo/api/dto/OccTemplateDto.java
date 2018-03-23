@@ -27,6 +27,9 @@ public class OccTemplateDto extends BusinessDto {
     @XmlElement(required = true)
     private OperationCategoryEnum occCategory;
 
+    /**
+     * @deprecated duplicate of accountingCode.
+     */
     @Deprecated
     private String accountCodeClientSide;
 

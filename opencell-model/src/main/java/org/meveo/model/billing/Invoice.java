@@ -71,14 +71,14 @@ import org.meveo.model.quote.Quote;
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "billing_invoice_seq"), })
 @CustomFieldEntity(cftCodePrefix = "INVOICE")
-@NamedQueries({ @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
+@NamedQueries({
+        @NamedQuery(name = "Invoice.validatedByBRNoXml", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.billingRun.id=:billingRunId and inv.xmlFilename IS NULL"),
         @NamedQuery(name = "Invoice.validatedNoXml", query = "select inv.id from Invoice inv where inv.xmlFilename IS NULL and inv.invoiceNumber IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdf", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL"),
         @NamedQuery(name = "Invoice.validatedNoPdfByBR", query = "select inv.id from Invoice inv where inv.invoiceNumber IS NOT NULL and inv.pdfFilename IS NULL and inv.xmlFilename IS NOT NULL and inv.billingRun.id=:billingRunId"),
         @NamedQuery(name = "Invoice.invoicesToNumberSummary", query = "select inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate, count(inv) from Invoice inv where inv.billingRun.id=:billingRunId group by inv.invoiceType.id, inv.billingAccount.customerAccount.customer.seller.id, inv.invoiceDate"),
         @NamedQuery(name = "Invoice.byBrItSelDate", query = "select inv.id from Invoice inv where inv.billingRun.id=:billingRunId and inv.invoiceType.id=:invoiceTypeId and inv.billingAccount.customerAccount.customer.seller.id = :sellerId and inv.invoiceDate=:invoiceDate order by inv.id"),
-        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId")
-})
+        @NamedQuery(name = "Invoice.byBr", query = "select inv from Invoice inv left join fetch inv.billingAccount ba where inv.billingRun.id=:billingRunId") })
 public class Invoice extends EnableEntity implements ICustomFieldEntity {
 
     private static final long serialVersionUID = 1L;
@@ -485,17 +485,16 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         }
 
         Invoice other = (Invoice) obj;
-        if (other.getId() == null) {
-            return false;
-        } else if (!other.getId().equals(this.getId())) {
-            return false;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
         }
-        return true;
+
+        return false;
     }
 
     @Override
     public int hashCode() {
-        return id == null ? 0 : id.intValue();
+        return 961 + ("Invoice" + id).hashCode();
     }
 
     /**
@@ -630,7 +629,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
         return pdfFilename;
     }
 
-    public void setPdfFilename(String pdfFilename) {	
+    public void setPdfFilename(String pdfFilename) {
         this.pdfFilename = pdfFilename;
     }
 
@@ -684,6 +683,7 @@ public class Invoice extends EnableEntity implements ICustomFieldEntity {
     public void setPaymentMethod(PaymentMethod paymentMethod) {
         this.paymentMethod = paymentMethod;
     }
+
     public void assignTemporaryInvoiceNumber() {
 
         StringBuffer num1 = new StringBuffer("000000000");

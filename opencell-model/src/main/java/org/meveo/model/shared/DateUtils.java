@@ -72,6 +72,12 @@ public class DateUtils {
         return result;
     }
 
+    /**
+     * Evaluates a date inside a pre-determined delimiters in a string.
+     * 
+     * @param input string that contains the date
+     * @return
+     */
     public static String evaluteDateFormat(String input) {
         if (!(input.contains(START_DATE_DELIMITER) && input.contains(END_DATE_DELIMITER))) {
             return input;

@@ -35,36 +35,34 @@ import org.meveo.model.ExportIdentifier;
 
 @Entity
 @Cacheable
-@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code" })
 @Table(name = "cat_serv_sub_charge_template")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_subchrg_templt_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_serv_subchrg_templt_seq"), })
 public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<OneShotChargeTemplate> {
 
-	private static final long serialVersionUID = 7811269692204342428L;
+    private static final long serialVersionUID = 7811269692204342428L;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cat_serv_sub_wallet_template", joinColumns = @JoinColumn(name = "service_sub_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
-	@OrderColumn(name = "INDX")
-	private List<WalletTemplate> walletTemplates;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_serv_sub_wallet_template", joinColumns = @JoinColumn(name = "service_sub_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+    @OrderColumn(name = "INDX")
+    private List<WalletTemplate> walletTemplates;
 
-	public List<WalletTemplate> getWalletTemplates() {
-		return walletTemplates;
-	}
+    public List<WalletTemplate> getWalletTemplates() {
+        return walletTemplates;
+    }
 
-	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
+    public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("ServiceChargeTemplateSubscription" + id).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -73,14 +71,14 @@ public class ServiceChargeTemplateSubscription extends ServiceChargeTemplate<One
         } else if (!(obj instanceof ServiceChargeTemplateSubscription)) {
             return false;
         }
-        
-		ServiceChargeTemplateSubscription other = (ServiceChargeTemplateSubscription) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+
+        ServiceChargeTemplateSubscription other = (ServiceChargeTemplateSubscription) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
 }

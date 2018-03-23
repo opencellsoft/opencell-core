@@ -1,6 +1,8 @@
 package org.meveo.model.billing;
 
 /**
+ * Type of view for AccountingCode.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

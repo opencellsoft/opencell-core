@@ -36,36 +36,37 @@ import org.meveo.model.ExportIdentifier;
 @Cacheable
 @ExportIdentifier("languageCode")
 @Table(name = "adm_language")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "adm_language_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "adm_language_seq"), })
 public class Language extends AuditableEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Column(name = "language_code", length = 3)
-	@Size(max = 3)
-	private String languageCode;
+    @Column(name = "language_code", length = 3)
+    @Size(max = 3)
+    private String languageCode;
 
-	@Column(name = "description_en", length = 100)
-	@Size(max = 100)
-	private String descriptionEn;
+    @Column(name = "description_en", length = 100)
+    @Size(max = 100)
+    private String descriptionEn;
 
-	public String getLanguageCode() {
-		return languageCode;
-	}
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
-	public String getDescriptionEn() {
-		return descriptionEn;
-	}
+    public String getDescriptionEn() {
+        return descriptionEn;
+    }
 
-	public void setDescriptionEn(String descriptionEn) {
-		this.descriptionEn = descriptionEn;
-	}
+    public void setDescriptionEn(String descriptionEn) {
+        this.descriptionEn = descriptionEn;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -74,18 +75,23 @@ public class Language extends AuditableEntity {
         } else if (!(obj instanceof Language)) {
             return false;
         }
-        
-		Language other = (Language) obj;
-		if (languageCode == null) {
-			if (other.languageCode != null)
-				return false;
-		} else if (!languageCode.equals(other.languageCode))
-			return false;
-		return true;
-	}
 
-	@Override
-	public String toString() {
-	    return languageCode;
-	}
+        Language other = (Language) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (languageCode == null) {
+            if (other.languageCode != null) {
+                return false;
+            }
+        } else if (!languageCode.equals(other.languageCode)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return languageCode;
+    }
 }

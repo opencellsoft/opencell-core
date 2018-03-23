@@ -63,7 +63,7 @@ public class UserDto extends BaseDto {
     @XmlElementWrapper(name = "userRoles")
     @XmlElement(name = "userRole")
     private List<String> roles;
-    
+
     @XmlElementWrapper(name = "externalRoles")
     @XmlElement(name = "externalRole")
     private List<RoleDto> externalRoles;
@@ -77,9 +77,9 @@ public class UserDto extends BaseDto {
 
     @XmlElement()
     private String userLevel;
-    
+
     private Date createdAt;
-    private Date lastLoginDate;   
+    private Date lastLoginDate;
 
     public UserDto() {
     }
@@ -96,12 +96,15 @@ public class UserDto extends BaseDto {
         }
         lastLoginDate = user.getLastLoginDate();
 
-        if (user.getRoles() != null) {
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             roles = new ArrayList<String>();
             for (Role r : user.getRoles()) {
                 roles.add(r.getName());
                 role = r.getName();
             }
+
+            Collections.sort(this.roles);
+            role = roles.get(roles.size() - 1);
         }
 
         if (user.getUserLevel() != null) {
@@ -187,13 +190,13 @@ public class UserDto extends BaseDto {
                 + userLevel + ", securedEntities=" + securedEntities + " ]";
     }
 
-	public String getPassword() {
-		return password;
-	}
+    public String getPassword() {
+        return password;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getEmail() {
         return email;

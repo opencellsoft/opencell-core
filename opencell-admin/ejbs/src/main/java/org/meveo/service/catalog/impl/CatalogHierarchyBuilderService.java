@@ -234,6 +234,7 @@ public class CatalogHierarchyBuilderService {
                 newProductTemplate.setCfValues(productTemplate.getCfValues());
             }
 
+            // needs a refresh here so CF will not be saved.
             productTemplateService.refresh(productTemplate);
             productTemplateService.create(newProductTemplate);
 

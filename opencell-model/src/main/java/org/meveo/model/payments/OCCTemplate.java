@@ -42,55 +42,53 @@ import org.meveo.model.billing.AccountingCode;
  */
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = {"code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_occ_template_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "ar_occ_template", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_occ_template_seq"), })
 public class OCCTemplate extends BusinessEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "accounting_code_id")
-	private AccountingCode accountingCode;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "accounting_code_id")
+    private AccountingCode accountingCode;
 
-	/**
+    /**
      * @deprecated As of version 5.0. All accountingCode now use {@link #accountingCode}
      */
-	@Deprecated
-	@Column(name = "account_code_client_side", length = 255)
+    @Deprecated
+    @Column(name = "account_code_client_side", length = 255)
     @Size(max = 255)
-	private String accountCodeClientSide;
+    private String accountCodeClientSide;
 
-	@Column(name = "occ_category")
-	@Enumerated(EnumType.STRING)
-	private OperationCategoryEnum occCategory;
+    @Column(name = "occ_category")
+    @Enumerated(EnumType.STRING)
+    private OperationCategoryEnum occCategory;
 
-	public String getAccountCodeClientSide() {
-		return accountCodeClientSide;
-	}
+    public String getAccountCodeClientSide() {
+        return accountCodeClientSide;
+    }
 
-	public void setAccountCodeClientSide(String accountCodeClientSide) {
-		this.accountCodeClientSide = accountCodeClientSide;
-	}
+    public void setAccountCodeClientSide(String accountCodeClientSide) {
+        this.accountCodeClientSide = accountCodeClientSide;
+    }
 
-	public OperationCategoryEnum getOccCategory() {
-		return occCategory;
-	}
+    public OperationCategoryEnum getOccCategory() {
+        return occCategory;
+    }
 
-	public void setOccCategory(OperationCategoryEnum occCategory) {
-		this.occCategory = occCategory;
-	}
+    public void setOccCategory(OperationCategoryEnum occCategory) {
+        this.occCategory = occCategory;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("OCCTemplate" + code).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -99,15 +97,19 @@ public class OCCTemplate extends BusinessEntity {
         } else if (!(obj instanceof OCCTemplate)) {
             return false;
         }
-        
-		OCCTemplate other = (OCCTemplate) obj;
-		if (code == null) {
-			if (other.code != null)
-				return false;
-		} else if (!code.equals(other.code))
-			return false;
-		return true;
-	}
+
+        OCCTemplate other = (OCCTemplate) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (code == null) {
+            if (other.code != null)
+                return false;
+        } else if (!code.equals(other.code))
+            return false;
+        return true;
+    }
 
     public AccountingCode getAccountingCode() {
         return accountingCode;

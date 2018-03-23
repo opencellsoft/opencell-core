@@ -32,77 +32,78 @@ import org.meveo.model.EnableEntity;
 
 @Entity
 @Table(name = "ar_matching_amount")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ar_matching_amount_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ar_matching_amount_seq"), })
 public class MatchingAmount extends EnableEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne
-	@JoinColumn(name = "matching_code_id")
-	private MatchingCode matchingCode;
+    @ManyToOne
+    @JoinColumn(name = "matching_code_id")
+    private MatchingCode matchingCode;
 
-	@ManyToOne
-	@JoinColumn(name = "account_operation_id")
-	private AccountOperation accountOperation;
+    @ManyToOne
+    @JoinColumn(name = "account_operation_id")
+    private AccountOperation accountOperation;
 
-	@Column(name = "matching_amount", precision = 23, scale = 12)
-	private BigDecimal matchingAmount;
+    @Column(name = "matching_amount", precision = 23, scale = 12)
+    private BigDecimal matchingAmount;
 
-	public MatchingAmount() {
-	}
+    public MatchingAmount() {
+    }
 
-	public BigDecimal getMatchingAmount() {
-		return matchingAmount;
-	}
+    public BigDecimal getMatchingAmount() {
+        return matchingAmount;
+    }
 
-	public void setMatchingAmount(BigDecimal matchingAmount) {
-		this.matchingAmount = matchingAmount;
-	}
+    public void setMatchingAmount(BigDecimal matchingAmount) {
+        this.matchingAmount = matchingAmount;
+    }
 
-	public void setAccountOperation(AccountOperation accountOperation) {
-		this.accountOperation = accountOperation;
-	}
+    public void setAccountOperation(AccountOperation accountOperation) {
+        this.accountOperation = accountOperation;
+    }
 
-	public AccountOperation getAccountOperation() {
-		return accountOperation;
-	}
+    public AccountOperation getAccountOperation() {
+        return accountOperation;
+    }
 
-	public void setMatchingCode(MatchingCode matchingCode) {
-		this.matchingCode = matchingCode;
-	}
+    public void setMatchingCode(MatchingCode matchingCode) {
+        this.matchingCode = matchingCode;
+    }
 
-	public MatchingCode getMatchingCode() {
-		return matchingCode;
-	}
+    public MatchingCode getMatchingCode() {
+        return matchingCode;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((matchingCode == null) ? 0 : matchingCode.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("MatchingAmount" + matchingCode).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-        
-	    if (this == obj) {
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
             return true;
         } else if (obj == null) {
             return false;
         } else if (!(obj instanceof MatchingAmount)) {
             return false;
         }
-        
-		MatchingAmount other = (MatchingAmount) obj;
 
-		if (matchingCode != null && accountOperation != null) {
-			if (matchingCode.equals(other.getMatchingCode())
-					&& accountOperation.equals(other.getAccountOperation())) {
-				return true;
-			}
-		}
-		return false;
-	}
+        MatchingAmount other = (MatchingAmount) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (matchingCode != null && accountOperation != null) {
+            if (matchingCode.equals(other.getMatchingCode()) && accountOperation.equals(other.getAccountOperation())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

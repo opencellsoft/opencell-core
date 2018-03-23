@@ -36,6 +36,9 @@ public class ProviderDto extends BaseDto {
 	private Boolean levelDuplication;	
 	private Integer rounding;
 	private Long prepaidReservationExpirationDelayinMillisec;
+	/**
+	 * @deprecated Not used.
+	 */
 	@Deprecated
 	private String discountAccountingCode;
 	private String email;

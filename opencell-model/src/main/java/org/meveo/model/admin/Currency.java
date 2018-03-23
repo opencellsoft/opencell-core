@@ -89,11 +89,17 @@ public class Currency extends AuditableEntity {
         }
 
         Currency other = (Currency) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
         if (currencyCode == null) {
-            if (other.currencyCode != null)
+            if (other.currencyCode != null) {
                 return false;
-        } else if (!currencyCode.equals(other.currencyCode))
+            }
+        } else if (!currencyCode.equals(other.currencyCode)) {
             return false;
+        }
         return true;
     }
 
@@ -108,10 +114,7 @@ public class Currency extends AuditableEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((currencyCode == null) ? 0 : currencyCode.hashCode());
-        return result;
+        return 961 + (("Currency" + (currencyCode == null ? "" : currencyCode)).hashCode());
     }
 
     public void setSystemCurrency(Boolean systemCurrency) {

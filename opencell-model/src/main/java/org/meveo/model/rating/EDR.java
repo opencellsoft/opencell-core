@@ -452,6 +452,11 @@ public class EDR extends BaseEntity {
         }
 
         EDR other = (EDR) obj;
+        
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        
         return this.toString().equals(other.toString());
     }
 

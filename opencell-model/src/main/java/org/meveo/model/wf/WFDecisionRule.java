@@ -38,38 +38,39 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "name", "value"})
-@Table(name = "wf_decision_rule", uniqueConstraints = @UniqueConstraint(columnNames = {"name", "value"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_decision_rule_seq"), })
-public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisionRule>{
+@ExportIdentifier({ "name", "value" })
+@Table(name = "wf_decision_rule", uniqueConstraints = @UniqueConstraint(columnNames = { "name", "value" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "wf_decision_rule_seq"), })
+public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisionRule> {
 
-	private static final long serialVersionUID = 1L;
- 
-	@Column(name = "name")
+    private static final long serialVersionUID = 1L;
+
+    @Column(name = "name")
     @Size(max = 255)
     @NotNull
-	private String name;
+    private String name;
 
     @Size(max = 255)
-	@Column(name = "value")
+    @Column(name = "value")
     @NotNull
-	private String value;
+    private String value;
 
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
     @NotNull
     private DecisionRuleTypeEnum type;
-	
-	@Column(name = "condition_el", length = 2000)
-	@Size(max = 2000)
-    @NotNull
-	private String conditionEl;
 
-	@Type(type="numeric_boolean")
+    @Column(name = "condition_el", length = 2000)
+    @Size(max = 2000)
+    @NotNull
+    private String conditionEl;
+
+    @Type(type = "numeric_boolean")
     @Column(name = "model")
     private boolean model = false;
 
-    @ManyToMany(mappedBy="wfDecisionRules")
+    @ManyToMany(mappedBy = "wfDecisionRules")
     private Set<WFTransition> wfTransitions = new HashSet<>();
 
     public String getName() {
@@ -96,19 +97,19 @@ public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisio
         this.type = type;
     }
 
-	/**
-	 * @return the conditionEl
-	 */
-	public String getConditionEl() {
-		return conditionEl;
-	}
+    /**
+     * @return the conditionEl
+     */
+    public String getConditionEl() {
+        return conditionEl;
+    }
 
-	/**
-	 * @param conditionEl the conditionEl to set
-	 */
-	public void setConditionEl(String conditionEl) {
-		this.conditionEl = conditionEl;
-	}
+    /**
+     * @param conditionEl the conditionEl to set
+     */
+    public void setConditionEl(String conditionEl) {
+        this.conditionEl = conditionEl;
+    }
 
     public boolean getModel() {
         return model;
@@ -127,15 +128,12 @@ public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisio
     }
 
     @Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    public int hashCode() {
+        return 961 + ("WFDecisionRule" + id).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -144,15 +142,15 @@ public class WFDecisionRule extends EnableEntity implements Comparable<WFDecisio
         } else if (!(obj instanceof WFDecisionRule)) {
             return false;
         }
-        
-		WFDecisionRule other = (WFDecisionRule) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+
+        WFDecisionRule other = (WFDecisionRule) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
     @Override
     public int compareTo(WFDecisionRule o) {

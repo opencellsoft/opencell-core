@@ -39,45 +39,43 @@ import org.meveo.model.bi.Report;
  */
 @Entity
 @Table(name = "crm_email")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "crm_email_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "crm_email_seq"), })
 public class Email extends BaseEntity {
 
-	private static final long serialVersionUID = 1L;
-	@Column(name = "email", length = 255)
-	@Size(max = 255)
-	private String address;
+    private static final long serialVersionUID = 1L;
+    @Column(name = "email", length = 255)
+    @Size(max = 255)
+    private String address;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "report_emails", joinColumns = @JoinColumn(name = "email_id"), inverseJoinColumns = @JoinColumn(name = "report_id"))
-	private List<Report> reports;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "report_emails", joinColumns = @JoinColumn(name = "email_id"), inverseJoinColumns = @JoinColumn(name = "report_id"))
+    private List<Report> reports;
 
-	public String getAddress() {
-		return address;
-	}
+    public String getAddress() {
+        return address;
+    }
 
-	public void setAddress(String address) {
-		this.address = address;
-	}
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
-	public List<Report> getReports() {
-		return reports;
-	}
+    public List<Report> getReports() {
+        return reports;
+    }
 
-	public void setReports(List<Report> reports) {
-		this.reports = reports;
-	}
+    public void setReports(List<Report> reports) {
+        this.reports = reports;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        return 961 + ("Email" + address).hashCode();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-        
+    @Override
+    public boolean equals(Object obj) {
+
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -85,14 +83,17 @@ public class Email extends BaseEntity {
         } else if (!(obj instanceof Email)) {
             return false;
         }
-        
-		Email other = (Email) obj;
-		if (address == null) {
-			if (other.address != null)
-				return false;
-		} else if (!address.equals(other.address))
-			return false;
-		return true;
-	}
+
+        Email other = (Email) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (address == null) {
+            if (other.address != null)
+                return false;
+        } else if (!address.equals(other.address))
+            return false;
+        return true;
+    }
 
 }

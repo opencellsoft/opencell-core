@@ -180,10 +180,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime * 1;// super.hashCode();
-        result = result + ((getUserName() == null) ? 0 : getUserName().hashCode());
-        return result;
+        return 961 + (("User" + (userName == null ? "" : userName)).hashCode());
     }
 
     @Override
@@ -199,7 +196,7 @@ public class User extends EnableEntity implements ICustomFieldEntity {
         User other = (User) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+            return true;
         }
 
         if (userName == null) {

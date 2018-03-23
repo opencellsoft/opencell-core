@@ -32,9 +32,10 @@ import org.meveo.model.catalog.ProductOffering;
 import org.meveo.model.shared.Address;
 
 @Entity
-@ExportIdentifier({ "order.code", "itemId"})
+@ExportIdentifier({ "order.code", "itemId" })
 @Table(name = "ord_order_item")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ord_order_item_seq"), })
 public class OrderItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
@@ -101,9 +102,9 @@ public class OrderItem extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
-    
-	@Embedded
-	private Address shippingAddress = new Address();
+
+    @Embedded
+    private Address shippingAddress = new Address();
 
     @Transient
     private Object orderItemDto;
@@ -174,24 +175,22 @@ public class OrderItem extends BaseEntity {
     public void setProductInstances(List<ProductInstance> productInstances) {
         this.productInstances = productInstances;
     }
-    
-    
 
     /**
-	 * @return the shippingAddress
-	 */
-	public Address getShippingAddress() {
-		return shippingAddress;
-	}
+     * @return the shippingAddress
+     */
+    public Address getShippingAddress() {
+        return shippingAddress;
+    }
 
-	/**
-	 * @param shippingAddress the shippingAddress to set
-	 */
-	public void setShippingAddress(Address shippingAddress) {
-		this.shippingAddress = shippingAddress;
-	}
+    /**
+     * @param shippingAddress the shippingAddress to set
+     */
+    public void setShippingAddress(Address shippingAddress) {
+        this.shippingAddress = shippingAddress;
+    }
 
-	public void addProductInstance(ProductInstance productInstance) {
+    public void addProductInstance(ProductInstance productInstance) {
         if (this.productInstances == null) {
             this.productInstances = new ArrayList<>();
         }
@@ -259,6 +258,12 @@ public class OrderItem extends BaseEntity {
             return false;
         }
 
-        return StringUtils.compare(getItemId(), ((OrderItem) obj).getItemId()) == 0;
+        OrderItem other = (OrderItem) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        return StringUtils.compare(getItemId(), other.getItemId()) == 0;
     }
 }

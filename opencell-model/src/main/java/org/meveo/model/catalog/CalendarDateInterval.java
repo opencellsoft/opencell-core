@@ -160,6 +160,9 @@ public class CalendarDateInterval extends BaseEntity implements Comparable<Calen
         }
         
         CalendarDateInterval other = (CalendarDateInterval) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
         return intervalBegin == other.getIntervalBegin() && intervalEnd == other.getIntervalEnd();
     }
 }

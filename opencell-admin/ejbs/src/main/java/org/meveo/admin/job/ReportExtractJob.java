@@ -17,6 +17,8 @@ import org.meveo.model.jobs.JobInstance;
 import org.meveo.service.job.Job;
 
 /**
+ * When executed this job will run all the ReportExtract and generates the file with matching records.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0
