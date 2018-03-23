@@ -49,10 +49,12 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@ExportIdentifier({ "uuid"})
+@ExportIdentifier({ "uuid" })
 @Table(name = "wf_transition", uniqueConstraints = @UniqueConstraint(columnNames = { "uuid" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "wf_transition_seq"), })
-@NamedQueries({ @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where (wft.fromStatus=:fromStatusValue or wft.fromStatus='*') and workflow=:workflowValue order by priority ASC") })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "wf_transition_seq"), })
+@NamedQueries({
+        @NamedQuery(name = "WFTransition.listByFromStatus", query = "SELECT wft FROM WFTransition wft where (wft.fromStatus=:fromStatusValue or wft.fromStatus='*') and workflow=:workflowValue order by priority ASC") })
 public class WFTransition extends EnableEntity implements Comparable<WFTransition> {
 
     private static final long serialVersionUID = 1L;
@@ -225,10 +227,7 @@ public class WFTransition extends EnableEntity implements Comparable<WFTransitio
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        return result;
+        return 961 + ("WFTransition" + id).hashCode();
     }
 
     @Override
@@ -241,7 +240,7 @@ public class WFTransition extends EnableEntity implements Comparable<WFTransitio
         } else if (!(obj instanceof WFTransition)) {
             return false;
         }
-        
+
         WFTransition other = (WFTransition) obj;
         if (getId() == null) {
             if (other.getId() != null) {
@@ -261,12 +260,12 @@ public class WFTransition extends EnableEntity implements Comparable<WFTransitio
     @Override
     public String toString() {
         return String.format("WFTransition [fromStatus=%s, toStatus=%s, priority=%s, conditionEl=%s, combinedEl=%s]", fromStatus, toStatus, priority, conditionEl, getCombinedEl());
-    }   
-    
+    }
+
     public String clearUuid() {
         String oldUuid = uuid;
         uuid = UUID.randomUUID().toString();
         return oldUuid;
     }
-    
+
 }

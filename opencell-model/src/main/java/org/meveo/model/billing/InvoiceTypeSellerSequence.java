@@ -112,7 +112,7 @@ public class InvoiceTypeSellerSequence implements IEntity {
         InvoiceTypeSellerSequence other = (InvoiceTypeSellerSequence) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+             return true;
         }
 
         if (invoiceType != null) {

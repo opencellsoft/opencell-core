@@ -40,67 +40,65 @@ import org.meveo.model.BaseEntity;
         @Parameter(name = "sequence_name", value = "bi_job_history_seq"), })
 public class JobHistory extends BaseEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Column(name = "history_type", insertable = false, updatable = false, length = 31)
     @Size(max = 31)
-	private String type;
+    private String type;
 
-	@Column(name = "execution_date")
-	private Date executionDate;
+    @Column(name = "execution_date")
+    private Date executionDate;
 
-	@Column(name = "lines_read")
-	private Integer linesRead;
+    @Column(name = "lines_read")
+    private Integer linesRead;
 
-	@Column(name = "lines_inserted")
-	private Integer linesInserted;
+    @Column(name = "lines_inserted")
+    private Integer linesInserted;
 
-	@Column(name = "lines_rejected")
-	private Integer linesRejected;
+    @Column(name = "lines_rejected")
+    private Integer linesRejected;
 
-	public Date getExecutionDate() {
-		return executionDate;
-	}
+    public Date getExecutionDate() {
+        return executionDate;
+    }
 
-	public void setExecutionDate(Date executionDate) {
-		this.executionDate = executionDate;
-	}
+    public void setExecutionDate(Date executionDate) {
+        this.executionDate = executionDate;
+    }
 
-	public Integer getLinesRead() {
-		return linesRead;
-	}
+    public Integer getLinesRead() {
+        return linesRead;
+    }
 
-	public void setLinesRead(Integer linesRead) {
-		this.linesRead = linesRead;
-	}
+    public void setLinesRead(Integer linesRead) {
+        this.linesRead = linesRead;
+    }
 
-	public Integer getLinesInserted() {
-		return linesInserted;
-	}
+    public Integer getLinesInserted() {
+        return linesInserted;
+    }
 
-	public void setLinesInserted(Integer linesInserted) {
-		this.linesInserted = linesInserted;
-	}
+    public void setLinesInserted(Integer linesInserted) {
+        this.linesInserted = linesInserted;
+    }
 
-	public Integer getLinesRejected() {
-		return linesRejected;
-	}
+    public Integer getLinesRejected() {
+        return linesRejected;
+    }
 
-	public void setLinesRejected(Integer linesRejected) {
-		this.linesRejected = linesRejected;
-	}
+    public void setLinesRejected(Integer linesRejected) {
+        this.linesRejected = linesRejected;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((executionDate == null) ? 0 : executionDate.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+    @Override
+    public int hashCode() {
+        int result = 961 + "JobHistory".hashCode() + (executionDate == null ? 0 : executionDate.hashCode());
+        result = 31 * result + ((type == null) ? 0 : type.hashCode());
+        return result;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         } else if (obj == null) {
@@ -108,27 +106,30 @@ public class JobHistory extends BaseEntity {
         } else if (!(obj instanceof JobHistory)) {
             return false;
         }
-        
-		JobHistory other = (JobHistory) obj;
-		if (executionDate == null) {
-			if (other.executionDate != null)
-				return false;
-		} else if (!executionDate.equals(other.executionDate))
-			return false;
-		if (type == null) {
-			if (other.type != null)
-				return false;
-		} else if (!type.equals(other.type))
-			return false;
-		return true;
-	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
+        JobHistory other = (JobHistory) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        if (executionDate == null) {
+            if (other.executionDate != null)
+                return false;
+        } else if (!executionDate.equals(other.executionDate))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        } else if (!type.equals(other.type))
+            return false;
+        return true;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
+    }
 
 }

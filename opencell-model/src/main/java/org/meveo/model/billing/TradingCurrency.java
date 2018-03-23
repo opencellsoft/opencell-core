@@ -98,6 +98,7 @@ public class TradingCurrency extends EnableEntity {
         this.currencyCode = currencyCode;
     }
 
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {
@@ -109,8 +110,13 @@ public class TradingCurrency extends EnableEntity {
         }
 
         TradingCurrency other = (TradingCurrency) obj;
-        return getId() != null && getId().equals(other.getId());
-        // return (o.currency!=null) && o.currency.equals(this.currency);
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+
+        } else if (currency.getId().equals(other.getCurrency().getId())) {
+            return true;
+        }
+        return false;
     }
 
     @Override

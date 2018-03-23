@@ -29,111 +29,109 @@ import org.meveo.model.billing.InvoiceSubCategory;
  **/
 @Entity
 @Cacheable
-@ExportIdentifier({ "code"})
-@Table(name = "cat_discount_plan_item", uniqueConstraints = { @UniqueConstraint(columnNames = { "code"}) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "cat_discount_plan_item", uniqueConstraints = { @UniqueConstraint(columnNames = { "code" }) })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_discount_plan_item_seq"), })
 public class DiscountPlanItem extends EnableEntity {
 
-	private static final long serialVersionUID = 4543503736567841084L;
+    private static final long serialVersionUID = 4543503736567841084L;
 
-	@Column(name = "code", length = 255, nullable = false)
-	@Size(max = 255, min = 1)
-	@NotNull
-	private String code;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "discount_plan_id", nullable = false)
+    @Column(name = "code", length = 255, nullable = false)
+    @Size(max = 255, min = 1)
     @NotNull
-	private DiscountPlan discountPlan;
+    private String code;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "discount_plan_id", nullable = false)
+    @NotNull
+    private DiscountPlan discountPlan;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoice_category_id")
-	private InvoiceCategory invoiceCategory;
+    private InvoiceCategory invoiceCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoice_sub_category_id")
-	private InvoiceSubCategory invoiceSubCategory;
+    @JoinColumn(name = "invoice_sub_category_id")
+    private InvoiceSubCategory invoiceSubCategory;
 
-	@Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-	@Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
-	@Min(0)
-	@Max(100)
-	private BigDecimal percent = new BigDecimal(0);
+    @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    @Digits(integer = NB_PRECISION, fraction = NB_DECIMALS)
+    @Min(0)
+    @Max(100)
+    private BigDecimal percent = new BigDecimal(0);
 
-	/**
-	 * @deprecated As of version 5.0. No replacement.
-	 */
-	@Deprecated // until further analysis
-	@Column(name = "accounting_code", length = 255)
-	@Size(max = 255)
-	private String accountingCode;
-	
-	@Column(name = "expression_el", length = 2000)
-   	@Size(max = 2000)
-   	private String expressionEl;
-	
-	@Column(name = "discount_percent_el", length = 2000)
-   	@Size(max = 2000)
-   	private String discountPercentEl;
+    /**
+     * @deprecated As of version 5.0. No replacement.
+     */
+    @Deprecated // until further analysis
+    @Column(name = "accounting_code", length = 255)
+    @Size(max = 255)
+    private String accountingCode;
 
-	public DiscountPlan getDiscountPlan() {
-		return discountPlan;
-	}
+    @Column(name = "expression_el", length = 2000)
+    @Size(max = 2000)
+    private String expressionEl;
 
-	public void setDiscountPlan(DiscountPlan discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+    @Column(name = "discount_percent_el", length = 2000)
+    @Size(max = 2000)
+    private String discountPercentEl;
 
-	public InvoiceCategory getInvoiceCategory() {
-		return invoiceCategory;
-	}
+    public DiscountPlan getDiscountPlan() {
+        return discountPlan;
+    }
 
-	public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
-		this.invoiceCategory = invoiceCategory;
-	}
+    public void setDiscountPlan(DiscountPlan discountPlan) {
+        this.discountPlan = discountPlan;
+    }
 
-	public InvoiceSubCategory getInvoiceSubCategory() {
-		return invoiceSubCategory;
-	}
+    public InvoiceCategory getInvoiceCategory() {
+        return invoiceCategory;
+    }
 
-	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
-		this.invoiceSubCategory = invoiceSubCategory;
-	}
+    public void setInvoiceCategory(InvoiceCategory invoiceCategory) {
+        this.invoiceCategory = invoiceCategory;
+    }
 
-	public BigDecimal getPercent() {
-		return percent;
-	}
+    public InvoiceSubCategory getInvoiceSubCategory() {
+        return invoiceSubCategory;
+    }
 
-	public void setPercent(BigDecimal percent) {
-		this.percent = percent;
-	}
+    public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+        this.invoiceSubCategory = invoiceSubCategory;
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public BigDecimal getPercent() {
+        return percent;
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public void setPercent(BigDecimal percent) {
+        this.percent = percent;
+    }
 
-	public String getExpressionEl() {
-		return expressionEl;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setExpressionEl(String expressionEl) {
-		this.expressionEl = expressionEl;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
-		return result;
-	}
+    public String getExpressionEl() {
+        return expressionEl;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    public void setExpressionEl(String expressionEl) {
+        this.expressionEl = expressionEl;
+    }
+
+    @Override
+    public int hashCode() {
+        return 961 + (("DiscountPlanItem" + (code == null ? "" : code)).hashCode());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -142,8 +140,8 @@ public class DiscountPlanItem extends EnableEntity {
         } else if (!(obj instanceof DiscountPlanItem)) {
             return false;
         }
-        
-		DiscountPlanItem other = (DiscountPlanItem) obj;
+
+        DiscountPlanItem other = (DiscountPlanItem) obj;
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
@@ -154,23 +152,23 @@ public class DiscountPlanItem extends EnableEntity {
         } else if (!code.equals(other.getCode())) {
             return false;
         }
-		return true;
-	}
+        return true;
+    }
 
-	public String getAccountingCode() {
-		return accountingCode;
-	}
+    public String getAccountingCode() {
+        return accountingCode;
+    }
 
-	public void setAccountingCode(String accountingCode) {
-		this.accountingCode = accountingCode;
-	}
+    public void setAccountingCode(String accountingCode) {
+        this.accountingCode = accountingCode;
+    }
 
-	public String getDiscountPercentEl() {
-		return discountPercentEl;
-	}
+    public String getDiscountPercentEl() {
+        return discountPercentEl;
+    }
 
-	public void setDiscountPercentEl(String discountPercentEl) {
-		this.discountPercentEl = discountPercentEl;
-	}
+    public void setDiscountPercentEl(String discountPercentEl) {
+        this.discountPercentEl = discountPercentEl;
+    }
 
 }

@@ -401,8 +401,7 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
+        int result = 961 + ((criteria1Value == null) ? 0 : criteria1Value.hashCode());
         result = prime * result + ((criteria2Value == null) ? 0 : criteria2Value.hashCode());
         result = prime * result + ((criteria3Value == null) ? 0 : criteria3Value.hashCode());
         result = prime * result + ((endRatingDate == null) ? 0 : endRatingDate.hashCode());

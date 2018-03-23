@@ -41,170 +41,170 @@ import javax.validation.constraints.Size;
 @DiscriminatorValue("F")
 public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "invoicesubcategory")
-	private InvoiceSubCategory invoiceSubCategory;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "invoicesubcategory")
+    private InvoiceSubCategory invoiceSubCategory;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
-	private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "billing_invoice_agregate_taxes", joinColumns = @JoinColumn(name = "sub_cat_invoice_aggregat_id"), inverseJoinColumns = @JoinColumn(name = "tax_id"))
+    private Set<Tax> subCategoryTaxes = new HashSet<Tax>();
 
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "category_invoice_agregate")
-	private CategoryInvoiceAgregate categoryInvoiceAgregate;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_invoice_agregate")
+    private CategoryInvoiceAgregate categoryInvoiceAgregate;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "wallet_id")
-	private WalletInstance wallet;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "wallet_id")
+    private WalletInstance wallet;
 
-	@OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
-	private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
+    @OneToMany(mappedBy = "invoiceAgregateF", fetch = FetchType.LAZY)
+    private List<RatedTransaction> ratedtransactions = new ArrayList<RatedTransaction>();
 
-	@Column(name = "discount_plan_code", length = 50)
-	@Size(max = 50)
-	private String discountPlanCode;
-
-	@Column(name = "discount_plan_item_code", length = 50)
+    @Column(name = "discount_plan_code", length = 50)
     @Size(max = 50)
-	private String discountPlanItemCode;
+    private String discountPlanCode;
 
-	@Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
-	private BigDecimal discountPercent;
-	
-	@Transient
-	private BigDecimal oldAmountWithoutTax;
-	
-	@Transient
-	private BigDecimal oldAmountWithTax;
+    @Column(name = "discount_plan_item_code", length = 50)
+    @Size(max = 50)
+    private String discountPlanItemCode;
 
-	public SubCategoryInvoiceAgregate() {
+    @Column(name = "discount_percent", precision = NB_PRECISION, scale = NB_DECIMALS)
+    private BigDecimal discountPercent;
 
-	}
+    @Transient
+    private BigDecimal oldAmountWithoutTax;
 
-	public SubCategoryInvoiceAgregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
-		this.setAccountingCode(subCategoryInvoiceAgregate.getAccountingCode());
-		this.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
-		this.setWallet(subCategoryInvoiceAgregate.getWallet());
-		this.setItemNumber(subCategoryInvoiceAgregate.getItemNumber());
-		this.setQuantity(subCategoryInvoiceAgregate.getQuantity());
-		this.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
-		this.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
-		this.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
-		this.setBillingAccount(subCategoryInvoiceAgregate.getBillingAccount());
-		this.setBillingRun(subCategoryInvoiceAgregate.getBillingRun());
-		this.setUserAccount(subCategoryInvoiceAgregate.getUserAccount());
-		this.setDiscountAggregate(false);
-	}
+    @Transient
+    private BigDecimal oldAmountWithTax;
 
-	public InvoiceSubCategory getInvoiceSubCategory() {
-		return invoiceSubCategory;
-	}
+    public SubCategoryInvoiceAgregate() {
 
-	public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
-		this.invoiceSubCategory = invoiceSubCategory;
-	}
+    }
 
-	public CategoryInvoiceAgregate getCategoryInvoiceAgregate() {
-		return categoryInvoiceAgregate;
-	}
+    public SubCategoryInvoiceAgregate(SubCategoryInvoiceAgregate subCategoryInvoiceAgregate) {
+        this.setAccountingCode(subCategoryInvoiceAgregate.getAccountingCode());
+        this.setInvoiceSubCategory(subCategoryInvoiceAgregate.getInvoiceSubCategory());
+        this.setWallet(subCategoryInvoiceAgregate.getWallet());
+        this.setItemNumber(subCategoryInvoiceAgregate.getItemNumber());
+        this.setQuantity(subCategoryInvoiceAgregate.getQuantity());
+        this.setAmountWithoutTax(subCategoryInvoiceAgregate.getAmountWithoutTax());
+        this.setAmountWithTax(subCategoryInvoiceAgregate.getAmountWithTax());
+        this.setAmountTax(subCategoryInvoiceAgregate.getAmountTax());
+        this.setBillingAccount(subCategoryInvoiceAgregate.getBillingAccount());
+        this.setBillingRun(subCategoryInvoiceAgregate.getBillingRun());
+        this.setUserAccount(subCategoryInvoiceAgregate.getUserAccount());
+        this.setDiscountAggregate(false);
+    }
 
-	public void setCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
-		this.categoryInvoiceAgregate = categoryInvoiceAgregate;
-		if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
-			categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
-		}
-	}
+    public InvoiceSubCategory getInvoiceSubCategory() {
+        return invoiceSubCategory;
+    }
 
-	public List<RatedTransaction> getRatedtransactions() {
-		return ratedtransactions;
-	}
+    public void setInvoiceSubCategory(InvoiceSubCategory invoiceSubCategory) {
+        this.invoiceSubCategory = invoiceSubCategory;
+    }
 
-	public void setRatedtransactions(List<RatedTransaction> ratedtransactions) {
-		this.ratedtransactions = ratedtransactions;
-	}
+    public CategoryInvoiceAgregate getCategoryInvoiceAgregate() {
+        return categoryInvoiceAgregate;
+    }
 
-	public WalletInstance getWallet() {
-		return wallet;
-	}
+    public void setCategoryInvoiceAgregate(CategoryInvoiceAgregate categoryInvoiceAgregate) {
+        this.categoryInvoiceAgregate = categoryInvoiceAgregate;
+        if (categoryInvoiceAgregate != null && categoryInvoiceAgregate.getSubCategoryInvoiceAgregates() != null) {
+            categoryInvoiceAgregate.getSubCategoryInvoiceAgregates().add(this);
+        }
+    }
 
-	public void setWallet(WalletInstance wallet) {
-		this.wallet = wallet;
-	}
+    public List<RatedTransaction> getRatedtransactions() {
+        return ratedtransactions;
+    }
 
-	public Set<Tax> getSubCategoryTaxes() {
-		return subCategoryTaxes;
-	}
+    public void setRatedtransactions(List<RatedTransaction> ratedtransactions) {
+        this.ratedtransactions = ratedtransactions;
+    }
 
-	public void setSubCategoryTaxes(Set<Tax> subCategoryTaxes) {
-		this.subCategoryTaxes = subCategoryTaxes;
-	}
+    public WalletInstance getWallet() {
+        return wallet;
+    }
 
-	public void addSubCategoryTax(Tax subCategoryTax) {
-		if (subCategoryTaxes == null) {
-			subCategoryTaxes = new HashSet<Tax>();
-		}
-		if (subCategoryTax != null) {
-			subCategoryTaxes.add(subCategoryTax);
-		}
-	}
+    public void setWallet(WalletInstance wallet) {
+        this.wallet = wallet;
+    }
 
-	public String getDiscountPlanCode() {
-		return discountPlanCode;
-	}
+    public Set<Tax> getSubCategoryTaxes() {
+        return subCategoryTaxes;
+    }
 
-	public void setDiscountPlanCode(String discountPlanCode) {
-		this.discountPlanCode = discountPlanCode;
-	}
+    public void setSubCategoryTaxes(Set<Tax> subCategoryTaxes) {
+        this.subCategoryTaxes = subCategoryTaxes;
+    }
 
-	public String getDiscountPlanItemCode() {
-		return discountPlanItemCode;
-	}
+    public void addSubCategoryTax(Tax subCategoryTax) {
+        if (subCategoryTaxes == null) {
+            subCategoryTaxes = new HashSet<Tax>();
+        }
+        if (subCategoryTax != null) {
+            subCategoryTaxes.add(subCategoryTax);
+        }
+    }
 
-	public void setDiscountPlanItemCode(String discountPlanItemCode) {
-		this.discountPlanItemCode = discountPlanItemCode;
-	}
+    public String getDiscountPlanCode() {
+        return discountPlanCode;
+    }
 
-	public BigDecimal getDiscountPercent() {
-		return discountPercent;
-	}
+    public void setDiscountPlanCode(String discountPlanCode) {
+        this.discountPlanCode = discountPlanCode;
+    }
 
-	public void setDiscountPercent(BigDecimal discountPercent) {
-		this.discountPercent = discountPercent;
-	}
+    public String getDiscountPlanItemCode() {
+        return discountPlanItemCode;
+    }
 
-	public BigDecimal getOldAmountWithoutTax() {
-		return oldAmountWithoutTax;
-	}
+    public void setDiscountPlanItemCode(String discountPlanItemCode) {
+        this.discountPlanItemCode = discountPlanItemCode;
+    }
 
-	public void setOldAmountWithoutTax(BigDecimal oldAmountWithoutTax) {
-		this.oldAmountWithoutTax = oldAmountWithoutTax;
-	}
+    public BigDecimal getDiscountPercent() {
+        return discountPercent;
+    }
 
-	public BigDecimal getOldAmountWithTax() {
-		return oldAmountWithTax;
-	}
+    public void setDiscountPercent(BigDecimal discountPercent) {
+        this.discountPercent = discountPercent;
+    }
 
-	public void setOldAmountWithTax(BigDecimal oldAmountWithTax) {
-		this.oldAmountWithTax = oldAmountWithTax;
-	}
-	
-	@Override
-	public int hashCode() {
-		if (id != null)
-			return id.intValue();
-		if (invoiceSubCategory != null)
-			return invoiceSubCategory.hashCode();
+    public BigDecimal getOldAmountWithoutTax() {
+        return oldAmountWithoutTax;
+    }
 
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result;
-		return result;
-	}
+    public void setOldAmountWithoutTax(BigDecimal oldAmountWithoutTax) {
+        this.oldAmountWithoutTax = oldAmountWithoutTax;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    public BigDecimal getOldAmountWithTax() {
+        return oldAmountWithTax;
+    }
+
+    public void setOldAmountWithTax(BigDecimal oldAmountWithTax) {
+        this.oldAmountWithTax = oldAmountWithTax;
+    }
+
+    @Override
+    public int hashCode() {
+        if (id != null)
+            return id.intValue();
+        if (invoiceSubCategory != null)
+            return invoiceSubCategory.hashCode();
+
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -213,23 +213,31 @@ public class SubCategoryInvoiceAgregate extends InvoiceAgregate {
         } else if (!(obj instanceof SubCategoryInvoiceAgregate)) {
             return false;
         }
-        
-		SubCategoryInvoiceAgregate other = (SubCategoryInvoiceAgregate) obj;
-		if (invoiceSubCategory == null) {
-			if (other.getInvoiceSubCategory() != null)
-				return false;
-		} else if (!invoiceSubCategory.equals(other.getInvoiceSubCategory()))
-			return false;
-		return true;
-	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "SubCategoryInvoiceAgregate [id="+id+",invoiceSubCategory=" + (invoiceSubCategory == null ? null:invoiceSubCategory.getCode() )+ ", oldAmountWithoutTax=" +
-	oldAmountWithoutTax + ", oldAmountWithTax="+ oldAmountWithTax + "]";
-	}
+        SubCategoryInvoiceAgregate other = (SubCategoryInvoiceAgregate) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        if (invoiceSubCategory == null) {
+            if (other.getInvoiceSubCategory() != null) {
+                return false;
+            }
+        } else if (!invoiceSubCategory.equals(other.getInvoiceSubCategory())) {
+            return false;
+        }
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "SubCategoryInvoiceAgregate [id=" + id + ",invoiceSubCategory=" + (invoiceSubCategory == null ? null : invoiceSubCategory.getCode()) + ", oldAmountWithoutTax="
+                + oldAmountWithoutTax + ", oldAmountWithTax=" + oldAmountWithTax + "]";
+    }
 
 }

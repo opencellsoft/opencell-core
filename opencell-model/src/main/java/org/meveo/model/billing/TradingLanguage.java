@@ -95,6 +95,7 @@ public class TradingLanguage extends EnableEntity {
         return String.format("TradingLanguage [language=%s, id=%s]", language, getId());
     }
 
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {

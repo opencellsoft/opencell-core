@@ -567,7 +567,7 @@ public class CustomFieldTemplate extends BusinessEntity implements Comparable<Cu
         CustomFieldTemplate other = (CustomFieldTemplate) obj;
 
         if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-            // return true;
+             return true;
         }
 
         if (code == null && other.getCode() != null) {

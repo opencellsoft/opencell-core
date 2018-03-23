@@ -49,10 +49,11 @@ import org.meveo.model.catalog.ProductTemplate;
 @Entity
 @ObservableEntity
 @CustomFieldEntity(cftCodePrefix = "PRODUCT_INSTANCE")
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @Table(name = "billing_product_instance")
 @AttributeOverrides({ @AttributeOverride(name = "code", column = @Column(name = "code", unique = false)) })
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "billing_product_instance_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "billing_product_instance_seq"), })
 public class ProductInstance extends BusinessCFEntity {
 
     private static final long serialVersionUID = 1L;
@@ -60,7 +61,7 @@ public class ProductInstance extends BusinessCFEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_account_id")
     private UserAccount userAccount;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "subscription_id")
     private Subscription subscription;
@@ -84,29 +85,29 @@ public class ProductInstance extends BusinessCFEntity {
     @Column(name = "order_number", length = 100)
     @Size(max = 100)
     private String orderNumber;
-    
+
     public ProductInstance() {
         super();
     }
 
-    public ProductInstance(UserAccount userAccount,Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity,
-    		Date applicationDate, String code, String description, String orderNumber) {
+    public ProductInstance(UserAccount userAccount, Subscription subscription, ProductTemplate productTemplate, BigDecimal quantity, Date applicationDate, String code,
+            String description, String orderNumber) {
         this.applicationDate = applicationDate;
         this.code = code;
         this.description = description;
         this.productChargeInstances = new ArrayList<>();
         this.productTemplate = productTemplate;
         this.quantity = quantity;
-        this.orderNumber=orderNumber;
-        this.subscription=subscription;
-        if(subscription==null){
+        this.orderNumber = orderNumber;
+        this.subscription = subscription;
+        if (subscription == null) {
             this.userAccount = userAccount;
         } else {
-        	this.userAccount=subscription.getUserAccount();
+            this.userAccount = subscription.getUserAccount();
         }
     }
 
-	public ProductTemplate getProductTemplate() {
+    public ProductTemplate getProductTemplate() {
         return productTemplate;
     }
 
@@ -139,14 +140,14 @@ public class ProductInstance extends BusinessCFEntity {
     }
 
     public Subscription getSubscription() {
-		return subscription;
-	}
+        return subscription;
+    }
 
-	public void setSubscription(Subscription subscription) {
-		this.subscription = subscription;
-	}
+    public void setSubscription(Subscription subscription) {
+        this.subscription = subscription;
+    }
 
-	public Date getApplicationDate() {
+    public Date getApplicationDate() {
         return applicationDate;
     }
 
@@ -155,14 +156,15 @@ public class ProductInstance extends BusinessCFEntity {
     }
 
     public String getOrderNumber() {
-		return orderNumber;
-	}
+        return orderNumber;
+    }
 
-	public void setOrderNumber(String orderNumber) {
-		this.orderNumber = orderNumber;
-	}
+    public void setOrderNumber(String orderNumber) {
+        this.orderNumber = orderNumber;
+    }
 
-	public boolean equals(Object obj) {
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -182,7 +184,7 @@ public class ProductInstance extends BusinessCFEntity {
 
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
-    	return new ICustomFieldEntity[]{productTemplate};        
+        return new ICustomFieldEntity[] { productTemplate };
     }
 
 }

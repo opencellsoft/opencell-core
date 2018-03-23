@@ -62,7 +62,7 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
  *
  * @author Edward P. Legaspi
  * @lastModifiedVersion 5.0
-
+ * 
  */
 @Entity
 @ObservableEntity
@@ -73,16 +73,16 @@ import org.meveo.model.persistence.CustomFieldValuesConverter;
         @Parameter(name = "sequence_name", value = "ar_account_operation_seq"), })
 @CustomFieldEntity(cftCodePrefix = "ACC_OP")
 @NamedQueries({
-    @NamedQuery(name = "AccountOperation.listAOIdsToPay", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' and "
-            + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
-    @NamedQuery(name = "RecordedInvoice.listAOToPayByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' "
-            + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
-            + " and pm.preferred is true and ao.unMatchingAmount <> 0"),
-    @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and "
-            + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
-    @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
-            + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
-            + " and pm.preferred is true and ao.unMatchingAmount <> 0")})
+        @NamedQuery(name = "AccountOperation.listAOIdsToPay", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' and "
+                + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
+        @NamedQuery(name = "RecordedInvoice.listAOToPayByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.transactionCategory='DEBIT' and ao.matchingStatus ='O' "
+                + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
+                + " and pm.preferred is true and ao.unMatchingAmount <> 0"),
+        @NamedQuery(name = "AccountOperation.listAOIdsToRefund", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm  where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' and "
+                + " ao.customerAccount.excludedFromPayment = false and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod  and pm.preferred is true and ao.unMatchingAmount <> 0"),
+        @NamedQuery(name = "RecordedInvoice.listAOToRefundByDate", query = "Select ao.id from AccountOperation as ao,PaymentMethod as pm where ao.type not in ('P','AP') and ao.transactionCategory='CREDIT' and ao.matchingStatus ='O' "
+                + "and  ao.customerAccount.excludedFromPayment = false and ao.dueDate >=:fromDueDate and ao.dueDate<=:toDueDate and ao.customerAccount.id = pm.customerAccount.id and pm.paymentType =:payMethod "
+                + " and pm.preferred is true and ao.unMatchingAmount <> 0") })
 public class AccountOperation extends EnableEntity implements ICustomFieldEntity, ISearchable {
 
     private static final long serialVersionUID = 1L;
@@ -182,7 +182,7 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
     @Column(name = "bank_collection_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Date bankCollectionDate;
-    
+
     @Column(name = "payment_method")
     @Enumerated(EnumType.STRING)
     private PaymentMethodEnum paymentMethod;
@@ -291,10 +291,7 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((occCode == null) ? 0 : occCode.hashCode());
-        return result;
+        return 961 + ("AccountOperation" + occCode).hashCode();
     }
 
     @Override
@@ -309,6 +306,9 @@ public class AccountOperation extends EnableEntity implements ICustomFieldEntity
         }
 
         AccountOperation other = (AccountOperation) obj;
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
         if (occCode == null) {
             if (other.occCode != null)
                 return false;
