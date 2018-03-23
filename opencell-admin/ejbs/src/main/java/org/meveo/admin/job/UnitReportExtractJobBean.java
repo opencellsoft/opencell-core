@@ -19,6 +19,8 @@ import org.meveo.service.script.finance.ReportExtractScript;
 import org.slf4j.Logger;
 
 /**
+ * Extension class for JobExtractReport to start a new transaction.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

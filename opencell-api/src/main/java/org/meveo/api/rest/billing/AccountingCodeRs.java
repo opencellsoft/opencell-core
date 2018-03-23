@@ -21,6 +21,8 @@ import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * API for managing AccountingCode entity.
+ * 
  * @author Edward P. Legaspi
  * @version 23 Feb 2018
  * @lastModifiedVersion 5.0

@@ -536,6 +536,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
     }
 
     /**
+     * Creates Invoice and its aggregates in memory.
+     * 
      * @param ratedTransactions list of rated transaction
      * @param billingAccount billing account
      * @param invoiceType type of invoice

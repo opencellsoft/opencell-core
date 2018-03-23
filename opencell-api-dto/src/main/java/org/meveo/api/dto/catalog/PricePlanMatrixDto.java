@@ -69,6 +69,10 @@ public class PricePlanMatrixDto extends BusinessDto {
     private List<LanguageDescriptionDto> languageDescriptions;
 
     private String woDescriptionEL;
+    
+    /**
+     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     */
     private String ratingEL;
 
     public PricePlanMatrixDto() {

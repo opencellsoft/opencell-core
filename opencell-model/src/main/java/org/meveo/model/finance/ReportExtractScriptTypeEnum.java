@@ -1,6 +1,8 @@
 package org.meveo.model.finance;
 
 /**
+ * Type of ReportExtract script.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

@@ -360,6 +360,11 @@ public class JobExecutionService extends PersistenceService<JobExecutionResultIm
         return JobRunningStatusEnum.RUNNING_THIS == jobCacheContainerProvider.isJobRunning(jobInstanceId);
     }
 
+    /**
+     * Finds the last job execution result by a given job instance.
+     * @param jobInstance JobInstance filter
+     * @return last job execution result
+     */
     public JobExecutionResultImpl findLastExecutionByInstance(JobInstance jobInstance) {
         QueryBuilder qb = new QueryBuilder(JobExecutionResultImpl.class, "j");
         qb.addCriterionEntity("jobInstance", jobInstance);

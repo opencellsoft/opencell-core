@@ -176,6 +176,9 @@ public class PricePlanMatrix extends BusinessCFEntity implements Comparable<Pric
     @Size(max = 2000)
     private String woDescriptionEL;
 
+    /**
+     * If this EL is not null, evaluate and set in WalletOperation amounts during amount calculation in RatingService.
+     */
     @Column(name = "rating_el", length = 2000)
     @Size(max = 2000)
     private String ratingEL;
