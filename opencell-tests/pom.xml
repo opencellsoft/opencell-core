@@ -47,6 +47,12 @@
 					<projectProperties>
 						<value>opencell.url=${opencell.url}</value>
 						<value>opencell.url2=${opencell.url2}</value>
+						<value>elasticSearchUrl=${elasticSearchUrl}</value>
+						<value>ingenico.SecretApiKey=${ingenico.SecretApiKey}</value>
+						<value>ingenico.ApiKeyId=${ingenico.ApiKeyId}</value>
+						<value>ingenico.merchantId=${ingenico.merchantId}</value>
+						<value>slimPay.secretKey=${slimPay.secretKey}</value>
+						<value>slimPay.userId=${slimPay.userId}</value>
 						<value>adminUsername=${adminUsername}</value>
 						<value>adminPassword=${adminPassword}</value>
 						<value>superUsername=${superUsername}</value>
