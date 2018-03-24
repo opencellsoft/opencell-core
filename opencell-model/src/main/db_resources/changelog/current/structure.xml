@@ -512,9 +512,60 @@
 	</changeSet>
 
     <changeSet id="#1705_20180220-migration-M" author="EdwardPLegaspi" dbms="mysql">
-        
-        <!--  TODO is missing data copy  -->
-
+        <sql>
+			<![CDATA[
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_tax set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.account_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}ar_occ_template set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_invoice_agregate set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}dwh_account_operation set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}dwh_journal_entries set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}ar_account_operation set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
+		</sql>
+		
+		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
+		</sql>
         <dropUniqueConstraint tableName="dwh_journal_entries" constraintName="uk_og8li9rlut4trrxgajab23j7y"/>
     </changeSet>
     
