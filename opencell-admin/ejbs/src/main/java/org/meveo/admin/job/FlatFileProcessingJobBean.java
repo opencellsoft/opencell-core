@@ -3,8 +3,12 @@ package org.meveo.admin.job;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
@@ -12,6 +16,8 @@ import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
+import org.meveo.admin.async.FlatFileAsyncResponse;
+import org.meveo.admin.async.FlatFileProcessingAsync;
 import org.meveo.admin.job.logging.JobLoggingInterceptor;
 import org.meveo.commons.parsers.FileParserBeanio;
 import org.meveo.commons.parsers.FileParserFlatworm;
@@ -47,6 +53,9 @@ public class FlatFileProcessingJobBean {
     /** The job execution service. */
     @Inject
     private JobExecutionService jobExecutionService;
+
+    @Inject
+    private FlatFileProcessingAsync flatFileProcessingAsync;
 
     /** The file name. */
     String fileName;
@@ -153,7 +162,7 @@ public class FlatFileProcessingJobBean {
                     fileParser = new FileParserBeanio();
                 }
                 if (fileParser == null) {
-                    throw new Exception("Check your mapping discriptor, only flatworm and beanio are allowed");
+                    throw new Exception("Check your mapping discriptor, only flatworm or beanio are allowed");
                 }
 
                 fileParser.setDataFile(currentFile);
@@ -161,30 +170,49 @@ public class FlatFileProcessingJobBean {
                 fileParser.setDataName(recordVariableName);
                 fileParser.parsing();
                 boolean continueAfterError = "true".equals(paramBeanFactory.getInstance().getProperty("flatfile.continueOnError", "true"));
+                List<Future<FlatFileAsyncResponse>> futures = new ArrayList<Future<FlatFileAsyncResponse>>();
                 while (fileParser.hasNext() && jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
                     RecordContext recordContext = null;
                     cpLines++;
                     try {
                         recordContext = fileParser.getNextRecord();
-                        log.debug("record line content:{}", recordContext.getLineContent());
+                        log.trace("record line content:{}", recordContext.getLineContent());
+                        if (recordContext.getRecord() == null) {
+                            throw new Exception(recordContext.getReason());
+                        }
                         Map<String, Object> executeParams = new HashMap<String, Object>();
                         executeParams.put(recordVariableName, recordContext.getRecord());
                         executeParams.put(originFilename, fileName);
-                        script.execute(executeParams);
-                        outputRecord(recordContext);
-                        result.registerSucces();
-
+                        futures.add(flatFileProcessingAsync.launchAndForget(script, executeParams, recordContext.getLineContent(), cpLines));
                     } catch (Throwable e) {
                         String erreur = (recordContext == null || recordContext.getReason() == null) ? e.getMessage() : recordContext.getReason();
-                        log.warn("error on reject record ", e);
+                        log.warn("record on error :" + erreur);
                         result.registerError("file=" + fileName + ", line=" + cpLines + ": " + erreur);
-                        rejectRecord(recordContext, erreur);
+                        rejectRecord((recordContext == null || recordContext.getLineContent() == null) ? ("Line " + cpLines) : recordContext.getLineContent(), erreur);
                         if (!continueAfterError) {
                             break;
                         }
                     }
                 }
+                for (Future<FlatFileAsyncResponse> future : futures) {
+                    try {
+                        FlatFileAsyncResponse flatFileAsyncResponse = future.get();
+                        if (!flatFileAsyncResponse.isSuccess()) {
+                            result.registerError("file=" + fileName + ", line=" + flatFileAsyncResponse.getLineNumber() + ": " + flatFileAsyncResponse.getReason());
+                            rejectRecord(flatFileAsyncResponse.getLineRecord(), flatFileAsyncResponse.getReason());
+                        } else {
+                            outputRecord(flatFileAsyncResponse.getLineRecord());
+                            result.registerSucces();
+                        }
 
+                    } catch (InterruptedException e) {
+                        // It was cancelled from outside - no interest
+
+                    } catch (ExecutionException e) {
+                        Throwable cause = e.getCause();
+                        log.error("Failed to execute async method", cause);
+                    }
+                }
                 if (cpLines == 0) {
                     report += "\r\n file is empty ";
                 }
@@ -269,33 +297,39 @@ public class FlatFileProcessingJobBean {
     /**
      * Output record.
      *
-     * @param record the record
+     * @param lineRecord the record line
      * @throws FileNotFoundException the file not found exception
      */
-    private void outputRecord(RecordContext record) throws FileNotFoundException {
+    private void outputRecord(String lineRecord) throws FileNotFoundException {
         if (outputFileWriter == null) {
             File outputFile = new File(outputDir + File.separator + fileName + ".processed");
             outputFileWriter = new PrintWriter(outputFile);
+            outputFileWriter.print(lineRecord);
+        } else {
+            outputFileWriter.println("");
+            outputFileWriter.print(lineRecord);
         }
-        outputFileWriter.println(record == null ? null : record.getRecord().toString());
     }
 
     /**
      * Reject record.
      *
-     * @param record the record
+     * @param lineRecord the record line
      * @param reason the reason
      */
-    private void rejectRecord(RecordContext record, String reason) {
+    private void rejectRecord(String lineRecord, String reason) {
         if (rejectFileWriter == null) {
             File rejectFile = new File(rejectDir + File.separator + fileName + ".rejected");
             try {
                 rejectFileWriter = new PrintWriter(rejectFile);
+                rejectFileWriter.print(lineRecord + "=>" + reason);
             } catch (FileNotFoundException e) {
                 log.error("Failed to create a rejection file {}", rejectFile.getAbsolutePath());
             }
+        } else {
+            rejectFileWriter.println("");
+            rejectFileWriter.print(lineRecord + "=>" + reason);
         }
-        rejectFileWriter.println((record == null ? null : record.getLineContent()) + ";" + reason);
     }
 
 }
