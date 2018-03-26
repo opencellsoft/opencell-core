@@ -42,7 +42,6 @@ import org.meveo.service.payments.impl.AccountOperationService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.payments.impl.MatchingAmountService;
 import org.meveo.service.payments.impl.MatchingCodeService;
-import org.meveo.service.payments.impl.PaymentService;
 import org.meveo.service.payments.impl.RecordedInvoiceService;
 
 /**
@@ -491,8 +490,10 @@ public class AccountOperationApi extends BaseApi {
         accountOperationDto.setTransactionDate(accountOp.getTransactionDate());
         accountOperationDto.setTransactionCategory(accountOp.getTransactionCategory());
         accountOperationDto.setReference(accountOp.getReference());
-        accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
-        accountOperationDto.setAccountCode(accountOp.getAccountingCode().getCode());
+        if(accountOp.getAccountingCode() != null) {
+            accountOperationDto.setAccountingCode(accountOp.getAccountingCode().getCode());
+            accountOperationDto.setAccountCode(accountOp.getAccountingCode().getCode());
+        }
         accountOperationDto.setAccountCodeClientSide(accountOp.getAccountCodeClientSide());
         accountOperationDto.setAmount(accountOp.getAmount());
         accountOperationDto.setMatchingAmount(accountOp.getMatchingAmount());
