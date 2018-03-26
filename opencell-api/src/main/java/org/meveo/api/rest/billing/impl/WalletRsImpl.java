@@ -7,6 +7,7 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.billing.WalletApi;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
+import org.meveo.api.dto.billing.AmountsDto;
 import org.meveo.api.dto.billing.FindWalletOperationsDto;
 import org.meveo.api.dto.billing.WalletBalanceDto;
 import org.meveo.api.dto.billing.WalletOperationDto;
@@ -16,6 +17,7 @@ import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.billing.FindWalletOperationsResponseDto;
 import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
+import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.rest.billing.WalletRs;
 import org.meveo.api.rest.impl.BaseRs;
@@ -31,39 +33,66 @@ public class WalletRsImpl extends BaseRs implements WalletRs {
     private WalletApi walletApi;
 
     @Override
-    public ActionStatus currentBalance(WalletBalanceDto postData) {
-        ActionStatus result = new ActionStatus();
+    public WalletBalanceResponseDto currentBalance(WalletBalanceDto calculateParameters) {
+
+        WalletBalanceResponseDto result = new WalletBalanceResponseDto();
 
         try {
-            result.setMessage("" + walletApi.getCurrentAmount(postData));
+
+            AmountsDto amounts = walletApi.getCurrentAmount(calculateParameters);
+
+            if (calculateParameters.isAmountWithTax() != null) {
+                result.getActionStatus().setMessage("" + amounts.getAmount(calculateParameters.isAmountWithTax()));
+            }
+
+            result.setAmounts(amounts);
+
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;
     }
 
     @Override
-    public ActionStatus reservedBalance(WalletBalanceDto postData) {
-        ActionStatus result = new ActionStatus();
+    public WalletBalanceResponseDto reservedBalance(WalletBalanceDto calculateParameters) {
+
+        WalletBalanceResponseDto result = new WalletBalanceResponseDto();
 
         try {
-            result.setMessage("" + walletApi.getReservedAmount(postData));
+
+            AmountsDto amounts = walletApi.getReservedAmount(calculateParameters);
+
+            if (calculateParameters.isAmountWithTax() != null) {
+                result.getActionStatus().setMessage("" + amounts.getAmount(calculateParameters.isAmountWithTax()));
+            }
+
+            result.setAmounts(amounts);
+
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;
     }
 
     @Override
-    public ActionStatus openBalance(WalletBalanceDto postData) {
-        ActionStatus result = new ActionStatus();
+    public WalletBalanceResponseDto openBalance(WalletBalanceDto calculateParameters) {
+
+        WalletBalanceResponseDto result = new WalletBalanceResponseDto();
 
         try {
-            result.setMessage("" + walletApi.getOpenAmount(postData));
+
+            AmountsDto amounts = walletApi.getOpenAmount(calculateParameters);
+
+            if (calculateParameters.isAmountWithTax() != null) {
+                result.getActionStatus().setMessage("" + amounts.getAmount(calculateParameters.isAmountWithTax()));
+            }
+
+            result.setAmounts(amounts);
+
         } catch (Exception e) {
-            processException(e, result);
+            processException(e, result.getActionStatus());
         }
 
         return result;

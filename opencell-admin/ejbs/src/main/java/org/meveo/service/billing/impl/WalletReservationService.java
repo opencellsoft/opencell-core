@@ -5,134 +5,112 @@ import java.util.Date;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.persistence.TypedQuery;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.Amounts;
+import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.UserAccount;
 import org.meveo.model.billing.WalletOperationStatusEnum;
 import org.meveo.model.billing.WalletReservation;
 import org.meveo.model.catalog.Calendar;
+import org.meveo.model.catalog.LevelEnum;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
-import org.meveo.service.admin.impl.SellerService;
+import org.meveo.model.crm.Customer;
+import org.meveo.model.payments.CustomerAccount;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.catalog.impl.CalendarService;
 
 /**
- * @author Wassim Drira
- * @lastModifiedVersion 5.0
+ * Service class for WalletReservation entity
  * 
+ * @author Wassim Drira
+ * @lastModifiedVersion 5.0.1
  */
 @Stateless
 public class WalletReservationService extends PersistenceService<WalletReservation> {
 
     @Inject
-    private WalletOperationService walletOperationService;
-
-    @Inject
     private RealtimeChargingService realtimeChargingService;
-
-    @Inject
-    private UserAccountService userAccountService;
-
-    @Inject
-    private SellerService sellerService;
 
     @Inject
     private CalendarService calendarService;
 
-    public BigDecimal getCurrentBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
-        }
+    /**
+     * Balance calculation type
+     */
+    private enum BalanceTypeEnum {
 
-        Seller seller = sellerService.findByCode(sellerCode);
-        if (seller == null) {
-            throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
-        }
+        /**
+         * Current balance - open or reserved
+         */
+        CURRENT,
 
-        return walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, false, 1);
+        /**
+         * Reserved balance
+         */
+        RESERVED,
+
+        /**
+         * Open balance
+         */
+        OPEN;
     }
 
-    public BigDecimal getCurrentBalanceWithTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
-        }
+    /**
+     * Calculate current balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * 
+     * @param seller Seller
+     * @param customer Customer
+     * @param customer Customer account
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param startDate Start date for balance calculation
+     * @param endDate End date for balance calculation
+     * @return A current balance
+     */
+    public Amounts getCurrentBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
+            Date endDate) {
 
-        Seller seller = sellerService.findByCode(sellerCode);
-        if (seller == null) {
-            throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
-        }
-
-        return walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, true, 1);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.CURRENT);
     }
 
-    public BigDecimal getReservedBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
-        }
+    /**
+     * Calculate reserved balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * 
+     * @param seller Seller
+     * @param customer Customer
+     * @param customerAccount Customer account
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param startDate Start date for balance calculation
+     * @param endDate End date for balance calculation
+     * @return A reserved balance
+     */
+    public Amounts getReservedBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
+            Date endDate) {
 
-        Seller seller = sellerService.findByCode(sellerCode);
-        if (seller == null) {
-            throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
-        }
-
-        return walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, false, 2);
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.RESERVED);
     }
 
-    public BigDecimal getReservedBalanceWithTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
-        }
+    /**
+     * Calculate open balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * 
+     * @param seller Seller
+     * @param customer Customer
+     * @param customerAccount Customer account
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param startDate Start date for balance calculation
+     * @param endDate End date for balance calculation
+     * @return An open balance
+     */
+    public Amounts getOpenBalance(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
+            Date endDate) {
 
-        Seller seller = sellerService.findByCode(sellerCode);
-        if (seller == null) {
-            throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
-        }
-
-        return walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, true, 2);
-    }
-
-    public BigDecimal getOpenBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
-        }
-
-        Seller seller = sellerService.findByCode(sellerCode);
-        if (seller == null) {
-            throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
-        }
-
-        return walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, false, 3);
-    }
-
-    public BigDecimal getOpenBalanceWithTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
-        UserAccount userAccount = userAccountService.findByCode(userAccountCode);
-        if (userAccount == null) {
-            throw new BusinessException("UserAccount with code=" + userAccountCode + " does not exists.");
-        }
-
-        Seller seller = sellerService.findByCode(sellerCode);
-        if (seller == null) {
-            throw new BusinessException("Seller with code=" + sellerCode + " does not exists.");
-        }
-
-        return walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, true, 3);
-    }
-
-    public BigDecimal getCurrentAmountWithoutTax() {
-        // return getOpenBalanceWithoutTax().add(getCurrentBalanceWithoutTax());
-        return null;
-    }
-
-    public BigDecimal getCurrentAmountWithTax() {
-        // return getOpenBalanceWithTax().add(getCurrentBalanceWithTax());
-        return null;
+        return getBalanceAmount(seller, customer, customerAccount, billingAccount, userAccount, startDate, endDate, BalanceTypeEnum.OPEN);
     }
 
     public void updateReservationStatus(Long reservationId, WalletOperationStatusEnum status) {
@@ -169,7 +147,7 @@ public class WalletReservationService extends PersistenceService<WalletReservati
         startDate = cal.previousCalendarDate(subscriptionDate);
         endDate = cal.nextCalendarDate(subscriptionDate);
 
-        BigDecimal ratedAmount = walletOperationService.getBalanceAmount(seller, null, null, null, userAccount, startDate, endDate, isWithTax, 1);
+        BigDecimal ratedAmount = getCurrentBalance(seller, null, null, null, userAccount, startDate, endDate).getAmount(isWithTax);
 
         return ratedAmount;
     }
@@ -201,6 +179,130 @@ public class WalletReservationService extends PersistenceService<WalletReservati
         } catch (Exception e) {
             log.error("failed to updateSpendCredit", e);
         }
+    }
+
+    /**
+     * Get wallet operation balance. Seller, customer, customer account, billing account and user account parameters are mutually exclusive and only one of them should be provided.
+     * 
+     * @param seller Seller
+     * @param customer Customer
+     * @param customerAccount Customer account
+     * @param billingAccount Billing account
+     * @param userAccount User account
+     * @param startDate Start date
+     * @param endDate End date
+     * @param amountWithTax Amount with tax
+     * @param mode Balance type
+     * @return balance amount.
+     */
+    private Amounts getBalanceAmount(Seller seller, Customer customer, CustomerAccount customerAccount, BillingAccount billingAccount, UserAccount userAccount, Date startDate,
+            Date endDate, BalanceTypeEnum mode) {
+
+        Amounts result = new Amounts(BigDecimal.ZERO, BigDecimal.ZERO);
+
+        LevelEnum level = LevelEnum.PROVIDER;
+
+        if (userAccount != null) {
+            level = LevelEnum.USER_ACCOUNT;
+        } else if (billingAccount != null) {
+            level = LevelEnum.BILLING_ACCOUNT;
+        } else if (customerAccount != null) {
+            level = LevelEnum.CUSTOMER_ACCOUNT;
+        } else if (customer != null) {
+            level = LevelEnum.CUSTOMER;
+        } else if (seller != null) {
+            level = LevelEnum.SELLER;
+        }
+
+        try {
+            StringBuilder strQuery = new StringBuilder();
+            strQuery.append("select new org.meveo.model.billing.Amounts(SUM(r.amountWithTax), SUM(r.amountWithoutTax)) from WalletOperation r " + "WHERE 1=1 ");
+
+            if (startDate != null) {
+                strQuery.append("AND r.operationDate>=:startDate ");
+            }
+            if (endDate != null) {
+                strQuery.append("AND r.operationDate<:endDate ");
+            }
+            if (mode == BalanceTypeEnum.CURRENT) {
+                strQuery.append("AND (r.status=:open OR r.status=:reserved) ");
+            } else if (mode == BalanceTypeEnum.RESERVED) {
+                strQuery.append("AND (r.status=:reserved) ");
+            } else if (mode == BalanceTypeEnum.OPEN) {
+                strQuery.append("AND (r.status=:open) ");
+            }
+
+            // + "AND (r.status=:open OR r.status=:treated) "
+            switch (level) {
+            case BILLING_ACCOUNT:
+                strQuery.append("AND r.wallet.userAccount.billingAccount=:billingAccount ");
+                break;
+            case CUSTOMER:
+                strQuery.append("AND r.wallet.userAccount.billingAccount.customerAccount.customer=:customer ");
+                break;
+            case CUSTOMER_ACCOUNT:
+                strQuery.append("AND r.wallet.userAccount.billingAccount.customerAccount=:customerAccount ");
+                break;
+            case PROVIDER:
+                break;
+            case SELLER:
+                strQuery.append("AND r.wallet.userAccount.billingAccount.customerAccount.customer.seller=:seller ");
+                break;
+            case USER_ACCOUNT:
+                strQuery.append("AND r.wallet.userAccount=:userAccount ");
+                break;
+            default:
+                break;
+            }
+
+            TypedQuery<Amounts> query = getEntityManager().createQuery(strQuery.toString(), Amounts.class);
+
+            if (mode == BalanceTypeEnum.CURRENT) {
+                query.setParameter("open", WalletOperationStatusEnum.OPEN);
+                query.setParameter("reserved", WalletOperationStatusEnum.RESERVED);
+            } else if (mode == BalanceTypeEnum.RESERVED) {
+                query.setParameter("reserved", WalletOperationStatusEnum.RESERVED);
+            } else if (mode == BalanceTypeEnum.OPEN) {
+                query.setParameter("open", WalletOperationStatusEnum.OPEN);
+            }
+            if (startDate != null) {
+                query.setParameter("startDate", startDate);
+            }
+            if (endDate != null) {
+                query.setParameter("endDate", endDate);
+            }
+
+            switch (level) {
+            case BILLING_ACCOUNT:
+                query.setParameter("billingAccount", billingAccount);
+                break;
+            case CUSTOMER:
+                query.setParameter("customer", customer);
+                break;
+            case CUSTOMER_ACCOUNT:
+                query.setParameter("customerAccount", customerAccount);
+                break;
+            case PROVIDER:
+                break;
+            case SELLER:
+                query.setParameter("seller", seller);
+                break;
+            case USER_ACCOUNT:
+                query.setParameter("userAccount", userAccount);
+                break;
+            default:
+                break;
+            }
+
+            result = query.getSingleResult();
+            
+            log.error("AKK balance is {}", result);
+
+        } catch (Exception e) {
+            log.error("Failed to get balance amount ", e);
+        }
+
+        return result;
     }
 
 }

@@ -42,6 +42,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.exception.DuplicateDefaultAccountException;
 import org.meveo.admin.util.pagination.EntityListDataModelPF;
 import org.meveo.admin.web.interceptor.ActionMethod;
+import org.meveo.model.billing.Amounts;
 import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.CounterInstance;
 import org.meveo.model.billing.OperationTypeEnum;
@@ -112,6 +113,12 @@ public class UserAccountBean extends AccountBean<UserAccount> {
     private Long billingAccountId;
     private WalletOperation reloadOperation;
     private String selectedWalletCode;
+
+    private Amounts currentBalance;
+
+    private Amounts reservedBalance;
+
+    private Amounts openBalance;
 
     // Retrieved wallet operations to improve GUI performance for Ajax request
     private Map<String, List<WalletOperation>> walletOperations = new HashMap<String, List<WalletOperation>>();
@@ -374,59 +381,80 @@ public class UserAccountBean extends AccountBean<UserAccount> {
         return result;
     }
 
-    public String getOpenBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
+    public String getOpenBalanceWithoutTax(Date startDate, Date endDate) throws BusinessException {
         String result = null;
-        BigDecimal balance = walletReservationService.getOpenBalanceWithoutTax(sellerCode, userAccountCode, startDate, endDate);
+        BigDecimal balance = getOpenBalance(startDate, endDate).getAmountWithoutTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getOpenBalanceWithTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
+    public String getOpenBalanceWithTax(Date startDate, Date endDate) throws BusinessException {
 
         String result = null;
-        BigDecimal balance = walletReservationService.getOpenBalanceWithTax(sellerCode, userAccountCode, startDate, endDate);
+        BigDecimal balance = getOpenBalance(startDate, endDate).getAmountWithTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getReservedBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
+    public String getReservedBalanceWithoutTax(Date startDate, Date endDate) throws BusinessException {
         String result = null;
-        BigDecimal balance = walletReservationService.getReservedBalanceWithoutTax(sellerCode, userAccountCode, startDate, endDate);
+        BigDecimal balance = getReservedBalance(startDate, endDate).getAmountWithoutTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getReservedBalanceWithTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
+    public String getReservedBalanceWithTax(Date startDate, Date endDate) throws BusinessException {
         String result = null;
-        BigDecimal balance = walletReservationService.getReservedBalanceWithTax(sellerCode, userAccountCode, startDate, endDate);
+        BigDecimal balance = getReservedBalance(startDate, endDate).getAmountWithTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getCurrentBalanceWithoutTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
+    public String getCurrentBalanceWithoutTax(Date startDate, Date endDate) throws BusinessException {
         String result = null;
-        BigDecimal balance = walletReservationService.getCurrentBalanceWithoutTax(sellerCode, userAccountCode, startDate, endDate);
+        BigDecimal balance = getCurrentBalance(startDate, endDate).getAmountWithoutTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
     }
 
-    public String getCurrentBalanceWithTax(String sellerCode, String userAccountCode, Date startDate, Date endDate) throws BusinessException {
+    public String getCurrentBalanceWithTax(Date startDate, Date endDate) throws BusinessException {
         String result = null;
-        BigDecimal balance = walletReservationService.getCurrentBalanceWithTax(sellerCode, userAccountCode, startDate, endDate);
+        BigDecimal balance = getCurrentBalance(startDate, endDate).getAmountWithTax();
         if (balance != null) {
             result = balance.setScale(2, RoundingMode.HALF_UP).toPlainString();
         }
         return result;
+    }
+
+    private Amounts getCurrentBalance(Date startDate, Date endDate) {
+        if (currentBalance == null) {
+            currentBalance = walletReservationService.getCurrentBalance(null, null, null, null, entity, startDate, endDate);
+        }
+        return currentBalance;
+    }
+
+    private Amounts getReservedBalance(Date startDate, Date endDate) {
+        if (reservedBalance == null) {
+            reservedBalance = walletReservationService.getReservedBalance(null, null, null, null, entity, startDate, endDate);
+        }
+        return reservedBalance;
+    }
+
+    private Amounts getOpenBalance(Date startDate, Date endDate) {
+        if (openBalance == null) {
+            openBalance = walletReservationService.getOpenBalance(null, null, null, null, entity, startDate, endDate);
+        }
+        return openBalance;
     }
 
     public List<SelectItem> getWalletOperationStatusList() {

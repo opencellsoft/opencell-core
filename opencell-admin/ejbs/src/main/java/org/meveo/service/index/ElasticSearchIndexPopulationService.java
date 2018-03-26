@@ -210,22 +210,20 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         String fieldNameTo = null;
         String fieldNameFrom = null;
 
-        log.debug("############################################");
-        log.debug("Processing entity: {}", entity);
+//        log.trace("Processing entity: {}", entity);
 
         for (Entry<String, String> fieldInfo : fields.entrySet()) {
 
             fieldNameTo = fieldInfo.getKey();
             fieldNameFrom = fieldInfo.getValue();
 
-            log.debug("Mapping {} to {}", fieldNameFrom, fieldNameTo);
+//            log.trace("Mapping {} to {}", fieldNameFrom, fieldNameTo);
 
             Object value = null;
             try {
                 // Obtain field value from entity
                 if (!fieldNameFrom.contains(".")) {
-                    log.debug("value {}", value);
-                    log.debug("Fetching value of property {}", fieldNameFrom);
+//                    log.trace("Fetching value of property {}", fieldNameFrom);
                     if (fieldNameFrom.endsWith("()")) {
                         value = MethodUtils.invokeMethod(entity, fieldNameFrom.substring(0, fieldNameFrom.length() - 2));
                     } else {
@@ -236,19 +234,19 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         value = ((HibernateProxy) value).getHibernateLazyInitializer().getImplementation();
                     }
 
-                    log.debug("Value retrieved: {}", value);
+//                    log.trace("Value retrieved: {}", value);
                 } else {
                     String[] fieldNames = fieldNameFrom.split("\\.");
 
                     Object fieldValue = entity;
                     for (String fieldName : fieldNames) {
-                        log.debug("Fetching value of property {}", fieldName);
+//                        log.trace("Fetching value of property {}", fieldName);
                         if (fieldName.endsWith("()")) {
                             fieldValue = MethodUtils.invokeMethod(fieldValue, fieldName.substring(0, fieldName.length() - 2));
                         } else {
                             fieldValue = FieldUtils.readField(fieldValue, fieldName, true);
                         }
-                        log.debug("Value retrieved: {}", fieldValue);
+//                        log.trace("Value retrieved: {}", fieldValue);
                         if (fieldValue == null) {
                             break;
                         }
@@ -257,7 +255,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                         }
                     }
                     value = fieldValue;
-                    log.debug("Final value retrieved, {}: {}", fieldNameFrom, value);
+//                    log.trace("Final value retrieved, {}: {}", fieldNameFrom, value);
                 }
 
                 if (value != null && (value instanceof IEntity || value.getClass().isAnnotationPresent(Embeddable.class))) {
@@ -327,7 +325,6 @@ public class ElasticSearchIndexPopulationService implements Serializable {
                 }
             }
         }
-        log.debug("############################################");
         return jsonValueMap;
     }
 
