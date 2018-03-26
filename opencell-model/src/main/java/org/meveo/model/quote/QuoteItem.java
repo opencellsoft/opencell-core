@@ -26,9 +26,10 @@ import org.meveo.model.billing.UserAccount;
 import org.meveo.model.catalog.ProductOffering;
 
 @Entity
-@ExportIdentifier({ "quote.code", "itemId"})
+@ExportIdentifier({ "quote.code", "itemId" })
 @Table(name = "ord_quote_item")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "ord_quote_item_seq"), })
 public class QuoteItem extends BaseEntity {
 
     private static final long serialVersionUID = -6831399734977276174L;
@@ -173,6 +174,12 @@ public class QuoteItem extends BaseEntity {
             return false;
         }
 
-        return StringUtils.compare(getItemId(), ((QuoteItem) obj).getItemId()) == 0;
+        QuoteItem other = (QuoteItem) obj;
+
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        return StringUtils.compare(getItemId(), other.getItemId()) == 0;
     }
 }

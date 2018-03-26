@@ -142,16 +142,16 @@ public class ServiceInstance extends BusinessCFEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "rate_until_date")
     private Date rateUntilDate;
-    
+
     @OneToMany(mappedBy = "serviceInstance", fetch = FetchType.LAZY)
     private List<OrderHistory> orderHistories;
-    
+
     /**
      * PK of OrderItem.id.
      */
     @Transient
     private Long orderItemId;
-    
+
     @Transient
     private OrderItemActionEnum orderItemAction;
 
@@ -291,6 +291,7 @@ public class ServiceInstance extends BusinessCFEntity {
         this.rateUntilDate = rateUntilDate;
     }
 
+    @Override
     public boolean equals(Object obj) {
 
         if (this == obj) {

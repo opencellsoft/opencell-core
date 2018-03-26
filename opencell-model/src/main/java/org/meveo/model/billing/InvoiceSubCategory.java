@@ -74,7 +74,7 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     private BigDecimal discount;
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-	@OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
+    @OneToMany(mappedBy = "invoiceSubCategory", fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
     private List<InvoiceSubcategoryCountry> invoiceSubcategoryCountries = new ArrayList<InvoiceSubcategoryCountry>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -84,7 +84,7 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @Type(type = "json")
     @Column(name = "description_i18n", columnDefinition = "text")
     private Map<String, String> descriptionI18n;
-    
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "accounting_code_id")
     private AccountingCode accountingCode;
@@ -124,31 +124,6 @@ public class InvoiceSubCategory extends BusinessCFEntity {
     @Override
     public ICustomFieldEntity[] getParentCFEntities() {
         return new ICustomFieldEntity[] { invoiceCategory };
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.intValue() : super.hashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof InvoiceSubCategory)) {
-            return false;
-        }
-
-        InvoiceSubCategory other = (InvoiceSubCategory) obj;
-        if (code == null) {
-            if (other.getCode() != null)
-                return false;
-        } else if (!code.equals(other.getCode()))
-            return false;
-
-        return true;
     }
 
     public Map<String, String> getDescriptionI18n() {

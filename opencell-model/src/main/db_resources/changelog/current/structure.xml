@@ -27,6 +27,11 @@
         <modifyDataType tableName="billing_charge_instance" columnName="termination_date" newDataType="datetime" />
         <modifyDataType tableName="billing_charge_instance" columnName="charge_date" newDataType="datetime" />
     </changeSet>
+    
+    <changeSet id="#3196_20180131-migration" author="AndriusKarpavicius">    
+        <sql>update ${db.schema.adapted}billing_recurring_charge_inst set next_charge_date = date(next_charge_date) + cast(subscription_date as time)
+        where recurring_chrg_tmpl_id in (select chrgt.id from ${db.schema.adapted}cat_recurring_charge_templ chrgt join ${db.schema.adapted}cat_calendar cal on chrgt.calendar_id = cal.id where cal.cal_type='PERIOD')</sql>
+    </changeSet>
 
     <changeSet id="#2819_20180212" author="AbdelmounaimAkadid">
         <addColumn tableName="crm_seller">
@@ -308,7 +313,7 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="dwh_report_extract_seq_pk" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema.adapted}dwh_report_extract_seq(1)</sql>
+        <sql>insert into ${db.schema.adapted}dwh_report_extract_seq values(1)</sql>
      </changeSet>
      
      <changeSet id="#3234_13032018_1 - Homogenization of Account Operation types" author="anansseh" dbms="mysql">
@@ -505,6 +510,64 @@
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
 		</sql>
 	</changeSet>
+
+    <changeSet id="#1705_20180220-migration-M" author="EdwardPLegaspi" dbms="mysql">
+        <sql>
+			<![CDATA[
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_invoice_sub_cat where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			update ${db.schema.adapted}billing_invoice_sub_cat set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.accounting_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct accounting_code from ${db.schema.adapted}billing_tax where accounting_code is not null and accounting_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=accounting_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_tax set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[
+			insert into ${db.schema.adapted}billing_accounting_code (code, id, version, disabled, created, creator, chart_of_account_type, chart_of_account_view_type)
+				select a.account_code, null, 0, 0, now(), null, 'ASSETS', 'REGULAR' 
+			    from 
+			        (select distinct account_code from ${db.schema.adapted}ar_occ_template where account_code is not null and account_code<>'' 
+					and not exists(select * from ${db.schema.adapted}billing_accounting_code where code=account_code)) a;
+			]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}ar_occ_template set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_invoice_agregate set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}dwh_account_operation set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}dwh_journal_entries set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=accounting_code);]]>
+		</sql>
+		<sql>
+			<![CDATA[update ${db.schema.adapted}ar_account_operation set accounting_code_id=(select id from ${db.schema.adapted}billing_accounting_code where code=account_code);]]>
+		</sql>
+		
+		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
+		</sql>
+        <dropUniqueConstraint tableName="dwh_journal_entries" constraintName="uk_og8li9rlut4trrxgajab23j7y"/>
+    </changeSet>
     
     <changeSet id="#1705_20180220-migration-end" author="EdwardPLegaspi" >        
 		<dropColumn tableName="billing_invoice_sub_cat" columnName="accounting_code"></dropColumn>
@@ -515,7 +578,7 @@
 		<dropColumn tableName="ar_occ_template" columnName="account_code"></dropColumn>
 		<dropColumn tableName="ar_account_operation" columnName="account_code"></dropColumn>
 		
-		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_og8li9rlut4trrxgajab23j7y" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
+		<addUniqueConstraint columnNames="origin_id, invoice_number, accounting_code_id" constraintName="uk_orinvacid" deferrable="false" disabled="false" initiallyDeferred="false" tableName="dwh_journal_entries" />
     </changeSet>
     
     <changeSet id="#3029_20180213 - Rating minimum on priceplan" author="EdwardPLegaspi">

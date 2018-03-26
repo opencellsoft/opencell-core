@@ -74,7 +74,7 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
     @Column(name = "display_orders")
     private Boolean displayOrders = false;
 
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "provider_id")
     private Provider provider;
 
@@ -205,13 +205,6 @@ public class InvoiceConfiguration extends BaseEntity implements Serializable, IE
             return true;
         }
 
-        // if (code == null) {
-        // if (other.getCode() != null) {
-        // return false;
-        // }
-        // } else if (!code.equals(other.getCode())) {
-        // return false;
-        // }
         // Always return true as there can be only one record of invoice configuration
         return true;
     }

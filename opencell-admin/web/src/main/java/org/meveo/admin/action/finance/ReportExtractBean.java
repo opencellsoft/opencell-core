@@ -20,6 +20,8 @@ import org.meveo.service.finance.ReportExtractService;
 import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
+ * Controller to manage detail view of {@link ReportExtract}.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

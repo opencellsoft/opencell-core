@@ -26,6 +26,8 @@ import org.meveo.service.finance.ReportExtractService;
 import org.slf4j.Logger;
 
 /**
+ * List all ReportExtract and dispatched for asynch execution.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

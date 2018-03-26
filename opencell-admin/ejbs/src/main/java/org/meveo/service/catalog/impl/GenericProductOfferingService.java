@@ -341,9 +341,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
     @SuppressWarnings("unchecked")
     public List<T> listActiveByDate(Date date) {
 
-        List<T> offers = (List<T>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", getEntityClass()).setParameter("date", date)
+        return (List<T>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", getEntityClass()).setParameter("date", date)
             .getResultList();
-
-        return offers;
     }
 }

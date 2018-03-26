@@ -71,10 +71,7 @@ public class ServiceChargeTemplateUsage extends ServiceChargeTemplate<UsageCharg
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-        return result;
+        return 961 + ("ServiceChargeTemplateUsage" + id).hashCode();
     }
 
     @Override

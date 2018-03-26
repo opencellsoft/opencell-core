@@ -23,6 +23,8 @@ import org.meveo.service.script.ScriptInstanceService;
 import org.meveo.service.script.finance.ReportExtractScript;
 
 /**
+ * Service for managing ReportExtract entity.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

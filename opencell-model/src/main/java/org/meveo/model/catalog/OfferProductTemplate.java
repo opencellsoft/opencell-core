@@ -98,10 +98,8 @@ public class OfferProductTemplate implements IEntity, Serializable {
         if (id != null) {
             return id.intValue();
         }
-        final int prime = 31;
-        int result = prime * 1; // super.hashCode();
-        result = prime * result + ((offerTemplate == null) ? 0 : offerTemplate.getId().hashCode());
-        result = prime * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
+        int result = 961 + ((offerTemplate == null) ? 0 : offerTemplate.getId().hashCode());
+        result = 31 * result + ((productTemplate == null) ? 0 : productTemplate.getId().hashCode());
 
         return result;
     }
@@ -117,9 +115,13 @@ public class OfferProductTemplate implements IEntity, Serializable {
             return false;
         }
 
-        OfferProductTemplate that = (OfferProductTemplate) obj;
+        OfferProductTemplate other = (OfferProductTemplate) obj;
 
-        ProductTemplate thatProductTemplate = that.getProductTemplate();
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+
+        ProductTemplate thatProductTemplate = other.getProductTemplate();
         if (productTemplate == null) {
             if (thatProductTemplate != null) {
                 return false;
@@ -128,7 +130,7 @@ public class OfferProductTemplate implements IEntity, Serializable {
             return false;
         }
 
-        OfferTemplate thatOfferTemplate = that.getOfferTemplate();
+        OfferTemplate thatOfferTemplate = other.getOfferTemplate();
         if (offerTemplate == null) {
             if (thatOfferTemplate != null) {
                 return false;

@@ -32,6 +32,7 @@ import org.meveo.api.exception.MeveoApiException;
 import org.meveo.api.exception.MissingParameterException;
 import org.meveo.api.order.OrderProductCharacteristicEnum;
 import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.ProductInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
@@ -55,6 +56,7 @@ import org.meveo.model.shared.Address;
 import org.meveo.model.shared.DateUtils;
 import org.meveo.service.admin.impl.CountryService;
 import org.meveo.service.billing.impl.ProductInstanceService;
+import org.meveo.service.billing.impl.ServiceInstanceService;
 import org.meveo.service.billing.impl.SubscriptionService;
 import org.meveo.service.billing.impl.TerminationReasonService;
 import org.meveo.service.billing.impl.UserAccountService;
@@ -120,6 +122,9 @@ public class OrderApi extends BaseApi {
 
     @Inject
     private CountryService countryService;
+    
+    @Inject
+    private ServiceInstanceService serviceInstanceService;
 
     /**
      * Register an order from TMForumApi.
@@ -538,10 +543,8 @@ public class OrderApi extends BaseApi {
             ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
             productOffering = productTemplateService.retrieveIfNotManaged(productOffering);
             ProductInstance productInstance = instantiateProduct(productOffering, productOfProduct, orderItem, productOrderItem, subscription, orderNumber);
-            if (productInstance != null) {
-                orderItem.addProductInstance(productInstance);
-                productOfProduct.setId(productInstance.getCode());
-            }
+            orderItem.addProductInstance(productInstance);
+            productOfProduct.setId(productInstance.getCode());
             index++;
         }
 
@@ -564,6 +567,7 @@ public class OrderApi extends BaseApi {
         if (!subscription.getUserAccount().equals(orderItem.getUserAccount())) {
             throw new MeveoApiException("Subscription's userAccount doesn't match with orderitem's billingAccount");
         }
+        
         Product subscriptionProduct = productOrderItem.getProduct();
 
         SubscriptionDto subscriptionDto = new SubscriptionDto();
@@ -575,10 +579,17 @@ public class OrderApi extends BaseApi {
 
         // Services are expressed as child products
         // instantiate, activate and terminate services
+        int index = 1;
         List<Product> services = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
         if (productOrderItem.getProduct().getProductRelationship() != null && !productOrderItem.getProduct().getProductRelationship().isEmpty()) {
             for (ProductRelationship productRelationship : productOrderItem.getProduct().getProductRelationship()) {
-                services.add(productRelationship.getProduct());
+                if (index < orderItem.getOrderItemProductOfferings().size()) {
+                    products.add(productRelationship.getProduct());
+                } else {
+                    services.add(productRelationship.getProduct());
+                }
+                index++;
             }
         }
 
@@ -588,6 +599,19 @@ public class OrderApi extends BaseApi {
 
         subscriptionService.refresh(subscription);
         orderItem.setSubscription(subscription);
+        
+        productOrderItem.getProduct().setId(subscription.getCode());
+
+        // Instantiate products - find a matching product offering. The order of products must match the order of productOfferings
+        index = 1;
+        for (Product productOfProduct : products) {
+            ProductTemplate productOffering = (ProductTemplate) orderItem.getOrderItemProductOfferings().get(index).getProductOffering();
+            productOffering = productTemplateService.retrieveIfNotManaged(productOffering);
+            ProductInstance productInstance = instantiateProduct(productOffering, productOfProduct, orderItem, productOrderItem, subscription, orderNumber);
+            orderItem.addProductInstance(productInstance);
+            productOfProduct.setId(productInstance.getCode());
+            index++;
+        }
 
         return subscription;
     }
@@ -757,8 +781,7 @@ public class OrderApi extends BaseApi {
 
             Date terminationDate = (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.TERMINATION_DATE.getCharacteristicName(), Date.class, null);
 
-            ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto();
-            subscriptionDto.getServices().addServiceInstance(serviceInstanceDto);
+            ServiceInstanceDto serviceInstanceDto = new ServiceInstanceDto(); 
 
             serviceInstanceDto.setId(serviceId);
             serviceInstanceDto.setCode(serviceCode);
@@ -776,6 +799,12 @@ public class OrderApi extends BaseApi {
 
                 if (StringUtils.isBlank(serviceCode)) {
                     throw new MissingParameterException("serviceCode");
+                }
+                
+                // check if service is activated on a given subscription
+                List<ServiceInstance> serviceFound = serviceInstanceService.findByCodeSubscriptionAndStatus(serviceCode, subscriptionDto.getCode(), InstanceStatusEnum.ACTIVE);
+                if (serviceFound != null && !serviceFound.isEmpty()) {
+                    continue;
                 }
 
                 serviceInstanceDto.setQuantity((BigDecimal) getProductCharacteristic(serviceProduct,
@@ -796,6 +825,8 @@ public class OrderApi extends BaseApi {
                 serviceInstanceDto.setEndAgreementDate(
                     (Date) getProductCharacteristic(serviceProduct, OrderProductCharacteristicEnum.SUBSCRIPTION_END_DATE.getCharacteristicName(), Date.class, null));
             }
+            
+            subscriptionDto.getServices().addServiceInstance(serviceInstanceDto);
         }
     }
 

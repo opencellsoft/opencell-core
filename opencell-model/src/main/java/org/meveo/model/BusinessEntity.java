@@ -119,10 +119,7 @@ public class BusinessEntity extends EnableEntity implements ISearchable {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = prime * 1; // super.hashCode();
-        result = prime * result + ((code == null) ? 0 : (this.getClass().getName() + code).hashCode());
-        return result;
+        return 961 + (this.getClass().getName() + code).hashCode();
     }
 
     @Override

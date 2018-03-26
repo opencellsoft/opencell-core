@@ -84,6 +84,9 @@ public class JobExecutionResultDto extends BaseDto {
      */
     private String report;
     
+    /**
+     * JobInstance code.
+     */
     private String jobInstanceCode;
 
     public JobExecutionResultDto() {

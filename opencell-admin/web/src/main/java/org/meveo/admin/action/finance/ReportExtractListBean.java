@@ -3,7 +3,11 @@ package org.meveo.admin.action.finance;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Named;
 
+import org.meveo.model.finance.ReportExtract;
+
 /**
+ * Controller to manage list view of {@link ReportExtract}.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

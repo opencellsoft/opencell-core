@@ -27,6 +27,9 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.scripts.ScriptInstance;
 
 /**
+ * ReportExtract can either be an SQL or a Java Script. In case of SQL, we need to provide an sql that returns a list of records. On the other hand if it is a Java script, we can
+ * also execute queries by calling the services.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

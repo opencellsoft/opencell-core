@@ -113,8 +113,13 @@ public class TradingCountry extends EnableEntity {
 
         TradingCountry other = (TradingCountry) obj;
 
-        return getId() != null && getId().equals(other.getId());
-        // return (o.country!=null) && o.country.equals(this.country);
+        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+            return true;
+
+        } else if (country.getId().equals(other.getCountry().getId())) {
+            return true;
+        }
+        return false;
     }
 
 }

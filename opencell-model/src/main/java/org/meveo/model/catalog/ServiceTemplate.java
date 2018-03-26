@@ -204,6 +204,11 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
         }
 
         ServiceTemplate other = (ServiceTemplate) obj;
+        
+        if (id != null && other.getId() != null && id.equals(other.getId())) {
+            return true;
+        }
+        
         if (code == null) {
             if (other.getCode() != null)
                 return false;

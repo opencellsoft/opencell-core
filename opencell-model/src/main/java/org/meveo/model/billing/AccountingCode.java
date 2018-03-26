@@ -18,6 +18,7 @@ import org.meveo.model.ExportIdentifier;
 
 /**
  * Use to store Chart of accounts. Previously accounting_code fields.
+ * 
  * @author Edward P. Legaspi
  * @version %I%, %G%
  * @since 5.0

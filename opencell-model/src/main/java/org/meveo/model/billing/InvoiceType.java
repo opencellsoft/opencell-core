@@ -96,7 +96,7 @@ public class InvoiceType extends BusinessEntity {
     @Column(name = "xml_filename_el", length = 2000)
     @Size(max = 2000)
     private String xmlFilenameEL;
-    
+
     @Column(name = "billing_template_name_el", length = 2000)
     @Size(max = 2000)
     private String billingTemplateNameEL;
@@ -147,11 +147,6 @@ public class InvoiceType extends BusinessEntity {
 
     public void setOccTemplateNegative(OCCTemplate occTemplateNegative) {
         this.occTemplateNegative = occTemplateNegative;
-    }
-
-    @Override
-    public int hashCode() {
-        return id != null ? id.intValue() : 0;
     }
 
     public InvoiceTypeSellerSequence getSellerSequenceByType(Seller seller) {

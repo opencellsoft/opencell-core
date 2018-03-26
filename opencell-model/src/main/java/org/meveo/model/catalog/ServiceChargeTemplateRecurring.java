@@ -33,40 +33,36 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.meveo.model.ExportIdentifier;
 
-
 @Entity
 @Cacheable
-@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code"})
+@ExportIdentifier({ "chargeTemplate.code", "serviceTemplate.code" })
 @Table(name = "cat_serv_rec_charge_template")
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "cat_serv_recchrg_templt_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+        @Parameter(name = "sequence_name", value = "cat_serv_recchrg_templt_seq"), })
 public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<RecurringChargeTemplate> {
 
-	private static final long serialVersionUID = -5599952620149127436L;
-	
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "cat_serv_rec_wallet_template", joinColumns = @JoinColumn(name = "service_rec_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
-	@OrderColumn(name="INDX")
-	private List<WalletTemplate> walletTemplates;
-	
+    private static final long serialVersionUID = -5599952620149127436L;
 
-	public List<WalletTemplate> getWalletTemplates() {
-		return walletTemplates;
-	}
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "cat_serv_rec_wallet_template", joinColumns = @JoinColumn(name = "service_rec_templt_id"), inverseJoinColumns = @JoinColumn(name = "wallet_template_id"))
+    @OrderColumn(name = "INDX")
+    private List<WalletTemplate> walletTemplates;
 
-	public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
-	
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = super.hashCode();
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		return result;
-	}
+    public List<WalletTemplate> getWalletTemplates() {
+        return walletTemplates;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
+    public void setWalletTemplates(List<WalletTemplate> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
+
+    @Override
+    public int hashCode() {
+        return 961 + ("ServiceChargeTemplateRecurring" + id).hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
 
         if (this == obj) {
             return true;
@@ -75,14 +71,14 @@ public class ServiceChargeTemplateRecurring extends ServiceChargeTemplate<Recurr
         } else if (!(obj instanceof ServiceChargeTemplateRecurring)) {
             return false;
         }
-                
-		ServiceChargeTemplateRecurring other = (ServiceChargeTemplateRecurring) obj;
-		if (getId() == null) {
-			if (other.getId() != null)
-				return false;
-		} else if (!getId().equals(other.getId()))
-			return false;
-		return true;
-	}
+
+        ServiceChargeTemplateRecurring other = (ServiceChargeTemplateRecurring) obj;
+        if (getId() == null) {
+            if (other.getId() != null)
+                return false;
+        } else if (!getId().equals(other.getId()))
+            return false;
+        return true;
+    }
 
 }
