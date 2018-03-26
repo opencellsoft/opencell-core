@@ -927,10 +927,24 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
+        
+        if (chargeInstance == null) {
+            return walletOperations;
+        }
         Date applyChargeFromDate = fromDate;
 
         Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
+        ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
+        
         cal.setInitDate(chargeInstance.getSubscriptionDate());
+        
+
+        if (cal.getInitDate() == null) {
+            if (serviceInstance != null) {
+                cal.setInitDate(serviceInstance.getSubscriptionDate());
+            }
+        }
+
         Date applyChargeToDate = cal.nextCalendarDate(toDate == null ? fromDate : toDate);
 
         InvoiceSubCategory invoiceSubCategory = chargeInstance.getRecurringChargeTemplate().getInvoiceSubCategory();
