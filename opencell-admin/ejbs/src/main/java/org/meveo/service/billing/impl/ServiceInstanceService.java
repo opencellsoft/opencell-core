@@ -138,6 +138,42 @@ public class ServiceInstanceService extends BusinessService<ServiceInstance> {
 
         return serviceInstances;
     }
+    
+    /**
+     * Find a service instance list by subscription entity, service template code and service instance status list.
+     * 
+     * @param code the service template code
+     * @param subscription the subscription entity
+     * @param statuses service instance statuses
+     * @return the ServiceInstance list found
+     */
+    @SuppressWarnings("unchecked")
+    public List<ServiceInstance> findByCodeSubscriptionAndStatus(String code, String subscriptionCode, InstanceStatusEnum... statuses) {
+        List<ServiceInstance> serviceInstances = null;
+        try {
+            log.debug("start of find {} by code and subscription/status (code={}) ..", "ServiceInstance", code);
+            QueryBuilder qb = new QueryBuilder(ServiceInstance.class, "c");
+            qb.addCriterion("c.code", "=", code, true);
+            qb.addCriterion("c.subscription.code", "=", subscriptionCode, true);
+            qb.startOrClause();
+            if (statuses != null && statuses.length > 0) {
+                for (InstanceStatusEnum status : statuses) {
+                    qb.addCriterionEnum("c.status", status);
+                }
+            }
+            qb.endOrClause();
+
+            serviceInstances = (List<ServiceInstance>) qb.getQuery(getEntityManager()).getResultList();
+            log.debug("end of find {} by code and subscription/status (code={}). Result found={}.", "ServiceInstance", code,
+                serviceInstances != null && !serviceInstances.isEmpty());
+        } catch (NoResultException nre) {
+            log.debug("findByCodeAndSubscription : no service has been found");
+        } catch (Exception e) {
+            log.error("findByCodeAndSubscription error={} ", e);
+        }
+
+        return serviceInstances;
+    }
 
     /**
      * Instantiate a service

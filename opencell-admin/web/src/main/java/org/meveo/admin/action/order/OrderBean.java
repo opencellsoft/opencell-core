@@ -710,7 +710,7 @@ public class OrderBean extends CustomFieldBean<Order> {
             }
         }
 
-        offersTree = constructOfferItemsTreeAndConfiguration(selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY, false, subscriptionConfiguration, subscriptionEntities);
+        offersTree = constructOfferItemsTreeAndConfiguration(selectedOrderItem.getAction() == OrderItemActionEnum.MODIFY, true, subscriptionConfiguration, subscriptionEntities);
 
     }
 
