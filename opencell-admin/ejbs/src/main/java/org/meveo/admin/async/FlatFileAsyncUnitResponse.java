@@ -7,13 +7,13 @@ package org.meveo.admin.async;
  * @author anasseh
  *
  */
-public class FlatFileAsyncResponse {
+public class FlatFileAsyncUnitResponse {
     private String lineRecord;
     private String reason;
     private long lineNumber =0;
     private boolean success  = false;
     
-    public FlatFileAsyncResponse() {
+    public FlatFileAsyncUnitResponse() {
         
     }
     

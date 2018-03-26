@@ -3,6 +3,7 @@
  */
 package org.meveo.admin.async;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Future;
 
@@ -13,8 +14,15 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
 
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.job.FlatFileProcessingJob;
 import org.meveo.admin.job.UnitFlatFileProcessingJobBean;
+import org.meveo.commons.parsers.IFileParser;
+import org.meveo.commons.parsers.RecordContext;
+import org.meveo.model.jobs.JobExecutionResultImpl;
+import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInterface;
+import org.slf4j.Logger;
 
 /**
  * @author anasseh
@@ -24,23 +32,59 @@ import org.meveo.service.script.ScriptInterface;
 @Stateless
 public class FlatFileProcessingAsync {
 
+    /** The log. */
+    @Inject
+    private Logger log;
+
     @Inject
     private UnitFlatFileProcessingJobBean unitFlatFileProcessingJobBean;
 
-    @Asynchronous
-    @TransactionAttribute(TransactionAttributeType.NEVER)
-    public Future<FlatFileAsyncResponse> launchAndForget(ScriptInterface script, Map<String, Object> executeParams, String lineRecord, long lineNumber) {
-        FlatFileAsyncResponse result = new FlatFileAsyncResponse();
-        result.setLineRecord(lineRecord);
-        result.setLineNumber(lineNumber);
-        try {
-            unitFlatFileProcessingJobBean.execute(script, executeParams);
-            result.setSuccess(true);
-        } catch (Exception e) {
-            result.setSuccess(false);
-            result.setReason(e.getMessage());
+    /** The job execution service. */
+    @Inject
+    private JobExecutionService jobExecutionService;
 
+    @Asynchronous
+    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    public Future<FlatFileAsyncListResponse> launchAndForget(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName,
+            String fileName, String originFilename, String errorAction) throws Exception {
+        long cpLines = 0;
+        FlatFileAsyncListResponse flatFileAsyncListResponse = new FlatFileAsyncListResponse();
+        while (fileParser.hasNext() && jobExecutionService.isJobRunningOnThis(result.getJobInstance())) {
+            RecordContext recordContext = null;
+            cpLines++;
+            FlatFileAsyncUnitResponse flatFileAsyncResponse = new FlatFileAsyncUnitResponse();
+            flatFileAsyncResponse.setLineNumber(cpLines);
+            try {
+                recordContext = fileParser.getNextRecord();
+                flatFileAsyncResponse.setLineRecord(recordContext.getLineContent());
+                log.trace("record line content:{}", recordContext.getLineContent());
+                if (recordContext.getRecord() == null) {
+                    throw new Exception(recordContext.getReason());
+                }
+                Map<String, Object> executeParams = new HashMap<String, Object>();
+                executeParams.put(recordVariableName, recordContext.getRecord());
+                executeParams.put(originFilename, fileName);
+                if (FlatFileProcessingJob.ROLLBBACK.equals(errorAction)) {
+                    script.execute(executeParams);
+                } else {
+                    unitFlatFileProcessingJobBean.execute(script, executeParams);
+                }
+                flatFileAsyncResponse.setSuccess(true);
+            } catch (Throwable e) {
+                if (FlatFileProcessingJob.ROLLBBACK.equals(errorAction)) {
+                    throw new BusinessException(e.getMessage());
+                }
+                String erreur = (recordContext == null || recordContext.getReason() == null) ? e.getMessage() : recordContext.getReason();
+                log.warn("record on error :" + erreur);
+                flatFileAsyncResponse.setSuccess(false);
+                flatFileAsyncResponse.setReason(erreur);
+                if (FlatFileProcessingJob.STOP.equals(errorAction)) {
+                    flatFileAsyncListResponse.getResponses().add(flatFileAsyncResponse);
+                    break;
+                }
+            }
+            flatFileAsyncListResponse.getResponses().add(flatFileAsyncResponse);
         }
-        return new AsyncResult<FlatFileAsyncResponse>(result);
+        return new AsyncResult<FlatFileAsyncListResponse>(flatFileAsyncListResponse);
     }
 }
