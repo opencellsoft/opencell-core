@@ -4,20 +4,35 @@
 package org.meveo.admin.async;
 
 /**
+ * The Class FlatFileAsyncUnitResponse contains a single the asynchronous response.
+ * 
  * @author anasseh
- *
+ * @lastModifiedVersion willBeSetLater
  */
 public class FlatFileAsyncUnitResponse {
+    
+    /** The line record. */
     private String lineRecord;
+    
+    /** The reason. */
     private String reason;
+    
+    /** The line number. */
     private long lineNumber =0;
+    
+    /** The success. */
     private boolean success  = false;
     
+    /**
+     * Instantiates a new flat file async unit response.
+     */
     public FlatFileAsyncUnitResponse() {
         
     }
     
     /**
+     * Checks if is success.
+     *
      * @return the success
      */
     public boolean isSuccess() {
@@ -25,6 +40,8 @@ public class FlatFileAsyncUnitResponse {
     }
 
     /**
+     * Sets the success.
+     *
      * @param success the success to set
      */
     public void setSuccess(boolean success) {
@@ -33,6 +50,8 @@ public class FlatFileAsyncUnitResponse {
 
     
     /**
+     * Gets the line record.
+     *
      * @return the lineRecord
      */
     public String getLineRecord() {
@@ -40,6 +59,8 @@ public class FlatFileAsyncUnitResponse {
     }
 
     /**
+     * Sets the line record.
+     *
      * @param lineRecord the lineRecord to set
      */
     public void setLineRecord(String lineRecord) {
@@ -47,12 +68,17 @@ public class FlatFileAsyncUnitResponse {
     }
 
     /**
+     * Gets the reason.
+     *
      * @return the reason
      */
     public String getReason() {
         return reason;
     }
+    
     /**
+     * Sets the reason.
+     *
      * @param reason the reason to set
      */
     public void setReason(String reason) {
@@ -60,6 +86,8 @@ public class FlatFileAsyncUnitResponse {
     }
 
     /**
+     * Gets the line number.
+     *
      * @return the lineNumber
      */
     public long getLineNumber() {
@@ -67,11 +95,17 @@ public class FlatFileAsyncUnitResponse {
     }
 
     /**
+     * Sets the line number.
+     *
      * @param lineNumber the lineNumber to set
      */
     public void setLineNumber(long lineNumber) {
         this.lineNumber = lineNumber;
     }
+
+    @Override
+    public String toString() {
+        return "FlatFileAsyncUnitResponse [lineRecord=" + lineRecord + ", reason=" + reason + ", lineNumber=" + lineNumber + ", success=" + success + "]";
+    }
    
-    
 }

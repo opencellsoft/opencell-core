@@ -24,8 +24,12 @@ import org.meveo.service.job.JobExecutionService;
 import org.meveo.service.script.ScriptInterface;
 import org.slf4j.Logger;
 
+
 /**
+ * Asynchronous FlatFile processing.
+ * 
  * @author anasseh
+ * @lastModifiedVersion willBeSetLater
  *
  */
 
@@ -36,6 +40,7 @@ public class FlatFileProcessingAsync {
     @Inject
     private Logger log;
 
+    /** The unit flat file processing job bean. */
     @Inject
     private UnitFlatFileProcessingJobBean unitFlatFileProcessingJobBean;
 
@@ -43,6 +48,19 @@ public class FlatFileProcessingAsync {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    /**
+     * Read/parse file and execute script for each line.
+     * 
+     * @param fileParser FlatFile parser
+     * @param result job execution result
+     * @param script script to execute
+     * @param recordVariableName record var name
+     * @param fileName file name
+     * @param originFilename originFilename var name
+     * @param errorAction action to do on error : continue, stop or rollback after an error
+     * @return Future of FlatFileAsyncListResponse
+     * @throws Exception Exception
+     */
     @Asynchronous
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public Future<FlatFileAsyncListResponse> launchAndForget(IFileParser fileParser, JobExecutionResultImpl result, ScriptInterface script, String recordVariableName,

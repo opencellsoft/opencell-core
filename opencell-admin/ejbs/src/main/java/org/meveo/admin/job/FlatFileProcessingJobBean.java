@@ -33,7 +33,7 @@ import org.slf4j.Logger;
  * The Class FlatFileProcessingJobBean.
  * 
  * @author anasseh
- * 
+ * @lastModifiedVersion willBeSetLater
  * 
  */
 @Stateless
@@ -77,7 +77,7 @@ public class FlatFileProcessingJobBean {
     /**
      * Execute.
      *
-     * @param result the result
+     * @param result job execution result
      * @param inputDir the input dir
      * @param file the file
      * @param mappingConf the mapping conf
@@ -86,7 +86,7 @@ public class FlatFileProcessingJobBean {
      * @param context the context
      * @param originFilename the origin filename
      * @param formatTransfo the format transfo
-     * @param errorAction continue, stop or rollbback after an error
+     * @param errorAction action to do on error : continue, stop or rollback after an error
      */
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
@@ -155,27 +155,22 @@ public class FlatFileProcessingJobBean {
 
                 Future<FlatFileAsyncListResponse> futures = flatFileProcessingAsync.launchAndForget(fileParser, result, script, recordVariableName, fileName, originFilename,
                     errorAction);
-               // try {
-                    for (FlatFileAsyncUnitResponse flatFileAsyncResponse : futures.get().getResponses()) {
-                        cpLines++;
-                        if (!flatFileAsyncResponse.isSuccess()) {
-                            result.registerError("file=" + fileName + ", line=" + flatFileAsyncResponse.getLineNumber() + ": " + flatFileAsyncResponse.getReason());
-                            rejectRecord(flatFileAsyncResponse.getLineRecord(), flatFileAsyncResponse.getReason());
-                        } else {
-                            outputRecord(flatFileAsyncResponse.getLineRecord());
-                            result.registerSucces();
-                        }
+                for (FlatFileAsyncUnitResponse flatFileAsyncResponse : futures.get().getResponses()) {
+                    cpLines++;
+                    if (!flatFileAsyncResponse.isSuccess()) {
+                        result.registerError("file=" + fileName + ", line=" + flatFileAsyncResponse.getLineNumber() + ": " + flatFileAsyncResponse.getReason());
+                        rejectRecord(flatFileAsyncResponse.getLineRecord(), flatFileAsyncResponse.getReason());
+                    } else {
+                        outputRecord(flatFileAsyncResponse.getLineRecord());
+                        result.registerSucces();
                     }
-              //  } catch (InterruptedException | ExecutionException e) {
-               //     Throwable cause = e.getCause();
-               //     log.error("Failed to execute async method", cause);
-               // }
+                }
                 if (cpLines == 0) {
                     String stateFile = "empty";
-                    if (FlatFileProcessingJob.ROLLBBACK.equals(errorAction)) {                    
+                    if (FlatFileProcessingJob.ROLLBBACK.equals(errorAction)) {
                         stateFile = "rollbacked";
-                     }
-                    report += "\r\n file "+fileName+" is "+stateFile;
+                    }
+                    report += "\r\n file " + fileName + " is " + stateFile;
                 }
 
                 log.info("InputFiles job {} done.", fileName);

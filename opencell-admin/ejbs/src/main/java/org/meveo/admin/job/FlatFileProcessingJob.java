@@ -24,8 +24,12 @@ import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.Job;
 import org.meveo.service.job.JobExecutionService;
 
+
 /**
  * The Class FlatFileProcessingJob consume any flat file and execute the given script for each line/record, the beanIO is used to describe file format.
+ * @author anasseh
+ *
+ * @lastModifiedVersion willBeSetLater
  */
 @Stateless
 public class FlatFileProcessingJob extends Job {
@@ -42,11 +46,17 @@ public class FlatFileProcessingJob extends Job {
     @Inject
     private JobExecutionService jobExecutionService;
 
+    /** The param bean factory. */
     @Inject
     private ParamBeanFactory paramBeanFactory;
     
+    /** The Constant CONTINUE. */
     public static final String CONTINUE = "CONTINUE";
+    
+    /** The Constant STOP. */
     public static final String STOP = "STOP";
+    
+    /** The Constant ROLLBBACK. */
     public static final String ROLLBBACK = "ROLLBBACK";
 
     @SuppressWarnings("unchecked")
@@ -106,10 +116,12 @@ public class FlatFileProcessingJob extends Job {
         }
     }
 
+
     @Override
     public JobCategoryEnum getJobCategory() {
         return JobCategoryEnum.MEDIATION;
     }
+
 
     @Override
     public Map<String, CustomFieldTemplate> getCustomFields() {
