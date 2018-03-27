@@ -52,13 +52,19 @@ public class TaxBean extends CustomFieldBean<Tax> {
     private String[] accountingCodeFields = new String[7];
     private String separator;
 
+    
+    @PostConstruct
+    private void init() {
+        log.debug("IPIEL> taxBean");
+        ParamBean param = paramBeanFactory.getInstance();
+        separator = param.getProperty("reporting.accountingCode.separator", ",");
+    }
+
     /**
      * Constructor. Invokes super constructor and provides class type of this bean for {@link BaseBean}.
      */
     public TaxBean() {
         super(Tax.class);
-        ParamBean param = paramBeanFactory.getInstance();
-        separator = param.getProperty("reporting.accountingCode.separator", ",");
     }
 
     /**
