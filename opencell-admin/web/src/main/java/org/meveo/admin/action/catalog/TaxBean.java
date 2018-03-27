@@ -55,7 +55,6 @@ public class TaxBean extends CustomFieldBean<Tax> {
     
     @PostConstruct
     private void init() {
-        log.debug("IPIEL> taxBean");
         ParamBean param = paramBeanFactory.getInstance();
         separator = param.getProperty("reporting.accountingCode.separator", ",");
     }
