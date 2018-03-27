@@ -628,5 +628,10 @@
 		</createTable>
 		<sql>insert into ${db.schema.adapted}ord_order_history_seq values(1)</sql>
     </changeSet>
-        
+	 <changeSet author="anasseh" id="#3323_27032018">
+	    <addUniqueConstraint 
+	            columnNames="payment_method,country_id,trading_currency_id"
+	            constraintName="uk_payment_gateway"
+	            tableName="ar_payment_gateway"/>	           
+	</changeSet>       
 </databaseChangeLog> 

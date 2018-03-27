@@ -14,6 +14,7 @@
 
 	<ui:define name="body">
 	    <p:importEnum type="org.meveo.model.payments.PaymentGatewayTypeEnum" var="PaymentGatewayTypeEnum" />
+	    <p:importEnum type="org.meveo.model.payments.PaymentMethodEnum" var="PaymentMethodEnum" />
 	    
 		<h:form id="crumbmenuForm">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -38,15 +39,20 @@
 			<p:tabView id="tabView" activeIndex="#{paymentGatewayBean.activeTab}">
 				<p:tab  title="#{messages['commons.tab.information']}" >
 					<hftl:formField label="#{messages['businessEntity.code']}" field="code" validateUnique="true" required="true"/>
-					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />					
-					<hftl:formField label="#{messages['paymentGateway.scriptInstance']}" field="scriptInstance" id="scriptSelectId" valueLabelField="code" popup="true" popupId="scriptInstancePopup"  required="true"
-					rendered="#{paymentGatewayBean.entity.type!=PaymentGatewayTypeEnum.NATIF}" />	
-					<hftl:formField label="#{messages['paymentGateway.implementationClassName']}" field="implementationClassName" id="classNameId" required="true" size="60" maxlength="255"
-                                   disabled="true" rendered="#{paymentGatewayBean.entity.type==PaymentGatewayTypeEnum.NATIF}" />																					
-					<hftl:formField label="#{messages['paymentGateway.paymentMethod']}" field="paymentMethodType"  listValues="#{paymentGatewayBean.getAllowedPaymentMethods()}" />
+					<hftl:formField label="#{messages['businessEntity.description']}" field="description" />	
+					<hftl:formField label="#{messages['businessEntity.description']}" field="type" listenerUpdate="impl_class_script" />		
+					<h:panelGroup id="impl_class_script">
+						<hftl:formField  label="#{messages['paymentGateway.scriptInstance']}" field="scriptInstance" id="scriptSelectId" valueLabelField="code" popup="true" popupId="scriptInstancePopup"  required="true"
+						rendered="#{paymentGatewayBean.entity.type!=PaymentGatewayTypeEnum.NATIF}" />	
+						<hftl:formField label="#{messages['paymentGateway.implementationClassName']}" field="implementationClassName" id="classNameId" required="true" size="60" maxlength="255"
+	                                   rendered="#{paymentGatewayBean.entity.type==PaymentGatewayTypeEnum.NATIF}"  autocompleteBean="#{paymentGatewayBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>																				
+					</h:panelGroup>
+					<hftl:formField label="#{messages['paymentGateway.paymentMethod']}" field="paymentMethodType"  listValues="#{paymentGatewayBean.getAllowedPaymentMethods()}" listenerUpdate="cardTypeP" />
 					<hftl:formField  id="trCountrySelectId" label="#{messages['tradingCountry.tradingCountry']}" field="country" valueLabelField="description" listBean="#{countryBean}" componentWidth="10" />
 					<hftl:formField label="#{messages['currency.codeCurrency']}" field="tradingCurrency"  valueLabelField="currencyCode" id="currencySelectId" listBean="#{tradingCurrencyBean}" componentWidth="10"/>
-					<hftl:formField label="#{messages['paymentGateway.cardType']}" field="cardType" />
+					<h:panelGroup id="cardTypeP">
+						<hftl:formField label="#{messages['paymentGateway.cardType']}" field="cardType" rendered="#{paymentGatewayBean.entity.paymentMethodType==PaymentMethodEnum.CARD}"  />
+					</h:panelGroup>
 					<hftl:formField label="#{messages['paymentGateway.application_el']}" field="applicationEL" textArea="true" rows="1" maxlength="2000" componentWidth="50" newLine="true" />
 					<!-- <p:fieldset legend="#{messages['paymentGateway.retry']}">
 						<hftl:formField label="#{messages['paymentGateway.nbTries']}" field="nbTries" />
