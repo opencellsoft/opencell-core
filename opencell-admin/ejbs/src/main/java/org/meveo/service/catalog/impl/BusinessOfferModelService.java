@@ -254,6 +254,7 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
                         break;
                     }
                 }
+                bpm = null;
             }
 
             ProductScriptInterface productScript = null;
@@ -411,17 +412,16 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
      * @return business service model.
      */
     public BusinessServiceModel findBsmFromBom(BusinessOfferModel businessOfferModel, ServiceTemplate serviceTemplate) {
-        BusinessServiceModel bsm = null;
         for (MeveoModuleItem item : businessOfferModel.getModuleItems()) {
             if (item.getItemClass().equals(BusinessServiceModel.class.getName())) {
-                bsm = businessServiceModelService.findByCode(item.getItemCode());
+                BusinessServiceModel bsm = businessServiceModelService.findByCode(item.getItemCode());
                 if (bsm.getServiceTemplate().equals(serviceTemplate)) {
-                    break;
+                    return bsm;
                 }
             }
         }
 
-        return bsm;
+        return null;
     }
 
 }

@@ -564,6 +564,7 @@
 		</sql>
 		
 		<sql>
+			<![CDATA[update ${db.schema.adapted}billing_accounting_code_seq set next_val=(select id+1 from ${db.schema.adapted}billing_accounting_code order by id desc limit 1);]]>
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
 		</sql>
         <dropUniqueConstraint tableName="dwh_journal_entries" constraintName="uk_og8li9rlut4trrxgajab23j7y"/>
@@ -628,5 +629,10 @@
 		</createTable>
 		<sql>insert into ${db.schema.adapted}ord_order_history_seq values(1)</sql>
     </changeSet>
-        
+	 <changeSet author="anasseh" id="#3323_27032018">
+	    <addUniqueConstraint 
+	            columnNames="payment_method,country_id,trading_currency_id"
+	            constraintName="uk_payment_gateway"
+	            tableName="ar_payment_gateway"/>	           
+	</changeSet>       
 </databaseChangeLog> 

@@ -11,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,12 +33,13 @@ import org.meveo.model.scripts.ScriptInstance;
  *
  * @author anasseh
  * @since Opencell 4.8
+ * @lastModifiedVersion willBeSetLater
  */
 
 @Entity
 @ModuleItem
 @CustomFieldEntity(cftCodePrefix = "PAYMENT_GW")
-@Table(name = "ar_payment_gateway")
+@Table(name = "ar_payment_gateway", uniqueConstraints = @UniqueConstraint(columnNames = { "payment_method","country_id","trading_currency_id" }))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "ar_payment_gateway_seq"), })
 public class PaymentGateway extends BusinessCFEntity {
