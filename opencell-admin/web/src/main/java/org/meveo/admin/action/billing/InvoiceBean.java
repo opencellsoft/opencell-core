@@ -267,6 +267,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
             messages.error(new BundleKey("messages", "invoice.jasperNotFound"));
         } catch (Exception e) {
             log.error("failed to generate PDF ", e);
+            messages.error(new BundleKey("messages", "invoice.pdfGenerationError"));
         }
     }
 
@@ -303,6 +304,7 @@ public class InvoiceBean extends CustomFieldBean<Invoice> {
 
         } catch (Exception e) {
             log.error("failed to generate xml invoice", e);
+            messages.error(new BundleKey("messages", "invoice.xmlGenerationError"));
         }
 
     }
