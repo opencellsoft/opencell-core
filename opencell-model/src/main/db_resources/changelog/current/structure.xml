@@ -564,7 +564,7 @@
 		</sql>
 		
 		<sql>
-			<![CDATA[update ${db.schema.adapted}billing_accounting_code_seq set next_val=(select id+1 from billing_accounting_code order by id desc limit 1;]]>
+			<![CDATA[update ${db.schema.adapted}billing_accounting_code_seq set next_val=(select id+1 from ${db.schema.adapted}billing_accounting_code order by id desc limit 1);]]>
 			<![CDATA[update ${db.schema.adapted}billing_accounting_code set migrated=1;]]>
 		</sql>
         <dropUniqueConstraint tableName="dwh_journal_entries" constraintName="uk_og8li9rlut4trrxgajab23j7y"/>
