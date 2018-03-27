@@ -39731,7 +39731,7 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
 				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
 				<eventTypeFilter>CREATED</eventTypeFilter>
 				<emailFrom>bot@opencellsoft.com</emailFrom> 
-				<subject>Create Selfcare account</subject>
+				<subject>Create account</subject>
 				<emailToEl>#{event.email}</emailToEl>
 				<body>Hello,
                 Your login has been created:
