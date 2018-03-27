@@ -56268,6 +56268,10 @@ rkJggg==
       <con:name>SCFirstname</con:name>
       <con:value>SC Firstname</con:value>
     </con:property>
+    <con:property>
+      <con:name>elasticSearch</con:name>
+      <con:value>http://elasticsearch:9200</con:value>
+    </con:property>
   </con:properties>
   <con:wssContainer/>
   <con:oAuth2ProfileContainer/>
