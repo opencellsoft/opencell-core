@@ -20,6 +20,7 @@ package org.meveo.admin.action.catalog;
 
 import java.sql.BatchUpdateException;
 
+import javax.annotation.PostConstruct;
 import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
