@@ -80,6 +80,7 @@ import org.slf4j.Logger;
  * Service class for WalletOperation entity
  * 
  * @author Wassim Drira
+ * @author Phung tien lan
  * @lastModifiedVersion 5.0.1
  */
 @Stateless
@@ -812,10 +813,21 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
     public List<WalletOperation> applyReccuringChargeVirtual(RecurringChargeInstance chargeInstance, Date fromDate, Date toDate) throws BusinessException {
 
         List<WalletOperation> walletOperations = new ArrayList<>();
+        
+        if (chargeInstance == null) {
+            return walletOperations;
+        }
+        
         Date applyChargeFromDate = fromDate;
-
         Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
         cal.setInitDate(chargeInstance.getSubscriptionDate());
+        if (cal.getInitDate() == null) {
+            ServiceInstance serviceInstance = chargeInstance.getServiceInstance();
+            if (serviceInstance != null) {
+                cal.setInitDate(serviceInstance.getSubscriptionDate());
+            }
+        }
+        
         Date applyChargeToDate = cal.nextCalendarDate(toDate == null ? fromDate : toDate);
 
         InvoiceSubCategory invoiceSubCategory = chargeInstance.getRecurringChargeTemplate().getInvoiceSubCategory();
