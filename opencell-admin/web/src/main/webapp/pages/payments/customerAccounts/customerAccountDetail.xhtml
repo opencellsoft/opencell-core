@@ -104,9 +104,10 @@
                                             </hftl:decorateFormField>
                                         </h:panelGroup>
 
-                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionNotNull" required="false" listBean="#{titleBean}"
-                                            listenerUpdate=":parentTab:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft" />
 
+                                        <hftl:formField label="#{messages['name.title']}" field="name" childField="title" valueLabelField="descriptionI18n" required="false" listBean="#{titleBean}"
+                                            listenerUpdate=":parentTab:formCustomerAccount:childTab:userNamePanel" styleClass="clearLeft" />
+                                            
                                         <h:panelGroup id="userNamePanel" layout="block">
                                             <hftl:formField
                                                 label="#{messages[(customerAccountBean.entity.name.title != null and customerAccountBean.entity.name.title.isCompany)?'name.company':'name.lastName']}"
