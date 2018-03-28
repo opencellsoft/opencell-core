@@ -70,6 +70,8 @@ import org.primefaces.model.LazyDataModel;
 /**
  * Standard backing bean for {@link UserAccount} (extends {@link BaseBean} that provides almost all common methods to handle entities filtering/sorting in datatable, their create,
  * edit, view, delete operations). It works with Manaty custom JSF components.
+ * 
+ * @lastModifiedVersion 5.0.1
  */
 @Named
 @ViewScoped

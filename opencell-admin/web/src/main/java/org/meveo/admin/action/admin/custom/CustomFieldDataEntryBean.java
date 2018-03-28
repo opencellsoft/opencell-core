@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Edward P. Legaspi
  * @author akadid abdelmounaim
- * @lastModifiedVersion 5.0
+ * @lastModifiedVersion 5.0.1
  */
 @Named
 @ViewScoped
@@ -365,6 +365,54 @@ public class CustomFieldDataEntryBean implements Serializable {
     // }
 
     /**
+     * Increase priority of a custom field value period
+     * 
+     * @param entityValueHolderEntity custom field value holder
+     * @param cft Custom field definition
+     * @param valuePeriodToChange Custom field value period to change
+     */
+    public void increasePriority(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange) {
+
+        boolean changed = entityValueHolder.changePriority(cft, valuePeriodToChange, true);
+
+        if (changed) {
+            messages.info(new BundleKey("messages", "customFieldTemplate.periodValue.priorityIncreased"));
+        }
+    }
+
+    /**
+     * Decrease priority of a custom field value period
+     * 
+     * @param entityValueHolderEntity custom field value holder
+     * @param cft Custom field definition
+     * @param valuePeriodToChange Custom field value period to change
+     */
+    public void decreasePriority(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange) {
+
+        boolean changed = entityValueHolder.changePriority(cft, valuePeriodToChange, false);
+
+        if (changed) {
+            messages.info(new BundleKey("messages", "customFieldTemplate.periodValue.priorityDecreased"));
+        }
+    }
+
+    /**
+     * Remove a customField period
+     * 
+     * @param entityValueHolder Entity custom field value holder
+     * @param cft Custom field definition
+     * @param valuePeriodToRemove Custom field value period to remove
+     */
+    public void removePeriod(CustomFieldValueHolder entityValueHolder, CustomFieldTemplate cft, CustomFieldValue valuePeriodToRemove) {
+
+        boolean removed = entityValueHolder.removeValuePeriod(cft, valuePeriodToRemove);
+
+        if (removed) {
+            messages.info(new BundleKey("messages", "customFieldTemplate.periodValue.removedPeriod"));
+        }
+    }
+
+    /**
      * Add a new customField period with a previous validation that matching period does not exists
      * 
      * @param entityValueHolder Entity custom field value holder
@@ -613,7 +661,6 @@ public class CustomFieldDataEntryBean implements Serializable {
         return customFieldInstanceService.getInheritedOnlyCFValue(entity, cfCode);
     }
 
-
     /**
      * Get a a list of custom field CFvalues for a given entity's parent's hierarchy up. (DOES NOT include a given entity)
      * 
@@ -659,8 +706,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     }
 
     /**
-     * Add row to a matrix.
-     * v5.0: Fix for save values on a multi values CF type problem
+     * Add row to a matrix. v5.0: Fix for save values on a multi values CF type problem
      *
      * @param entityValueHolder Entity custom field value holder
      * @param cfValue Map value holder
