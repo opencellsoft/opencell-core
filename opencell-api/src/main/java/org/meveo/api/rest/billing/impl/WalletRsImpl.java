@@ -23,7 +23,10 @@ import org.meveo.api.rest.billing.WalletRs;
 import org.meveo.api.rest.impl.BaseRs;
 
 /**
+ * Wallet operation and balance related REST API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })

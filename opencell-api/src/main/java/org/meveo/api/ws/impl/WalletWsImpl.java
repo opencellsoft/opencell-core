@@ -21,7 +21,10 @@ import org.meveo.api.logging.WsRestApiInterceptor;
 import org.meveo.api.ws.WalletWs;
 
 /**
+ * Wallet operation and balance related Webservices API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @WebService(serviceName = "WalletWs", endpointInterface = "org.meveo.api.ws.WalletWs")
 @Interceptors({ WsRestApiInterceptor.class })

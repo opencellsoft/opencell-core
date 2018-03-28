@@ -26,7 +26,10 @@ import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 import org.meveo.api.rest.IBaseRs;
 
 /**
+ * Wallet operation and balance related REST API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @Path("/billing/wallet")
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
