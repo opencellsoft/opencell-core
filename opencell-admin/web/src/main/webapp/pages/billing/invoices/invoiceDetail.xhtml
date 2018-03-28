@@ -208,7 +208,7 @@
                         </p:fieldset>
 
                         <p:outputPanel styleClass="action-buttons" column="2" id="invoiceAdjustmentActionPanel"
-                            rendered="#{(not empty invoiceBean.entity.invoiceNumber) and (invoiceBean.entity.invoiceType.code eq invoiceTypeBean.commercialCode) }">
+                            rendered="#{not empty invoiceBean.entity.invoiceNumber}">
                             <p:button id="btnNewIAAggregateds" value="#{messages['invoice.adjustment.action.new.aggregated']}" outcome="invoiceAggregatedDetail">
                                 <f:param name="linkedInvoiceIdParam" value="#{invoiceBean.entity.id}" />
                                 <f:param name="cid" value="#{javax.enterprise.context.conversation.id}" />
