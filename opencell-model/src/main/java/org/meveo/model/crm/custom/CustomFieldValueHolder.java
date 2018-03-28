@@ -3,6 +3,8 @@ package org.meveo.model.crm.custom;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +19,7 @@ import org.slf4j.LoggerFactory;
  * Used to facilitate custom field value data entry in GUI. Represents custom field values of a single entity
  * 
  * @author Andrius Karpavicius
- * 
+ * @lastModifiedVersion 5.0.1
  */
 public class CustomFieldValueHolder implements Serializable {
 
@@ -258,6 +260,7 @@ public class CustomFieldValueHolder implements Serializable {
 
     /**
      * Check if any field value should be considered as empty for GUI.
+     * 
      * @param cft custom field template.
      * @return true if any field is emty.
      */
@@ -386,5 +389,98 @@ public class CustomFieldValueHolder implements Serializable {
         CustomFieldValueHolder other = (CustomFieldValueHolder) obj;
 
         return getEntityUuid().equals(other.getEntityUuid());
+    }
+
+    /**
+     * Remove custom field value (period)
+     * 
+     * @param cft Custom field template
+     * @param valuePeriodToRemove Custom field value (period) to remove
+     * @return True if value was removed
+     */
+    public boolean removeValuePeriod(CustomFieldTemplate cft, CustomFieldValue valuePeriodToRemove) {
+        List<CustomFieldValue> periodValues = valuesByCode.get(cft.getCode());
+
+        if (periodValues == null) {
+            return false;
+        }
+
+        boolean removed = false;
+
+        // Remove period
+        for (int i = periodValues.size() - 1; i >= 0; i--) {
+            CustomFieldValue periodValue = periodValues.get(i);
+
+            if ((periodValue.getPeriod() != null && periodValue.getPeriod().equals(valuePeriodToRemove.getPeriod())
+                    || (periodValue.getPeriod() == null && valuePeriodToRemove.getPeriod() == null)) && periodValue.getPriority() == valuePeriodToRemove.getPriority()) {
+                periodValues.remove(i);
+                removed = true;
+                break;
+            }
+        }
+
+        // Reassign priority numbers if not versioned by a calendar
+        if (removed && cft.getCalendar() == null && !periodValues.isEmpty()) {
+            Collections.sort(periodValues, Comparator.comparing(CustomFieldValue::getPriority));
+
+            for (int i = 0; i < periodValues.size(); i++) {
+                periodValues.get(i).setPriority(i + 1);
+            }
+        }
+
+        return removed;
+    }
+
+    /**
+     * Increase or decrease priority of custom field value (period). A greater number means higher priority. Applies when period dates are not managed by a calendar.
+     * 
+     * @param cft Custom field template
+     * @param valuePeriodToChange Custom field value (period) to change
+     * @param increasePriority True if priority should be increased
+     * @return True if priority was changed
+     */
+    public boolean changePriority(CustomFieldTemplate cft, CustomFieldValue valuePeriodToChange, boolean increasePriority) {
+        List<CustomFieldValue> periodValues = valuesByCode.get(cft.getCode());
+
+        if (periodValues == null || cft.getCalendar() != null) {
+            return false;
+        }
+
+        int currentIndex = -1;
+
+        // Find position of the period to change
+        Collections.sort(periodValues, Comparator.comparing(CustomFieldValue::getPriority));
+
+        for (int i = periodValues.size() - 1; i >= 0; i--) {
+            CustomFieldValue periodValue = periodValues.get(i);
+
+            if ((periodValue.getPeriod() != null && periodValue.getPeriod().equals(valuePeriodToChange.getPeriod())
+                    || (periodValue.getPeriod() == null && valuePeriodToChange.getPeriod() == null)) && periodValue.getPriority() == valuePeriodToChange.getPriority()) {
+                currentIndex = i;
+                break;
+            }
+        }
+
+        // Exchange priority numbers and reorder
+        if (currentIndex > -1) {
+
+            // Nowhere to move - either the first ir last item already
+            if ((currentIndex == 0 && !increasePriority) || currentIndex == periodValues.size() - 1 && increasePriority) {
+                return false;
+            }
+
+            int otherIndex = increasePriority ? currentIndex + 1 : currentIndex - 1;
+            int currentPriority = periodValues.get(currentIndex).getPriority();
+            int otherPriority = periodValues.get(otherIndex).getPriority();
+            periodValues.get(currentIndex).setPriority(otherPriority);
+            periodValues.get(otherIndex).setPriority(currentPriority);
+
+            Collections.sort(periodValues, Comparator.comparing(CustomFieldValue::getPriority));
+
+            for (int i = 0; i < periodValues.size(); i++) {
+                periodValues.get(i).setPriority(i + 1);
+            }
+        }
+        return currentIndex > -1;
     }
 }

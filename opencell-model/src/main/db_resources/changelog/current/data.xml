@@ -83,5 +83,514 @@
 	    <sql>update ${db.schema.adapted}ar_payment_gateway set country_id = 70, trading_currency_id = null where id =-1 </sql> 
 	    <sql>update ${db.schema.adapted}ar_payment_gateway set country_id = 102, trading_currency_id = null where id =-2</sql> 
 	</changeSet>
+	
+	<changeSet id="#2125_20180328 Report Extracts" author="EdwardPLegaspi">
+		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-1, 0, 0, now(), 'ACCOUNT_OPS', 'Export account operations', 'JAVA', '
+			package org.meveo.service.script.export;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.model.payments.AccountOperation;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.RecordedInvoice;
+import org.meveo.service.payments.impl.AccountOperationService;
+import org.meveo.service.script.Script;
+import org.meveo.service.script.finance.ReportExtractScript;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.util.Date;
+
+public class ExportAccountOperationScript extends ReportExtractScript {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExportAccountOperationScript.class);
+
+    private AccountOperationService accountOperationService = (AccountOperationService) getServiceInterface(AccountOperationService.class.getSimpleName());
+
+
+	@Override
+	public void execute(Map<String, Object> initContext) throws BusinessException {
+		try {
+			LOGGER.debug("#####################Starting of script ExportAccountOperationScript");
+	
+			Date startDate = (Date) initContext.get(ReportExtractScript.START_DATE);	
+			Date endDate = (Date) initContext.get(ReportExtractScript.END_DATE);
+			DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+			 
+			List<AccountOperation> accountOperations = accountOperationService.list();
+	        String exportDir = String.valueOf(initContext.get(ReportExtractScript.DIR));
+	        File dir = new File(exportDir);
+	        if (!dir.exists()) {
+	            dir.mkdirs();
+	        }
+	        CustomerAccount customerAccount = null;
+	        StringBuilder sb =new StringBuilder();
+	        sb.append("Transaction Date;Transaction Type;Amount;Due Date;Reference;Transaction Category;Invoice Date;"
+	        		+ "Customer Account Code;Customer Account Description\n");
+	        for (AccountOperation accountOperation : accountOperations) { 
+	        	if(accountOperation.getTransactionDate().equals(startDate) || accountOperation.getTransactionDate().equals(endDate)
+	        			|| (accountOperation.getTransactionDate().after(startDate) && accountOperation.getTransactionDate().before(endDate))) {
+	        		
+	        		customerAccount = accountOperation.getCustomerAccount();
+	        		sb.append(nil(accountOperation.getTransactionDate().toString())+ ";");
+		        	sb.append(nil(accountOperation.getType()) + ";");
+		        	sb.append(nil(accountOperation.getAmount().toString()) + ";");
+		        	sb.append(isNull(accountOperation.getDueDate()) + ";");
+		        	sb.append(nil(accountOperation.getReference()) + ";");
+		        	sb.append(nil(accountOperation.getTransactionCategory().toString()) + ";");
+		        	if(accountOperation instanceof RecordedInvoice) {
+		        		RecordedInvoice invoice = (RecordedInvoice) accountOperation;
+			        	sb.append(invoice.getInvoiceDate().toString() + ";");
+		        	} else {
+			        	sb.append(";");
+		        	}
+		        	sb.append(nil(customerAccount.getCode()) + ";");
+		        	sb.append(nil(customerAccount.getDescriptionOrCode()) + ";\n");
+
+		        	
+	        	}
+	        }
+          	String strFilename = String.valueOf(initContext.get(ReportExtractScript.FILENAME));
+          	LOGGER.debug("output={}", strFilename);
+	        File file = new File(dir + File.separator + strFilename);
+	        file.createNewFile();
+	        FileWriter fileWriter = new FileWriter(file);
+	        fileWriter.write(sb.toString());
+	        fileWriter.close();
+	        
+			LOGGER.debug("#####################Ending of script ExportAccountOperationScript");
+		} catch (Exception e) {
+			LOGGER.error("Exception:", e);
+			throw new BusinessException(e.getMessage());
+		}
+		
+	}
+  
+  private String isNull(Object obj) {
+    if(obj == null) {
+      return "";
+    } else {
+      return obj.toString();
+    }
+  }
+  
+	private String nil(String word) {
+		if (word == null || "null".equalsIgnoreCase(word)) {
+			return "";
+		} else {
+			return word;
+		}
+	}
+}		
+		');]]></sql>
+		
+		<sql><![CDATA[INSERT INTO ${db.schema.adapted}meveo_script_instance (id, version, disabled, created, code, description, src_type, script) VALUES (-2, 0, 0, now(), 'SAGE_EXPORT', 'Export records for sage', 'JAVA', '
+		package org.meveo.service.script.hubicus;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.text.DecimalFormat;
+import java.util.Locale;
+
+import org.meveo.admin.exception.BusinessException;
+import org.meveo.commons.utils.CsvBuilder;
+import org.meveo.commons.utils.ParamBean;
+import org.meveo.commons.utils.StringUtils;
+import org.meveo.model.admin.Seller;
+import org.meveo.model.billing.BillingAccount;
+import org.meveo.model.billing.Invoice;
+import org.meveo.model.billing.InvoiceAgregate;
+import org.meveo.model.billing.InvoiceCategory;
+import org.meveo.model.billing.RatedTransaction;
+import org.meveo.model.billing.TaxInvoiceAgregate;
+import org.meveo.model.crm.CustomerCategory;
+import org.meveo.model.crm.Provider;
+import org.meveo.model.payments.CustomerAccount;
+import org.meveo.model.payments.OperationCategoryEnum;
+import org.meveo.model.shared.DateUtils;
+import org.meveo.service.billing.impl.InvoiceService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
+import org.meveo.service.crm.impl.ProviderService;
+import org.meveo.service.admin.impl.SellerService;
+import org.meveo.service.script.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.meveo.service.script.finance.ReportExtractScript;
+
+public class ExportSageScript extends ReportExtractScript {
+
+    private static final Logger log = LoggerFactory.getLogger(ExportSageScript.class);
+    private CustomFieldInstanceService cfiService = (CustomFieldInstanceService) getServiceInterface("CustomFieldInstanceService");
+    private InvoiceService invoiceService = (InvoiceService) getServiceInterface("InvoiceService");
+    private SellerService sellerService = (SellerService) getServiceInterface("SellerService");
+    private DecimalFormat decimalFormat = (DecimalFormat)DecimalFormat.getInstance(Locale.FRENCH);
+    private String clientAccountingCodeTax = null;
+    private String clientAccountingCodeNoTax = null;
+    private String groupAccountingCodeTax = null;
+    private String groupAccountingCodeNoTax = null;
+
+    @Override
+    public void execute(Map<String, Object> context) throws BusinessException {
+
+        decimalFormat.setDecimalSeparatorAlwaysShown(true);
+        decimalFormat.setMinimumFractionDigits(2);
+        decimalFormat.setGroupingUsed(false);
+
+        log.debug("Execute - Context:{}",context);        
+        Provider appProvider = ((ProviderService) getServiceInterface("ProviderService")).getProvider();
+        Date lastDate = (Date)cfiService.getCFValue(appProvider, "CF_PROVIDER_EXPORT_SAGE_LASTDATE");
+        Date startDate = (Date) context.get(ReportExtractScript.START_DATE);	
+		Date endDate = (Date) context.get(ReportExtractScript.END_DATE);        
+        
+ 
+        Seller seller = sellerService.findByCode("HUBICUS");
+        clientAccountingCodeTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_ACCOUNTING_CODE_TAX");
+        clientAccountingCodeNoTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_ACCOUNTING_CODE_NOTAX");
+        groupAccountingCodeTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_GROUP_ACCOUNTING_CODE_TAX");
+        groupAccountingCodeNoTax = (String)cfiService.getCFValue(seller, "CF_S_HUBICUS_GROUP_ACCOUNTING_CODE_NOTAX");
+        log.debug("clientAccountingCodeTax={}", clientAccountingCodeTax);
+        log.debug("clientAccountingCodeNoTax={}", clientAccountingCodeNoTax);
+        log.debug("groupAccountingCodeTax={}", groupAccountingCodeTax);
+        log.debug("groupAccountingCodeNoTax={}", groupAccountingCodeNoTax);
+
+        if(startDate == null){
+            startDate = lastDate;
+        }
+        if(endDate == null){
+            endDate = new Date();
+        }
+        
+        String outputDir = String.valueOf(context.get(ReportExtractScript.DIR));
+		File dir = new File(outputDir);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		String strFilename = String.valueOf(context.get(ReportExtractScript.FILENAME));
+		log.debug("output={}", strFilename);
+		String absolutFileName  = dir + File.separator + strFilename;
+        
+        log.debug("Processing Sage Report for startDate:{}, endDate:{}, fileName:{}, outputDir:{}", startDate, endDate,strFilename, outputDir);
+                
+        Map<String,Object> params = new HashMap<String, Object>();
+        String query = "Select inv From Invoice inv where inv.recordedInvoice is not null ";
+        if(startDate != null){
+            params.put("startDate", startDate);
+            query +="and inv.recordedInvoice.transactionDate >=:startDate ";
+        }
+        if(endDate != null){
+            params.put("endDate", endDate);
+            query +="and  inv.recordedInvoice.transactionDate <:endDate  ";
+        }            
+        
+        CsvBuilder csvBuilder = new CsvBuilder("", false);
+        
+        List<Invoice> invoices = (List<Invoice>) invoiceService.executeSelectQuery(query, params);
+        log.debug("Count invoices :{}", invoices == null ? null : invoices.size());
+        for (Invoice invoice : invoices) {
+            for(String line : getHTlines(invoice)){
+                csvBuilder.appendValue(line);
+                csvBuilder.startNewLine();
+            }
+            for(String line : getTVAlines(invoice)){
+                csvBuilder.appendValue(line);
+                csvBuilder.startNewLine();
+            }
+            if( !BigDecimal.ZERO.equals(invoice.getAmountWithTax()) ){
+                csvBuilder.appendValue(getTTCline(invoice));
+                csvBuilder.startNewLine();
+            }
+        }
+        
+        csvBuilder.toFile(absolutFileName);
+        log.debug("Sage Report created :{}", absolutFileName);
+        cfiService.setCFValue(appProvider, "CF_PROVIDER_EXPORT_SAGE_LASTDATE",endDate);
+        log.debug("CF_PROVIDER_EXPORT_SAGE_LASTDATE updated with:{}", endDate);
+    }
+
+
+    private List<String> getTVAlines(Invoice invoice) {
+        List<String> lines = new ArrayList<String>();
+        for (InvoiceAgregate invoiceAgregate : invoice.getInvoiceAgregates()) {
+            if (invoiceAgregate instanceof TaxInvoiceAgregate) {
+                TaxInvoiceAgregate taxInvoiceAgregate = (TaxInvoiceAgregate) invoiceAgregate;
+    
+                if( BigDecimal.ZERO.compareTo(taxInvoiceAgregate.getAmountTax()) != 0 ) {
+                	String accountingCode = taxInvoiceAgregate.getTax().getAccountingCode() != null ? taxInvoiceAgregate.getTax().getAccountingCode().getCode() : "";
+                    String line ="";
+                    line += "VE ";
+                    line += "G";
+                    line += "D";
+                    line += StringUtils.getStringAsNChar(accountingCode,8);
+                    line += StringUtils.getStringAsNChar("",16);
+                    line += invoice.getRecordedInvoice().getTransactionCategory().name().equals(OperationCategoryEnum.DEBIT.name()) ? "C":"D";
+                    line += StringUtils.getStringAsNChar(""+round(taxInvoiceAgregate.getAmountTax(),2),15);
+                    line += StringUtils.getStringAsNChar(cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(),"codeClientCompta")+" "+invoice.getInvoiceNumber(),30);
+                    line += DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), "ddMMyy");
+                    line += StringUtils.getStringAsNChar(" "+invoice.getInvoiceNumber(),12);
+                    line += StringUtils.getStringAsNChar("",5);
+                    line += DateUtils.formatDateWithPattern(invoice.getDueDate(), "ddMMyy");
+                    line += StringUtils.getStringAsNChar("",7);
+                    lines.add(line);
+                }
+            }
+        }
+        return lines;
+    }
+
+    private String getTTCline(Invoice invoice) {        
+        BigDecimal amountTTC = invoice.getAmountWithTax();
+        log.debug("TTC line: {}={}", invoice.getInvoiceNumber(), amountTTC);
+
+        if( BigDecimal.ZERO.compareTo(amountTTC) != 0) {
+            String line ="";                
+            line += "VE ";
+            line += "X";    
+            line += "D";
+            line += StringUtils.getStringAsNChar(getAccountingCodeTTC(invoice),8);
+            line += StringUtils.getStringAsNChar((String)cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(), "codeClientCompta"),16);
+            line += invoice.getRecordedInvoice().getTransactionCategory().name().equals(OperationCategoryEnum.DEBIT.name()) ? "D":"C";
+            line += StringUtils.getStringAsNChar(""+round(amountTTC,2),15);
+            line += StringUtils.getStringAsNChar(cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(),"codeClientCompta")+" "+invoice.getInvoiceNumber(),30);
+            line += DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), "ddMMyy");
+            line += StringUtils.getStringAsNChar(" "+invoice.getInvoiceNumber(),12);
+            line += StringUtils.getStringAsNChar("",5);
+            line += DateUtils.formatDateWithPattern(invoice.getDueDate(), "ddMMyy");
+            line += StringUtils.getStringAsNChar("",7);
+            return line;
+        } else {
+            return null;
+        }
+    }
+
+    private List<String> getHTlines(Invoice invoice) {
+        List<String> lines = new ArrayList<String>();
+        for (String param2  : getListParam2(invoice)) {            
+            BigDecimal amountHT = computeAmountHT(getRatedTransactionByParam(invoice, param2));
+            String invoiceNumber = invoice.getInvoiceNumber();
+            String accountingPartyCode = (String)cfiService.getCFValue(invoice.getBillingAccount().getCustomerAccount(),"codeClientCompta");
+            log.debug("HT line: {}={}", invoice.getInvoiceNumber(), amountHT);
+
+            if( BigDecimal.ZERO.compareTo(amountHT) != 0 ) {
+                String line ="";                
+                line += "VE ";
+                line += "G";
+                line += "D";
+                line += StringUtils.getStringAsNChar(getAccountingCodeHT(invoice, param2),8);
+                line += StringUtils.getStringAsNChar("",16);
+                line += invoice.getRecordedInvoice().getTransactionCategory().name().equals(OperationCategoryEnum.DEBIT.name()) ? "C":"D";
+                line += StringUtils.getStringAsNChar(""+round(amountHT,2),15);
+                line += StringUtils.getStringAsNChar(accountingPartyCode+" "+invoiceNumber,30);
+                line += DateUtils.formatDateWithPattern(invoice.getInvoiceDate(), "ddMMyy");
+                line += StringUtils.getStringAsNChar(" "+invoice.getInvoiceNumber(),12);
+                line += StringUtils.getStringAsNChar(param2.split("-")[1],5);
+                line += DateUtils.formatDateWithPattern(invoice.getDueDate(), "ddMMyy");
+                line += StringUtils.getStringAsNChar(param2.split("-")[0],7);
+                lines.add(line);
+            }
+        }
+        return lines;
+    }
+
+
+    private String getAccountingCodeTTC(Invoice invoice){
+        String accountingCode = "INCONNU";
+        CustomerCategory CustomerCategory = invoice.getBillingAccount().getCustomerAccount().getCustomer().getCustomerCategory();
+
+        if("Client".equals(CustomerCategory.getCode()) || "Partenaire".equals(CustomerCategory.getCode())){
+            accountingCode = clientAccountingCodeTax;
+        } else if("Client_EX".equals(CustomerCategory.getCode()) || "Partenaire_EX".equals(CustomerCategory.getCode())){
+            accountingCode = clientAccountingCodeNoTax;
+        } else if("Client_Groupe".equals(CustomerCategory.getCode()) ){
+            accountingCode = groupAccountingCodeTax;
+        } else if("Client_Groupe_EX".equals(CustomerCategory.getCode()) ){
+            accountingCode = groupAccountingCodeNoTax;
+        }
+        return accountingCode;
+
+    }
+
+    private String getAccountingCodeHT(Invoice invoice,String param2){
+        String accountingCodeHTPrefix = null;
+        String accountingCodeSuffix = "00";                
+        BillingAccount ba = invoice.getBillingAccount();
+        CustomerAccount ca = ba.getCustomerAccount();        
+        CustomerCategory CustomerCategory = ca.getCustomer().getCustomerCategory();        
+        InvoiceCategory iCat = getRatedTransactionByParam(invoice, param2).get(0).getInvoiceSubCategory().getInvoiceCategory();
+        accountingCodeHTPrefix =  (String)cfiService.getCFValue(iCat, "CF_ICAT_ACCOUNTING_CODE");
+        if("Client_Groupe".equals(CustomerCategory.getCode()) || "Client_Groupe_EX".equals(CustomerCategory.getCode()) ){
+            accountingCodeSuffix = (String)cfiService.getCFValue(ba, "suffixCompta");
+        }        
+        return accountingCodeHTPrefix+accountingCodeSuffix;        
+    }
+
+    private List<String> getListParam2(Invoice invoice){
+        List<String> listParam = new ArrayList<String>();
+        for (RatedTransaction rt : invoice.getRatedTransactions()) {
+            if (!StringUtils.isBlank(rt.getParameter2()) && !listParam.contains(rt.getParameter2())) {
+                listParam.add(rt.getParameter2());
+            }       
+        }    
+
+        return listParam;
+    }
+
+    private List<RatedTransaction> getRatedTransactionByParam(Invoice invoice, String param)  {
+        List<RatedTransaction> rts = new ArrayList<RatedTransaction>();
+        for (RatedTransaction rt : invoice.getRatedTransactions()) {
+            if(param == null && rt.getParameter2() == null) {
+                rts.add(rt);
+            }
+
+            if(param != null && param.equals(rt.getParameter2())) {
+                rts.add(rt);
+            }
+        }
+        return rts;
+    }
+
+    private Date parseDate(String dateString) throws BusinessException {
+        Date date = null;
+        if (dateString != null) {
+            date = DateUtils.guessDate(dateString, "dd/MM/yyyy", "dd-MM-yyyy");
+            if (date == null || date.getTime() == 1) {
+                throw new BusinessException("Invalid date format, please use dd/MM/yyyy or dd-MM-yyyy");
+            }
+        }
+        return date;
+    }
+
+    private String round(BigDecimal amount, Integer scale) {
+        if (amount == null) {
+            amount = BigDecimal.ZERO;
+        }
+        if (scale == null) {
+            scale = 2;
+        }
+        amount = amount.setScale(scale, RoundingMode.HALF_UP);
+        return decimalFormat.format(amount);
+    }
+
+    private BigDecimal computeAmountHT(List<RatedTransaction> ratedTransactions) {        
+        BigDecimal sumHT = BigDecimal.ZERO;
+
+        for (RatedTransaction rt : ratedTransactions) {
+            sumHT = sumHT.add(rt.getAmountWithoutTax());
+        }
+        return sumHT;
+    }
+
+}
+		');]]></sql>
+		
+		<sql><![CDATA[
+INSERT INTO ${db.schema.adapted}dwh_report_extract 
+	(id, version, disabled, created, code, description, category, script_type, filename_format, sql_query) 
+VALUES 
+	(-1, 0, 0, now(), 'SALES_JOURNAL', 'Sales Journal', 'sales', 'SQL', 'sales-[yyyy_MM_dd].csv', '
+SELECT
+    TO_CHAR(ao.invoice_date,''MM'') AS "Mois",
+    TO_CHAR(ao.invoice_date,''DD/MM/YYYY'') AS "Date facture",
+    text(''HG'') AS "Code comptable",
+    ae.code AS "Client facturé",
+    text(''MAI'') AS "Type article",
+    split_part(bac.code, '','', 6) AS "Famille statistique",
+    split_part(bac.code, '','', 2) AS "Article",
+    trim(TO_CHAR(ia.amount_without_tax,''9999990D00'')) AS "Montant HT",
+    trim(TO_CHAR(ia.quantity,''9999990'')) AS "Qté facturée",
+    ao.reference AS "No facture",
+    ao.occ_description AS "Catégorie facture",
+    ao.occ_code AS "Type de pièce",
+    text(''VEN'') AS "Journal"
+FROM
+    account_entity ae
+INNER JOIN ar_account_operation ao ON ao.customer_account_id = ae.id
+INNER JOIN billing_invoice i ON i.invoice_number = ao.reference
+INNER JOIN billing_invoice_agregate ia ON (ia.invoice_id = i.id AND type = ''F'')
+LEFT JOIN billing_accounting_code bac ON bac.id = ia.accounting_code_id
+WHERE :START_DATE<>:END_DATE
+AND ae.account_type = ''ACCT_CA''
+AND ao.invoice_date >= to_date(''01/'' || TO_CHAR(CURRENT_DATE,''MM/YYYY''),''DD/MM/YYYY'') + interval ''-12 month''
+AND ao.invoice_date <= to_date(''01/'' || TO_CHAR(CURRENT_DATE,''MM/YYYY''),''DD/MM/YYYY'') + interval ''0 month''
+ORDER BY
+    ae.code,
+    occ_code,
+    split_part(bac.code, '','', 6),
+    split_part(bac.code, '','', 2);
+')
+		]]></sql>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-1"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-1"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract">
+			<column name="id" valueNumeric="-2" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="ACCOUNT_OPS" />
+			<column name="description" value="Export account operations" />
+			<column name="category" value="sales"></column>
+			<column name="script_type" value="JAVA"></column>
+			<column name="filename_format" value="accounts-ops-[yyyy_MM_dd].csv"></column>
+			<column name="script_instance_id" value="-1"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-2"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-2"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract">
+			<column name="id" valueNumeric="-3" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="code" value="SAGE_EXPORT" />
+			<column name="description" value="Export records for sage" />
+			<column name="category" value="accounting"></column>
+			<column name="script_type" value="JAVA"></column>
+			<column name="filename_format" value="sage-[yyyy_MM_dd].csv"></column>
+			<column name="script_instance_id" value="-2"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-3"></column>
+			<column name="params_key" value="START_DATE"></column>
+			<column name="params" value="31/01/2017"></column>
+		</insert>
+		
+		<insert tableName="dwh_report_extract_params">
+			<column name="reportextract_id" value="-3"></column>
+			<column name="params_key" value="END_DATE"></column>
+			<column name="params" value="31/12/2018"></column>
+		</insert>
+	</changeSet>
     
 </databaseChangeLog>

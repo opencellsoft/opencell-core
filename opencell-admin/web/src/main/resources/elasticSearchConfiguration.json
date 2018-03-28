@@ -25,11 +25,14 @@
     "Subscription": {
       "index": "billing"
     },
-    "AccountOperation": {
+    "ServiceInstance": {
       "index": "billing"
     },
+    "AccountOperation": {
+      "index": "payment"
+    },
     "RatedTransaction": {
-      "index": "billing"
+      "index": "payment"
     },
     "CustomEntityInstance": {
       "index": "custom",
@@ -42,7 +45,8 @@
   "entityFieldMapping": {
     "default": {
       "code": "code",
-      "description": "description"
+      "description": "description",
+      "description_sort": "description"
     },
     "Customer": {
       "address.address1": "address.address1",
@@ -86,7 +90,8 @@
       "name.fullName": "getName().getFullName()",
       "name.firstName": "name.firstName",
       "name.lastName": "name.lastName",
-      "name.title": "name.title.code"
+      "name.title": "name.title.code",
+      "customerAccount": "getCustomerAccount().getCode()"
     },
     "UserAccount": {
       "address.address1": "address.address1",
@@ -121,11 +126,23 @@
       "userAccount.description": "getUserAccount().getDescription()",
       "userAccount.billingAccount": "getUserAccount().getBillingAccount().getCode()",
       "offer.code": "getOffer().getCode()",
-      "offer.description": "getOffer().getDescription()"
+      "offer.description": "getOffer().getDescription()",
+      "offer.description_sort": "getOffer().getDescription()"
+    },
+    "ServiceInstance": {
+      "subscription.code": "subscription.code",
+      "subscription.description": "subscription.description",
+      "subscription.description_sort": "subscription.description",
+      "status": "status",
+      "statusDate": "statusDate",
+      "subscriptionDate": "subscriptionDate",
+      "terminationDate": "terminationDate",
+      "endAgreementDate": "endAgreementDate"
     },
     "AccountOperation": {
       "occCode": "occCode",
       "occDescription": "occDescription",
+      "occDescription_sort": "occDescription",
       "type": "type",
       "amount": "amount",
       "transactionCategory": "transactionCategory",
@@ -137,7 +154,8 @@
       "customerAccount.name.firstName": "getCustomerAccount().getName().firstName",
       "customerAccount.name.lastName": "getCustomerAccount().getName().lastName",
       "customerAccount.name.title": "getCustomerAccount().getName().title.description",
-      "customerAccount.description": "getCustomerAccount().getDescription()"
+      "customerAccount.description": "getCustomerAccount().getDescription()",
+      "customerAccount.description_sort": "getCustomerAccount().getDescription()"
     },
     "RatedTransaction": {
       "billingRun": "getBillingRun().getId()",
@@ -147,8 +165,10 @@
       "billingAccount.name.lastName": "getBillingAccount().getName().lastName",
       "billingAccount.name.title": "getBillingAccount().getName().title.description",
       "billingAccount.description": "getBillingAccount().getDescription()",
+      "billingAccount.description_sort": "getBillingAccount().getDescription()",
       "invoiceSubCategory.code": "getInvoiceSubCategory().getCode()",
       "invoiceSubCategory.description": "getInvoiceSubCategory().getDescription()",
+      "invoiceSubCategory.description_sort": "getInvoiceSubCategory().getDescription()",
       "invoice": "getInvoice().getInvoiceNumber()",
       "status": "status",
       "usageDate": "usageDate",
@@ -222,6 +242,10 @@
             "description": {
               "type": "string"
             },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
             "userAccount": {
               "properties": {
                 "code": {
@@ -231,9 +255,12 @@
                 "description": {
                   "type": "string"
                 },
-                "billingAccount": {
+                "description_sort": {
                   "type": "string",
                   "index": "not_analyzed"
+                },
+                "billingAccount": {
+                  "type": "string"
                 },
                 "name": {
                   "properties": {
@@ -242,16 +269,13 @@
                       "index": "not_analyzed"
                     },
                     "firstName": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     },
                     "lastName": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     },
                     "title": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     }
                   }
                 }
@@ -260,13 +284,62 @@
             "offer": {
               "properties": {
                 "code": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
+            }
+          }
+        },
+        "ServiceInstance": {
+          "properties": {
+            "code": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "description": {
+              "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "subscription": {
+              "properties": {
+                "code": {
                   "type": "string",
                   "index": "not_analyzed"
                 },
                 "description": {
                   "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
                 }
               }
+            },
+            "status": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "statusDate": {
+              "type": "date"
+            },
+            "subscriptionDate": {
+              "type": "date"
+            },
+            "terminationDate": {
+              "type": "date"
+            },
+            "endAgreementDate": {
+              "type": "date"
             }
           }
         },
@@ -279,12 +352,20 @@
             "description": {
               "type": "string"
             },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
             "occCode": {
               "type": "string",
               "index": "not_analyzed"
             },
             "occDescription": {
               "type": "string"
+            },
+            "occDescription_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "transactionCategory": {
               "type": "string",
@@ -314,6 +395,10 @@
                 "description": {
                   "type": "string"
                 },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
                 "customer": {
                   "type": "string",
                   "index": "not_analyzed"
@@ -325,16 +410,13 @@
                       "index": "not_analyzed"
                     },
                     "firstName": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     },
                     "lastName": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     },
                     "title": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     }
                   }
                 }
@@ -350,6 +432,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "billingRun": {
               "type": "string",
@@ -383,6 +469,10 @@
                 },
                 "description": {
                   "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
                 }
               }
             },
@@ -395,6 +485,10 @@
                 "description": {
                   "type": "string"
                 },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
                 "name": {
                   "properties": {
                     "fullName": {
@@ -402,16 +496,13 @@
                       "index": "not_analyzed"
                     },
                     "firstName": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     },
                     "lastName": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     },
                     "title": {
-                      "type": "string",
-                      "index": "not_analyzed"
+                      "type": "string"
                     }
                   }
                 }
@@ -441,6 +532,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         }
@@ -467,6 +562,10 @@
             "description": {
               "type": "string"
             },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
             "name": {
               "type": "string"
             }
@@ -481,6 +580,10 @@
             "description": {
               "type": "string"
             },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
             "name": {
               "type": "string"
             }
@@ -494,6 +597,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         },
@@ -505,6 +612,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         },
@@ -516,6 +627,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "name": {
               "type": "string"
@@ -530,6 +645,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         },
@@ -541,6 +660,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             }
           }
         },
@@ -552,6 +675,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "chargeType": {
               "type": "string",
@@ -581,6 +708,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "address": {
               "properties": {
@@ -622,16 +753,13 @@
                   "index": "not_analyzed"
                 },
                 "firstName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "lastName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "title": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 }
               }
             }
@@ -645,6 +773,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "customer": {
               "type": "string",
@@ -690,16 +822,13 @@
                   "index": "not_analyzed"
                 },
                 "firstName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "lastName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "title": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 }
               }
             },
@@ -716,6 +845,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "address": {
               "properties": {
@@ -757,16 +890,13 @@
                   "index": "not_analyzed"
                 },
                 "firstName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "lastName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "title": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 }
               }
             }
@@ -780,6 +910,10 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
             },
             "billingAccount": {
               "type": "string",
@@ -825,16 +959,13 @@
                   "index": "not_analyzed"
                 },
                 "firstName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "lastName": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 },
                 "title": {
-                  "type": "string",
-                  "index": "not_analyzed"
+                  "type": "string"
                 }
               }
             }
@@ -848,6 +979,191 @@
             },
             "description": {
               "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        }
+      }
+    },
+    "<provider>_payment_v1": {
+      "settings": {
+        "index": {
+          "number_of_shards": "5",
+          "number_of_replicas": "1"
+        }
+      },
+      "aliases": {
+        "<provider>_payment": {
+        }
+      },
+      "mappings": {
+        "AccountOperation": {
+          "properties": {
+            "code": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "description": {
+              "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "occCode": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "occDescription": {
+              "type": "string"
+            },
+            "occDescription_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "transactionCategory": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "type": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "amount": {
+              "type": "double"
+            },
+            "matchingStatus": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "reference": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "customerAccount": {
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "customer": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "name": {
+                  "properties": {
+                    "fullName": {
+                      "type": "string",
+                      "index": "not_analyzed"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "RatedTransaction": {
+          "properties": {
+            "code": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "description": {
+              "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "billingRun": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "invoice": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "status": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "amountWithoutTax": {
+              "type": "double"
+            },
+            "amountTax": {
+              "type": "double"
+            },
+            "amountWithTax": {
+              "type": "double"
+            },
+            "usageDate": {
+              "type": "date"
+            },
+            "invoiceSubCategory": {
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
+            },
+            "billingAccount": {
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "name": {
+                  "properties": {
+                    "fullName": {
+                      "type": "string",
+                      "index": "not_analyzed"
+                    },
+                    "firstName": {
+                      "type": "string"
+                    },
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -875,6 +1191,10 @@
         },
         "description": {
           "type": "string"
+        },
+        "description_sort": {
+          "type": "string",
+          "index": "not_analyzed"
         }
       }
     }

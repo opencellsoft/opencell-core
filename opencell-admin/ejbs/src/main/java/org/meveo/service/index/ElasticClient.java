@@ -33,7 +33,7 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.cache.CustomFieldsCacheContainerProvider;
 import org.meveo.commons.utils.ReflectionUtils;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.customEntities.CustomEntityInstance;
 import org.meveo.model.customEntities.CustomEntityTemplate;
@@ -91,7 +91,7 @@ public class ElasticClient {
      * 
      * @param entity Entity to store in Elastic Search
      */
-    public void createOrFullUpdate(BusinessEntity entity) {
+    public void createOrFullUpdate(ISearchable entity) {
 
         createOrUpdate(entity, false);
     }
@@ -101,7 +101,7 @@ public class ElasticClient {
      * 
      * @param entity Entity to store in Elastic Search via partial update
      */
-    public void partialUpdate(BusinessEntity entity) {
+    public void partialUpdate(ISearchable entity) {
         createOrUpdate(entity, true);
     }
 
@@ -112,7 +112,7 @@ public class ElasticClient {
      * @param fieldName Field name
      * @param fieldValue Field value
      */
-    public void partialUpdate(BusinessEntity entity, String fieldName, Object fieldValue) {
+    public void partialUpdate(ISearchable entity, String fieldName, Object fieldValue) {
 
         Map<String, Object> fieldsToUpdate = new HashMap<>();
         fieldsToUpdate.put(fieldName, fieldValue);
@@ -125,7 +125,7 @@ public class ElasticClient {
      * @param entity Entity corresponding to a document in Elastic Search. Is used to construct document id only
      * @param fieldsToUpdate A map of fieldname and values to update in entity
      */
-    public void partialUpdate(BusinessEntity entity, Map<String, Object> fieldsToUpdate) {
+    public void partialUpdate(ISearchable entity, Map<String, Object> fieldsToUpdate) {
 
         if (!esConnection.isEnabled()) {
             return;
@@ -162,7 +162,7 @@ public class ElasticClient {
      * @param partialUpdate Should it be treated as partial update instead of replace if document exists. This value can be overridden in elasticSearchConfiguration.json to always
      *        do upsert.
      */
-    private void createOrUpdate(BusinessEntity entity, boolean partialUpdate) {
+    private void createOrUpdate(ISearchable entity, boolean partialUpdate) {
 
         if (!esConnection.isEnabled()) {
             return;
@@ -202,7 +202,7 @@ public class ElasticClient {
      * 
      * @param entity Entity to remove from Elastic Search
      */
-    public void remove(BusinessEntity entity) {
+    public void remove(ISearchable entity) {
 
         if (!esConnection.isEnabled()) {
             return;
@@ -668,14 +668,14 @@ public class ElasticClient {
     public ElasticSearchClassInfo getSearchScopeInfo(String classnameOrCetCode) {
         ElasticSearchClassInfo classInfo = null;
         try {
-            classInfo = new ElasticSearchClassInfo((Class<? extends BusinessEntity>) Class.forName(classnameOrCetCode), null);
+            classInfo = new ElasticSearchClassInfo((Class<? extends ISearchable>) Class.forName(classnameOrCetCode), null);
 
             // If not a real class, then might be a Custom Entity Instance. Check if CustomEntityTemplate exists with such name
         } catch (ClassNotFoundException e) {
 
-            Class clazz = ReflectionUtils.getClassBySimpleNameAndParentClass(classnameOrCetCode, BusinessEntity.class);
+            Class clazz = ReflectionUtils.getClassBySimpleNameAndParentClass(classnameOrCetCode, ISearchable.class);
             if (clazz != null) {
-                classInfo = new ElasticSearchClassInfo((Class<? extends BusinessEntity>) clazz, null);
+                classInfo = new ElasticSearchClassInfo((Class<? extends ISearchable>) clazz, null);
 
             } else {
 

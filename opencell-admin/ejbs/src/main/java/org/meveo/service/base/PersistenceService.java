@@ -63,6 +63,7 @@ import org.meveo.model.EnableEntity;
 import org.meveo.model.IAuditable;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.IEntity;
+import org.meveo.model.ISearchable;
 import org.meveo.model.IdentifiableEnum;
 import org.meveo.model.ObservableEntity;
 import org.meveo.model.UniqueEntity;
@@ -360,6 +361,10 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     public E update(E entity) throws BusinessException {
         log.debug("start of update {} entity (id={}) ..", entity.getClass().getSimpleName(), entity.getId());
 
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
+
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
         }
@@ -380,12 +385,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         // partially, as entity itself does not have Custom field values
         if (entity instanceof BusinessCFEntity) {
             elasticClient.partialUpdate((BusinessEntity) entity);
-
-        } else if (entity instanceof BusinessEntity) {
-            elasticClient.createOrFullUpdate((BusinessEntity) entity);
-
-            // validate code
-            validateCode((BusinessEntity) entity);
+        } else if (entity instanceof ISearchable) {
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of update {} entity (id={}).", entity.getClass().getSimpleName(), entity.getId());
@@ -393,7 +394,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         return entity;
     }
 
-    private boolean validateCode(BusinessEntity entity) throws BusinessException {
+    private boolean validateCode(ISearchable entity) throws BusinessException {
         if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
             throw new BusinessException("Invalid characters found in entity code.");
         }
@@ -406,7 +407,11 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
      */
     @Override
     public void create(E entity) throws BusinessException {
-        // log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+        log.debug("start of create {} entity={}", entity.getClass().getSimpleName());
+
+        if (entity instanceof ISearchable) {
+            validateCode((ISearchable) entity);
+        }
 
         if (entity instanceof IAuditable) {
             ((IAuditable) entity).updateAudit(currentUser);
@@ -425,11 +430,8 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         getEntityManager().persist(entity);
 
         // Add entity to Elastic Search
-        if (BusinessEntity.class.isAssignableFrom(entity.getClass())) {
-            elasticClient.createOrFullUpdate((BusinessEntity) entity);
-
-            // validate code
-            validateCode((BusinessEntity) entity);
+        if (ISearchable.class.isAssignableFrom(entity.getClass())) {
+            elasticClient.createOrFullUpdate((ISearchable) entity);
         }
 
         log.trace("end of create {}. entity id={}.", entity.getClass().getSimpleName(), entity.getId());

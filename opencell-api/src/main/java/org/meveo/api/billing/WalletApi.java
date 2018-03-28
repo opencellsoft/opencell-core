@@ -52,7 +52,10 @@ import org.meveo.service.payments.impl.CustomerAccountService;
 import org.primefaces.model.SortOrder;
 
 /**
+ * Wallet operation and balance related API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @Stateless
 public class WalletApi extends BaseApi {

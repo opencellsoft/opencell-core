@@ -18,7 +18,10 @@ import org.meveo.api.dto.response.billing.GetWalletTemplateResponseDto;
 import org.meveo.api.dto.response.billing.WalletBalanceResponseDto;
 
 /**
+ * Wallet operation and balance related Webservices API
+ * 
  * @author Edward P. Legaspi
+ * @lastModifiedVersion 5.0.1
  **/
 @WebService
 public interface WalletWs extends IBaseWs {

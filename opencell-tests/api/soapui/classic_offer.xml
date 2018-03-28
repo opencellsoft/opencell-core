@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project activeEnvironment="Default" name="Classic offer" resourceRoot="${projectDir}" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" id="2e379382-059f-42f2-a263-3971d606356b" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -15248,6 +15248,27 @@
       <con:settings/>
     </con:operation>
   </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="35dcee6a-aeeb-48f6-bddc-b783e44b993f" wsaVersion="NONE" name="FilteredListWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}FilteredListWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/FilteredListWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="d203de4d-8e9f-4b9f-8b95-2468dcb41c09" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="e543b68d-da1f-4676-99bd-0984d631ede0" isOneWay="false" action="" name="searchByField" bindingOperationName="searchByField" type="Request-Response" outputName="searchByFieldResponse" inputName="searchByField" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="1a51ff83-49ee-44e0-9367-5ea6ed8791f2" isOneWay="false" action="" name="search" bindingOperationName="search" type="Request-Response" outputName="searchResponse" inputName="search" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="cef9b445-1cae-4c38-bb1f-ca1eafe250a1" isOneWay="false" action="" name="reindex" bindingOperationName="reindex" type="Request-Response" outputName="reindexResponse" inputName="reindex" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+    <con:operation id="6cb08b85-1bc3-4abc-8f2e-e1e86f116a04" isOneWay="false" action="" name="listByFilter" bindingOperationName="listByFilter" type="Request-Response" outputName="listByFilterResponse" inputName="listByFilter" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+    </con:operation>
+  </con:interface>
   <con:testSuite id="57d7b035-5869-4a10-8510-2dcae69521f6" name="Authorization">
     <con:settings/>
     <con:runType>SEQUENTIAL</con:runType>
@@ -15276,15 +15297,56 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
 	          log.info("AUTH for ["+testSuiteItem.getLabel()+"/"+testCaseItem.getName()+"/"+testStep.getName()+"]");
 
 		    	testStep.getTestRequest().setPreemptive(true);
-		    	if("Create Provider".equals(testCaseItem.getName())){
+		    	if ("Create Provider".equals(testCaseItem.getName())) {
 		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
-		    	}else {		       
+		    	} else if(testCaseItem.getName().contains("AUTHORIZATION_SUPERADMIN") || testStep.getName().contains("AUTHORIZATION_SUPERADMIN")) {
+		    		testStep.getTestRequest().setRequestHeaders(headersForSuper);
+		    	} else {		       
 			     testStep.getTestRequest().setRequestHeaders(headersForAdmin);
 		    	}
 
 	    }
 	}
 }</con:setupScript>
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
+    <con:setupScript/>
+  </con:testSuite>
+  <con:testSuite id="f8bdd89d-00bc-4dde-bd9c-ed45b757233d" name="Setup">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="00452d4f-713c-4673-aa26-5f8c305da758" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Clean up data" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="request" name="Clean and reindex Full text - AUTHORIZATION_SUPERADMIN" id="9b91d7b7-95b9-410e-af17-172e11ca6b3d">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>FilteredListWsSoapBinding</con:interface>
+          <con:operation>reindex</con:operation>
+          <con:request name="Clean and reindex Full text - AUTHORIZATION_SUPERADMIN" id="a204a038-7355-43be-b9ef-d2ed435a5f30">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuc3VwZXJhZG1pbjpvcGVuY2VsbC5zdXBlcmFkbWlu" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/FilteredListWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:reindex/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="0c692431-fe04-4f6e-a93f-b3dbbc8ef5c5"/>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:properties/>
@@ -19568,7 +19630,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/opencell/AccountingWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -19614,7 +19676,7 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
               <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
             </con:settings>
             <con:encoding>UTF-8</con:encoding>
-            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:endpoint>http://localhost:8080/opencell/AccountingWs</con:endpoint>
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
@@ -39731,7 +39793,7 @@ public class RegisterHierarchy extends org.meveo.service.script.Script {
 				<classNameFilter>org.meveo.model.admin.User</classNameFilter>
 				<eventTypeFilter>CREATED</eventTypeFilter>
 				<emailFrom>bot@opencellsoft.com</emailFrom> 
-				<subject>Create account</subject>
+				<subject>Create Selfcare account</subject>
 				<emailToEl>#{event.email}</emailToEl>
 				<body>Hello,
                 Your login has been created:
@@ -56267,10 +56329,6 @@ rkJggg==
     <con:property>
       <con:name>SCFirstname</con:name>
       <con:value>SC Firstname</con:value>
-    </con:property>
-    <con:property>
-      <con:name>elasticSearch</con:name>
-      <con:value>http://elasticsearch:9200</con:value>
     </con:property>
   </con:properties>
   <con:wssContainer/>
