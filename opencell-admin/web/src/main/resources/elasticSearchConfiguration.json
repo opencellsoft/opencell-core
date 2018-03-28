@@ -25,6 +25,9 @@
     "Subscription": {
       "index": "billing"
     },
+    "ServiceInstance": {
+      "index": "billing"
+    },
     "AccountOperation": {
       "index": "payment"
     },
@@ -126,9 +129,20 @@
       "offer.description": "getOffer().getDescription()",
       "offer.description_sort": "getOffer().getDescription()"
     },
+    "ServiceInstance": {
+      "subscription.code": "subscription.code",
+      "subscription.description": "subscription.description",
+      "subscription.description_sort": "subscription.description",
+      "status": "status",
+      "statusDate": "statusDate",
+      "subscriptionDate": "subscriptionDate",
+      "terminationDate": "terminationDate",
+      "endAgreementDate": "endAgreementDate"
+    },
     "AccountOperation": {
       "occCode": "occCode",
       "occDescription": "occDescription",
+      "occDescription_sort": "occDescription",
       "type": "type",
       "amount": "amount",
       "transactionCategory": "transactionCategory",
@@ -154,6 +168,7 @@
       "billingAccount.description_sort": "getBillingAccount().getDescription()",
       "invoiceSubCategory.code": "getInvoiceSubCategory().getCode()",
       "invoiceSubCategory.description": "getInvoiceSubCategory().getDescription()",
+      "invoiceSubCategory.description_sort": "getInvoiceSubCategory().getDescription()",
       "invoice": "getInvoice().getInvoiceNumber()",
       "status": "status",
       "usageDate": "usageDate",
@@ -279,6 +294,52 @@
                   "index": "not_analyzed"
                 }
               }
+            }
+          }
+        },
+        "ServiceInstance": {
+          "properties": {
+            "code": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "description": {
+              "type": "string"
+            },
+            "description_sort": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "subscription": {
+              "properties": {
+                "code": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "description_sort": {
+                  "type": "string",
+                  "index": "not_analyzed"
+                }
+              }
+            },
+            "status": {
+              "type": "string",
+              "index": "not_analyzed"
+            },
+            "statusDate": {
+              "type": "date"
+            },
+            "subscriptionDate": {
+              "type": "date"
+            },
+            "terminationDate": {
+              "type": "date"
+            },
+            "endAgreementDate": {
+              "type": "date"
             }
           }
         },
