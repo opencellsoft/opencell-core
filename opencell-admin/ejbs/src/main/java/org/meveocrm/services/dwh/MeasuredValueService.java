@@ -16,15 +16,15 @@ import org.meveo.service.base.PersistenceService;
 
 /**
  * @author Wassim Drira
- * @lastModifiedVersion 5.1
+ * @lastModifiedVersion 5.0.1
  */
 @Stateless
 public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 
     /**
-     * @param date
-     * @param period
-     * @param mq
+     * @param date date
+     * @param period MeasurementPeriodEnum
+     * @param mq MeasurableQuantity
      * @return MeasuredValue
      */
     public MeasuredValue getByDate(Date date, MeasurementPeriodEnum period, MeasurableQuantity mq) {
@@ -32,10 +32,10 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
     }
 
     /**
-     * @param em
-     * @param date
-     * @param period
-     * @param mq
+     * @param em EntityManager
+     * @param date date
+     * @param period MeasurementPeriodEnum
+     * @param mq MeasurableQuantity
      * @return MeasuredValue
      */
     public MeasuredValue getByDate(EntityManager em, Date date, MeasurementPeriodEnum period, MeasurableQuantity mq) {
@@ -66,10 +66,10 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
 
     /**
      * 
-     * @param dimensionIndex
-     * @param fromDate
-     * @param toDate
-     * @param mq
+     * @param dimensionIndex dimension index
+     * @param fromDate starting date
+     * @param toDate end date
+     * @param mq MeasurableQuantity
      * @return list
      */
     @SuppressWarnings("rawtypes")
@@ -113,11 +113,11 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
     /**
      * List of measured values.
      * 
-     * @param code
-     * @param fromDate
-     * @param toDate
-     * @param period
-     * @param mq
+     * @param code MeasuredValue code
+     * @param fromDate starting date
+     * @param toDate ending date
+     * @param period DAILY, WEEKLY, MONTHLY orYEARLY
+     * @param mq MeasurableQuantity
      * @return list of measured values
      */
     public List<MeasuredValue> getByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, MeasurableQuantity mq) {
@@ -125,12 +125,12 @@ public class MeasuredValueService extends PersistenceService<MeasuredValue> {
     }
 
     /**
-     * @param code
-     * @param fromDate
-     * @param toDate
-     * @param period
-     * @param mq
-     * @param sortByDate
+     * @param code MeasuredValue code
+     * @param fromDate starting date
+     * @param toDate ending date
+     * @param period DAILY, WEEKLY, MONTHLY orYEARLY
+     * @param mq MeasurableQuantity
+     * @param sortByDate do we need to sort by date
      * @return list of measured values
      */
     @SuppressWarnings("unchecked")
