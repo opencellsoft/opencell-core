@@ -467,9 +467,11 @@ public class InvoiceService extends PersistenceService<Invoice> {
             Date dueDate = invoiceDate;
             if (delay != null) {
                 dueDate = DateUtils.addDaysToDate(invoiceDate, delay);
+            }else {
+                throw new BusinessException("Due date delay is null");
             }
             invoice.setDueDate(dueDate);
-
+            
             ratedTransactionService.appendInvoiceAgregates(billingAccount, invoice, ratedTransactionFilter, orderNumber, firstTransactionDate, lastTransactionDate);
             log.debug("appended aggregates");
 
@@ -524,12 +526,12 @@ public class InvoiceService extends PersistenceService<Invoice> {
             log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="
                     + (endDate - startDate));
 
-        } catch (BusinessException e) {
-            log.error("Error for BA {}", billingAccount.getCode(), e);
-            if (billingRun != null) {
-                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());
+        } catch (Exception e) {
+            log.error("Error for BA {}", billingAccount.getCode(), e);                       
+            if (billingRun != null) {                
+                rejectedBillingAccountService.create(billingAccount, em.getReference(BillingRun.class, billingRun.getId()), e.getMessage());                
             } else {
-                throw e;
+                throw new BusinessException(e.getMessage());
             }
         }
         return invoice;
@@ -1569,7 +1571,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         if (expression.indexOf("order") >= 0) {
             userMap.put("order", order);
         }
-
         Object res = ValueExpressionWrapper.evaluateExpression(expression, userMap, Integer.class);
         try {
             result = (Integer) res;
