@@ -73,7 +73,7 @@ public class CustomFieldValue implements Serializable {
     private DatePeriod period;
 
     /**
-     * Value priority if periods overlapp
+     * Value priority if periods overlapp. The higher the number, the higher the priority is.
      */
     private Integer priority;
 
