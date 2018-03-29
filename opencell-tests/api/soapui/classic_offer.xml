@@ -52045,10 +52045,10 @@ from subscriptions s, terminations t
             <additive>false</additive>
             <sqlQuery>
 with
-       value as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('IN_CREATION')),
-       pending as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('ACKNOWLEDGED','IN_PROGRESS','PENDING','PARTIAL','HELD')),
-       validated as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('COMPLETED')),
-       cancelled as (select count(o.id) from ord_order o where provider_id = #{provider} and status in ('REJECTED','FAILED','CANCELLED'))
+       value as (select count(o.id) from ord_order o where status in ('IN_CREATION')),
+       pending as (select count(o.id) from ord_order o where status in ('ACKNOWLEDGED','IN_PROGRESS','PENDING','PARTIAL','HELD')),
+       validated as (select count(o.id) from ord_order o where status in ('COMPLETED')),
+       cancelled as (select count(o.id) from ord_order o where status in ('REJECTED','FAILED','CANCELLED'))
 select
         value.count as value,
         pending.count as pending,
