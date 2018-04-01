@@ -89,15 +89,15 @@
                         </p:fieldset>
 
                         <p:fieldset legend="#{messages['customerAccount.paymentMethod']}" styleClass="clearBoth" rendered="#{orderBean.orderEditable or orderBean.entity.paymentMethod!=null}">
-                            <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">       
-                              <p:selectOneMenu id="newPaymentMethodType" value="#{orderBean.paymentMethodType}">                                                   
-                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
-                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
-                                  <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
-                                  <f:converter converterId="enumConverter" />
-                                  <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
-                                   <p:ajax update="paymentMethodDetail"  listener="#{orderBean.changePaymentMethodType}" event="change" />                                 
-                              </p:selectOneMenu>
+                            <p:outputPanel id="paymentMethodDetail" styleClass="form-panel-fields #{edit?'':' form-panel-fields-view'}">
+                                <p:selectOneMenu id="newPaymentMethodType" value="#{orderBean.paymentMethodType}">
+                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.CHECK.label]}" itemValue="#{PaymentMethodEnum.CHECK}" />
+                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.DIRECTDEBIT.label]}" itemValue="#{PaymentMethodEnum.DIRECTDEBIT}" />
+                                    <f:selectItem itemLabel="#{messages[PaymentMethodEnum.WIRETRANSFER.label]}" itemValue="#{PaymentMethodEnum.WIRETRANSFER}" />
+                                    <f:converter converterId="enumConverter" />
+                                    <f:attribute name="GenericEnumConverter.enumType" value="org.meveo.model.payments.PaymentMethodEnum" />
+                                    <p:ajax update="paymentMethodDetail" listener="#{orderBean.changePaymentMethodType}" event="change" />
+                                </p:selectOneMenu>
 
                                 <h:panelGroup rendered="#{orderBean.paymentMethodType!=null}">
                                     <hftl:formField label="#{messages['paymentMethod.alias']}" field="paymentMethod" childField="alias" required="true" />
@@ -121,24 +121,22 @@
                                     </c:if>
 
                                     <c:if test="#{orderBean.entity.paymentMethod.paymentType eq PaymentMethodEnum.DIRECTDEBIT}">
-										<hftl:decorateFormField
-											label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
-											<p:inputText id="mandateIdentification" value="#{orderBean.paymentMethod.mandateIdentification}" required="true" />
-										</hftl:decorateFormField>
-										<hftl:decorateFormField
-											label="#{messages['customerAccount.mandateDate']}" fieldId="mandateDate">
-											<p:calendar id="mandateDate" value="#{orderBean.paymentMethod.mandateDate}" pattern="#{paramBean.dateFormat}" required="true" />
-										</hftl:decorateFormField>
-										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankName']}" field="bankName" size="55" required="true" />
-										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
-											required="true" />
-										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
-										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />
-										<hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.ics']}" field="ics" size="35" required="true" />
+                                        <hftl:decorateFormField label="#{messages['customerAccount.mandateIdentification']}" fieldId="mandateIdentification">
+                                            <p:inputText id="mandateIdentification" value="#{orderBean.paymentMethod.mandateIdentification}" required="true" />
+                                        </hftl:decorateFormField>
+                                        <hftl:decorateFormField label="#{messages['customerAccount.mandateDate']}" fieldId="mandateDate">
+                                            <p:calendar id="mandateDate" value="#{orderBean.paymentMethod.mandateDate}" pattern="#{paramBean.dateFormat}" required="true" />
+                                        </hftl:decorateFormField>
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bankName']}" field="bankName" size="55" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.accountOwner']}" field="accountOwner" size="55"
+                                            required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.bic']}" field="bic" size="15" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.iban']}" field="iban" size="45" required="true" />
+                                        <hftl:formField entity="#{orderBean.paymentMethod.bankCoordinates}" label="#{messages['bankCoordinates.ics']}" field="ics" size="35" required="true" />
                                     </c:if>
-                                    
+
                                 </h:panelGroup>
-                            
+
                             </p:outputPanel>
                         </p:fieldset>
                         <div class="clearLeft"></div>
@@ -278,7 +276,8 @@
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_DATE.characteristicName}" />
                                                         </p:calendar>
@@ -441,7 +440,8 @@
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION and (orderBean.selectedOrderItem.action==OrderItemActionEnum.ADD or orderBean.selectedOrderItem.action==OrderItemActionEnum.MODIFY)}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.SUBSCRIPTION_END_DATE.characteristicName}" />
                                                         </p:calendar>
@@ -497,7 +497,8 @@
                                                             rendered="#{orderBean.entity.status == OrderStatusEnum.IN_CREATION}">
                                                             <p:ajax event="dateSelect" listener="#{orderBean.onMainCharacteristicsSet}"
                                                                 update="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':' '}"
-                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" />
+                                                                process="#{itemConfiguration.isMain()?':orderForm:tabView:offerConfigurations':'@this'}" immediate="true" partialSubmit="true"
+                                                                partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                                             <f:attribute name="isMain" value="#{itemConfiguration.isMain()}" />
                                                             <f:attribute name="characteristic" value="#{CharacteristicsEnum.TERMINATION_DATE.characteristicName}" />
                                                         </p:calendar>
@@ -569,7 +570,7 @@
                             <h:panelGroup layout="block" styleClass="form-panel-actions">
                                 <p:commandButton value="#{messages['order.saveOrderItem']}" action="#{orderBean.saveOrderItem()}"
                                     update="orderItemMessages :orderForm:tabView:orderItems :orderForm:tabView:orderItemDetails" rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
-                                    process="orderItemDetails" />
+                                    process="@this orderItemDetails" partialSubmit="true" partialSubmitFilter=":not([name*='omitFromSubmit'])" />
                                 <p:commandButton value="#{messages['action.cancel']}" action="#{orderBean.cancelOrderItemEdit}"
                                     update="orderItemMessages :orderForm:tabView:orderItems :orderForm:tabView:orderItemDetails" rendered="#{orderBean.entity.status==OrderStatusEnum.IN_CREATION}"
                                     process="@this" />

@@ -69,9 +69,9 @@ import org.meveo.service.billing.impl.UserAccountService;
 import org.meveo.service.catalog.impl.ProductOfferingService;
 import org.meveo.service.hierarchy.impl.UserHierarchyLevelService;
 import org.meveo.service.order.OrderService;
-import org.meveo.service.quote.QuoteItemService;
 import org.meveo.service.quote.QuoteService;
 import org.meveo.service.wf.WorkflowService;
+import org.meveo.util.PersistenceUtils;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
@@ -100,9 +100,6 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     @Inject
     private QuoteService quoteService;
-
-    @Inject
-    private QuoteItemService quoteItemService;
 
     @Inject
     private QuoteApi quoteApi;
@@ -135,7 +132,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     private List<OfferItemInfo> offerConfigurations;
 
     private Boolean workflowEnabled;
-    
+
     private boolean validationFailed = false;
 
     /**
@@ -143,6 +140,19 @@ public class QuoteBean extends CustomFieldBean<Quote> {
      */
     public QuoteBean() {
         super(Quote.class);
+    }
+
+    @Override
+    public Quote initEntity() {
+        super.initEntity();
+
+        if (entity.getQuoteItems() != null) {
+            for (QuoteItem quoteItem : entity.getQuoteItems()) {
+                PersistenceUtils.initializeAndUnproxy(quoteItem.getQuoteItemProductOfferings());
+            }
+        }
+
+        return entity;
     }
 
     /**
@@ -172,13 +182,10 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public void editQuoteItem(QuoteItem quoteItemToEdit) {
 
         try {
-            if (quoteItemToEdit.isTransient()) {
-                this.selectedQuoteItem = quoteItemToEdit;
 
-            } else {
+            this.selectedQuoteItem = quoteItemToEdit;
 
-                this.selectedQuoteItem = quoteItemService.refreshOrRetrieve(quoteItemToEdit);
-
+            if (!quoteItemToEdit.isTransient()) {
                 try {
                     this.selectedQuoteItem.setQuoteItemDto(ProductQuoteItem.deserializeQuoteItem(selectedQuoteItem.getSource()));
                 } catch (BusinessException e) {
@@ -373,7 +380,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
     public String saveOrUpdate(boolean killConversation) throws BusinessException {
 
         if (entity.getQuoteItems() == null || entity.getQuoteItems().isEmpty()) {
-            //throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
+            // throw new ValidationException("At least one quote item is required", "quote.itemsRequired");
             setValidationFailed(true);
             messages.error(new BundleKey("messages", "quote.itemsRequired"));
             return null;
@@ -413,6 +420,7 @@ public class QuoteBean extends CustomFieldBean<Quote> {
 
     /**
      * Initiate processing of quote
+     * 
      * @return output view
      * 
      */
