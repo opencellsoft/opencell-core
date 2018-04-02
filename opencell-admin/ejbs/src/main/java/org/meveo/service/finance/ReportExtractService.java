@@ -55,6 +55,12 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
         Iterator it = params.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
+
+            // if type is sql check if parameter exists
+            if (entity.getScriptType().equals(ReportExtractScriptTypeEnum.SQL) && !entity.getSqlQuery().contains(":" + pair.getKey().toString())) {
+                continue;
+            }
+
             if (!StringUtils.isBlank(pair.getValue())) {
                 if (pair.getKey().toString().endsWith("_DATE")) {
                     context.put(pair.getKey().toString(), DateUtils.parseDateWithPattern(pair.getValue().toString(), ParamBean.getInstance().getDateFormat()));
