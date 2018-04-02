@@ -9,13 +9,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+
 import org.meveo.api.dto.CustomEntityInstanceDto;
 import org.meveo.api.dto.CustomFieldDto;
 import org.meveo.api.dto.CustomFieldValueDto;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.EntityReferenceDto;
 import org.meveo.commons.utils.StringUtils;
-import org.meveo.model.BusinessEntity;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.crm.EntityReferenceWrapper;
@@ -30,12 +30,12 @@ import org.meveo.service.crm.impl.CustomFieldTemplateService;
 import org.meveo.service.custom.CustomEntityInstanceService;
 import org.meveo.util.ApplicationProvider;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Stateless
 public class EntityToDtoConverter {
 
-    private static final Logger logger = LoggerFactory.getLogger(EntityToDtoConverter.class);
+    @Inject
+    private Logger logger;
 
 
     @Inject
@@ -61,9 +61,6 @@ public class EntityToDtoConverter {
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, boolean includeInheritedCF, boolean mergeMapValues) {
         Map<String, List<CustomFieldValue>> cfValuesByCode = entity.getCfValues() != null ? entity.getCfValues().getValuesByCode() : new HashMap<>();
-        if (!includeInheritedCF && entity.getCfValues() != null) {
-            return null;
-        }
         return getCustomFieldsDTO(entity, cfValuesByCode, includeInheritedCF, mergeMapValues);
     }
 
@@ -92,15 +89,14 @@ public class EntityToDtoConverter {
 
     public CustomFieldsDto getCustomFieldsDTO(ICustomFieldEntity entity, Map<String, List<CustomFieldValue>> cfValues, CustomFieldInheritanceEnum inheritCF) {
 
-        logger.debug("Processing Custom fields");
-        logger.debug("Entity: " + entity.toString());
-        logger.debug("Custom Field Values: " + cfValues.toString());
-
         CustomFieldsDto currentEntityCFs = new CustomFieldsDto();
         boolean isValueMapEmpty = cfValues == null || cfValues.isEmpty();
         boolean mergeMapValues = inheritCF == CustomFieldInheritanceEnum.INHERIT_MERGED;
         boolean includeInheritedCF = mergeMapValues || inheritCF == CustomFieldInheritanceEnum.INHERIT_NO_MERGE;
         Map<String, CustomFieldTemplate> cfts = customFieldTemplateService.findByAppliesTo(entity);
+
+        logger.debug("Processing Custom fields\nEntity: {}\nCustom Field Values: {}", entity.toString(), cfValues == null ? "" : cfValues.toString());
+
         if (!isValueMapEmpty) {
             for (Entry<String, List<CustomFieldValue>> cfValueInfo : cfValues.entrySet()) {
                 String cfCode = cfValueInfo.getKey();
@@ -158,18 +154,14 @@ public class EntityToDtoConverter {
 
     private void mergeMapValues(List<CustomFieldDto> source, List<CustomFieldDto> destination) {
         for (CustomFieldDto sourceCF : source) {
-            logger.debug("Source custom field: ");
-            logger.debug(sourceCF.toString());
+            logger.debug("Source custom field: {}", sourceCF.toString());
             boolean found = false;
             // look for a matching CF in the destination
             for (CustomFieldDto destinationCF : destination) {
-                logger.debug("Comparing to destination custom field: ");
-                logger.debug(destinationCF.toString());
+                logger.debug("Comparing to destination custom field: {}", destinationCF.toString());
                 found = destinationCF.getCode().equalsIgnoreCase(sourceCF.getCode());
                 if (found) {
-                    logger.debug("Custom field matched: ");
-                    logger.debug(sourceCF.toString());
-                    logger.debug(destinationCF.toString());
+                    logger.debug("Custom field matched: \n{}\n{}", sourceCF.toString(), destinationCF.toString());
                     Map<String, CustomFieldValueDto> sourceValues = sourceCF.getMapValue();
                     if (sourceValues != null) {
                         Map<String, CustomFieldValueDto> destinationValues = destinationCF.getMapValue();
@@ -261,13 +253,11 @@ public class EntityToDtoConverter {
             CustomFieldValueDto dto = new CustomFieldValueDto();
             if (listItem instanceof EntityReferenceWrapper) {
                 if (isChildEntityTypeField) {
-
-                    CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(((EntityReferenceWrapper) listItem).getClassnameCode(),
-                            ((EntityReferenceWrapper) listItem).getCode());
-
+                    CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(((EntityReferenceWrapper) listItem).getClassnameCode(), ((EntityReferenceWrapper) listItem).getCode());
                     if (cei == null) {
                         continue;
                     }
+                    logger.debug("Fetch CustomEntityInstance custom fields: {}", cei.toString());
                     dto.setValue(CustomEntityInstanceDto.toDTO(cei, getCustomFieldsDTO(cei)));
 
                 } else {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -2658,7 +2658,7 @@ public class Action1 extends Script {
             <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
    <soapenv:Header/>\r
    <soapenv:Body>\r
-      <ws:createSeller>\r
+      <ws:createOrUpdateSeller>\r
          <seller code="${#Project#entityPrefix}_${#TestSuite#index}_SELLER_ALL" description="${#Project#entityPrefix}_${#TestSuite#index}_SELLER">\r
             <!-- <invoicePrefix>TEST</invoicePrefix>\r-->
             <currencyCode>EUR</currencyCode>\r
@@ -4320,7 +4320,7 @@ public class Action1 extends Script {
                </customField>                  
             </customFields>\r
          </seller>\r
-      </ws:createSeller>\r
+      </ws:createOrUpdateSeller>\r
    </soapenv:Body>\r
 </soapenv:Envelope>]]></con:request>
             <con:assertion type="SOAP Response" id="52a86b20-f03c-4fe8-8595-0187c1e3cfdb"/>
@@ -21413,11 +21413,10 @@ public class Action1 extends Script {
             </con:assertion>
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
-                <token><![CDATA[<customFields>
-                  <customField code="${#Project#baseEntityPrefix}_STRING_DEF">
-                     <stringValue>should be set</stringValue>
-                  </customField>
-               </customFields>]]></token>
+                <token>&lt;customFields>
+                  &lt;customField code="CF_BASE_STRING_DEF">
+                     &lt;stringValue>should be set&lt;/stringValue>
+                  &lt;/customField></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21672,8 +21671,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" id="8a6e888c-f72d-4540-a796-ca9dc6390567" name="Contains 1">
               <con:configuration>
                 <token>&lt;customFields>
-                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/>
-               &lt;/customFields></token>
+                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21765,8 +21763,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
                 <token>&lt;customFields>
-                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/>
-               &lt;/customFields></token>
+                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21865,8 +21862,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
                 <token>&lt;customFields>
-                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/>
-               &lt;/customFields></token>
+                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -21961,8 +21957,7 @@ public class Action1 extends Script {
             <con:assertion type="Simple Contains" name="Contains 1" id="8d13b5a3-4ec9-402f-bc41-1ab247547472">
               <con:configuration>
                 <token>&lt;customFields>
-                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/>
-               &lt;/customFields></token>
+                  &lt;customField code="${#Project#baseEntityPrefix}_STRING_DEF"/></token>
                 <ignoreCase>false</ignoreCase>
                 <useRegEx>false</useRegEx>
               </con:configuration>
@@ -34090,7 +34085,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>13</con:value>
+        <con:value>16</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36721,7 +36716,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>59</con:value>
+        <con:value>61</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -38141,7 +38136,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>18</con:value>
+        <con:value>21</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39364,7 +39359,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>14</con:value>
+        <con:value>17</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
