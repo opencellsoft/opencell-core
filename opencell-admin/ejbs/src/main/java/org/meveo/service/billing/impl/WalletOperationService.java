@@ -415,6 +415,23 @@ public class WalletOperationService extends BusinessService<WalletOperation> {
 
         return nextChargeDate;
     }
+    
+    /**
+     * Sets the charge and next charge date of a RecurringChargeInstance. This method is called when a {@link RecurringChargeTemplate#getFilterExpression()} evaluates to false.
+     * 
+     * @param chargeInstance RecurringChargeInstance
+     * @see RecurringChargeInstance
+     */
+    public void updateChargeDate(RecurringChargeInstance chargeInstance) {
+        Calendar cal = chargeInstance.getRecurringChargeTemplate().getCalendar();
+        cal.setInitDate(chargeInstance.getSubscriptionDate());
+
+        Date chargeDate = cal.truncateDateTime(chargeInstance.getNextChargeDate());
+        Date nextChargeDate = cal.nextCalendarDate(chargeInstance.getNextChargeDate());
+        
+        chargeInstance.setChargeDate(chargeDate);
+        chargeInstance.setNextChargeDate(nextChargeDate);
+    }
 
     /**
      * Apply the first recurring charge. Quantity might be prorated based on charge configuration. Will update charge instance with a new charge and next charge dates. <br>
