@@ -209,7 +209,7 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
     ConfigIssuesReportingDTO reportConfigDto;
 
     @PostConstruct
-    public void init() throws IOException {
+    public void init() {
         reportConfigDto = new ConfigIssuesReportingDTO();
         reportConfigDto.setNbrWalletOpOpen(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.OPEN).intValue());
         reportConfigDto.setNbrWalletOpRerated(walletOperationService.getNbrWalletOperationByStatus(WalletOperationStatusEnum.RERATED).intValue());
@@ -220,7 +220,11 @@ public class ConfigIssuesReportingBean extends BaseBean<BaseEntity> {
         reportConfigDto.setNbrEdrOpen(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.OPEN).intValue());
         reportConfigDto.setNbrEdrRated(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.RATED).intValue());
         reportConfigDto.setNbrEdrRejected(walletOperationService.getNbrEdrByStatus(EDRStatusEnum.REJECTED).intValue());
-        reportConfigDto.setNbrJasperDir(getJasperFiles().size());
+        try {
+            reportConfigDto.setNbrJasperDir(getJasperFiles().size());
+        } catch (IOException e) {
+            log.error("Failed to get number of jasper files", e);
+        }
     }
 
     public Integer getNbrChargesWithNotPricePlan() {

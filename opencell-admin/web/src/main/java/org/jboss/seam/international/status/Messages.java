@@ -19,7 +19,6 @@ package org.jboss.seam.international.status;
 
 import java.io.Serializable;
 
-import javax.enterprise.context.RequestScoped;
 import javax.faces.application.FacesMessage.Severity;
 
 import org.jboss.seam.international.status.builder.BundleKey;
@@ -32,7 +31,6 @@ import org.jboss.seam.international.status.builder.BundleKey;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@RequestScoped
 public interface Messages extends Serializable {
     /**
      * Clear all pending messages.
