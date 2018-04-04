@@ -33,9 +33,9 @@ public class OfferServiceTemplateDto implements Serializable{
 
 	}
 
-	public OfferServiceTemplateDto(OfferServiceTemplate e,CustomFieldsDto customFields) {
+	public OfferServiceTemplateDto(OfferServiceTemplate e, CustomFieldsDto customFields, boolean loadServiceChargeTemplate) {
 		if (e.getServiceTemplate() != null) {
-			serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields);
+			serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields, loadServiceChargeTemplate);
 		}
 		mandatory = e.isMandatory();
 		if (e.getIncompatibleServices() != null) {

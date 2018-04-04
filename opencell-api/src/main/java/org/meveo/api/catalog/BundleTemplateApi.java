@@ -103,7 +103,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
                 bundleProductTemplateDto.setQuantity(bundleProductTemplate.getQuantity());
                 productTemplate = bundleProductTemplate.getProductTemplate();
                 if (productTemplate != null) {
-                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false));
+                    bundleProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, true), false, true));
                 }
                 bundleProductTemplates.add(bundleProductTemplateDto);
             }

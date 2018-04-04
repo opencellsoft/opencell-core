@@ -1,7 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -9,7 +7,6 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessServiceModelDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.response.catalog.GetBusinessServiceModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -19,8 +16,9 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.BusinessServiceModel;
 
 /**
- * @author Edward P. Legaspi
- **/
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
+ * @lastModifiedVersion 5.0
+ */
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
 public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServiceModelRs {
@@ -96,11 +94,8 @@ public class BusinessServiceModelRsImpl extends BaseRs implements BusinessServic
     @Override
     public MeveoModuleDtosResponse list() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessServiceModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessServiceModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

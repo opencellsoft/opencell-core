@@ -1,7 +1,5 @@
 package org.meveo.api.ws.impl;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.jws.WebService;
@@ -18,7 +16,7 @@ import org.meveo.model.module.MeveoModule;
 
 /**
  * @author Tyshan Shi(tyshan@manaty.net)
- * 
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  **/
 @WebService(serviceName = "ModuleWs", endpointInterface = "org.meveo.api.ws.ModuleWs")
 @Interceptors({ WsRestApiInterceptor.class })
@@ -68,11 +66,8 @@ public class ModuleWsImpl extends BaseWs implements ModuleWs {
     @Override
     public MeveoModuleDtosResponse list() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(null);
-            result.setModules(dtos);
+            result = moduleApi.list(null);
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }

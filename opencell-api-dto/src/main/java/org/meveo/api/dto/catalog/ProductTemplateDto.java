@@ -14,9 +14,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.api.dto.billing.WalletTemplateDto;
 import org.meveo.model.catalog.BusinessProductModel;
+import org.meveo.model.catalog.ProductChargeTemplate;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 
+/**
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
+ * @lastModifiedVersion 5.0
+ */
 @XmlRootElement(name = "ProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductTemplateDto extends ProductOfferingDto implements Serializable {
@@ -36,8 +41,20 @@ public class ProductTemplateDto extends ProductOfferingDto implements Serializab
 	public ProductTemplateDto() {
 	}
 
-	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink, boolean loadProductChargeTemplate) {
 		super(productTemplate, customFieldsDto, asLink);
+		
+        // set serviceChargeTemplateRecurrings
+        if (loadProductChargeTemplate && !productTemplate.getProductChargeTemplates().isEmpty()) {
+            productChargeTemplates = new ArrayList<>();
+
+            for (ProductChargeTemplate charge : productTemplate.getProductChargeTemplates()) {
+                ProductChargeTemplateDto dto = new ProductChargeTemplateDto();
+                dto.setCode(charge.getCode());
+
+                productChargeTemplates.add(dto);
+            }
+        }
 
 		if (asLink){
 		    return;

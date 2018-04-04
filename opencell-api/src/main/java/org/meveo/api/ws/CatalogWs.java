@@ -163,7 +163,9 @@ public interface CatalogWs extends IBaseWs {
 
     @WebMethod
     GetOfferTemplateResponseDto findOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom,
-            @WebParam(name = "validTo") Date validTo);
+            @WebParam(name = "validTo") Date validTo, @WebParam(name = "loadOfferServiceTemplate") boolean loadOfferServiceTemplate,
+            @WebParam(name = "loadOfferProductTemplate") boolean loadOfferProductTemplate, @WebParam(name = "loadServiceChargeTemplate") boolean loadServiceChargeTemplate,
+            @WebParam(name = "loadProductChargeTemplate") boolean loadProductChargeTemplate);
 
     @WebMethod
     ActionStatus removeOfferTemplate(@WebParam(name = "offerTemplateCode") String offerTemplateCode, @WebParam(name = "validFrom") Date validFrom,

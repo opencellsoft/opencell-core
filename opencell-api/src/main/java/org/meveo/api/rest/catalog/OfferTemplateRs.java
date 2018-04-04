@@ -59,6 +59,10 @@ public interface OfferTemplateRs extends IBaseRs {
      * Search offer template with a given code and validity dates. If no validity dates are provided, an offer template valid on a current date will be returned.
      * 
      * @param offerTemplateCode The offer template's code
+     * @param loadOfferServiceTemplate if true loads the services
+     * @param loadOfferProductTemplate if true loads the products
+     * @param loadServiceChargeTemplate if true load the service charges
+     * @param loadProductChargeTemplate if true load the product charges
      * @param validFrom Offer template validity range - from date
      * @param validTo Offer template validity range - to date
      * @return Return offerTemplateDto containing offerTemplate
@@ -66,7 +70,9 @@ public interface OfferTemplateRs extends IBaseRs {
     @Path("/")
     @GET
     GetOfferTemplateResponseDto find(@QueryParam("offerTemplateCode") String offerTemplateCode, @QueryParam("validFrom") @RestDateParam Date validFrom,
-            @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF);
+            @QueryParam("validTo") @RestDateParam Date validTo, @DefaultValue("INHERIT_NO_MERGE") @QueryParam("inheritCF") CustomFieldInheritanceEnum inheritCF,
+            @QueryParam("loadOfferServiceTemplate") boolean loadOfferServiceTemplate, @QueryParam("loadOfferProductTemplate") boolean loadOfferProductTemplate,
+            @QueryParam("loadServiceChargeTemplate") boolean loadServiceChargeTemplate, @QueryParam("loadProductChargeTemplate") boolean loadProductChargeTemplate);
 
     /**
      * List Offer templates matching filtering and query criteria or code and validity dates.

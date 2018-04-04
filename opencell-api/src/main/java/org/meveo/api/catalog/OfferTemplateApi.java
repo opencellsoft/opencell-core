@@ -416,12 +416,13 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public OfferTemplateDto find(String code, Date validFrom, Date validTo) throws MeveoApiException {
-        return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+        return find(code, validFrom, validTo, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true);
     }
 
     @SecuredBusinessEntityMethod(resultFilter = ObjectFilter.class)
     @FilterResults(itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
-    public OfferTemplateDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF) throws MeveoApiException {
+    public OfferTemplateDto find(String code, Date validFrom, Date validTo, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate,
+            boolean loadOfferProductTemplate, boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) throws MeveoApiException {
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("offerTemplateCode");
@@ -435,9 +436,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                 code + " / " + DateUtils.formatDateWithPattern(validFrom, datePattern) + " / " + DateUtils.formatDateWithPattern(validTo, datePattern));
         }
 
-        OfferTemplateDto offerTemplateDto = convertOfferTemplateToDto(offerTemplate, inheritCF);
-
-        return offerTemplateDto;
+        return fromOfferTemplate(offerTemplate, inheritCF, loadOfferServiceTemplate, loadOfferProductTemplate, loadServiceChargeTemplate, loadProductChargeTemplate);
     }
 
     public void remove(String code, Date validFrom, Date validTo) throws MeveoApiException, BusinessException {
@@ -477,37 +476,40 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
     }
 
-    public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate) {
-        return convertOfferTemplateToDto(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
+    public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate) {
+        return fromOfferTemplate(offerTemplate, CustomFieldInheritanceEnum.INHERIT_NO_MERGE, true, true, true, true);
     }
 
-    public OfferTemplateDto convertOfferTemplateToDto(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF) {
+    public OfferTemplateDto fromOfferTemplate(OfferTemplate offerTemplate, CustomFieldInheritanceEnum inheritCF, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
 
         OfferTemplateDto dto = new OfferTemplateDto(offerTemplate, entityToDtoConverter.getCustomFieldsDTO(offerTemplate, inheritCF), false);
-
-        if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
-            List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<OfferServiceTemplateDto>();
+        
+        if (loadOfferServiceTemplate && offerTemplate.getOfferServiceTemplates() != null && !offerTemplate.getOfferServiceTemplates().isEmpty()) {
+            List<OfferServiceTemplateDto> offerTemplateServiceDtos = new ArrayList<>();
             for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
-                offerTemplateServiceDtos.add(new OfferServiceTemplateDto(st, entityToDtoConverter.getCustomFieldsDTO(st.getServiceTemplate(), inheritCF)));
+                offerTemplateServiceDtos.add(new OfferServiceTemplateDto(st, entityToDtoConverter.getCustomFieldsDTO(st.getServiceTemplate(), inheritCF), loadServiceChargeTemplate));
             }
             dto.setOfferServiceTemplates(offerTemplateServiceDtos);
         }
 
-        List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
-        if (childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()) {
-            List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
-            OfferProductTemplateDto offerProductTemplateDto = null;
-            ProductTemplate productTemplate = null;
-            for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
-                productTemplate = offerProductTemplate.getProductTemplate();
-                offerProductTemplateDto = new OfferProductTemplateDto();
-                offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
-                if (productTemplate != null) {
-                    offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, inheritCF), false));
+        if(loadOfferProductTemplate) {
+            List<OfferProductTemplate> childOfferProductTemplates = offerTemplate.getOfferProductTemplates();
+            if (childOfferProductTemplates != null && !childOfferProductTemplates.isEmpty()) {
+                List<OfferProductTemplateDto> offerProductTemplates = new ArrayList<>();
+                OfferProductTemplateDto offerProductTemplateDto = null;
+                ProductTemplate productTemplate = null;
+                for (OfferProductTemplate offerProductTemplate : childOfferProductTemplates) {
+                    productTemplate = offerProductTemplate.getProductTemplate();
+                    offerProductTemplateDto = new OfferProductTemplateDto();
+                    offerProductTemplateDto.setMandatory(offerProductTemplate.isMandatory());
+                    if (productTemplate != null) {
+                        offerProductTemplateDto.setProductTemplate(new ProductTemplateDto(productTemplate, entityToDtoConverter.getCustomFieldsDTO(productTemplate, inheritCF), false, loadProductChargeTemplate));
+                    }
+                    offerProductTemplates.add(offerProductTemplateDto);
                 }
-                offerProductTemplates.add(offerProductTemplateDto);
+                dto.setOfferProductTemplates(offerProductTemplates);
             }
-            dto.setOfferProductTemplates(offerProductTemplates);
         }
 
         return dto;
@@ -571,13 +573,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         Long totalCount = offerTemplateService.count(paginationConfig);
 
         GetListOfferTemplateResponseDto result = new GetListOfferTemplateResponseDto();
-        result.setPaging(pagingAndFiltering != null ? pagingAndFiltering : new PagingAndFiltering());
+        result.setPaging(pagingAndFiltering);
         result.getPaging().setTotalNumberOfRecords(totalCount.intValue());
 
         if (totalCount > 0) {
             List<OfferTemplate> offers = offerTemplateService.list(paginationConfig);
             for (OfferTemplate offerTemplate : offers) {
-                result.addOfferTemplate(convertOfferTemplateToDto(offerTemplate, inheritCF));
+                result.addOfferTemplate(fromOfferTemplate(offerTemplate, inheritCF, pagingAndFiltering.hasFieldOption("offerServiceTemplate"),
+                    pagingAndFiltering.hasFieldOption("offerProductTemplate"), pagingAndFiltering.hasFieldOption("serviceChargeTemplate"),
+                    pagingAndFiltering.hasFieldOption("productChargeTemplate")));
             }
         }
 

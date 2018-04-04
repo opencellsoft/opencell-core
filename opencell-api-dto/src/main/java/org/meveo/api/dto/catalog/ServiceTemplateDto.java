@@ -48,7 +48,7 @@ public class ServiceTemplateDto extends BusinessDto {
     public ServiceTemplateDto() {
     }
 
-    public ServiceTemplateDto(ServiceTemplate serviceTemplate, CustomFieldsDto customFieldInstances) {
+    public ServiceTemplateDto(ServiceTemplate serviceTemplate, CustomFieldsDto customFieldInstances, boolean loadServiceChargeTemplate) {
         super(serviceTemplate);
         
         longDescription = serviceTemplate.getLongDescription();
@@ -59,73 +59,74 @@ public class ServiceTemplateDto extends BusinessDto {
             somCode = serviceTemplate.getBusinessServiceModel().getCode();
         }
 
-        // set serviceChargeTemplateRecurrings
-        if (serviceTemplate.getServiceRecurringCharges().size() > 0) {
-            serviceChargeTemplateRecurrings = new ServiceChargeTemplateRecurringsDto();
-
-            for (ServiceChargeTemplateRecurring recCharge : serviceTemplate.getServiceRecurringCharges()) {
-                ServiceChargeTemplateRecurringDto serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurringDto();
-                serviceChargeTemplateRecurring.setCode(recCharge.getChargeTemplate().getCode());
-
-                for (WalletTemplate wallet : recCharge.getWalletTemplates()) {
-                    serviceChargeTemplateRecurring.getWallets().getWallet().add(wallet.getCode());
+        if(loadServiceChargeTemplate) {
+            // set serviceChargeTemplateRecurrings
+            if (!serviceTemplate.getServiceRecurringCharges().isEmpty()) {
+                serviceChargeTemplateRecurrings = new ServiceChargeTemplateRecurringsDto();
+    
+                for (ServiceChargeTemplateRecurring recCharge : serviceTemplate.getServiceRecurringCharges()) {
+                    ServiceChargeTemplateRecurringDto serviceChargeTemplateRecurring = new ServiceChargeTemplateRecurringDto();
+                    serviceChargeTemplateRecurring.setCode(recCharge.getChargeTemplate().getCode());
+    
+                    for (WalletTemplate wallet : recCharge.getWalletTemplates()) {
+                        serviceChargeTemplateRecurring.getWallets().getWallet().add(wallet.getCode());
+                    }
+    
+                    serviceChargeTemplateRecurrings.getServiceChargeTemplateRecurring().add(serviceChargeTemplateRecurring);
                 }
-
-                serviceChargeTemplateRecurrings.getServiceChargeTemplateRecurring().add(serviceChargeTemplateRecurring);
             }
-        }
-
-        // set serviceChargeTemplateSubscriptions
-        if (serviceTemplate.getServiceSubscriptionCharges().size() > 0) {
-            serviceChargeTemplateSubscriptions = new ServiceChargeTemplateSubscriptionsDto();
-
-            for (ServiceChargeTemplateSubscription subCharge : serviceTemplate.getServiceSubscriptionCharges()) {
-                ServiceChargeTemplateSubscriptionDto serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscriptionDto();
-                serviceChargeTemplateSubscription.setCode(subCharge.getChargeTemplate().getCode());
-
-                for (WalletTemplate wallet : subCharge.getWalletTemplates()) {
-                    serviceChargeTemplateSubscription.getWallets().getWallet().add(wallet.getCode());
+    
+            // set serviceChargeTemplateSubscriptions
+            if (!serviceTemplate.getServiceSubscriptionCharges().isEmpty()) {
+                serviceChargeTemplateSubscriptions = new ServiceChargeTemplateSubscriptionsDto();
+    
+                for (ServiceChargeTemplateSubscription subCharge : serviceTemplate.getServiceSubscriptionCharges()) {
+                    ServiceChargeTemplateSubscriptionDto serviceChargeTemplateSubscription = new ServiceChargeTemplateSubscriptionDto();
+                    serviceChargeTemplateSubscription.setCode(subCharge.getChargeTemplate().getCode());
+    
+                    for (WalletTemplate wallet : subCharge.getWalletTemplates()) {
+                        serviceChargeTemplateSubscription.getWallets().getWallet().add(wallet.getCode());
+                    }
+    
+                    serviceChargeTemplateSubscriptions.getServiceChargeTemplateSubscription().add(serviceChargeTemplateSubscription);
                 }
-
-                serviceChargeTemplateSubscriptions.getServiceChargeTemplateSubscription().add(serviceChargeTemplateSubscription);
             }
-        }
-
-        // set serviceChargeTemplateTerminations
-        if (serviceTemplate.getServiceTerminationCharges().size() > 0) {
-            serviceChargeTemplateTerminations = new ServiceChargeTemplateTerminationsDto();
-
-            for (ServiceChargeTemplateTermination terminationCharge : serviceTemplate.getServiceTerminationCharges()) {
-                ServiceChargeTemplateTerminationDto serviceChargeTemplateTermination = new ServiceChargeTemplateTerminationDto();
-                serviceChargeTemplateTermination.setCode(terminationCharge.getChargeTemplate().getCode());
-
-                for (WalletTemplate wallet : terminationCharge.getWalletTemplates()) {
-                    serviceChargeTemplateTermination.getWallets().getWallet().add(wallet.getCode());
+    
+            // set serviceChargeTemplateTerminations
+            if (!serviceTemplate.getServiceTerminationCharges().isEmpty()) {
+                serviceChargeTemplateTerminations = new ServiceChargeTemplateTerminationsDto();
+    
+                for (ServiceChargeTemplateTermination terminationCharge : serviceTemplate.getServiceTerminationCharges()) {
+                    ServiceChargeTemplateTerminationDto serviceChargeTemplateTermination = new ServiceChargeTemplateTerminationDto();
+                    serviceChargeTemplateTermination.setCode(terminationCharge.getChargeTemplate().getCode());
+    
+                    for (WalletTemplate wallet : terminationCharge.getWalletTemplates()) {
+                        serviceChargeTemplateTermination.getWallets().getWallet().add(wallet.getCode());
+                    }
+    
+                    serviceChargeTemplateTerminations.getServiceChargeTemplateTermination().add(serviceChargeTemplateTermination);
                 }
-
-                serviceChargeTemplateTerminations.getServiceChargeTemplateTermination().add(serviceChargeTemplateTermination);
+    
             }
-
-        }
-
-        // add serviceChargeTemplateUsages
-
-        if (serviceTemplate.getServiceUsageCharges().size() > 0) {
-            serviceChargeTemplateUsages = new ServiceChargeTemplateUsagesDto();
-
-            for (ServiceChargeTemplateUsage usageCharge : serviceTemplate.getServiceUsageCharges()) {
-                ServiceUsageChargeTemplateDto serviceUsageChargeTemplate = new ServiceUsageChargeTemplateDto();
-                serviceUsageChargeTemplate.setCode(usageCharge.getChargeTemplate().getCode());
-
-                if (usageCharge.getCounterTemplate() != null) {
-                    serviceUsageChargeTemplate.setCounterTemplate(usageCharge.getCounterTemplate().getCode());
+    
+            // add serviceChargeTemplateUsages
+            if (!serviceTemplate.getServiceUsageCharges().isEmpty()) {
+                serviceChargeTemplateUsages = new ServiceChargeTemplateUsagesDto();
+    
+                for (ServiceChargeTemplateUsage usageCharge : serviceTemplate.getServiceUsageCharges()) {
+                    ServiceUsageChargeTemplateDto serviceUsageChargeTemplate = new ServiceUsageChargeTemplateDto();
+                    serviceUsageChargeTemplate.setCode(usageCharge.getChargeTemplate().getCode());
+    
+                    if (usageCharge.getCounterTemplate() != null) {
+                        serviceUsageChargeTemplate.setCounterTemplate(usageCharge.getCounterTemplate().getCode());
+                    }
+    
+                    for (WalletTemplate wallet : usageCharge.getWalletTemplates()) {
+                        serviceUsageChargeTemplate.getWallets().getWallet().add(wallet.getCode());
+                    }
+    
+                    serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
                 }
-
-                for (WalletTemplate wallet : usageCharge.getWalletTemplates()) {
-                    serviceUsageChargeTemplate.getWallets().getWallet().add(wallet.getCode());
-                }
-
-                serviceChargeTemplateUsages.getServiceChargeTemplateUsage().add(serviceUsageChargeTemplate);
             }
         }
 

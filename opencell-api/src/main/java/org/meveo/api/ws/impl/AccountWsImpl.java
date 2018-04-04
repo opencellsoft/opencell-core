@@ -32,7 +32,6 @@ import org.meveo.api.dto.account.CustomerHierarchyDto;
 import org.meveo.api.dto.account.FindAccountHierachyRequestDto;
 import org.meveo.api.dto.account.UserAccountDto;
 import org.meveo.api.dto.billing.CounterInstanceDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
 import org.meveo.api.dto.payment.AccountOperationDto;
 import org.meveo.api.dto.payment.DunningInclusionExclusionDto;
 import org.meveo.api.dto.payment.LitigationRequestDto;
@@ -996,11 +995,8 @@ public class AccountWsImpl extends BaseWs implements AccountWs {
     @Override
     public MeveoModuleDtosResponse listBusinessAccountModel() {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessAccountModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessAccountModel.class);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());

@@ -1,7 +1,5 @@
 package org.meveo.api.rest.catalog.impl;
 
-import java.util.List;
-
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
@@ -9,7 +7,9 @@ import javax.interceptor.Interceptors;
 import org.meveo.api.dto.ActionStatus;
 import org.meveo.api.dto.ActionStatusEnum;
 import org.meveo.api.dto.catalog.BusinessOfferModelDto;
-import org.meveo.api.dto.module.MeveoModuleDto;
+import org.meveo.api.dto.module.ModulePropertyFlagLoader;
+import org.meveo.api.dto.response.PagingAndFiltering;
+import org.meveo.api.dto.response.PagingAndFiltering.SortOrder;
 import org.meveo.api.dto.response.catalog.GetBusinessOfferModelResponseDto;
 import org.meveo.api.dto.response.module.MeveoModuleDtosResponse;
 import org.meveo.api.logging.WsRestApiInterceptor;
@@ -19,7 +19,7 @@ import org.meveo.api.rest.impl.BaseRs;
 import org.meveo.model.catalog.BusinessOfferModel;
 
 /**
- * @author Edward P. Legaspi
+ * @author Edward P. Legaspi(edward.legaspi@manaty.net)
  **/
 @RequestScoped
 @Interceptors({ WsRestApiInterceptor.class })
@@ -55,11 +55,17 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
     }
 
     @Override
-    public GetBusinessOfferModelResponseDto find(String businessOfferModelCode) {
+    public GetBusinessOfferModelResponseDto find(String businessOfferModelCode, boolean loadOfferServiceTemplate, boolean loadOfferProductTemplate,
+            boolean loadServiceChargeTemplate, boolean loadProductChargeTemplate) {
         GetBusinessOfferModelResponseDto result = new GetBusinessOfferModelResponseDto();
-
+        ModulePropertyFlagLoader modulePropertyFlagLoader = new ModulePropertyFlagLoader();
+        modulePropertyFlagLoader.setLoadOfferServiceTemplate(loadOfferServiceTemplate);
+        modulePropertyFlagLoader.setLoadOfferProductTemplate(loadOfferProductTemplate);
+        modulePropertyFlagLoader.setLoadServiceChargeTemplate(loadServiceChargeTemplate);
+        modulePropertyFlagLoader.setLoadProductChargeTemplate(loadProductChargeTemplate);
+        
         try {
-            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.find(businessOfferModelCode));
+            result.setBusinessOfferModel((BusinessOfferModelDto) moduleApi.find(businessOfferModelCode, modulePropertyFlagLoader));
         } catch (Exception e) {
             processException(e, result.getActionStatus());
         }
@@ -94,13 +100,25 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
     }
 
     @Override
-    public MeveoModuleDtosResponse list() {
+    public MeveoModuleDtosResponse listGet(String query, String fields, Integer offset, Integer limit, String sortBy, SortOrder sortOrder) {
         MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
-        result.getActionStatus().setStatus(ActionStatusEnum.SUCCESS);
-        result.getActionStatus().setMessage("");
+        
         try {
-            List<MeveoModuleDto> dtos = moduleApi.list(BusinessOfferModel.class);
-            result.setModules(dtos);
+            result = moduleApi.list(BusinessOfferModel.class, new PagingAndFiltering(query, fields, offset, limit, sortBy, sortOrder));
+
+        } catch (Exception e) {
+            processException(e, result.getActionStatus());
+        }
+
+        return result;
+    }
+
+    @Override
+    public MeveoModuleDtosResponse listPost(PagingAndFiltering pagingAndFiltering) {
+        MeveoModuleDtosResponse result = new MeveoModuleDtosResponse();
+
+        try {
+            result = moduleApi.list(BusinessOfferModel.class, pagingAndFiltering);
 
         } catch (Exception e) {
             processException(e, result.getActionStatus());
@@ -122,4 +140,5 @@ public class BusinessOfferModelRsImpl extends BaseRs implements BusinessOfferMod
 
         return result;
     }
+
 }
