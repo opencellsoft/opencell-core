@@ -270,9 +270,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
             return null;
         }
         
-        entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
-        entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
-
         String outcome = super.saveOrUpdate(killConversation);
 
         if (outcome != null) {
@@ -1026,6 +1023,8 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
      */
     public void copySubscriptionRenewalInfo() {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
+        entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
+        entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
         updateSubscribedTillDate();
     }
 }

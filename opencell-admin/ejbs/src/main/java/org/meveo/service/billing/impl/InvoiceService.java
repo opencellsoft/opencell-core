@@ -402,7 +402,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
                 : billingAccount.getInvoicingThreshold();
         if (invoicingThreshold != null) {
-            BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
+            Object[] objects = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
+            BigDecimal invoiceAmount = (BigDecimal) objects[0];
             if (invoiceAmount == null) {
                 throw new BusinessException("Cant compute invoice amount");
             }
@@ -742,7 +743,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 dataSource = new JRXmlDataSource(new ByteArrayInputStream(getNodeXmlString(invoiceNode).getBytes(StandardCharsets.UTF_8)), "/invoice");
             }
 
-            String path = jasperFile.getPath();
+            String path = jasperFile.getPath()+jasperFile.lastModified();
             JasperReport jasperReport = jasperReportMap.get(path);
             if (jasperReport == null) {
                 jasperReport = (JasperReport) JRLoader.loadObject(reportTemplate);

@@ -243,7 +243,9 @@ public class RecordedInvoiceService extends PersistenceService<RecordedInvoice> 
         List<String> orderNums = new ArrayList<String>();
         if (invoice.getOrders() != null) {
             for (Order order : invoice.getOrders()) {
-                orderNums.add(order.getOrderNumber());
+                if(order != null) {
+                    orderNums.add(order.getOrderNumber());
+                }
             }
             recordedInvoice.setOrderNumber(StringUtils.concatenate("|", orderNums));
         }

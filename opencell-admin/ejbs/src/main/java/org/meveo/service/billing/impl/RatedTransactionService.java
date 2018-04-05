@@ -300,7 +300,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         
         
         Query qSumMinBilling = getEntityManager().createNamedQuery("RatedTransaction.sumMinBilling")
-                .setParameter("lastTransactionDate", lastTransactionDate);
+                .setParameter("lastTransactionDate", lastTransactionDate).setParameter("billingAccount", billingAccount);
         if (isInvoiceAdjustment) {
             qSumMinBilling = qSumMinBilling.setParameter("status", RatedTransactionStatusEnum.BILLED);
         } else {
@@ -1169,6 +1169,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         for (WalletOperation walletOp : walletOps) {
             createRatedTransaction(walletOp, false);
         }
+        
+        billingAccountService.createMinAmountsRT(billingAccount, new Date());
     }
 
     /**
