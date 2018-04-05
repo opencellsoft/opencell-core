@@ -367,7 +367,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Increase priority of a custom field value period
      * 
-     * @param entityValueHolderEntity custom field value holder
+     * @param entityValueHolder custom field value holder
      * @param cft Custom field definition
      * @param valuePeriodToChange Custom field value period to change
      */
@@ -383,7 +383,7 @@ public class CustomFieldDataEntryBean implements Serializable {
     /**
      * Decrease priority of a custom field value period
      * 
-     * @param entityValueHolderEntity custom field value holder
+     * @param entityValueHolder custom field value holder
      * @param cft Custom field definition
      * @param valuePeriodToChange Custom field value period to change
      */

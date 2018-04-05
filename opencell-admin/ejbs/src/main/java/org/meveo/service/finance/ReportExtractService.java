@@ -64,8 +64,8 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
             }
         }
 
-        StringBuilder sbDir = new StringBuilder(ParamBean.getInstance().getProperty("providers.rootDir", "/opt/opencelldata"));
-        sbDir.append(File.separator + appProvider.getCode() + File.separator + ReportExtractScript.REPORTS_DIR);
+        StringBuilder sbDir = new StringBuilder(ParamBean.getInstance().getChrootDir(appProvider.getCode()));
+        sbDir.append(File.separator + ReportExtractScript.REPORTS_DIR);
 
         if (!StringUtils.isBlank(entity.getCategory())) {
             sbDir.append(File.separator + entity.getCategory());

@@ -41,7 +41,7 @@ public class MeveoMinaFTPListener {
     private FtpServer server = null;
 
     @PostConstruct
-    public void init() throws FtpException {
+    public void init() {
         String portStr = ParamBeanFactory.getAppScopeInstance().getProperty("ftpserver.port", null);
         if (StringUtils.isBlank(portStr)) {
             return;
@@ -70,7 +70,11 @@ public class MeveoMinaFTPListener {
 
         // start the server
         server = serverFactory.createServer();
-        server.start();
+        try {
+            server.start();
+        } catch (FtpException e) {
+            throw new RuntimeException(e);
+        }
         log.debug("start meveo ftp server ...");
     }
 

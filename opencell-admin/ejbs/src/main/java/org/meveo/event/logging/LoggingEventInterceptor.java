@@ -14,24 +14,20 @@ import org.slf4j.LoggerFactory;
 @Interceptor
 public class LoggingEventInterceptor {
 
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	@AroundInvoke
-	public Object aroundInvoke(InvocationContext invocationContext)
-			throws Exception {
-		log.debug("\r\n\r\n===========================================================");
-		log.debug("Entering method: "
-				+ invocationContext.getMethod().getName().toUpperCase()
-				+ " in class "
-				+ invocationContext.getMethod().getDeclaringClass().getName());
+    @AroundInvoke
+    public Object aroundInvoke(InvocationContext invocationContext) throws Exception {
+        log.debug("\r\n\r\n===========================================================");
+        log.debug("Entering method: {} in class {}", invocationContext.getMethod().getName().toUpperCase(), invocationContext.getMethod().getDeclaringClass().getName());
 
-		if (invocationContext.getParameters() != null) {
-			for (Object obj : invocationContext.getParameters()) {
-				log.debug(obj.toString());
-			}
-		}
+        if (invocationContext.getParameters() != null) {
+            for (Object obj : invocationContext.getParameters()) {
+                log.debug("{}", obj);
+            }
+        }
 
-		return invocationContext.proceed();
-	}
+        return invocationContext.proceed();
+    }
 
 }

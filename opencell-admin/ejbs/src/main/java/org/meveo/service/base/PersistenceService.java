@@ -42,7 +42,6 @@ import javax.persistence.Query;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.transform.AliasToEntityMapResultTransformer;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
@@ -70,6 +69,7 @@ import org.meveo.model.UniqueEntity;
 import org.meveo.model.catalog.IImageUpload;
 import org.meveo.model.crm.CustomFieldTemplate;
 import org.meveo.model.filter.Filter;
+import org.meveo.model.transformer.AliasToEntityOrderedMapResultTransformer;
 import org.meveo.service.base.local.IPersistenceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.index.ElasticClient;
@@ -1081,7 +1081,7 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
         Session session = getEntityManager().unwrap(Session.class);
         SQLQuery q = session.createSQLQuery(query);
 
-        q.setResultTransformer(AliasToEntityMapResultTransformer.INSTANCE);
+        q.setResultTransformer(AliasToEntityOrderedMapResultTransformer.INSTANCE);
 
         if (params != null) {
             for (Map.Entry<String, Object> entry : params.entrySet()) {

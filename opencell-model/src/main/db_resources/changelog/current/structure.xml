@@ -634,5 +634,9 @@
 	            columnNames="payment_method,country_id,trading_currency_id"
 	            constraintName="uk_payment_gateway"
 	            tableName="ar_payment_gateway"/>	           
-	</changeSet>       
+	</changeSet>
+	<changeSet id="perf_mediation_20180404" author="Wassim">
+		<sql>DROP INDEX IF EXISTS rating_edr_index</sql>
+        <sql>CREATE INDEX rating_edr_index ON ${db.schema.adapted}rating_edr(origin_batch, origin_record)</sql>
+	</changeSet>      
 </databaseChangeLog> 

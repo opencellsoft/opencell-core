@@ -144,6 +144,14 @@ public class DateUtils {
         return isDateWithinPeriod(new Date(), periodStart, periodEnd);
     }
 
+    /**
+     * Check if given date are in period [periodStart,periodEnd[
+     * 
+     * @param date date to check
+     * @param periodStart periodStart
+     * @param periodEnd periodEnd
+     * @return true if date are in period
+     */
     public static boolean isDateWithinPeriod(Date date, Date periodStart, Date periodEnd) {
         if (date == null)
             return true;
@@ -159,13 +167,16 @@ public class DateUtils {
 
         Date dateToCheck = setDateToStartOfDay(date);
         boolean result = false;
-        if (start != null && end != null)
-            result = (dateToCheck.after(start) || dateToCheck.equals(start)) && (dateToCheck.before(end) || dateToCheck.equals(end));
-        else if (start != null)
-            result = (dateToCheck.after(start) || dateToCheck.equals(start));
-        else
-            result = (dateToCheck.before(end) || dateToCheck.equals(end));
 
+        // case 1 end and start not nunll
+
+        if (start != null && end != null) {
+            result = (dateToCheck.after(start) || dateToCheck.equals(start)) && (dateToCheck.before(end));
+        } else if (end == null) {
+            result = (dateToCheck.after(start) || dateToCheck.equals(start));
+        } else {
+            result = (dateToCheck.before(end) );
+        }
         return result;
 
     }

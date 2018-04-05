@@ -44,7 +44,7 @@ public interface ReportExtractRs extends IBaseRs {
     ActionStatus remove(String reportExtractCode);
 
     @GET
-    @Path("/")
+    @Path("/list")
     ReportExtractsResponseDto list();
 
     @GET
