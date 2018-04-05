@@ -403,18 +403,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId);
-        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
-                : billingAccount.getInvoicingThreshold();
-        if (invoicingThreshold != null) {
-            BigDecimal invoiceAmount = billingAccountService.computeBaInvoiceAmount(billingAccount, firstTransactionDate, lastTransactionDate);
-            if (invoiceAmount == null) {
-                throw new BusinessException("Cant compute invoice amount");
-            }
-            if (invoicingThreshold.compareTo(invoiceAmount) > 0) {
-                throw new BusinessException("Invoice amount below the threshold");
-            }
-        }
-
         Invoice invoice = null;
         EntityManager em = getEntityManager();
         try {

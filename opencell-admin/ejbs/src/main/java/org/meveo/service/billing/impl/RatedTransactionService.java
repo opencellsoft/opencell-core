@@ -607,6 +607,15 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
             appendInvoiceDiscountAggregates(userAccount, isExonerated, invoice, taxInvoiceAgregateMap, isVirtual);
         }
+        
+        BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
+                : billingAccount.getInvoicingThreshold();
+        if (invoicingThreshold != null) {           
+            if (invoicingThreshold.compareTo(invoice.getAmountWithoutTax()) > 0) {
+                throw new BusinessException("Invoice amount below the threshold");
+            }
+        }
+        
 
         log.debug("Before  isVirtual: {}", (System.currentTimeMillis() - startDate));
 
@@ -633,7 +642,7 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         }
 
         log.info("discountAmountWithoutTax= {},discountAmountTax={},discountAmountWithTax={}", discountAmountWithoutTax, discountAmountTax, discountAmountWithTax);
-
+        
         invoice.addAmountWithoutTax(discountAmountWithoutTax);
         invoice.addAmountTax(discountAmountTax);
         invoice.addAmountWithTax(discountAmountWithTax);
