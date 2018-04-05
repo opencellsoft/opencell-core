@@ -308,10 +308,12 @@ public class MeveoModuleApi extends BaseCrudApi<MeveoModule, MeveoModuleDto> {
                     moduleDto = moduleToDto(meveoModule);
                 } else {
                     ModulePropertyFlagLoader modulePropertyFlagLoader = new ModulePropertyFlagLoader();
-                    modulePropertyFlagLoader.setLoadOfferServiceTemplate(pagingAndFiltering.hasFieldOption("loadOfferServiceTemplate"));
-                    modulePropertyFlagLoader.setLoadOfferProductTemplate(pagingAndFiltering.hasFieldOption("loadOfferProductTemplate"));
-                    modulePropertyFlagLoader.setLoadServiceChargeTemplate(pagingAndFiltering.hasFieldOption("loadServiceChargeTemplate"));
-                    modulePropertyFlagLoader.setLoadProductChargeTemplate(pagingAndFiltering.hasFieldOption("loadProductChargeTemplate"));
+                    if(pagingAndFiltering != null) {
+                        modulePropertyFlagLoader.setLoadOfferServiceTemplate(pagingAndFiltering.hasFieldOption("loadOfferServiceTemplate"));
+                        modulePropertyFlagLoader.setLoadOfferProductTemplate(pagingAndFiltering.hasFieldOption("loadOfferProductTemplate"));
+                        modulePropertyFlagLoader.setLoadServiceChargeTemplate(pagingAndFiltering.hasFieldOption("loadServiceChargeTemplate"));
+                        modulePropertyFlagLoader.setLoadProductChargeTemplate(pagingAndFiltering.hasFieldOption("loadProductChargeTemplate"));
+                    }
                     
                     moduleDto = moduleToDto(meveoModule, modulePropertyFlagLoader);
                 }
