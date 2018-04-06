@@ -45,6 +45,7 @@
   "entityFieldMapping": {
     "default": {
       "code": "code",
+      "id": "id",
       "description": "description",
       "description_sort": "description"
     },

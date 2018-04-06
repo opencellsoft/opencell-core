@@ -142,7 +142,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            id = cleanUpCode(buildId(entity));
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.UPDATE, index, type, id, entity.getClass(), fieldsToUpdate);
             queuedChanges.addChange(change);
@@ -179,7 +179,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            id = cleanUpCode(buildId(entity));
             boolean upsert = esConfiguration.isDoUpsert(entity);
 
             ElasticSearchAction action = upsert ? ElasticSearchAction.UPSERT : partialUpdate ? ElasticSearchAction.UPDATE : ElasticSearchAction.ADD_REPLACE;
@@ -219,7 +219,7 @@ public class ElasticClient {
             }
 
             type = esConfiguration.getType(entity);
-            id = ElasticClient.cleanUpCode(entity.getCode());
+            id = cleanUpCode(buildId(entity));
 
             ElasticSearchChangeset change = new ElasticSearchChangeset(ElasticSearchAction.DELETE, index, type, id, entity.getClass(), null);
             queuedChanges.addChange(change);
@@ -696,5 +696,9 @@ public class ElasticClient {
             }
         }
         return classInfo;
+    }
+
+    protected static String buildId(ISearchable entity) {
+        return entity.getCode() + "__" + entity.getId();
     }
 }

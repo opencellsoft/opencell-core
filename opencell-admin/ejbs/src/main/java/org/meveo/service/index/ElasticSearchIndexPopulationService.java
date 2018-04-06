@@ -152,11 +152,7 @@ public class ElasticSearchIndexPopulationService implements Serializable {
         for (ISearchable entity : entities) {
 
             type = esConfiguration.getType(entity);
-            if(entity instanceof BusinessEntity) {
-                id = ElasticClient.cleanUpCode(entity.getCode());
-            } else {
-                id = ElasticClient.cleanUpCode(ReflectionUtils.getCleanClassName(entity.getClass().getSimpleName()) + entity.getId());
-            }
+            id = ElasticClient.cleanUpCode(ElasticClient.buildId(entity));
 
             Map<String, Object> valueMap = convertEntityToJson(entity, cftIndexable, cftNotIndexable);
 
