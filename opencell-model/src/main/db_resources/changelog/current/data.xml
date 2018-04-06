@@ -603,5 +603,247 @@ ORDER BY
          <sql>INSERT INTO ${db.schema.adapted}billing_accounting_code (id,version, disabled, created, code,  creator,  chart_of_account_type, chart_of_account_view_type, migrated) VALUES (nextval('${db.schema.adapted}billing_accounting_code_seq'),0, 0, current_timestamp, '654100000', 'opencell.admin', 'ASSETS', 'REGULAR', 1)</sql>
 	    <sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,(select id from ${db.schema.adapted}billing_accounting_code where code='512010000'),'411000000','PAY_CRD','Payment - card','CREDIT','opencell.admin')</sql>
 		<sql>insert into ${db.schema.adapted}ar_occ_template (id,version,disabled,created,accounting_code_id,account_code_client_side,code, description,occ_category,creator) values (nextval('${db.schema.adapted}ar_occ_template_seq'),0,0,current_timestamp,(select id from ${db.schema.adapted}billing_accounting_code where code='654100000'),'411000000','EXP_WRT','Expense - bad debt write-off','DEBIT','opencell.admin')</sql>
-    </changeSet>	    
+    </changeSet>	
+    
+    <changeSet id="#1705_20180406" author="EdwardPLegaspi">
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-8" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="400000000"></column>
+    		<column name="description" value="Accounts payable"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-9" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="401000000"></column>
+    		<column name="description" value="General AP"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-10" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="408000000"></column>
+    		<column name="description" value="Accrued payables"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-11" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="410000000"></column>
+    		<column name="description" value="Accounts receivable"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-13" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="416000000"></column>
+    		<column name="description" value="Doubtful receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-14" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="418100000"></column>
+    		<column name="description" value="Accrued receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-15" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445510000"></column>
+    		<column name="description" value="VAT due"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-16" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445660000"></column>
+    		<column name="description" value="VAT deductible"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-17" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445670000"></column>
+    		<column name="description" value="VAT credit"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-18" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="445710000"></column>
+    		<column name="description" value="VAT collected"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-19" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="487000000"></column>
+    		<column name="description" value="Deferred revenue"></column>
+    		<column name="chart_of_account_type" value="LIABILITIES"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-20" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="512000000"></column>
+    		<column name="description" value="Cash"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-22" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="512020000"></column>
+    		<column name="description" value="Cash Payment - BNP #345678"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-23" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="622000000"></column>
+    		<column name="description" value="Reseller commission"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-24" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="651100000"></column>
+    		<column name="description" value="Bad debt"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-27" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701000000"></column>
+    		<column name="description" value="Revenue"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="VIEW"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-28" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701010000"></column>
+    		<column name="description" value="Gross Revenue"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    	</insert>
+    	<insert tableName="billing_accounting_code">
+    		<column name="id" valueNumeric="-29" />
+			<column name="version" valueNumeric="0" />
+			<column name="disabled" valueNumeric="0" />
+			<column name="created" valueDate="now()" />
+			<column name="creator" value="OPENCELL.ADMIN" />
+            <column name="created" valueDate="now()" />
+    		<column name="code" value="701020000"></column>
+    	</insert>
+    	
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Gross receivables"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='411000000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Payment profit"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='758100000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Cash Deposit  - BNP #123456"></column>
+    		<column name="chart_of_account_type" value="ASSETS"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='512010000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Bad debt write-off"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='654100000'</where>
+    	</update>
+    </changeSet>
+        
 </databaseChangeLog>
