@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.4.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
+<con:soapui-project id="f4ab4777-a44c-4f53-ae8e-edc96c5eb57e" activeEnvironment="Default" name="MEVEO CF - wildfly" resourceRoot="" soapui-version="5.3.0" abortOnError="false" runType="SEQUENTIAL" xmlns:con="http://eviware.com/soapui/config">
   <con:settings>
     <con:setting id="com.eviware.soapui.impl.wsdl.actions.iface.tools.soapui.TestRunnerAction@values-local"><![CDATA[<xml-fragment xmlns:con="http://eviware.com/soapui/config">
   <con:entry key="Environment" value="Default"/>
@@ -1192,6 +1192,117 @@
     </con:operation>
     <con:operation id="3b068fef-0723-49f3-a579-dd9054082586" isOneWay="false" action="" name="update" bindingOperationName="update" type="Request-Response" outputName="updateResponse" inputName="update" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
       <con:settings/>
+    </con:operation>
+  </con:interface>
+  <con:interface xsi:type="con:WsdlInterface" id="6606b221-c407-4821-9c32-6a6b4b4769d5" wsaVersion="NONE" name="AccountingWsSoapBinding" type="wsdl" bindingName="{http://impl.ws.api.meveo.org/}AccountingWsSoapBinding" soapVersion="1_1" anonymous="optional" definition="${#Project#opencell.url}/AccountingWs?wsdl" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+    </con:endpoints>
+    <con:operation id="4db59560-9a43-4034-b85e-0536393d1729" isOneWay="false" action="" name="createAccountingCode" bindingOperationName="createAccountingCode" type="Request-Response" outputName="createAccountingCodeResponse" inputName="createAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="ae28546e-e225-4956-bdd7-790565cdea20" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/createAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="c9e7131e-5e3d-47d6-a2ba-23bcb872a11e" isOneWay="false" action="" name="createOrUpdateAccountingCode" bindingOperationName="createOrUpdateAccountingCode" type="Request-Response" outputName="createOrUpdateAccountingCodeResponse" inputName="createOrUpdateAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="00176965-5b60-4dfd-a140-742df7083a3d" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createOrUpdateAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/createOrUpdateAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="955becf6-dfcb-4c75-ab1c-9479b9771a96" isOneWay="false" action="" name="findAccountingCode" bindingOperationName="findAccountingCode" type="Request-Response" outputName="findAccountingCodeResponse" inputName="findAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="d101ac2a-ec86-4fd7-8153-24357f770cbb" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:findAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/findAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="80ec96ab-082b-471c-94bb-64a452218042" isOneWay="false" action="" name="index" bindingOperationName="index" type="Request-Response" outputName="indexResponse" inputName="index" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="01cb1a59-f991-4660-83f5-2cf540f7d450" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:index/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/index"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="26fa70d0-39fa-457c-acf8-dd591d47d7f8" isOneWay="false" action="" name="listAccountingCode" bindingOperationName="listAccountingCode" type="Request-Response" outputName="listAccountingCodeResponse" inputName="listAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="a374f318-d3bb-408b-8b35-723ec9069b51" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:listAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/listAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="90e59234-9b85-403c-bebc-72ec77b6ce64" isOneWay="false" action="" name="removeAccountingCode" bindingOperationName="removeAccountingCode" type="Request-Response" outputName="removeAccountingCodeResponse" inputName="removeAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="7088a440-18f1-4a27-8a77-95fcb62a0433" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:removeAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/removeAccountingCode"/>
+      </con:call>
+    </con:operation>
+    <con:operation id="4ba88055-28ad-4064-8a38-442fcbfcb984" isOneWay="false" action="" name="updateAccountingCode" bindingOperationName="updateAccountingCode" type="Request-Response" outputName="updateAccountingCodeResponse" inputName="updateAccountingCode" receivesAttachments="false" sendsAttachments="false" anonymous="optional">
+      <con:settings/>
+      <con:call id="6bbbcb01-5ecf-4e57-8bb9-d1f64c82e6eb" name="Request 1">
+        <con:settings/>
+        <con:encoding>UTF-8</con:encoding>
+        <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+        <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:updateAccountingCode/>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+        <con:wsaConfig mustUnderstand="NONE" version="200508" action="http://impl.ws.api.meveo.org/AccountingWs/updateAccountingCode"/>
+      </con:call>
     </con:operation>
   </con:interface>
   <con:testSuite id="472fe052-2321-48cc-894f-c262e1826cd3" name="Setup Authorization">
@@ -31885,6 +31996,51 @@ public class Action1 extends Script {
     </con:testCase>
     <con:testCase id="d305838f-eb11-4971-a13e-69c5aacaccf3" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="CFT - Settings" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="Create accountingCode 1" id="f6d55040-b86c-4816-8018-04969b5f08ec">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 1" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="205.55.77.98" description="205.55.77.98">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="create invoice category" id="b744e295-da86-4b48-aefb-772788e051f6">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -34085,7 +34241,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>16</con:value>
+        <con:value>18</con:value>
       </con:property>
       <con:property>
         <con:name>currentDate</con:name>
@@ -36716,7 +36872,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
       </con:property>
       <con:property>
         <con:name>index</con:name>
-        <con:value>61</con:value>
+        <con:value>63</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -37147,6 +37303,96 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:testCase>
     <con:testCase id="c0e1c42a-3db6-4f97-8af8-494f1028b41e" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Invoice cat type subcat creation" searchProperties="true">
       <con:settings/>
+      <con:testStep type="request" name="Create accountingCode 1" id="15674151-f6e7-4d06-a1c0-cae0539297be">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 1" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="${#Project#entityPrefix}_${#TestSuite#index}_OCC_ACC" description="${#Project#entityPrefix}_${#TestSuite#index}_OCC_ACC">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="request" name="Create accountingCode 2" id="c5905bdc-6415-4b8f-ba17-d316b14cc85b">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 2" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="ACC_CODE" description="ACC_CODE">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="createOccTemplate" id="9a6f752f-2910-4334-8b22-d1ce77b3e83f">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -37731,6 +37977,51 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     </con:testCase>
     <con:testCase failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Create account operation with CF" searchProperties="true" id="aee0c55c-859c-4bb0-a310-0537d67a71b6">
       <con:settings/>
+      <con:testStep type="request" name="Create accountingCode 1" id="1f200a03-ac8c-4bb1-9478-6a57f59fd271">
+        <con:settings/>
+        <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:interface>AccountingWsSoapBinding</con:interface>
+          <con:operation>createAccountingCode</con:operation>
+          <con:request name="Create accountingCode 1" id="0180e343-70b4-4cd4-b7f5-140e7d43f046">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:encoding>UTF-8</con:encoding>
+            <con:endpoint>${#Project#opencell.url}/AccountingWs</con:endpoint>
+            <con:request><![CDATA[<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ws="http://ws.api.meveo.org/">\r
+   <soapenv:Header/>\r
+   <soapenv:Body>\r
+      <ws:createAccountingCode>\r
+         <!--Optional:-->\r
+         <accountingCode code="1234" description="1234">\r
+            <chartOfAccountTypeEnum>ASSETS</chartOfAccountTypeEnum>\r
+            <!--Optional:-->\r
+            <chartOfAccountViewTypeEnum>REGULAR</chartOfAccountViewTypeEnum>\r
+            <!--Optional:-->\r
+            <reportingAccount>sales</reportingAccount>\r
+         </accountingCode>\r
+      </ws:createAccountingCode>\r
+   </soapenv:Body>\r
+</soapenv:Envelope>]]></con:request>
+            <con:assertion type="SOAP Response" id="224d24cf-2ffd-4990-b427-2e13d9bda4c4"/>
+            <con:assertion type="Simple Contains" id="323c58da-0f7d-41d3-8a72-4b292e4a24bb" name="Contains">
+              <con:configuration>
+                <token>SUCCESS</token>
+                <ignoreCase>false</ignoreCase>
+                <useRegEx>false</useRegEx>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:wsaConfig mustUnderstand="NONE" version="200508"/>
+            <con:wsrmConfig version="1.2"/>
+          </con:request>
+        </con:config>
+      </con:testStep>
       <con:testStep type="request" name="create_accountOperation" id="d1560273-7de3-488c-a0fb-78d57b9ee7e1">
         <con:settings/>
         <con:config xsi:type="con:RequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -38136,7 +38427,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>21</con:value>
+        <con:value>25</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39359,7 +39650,7 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
     <con:properties>
       <con:property>
         <con:name>index</con:name>
-        <con:value>17</con:value>
+        <con:value>19</con:value>
       </con:property>
     </con:properties>
     <con:setupScript>testSuite.setPropertyValue('index',(testSuite.getPropertyValue('index').toInteger()+1).toString());</con:setupScript>
@@ -39371,11 +39662,11 @@ public void execute(Map&lt;String, Object> methodContext) throws BusinessExcepti
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
