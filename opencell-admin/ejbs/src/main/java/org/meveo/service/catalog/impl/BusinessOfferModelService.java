@@ -17,6 +17,7 @@ import org.meveo.model.catalog.BusinessOfferModel;
 import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.BusinessServiceModel;
 import org.meveo.model.catalog.ChargeTemplate;
+import org.meveo.model.catalog.LifeCycleStatusEnum;
 import org.meveo.model.catalog.OfferProductTemplate;
 import org.meveo.model.catalog.OfferServiceTemplate;
 import org.meveo.model.catalog.OfferTemplate;
@@ -150,6 +151,8 @@ public class BusinessOfferModelService extends GenericModuleService<BusinessOffe
         newOfferTemplate.setActive(true);
         if (bomParams.getLifeCycleStatusEnum() != null) {
             newOfferTemplate.setLifeCycleStatus(bomParams.getLifeCycleStatusEnum());
+        } else {
+            newOfferTemplate.setLifeCycleStatus(LifeCycleStatusEnum.ACTIVE);
         }
 
         newOfferTemplate.setSubscriptionRenewal(bomOffer.getSubscriptionRenewal());
