@@ -18,7 +18,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
@@ -61,8 +60,7 @@ public class ReportExtract extends BusinessEntity {
     @JoinColumn(name = "script_instance_id")
     private ScriptInstance scriptInstance;
 
-    @Column(name = "sql_query", length = 2000)
-    @Size(max = 2000)
+    @Column(name = "sql_query", columnDefinition = "TEXT")
     private String sqlQuery;
 
     @ElementCollection(fetch = FetchType.EAGER)
