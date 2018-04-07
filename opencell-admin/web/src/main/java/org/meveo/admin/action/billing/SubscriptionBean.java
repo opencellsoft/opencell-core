@@ -510,8 +510,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
                     serviceInstance.setSubscriptionDate(calendar.getTime());
                 }
                 serviceInstance.setQuantity(quantity);
-                serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
-                serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
                 serviceInstanceService.serviceInstanciation(serviceInstance, descriptionOverride);
                 serviceInstances.add(serviceInstance);
                 serviceTemplates.remove(serviceTemplate);
@@ -1023,8 +1021,6 @@ public class SubscriptionBean extends CustomFieldBean<Subscription> {
      */
     public void copySubscriptionRenewalInfo() {
         entity.setSubscriptionRenewal(entity.getOffer().getSubscriptionRenewal());
-        entity.setMinimumAmountEl(entity.getOffer().getMinimumAmountEl());
-        entity.setMinimumLabelEl(entity.getOffer().getMinimumLabelEl());
         updateSubscribedTillDate();
     }
 }

@@ -46,6 +46,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.BillingCycle;
 import org.meveo.model.billing.BillingRun;
 import org.meveo.model.billing.ChargeInstance;
+import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
 import org.meveo.model.billing.RatedTransaction;
@@ -54,6 +55,7 @@ import org.meveo.model.billing.RatedTransactionStatusEnum;
 import org.meveo.model.billing.RecurringChargeInstance;
 import org.meveo.model.billing.ServiceInstance;
 import org.meveo.model.billing.Subscription;
+import org.meveo.model.billing.SubscriptionStatusEnum;
 import org.meveo.model.billing.SubscriptionTerminationReason;
 import org.meveo.model.billing.UsageChargeInstance;
 import org.meveo.model.billing.UserAccount;
@@ -511,131 +513,143 @@ public class BillingAccountService extends AccountService<BillingAccount> {
     
     public BigDecimal createMinAmountsRT(BillingAccount billingAccount, Date lastTransactionDate) throws BusinessException {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
+        cal.setTime(lastTransactionDate);
         cal.set(Calendar.HOUR, 0);
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 0);
+        cal.add(Calendar.SECOND, -1);
         Date rtDate = cal.getTime();
         
         for(UserAccount userAccount : billingAccount.getUsersAccounts()) {
+            if(userAccount.getStatus().equals(AccountStatusEnum.ACTIVE)) {
             for(Subscription subscription : userAccount.getSubscriptions()) {
-                BigDecimal totalSubscriptionBilledAmountWithTax = BigDecimal.ZERO;
-                BigDecimal totalSubscriptionBilledAmountWithoutTax = BigDecimal.ZERO;
-                BigDecimal totalSubscriptionBilledAmountTax = BigDecimal.ZERO;
-
-                for(ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                if(subscription.getStatus().equals(SubscriptionStatusEnum.ACTIVE)) {
                     
-                    if(!StringUtils.isBlank(serviceInstance.getMinimumAmountEl())) {
+                    BigDecimal totalSubscriptionBilledAmountWithTax = BigDecimal.ZERO;
+                    BigDecimal totalSubscriptionBilledAmountWithoutTax = BigDecimal.ZERO;
+                    BigDecimal totalSubscriptionBilledAmountTax = BigDecimal.ZERO;
+                
+                    for(ServiceInstance serviceInstance : subscription.getServiceInstances()) {
+                        if(serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
                         
-                        BigDecimal serviceMinAmount = new BigDecimal(evaluateDoubleExpression(serviceInstance.getMinimumAmountEl(), serviceInstance));
-                        String serviceMinLabel = evaluateStringExpression(serviceInstance.getMinimumLabelEl(), serviceInstance);
-
-                        BigDecimal serviceAmountWithTax = BigDecimal.ZERO;
-                        BigDecimal serviceAmountWithoutTax = BigDecimal.ZERO;
-                        BigDecimal serviceAmountTax = BigDecimal.ZERO;
-                        
-                        List<RecurringChargeInstance> recurringChargeInstanceList = serviceInstance.getRecurringChargeInstances();
-                        for(RecurringChargeInstance recurringChargeInstance : recurringChargeInstanceList) {
-                            Object[] amounts = computeChargeInvoiceAmount(recurringChargeInstance, new Date(0), lastTransactionDate, billingAccount);
-                            BigDecimal chargeAmountWithoutTax = (BigDecimal) amounts[0];
-                            BigDecimal chargeAmountWithTax = (BigDecimal) amounts[1];
-                            BigDecimal chargeAmountTax = (BigDecimal) amounts[2];
+                            BigDecimal serviceAmountWithTax = BigDecimal.ZERO;
+                            BigDecimal serviceAmountWithoutTax = BigDecimal.ZERO;
+                            BigDecimal serviceAmountTax = BigDecimal.ZERO;
                             
-                            if(chargeAmountWithoutTax != null) {
-                                serviceAmountWithoutTax = serviceAmountWithoutTax.add(chargeAmountWithoutTax);
-                                serviceAmountWithTax = serviceAmountWithTax.add(chargeAmountWithTax);
-                                serviceAmountTax = serviceAmountTax.add(chargeAmountTax);
-                            }
-                        }
-                        
-                        List<UsageChargeInstance> usageChargeInstanceList = serviceInstance.getUsageChargeInstances();
-                        for(UsageChargeInstance usageChargeInstance : usageChargeInstanceList) {
-                            Object[] amounts = computeChargeInvoiceAmount(usageChargeInstance, new Date(0), lastTransactionDate, billingAccount);
-                            BigDecimal chargeAmountWithoutTax = (BigDecimal) amounts[0];
-                            BigDecimal chargeAmountWithTax = (BigDecimal) amounts[1];
-                            BigDecimal chargeAmountTax = (BigDecimal) amounts[2];
-
-                            if(chargeAmountWithoutTax != null) {
-                                serviceAmountWithoutTax = serviceAmountWithoutTax.add(chargeAmountWithoutTax);
-                                serviceAmountWithTax = serviceAmountWithTax.add(chargeAmountWithTax);
-                                serviceAmountTax = serviceAmountTax.add(chargeAmountTax);
-                            }
-                        }
-                        
-                        if(serviceAmountWithoutTax != BigDecimal.ZERO) {
-                            BigDecimal diff = null;
-                            if(appProvider.isEntreprise()) {
-                                diff = serviceMinAmount.subtract(serviceAmountWithoutTax);
-                            } else {
-                                diff = serviceMinAmount.subtract(serviceAmountWithTax);
-                            }
-                            
-                            if(diff.doubleValue() > 0) {
-                                BigDecimal percent = BigDecimal.ZERO;
-                                if(serviceAmountWithTax != BigDecimal.ZERO) {
-                                    percent = serviceAmountTax.divide(serviceAmountWithTax, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                            List<RecurringChargeInstance> recurringChargeInstanceList = serviceInstance.getRecurringChargeInstances();
+                            for(RecurringChargeInstance recurringChargeInstance : recurringChargeInstanceList) {
+                                Object[] amounts = computeChargeInvoiceAmount(recurringChargeInstance, new Date(0), lastTransactionDate, billingAccount);
+                                BigDecimal chargeAmountWithoutTax = (BigDecimal) amounts[0];
+                                BigDecimal chargeAmountWithTax = (BigDecimal) amounts[1];
+                                BigDecimal chargeAmountTax = (BigDecimal) amounts[2];
+                                
+                                if(chargeAmountWithoutTax != null) {
+                                    serviceAmountWithoutTax = serviceAmountWithoutTax.add(chargeAmountWithoutTax);
+                                    serviceAmountWithTax = serviceAmountWithTax.add(chargeAmountWithTax);
+                                    serviceAmountTax = serviceAmountTax.add(chargeAmountTax);
                                 }
+                            }
+                            
+                            List<UsageChargeInstance> usageChargeInstanceList = serviceInstance.getUsageChargeInstances();
+                            for(UsageChargeInstance usageChargeInstance : usageChargeInstanceList) {
+                                Object[] amounts = computeChargeInvoiceAmount(usageChargeInstance, new Date(0), lastTransactionDate, billingAccount);
+                                BigDecimal chargeAmountWithoutTax = (BigDecimal) amounts[0];
+                                BigDecimal chargeAmountWithTax = (BigDecimal) amounts[1];
+                                BigDecimal chargeAmountTax = (BigDecimal) amounts[2];
     
-                                BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?diff:diff.subtract(diff.multiply(percent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
-                                BigDecimal unitAmountWithTax = appProvider.isEntreprise()?diff.add(diff.multiply(percent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)):diff;
-                                BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
-                                BigDecimal amountWithoutTax = unitAmountWithoutTax;
-                                BigDecimal amountWithTax = unitAmountWithTax;
-                                BigDecimal amountTax = unitAmountTax;
-                                
-                                RatedTransaction ratedTransaction = new RatedTransaction(null, rtDate, unitAmountWithoutTax, unitAmountWithTax,
-                                    unitAmountTax,  BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                                    null, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_SERVICE_AMOUNT.getCode()+"_"+serviceInstance.getCode(), serviceMinLabel);
-                                ratedTransactionService.create(ratedTransaction);
-                                ratedTransactionService.commit();
-                                
-                                if(appProvider.isEntreprise()) {
-                                    serviceAmountWithTax = serviceMinAmount;
-                                    serviceAmountWithoutTax = serviceAmountWithoutTax.add(amountWithoutTax);
-                                } else {
-                                    serviceAmountWithTax = serviceAmountWithTax.add(amountWithTax);
-                                    serviceAmountWithoutTax = serviceMinAmount;
+                                if(chargeAmountWithoutTax != null) {
+                                    serviceAmountWithoutTax = serviceAmountWithoutTax.add(chargeAmountWithoutTax);
+                                    serviceAmountWithTax = serviceAmountWithTax.add(chargeAmountWithTax);
+                                    serviceAmountTax = serviceAmountTax.add(chargeAmountTax);
                                 }
                             }
-                    
+                            
+                            String serviceMinAmountEL = StringUtils.isBlank(serviceInstance.getMinimumAmountEl())?serviceInstance.getServiceTemplate().getMinimumAmountEl():serviceInstance.getMinimumAmountEl();
+                            String serviceMinLabelEL = StringUtils.isBlank(serviceInstance.getMinimumLabelEl())?serviceInstance.getServiceTemplate().getMinimumLabelEl():serviceInstance.getMinimumLabelEl();
+                            
+                            if(serviceAmountWithoutTax != BigDecimal.ZERO && !StringUtils.isBlank(serviceMinAmountEL)) {
+                                
+                                BigDecimal serviceMinAmount = new BigDecimal(evaluateDoubleExpression(serviceMinAmountEL, serviceInstance));
+                                String serviceMinLabel = evaluateStringExpression(serviceMinLabelEL, serviceInstance);
+    
+                                BigDecimal diff = null;
+                                if(appProvider.isEntreprise()) {
+                                    diff = serviceMinAmount.subtract(serviceAmountWithoutTax);
+                                } else {
+                                    diff = serviceMinAmount.subtract(serviceAmountWithTax);
+                                }
+                                
+                                if(diff.doubleValue() > 0) {
+                                    BigDecimal percent = BigDecimal.ZERO;
+                                    if(serviceAmountWithTax != BigDecimal.ZERO) {
+                                        percent = serviceAmountTax.divide(serviceAmountWithTax, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                                    }
+        
+                                    BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?diff:diff.subtract(diff.multiply(percent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                                    BigDecimal unitAmountWithTax = appProvider.isEntreprise()?diff.add(diff.multiply(percent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)):diff;
+                                    BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
+                                    BigDecimal amountWithoutTax = unitAmountWithoutTax;
+                                    BigDecimal amountWithTax = unitAmountWithTax;
+                                    BigDecimal amountTax = unitAmountTax;
+                                    
+                                    RatedTransaction ratedTransaction = new RatedTransaction(null, rtDate, unitAmountWithoutTax, unitAmountWithTax,
+                                        unitAmountTax,  BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                                        null, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SE.getCode()+"_"+serviceInstance.getCode(), serviceMinLabel);
+                                    ratedTransactionService.create(ratedTransaction);
+                                    ratedTransactionService.commit();
+                                    
+                                    if(appProvider.isEntreprise()) {
+                                        serviceAmountWithTax = serviceMinAmount;
+                                        serviceAmountWithoutTax = serviceAmountWithoutTax.add(amountWithoutTax);
+                                    } else {
+                                        serviceAmountWithTax = serviceAmountWithTax.add(amountWithTax);
+                                        serviceAmountWithoutTax = serviceMinAmount;
+                                    }
+                                }
+                            }
+                            
                             totalSubscriptionBilledAmountWithTax = totalSubscriptionBilledAmountWithTax.add(serviceAmountWithTax);
                             totalSubscriptionBilledAmountWithoutTax = totalSubscriptionBilledAmountWithoutTax.add(serviceAmountWithoutTax);
                             totalSubscriptionBilledAmountTax = totalSubscriptionBilledAmountWithTax.subtract(totalSubscriptionBilledAmountWithoutTax);
                         }
                     }
-                }
-                
-                if(!StringUtils.isBlank(subscription.getMinimumAmountEl()) && totalSubscriptionBilledAmountWithoutTax != BigDecimal.ZERO) {
-                    BigDecimal subscriptionMinAmount = new BigDecimal(evaluateDoubleExpression(subscription.getMinimumAmountEl(), subscription));
-                    String subscriptionMinLabel = evaluateStringExpression(subscription.getMinimumLabelEl(), subscription);
-                    BigDecimal percent = BigDecimal.ZERO;
-                    if(totalSubscriptionBilledAmountWithTax != BigDecimal.ZERO) {
-                        percent = totalSubscriptionBilledAmountTax.divide(totalSubscriptionBilledAmountWithTax, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
-                    }
                     
-                    BigDecimal diff = null;
-                    if(appProvider.isEntreprise()) {
-                        diff = subscriptionMinAmount.subtract(totalSubscriptionBilledAmountWithoutTax);
-                    } else {
-                        diff = subscriptionMinAmount.subtract(totalSubscriptionBilledAmountWithTax);
-                    }
+                    String subscriptionMinAmountEL = StringUtils.isBlank(subscription.getMinimumAmountEl())?subscription.getOffer().getMinimumAmountEl():subscription.getMinimumAmountEl();
+                    String subscriptionMinLabelEL = StringUtils.isBlank(subscription.getMinimumLabelEl())?subscription.getOffer().getMinimumLabelEl():subscription.getMinimumLabelEl();
                     
-                    if(diff.doubleValue() > 0) {
+                    if(!StringUtils.isBlank(subscriptionMinAmountEL) && totalSubscriptionBilledAmountWithoutTax != BigDecimal.ZERO) {
+                        BigDecimal subscriptionMinAmount = new BigDecimal(evaluateDoubleExpression(subscriptionMinAmountEL, subscription));
+                        String subscriptionMinLabel = evaluateStringExpression(subscriptionMinLabelEL, subscription);
+                        BigDecimal percent = BigDecimal.ZERO;
+                        if(totalSubscriptionBilledAmountWithTax != BigDecimal.ZERO) {
+                            percent = totalSubscriptionBilledAmountTax.divide(totalSubscriptionBilledAmountWithTax, 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+                        }
                         
-                        BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?diff:diff.add(diff.multiply(percent));
-                        BigDecimal unitAmountWithTax = appProvider.isEntreprise()?diff.subtract(diff.multiply(percent)):diff;
-                        BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
-                        BigDecimal amountWithoutTax = unitAmountWithoutTax;
-                        BigDecimal amountWithTax = unitAmountWithTax;
-                        BigDecimal amountTax = unitAmountTax;
+                        BigDecimal diff = null;
+                        if(appProvider.isEntreprise()) {
+                            diff = subscriptionMinAmount.subtract(totalSubscriptionBilledAmountWithoutTax);
+                        } else {
+                            diff = subscriptionMinAmount.subtract(totalSubscriptionBilledAmountWithTax);
+                        }
                         
-                        RatedTransaction ratedTransaction = new RatedTransaction(null, rtDate, unitAmountWithoutTax, unitAmountWithTax,
-                            unitAmountTax, BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                            null, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_SUBSCRIPTION_AMOUNT.getCode()+"_"+subscription.getCode(), subscriptionMinLabel);
-                        ratedTransactionService.create(ratedTransaction);
-                        ratedTransactionService.commit();
+                        if(diff.doubleValue() > 0) {
+                            
+                            BigDecimal unitAmountWithoutTax = appProvider.isEntreprise()?diff:diff.subtract(diff.multiply(percent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP));
+                            BigDecimal unitAmountWithTax = appProvider.isEntreprise()?diff.add(diff.multiply(percent).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP)):diff;
+                            BigDecimal unitAmountTax = unitAmountWithTax.subtract(unitAmountWithoutTax);
+                            BigDecimal amountWithoutTax = unitAmountWithoutTax;
+                            BigDecimal amountWithTax = unitAmountWithTax;
+                            BigDecimal amountTax = unitAmountTax;
+                            
+                            RatedTransaction ratedTransaction = new RatedTransaction(null, rtDate, unitAmountWithoutTax, unitAmountWithTax,
+                                unitAmountTax, BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
+                                null, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_SU.getCode()+"_"+subscription.getCode(), subscriptionMinLabel);
+                            ratedTransactionService.create(ratedTransaction);
+                            ratedTransactionService.commit();
+                        }
                     }
                 }
+            }
             }
         }
         
@@ -670,7 +684,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                 
                 RatedTransaction ratedTransaction = new RatedTransaction(null, rtDate, unitAmountWithoutTax, unitAmountWithTax,
                     unitAmountTax,  BigDecimal.ONE, amountWithoutTax, amountWithTax,  amountTax, RatedTransactionStatusEnum.OPEN, null, billingAccount,
-                    null, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_BA_AMOUNT.getCode()+"_"+billingAccount.getCode(), billingAccountMinLabel);
+                    null, "", "", "", "", null, "", "", null, "NO_OFFER", null, RatedTransactionMinAmountTypeEnum.RT_MIN_AMOUNT_BA.getCode()+"_"+billingAccount.getCode(), billingAccountMinLabel);
                 
                 ratedTransactionService.create(ratedTransaction);
                 ratedTransactionService.commit();

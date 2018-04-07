@@ -1471,6 +1471,8 @@ public class InvoiceService extends PersistenceService<Invoice> {
         }
 
         ratedTransactionService.createRatedTransaction(billingAccount.getId(), invoiceDate);
+        ratedTransactionService.commit();
+        
         if (ratedTxFilter == null && StringUtils.isBlank(orderNumber)) {
             if (!ratedTransactionService.isBillingAccountBillable(billingAccount, firstTransactionDate, lastTransactionDate)) {
                 throw new BusinessException(resourceMessages.getString("error.invoicing.noTransactions"));

@@ -61,6 +61,12 @@ public class SubscriptionDto extends BusinessDto {
 
     private String terminationReason;
     private String orderNumber;
+    
+    @XmlElement
+    private String minimumAmountEl;
+    
+    @XmlElement
+    private String minimumLabelEl;
 
     /**
      * A date till which subscription is subscribed. After this date it will either be extended or terminated
@@ -237,5 +243,22 @@ public class SubscriptionDto extends BusinessDto {
 	public void setProductInstances(List<ProductInstanceDto> productInstances) {
 		this.productInstances = productInstances;
 	}
+
+    public String getMinimumAmountEl() {
+        return minimumAmountEl;
+    }
+
+    public void setMinimumAmountEl(String minimumAmountEl) {
+        this.minimumAmountEl = minimumAmountEl;
+    }
+
+    public String getMinimumLabelEl() {
+        return minimumLabelEl;
+    }
+
+    public void setMinimumLabelEl(String minimumLabelEl) {
+        this.minimumLabelEl = minimumLabelEl;
+    }
+    
     
 }

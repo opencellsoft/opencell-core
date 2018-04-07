@@ -278,6 +278,10 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
         subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
+        if(!StringUtils.isBlank(postData.getMinimumAmountEl())) {
+            subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
+            subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
+        }
 
         // populate customFields
         try {
