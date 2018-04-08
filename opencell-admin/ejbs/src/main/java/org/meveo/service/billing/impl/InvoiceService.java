@@ -851,6 +851,14 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
         super.remove(invoice);
     }
+    
+    /**
+     * @param invoice invoice to delete
+     * @throws BusinessException business exception 
+     */
+    public void deleteMinRT(Invoice invoice) throws BusinessException {
+        getEntityManager().createNamedQuery("RatedTransaction.deleteMinRT").setParameter("invoice", invoice).executeUpdate();
+    }
 
     /**
      * @param prefix prefix of EL expression
@@ -1521,6 +1529,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
             throw new BusinessException("Can't cancel an invoice that present in AR");
         }
         
+        deleteMinRT(invoice);
         deleteInvoice(invoice);
         log.debug("Invoice canceled {}", invoice.getTemporaryInvoiceNumber());
     }

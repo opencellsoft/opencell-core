@@ -81,9 +81,10 @@ import org.meveo.model.rating.EDR;
                 + "WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
                 + " AND r.doNotTriggerInvoicing=false " + "AND r.invoice is null" + " AND r.billingAccount=:billingAccount"),
         
-        @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax)  FROM RatedTransaction r "
+        @NamedQuery(name = "RatedTransaction.sumByCharge", query = "SELECT sum(r.amountWithoutTax), sum(r.amountWithTax), sum(r.amountTax), r.usageDate  FROM RatedTransaction r "
                 + " WHERE r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN" + " AND :firstTransactionDate<r.usageDate AND r.usageDate<:lastTransactionDate "
-                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.walletOperationEntity.chargeInstance=:chargeInstance"),
+                + " AND r.doNotTriggerInvoicing=false AND r.invoice is null AND r.billingAccount=:billingAccount AND r.walletOperationEntity.chargeInstance=:chargeInstance"
+                + " GROUP BY r.usageDate"),
         
         @NamedQuery(name = "RatedTransaction.updateInvoiced", query = "UPDATE RatedTransaction r "
                 + "SET r.billingRun=:billingRun,r.invoice=:invoice,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.BILLED " + "where r.invoice is null"
@@ -100,6 +101,10 @@ import org.meveo.model.rating.EDR;
         @NamedQuery(name = "RatedTransaction.getListByInvoiceAndSubCategory", query = "from RatedTransaction t where t.invoice=:invoice and t.invoiceSubCategory=:invoiceSubCategory "),
         @NamedQuery(name = "RatedTransaction.deleteInvoice", query = "UPDATE RatedTransaction r "
                 + "set r.invoice=null,r.invoiceAgregateF=null,r.invoiceAgregateR=null,r.invoiceAgregateT=null,r.billingRun=null,r.status=org.meveo.model.billing.RatedTransactionStatusEnum.OPEN where r.invoice=:invoice"),
+
+        @NamedQuery(name = "RatedTransaction.deleteMinRT", query = "DELETE from RatedTransaction r "
+                + " WHERE r.invoice=:invoice AND r.wallet IS null"),
+        
         @NamedQuery(name = "RatedTransaction.getDistinctOrderNumsByInvoice", query = "SELECT DISTINCT rt.orderNumber from RatedTransaction rt where  rt.invoice=:invoice AND NOT(rt.orderNumber IS null)") })
 public class RatedTransaction extends BaseEntity {
 
