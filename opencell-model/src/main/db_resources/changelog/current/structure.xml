@@ -670,6 +670,7 @@
             	<constraints nullable="false"/>
             </column>
 		</createTable>
+        <createSequence sequenceName="billing_finance_segment_seq" />
 		
 		<addUniqueConstraint columnNames="code" tableName="billing_finance_segment"/>
 	</changeSet>
