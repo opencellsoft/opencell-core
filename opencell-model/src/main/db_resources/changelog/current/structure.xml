@@ -681,6 +681,6 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_finance_segment" />
             </column>
         </createTable>
-        <sql>insert into ${db.schema.adapted}pk_billing_finance_segment values(1)</sql>
+        <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
     </changeSet>
 </databaseChangeLog> 
