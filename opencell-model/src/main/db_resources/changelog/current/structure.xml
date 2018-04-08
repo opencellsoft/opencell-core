@@ -678,7 +678,7 @@
 	<changeSet id="#1706_20180408-M" author="EdwardPLegaspi" dbms="mysql">
         <createTable tableName="billing_finance_segment_seq">
             <column name="next_val" type="BIGINT">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_finance_segment" />
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_finance_segment_seq" />
             </column>
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
