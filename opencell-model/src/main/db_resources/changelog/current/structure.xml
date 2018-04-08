@@ -643,4 +643,34 @@
 	<changeSet id="#3351_20180407" author="EdwardPLegaspi">
 		<modifyDataType tableName="dwh_report_extract" columnName="sql_query" newDataType="text" />
 	</changeSet> 
+	
+	<changeSet id="#1706_20180408" author="EdwardPLegaspi">
+		<createTable tableName="billing_finance_segment">
+			<column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="pk_billing_finance_segment" />
+            </column>
+            <column name="code" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="description" type="varchar(255)" />
+            <column name="version" type="int4" />
+            <column name="disabled" type="${type.boolean}" defaultValueNumeric="0">
+                <constraints nullable="false" />
+            </column>
+            <column name="created" type="datetime">
+                <constraints nullable="false" />
+            </column>
+            <column name="updated" type="datetime" />
+            <column name="creator" type="varchar(100)" />
+            <column name="updater" type="varchar(100)" />
+            <column name="object_class" type="varchar(100)">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="field" type="varchar(100)">
+            	<constraints nullable="false"/>
+            </column>
+		</createTable>
+		
+		<addUniqueConstraint columnNames="code" tableName="billing_finance_segment"/>
+	</changeSet>
 </databaseChangeLog> 
