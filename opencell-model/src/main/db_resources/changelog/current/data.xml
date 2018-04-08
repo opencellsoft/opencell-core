@@ -818,6 +818,9 @@ ORDER BY
 			<column name="creator" value="OPENCELL.ADMIN" />
             <column name="created" valueDate="now()" />
     		<column name="code" value="701020000"></column>
+    		<column name="description" value="Discounts"></column>
+    		<column name="chart_of_account_type" value="REVENUE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
     	</insert>
     	
     	<update tableName="billing_accounting_code">
@@ -833,7 +836,7 @@ ORDER BY
     		<where>code='758100000'</where>
     	</update>
     	<update tableName="billing_accounting_code">
-    		<column name="description" value="Cash Deposit  - BNP #123456"></column>
+    		<column name="description" value="Cash Deposit - BNP #123456"></column>
     		<column name="chart_of_account_type" value="ASSETS"></column>
     		<column name="chart_of_account_view_type" value="REGULAR"></column>
     		<where>code='512010000'</where>
@@ -843,6 +846,12 @@ ORDER BY
     		<column name="chart_of_account_type" value="EXPENSE"></column>
     		<column name="chart_of_account_view_type" value="REGULAR"></column>
     		<where>code='654100000'</where>
+    	</update>
+    	<update tableName="billing_accounting_code">
+    		<column name="description" value="Payment loss"></column>
+    		<column name="chart_of_account_type" value="EXPENSE"></column>
+    		<column name="chart_of_account_view_type" value="REGULAR"></column>
+    		<where>code='658100000'</where>
     	</update>
     </changeSet>
         
