@@ -118,18 +118,21 @@ public class ReportExtractService extends BusinessService<ReportExtract> {
                         fileWriter.write(System.lineSeparator());
                         line = new StringBuilder("");
                     }
-
-                } catch (IOException e) {
-                    log.error("Cannot write report to file");
-                    throw new BusinessException("Cannot write report to file.");
-
-                } finally {
                     if (fileWriter != null) {
                         try {
                             fileWriter.close();
                         } catch (IOException e) {
                         }
                     }
+                } catch (Exception e) {
+                    if (fileWriter != null) {
+                        try {
+                            fileWriter.close();
+                        } catch (IOException e1) {
+                        }
+                    }
+                    log.error("Cannot write report to file: {}", e.getMessage());
+                    throw new BusinessException("Cannot write report to file.");
                 }
             }
 
