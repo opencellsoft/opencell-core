@@ -85,7 +85,7 @@ public class ScriptInstanceService extends CustomScriptService<ScriptInstance, S
      */
     @Override
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
-            throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException, BusinessException {
+            throws BusinessException {
 
         ScriptInstance scriptInstance = findByCode(scriptCode);
         // Check access to the script
