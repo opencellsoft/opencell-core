@@ -854,5 +854,38 @@ ORDER BY
     		<where>code='658100000'</where>
     	</update>
     </changeSet>
+    
+    <changeSet id="#3260_20180409 - Delete roles, add to permission" author="EdwardPLegaspi">
+    	<delete tableName="adm_user_role">
+    		<where>role_id=-7</where>
+    	</delete>
+    	<delete tableName="adm_user_role">
+    		<where>role_id=-8</where>
+    	</delete>
+    	<delete tableName="adm_role">
+    		<where>id=-7</where>
+    	</delete>
+    	<delete tableName="adm_role">
+    		<where>id=-8</where>
+    	</delete>
+    	<insert tableName="adm_permission">
+            <column name="id" valueNumeric="-29" />
+            <column name="name" value="Finance Management" />
+            <column name="permission" value="financeManagement" />
+        </insert>
+        <insert tableName="adm_permission">
+            <column name="id" valueNumeric="-30" />
+            <column name="name" value="Finance Visualization" />
+            <column name="permission" value="financeVisualization" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-29" />
+        </insert>
+        <insert tableName="adm_role_permission">
+            <column name="role_id" valueNumeric="-1" />
+            <column name="permission_id" valueNumeric="-30" />
+        </insert>
+	</changeSet>
         
 </databaseChangeLog>
