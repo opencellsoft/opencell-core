@@ -169,6 +169,7 @@ public class QuoteApi extends BaseApi {
         quote.setQuoteDate(productQuote.getQuoteDate() != null ? productQuote.getQuoteDate() : new Date());
         quote.setRequestedCompletionDate(productQuote.getQuoteCompletionDate());
         quote.setFulfillmentStartDate(productQuote.getFulfillmentStartDate());
+        quote.setGeneratePdf(productQuote.isGeneratePdf());
 
         if (productQuote.getValidFor() != null) {
             quote.setValidity(productQuote.getValidFor().toDatePeriod());
@@ -426,7 +427,7 @@ public class QuoteApi extends BaseApi {
                 quoteInvoiceInfos.get(baCode).add(preInvoiceQuoteItem(quote, quoteItem));
             }
 
-            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos);
+            List<Invoice> invoices = quoteService.provideQuote(quoteInvoiceInfos, quote.isGeneratePdf());
             List<QuoteInvoiceInfo> quoteInvoiceInfosAll = new ArrayList<>();
 
             for (List<QuoteInvoiceInfo> quoteInvoiceInfo : quoteInvoiceInfos.values()) {

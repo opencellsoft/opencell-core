@@ -25616,6 +25616,90 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
           </con:restRequest>
         </con:config>
       </con:testStep>
+      <con:testStep type="restrequest" name="Create quote for product - no pdf" id="dad7e280-aacf-4710-a2d6-2c9c9da5990f">
+        <con:settings/>
+        <con:config service="MEVEO JAX-WS API Documentation" resourcePath="/api/rest/quoteManagement/productQuote" methodName="createProductQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote for product - no pdf" id="3e63d18c-0002-446a-940a-1e03685399a5" mediaType="application/json" postQueryString="false">
+            <con:settings>
+              <con:setting id="com.eviware.soapui.impl.wsdl.WsdlRequest@request-headers">&lt;entry key="Authorization" value="Basic b3BlbmNlbGwuYWRtaW46b3BlbmNlbGwuYWRtaW4=" xmlns="http://eviware.com/soapui/config"/></con:setting>
+            </con:settings>
+            <con:endpoint>${#Project#opencell.url}</con:endpoint>
+            <con:request>{
+   "generatePdf": false,
+   "description":"${#Project#entityPrefix}_${#TestSuite#index}_Product_Quote",
+   "quoteDate":"2015-10-25T15:50:48+08",
+   "quoteItem":[
+      {
+         "id":"03",
+	    "billingAccount":[
+		  {
+		     "id":"${#Project#baseEntityPrefix}_UA"
+		  }
+	    ],
+         "productOffering":{         	
+            "id":"${#Project#baseEntityPrefix}_PRODUCT1"
+         },
+         "product":{
+            "productCharacteristic":[               
+              {
+                 "name":"quantity",
+                 "value":"2"
+              },
+              {
+			  "name":"productInstanceCode",
+			  "value":"${#Project#entityPrefix}_${#TestSuite#index}_Quote_Product_1_Instance"
+              },
+              {
+                  "name":"${#Project#baseEntityPrefix}_PROD_CF_STRING",
+                  "value":"Product CF value"
+              },
+              {
+                 "name":"${#Project#baseEntityPrefix}_PROD_CF_LONG_MAP",
+                 "value":"{'One':150,'Two':100}"
+              }
+            ]
+         }
+      }     
+   ]
+}</con:request>
+            <con:originalUri>http://localhost/opencell/api/rest/orderManagement/productOrder</con:originalUri>
+            <con:assertion type="Valid HTTP Status Codes" id="d2019593-3a6b-431a-a279-ed2dca1a1662" name="Valid HTTP Status Codes">
+              <con:configuration>
+                <codes>201</codes>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Count" id="7c2bbbd6-523b-42ab-8382-0ea04c5d4753" name="JsonPath Count">
+              <con:configuration>
+                <path>$.invoices</path>
+                <content>1</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="755e7794-b8a6-4a29-a9f0-878ae7df9b61" name="JsonPath Match">
+              <con:configuration>
+                <path>$.invoices[0].amountWithoutTax</path>
+                <content>2.0</content>
+                <allowWildcards>false</allowWildcards>
+                <ignoreNamspaceDifferences>false</ignoreNamspaceDifferences>
+                <ignoreComments>false</ignoreComments>
+              </con:configuration>
+            </con:assertion>
+            <con:credentials>
+              <con:username/>
+              <con:password/>
+              <con:selectedAuthProfile>No Authorization</con:selectedAuthProfile>
+              <con:addedBasicAuthenticationTypes>Basic</con:addedBasicAuthenticationTypes>
+              <con:preemptive>true</con:preemptive>
+              <con:authType>No Authorization</con:authType>
+            </con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:jmsPropertyConfig/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
       <con:properties/>
     </con:testCase>
     <con:testCase id="15a3772a-616a-4d83-af25-f9376d43316c" failOnError="true" failTestCaseOnErrors="true" keepSession="false" maxResults="0" name="Quote versioned" searchProperties="true">
@@ -32336,11 +32420,11 @@ for(testSuiteItem in  testCase.testSuite.project.getTestSuiteList()){
   <con:properties>
     <con:property>
       <con:name>opencell.url</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>opencell.url2</con:name>
-      <con:value>http://localhost:8080/opencell</con:value>
+      <con:value>http://integration.i.opencellsoft.com/opencell</con:value>
     </con:property>
     <con:property>
       <con:name>adminUsername</con:name>
