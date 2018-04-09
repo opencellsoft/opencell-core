@@ -499,20 +499,53 @@ public class RatingService extends BusinessService<WalletOperation> {
 
         calculateAmounts(bareWalletOperation, unitPriceWithoutTax, unitPriceWithTax);
 
+        // we override the wo if minimum amount el is set
         if (pricePlan != null) {
             if (appProvider.isEntreprise() && !StringUtils.isBlank(pricePlan.getMinimumAmountWithoutTaxEl())) {
                 BigDecimal minimumAmount = new BigDecimal(
                     evaluateDoubleExpression(pricePlan.getMinimumAmountWithoutTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
+                // if minAmount > amountWithoutTax override its value
                 if (bareWalletOperation.getAmountWithoutTax().compareTo(minimumAmount) < 0) {
-                    bareWalletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
+                    BigDecimal oldAmountWithoutTax = bareWalletOperation.getAmountWithoutTax();
+
+                    Integer rounding = appProvider.getRounding();
                     bareWalletOperation.setAmountWithoutTax(minimumAmount);
+                    BigDecimal amountTax = minimumAmount.multiply(bareWalletOperation.getTaxPercent().divide(HUNDRED));
+                    if (rounding != null && rounding > 0) {
+                        amountTax = NumberUtils.round(amountTax, rounding);
+                    }
+                    bareWalletOperation.setAmountTax(amountTax);
+                    bareWalletOperation.setAmountWithTax(minimumAmount.add(amountTax));
+
+                    // sets the raw amount
+                    if (StringUtils.isBlank(pricePlan.getAmountWithoutTaxEL())) {
+                        bareWalletOperation.setRawAmountWithoutTax(pricePlan.getAmountWithoutTax());
+                    } else {
+                        BigDecimal oldPriceWithoutTax = getExpressionValue(pricePlan.getAmountWithoutTaxEL(), pricePlan, bareWalletOperation,
+                            bareWalletOperation.getChargeInstance().getUserAccount(), oldAmountWithoutTax);
+                        if (oldPriceWithoutTax != null) {
+                            oldPriceWithoutTax = oldPriceWithoutTax.multiply(bareWalletOperation.getQuantity());
+                            bareWalletOperation.setRawAmountWithoutTax(oldPriceWithoutTax);
+                        }
+                    }
                 }
             } else if (!StringUtils.isBlank(pricePlan.getMinimumAmountWithTaxEl())) {
                 BigDecimal minimumAmount = new BigDecimal(
                     evaluateDoubleExpression(pricePlan.getMinimumAmountWithTaxEl(), bareWalletOperation, bareWalletOperation.getWallet().getUserAccount()));
                 if (bareWalletOperation.getAmountWithTax().compareTo(minimumAmount) < 0) {
-                    bareWalletOperation.setRawAmountWithTax(pricePlan.getAmountWithTax());
+                    BigDecimal oldAmountWithTax = pricePlan.getAmountWithTax();
                     bareWalletOperation.setAmountWithTax(minimumAmount);
+
+                    if (StringUtils.isBlank(pricePlan.getAmountWithTaxEL())) {
+                        bareWalletOperation.setRawAmountWithTax(oldAmountWithTax);
+                    } else {
+                        BigDecimal oldPriceWithTax = getExpressionValue(pricePlan.getAmountWithTaxEL(), pricePlan, bareWalletOperation,
+                            bareWalletOperation.getChargeInstance().getUserAccount(), oldAmountWithTax);
+                        if (oldPriceWithTax != null) {
+                            oldPriceWithTax = oldPriceWithTax.multiply(bareWalletOperation.getQuantity());
+                            bareWalletOperation.setRawAmountWithTax(oldPriceWithTax);
+                        }
+                    }
                 }
             }
         }
