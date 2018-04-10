@@ -93,7 +93,7 @@
             </c:if>
             <c:if test="#{! edit}">
                 <c:if test="#{! fkToEntity}">
-                    <h:outputText id="#{id}" value="#{fieldItem[valueLabelField]}" styleClass="field-value" />
+                    <h:outputText id="#{id}" value="#{listBean.getTranslation(fieldItem[valueLabelField])}" styleClass="field-value" />
                 </c:if>
                 <c:if test="#{fkToEntity}">
                     <h:outputText id="#{id}" value="#{listBean.persistenceService.findByCode(fieldItem)[valueLabelField]}" styleClass="field-value" />
