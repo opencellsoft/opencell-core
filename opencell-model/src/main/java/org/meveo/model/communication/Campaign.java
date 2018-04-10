@@ -163,5 +163,5 @@ public class Campaign extends BusinessEntity {
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
-
+	
 }

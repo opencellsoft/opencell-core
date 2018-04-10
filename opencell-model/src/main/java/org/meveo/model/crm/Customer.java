@@ -18,6 +18,7 @@
  */
 package org.meveo.model.crm;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ICustomFieldEntity;
 import org.meveo.model.admin.Seller;
+import org.meveo.model.intcrm.AdditionalDetails;
 import org.meveo.model.payments.CustomerAccount;
 import org.meveo.model.shared.ContactInformation;
 
@@ -75,6 +77,9 @@ public class Customer extends AccountEntity {
     
     @Column(name = "registration_no", length = 100)
     private String registrationNo;
+    
+    //OneToOne
+    private AdditionalDetails additionalDetails;
 
     public Customer() {
         accountType = ACCOUNT_TYPE;

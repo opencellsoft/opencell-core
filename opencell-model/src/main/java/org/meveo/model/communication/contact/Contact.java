@@ -18,8 +18,10 @@
  */
 package org.meveo.model.communication.contact;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -36,14 +38,52 @@ import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.CommunicationPolicy;
 import org.meveo.model.communication.Message;
 import org.meveo.model.crm.Provider;
+import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
-@ExportIdentifier({ "contactCode"})
+@ExportIdentifier({ "contactCode" })
 @Table(name = "com_contact", uniqueConstraints = @UniqueConstraint(columnNames = { "contact_code" }))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_contact_seq"), })
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+		@Parameter(name = "sequence_name", value = "com_contact_seq"), })
 public class Contact extends BaseEntity {
 
 	private static final long serialVersionUID = 3772773449495155646L;
+
+	@Column(name = "description", length = 512)
+	@Size(max = 512)
+	private String description;
+
+	@Column(name = "assistantname", length = 50)
+	@Size(max = 50)
+	private String assistantName;
+
+	@Column(name = "assistantphone", length = 255)
+	@Size(max = 255)
+	private String assistantPhone;
+
+	@Column(name = "importedfrom", length = 50)
+	@Size(max = 50)
+	private String importedFrom;
+
+	@Column(name = "importedby", length = 50)
+	@Size(max = 50)
+	private String importedBy;
+
+	@Column(name = "socialidentifier", length = 1000)
+	@Size(max = 1000)
+	private String socialIdentifier;
+
+	@Column(name = "isvip", columnDefinition = "tinyint default false")
+	private boolean isVip;
+
+	@Column(name = "issuspect", columnDefinition = "tinyint default false")
+	private boolean isSuspect;
+
+	@Column(name = "agreedua", columnDefinition = "tinyint default false")
+	private boolean agreedToUA;
+
+	@OneToMany(mappedBy = "crm_contact", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	private List<ContactGroup> contactGroups = new ArrayList<>();
 
 	// It is provider resposibility to create contacts with unique codes
 	@Column(name = "contact_code", length = 50)
@@ -55,6 +95,78 @@ public class Contact extends BaseEntity {
 
 	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
 	private List<Message> messages;
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getAssistantName() {
+		return assistantName;
+	}
+
+	public void setAssistantName(String assistantName) {
+		this.assistantName = assistantName;
+	}
+
+	public String getAssistantPhone() {
+		return assistantPhone;
+	}
+
+	public void setAssistantPhone(String assistantPhone) {
+		this.assistantPhone = assistantPhone;
+	}
+
+	public String getImportedFrom() {
+		return importedFrom;
+	}
+
+	public void setImportedFrom(String importedFrom) {
+		this.importedFrom = importedFrom;
+	}
+
+	public String getImportedBy() {
+		return importedBy;
+	}
+
+	public void setImportedBy(String importedBy) {
+		this.importedBy = importedBy;
+	}
+
+	public String getSocialIdentifier() {
+		return socialIdentifier;
+	}
+
+	public void setSocialIdentifier(String socialIdentifier) {
+		this.socialIdentifier = socialIdentifier;
+	}
+
+	public boolean isVip() {
+		return isVip;
+	}
+
+	public void setVip(boolean isVip) {
+		this.isVip = isVip;
+	}
+
+	public boolean isSuspect() {
+		return isSuspect;
+	}
+
+	public void setSuspect(boolean isSuspect) {
+		this.isSuspect = isSuspect;
+	}
+
+	public List<ContactGroup> getContactGroups() {
+		return contactGroups;
+	}
+
+	public void setContactGroups(List<ContactGroup> contactGroups) {
+		this.contactGroups = contactGroups;
+	}
 
 	public String getContactCode() {
 		return contactCode;
@@ -80,30 +192,30 @@ public class Contact extends BaseEntity {
 		this.messages = messages;
 	}
 
-    @Override
-    public boolean equals(Object obj) {
+	@Override
+	public boolean equals(Object obj) {
 
-        if (this == obj) {
-            return true;
-        } else if (obj == null) {
-            return false;
-        } else if (!(obj instanceof Provider)) {
-            return false;
-        }
+		if (this == obj) {
+			return true;
+		} else if (obj == null) {
+			return false;
+		} else if (!(obj instanceof Provider)) {
+			return false;
+		}
 
-        Contact other = (Contact) obj;
+		Contact other = (Contact) obj;
 
-        if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
-             return true;
-        }
+		if (getId() != null && other.getId() != null && getId().equals(other.getId())) {
+			return true;
+		}
 
-        if (contactCode == null) {
-            if (other.getContactCode() != null) {
-                return false;
-            }
-        } else if (!contactCode.equals(other.getContactCode())) {
-            return false;
-        }
-        return true;
-    }
+		if (contactCode == null) {
+			if (other.getContactCode() != null) {
+				return false;
+			}
+		} else if (!contactCode.equals(other.getContactCode())) {
+			return false;
+		}
+		return true;
+	}
 }
