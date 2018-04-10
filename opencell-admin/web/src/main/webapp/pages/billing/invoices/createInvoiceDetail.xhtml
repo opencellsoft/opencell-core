@@ -15,7 +15,7 @@
 				listener="#{creationInvoiceBean.preRenderView}" />
 		</f:metadata>
 	</ui:define>
-
+ 
 	<ui:define name="body">
 		<h:form id="crumbmenuForm1">
 			<p:breadCrumb homeDisplay="text" id="crumbmenu1">
@@ -149,12 +149,13 @@
 								</hftl:decorateFormField>
 							</p:panel>
 							<p:panel>
-								<p:commandButton immediate="true"
+								<p:commandButton
 									disabled="#{creationInvoiceBean.entity.linkedInvoices.size() lt 1}"
 									value="#{messages['action.invoice.importFromLinkedInvoices']}"
 									action="#{creationInvoiceBean.importFromLinkedInvoices}"
 									process=":formId:tabView @this"
-									update=":formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" />
+									update=":formId:tabView:cfTab :formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" >
+								</p:commandButton>
 								<h:outputText value="&#160;" />
 								<h:outputText value="&#160;" />
 								<h:outputText value="&#160;" />
@@ -205,19 +206,20 @@
 											value="#{aSubCatInvAgregate.getRatedtransactions()}">
 											<p:columnGroup type="header">
 												<p:row>
-													<p:column
-														headerText="#{messages['ratedTransaction.usageDate']}" />
-													<p:column
-														headerText="#{messages['BusinessEntity.description']}" />
-													<p:column
-														headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" />
-													<p:column headerText="#{messages['invoice.quantity']}" />
-													<p:column headerText="#{messages['commons.actions']}" />
+													<p:column headerText="#{messages['ratedTransaction.usageDate']}" width="90"/>
+													<p:column headerText="#{messages['BusinessEntity.description']}" />
+													<p:column headerText="#{messages['ratedTransaction.unitAmountWithoutTax']}" width="130"/>
+													<p:column headerText="#{messages['invoice.quantity']}" width="60"/>
+													<p:column headerText="#{messages['ratedTransaction.param1']}"  width="120"/>
+													<p:column headerText="#{messages['ratedTransaction.param2']}"  width="120"/>
+													<p:column headerText="#{messages['ratedTransaction.param3']}"  width="120"/>
+													<p:column headerText="#{messages['order.number']}" width="120"/>
+													<p:column headerText="#{messages['commons.actions']}" width="40"/>
 												</p:row>
 											</p:columnGroup>
 											<p:column>
 											<hftl:decorateFormField fieldId="usageDate">
-                                                 <p:calendar id="usageDate" value="#{rated.usageDate}"  pattern="#{paramBean.dateFormat}" >												
+                                                 <p:calendar id="usageDate" value="#{rated.usageDate}"  pattern="#{paramBean.dateFormat}" size="10">												
 													<p:ajax event="dateSelect"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
@@ -227,7 +229,7 @@
 											<p:column>
 
 
-												<h:inputText value="#{rated.description}">
+												<h:inputText value="#{rated.description}" size="25">
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
@@ -235,8 +237,7 @@
 
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.unitAmountWithoutTax}"
-													label="#{messages['ratedTransaction.unitAmountWithoutTax']}">
+												<p:inputText value="#{rated.unitAmountWithoutTax}" label="#{messages['ratedTransaction.unitAmountWithoutTax']}" size="15">
 													<p:keyFilter mask="num" />
 													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
@@ -245,13 +246,33 @@
 												</p:inputText>
 											</p:column>
 											<p:column>
-												<p:inputText value="#{rated.quantity}"
+												<p:inputText value="#{rated.quantity}" size="4"
 													label="#{messages['ratedTransaction.quantity']}">
 													<p:keyFilter mask="num" />
 													<f:converter converterId="bigDecimal4DigitsConverter" />
 													<p:ajax event="change"
 														listener="#{creationInvoiceBean.reComputeAmountWithoutTax(rated)}"
 														update="ratedTransactionTable :formId:tabView:invoiceSummary"></p:ajax>
+												</p:inputText>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.parameter1}" size="15"
+													label="#{messages['ratedTransaction.param1']}">
+												</p:inputText>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.parameter2}" size="15"
+													label="#{messages['ratedTransaction.param2']}">
+												</p:inputText>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.parameter3}" size="15"
+													label="#{messages['ratedTransaction.param3']}">
+												</p:inputText>
+											</p:column>
+											<p:column>
+												<p:inputText value="#{rated.orderNumber}" size="15"
+													label="#{messages['order.number']}">
 												</p:inputText>
 											</p:column>
 											<p:column>
@@ -393,7 +414,7 @@
 												value="#{creationInvoiceBean.description}" size="70"></p:inputText>
 										</hftl:decorateFormField> 									
 									</h:panelGrid> 								
-								<h:panelGrid columns="5">										 										
+								<h:panelGrid columns="8">										 										
 										<hftl:decorateFormField fieldId="usageDate"
 											label="#{messages['ratedTransaction.usageDate']} *">
 											<p:calendar id="usageDate" value="#{creationInvoiceBean.usageDate}"  pattern="#{paramBean.dateFormat}" />										
@@ -412,7 +433,19 @@
 												<p:keyFilter mask="num" />
 											</p:inputText>
 										</hftl:decorateFormField> 
- 
+										<hftl:decorateFormField fieldId="parameter1" label="#{messages['ratedTransaction.param1']}">
+											<p:inputText id="parameter1" value="#{creationInvoiceBean.parameter1}" />
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="parameter2" label="#{messages['ratedTransaction.param2']}">
+											<p:inputText id="parameter2" value="#{creationInvoiceBean.parameter2}" />
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="parameter3" label="#{messages['ratedTransaction.param3']}">
+											<p:inputText id="parameter3" value="#{creationInvoiceBean.parameter3}" />
+										</hftl:decorateFormField>
+										<hftl:decorateFormField fieldId="orderNumber" label="#{messages['order.number']}">
+											<p:inputText id="orderNumber" value="#{creationInvoiceBean.orderNumber}" />
+										</hftl:decorateFormField>
+										
 										<p:commandButton value="#{messages['action.invoice.addLine']}" style="margin-top:10px" 
 											process="addDetailInvoiceLine"
 											action="#{creationInvoiceBean.addDetailInvoiceLine()}"
