@@ -67,4 +67,26 @@ public class BusinessServiceModelService extends GenericModuleService<BusinessSe
         return newServiceTemplateCreated;
 
     }
+
+    @SuppressWarnings("unchecked")
+    public List<BusinessServiceModel> listByServiceTemplate(ServiceTemplate serviceTemplate) {
+        QueryBuilder qb = new QueryBuilder(BusinessServiceModel.class, "t");
+        qb.addCriterionEntity("serviceTemplate", serviceTemplate);
+
+        List<BusinessServiceModel> result = (List<BusinessServiceModel>) qb.getQuery(getEntityManager()).getResultList();
+        return (result == null || result.isEmpty()) ? null : result;
+    }
+    
+    /**
+     * Returns the count of all installed BSM
+     * @param serviceTemplate serviceTemplate of BSM
+     * @return count of install BSM
+     */
+    public Long countByServiceTemplate(ServiceTemplate serviceTemplate) {
+        QueryBuilder qb = new QueryBuilder(BusinessServiceModel.class, "t");
+        qb.addCriterionEntity("serviceTemplate", serviceTemplate);
+        qb.addCriterion("installed", "=", true, true);
+
+        return qb.count(getEntityManager());
+    }
 }
