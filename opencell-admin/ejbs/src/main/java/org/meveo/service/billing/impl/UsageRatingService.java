@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.meveo.admin.exception.BusinessException;
+import org.meveo.admin.exception.IncorrectChargeTemplateException;
 import org.meveo.admin.exception.InsufficientBalanceException;
 import org.meveo.admin.parse.csv.CDR;
 import org.meveo.api.dto.ActionStatus;
@@ -204,9 +205,16 @@ public class UsageRatingService implements Serializable {
         walletOperation.setSeller(chargeInstance.getSeller());
 
         TradingCurrency currency = chargeInstance.getCurrency();
-        Tax tax = invoiceSubcategoryCountry.getTax();
-        if (tax == null) {
+        
+        
+        Tax tax = null;
+        if (StringUtils.isBlank(invoiceSubcategoryCountry.getTaxCodeEL())) {
+            tax = invoiceSubcategoryCountry.getTax();
+        } else {
             tax = invoiceSubCategoryService.evaluateTaxCodeEL(invoiceSubcategoryCountry.getTaxCodeEL(), userAccount, billingAccount, null);
+        }
+        if (tax == null) {
+            throw new BusinessException("No tax exists for invoiceSubcategoryCountry id=" + invoiceSubcategoryCountry.getId());
         }
 
         walletOperation.setInvoiceSubCategory(chargeTemplate.getInvoiceSubCategory());

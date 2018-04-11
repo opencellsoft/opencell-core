@@ -215,8 +215,7 @@ public class InvoiceApi extends BaseApi {
                                 taxes.add(invoiceSubCategoryService.evaluateTaxCodeEL(invoicesubcatCountry.getTaxCodeEL(), userAccount, billingAccount, invoice));
                             }
                         }
-                        if (currentTax == null) {
-                            currentTax = invoicesubcatCountry.getTax();
+                        if (currentTax == null) {                           
                             if (StringUtils.isBlank(invoicesubcatCountry.getTaxCodeEL())) {
                                 currentTax = invoicesubcatCountry.getTax();
                             } else {

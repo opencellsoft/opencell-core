@@ -30,36 +30,28 @@
 			<hftl:column label="#{messages['reportExtract.scriptType']}" field="scriptType" />
 			<hftl:column label="#{messages['enableEntity.active']}" field="active" />
 			<hftl:actionsColumn width="10%" renderEnableLink="true">
-				<p:commandButton id="runReport" icon="fa fa-fw fa-play" onclick="PF('dlgRunReport').show();" >
-		            <f:setPropertyActionListener target="#{reportExtractBean.entity}" value="#{entity}" />
+				<p:commandButton id="runReport" icon="fa fa-fw fa-play" actionListener="#{reportExtractBean.initEntity(entity)}" oncomplete="PF('dlgRunReport').show()" update=":runReportDialog">
 		        </p:commandButton>
 		        <p:tooltip for="runReport" value="#{messages['action.run']}" showEffect="slide" hideEffect="slide" />
 			</hftl:actionsColumn>
 		</hftl:dataList>
-
-		<h:form>
-			<p:dialog header="Run Report" widgetVar="dlgRunReport">
-				<div class="ui-g ui-fluid">
-					<div class="ui-g-4">
-						<p:outputLabel for="startDate" value="#{messages['reportExtract.startDate']}"></p:outputLabel>
-					</div>
-					<div class="ui-g-8">
-						<p:calendar id="startDate" value="#{reportExtractBean.entity.startDate}" pattern="#{paramBean.dateFormat}" />
-					</div>
-					<div class="ui-g-4">
-						<p:outputLabel for="endDate" value="#{messages['reportExtract.endDate']}"></p:outputLabel>
-					</div>
-					<div class="ui-g-8">
-						<p:calendar id="endDate" value="#{reportExtractBean.entity.endDate}" pattern="#{paramBean.dateFormat}" />
-					</div>
-					<div class="ui-g-8"></div>
-					<div class="ui-g-4">
-		    			<p:commandButton id="runReport" value="#{messages['action.run']}" action="#{reportExtractBean.runReportFromList()}" update=":results_panel" onclick="dlgRunReport.hide()">
-		        		</p:commandButton>
-	        		</div>
+		
+		<p:dialog header="Run Report" widgetVar="dlgRunReport" width="80%" id="runReportDialog">
+			<h:form id="runReportForm">
+				<div class="ui-g">
+					<hftl:formPanel formId="reportExtractForm" label="#{messages['reportExtract.title']}" backingBean="#{reportExtractBean}" showFormButtons="false">
+						<hftl:formField label="#{messages['entity.notification.params']}" field="params" newLine="true" componentWidth="100%" />
+						<div class="ui-g-8"></div>
+						<ui:insert name="form-panel-actions">
+							<div class="ui-g-4">
+				    			<p:commandButton id="runReport" value="#{messages['action.run']}" action="#{reportExtractBean.runReportFromList()}" update=":results_panel" onclick="dlgRunReport.hide()">
+				        		</p:commandButton>
+			        		</div>
+		        		</ui:insert>
+	        		</hftl:formPanel>
 		        </div>
-			</p:dialog>
-		</h:form>
+	        </h:form>
+		</p:dialog>
 	</ui:define>
 
 </ui:composition>

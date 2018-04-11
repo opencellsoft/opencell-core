@@ -602,7 +602,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws ElementNotFoundException Script not found
      * @throws BusinessException Any execution exception
      */
-    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws InvalidPermissionException, ElementNotFoundException, BusinessException {
+    public Map<String, Object> execute(IEntity entity, String scriptCode, String encodedParameters) throws BusinessException {
 
         return execute(entity, scriptCode, CustomScriptService.parseParameters(encodedParameters));
     }
@@ -620,7 +620,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws BusinessException Any execution exception
      */
     public Map<String, Object> execute(IEntity entity, String scriptCode, Map<String, Object> context)
-            throws InvalidScriptException, ElementNotFoundException, InvalidPermissionException, BusinessException {
+            throws BusinessException {
 
         if (context == null) {
             context = new HashMap<String, Object>();
@@ -643,7 +643,7 @@ public abstract class CustomScriptService<T extends CustomScript, SI extends Scr
      * @throws BusinessException Any execution exception
      */
     public Map<String, Object> execute(String scriptCode, Map<String, Object> context)
-            throws ElementNotFoundException, InvalidScriptException, InvalidPermissionException, BusinessException {
+            throws BusinessException {
 
         log.trace("Script {} to be executed with parameters {}", scriptCode, context);
 
