@@ -466,6 +466,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
 
                 if (!entreprise) {
                     nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add((BigDecimal) object[2]);
+                    for (Object[] minAmount : minAmounts) {
+                        nonEnterprisePriceWithTax = nonEnterprisePriceWithTax.add(((BigDecimal) minAmount[2]).setScale(rounding, RoundingMode.HALF_UP));
+                    }
                 }
 
                 // start aggregate T

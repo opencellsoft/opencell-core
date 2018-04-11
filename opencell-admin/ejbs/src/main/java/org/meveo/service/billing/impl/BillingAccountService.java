@@ -763,10 +763,10 @@ public class BillingAccountService extends AccountService<BillingAccount> {
 	                ratedTransactionService.create(ratedTransaction);
 	                ratedTransactionService.commit();
 	                
-	                totalInvoiceAmountWithoutTax.add(amountWithoutTax);
+	                totalInvoiceAmountWithoutTax = totalInvoiceAmountWithoutTax.add(amountWithoutTax);
 	            }
 	        }   
-	        totalInvoiceAmountWithoutTax.add(invoiceAmountWithoutTax);
+	        totalInvoiceAmountWithoutTax = totalInvoiceAmountWithoutTax.add(invoiceAmountWithoutTax);
         }
         
         return totalInvoiceAmountWithoutTax;
