@@ -97,7 +97,9 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         OneShotChargeTemplate chargeTemplate = new OneShotChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
@@ -106,7 +108,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-		chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -182,7 +184,6 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
 
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setOneShotChargeTemplateType(postData.getOneShotChargeTemplateType());
         chargeTemplate.setInvoiceSubCategory(invoiceSubCategory);
@@ -191,7 +192,7 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
         chargeTemplate.setUnitNbDecimal(postData.getUnitNbDecimal());
         chargeTemplate.setInputUnitDescription(postData.getInputUnitDescription());
-		chargeTemplate.setFilterExpression(postData.getFilterExpression());
+        chargeTemplate.setFilterExpression(postData.getFilterExpression());
         if (postData.getRoundingModeDtoEnum() != null) {
             chargeTemplate.setRoundingMode(postData.getRoundingModeDtoEnum());
         } else {
@@ -295,7 +296,8 @@ public class OneShotChargeTemplateApi extends BaseCrudApi<OneShotChargeTemplate,
             if (country == null) {
                 log.warn("country with code={} does not exists", countryCode);
             } else {
-                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService.findByInvoiceSubCategoryAndCountryWithHighestPriority(invoiceSubCategory.getId(), country.getId());
+                InvoiceSubcategoryCountry invoiceSubcategoryCountry = invoiceSubCategoryCountryService
+                    .findByInvoiceSubCategoryAndCountryWithHighestPriority(invoiceSubCategory.getId(), country.getId());
                 if (invoiceSubcategoryCountry != null && invoiceSubcategoryCountry.getTax() != null) {
                     Tax tax = invoiceSubcategoryCountry.getTax();
                     oneShotChargeDto.setTaxCode(tax.getCode());

@@ -4,18 +4,16 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.dwh.Chart;
-
 
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "Chart")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChartDto extends BusinessDto {
+public class ChartDto extends EnableBusinessDto {
 
-	
     private static final long serialVersionUID = 2573963792647472501L;
 
     private MeasurableQuantityDto measurableQuantity;
@@ -31,10 +29,10 @@ public class ChartDto extends BusinessDto {
     }
 
     public ChartDto(Chart chart) {
-        super(chart);        
+        super(chart);
 
         if (chart.getMeasurableQuantity() != null) {
-        	setMeasurableQuantity(new MeasurableQuantityDto(chart.getMeasurableQuantity()));
+            setMeasurableQuantity(new MeasurableQuantityDto(chart.getMeasurableQuantity()));
         }
         setWidth(chart.getWidth());
         setHeight(chart.getHeight());

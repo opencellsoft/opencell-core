@@ -46,7 +46,7 @@ public interface JobTriggerRs extends IBaseRs {
     ActionStatus update(JobTriggerDto postData);
 
     /**
-     * Find a job trigger with a given code 
+     * Find a job trigger with a given code
      * 
      * @param notificationCode The job trigger's code
      * @return
@@ -56,7 +56,7 @@ public interface JobTriggerRs extends IBaseRs {
     GetJobTriggerResponseDto find(@QueryParam("notificationCode") String notificationCode);
 
     /**
-     * Remove an existing job trigger with a given code 
+     * Remove an existing job trigger with a given code
      * 
      * @param notificationCode The job trigger's code
      * @return Request processing status
@@ -74,4 +74,25 @@ public interface JobTriggerRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(JobTriggerDto postData);
+
+    /**
+     * Enable a Job execution trigger notification with a given code
+     * 
+     * @param code Job execution trigger notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Job execution trigger notification with a given code
+     * 
+     * @param code Job execution trigger notification code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
+
 }

@@ -119,8 +119,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
             throw new EntityAlreadyExistsException(OfferTemplate.class, postData.getCode() + " / " + postData.getValidFrom() + " / " + postData.getValidTo());
         }
 
-        OfferTemplate offerTemplate = new OfferTemplate();
-        populateFromDto(offerTemplate, postData);
+        OfferTemplate offerTemplate = populateFromDto(postData, null);
 
         // populate customFields
         try {
@@ -164,8 +163,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
                         + ", already exists. Please change the validity dates of an existing offer first.");
         }
 
-        populateFromDto(offerTemplate, postData);
-        offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        offerTemplate = populateFromDto(postData, offerTemplate);
 
         // populate customFields
         try {
@@ -183,7 +181,15 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         return offerTemplate;
     }
 
-    private void populateFromDto(OfferTemplate offerTemplate, OfferTemplateDto postData) throws MeveoApiException, BusinessException {
+    private OfferTemplate populateFromDto(OfferTemplateDto postData, OfferTemplate offerTemplateToUpdate) throws MeveoApiException, BusinessException {
+
+        OfferTemplate offerTemplate = offerTemplateToUpdate;
+        if (offerTemplate == null) {
+            offerTemplate = new OfferTemplate();
+            if (postData.isDisabled() != null) {
+                offerTemplate.setDisabled(postData.isDisabled());
+            }
+        }
 
         BusinessOfferModel businessOffer = null;
         if (!StringUtils.isBlank(postData.getBomCode())) {
@@ -243,11 +249,10 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
         }
 
         offerTemplate.setBusinessOfferModel(businessOffer);
-        offerTemplate.setCode(postData.getCode());
+        offerTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplate.setDescription(postData.getDescription());
         offerTemplate.setName(postData.getName());
         offerTemplate.setLongDescription(postData.getLongDescription());
-        offerTemplate.setDisabled(postData.isDisabled());
         offerTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         if (postData.getLifeCycleStatus() != null) {
             offerTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
@@ -274,6 +279,8 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
 
         // check offer product templates
         processOfferProductTemplates(postData, offerTemplate);
+
+        return offerTemplate;
     }
 
     private void processOfferServiceTemplates(OfferTemplateDto postData, OfferTemplate offerTemplate) throws MeveoApiException, BusinessException {
@@ -529,7 +536,7 @@ public class OfferTemplateApi extends ProductOfferingApi<OfferTemplate, OfferTem
     @SecuredBusinessEntityMethod(resultFilter = ListFilter.class)
     @FilterResults(propertyToFilter = "offerTemplates", itemPropertiesToFilter = { @FilterProperty(property = "sellers", entityClass = Seller.class, allowAccessIfNull = true) })
     public GetListOfferTemplateResponseDto list(@Deprecated String code, @Deprecated Date validFrom, @Deprecated Date validTo, PagingAndFiltering pagingAndFiltering)
-            throws InvalidParameterException{
+            throws InvalidParameterException {
         return list(code, validFrom, validTo, pagingAndFiltering, CustomFieldInheritanceEnum.INHERIT_NO_MERGE);
     }
 

@@ -47,8 +47,6 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
 
         handleMissingParametersAndValidate(postData);
 
-        
-
         if (offerTemplateCategoryService.findByCode(postData.getCode()) != null) {
             throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
         }
@@ -57,6 +55,11 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         offerTemplateCategory.setCode(postData.getCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
+        if (postData.isActive() != null) {
+            offerTemplateCategory.setActive(postData.isActive());
+        } else if (postData.isDisabled() != null) {
+            offerTemplateCategory.setDisabled(postData.isDisabled());
+        }
         try {
             saveImage(offerTemplateCategory, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -106,13 +109,13 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         }
 
         handleMissingParametersAndValidate(postData);
-        
+
         OfferTemplateCategory offerTemplateCategory = offerTemplateCategoryService.findByCode(postData.getCode());
 
         if (offerTemplateCategory == null) {
             throw new EntityAlreadyExistsException(OfferTemplateCategory.class, postData.getCode());
         }
-        offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        offerTemplateCategory.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         offerTemplateCategory.setDescription(postData.getDescription());
         offerTemplateCategory.setName(postData.getName());
 
@@ -148,7 +151,9 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategory;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -172,7 +177,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
         return offerTemplateCategoryDto;
 
     }
-    
+
     /**
      * 
      * @param code offer template category
@@ -230,10 +235,10 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
      * @throws BusinessException business exceptions
      */
     public OfferTemplateCategory createOrUpdate(OfferTemplateCategoryDto postData) throws MeveoApiException, BusinessException {
-       if (StringUtils.isBlank(postData.getCode())) {
+        if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
-        }        
+        }
         if (offerTemplateCategoryService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {
@@ -283,7 +288,7 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     /**
      * 
      * @param code code of offer template category
-
+     * 
      * @return offer template category
      * @throws MeveoApiException meveo api exception
      */
@@ -307,14 +312,13 @@ public class OfferTemplateCategoryApi extends BaseCrudApi<OfferTemplateCategory,
     /**
      * @param uriInfo uri information
      * @param code code of offer template category
-
+     * 
      * @return found offer template category
      * @throws EntityDoesNotExistsException entity does not exist exception
      * @throws InvalidParameterException invalid parameter exception
      * @throws MissingParameterException missing parameter exception
      */
-    public OfferTemplateCategoryDto findByCode(String code, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException,
-            MissingParameterException {
+    public OfferTemplateCategoryDto findByCode(String code, UriInfo uriInfo) throws EntityDoesNotExistsException, InvalidParameterException, MissingParameterException {
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();

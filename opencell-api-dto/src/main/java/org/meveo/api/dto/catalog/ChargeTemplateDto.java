@@ -9,8 +9,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.BaseEntity;
 import org.meveo.model.catalog.ChargeTemplate;
@@ -23,15 +23,12 @@ import org.meveo.model.catalog.TriggeredEDRTemplate;
  */
 @XmlRootElement(name = "ChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ChargeTemplateDto extends BusinessDto implements Serializable {
+public class ChargeTemplateDto extends EnableBusinessDto implements Serializable {
 
     private static final long serialVersionUID = -5143285194077662656L;
 
     @XmlElement(required = true)
     private String invoiceSubCategory;
-
-    @XmlElement(required = true)
-    private boolean disabled;
 
     private Boolean amountEditable;
     private List<LanguageDescriptionDto> languageDescriptions;
@@ -42,7 +39,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
     private int unitNbDecimal = BaseEntity.NB_DECIMALS;
     private RoundingModeEnum roundingModeDtoEnum;
     private String revenueRecognitionRuleCode;
-    private CustomFieldsDto customFields;    
+    private CustomFieldsDto customFields;
 
     private TriggeredEdrTemplatesDto triggeredEdrs = new TriggeredEdrTemplatesDto();
 
@@ -55,7 +52,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
         if (chargeTemplate.getInvoiceSubCategory() != null) {
             invoiceSubCategory = chargeTemplate.getInvoiceSubCategory().getCode();
         }
-        disabled = chargeTemplate.isDisabled();
         amountEditable = chargeTemplate.getAmountEditable();
         if (chargeTemplate.getEdrTemplates() != null) {
             triggeredEdrs = new TriggeredEdrTemplatesDto();
@@ -85,7 +81,7 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
 
     @Override
     public String toString() {
-        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + disabled
+        return "ChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + invoiceSubCategory + ", disabled=" + isDisabled()
                 + ", amountEditable=" + amountEditable + ", languageDescriptions=" + languageDescriptions + ", inputUnitDescription=" + inputUnitDescription
                 + ", ratingUnitDescription=" + ratingUnitDescription + ", unitMultiplicator=" + unitMultiplicator + ", unitNbDecimal=" + unitNbDecimal + ", customFields="
                 + customFields + ", triggeredEdrs=" + triggeredEdrs + ",roundingModeDtoEnum=" + roundingModeDtoEnum + "]";
@@ -105,14 +101,6 @@ public class ChargeTemplateDto extends BusinessDto implements Serializable {
 
     public void setInvoiceSubCategory(String invoiceSubCategory) {
         this.invoiceSubCategory = invoiceSubCategory;
-    }
-
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     public String getInputUnitDescription() {

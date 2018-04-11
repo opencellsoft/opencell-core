@@ -57,7 +57,13 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
         JobCategoryEnum jobCategory = job.getJobCategory();
 
         JobInstance jobInstance = new JobInstance();
-        jobInstance.setActive(postData.isActive());
+
+        // Use Active or Disabled field
+        if (postData.isActive() != null) {
+            jobInstance.setActive(postData.isActive());
+        } else if (postData.isDisabled() != null) {
+            jobInstance.setDisabled(postData.isDisabled());
+        }
         jobInstance.setParametres(postData.getParameter());
         jobInstance.setJobCategoryEnum(jobCategory);
         jobInstance.setJobTemplate(postData.getJobTemplate());
@@ -139,7 +145,12 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
 
         jobInstance.setJobTemplate(postData.getJobTemplate());
         jobInstance.setParametres(postData.getParameter()); // TODO setParametres should be renamed
-        jobInstance.setActive(postData.isActive());
+        // Use Active or Disabled field
+        // if (postData.isActive() != null) {
+        // jobInstance.setActive(postData.isActive());
+        // } else if (postData.isDisabled() != null) {
+        // jobInstance.setDisabled(postData.isDisabled());
+        // }
         jobInstance.setJobCategoryEnum(jobCategory);
         jobInstance.setDescription(postData.getDescription());
         jobInstance.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -224,9 +235,8 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
 
-        JobInstanceDto jobInstanceDto = jobInstanceToDto(jobInstance);
+        JobInstanceDto jobInstanceDto = new JobInstanceDto(jobInstance, entityToDtoConverter.getCustomFieldsDTO(jobInstance, true));
         return jobInstanceDto;
-
     }
 
     /**
@@ -247,33 +257,5 @@ public class JobInstanceApi extends BaseCrudApi<JobInstance, JobInstanceDto> {
             throw new EntityDoesNotExistsException(JobInstance.class, code);
         }
         jobInstanceService.remove(jobInstance);
-    }
-
-    private JobInstanceDto jobInstanceToDto(JobInstance jobInstance) {
-        JobInstanceDto dto = new JobInstanceDto();
-
-        dto.setCode(jobInstance.getCode());
-        dto.setActive(jobInstance.isActive());
-
-        dto.setDescription(jobInstance.getDescription());
-
-        dto.setJobCategory(jobInstance.getJobCategoryEnum());
-        dto.setJobTemplate(jobInstance.getJobTemplate());
-        dto.setParameter(jobInstance.getParametres());
-
-        if (jobInstance.getTimerEntity() != null) {
-            dto.setTimerCode(jobInstance.getTimerEntity().getCode());
-        }
-
-        dto.setRunOnNodes(jobInstance.getRunOnNodes());
-        dto.setLimitToSingleNode(jobInstance.isLimitToSingleNode());
-        
-        dto.setCustomFields(entityToDtoConverter.getCustomFieldsDTO(jobInstance, true));
-
-        if (jobInstance.getFollowingJob() != null) {
-            dto.setFollowingJob(jobInstance.getFollowingJob().getCode());
-        }
-
-        return dto;
     }
 }

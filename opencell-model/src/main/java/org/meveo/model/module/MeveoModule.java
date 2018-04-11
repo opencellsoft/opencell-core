@@ -25,7 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -46,7 +46,7 @@ import org.meveo.model.scripts.ScriptInstance;
 @Table(name = "meveo_module", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "meveo_module_seq"), })
 @Inheritance(strategy = InheritanceType.JOINED)
-public class MeveoModule extends BusinessEntity implements Serializable {
+public class MeveoModule extends EnableBusinessEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

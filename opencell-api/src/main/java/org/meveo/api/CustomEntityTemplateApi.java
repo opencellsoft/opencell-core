@@ -55,7 +55,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
     @Inject
     private EntityCustomActionApi entityCustomActionApi;
-    
+
     @Inject
     private EntityCustomActionService entityCustomActionService;
 
@@ -74,17 +74,20 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             throw new EntityAlreadyExistsException(CustomEntityTemplate.class, dto.getCode());
         }
 
-        CustomEntityTemplate cet = CustomEntityTemplateDto.fromDTO(dto, null);
+        CustomEntityTemplate cet = convertCustomEntityTemplateFromDTO(dto, null);
         customEntityTemplateService.create(cet);
 
         if (dto.getFields() != null) {
             for (CustomFieldTemplateDto cftDto : dto.getFields()) {
+
+                cftDto.setDisabled(dto.isDisabled());
                 customFieldTemplateApi.createOrUpdate(cftDto, cet.getAppliesTo());
             }
         }
 
         if (dto.getActions() != null) {
             for (EntityCustomActionDto actionDto : dto.getActions()) {
+                actionDto.setDisabled(dto.isDisabled());
                 entityCustomActionApi.createOrUpdate(actionDto, cet.getAppliesTo());
             }
         }
@@ -108,7 +111,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, dto.getCode());
         }
 
-        cet = CustomEntityTemplateDto.fromDTO(dto, cet);
+        cet = convertCustomEntityTemplateFromDTO(dto, cet);
         cet = customEntityTemplateService.update(cet);
 
         synchronizeCustomFieldsAndActions(cet.getAppliesTo(), dto.getFields(), dto.getActions());
@@ -132,7 +135,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -148,13 +153,9 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         if (cet == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-
-        Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo());
-
-        return CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values());
+        return convertCustomEntityTemplateToDTO(cet);
     }
-    
+
     @Override
     public CustomEntityTemplate createOrUpdate(CustomEntityTemplateDto postData) throws MeveoApiException, BusinessException {
         CustomEntityTemplate cet = customEntityTemplateService.findByCode(postData.getCode());
@@ -177,11 +178,7 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         List<CustomEntityTemplateDto> cetDtos = new ArrayList<CustomEntityTemplateDto>();
 
         for (CustomEntityTemplate cet : cets) {
-
-            Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
-            Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo());
-
-            cetDtos.add(CustomEntityTemplateDto.toDTO(cet, cetFields.values(), cetActions.values()));
+            cetDtos.add(convertCustomEntityTemplateToDTO(cet));
         }
 
         return cetDtos;
@@ -301,39 +298,37 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
 
         return EntityCustomizationDto.toDTO(clazz, cetFields.values(), cetActions.values());
     }
-    
-	public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode)
-			throws MeveoApiException {
-		List<BusinessEntityDto> result = new ArrayList<>();
 
-		if (StringUtils.isBlank(code)) {
-			missingParameters.add("code");
-		}
-		
-		if(StringUtils.isBlank(wildcode)) {
-			wildcode = "";
-		}
+    public List<BusinessEntityDto> listBusinessEntityForCFVByCode(String code, String wildcode) throws MeveoApiException {
+        List<BusinessEntityDto> result = new ArrayList<>();
 
-		handleMissingParameters();
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
 
-		CustomFieldTemplate cft = customFieldTemplateService.findByCode(code);
-		if (cft == null) {
-			throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
-		}
+        if (StringUtils.isBlank(wildcode)) {
+            wildcode = "";
+        }
 
-		String entityClazz = cft.getEntityClazz();
-		if (!StringUtils.isBlank(entityClazz)) {
-			List<BusinessEntity> businessEntities = customFieldInstanceService
-					.findBusinessEntityForCFVByCode(entityClazz, wildcode);
-			if (businessEntities != null) {
-				for (BusinessEntity be : businessEntities) {
-					result.add(new BusinessEntityDto(be));
-				}
-			}
-		}
+        handleMissingParameters();
 
-		return result;
-	}
+        CustomFieldTemplate cft = customFieldTemplateService.findByCode(code);
+        if (cft == null) {
+            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
+        }
+
+        String entityClazz = cft.getEntityClazz();
+        if (!StringUtils.isBlank(entityClazz)) {
+            List<BusinessEntity> businessEntities = customFieldInstanceService.findBusinessEntityForCFVByCode(entityClazz, wildcode);
+            if (businessEntities != null) {
+                for (BusinessEntity be : businessEntities) {
+                    result.add(new BusinessEntityDto(be));
+                }
+            }
+        }
+
+        return result;
+    }
 
     /**
      * Finds an entity that match the given criterion. Evaluates applicableEL on custom fields and actions of the entity, if false it will not be included in the resulting object.
@@ -344,49 +339,48 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
      * @throws MissingParameterException when there is a missing parameter
      * @throws BusinessException business logic is violated
      */
-	public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode)
-			throws MissingParameterException, BusinessException {
-		EntityCustomizationDto result = new EntityCustomizationDto();
-		log.debug("IPIEL: listELFiltered");
+    public EntityCustomizationDto listELFiltered(String appliesTo, String entityCode) throws MissingParameterException, BusinessException {
+        EntityCustomizationDto result = new EntityCustomizationDto();
+        log.debug("IPIEL: listELFiltered");
 
-		if (StringUtils.isBlank(appliesTo)) {
-			missingParameters.add("appliesTo");
-		}
-		if (StringUtils.isBlank(entityCode)) {
-			missingParameters.add("entityCode");
-		}
+        if (StringUtils.isBlank(appliesTo)) {
+            missingParameters.add("appliesTo");
+        }
+        if (StringUtils.isBlank(entityCode)) {
+            missingParameters.add("entityCode");
+        }
 
-		handleMissingParameters();
+        handleMissingParameters();
 
-		@SuppressWarnings("rawtypes")
-		Class entityClass = null;
-		// get all the class annotated with customFieldEntity
-		Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
-		for (Class<?> clazz : cfClasses) {
-			// check if appliesTo match, eg OFFER
-			if (appliesTo.equals(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
-				entityClass = clazz;
-				break;
-			}
-		}
+        @SuppressWarnings("rawtypes")
+        Class entityClass = null;
+        // get all the class annotated with customFieldEntity
+        Set<Class<?>> cfClasses = ReflectionUtils.getClassesAnnotatedWith(CustomFieldEntity.class);
+        for (Class<?> clazz : cfClasses) {
+            // check if appliesTo match, eg OFFER
+            if (appliesTo.equals(clazz.getAnnotation(CustomFieldEntity.class).cftCodePrefix())) {
+                entityClass = clazz;
+                break;
+            }
+        }
 
-		// search for custom field entity filtered by type and code
-		ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
+        // search for custom field entity filtered by type and code
+        ICustomFieldEntity entityInstance = customEntityTemplateService.findByClassAndCode(entityClass, entityCode);
 
-		// custom fields that applies to an entity type, eg. OFFER
-		Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
-		Map<String, EntityCustomAction> caFields = entityCustomActionService.findByAppliesTo(appliesTo);
-		result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), caFields.values());
+        // custom fields that applies to an entity type, eg. OFFER
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(appliesTo);
+        Map<String, EntityCustomAction> caFields = entityCustomActionService.findByAppliesTo(appliesTo);
+        result = EntityCustomizationDto.toDTO(entityClass, cetFields.values(), caFields.values());
 
-		// evaluate the CFT againsts the entity
-		List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
-		for (CustomFieldTemplateDto cft : result.getFields()) {
-			if (ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entityInstance)) {
-				evaluatedCFTDto.add(cft);
-			}
-		}
-		result.setFields(evaluatedCFTDto);
-		
+        // evaluate the CFT against the entity
+        List<CustomFieldTemplateDto> evaluatedCFTDto = new ArrayList<>();
+        for (CustomFieldTemplateDto cft : result.getFields()) {
+            if (ValueExpressionWrapper.evaluateToBooleanOneVariable(cft.getApplicableOnEl(), "entity", entityInstance)) {
+                evaluatedCFTDto.add(cft);
+            }
+        }
+        result.setFields(evaluatedCFTDto);
+
         // evaluate the CA againsts the entity
         List<EntityCustomActionDto> evaluatedCA = new ArrayList<>();
         for (EntityCustomActionDto eca : result.getActions()) {
@@ -396,7 +390,48 @@ public class CustomEntityTemplateApi extends BaseCrudApi<CustomEntityTemplate, C
         }
         result.setActions(evaluatedCA);
 
-		return result;
-	}
+        return result;
+    }
+
+    /**
+     * Convert CustomEntityTemplate instance to CustomEntityTemplateDto object including the fields and actions
+     * 
+     * @param cet CustomEntityTemplate object to convert
+     * @param cetFields Fields (CustomFieldTemplate) that are part of CustomEntityTemplate
+     * @param cetActions Actions (EntityActionScript) available on CustomEntityTemplate
+     * @return A CustomEntityTemplateDto object with fields set
+     */
+    private CustomEntityTemplateDto convertCustomEntityTemplateToDTO(CustomEntityTemplate cet) {
+
+        Map<String, CustomFieldTemplate> cetFields = customFieldTemplateService.findByAppliesTo(cet.getAppliesTo());
+
+        Map<String, EntityCustomAction> cetActions = entityActionScriptService.findByAppliesTo(cet.getAppliesTo());
+
+        CustomEntityTemplateDto dto = new CustomEntityTemplateDto(cet, cetFields.values(), cetActions.values());
+
+        return dto;
+    }
+
+    /**
+     * Convert CustomEntityTemplateDto to a CustomEntityTemplate instance. Note: does not convert custom fields that are part of DTO
+     * 
+     * @param dto CustomEntityTemplateDto object to convert
+     * @param cetToUpdate CustomEntityTemplate to update with values from dto, or if null create a new one
+     * @return A new or updated CustomEntityTemplate instance
+     */
+    private CustomEntityTemplate convertCustomEntityTemplateFromDTO(CustomEntityTemplateDto dto, CustomEntityTemplate cetToUpdate) {
+        CustomEntityTemplate cet = cetToUpdate;
+        if (cetToUpdate == null) {
+            cet = new CustomEntityTemplate();
+            cet.setCode(dto.getCode());
+            if (dto.isDisabled() != null) {
+                cet.setDisabled(dto.isDisabled());
+            }
+        }
+        cet.setName(dto.getName());
+        cet.setDescription(dto.getDescription());
+
+        return cet;
+    }
 
 }

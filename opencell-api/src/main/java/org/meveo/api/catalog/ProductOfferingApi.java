@@ -9,7 +9,7 @@ import javax.inject.Inject;
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.api.BaseCrudVersionedApi;
 import org.meveo.api.dto.BaseDto;
-import org.meveo.api.dto.catalog.DigitalResourcesDto;
+import org.meveo.api.dto.catalog.DigitalResourceDto;
 import org.meveo.api.dto.catalog.OfferTemplateCategoryDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
@@ -37,13 +37,13 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
 
     @Inject
     private ProductChargeTemplateService productChargeTemplateService;
-    
+
     @Inject
     protected SellerService sellerService;
 
     @Inject
     private DigitalResourceApi digitalResourceApi;
-    
+
     @Inject
     protected ChannelService channelService;
 
@@ -55,8 +55,7 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
             for (ProductChargeTemplate productChargeTemplate : productChargeTemplates) {
                 if (productChargeTemplate != null) {
                     productChargeTemplate.setProductTemplates(Arrays.asList(productTemplate));
-                    productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate,
-                        entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, true));
+                    productChargeTemplateDto = new ProductChargeTemplateDto(productChargeTemplate, entityToDtoConverter.getCustomFieldsDTO(productChargeTemplate, true));
                     chargeDtos.add(productChargeTemplateDto);
                 }
             }
@@ -92,19 +91,19 @@ public abstract class ProductOfferingApi<E extends IEntity, T extends BaseDto> e
     }
 
     protected void processDigitalResources(ProductTemplateDto postData, ProductTemplate productTemplate) throws BusinessException, MeveoApiException {
-        List<DigitalResourcesDto> attachmentDtos = postData.getAttachments();
+        List<DigitalResourceDto> attachmentDtos = postData.getAttachments();
         boolean hasAttachmentDtos = attachmentDtos != null && !attachmentDtos.isEmpty();
         List<DigitalResource> existingAttachments = productTemplate.getAttachments();
         boolean hasExistingAttachments = existingAttachments != null && !existingAttachments.isEmpty();
         if (hasAttachmentDtos) {
             DigitalResource attachment = null;
             List<DigitalResource> newAttachments = new ArrayList<>();
-            for (DigitalResourcesDto attachmentDto : attachmentDtos) {
+            for (DigitalResourceDto attachmentDto : attachmentDtos) {
                 attachment = digitalResourceService.findByCode(attachmentDto.getCode());
                 if (attachment == null) {
                     throw new EntityDoesNotExistsException(DigitalResource.class, attachmentDto.getCode());
                 }
-                attachment = digitalResourceApi.populateDigitalResourceEntity(attachment, attachmentDto);
+                attachment = digitalResourceApi.convertFromDto(attachmentDto, attachment);
                 newAttachments.add(attachment);
             }
             productTemplate.setAttachments(newAttachments);

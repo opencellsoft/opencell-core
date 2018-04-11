@@ -116,14 +116,19 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
         }
 
         List<WFTransition> currentWfTransitions = workflow.getTransitions();
+        List<WFTransition> wfTransitionsToRemove = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
             currentWfTransitions.removeAll(listUpdate);
             if (CollectionUtils.isNotEmpty(currentWfTransitions)) {
                 for (WFTransition wfTransition : currentWfTransitions) {
+                    wfTransitionsToRemove.add(wfTransition);
                     wfTransitionService.remove(wfTransition);
                 }
             }
         }
+
+        workflow.getTransitions().removeAll(wfTransitionsToRemove);
+
         if (workflowDto.getListWFTransitionDto() != null && !workflowDto.getListWFTransitionDto().isEmpty()) {
             int priority = 1;
             for (WFTransitionDto wfTransitionDto : workflowDto.getListWFTransitionDto()) {
@@ -216,11 +221,13 @@ public class WorkflowApi extends BaseCrudApi<Workflow, WorkflowDto> {
     }
 
     protected Workflow fromDTO(WorkflowDto dto, Workflow workflowToUpdate) {
-        Workflow workflow = new Workflow();
-        if (workflowToUpdate != null) {
-            workflow = workflowToUpdate;
-        } else {
+        Workflow workflow = workflowToUpdate;
+        if (workflowToUpdate == null) {
+            workflow = new Workflow();
             workflow.setWfType(dto.getWfType());
+            if (dto.isDisabled() != null) {
+                workflow.setDisabled(dto.isDisabled());
+            }
         }
 
         workflow.setCode(dto.getCode());

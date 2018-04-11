@@ -135,6 +135,10 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
 
+        if (postData.isDisabled() != null) {
+            productTemplate.setDisabled(postData.isDisabled());
+        }
+
         try {
             saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -227,6 +231,7 @@ public class ProductTemplateApi extends ProductOfferingApi<ProductTemplate, Prod
         productTemplate.setName(postData.getName());
         productTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         productTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
         try {
             saveImage(productTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {

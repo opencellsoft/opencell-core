@@ -122,7 +122,9 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -151,7 +153,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
 
         return result;
     }
-    
+
     public void remove(String chartCode) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(chartCode)) {
@@ -208,7 +210,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, chart);
+        populateChartFromDto(dto, chart, chartToUpdate != null);
 
         chart.setFilled(dto.isFilled());
         chart.setLegendPosition(dto.getLegendPosition());
@@ -229,7 +231,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, chart);
+        populateChartFromDto(dto, chart, chartToUpdate != null);
 
         chart.setFilled(dto.isFilled());
         chart.setLegendPosition(dto.getLegendPosition());
@@ -261,7 +263,7 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         if (chartToUpdate != null) {
             chart = chartToUpdate;
         }
-        populateChartFromDto(dto, chart);
+        populateChartFromDto(dto, chart, chartToUpdate != null);
 
         chart.setLegendPosition(dto.getLegendPosition());
         chart.setBarPadding(dto.getBarPadding());
@@ -285,10 +287,14 @@ public class ChartApi extends BaseCrudApi<Chart, ChartDto> {
         return chart;
     }
 
-    private void populateChartFromDto(ChartDto dto, Chart chartToUpdate) throws MeveoApiException, BusinessException {
+    private void populateChartFromDto(ChartDto dto, Chart chartToUpdate, boolean isUpdate) throws MeveoApiException, BusinessException {
 
         chartToUpdate.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         chartToUpdate.setDescription(dto.getDescription());
+        if (!isUpdate && dto.isDisabled() != null) {
+            chartToUpdate.setDisabled(dto.isDisabled());
+        }
+
         // Should create it or update measurableQuantity only it has full information only
         if (!dto.getMeasurableQuantity().isCodeOnly()) {
             measurableQuantityApi.createOrUpdate(dto.getMeasurableQuantity());

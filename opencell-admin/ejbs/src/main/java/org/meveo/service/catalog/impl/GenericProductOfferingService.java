@@ -10,12 +10,13 @@ import org.meveo.admin.exception.BusinessException;
 import org.meveo.model.DatePeriod;
 import org.meveo.model.catalog.ProductOffering;
 import org.meveo.service.base.BusinessService;
+import org.meveo.service.base.IVersionedBusinessEntityService;
 
 /**
  * @author Andrius Karpavicius
  */
 @Stateless
-public class GenericProductOfferingService<T extends ProductOffering> extends BusinessService<T> {
+public class GenericProductOfferingService<T extends ProductOffering> extends BusinessService<T> implements IVersionedBusinessEntityService<T> {
 
     private static String FIND_CODE_BY_DATE_CLAUSE = "((be.validity.from IS NULL and be.validity.to IS NULL) or (be.validity.from<=:date and :date<be.validity.to) or (be.validity.from<=:date and be.validity.to IS NULL) or (be.validity.from IS NULL and :date<be.validity.to))";
 
@@ -235,6 +236,7 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
      * @param to Validity date range end date
      * @return Product offering
      */
+    @Override
     public T findByCode(String code, Date from, Date to) {
         // Append search by a from and to dates
 
@@ -341,7 +343,6 @@ public class GenericProductOfferingService<T extends ProductOffering> extends Bu
     @SuppressWarnings("unchecked")
     public List<T> listActiveByDate(Date date) {
 
-        return (List<T>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", getEntityClass()).setParameter("date", date)
-            .getResultList();
+        return (List<T>) getEntityManager().createNamedQuery("ProductOffering.findActiveByDate").setParameter("clazz", getEntityClass()).setParameter("date", date).getResultList();
     }
 }

@@ -4,7 +4,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.jboss.resteasy.annotations.interception.HeaderDecoratorPrecedence;
 import org.meveo.api.dto.response.BaseResponse;
 
 @XmlRootElement(name = "CardPaymentMethodToken")

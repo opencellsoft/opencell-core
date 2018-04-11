@@ -12,14 +12,14 @@ import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.Type;
 import org.meveo.commons.utils.XStreamCDATAConverter;
-import org.meveo.model.BusinessEntity;
+import org.meveo.model.EnableBusinessEntity;
 import org.meveo.model.ExportIdentifier;
 
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 
-@ExportIdentifier({ "code"})
+@ExportIdentifier({ "code" })
 @MappedSuperclass
-public abstract class CustomScript extends BusinessEntity {
+public abstract class CustomScript extends EnableBusinessEntity {
 
     private static final long serialVersionUID = 8176170199770220430L;
 
@@ -35,7 +35,7 @@ public abstract class CustomScript extends BusinessEntity {
     @Transient
     private List<ScriptInstanceError> scriptErrors = new ArrayList<ScriptInstanceError>();
 
-    @Type(type="numeric_boolean")
+    @Type(type = "numeric_boolean")
     @Column(name = "is_error")
     private Boolean error = false;
 

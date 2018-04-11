@@ -40,8 +40,8 @@ import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
-import org.meveo.model.BusinessCFEntity;
 import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.EnableBusinessCFEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.ModuleItem;
 import org.meveo.model.ObservableEntity;
@@ -67,25 +67,25 @@ import org.meveo.model.annotation.ImageType;
         // @NamedQuery(name = "serviceTemplate.getServicesWithUsagesByChargeTemplate",
         // query = "from ServiceTemplate s left join s.serviceUsageCharges c where c.chargeTemplate=:chargeTemplate")
 })
-public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
+public class ServiceTemplate extends EnableBusinessCFEntity implements IImageUpload {
 
     private static final long serialVersionUID = 1L;
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateRecurring> serviceRecurringCharges = new ArrayList<>();
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateSubscription> serviceSubscriptionCharges = new ArrayList<>();
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateTermination> serviceTerminationCharges = new ArrayList<>();
 
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @OneToMany(mappedBy = "serviceTemplate", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
+    private List<ServiceChargeTemplateUsage> serviceUsageCharges = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "invoicing_calendar_id")
@@ -107,14 +107,14 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
     @Transient
     private boolean selected;
 
-	/**
-	 * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
-	 */
-	@Transient
-	private boolean instantiatedFromBSM;
-	
-	@Transient
-	private String descriptionOverride;
+    /**
+     * If service is from BSM, it allows us to have a duplicate service template when instantiating BOM.
+     */
+    @Transient
+    private boolean instantiatedFromBSM;
+
+    @Transient
+    private String descriptionOverride;
 
     public ServiceChargeTemplateRecurring getServiceRecurringChargeByChargeCode(String chargeCode) {
         ServiceChargeTemplateRecurring result = null;
@@ -204,11 +204,11 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
         }
 
         ServiceTemplate other = (ServiceTemplate) obj;
-        
+
         if (id != null && other.getId() != null && id.equals(other.getId())) {
             return true;
         }
-        
+
         if (code == null) {
             if (other.getCode() != null)
                 return false;
@@ -257,13 +257,14 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
         this.imagePath = imagePath;
     }
 
-	public boolean isInstantiatedFromBSM() {
-		return instantiatedFromBSM;
-	}
+    public boolean isInstantiatedFromBSM() {
+        return instantiatedFromBSM;
+    }
 
-	public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
-		this.instantiatedFromBSM = instantiatedFromBSM;
-	}
+    public void setInstantiatedFromBSM(boolean instantiatedFromBSM) {
+        this.instantiatedFromBSM = instantiatedFromBSM;
+    }
+
     public String getDescriptionOverride() {
         return descriptionOverride;
     }
@@ -271,6 +272,5 @@ public class ServiceTemplate extends BusinessCFEntity implements IImageUpload {
     public void setDescriptionOverride(String descriptionOverride) {
         this.descriptionOverride = descriptionOverride;
     }
-
 
 }

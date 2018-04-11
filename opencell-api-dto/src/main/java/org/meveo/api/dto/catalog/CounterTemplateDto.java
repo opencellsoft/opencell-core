@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.CounterTemplate;
 import org.meveo.model.catalog.CounterTemplateLevel;
 import org.meveo.model.catalog.CounterTypeEnum;
@@ -18,7 +18,7 @@ import org.meveo.model.catalog.CounterTypeEnum;
  **/
 @XmlRootElement(name = "CounterTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CounterTemplateDto extends BusinessDto implements Serializable {
+public class CounterTemplateDto extends EnableBusinessDto implements Serializable {
 
     private static final long serialVersionUID = 2587489734648000805L;
 
@@ -28,7 +28,6 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
     private String unity;
     private CounterTypeEnum type;
     private BigDecimal ceiling;
-    private boolean disabled;
     private CounterTemplateLevel counterLevel;
     private String ceilingExpressionEl;
     private String notificationLevels;
@@ -37,11 +36,10 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
     }
 
     public CounterTemplateDto(CounterTemplate e) {
-    	super(e);
+        super(e);
         unity = e.getUnityDescription();
         type = e.getCounterType();
         ceiling = e.getCeiling();
-        disabled = e.isDisabled();
         calendar = e.getCalendar().getCode();
         counterLevel = e.getCounterLevel();
         ceilingExpressionEl = e.getCeilingExpressionEl();
@@ -70,14 +68,6 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
 
     public void setCeiling(BigDecimal ceiling) {
         this.ceiling = ceiling;
-    }
-
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
     }
 
     public String getCalendar() {
@@ -114,10 +104,9 @@ public class CounterTemplateDto extends BusinessDto implements Serializable {
 
     @Override
     public String toString() {
-        return String
-            .format(
-                "CounterTemplateDto [code=%s, description=%s, calendar=%s, unity=%s, type=%s, ceiling=%s, disabled=%s, counterLevel=%s, ceilingExpressionEl=%s, notificationLevels=%s]",
-                getCode(), getDescription(), calendar, unity, type, ceiling, disabled, counterLevel, ceilingExpressionEl, notificationLevels);
+        return String.format(
+            "CounterTemplateDto [code=%s, description=%s, calendar=%s, unity=%s, type=%s, ceiling=%s, disabled=%s, counterLevel=%s, ceilingExpressionEl=%s, notificationLevels=%s]",
+            getCode(), getDescription(), calendar, unity, type, ceiling, isDisabled(), counterLevel, ceilingExpressionEl, notificationLevels);
     }
 
     @Override

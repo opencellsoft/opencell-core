@@ -2,17 +2,17 @@ package org.meveo.api.dto.billing;
 
 import javax.validation.constraints.NotNull;
 
-import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.billing.AccountingCode;
 import org.meveo.model.billing.ChartOfAccountTypeEnum;
 import org.meveo.model.billing.ChartOfAccountViewTypeEnum;
 
 /**
  * @author Edward P. Legaspi
- * @version %I%, %G%
  * @since 5.0
  * @lastModifiedVersion 5.0
  **/
-public class AccountingCodeDto extends BusinessEntityDto {
+public class AccountingCodeDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = 8093532321068428023L;
 
@@ -24,12 +24,22 @@ public class AccountingCodeDto extends BusinessEntityDto {
     @NotNull
     private ChartOfAccountViewTypeEnum chartOfAccountViewTypeEnum;
 
-    @NotNull
-    private boolean disabled = false;
-
     private String reportingAccount;
     private String notes;
     private boolean migrated = false;
+
+    public AccountingCodeDto() {
+    }
+
+    public AccountingCodeDto(AccountingCode accountingCode) {
+        super(accountingCode);
+
+        setChartOfAccountTypeEnum(accountingCode.getChartOfAccountTypeEnum());
+        setChartOfAccountViewTypeEnum(accountingCode.getChartOfAccountViewTypeEnum());
+        setNotes(accountingCode.getNotes());
+        setReportingAccount(accountingCode.getReportingAccount());
+        setMigrated(accountingCode.isMigrated());
+    }
 
     public String getParentAccountingCode() {
         return parentAccountingCode;
@@ -71,14 +81,6 @@ public class AccountingCodeDto extends BusinessEntityDto {
         this.notes = notes;
     }
 
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
     public boolean isMigrated() {
         return migrated;
     }
@@ -86,5 +88,4 @@ public class AccountingCodeDto extends BusinessEntityDto {
     public void setMigrated(boolean migrated) {
         this.migrated = migrated;
     }
-
 }

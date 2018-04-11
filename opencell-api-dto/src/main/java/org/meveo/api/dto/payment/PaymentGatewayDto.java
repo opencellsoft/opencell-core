@@ -7,8 +7,8 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.payments.CreditCardTypeEnum;
 import org.meveo.model.payments.PaymentGateway;
 import org.meveo.model.payments.PaymentGatewayTypeEnum;
@@ -22,7 +22,7 @@ import org.meveo.model.payments.PaymentMethodEnum;
  */
 @XmlRootElement(name = "PaymentGateway")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentGatewayDto extends BusinessDto {
+public class PaymentGatewayDto extends EnableBusinessDto {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8975150158860312801L;
@@ -42,7 +42,7 @@ public class PaymentGatewayDto extends BusinessDto {
     /** The application EL. */
     private String applicationEL;
 
-    /** The  country code. */
+    /** The country code. */
     private String countryCode;
 
     /** The trading currency code. */
@@ -62,14 +62,16 @@ public class PaymentGatewayDto extends BusinessDto {
 
     /**
      * Instantiates a new payment gateway dto from the entity.
+     * 
      * @param paymentGateway payment gateway instance.
      */
     public PaymentGatewayDto(PaymentGateway paymentGateway) {
+
+        super(paymentGateway);
+
         this.id = paymentGateway.getId();
         this.applicationEL = paymentGateway.getApplicationEL();
         this.cardType = paymentGateway.getCardType();
-        this.code = paymentGateway.getCode();
-        this.description = paymentGateway.getDescription();
         this.implementationClassName = paymentGateway.getImplementationClassName();
         this.paymentMethodType = paymentGateway.getPaymentMethodType();
         this.scriptInstanceCode = paymentGateway.getScriptInstance() == null ? null : paymentGateway.getScriptInstance().getCode();

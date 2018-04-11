@@ -193,6 +193,38 @@ public class CustomFieldTemplateApi extends BaseApi {
     }
 
     /**
+     * Enable or disable Custom field template
+     * 
+     * @param code CFT code
+     * @param appliesTo Entity it Applies to
+     * @param enable Should CFT be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String code, String appliesTo, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(appliesTo)) {
+            missingParameters.add("appliesTo");
+        }
+
+        handleMissingParameters();
+
+        CustomFieldTemplate cft = customFieldTemplateService.findByCodeAndAppliesTo(code, appliesTo);
+        if (cft == null) {
+            throw new EntityDoesNotExistsException(CustomFieldTemplate.class, code);
+        }
+        if (enable) {
+            customFieldTemplateService.enable(cft);
+        } else {
+            customFieldTemplateService.disable(cft);
+        }
+    }
+
+    /**
      * Find Custom Field Template by its code and appliesTo attributes.
      * 
      * @param code Custom Field Template code
@@ -296,6 +328,10 @@ public class CustomFieldTemplateApi extends BaseApi {
                 }
             }
             cft.setAppliesTo(appliesTo);
+
+            if (dto.isDisabled() != null) {
+                cft.setDisabled(dto.isDisabled());
+            }
         }
 
         if (dto.getDescription() != null) {
@@ -395,6 +431,7 @@ public class CustomFieldTemplateApi extends BaseApi {
         if (dto.getLanguageDescriptions() != null) {
             cft.setDescriptionI18n(convertMultiLanguageToMapOfValues(dto.getLanguageDescriptions(), cft.getDescriptionI18n()));
         }
+
         return cft;
     }
 

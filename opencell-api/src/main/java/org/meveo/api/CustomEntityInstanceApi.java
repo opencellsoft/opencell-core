@@ -65,7 +65,7 @@ public class CustomEntityInstanceApi extends BaseApi {
             throw new EntityAlreadyExistsException(CustomEntityInstance.class, dto.getCode());
         }
 
-        CustomEntityInstance cei = CustomEntityInstanceDto.fromDTO(dto, null);
+        CustomEntityInstance cei = convertFromDTO(dto, null);
 
         // populate customFields
         try {
@@ -106,7 +106,7 @@ public class CustomEntityInstanceApi extends BaseApi {
             throw new EntityDoesNotExistsException(CustomEntityInstance.class, dto.getCode());
         }
 
-        cei = CustomEntityInstanceDto.fromDTO(dto, cei);
+        cei = convertFromDTO(dto, cei);
 
         // populate customFields
         try {
@@ -163,7 +163,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         if (cei == null) {
             throw new EntityDoesNotExistsException(CustomEntityTemplate.class, code);
         }
-        return CustomEntityInstanceDto.toDTO(cei, entityToDtoConverter.getCustomFieldsDTO(cei, true));
+        return new CustomEntityInstanceDto(cei, entityToDtoConverter.getCustomFieldsDTO(cei, true));
     }
 
     public List<CustomEntityInstanceDto> list(String cetCode) throws MeveoApiException {
@@ -185,7 +185,7 @@ public class CustomEntityInstanceApi extends BaseApi {
         List<CustomEntityInstanceDto> customEntityInstanceDtos = new ArrayList<>();
 
         for (CustomEntityInstance instance : customEntityInstances) {
-            customEntityInstanceDtos.add(CustomEntityInstanceDto.toDTO(instance, entityToDtoConverter.getCustomFieldsDTO(instance, true)));
+            customEntityInstanceDtos.add(new CustomEntityInstanceDto(instance, entityToDtoConverter.getCustomFieldsDTO(instance, true)));
         }
 
         return customEntityInstanceDtos;
@@ -228,5 +228,73 @@ public class CustomEntityInstanceApi extends BaseApi {
 
         validateAndConvertCustomFields(customFieldTemplates, ceiDto.getCustomFields() != null ? ceiDto.getCustomFields().getCustomField() : new ArrayList<CustomFieldDto>(), true,
             isNew, cei);
+    }
+
+    /**
+     * Convert CustomEntityInstanceDto object to CustomEntityInstance object. Note: does not convert custom field values
+     * 
+     * @param dto CustomEntityInstanceDto to convert
+     * @param ceiToUpdate CustomEntityInstance to update with values from dto, or if null create a new one
+     * @return A new or updated CustomEntityInstance instance
+     */
+    private CustomEntityInstance convertFromDTO(CustomEntityInstanceDto dto, CustomEntityInstance ceiToUpdate) {
+
+        CustomEntityInstance cei = ceiToUpdate;
+        if (ceiToUpdate == null) {
+            cei = new CustomEntityInstance();
+            if (dto.isDisabled() != null) {
+                cei.setDisabled(dto.isDisabled());
+            }
+
+        }
+        cei.setCode(dto.getCode());
+        cei.setCetCode(dto.getCetCode());
+        cei.setDescription(dto.getDescription());
+
+        return cei;
+    }
+
+    /**
+     * Enable or disable Custom entity instance by its code
+     * 
+     * @param cetCode Custom entity template code
+     * @param code Custom entity instance code
+     * @param enable Should Custom entity instance be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     * @throws ActionForbiddenException User does not have sufficient right to perform operation
+     */
+    public void enableOrDisable(String cetCode, String code, boolean enable)
+            throws EntityDoesNotExistsException, MissingParameterException, BusinessException, ActionForbiddenException {
+
+        if (StringUtils.isBlank(code)) {
+            missingParameters.add("code");
+        }
+        if (StringUtils.isBlank(cetCode)) {
+            missingParameters.add("cetCode");
+        }
+
+        handleMissingParameters();
+
+        CustomEntityTemplate cet = customEntityTemplateService.findByCode(cetCode);
+        if (cet == null) {
+            throw new EntityDoesNotExistsException(CustomEntityTemplate.class, cetCode);
+        }
+
+        if (!currentUser.hasRole(CustomEntityTemplate.getModifyPermission(cetCode))) {
+            throw new ActionForbiddenException("User does not have permission '" + CustomEntityTemplate.getModifyPermission(cetCode) + "'");
+        }
+
+        CustomEntityInstance cei = customEntityInstanceService.findByCodeByCet(cetCode, code);
+        if (cei == null) {
+            throw new EntityDoesNotExistsException(CustomEntityInstance.class, cetCode + "/" + code);
+        }
+
+        if (enable) {
+            customEntityInstanceService.enable(cei);
+        } else {
+            customEntityInstanceService.disable(cei);
+        }
     }
 }

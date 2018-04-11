@@ -28,7 +28,7 @@ public class ScriptInstanceDto extends CustomScriptDto {
     }
 
     public ScriptInstanceDto(ScriptInstance e) {
-        super(e.getCode(), e.getDescription(), e.getSourceTypeEnum(), e.getScript());
+        super(e);
 
         if (e.getExecutionRoles() != null) {
             for (Role role : e.getExecutionRoles()) {

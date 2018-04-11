@@ -90,7 +90,6 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setParams(postData.getScriptParams());
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
-
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
         notif.setSubject(postData.getSubject());
@@ -108,7 +107,9 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         return notif;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -184,12 +185,16 @@ public class EmailNotificationApi extends BaseCrudApi<EmailNotification, EmailNo
         notif.setParams(postData.getScriptParams());
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
-
         notif.setEmailFrom(postData.getEmailFrom());
         notif.setEmailToEl(postData.getEmailToEl());
         notif.setSubject(postData.getSubject());
         notif.setBody(postData.getBody());
         notif.setHtmlBody(postData.getHtmlBody());
+
+        if (postData.isDisabled() != null) {
+            notif.setDisabled(postData.isDisabled());
+        }
+
         Set<String> emails = new HashSet<String>();
         for (String email : postData.getSendToMail()) {
             emails.add(email);

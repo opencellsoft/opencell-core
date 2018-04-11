@@ -34,8 +34,7 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
 
         handleMissingParametersAndValidate(postData);
 
-        Filter filter = new Filter();
-        mapDtoToFilter(postData, filter);
+        Filter filter = mapDtoToFilter(postData, null);
         filterService.create(filter);
 
         return filter;
@@ -52,28 +51,37 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
 
         handleMissingParametersAndValidate(postData);
 
-        
         Filter filter = filterService.findByCode(postData.getCode());
 
         if (filter == null) {
             throw new EntityDoesNotExistsException(Filter.class, postData.getCode());
         }
 
-        mapDtoToFilter(postData, filter);
+        filter = mapDtoToFilter(postData, filter);
         filter = filterService.update(filter);
 
         return filter;
     }
 
-    private void mapDtoToFilter(FilterDto dto, Filter filter) {
-        if (filter.isTransient()) {
+    private Filter mapDtoToFilter(FilterDto dto, Filter filterToUpdate) {
+        Filter filter = filterToUpdate;
+
+        if (filter == null) {
+            filter = new Filter();
             filter.setCode(dto.getCode());
             filter.clearUuid();
+
+            if (dto.isDisabled() != null) {
+                filter.setDisabled(dto.isDisabled());
+            }
         }
+
         filter.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
         filter.setDescription(dto.getDescription());
         filter.setInputXml(dto.getInputXml());
         filter.setShared(dto.getShared());
+
+        return filter;
     }
 
     @Override
@@ -83,7 +91,6 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
             handleMissingParameters();
         }
 
-        
         Filter existed = filterService.findByCode(dto.getCode());
         if (existed != null) {
             return update(dto);
@@ -92,7 +99,9 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -108,6 +117,6 @@ public class FilterApi extends BaseCrudApi<Filter, FilterDto> {
             throw new EntityDoesNotExistsException(Filter.class, code);
         }
 
-        return FilterDto.toDto(filter);
+        return new FilterDto(filter);
     }
 }

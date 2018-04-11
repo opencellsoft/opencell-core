@@ -11,50 +11,70 @@ import org.meveo.model.billing.TradingLanguage;
 /**
  * @author Edward P. Legaspi
  * 
- * @deprecated will be renammed to TradingLanguageDto
  **/
 @XmlRootElement(name = "Language")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LanguageDto extends BaseDto {
+public class LanguageDto extends BaseDto implements IEnableDto {
 
-	private static final long serialVersionUID = 725968016559888810L;
+    private static final long serialVersionUID = 725968016559888810L;
 
-	@XmlAttribute(required = true)
-	private String code;
-	private String description;
+    /**
+     * Language code
+     */
+    @XmlAttribute(required = true)
+    private String code;
 
-	public LanguageDto() {
+    /**
+     * Description
+     */
+    private String description;
 
-	}
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
-	public LanguageDto(TradingLanguage e) {
-		code = e.getLanguageCode();
-		description = e.getPrDescription();
-	}
-	public LanguageDto(Language e) {
-		code = e.getLanguageCode();
-		description = e.getDescriptionEn();
-	}
+    public LanguageDto() {
 
-	public String getCode() {
-		return code;
-	}
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public LanguageDto(TradingLanguage e) {
+        code = e.getLanguageCode();
+        description = e.getPrDescription();
+        disabled = e.isDisabled();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public LanguageDto(Language e) {
+        code = e.getLanguageCode();
+        description = e.getDescriptionEn();
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	@Override
-	public String toString() {
-		return "LanguageDto [code=" + code + ", description=" + description + "]";
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "LanguageDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean isDisabled() {
+        return disabled;
+    }
 }

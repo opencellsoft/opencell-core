@@ -6,7 +6,8 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.meveo.api.dto.BusinessEntityDto;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.finance.ReportExtract;
 import org.meveo.model.finance.ReportExtractScriptTypeEnum;
 
 /**
@@ -15,7 +16,7 @@ import org.meveo.model.finance.ReportExtractScriptTypeEnum;
  * @since 5.0
  * @lastModifiedVersion 5.0
  **/
-public class ReportExtractDto extends BusinessEntityDto {
+public class ReportExtractDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = 3600792942683148893L;
 
@@ -32,6 +33,30 @@ public class ReportExtractDto extends BusinessEntityDto {
     private Map<String, String> params = new HashMap<>();
     private Date startDate;
     private Date endDate;
+
+    public ReportExtractDto() {
+    }
+
+    public ReportExtractDto(ReportExtract reportExtract) {
+        super(reportExtract);
+
+        setCategory(reportExtract.getCategory());
+        setCode(reportExtract.getCode());
+        setDescription(reportExtract.getDescription());
+        setEndDate(reportExtract.getEndDate());
+        setFilenameFormat(reportExtract.getFilenameFormat());
+        setParams(reportExtract.getParams());
+        setStartDate(reportExtract.getStartDate());
+        setScriptType(reportExtract.getScriptType());
+        if (reportExtract.getScriptType().equals(ReportExtractScriptTypeEnum.JAVA)) {
+            if (reportExtract.getScriptInstance() != null) {
+                setScriptInstanceCode(reportExtract.getScriptInstance().getCode());
+            }
+        } else {
+            setSqlQuery(reportExtract.getSqlQuery());
+        }
+
+    }
 
     public String getCategory() {
         return category;

@@ -83,7 +83,9 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         RecurringChargeTemplate chargeTemplate = new RecurringChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
         chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());
@@ -172,7 +174,6 @@ public class RecurringChargeTemplateApi extends BaseCrudApi<RecurringChargeTempl
         }
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setDurationTermInMonth(postData.getDurationTermInMonth());
         chargeTemplate.setSubscriptionProrata(postData.getSubscriptionProrata());

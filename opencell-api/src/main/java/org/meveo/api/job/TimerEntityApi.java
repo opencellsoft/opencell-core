@@ -52,13 +52,11 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
 
         }
 
-        
-
         if (timerEntityService.findByCode(timerEntityDto.getCode()) != null) {
             throw new EntityAlreadyExistsException(TimerEntity.class, timerEntityDto.getCode());
         }
 
-        TimerEntity timerEntity = TimerEntityDto.fromDTO(timerEntityDto, null);
+        TimerEntity timerEntity = convertTimerEntityFromDTO(timerEntityDto, null);
 
         timerEntityService.create(timerEntity);
 
@@ -68,7 +66,6 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
     public TimerEntity update(TimerEntityDto timerEntityDto) throws MeveoApiException, BusinessException {
 
         String timerEntityCode = timerEntityDto.getCode();
-        
 
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("Code");
@@ -80,7 +77,7 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
             throw new EntityDoesNotExistsException(TimerEntity.class, timerEntityCode);
         }
 
-        timerEntity = TimerEntityDto.fromDTO(timerEntityDto, timerEntity);
+        timerEntity = convertTimerEntityFromDTO(timerEntityDto, timerEntity);
 
         timerEntity = timerEntityService.update(timerEntity);
 
@@ -96,7 +93,9 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
         }
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -114,7 +113,7 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
 
         return result;
     }
-    
+
     public void remove(String timerEntityCode) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(timerEntityCode)) {
             missingParameters.add("code");
@@ -126,5 +125,27 @@ public class TimerEntityApi extends BaseCrudApi<TimerEntity, TimerEntityDto> {
         }
 
         timerEntityService.remove(timerEntity);
+    }
+
+    private TimerEntity convertTimerEntityFromDTO(TimerEntityDto dto, TimerEntity timerEntityToUpdate) {
+        TimerEntity timerEntity = timerEntityToUpdate;
+        if (timerEntityToUpdate == null) {
+            timerEntity = new TimerEntity();
+            if (dto.isDisabled() != null) {
+                timerEntity.setDisabled(dto.isDisabled());
+            }
+        }
+
+        timerEntity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
+        timerEntity.setDescription(dto.getDescription());
+        timerEntity.setYear(dto.getYear());
+        timerEntity.setMonth(dto.getMonth());
+        timerEntity.setDayOfMonth(dto.getDayOfMonth());
+        timerEntity.setDayOfWeek(dto.getDayOfWeek());
+        timerEntity.setHour(dto.getHour());
+        timerEntity.setMinute(dto.getMinute());
+        timerEntity.setSecond(dto.getSecond());
+
+        return timerEntity;
     }
 }

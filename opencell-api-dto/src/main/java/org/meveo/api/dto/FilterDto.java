@@ -9,45 +9,45 @@ import org.meveo.model.filter.Filter;
 /**
  * @author Tyshan Shi
  *
-**/
-@XmlRootElement(name="Filter")
+ **/
+@XmlRootElement(name = "Filter")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FilterDto extends BusinessDto {
+public class FilterDto extends EnableBusinessDto {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private Boolean shared;
-	private String inputXml;
-	
-	public Boolean getShared() {
-		return shared;
-	}
-	public void setShared(Boolean shared) {
-		this.shared = shared;
-	}
-	public String getInputXml() {
-		return inputXml;
-	}
-	public void setInputXml(String inputXml) {
-		this.inputXml = inputXml;
-	}
-	
-	public static FilterDto toDto(Filter filter){
-		FilterDto dto=new FilterDto();
-		dto.setCode(filter.getCode());
-		dto.setDescription(filter.getDescription());
-		dto.setShared(filter.getShared());
-		dto.setInputXml(filter.getInputXml());
-		return dto;
-	}
-	
-	@Override
-	public String toString() {
-		return "FilterDto [code=" + getCode() + ", description=" + getDescription()
-				+ ", shared=" + shared + ", inputXml=" + inputXml + "]";
-	}
-	
+    private Boolean shared;
+    private String inputXml;
+
+    public FilterDto() {
+
+    }
+
+    public FilterDto(Filter filter) {
+        super(filter);
+
+        shared = filter.getShared();
+        inputXml = filter.getInputXml();
+    }
+
+    public Boolean getShared() {
+        return shared;
+    }
+
+    public void setShared(Boolean shared) {
+        this.shared = shared;
+    }
+
+    public String getInputXml() {
+        return inputXml;
+    }
+
+    public void setInputXml(String inputXml) {
+        this.inputXml = inputXml;
+    }
+
+    @Override
+    public String toString() {
+        return "FilterDto [code=" + getCode() + ", description=" + getDescription() + ", shared=" + shared + ", inputXml=" + inputXml + "]";
+    }
 }

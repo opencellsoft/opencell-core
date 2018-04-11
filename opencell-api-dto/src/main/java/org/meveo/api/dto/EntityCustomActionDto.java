@@ -17,21 +17,9 @@ import org.meveo.model.crm.custom.EntityCustomAction;
  **/
 @XmlRootElement(name = "EntityCustomAction")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EntityCustomActionDto extends BaseDto {
+public class EntityCustomActionDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = -2916923287316823939L;
-
-    /**
-     * Code
-     */
-    @XmlAttribute(required = true)
-    private String code;
-
-    /**
-     * Description
-     */
-    @XmlAttribute()
-    private String description;
 
     /**
      * Entity action applies to
@@ -77,9 +65,8 @@ public class EntityCustomActionDto extends BaseDto {
     }
 
     public EntityCustomActionDto(EntityCustomAction action) {
-        this.code = action.getCode();
-        this.description = action.getDescription();
-
+        super(action);
+        
         this.appliesTo = action.getAppliesTo();
         this.applicableOnEl = action.getApplicableOnEl();
         this.label = action.getLabel();
@@ -87,22 +74,6 @@ public class EntityCustomActionDto extends BaseDto {
         this.guiPosition = action.getGuiPosition();
 
         this.setScript(new ScriptInstanceDto(action.getScript()));
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public String getAppliesTo() {

@@ -2,26 +2,20 @@ package org.meveo.api.dto.script;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 
 import org.apache.commons.lang3.StringUtils;
-import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.EnableBusinessDto;
+import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.model.scripts.ScriptSourceTypeEnum;
 
 /**
  * @author Andrius Karpavicius
  **/
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class CustomScriptDto extends BaseDto {
+public abstract class CustomScriptDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = -977313726064562882L;
-
-    @XmlAttribute(required = true)
-    private String code;
-
-    @XmlAttribute()
-    private String description;
 
     @XmlElement
     private ScriptSourceTypeEnum type;
@@ -33,27 +27,10 @@ public abstract class CustomScriptDto extends BaseDto {
 
     }
 
-    public CustomScriptDto(String code, String description, ScriptSourceTypeEnum type, String script) {
-        this.code = code;
-        this.description = description;
-        this.type = type;
-        this.script = script;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public CustomScriptDto(ScriptInstance scriptInstance) {
+        super(scriptInstance);
+        this.type = scriptInstance.getSourceTypeEnum();
+        this.script = scriptInstance.getScript();
     }
 
     public ScriptSourceTypeEnum getType() {

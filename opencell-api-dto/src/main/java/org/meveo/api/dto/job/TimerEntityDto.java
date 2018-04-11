@@ -5,13 +5,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
-import org.meveo.commons.utils.StringUtils;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.jobs.TimerEntity;
 
 @XmlRootElement(name = "TimerEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TimerEntityDto extends BusinessDto {
+public class TimerEntityDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = 5166093858617578774L;
 
@@ -51,24 +50,7 @@ public class TimerEntityDto extends BusinessDto {
         this.second = timerEntity.getSecond();
     }
 
-    public static TimerEntity fromDTO(TimerEntityDto dto, TimerEntity timerEntityToUpdate) {
-        TimerEntity timerEntity = new TimerEntity();
-        if (timerEntityToUpdate != null) {
-            timerEntity = timerEntityToUpdate;
-        }
 
-        timerEntity.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
-        timerEntity.setDescription(dto.getDescription());
-        timerEntity.setYear(dto.getYear());
-        timerEntity.setMonth(dto.getMonth());
-        timerEntity.setDayOfMonth(dto.getDayOfMonth());
-        timerEntity.setDayOfWeek(dto.getDayOfWeek());
-        timerEntity.setHour(dto.getHour());
-        timerEntity.setMinute(dto.getMinute());
-        timerEntity.setSecond(dto.getSecond());
-
-        return timerEntity;
-    }
 
     public String getYear() {
         return year;

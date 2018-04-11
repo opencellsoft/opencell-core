@@ -11,51 +11,70 @@ import org.meveo.model.billing.TradingCurrency;
 /**
  * @author Edward P. Legaspi
  * 
- *  @deprecated will be renammed to  TradingCurrencyDto
  **/
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CurrencyDto extends BaseDto {
+public class CurrencyDto extends BaseDto implements IEnableDto {
 
-	private static final long serialVersionUID = 9143645109603442839L;
+    private static final long serialVersionUID = 9143645109603442839L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    /**
+     * Currency code
+     */
+    @XmlAttribute(required = true)
+    private String code;
 
-	private String description;
+    /**
+     * Description
+     */
+    private String description;
 
-	public CurrencyDto() {
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
-	}
+    public CurrencyDto() {
 
-	public CurrencyDto(TradingCurrency e) {
-		code = e.getCurrencyCode();
-		description = e.getPrDescription();
-	}
-	public CurrencyDto(Currency e) {
-		code = e.getCurrencyCode();
-		description = e.getDescriptionEn();
-	}
+    }
 
-	public String getCode() {
-		return code;
-	}
+    public CurrencyDto(TradingCurrency e) {
+        code = e.getCurrencyCode();
+        description = e.getPrDescription();
+        disabled = e.isDisabled();
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    public CurrencyDto(Currency e) {
+        code = e.getCurrencyCode();
+        description = e.getDescriptionEn();
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public String getCode() {
+        return code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	@Override
-	public String toString() {
-		return "CurrencyDto [code=" + code + ", description=" + description + "]";
-	}
+    public String getDescription() {
+        return description;
+    }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public String toString() {
+        return "CurrencyDto [code=" + code + ", description=" + description + ", disabled=" + disabled + "]";
+    }
 }

@@ -3,13 +3,14 @@ package org.meveo.api.dto;
 import java.util.Date;
 
 /**
- * @author Edward P. Legaspi
+ * Equivalent of AuditableEntity in DTO
  * 
+ * @author Edward P. Legaspi
  */
-public class AuditableDto extends BaseDto {
+public abstract class AuditableDto extends BaseDto {
 
     /**
-     * serial versuion uid.
+     * serial version uid.
      */
     private static final long serialVersionUID = 1040133977061424749L;
 

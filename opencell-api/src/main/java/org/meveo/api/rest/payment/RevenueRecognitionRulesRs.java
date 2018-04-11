@@ -22,8 +22,8 @@ import org.meveo.api.rest.IBaseRs;
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
 public interface RevenueRecognitionRulesRs extends IBaseRs {
-	
-	/**
+
+    /**
      * Create a new revenue recognition rule
      * 
      * @param postData The revenue recognition rule's data
@@ -33,7 +33,7 @@ public interface RevenueRecognitionRulesRs extends IBaseRs {
     @Path("/")
     ActionStatus create(RevenueRecognitionRuleDto postData);
 
-	/**
+    /**
      * Update an existing revenue recognition rule
      * 
      * @param postData The revenue recognition rule's data
@@ -43,8 +43,8 @@ public interface RevenueRecognitionRulesRs extends IBaseRs {
     @Path("/")
     ActionStatus update(RevenueRecognitionRuleDto postData);
 
-	/**
-     * Find a revenue recognition rule with a given code 
+    /**
+     * Find a revenue recognition rule with a given code
      * 
      * @param revenueRecognitionRuleCode The revenue recognition rule's code
      * @return
@@ -62,9 +62,9 @@ public interface RevenueRecognitionRulesRs extends IBaseRs {
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(RevenueRecognitionRuleDto postData);
-    
-	/**
-     * Remove an existing revenue recognition rule with a given code 
+
+    /**
+     * Remove an existing revenue recognition rule with a given code
      * 
      * @param revenueRecognitionRuleCode The revenue recognition rule's code
      * @return Request processing status
@@ -73,7 +73,7 @@ public interface RevenueRecognitionRulesRs extends IBaseRs {
     @Path("/{revenueRecognitionRuleCode}")
     ActionStatus remove(@PathParam("revenueRecognitionRuleCode") String revenueRecognitionRuleCode);
 
-	/**
+    /**
      * List of revenue recognition rules.
      * 
      * @return A list of revenue recognition rules
@@ -81,5 +81,25 @@ public interface RevenueRecognitionRulesRs extends IBaseRs {
     @POST
     @Path("/list")
     RevenueRecognitionRuleDtosResponse list();
+
+    /**
+     * Enable a Revenue recognition rule with a given code
+     * 
+     * @param code Revenue recognition rule code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/enable")
+    ActionStatus enable(@PathParam("code") String code);
+
+    /**
+     * Disable a Revenue recognition rule with a given code
+     * 
+     * @param code Revenue recognition rule code
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{code}/disable")
+    ActionStatus disable(@PathParam("code") String code);
 
 }

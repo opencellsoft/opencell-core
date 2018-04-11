@@ -29,7 +29,7 @@ public interface ApiService<E extends IEntity, T extends BaseDto> {
      * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
-    T find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException;
+    public T find(String code) throws EntityDoesNotExistsException, MissingParameterException, InvalidParameterException, MeveoApiException;
 
     /**
      * Find entity identified by code. Return null if not found
@@ -41,7 +41,7 @@ public interface ApiService<E extends IEntity, T extends BaseDto> {
      * @throws MissingParameterException A parameter, necessary to find an entity, was not provided
      * @throws MeveoApiException Any other exception is wrapped to MeveoApiException
      */
-    T findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException;
+    public T findIgnoreNotFound(String code) throws MissingParameterException, InvalidParameterException, MeveoApiException;
 
     /**
      * Create or update an entity from DTO.
@@ -51,6 +51,17 @@ public interface ApiService<E extends IEntity, T extends BaseDto> {
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception.
      */
-    E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
+    public E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
+
+    /**
+     * Enable or disable entity
+     * 
+     * @param code Entity code
+     * @param enable Should entity be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String code, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException;
 
 }

@@ -6,12 +6,12 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.model.catalog.OfferTemplateCategory;
 
 @XmlRootElement(name = "OfferCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OfferTemplateCategoryDto extends BusinessDto {
+public class OfferTemplateCategoryDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = 1L;
 
@@ -25,7 +25,12 @@ public class OfferTemplateCategoryDto extends BusinessDto {
 
     private Date lastModified;
 
-    private boolean active;
+    /**
+     * Is category active. A negative of Disabled. Deprecated in 5.0.1. Use Disabled field instead.
+     * 
+     */
+    @Deprecated
+    private Boolean active;
 
     private Long parentId;
 
@@ -58,7 +63,6 @@ public class OfferTemplateCategoryDto extends BusinessDto {
                 this.setParentId(parent.getId());
             }
         }
-
     }
 
     public OfferTemplateCategoryDto(OfferTemplateCategory offerTemplateCategory, String baseUri) {
@@ -113,11 +117,11 @@ public class OfferTemplateCategoryDto extends BusinessDto {
         this.lastModified = lastModified;
     }
 
-    public boolean isActive() {
+    public Boolean isActive() {
         return active;
     }
 
-    public void setActive(boolean active) {
+    public void setActive(Boolean active) {
         this.active = active;
     }
 

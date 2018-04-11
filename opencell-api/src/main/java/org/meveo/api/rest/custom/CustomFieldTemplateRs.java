@@ -29,7 +29,7 @@ public interface CustomFieldTemplateRs extends IBaseRs {
      * Define a new custom field
      * 
      * @param postData
-     * @return
+     * @return Request processing status
      */
     @POST
     @Path("/")
@@ -39,7 +39,7 @@ public interface CustomFieldTemplateRs extends IBaseRs {
      * Update existing custom field definition
      * 
      * @param postData
-     * @return
+     * @return Request processing status
      */
     @PUT
     @Path("/")
@@ -48,9 +48,9 @@ public interface CustomFieldTemplateRs extends IBaseRs {
     /**
      * Remove custom field definition given its code and entity it applies to
      * 
-     * @param customFieldTemplateCode
-     * @param appliesTo
-     * @return
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
      */
     @DELETE
     @Path("/{customFieldTemplateCode}/{appliesTo}")
@@ -59,8 +59,8 @@ public interface CustomFieldTemplateRs extends IBaseRs {
     /**
      * Get custom field definition
      * 
-     * @param customFieldTemplateCode
-     * @param appliesTo
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
      * @return
      */
     @GET
@@ -71,9 +71,32 @@ public interface CustomFieldTemplateRs extends IBaseRs {
      * Define new or update existing custom field definition
      * 
      * @param postData
-     * @return
+     * @return Request processing status
      */
     @POST
     @Path("/createOrUpdate")
     ActionStatus createOrUpdate(CustomFieldTemplateDto postData);
+
+    /**
+     * Enable a Custom field template with a given code
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{customFieldTemplateCode}/{appliesTo}/enable")
+    ActionStatus enable(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
+
+    /**
+     * Disable a Custom field template with a given code
+     * 
+     * @param customFieldTemplateCode Custom field template code
+     * @param appliesTo Entity it applies to
+     * @return Request processing status
+     */
+    @POST
+    @Path("/{customFieldTemplateCode}/{appliesTo}/disable")
+    ActionStatus disable(@PathParam("customFieldTemplateCode") String customFieldTemplateCode, @PathParam("appliesTo") String appliesTo);
+
 }

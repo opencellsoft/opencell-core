@@ -26,6 +26,7 @@ import javax.validation.Validator;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.ImageUploadEventHandler;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
 import org.meveo.api.dto.BaseDto;
@@ -948,14 +949,14 @@ public abstract class BaseApi {
      * @throws MeveoApiException meveo api exception.
      */
     @SuppressWarnings("rawtypes")
-    protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws MeveoApiException {
+    protected PersistenceService getPersistenceService(Class entityClass, boolean throwException) throws BusinessException {
 
         PersistenceService persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSimpleName() + "Service");
         if (persistenceService == null) {
             persistenceService = (PersistenceService) EjbUtils.getServiceInterface(entityClass.getSuperclass().getSimpleName() + "Service");
         }
         if (persistenceService == null && throwException) {
-            throw new MeveoApiException("Failed to find implementation of persistence service for class " + entityClass.getName());
+            throw new BusinessException("Failed to find implementation of persistence service for class " + entityClass.getName());
         }
 
         return persistenceService;

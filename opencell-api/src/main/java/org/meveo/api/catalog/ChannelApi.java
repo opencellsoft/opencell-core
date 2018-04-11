@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.ChannelDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
 import org.meveo.api.exception.EntityDoesNotExistsException;
@@ -17,7 +17,7 @@ import org.meveo.model.catalog.Channel;
 import org.meveo.service.catalog.impl.ChannelService;
 
 @Stateless
-public class ChannelApi extends BaseApi {
+public class ChannelApi extends BaseCrudApi<Channel, ChannelDto> {
 
     @Inject
     private ChannelService channelService;
@@ -25,54 +25,60 @@ public class ChannelApi extends BaseApi {
     /**
      * 
      * @param postData posted data to API containing channel's infos.
-
-     * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception.
-     */
-    public void create(ChannelDto postData) throws MeveoApiException, BusinessException {
-
-        if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");
-        }
-
-        handleMissingParametersAndValidate(postData);        
-
-        if (channelService.findByCode(postData.getCode()) != null) {
-            throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
-        } else {
-
-            Channel channel = new Channel();
-            channel.setCode(postData.getCode());
-            channel.setDescription(postData.getDescription());
-            channelService.create(channel);
-
-        }
-    }
-
-    /**
      * 
-     * @param postData posted data to API containing channel's infos.
-
-     * @throws MeveoApiException mevveo api exception
-     * @throws BusinessException  business exception
+     * @throws MeveoApiException meveo api exception
+     * @throws BusinessException business exception.
      */
-    public void update(ChannelDto postData) throws MeveoApiException, BusinessException {
+    public Channel create(ChannelDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
 
         handleMissingParametersAndValidate(postData);
-        
+
+        if (channelService.findByCode(postData.getCode()) != null) {
+            throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
+        }
+
+        Channel channel = new Channel();
+        channel.setCode(postData.getCode());
+        channel.setDescription(postData.getDescription());
+        if (postData.isDisabled() != null) {
+            channel.setDisabled(postData.isDisabled());
+        }
+
+        channelService.create(channel);
+
+        return channel;
+
+    }
+
+    /**
+     * 
+     * @param postData posted data to API containing channel's infos.
+     * 
+     * @throws MeveoApiException mevveo api exception
+     * @throws BusinessException business exception
+     */
+    public Channel update(ChannelDto postData) throws MeveoApiException, BusinessException {
+
+        if (StringUtils.isBlank(postData.getCode())) {
+            missingParameters.add("code");
+        }
+
+        handleMissingParametersAndValidate(postData);
+
         Channel channel = channelService.findByCode(postData.getCode());
         if (channel == null) {
-            throw new EntityAlreadyExistsException(Channel.class,postData.getCode());
-        } else {
-        	channel.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
-            channel.setDescription(postData.getDescription());
-            channelService.update(channel);
-
+            throw new EntityAlreadyExistsException(Channel.class, postData.getCode());
         }
+
+        channel.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
+        channel.setDescription(postData.getDescription());
+
+        channel = channelService.update(channel);
+        return channel;
     }
 
     /**
@@ -106,7 +112,7 @@ public class ChannelApi extends BaseApi {
      * 
      * @param code channel's code
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception
+     * @throws BusinessException business exception
      */
     public void remove(String code) throws MeveoApiException, BusinessException {
 
@@ -128,22 +134,22 @@ public class ChannelApi extends BaseApi {
     /**
      * 
      * @param postData posted data to API containing channel's infos
-
+     * 
      * @throws MeveoApiException meveo api exception
      * @throws BusinessException business exception
      */
-    public void createOrUpdate(ChannelDto postData) throws MeveoApiException, BusinessException {
+    public Channel createOrUpdate(ChannelDto postData) throws MeveoApiException, BusinessException {
 
         String code = postData.getCode();
 
         if (StringUtils.isBlank(code)) {
             missingParameters.add("code");
             handleMissingParameters();
-        }      
+        }
         if (channelService.findByCode(postData.getCode()) == null) {
-            create(postData);
+            return create(postData);
         } else {
-            update(postData);
+            return update(postData);
         }
     }
 
@@ -167,11 +173,10 @@ public class ChannelApi extends BaseApi {
         return ChannelDtos;
     }
 
-
     /**
      * 
      * @param ChannelId channel's id
-
+     * 
      * @return channel for given id
      * @throws MeveoApiException meveo api exception.
      */

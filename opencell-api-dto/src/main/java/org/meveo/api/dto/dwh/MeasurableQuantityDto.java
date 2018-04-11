@@ -6,7 +6,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.commons.utils.CustomDateSerializer;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.dwh.MeasurableQuantity;
@@ -14,16 +14,15 @@ import org.meveo.model.dwh.MeasurementPeriodEnum;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-
 /**
  * @author Edward P. Legaspi
  **/
 @XmlRootElement(name = "MeasurableQuantity")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MeasurableQuantityDto extends BusinessDto {
+public class MeasurableQuantityDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = 2678416518718451635L;
-    
+
     private String theme;
     private String dimension1;
     private String dimension2;
@@ -47,7 +46,7 @@ public class MeasurableQuantityDto extends BusinessDto {
 
     public MeasurableQuantityDto(MeasurableQuantity mq) {
         super(mq);
-        
+
         setTheme(mq.getTheme());
         setDimension1(mq.getDimension1());
         setDimension2(mq.getDimension2());
@@ -142,9 +141,8 @@ public class MeasurableQuantityDto extends BusinessDto {
 
     @Override
     public String toString() {
-        return String
-            .format(
-                "MeasurableQuantityDto [code=%s, description=%s, theme=%s, dimension1=%s, dimension2=%s, dimension3=%s, dimension4=%s, editable=%s, additive=%s, sqlQuery=%s, measurementPeriod=%s, lastMeasureDate=%s]",
-                getCode(), getDescription(), theme, dimension1, dimension2, dimension3, dimension4, editable, additive, sqlQuery, measurementPeriod, lastMeasureDate);
+        return String.format(
+            "MeasurableQuantityDto [code=%s, description=%s, theme=%s, dimension1=%s, dimension2=%s, dimension3=%s, dimension4=%s, editable=%s, additive=%s, sqlQuery=%s, measurementPeriod=%s, lastMeasureDate=%s]",
+            getCode(), getDescription(), theme, dimension1, dimension2, dimension3, dimension4, editable, additive, sqlQuery, measurementPeriod, lastMeasureDate);
     }
 }

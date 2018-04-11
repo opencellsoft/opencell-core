@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.CurrencyIsoDto;
+import org.meveo.api.dto.CurrencyDto;
 
 /**
  * @author Edward P. Legaspi
@@ -14,25 +14,25 @@ import org.meveo.api.dto.CurrencyIsoDto;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class GetTradingCurrencyResponse extends BaseResponse {
 
-	private static final long serialVersionUID = -5595545533673878857L;
+    private static final long serialVersionUID = -5595545533673878857L;
 
-	private CurrencyIsoDto currency;
+    private CurrencyDto currency;
 
-	public GetTradingCurrencyResponse() {
-		super();
-	}
+    public GetTradingCurrencyResponse() {
+        super();
+    }
 
-	public CurrencyIsoDto getCurrency() {
-		return currency;
-	}
+    public CurrencyDto getCurrency() {
+        return currency;
+    }
 
-	public void setCurrency(CurrencyIsoDto currency) {
-		this.currency = currency;
-	}
+    public void setCurrency(CurrencyDto currency) {
+        this.currency = currency;
+    }
 
-	@Override
-	public String toString() {
-		return "GetTradingCurrencyResponse [currency=" + currency + ", toString()=" + super.toString() + "]";
-	}
+    @Override
+    public String toString() {
+        return "GetTradingCurrencyResponse [currency=" + currency + ", toString()=" + super.toString() + "]";
+    }
 
 }

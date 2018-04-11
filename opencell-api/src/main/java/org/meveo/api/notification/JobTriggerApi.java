@@ -94,12 +94,17 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
         notif.setCounterTemplate(counterTemplate);
         notif.setJobInstance(jobInstance);
         notif.setJobParams(postData.getJobParams());
+        if (postData.isDisabled() != null) {
+            notif.setDisabled(postData.isDisabled());
+        }
         jobTriggerService.create(notif);
 
         return notif;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -122,7 +127,7 @@ public class JobTriggerApi extends BaseCrudApi<JobTrigger, JobTriggerDto> {
 
         return result;
     }
-        
+
     public JobTrigger update(JobTriggerDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

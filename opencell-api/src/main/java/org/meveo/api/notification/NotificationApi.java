@@ -54,8 +54,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     private InboundRequestService inboundRequestService;
 
     /**
-     * Create notification
-     * v5.0: Add script disable and check for ScriptInstanceCode
+     * Create notification v5.0: Add script disable and check for ScriptInstanceCode
      * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
@@ -110,18 +109,20 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setElFilter(postData.getElFilter());
         notif.setCounterTemplate(counterTemplate);
         notif.setPriority(postData.getPriority());
-        if(postData.isActive() != null) {
+        if (postData.isActive() != null) {
             notif.setActive(postData.isActive());
-        } else {
-            notif.setActive(true);
+        } else if (postData.isDisabled() != null) {
+            notif.setDisabled(postData.isDisabled());
         }
-        
+
         notificationService.create(notif);
 
         return notif;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -146,8 +147,7 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
     }
 
     /**
-     * Update notification
-     * v5.0: Add script disable and check for ScriptInstanceCode
+     * Update notification v5.0: Add script disable and check for ScriptInstanceCode
      * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
@@ -202,9 +202,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
         notif.setCounterTemplate(counterTemplate);
         notif.setParams(postData.getScriptParams());
         notif.setPriority(postData.getPriority());
-        if(postData.isActive() != null) {
-            notif.setActive(postData.isActive());
-        }
+        // if (postData.isActive() != null) {
+        // notif.setActive(postData.isActive());
+        // } else if (postData.isDisabled() != null) {
+        // notif.setDisabled(postData.isDisabled());
+        // }
 
         notif = notificationService.update(notif);
 

@@ -85,12 +85,11 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
     @Inject
     private CounterTemplateService counterTemplateService;
-    
+
     @Inject
     private BusinessServiceModelService businessServiceModelService;
 
     private void createServiceChargeTemplateRecurring(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
-        
 
         if (postData.getServiceChargeTemplateRecurrings() != null) {
             for (ServiceChargeTemplateRecurringDto serviceChargeTemplateDto : postData.getServiceChargeTemplateRecurrings().getServiceChargeTemplateRecurring()) {
@@ -121,7 +120,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     }
 
     private void createServiceChargeTemplateSubscription(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
-        
 
         if (postData.getServiceChargeTemplateSubscriptions() != null) {
             for (ServiceChargeTemplateSubscriptionDto serviceChargeTemplateDto : postData.getServiceChargeTemplateSubscriptions().getServiceChargeTemplateSubscription()) {
@@ -152,7 +150,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     }
 
     private void createServiceChargeTemplateTermination(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
-        
 
         if (postData.getServiceChargeTemplateTerminations() != null) {
             for (ServiceChargeTemplateTerminationDto serviceChargeTemplateDto : postData.getServiceChargeTemplateTerminations().getServiceChargeTemplateTermination()) {
@@ -183,7 +180,6 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     }
 
     private void createServiceChargeTemplateUsage(ServiceTemplateDto postData, ServiceTemplate serviceTemplate) throws MeveoApiException, BusinessException {
-        
 
         if (postData.getServiceChargeTemplateUsages() != null) {
             for (ServiceUsageChargeTemplateDto serviceChargeTemplateDto : postData.getServiceChargeTemplateUsages().getServiceChargeTemplateUsage()) {
@@ -227,10 +223,10 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
     public ServiceTemplate create(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
-        
-        handleMissingParametersAndValidate(postData);        
+
+        handleMissingParametersAndValidate(postData);
 
         // check if code already exists
         if (serviceTemplateService.findByCode(postData.getCode()) != null) {
@@ -244,14 +240,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
                 throw new EntityDoesNotExistsException(Calendar.class, postData.getInvoicingCalendar());
             }
         }
-        
-    	BusinessServiceModel businessService = null;
-		if (!StringUtils.isBlank(postData.getSomCode())) {
-			businessService = businessServiceModelService.findByCode(postData.getSomCode());
-			if (businessService == null) {
-				throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
-			}
-		}
+
+        BusinessServiceModel businessService = null;
+        if (!StringUtils.isBlank(postData.getSomCode())) {
+            businessService = businessServiceModelService.findByCode(postData.getSomCode());
+            if (businessService == null) {
+                throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
+            }
+        }
 
         ServiceTemplate serviceTemplate = new ServiceTemplate();
         serviceTemplate.setBusinessServiceModel(businessService);
@@ -259,12 +255,17 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
+
+        if (postData.isDisabled() != null) {
+            serviceTemplate.setDisabled(postData.isDisabled());
+        }
+
         try {
-			saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64());
-		} catch (IOException e1) {
-			log.error("Invalid image data={}", e1.getMessage());
-			throw new InvalidImageData();
-		}
+            saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
+        }
 
         // populate customFields
         try {
@@ -290,7 +291,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for usage charges
         createServiceChargeTemplateUsage(postData, serviceTemplate);
-        
+
         return serviceTemplate;
     }
 
@@ -299,15 +300,15 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
-        
+
         handleMissingParametersAndValidate(postData);
-        
+
         // check if code already exists
         ServiceTemplate serviceTemplate = serviceTemplateService.findByCode(postData.getCode());
         if (serviceTemplate == null) {
             throw new EntityDoesNotExistsException(ServiceTemplateService.class, postData.getCode());
         }
-        serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        serviceTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         serviceTemplate.setDescription(postData.getDescription());
         serviceTemplate.setLongDescription(postData.getLongDescription());
 
@@ -319,23 +320,23 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
             }
         }
         serviceTemplate.setInvoicingCalendar(invoicingCalendar);
-        
+
         BusinessServiceModel businessService = null;
-		if (!StringUtils.isBlank(postData.getSomCode())) {
-			businessService = businessServiceModelService.findByCode(postData.getSomCode());
-			if (businessService == null) {
-				throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
-			}
-		}
-		serviceTemplate.setBusinessServiceModel(businessService);
+        if (!StringUtils.isBlank(postData.getSomCode())) {
+            businessService = businessServiceModelService.findByCode(postData.getSomCode());
+            if (businessService == null) {
+                throw new EntityDoesNotExistsException(BusinessServiceModel.class, postData.getSomCode());
+            }
+        }
+        serviceTemplate.setBusinessServiceModel(businessService);
 
         setAllWalletTemplatesToNull(serviceTemplate);
         try {
-			saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64());
-		} catch (IOException e1) {
-			log.error("Invalid image data={}", e1.getMessage());
-			throw new InvalidImageData();
-		}
+            saveImage(serviceTemplate, postData.getImagePath(), postData.getImageBase64());
+        } catch (IOException e1) {
+            log.error("Invalid image data={}", e1.getMessage());
+            throw new InvalidImageData();
+        }
 
         // populate customFields
         try {
@@ -366,11 +367,13 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
 
         // check for usage charges
         createServiceChargeTemplateUsage(postData, serviceTemplate);
-        
+
         return serviceTemplate;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -392,7 +395,7 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         ServiceTemplateDto result = new ServiceTemplateDto(serviceTemplate, entityToDtoConverter.getCustomFieldsDTO(serviceTemplate, inheritCF));
         return result;
     }
-    
+
     private void setAllWalletTemplatesToNull(ServiceTemplate serviceTemplate) {
         List<ServiceChargeTemplateRecurring> listRec = new ArrayList<ServiceChargeTemplateRecurring>();
         for (ServiceChargeTemplateRecurring recurring : serviceTemplate.getServiceRecurringCharges()) {
@@ -436,14 +439,14 @@ public class ServiceTemplateApi extends BaseCrudApi<ServiceTemplate, ServiceTemp
         }
 
         setAllWalletTemplatesToNull(serviceTemplate);
-        
-        //deleteImage(serviceTemplate);
-        
+
+        // deleteImage(serviceTemplate);
+
         serviceTemplateService.remove(serviceTemplate);
 
     }
 
-    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {    	
+    public ServiceTemplate createOrUpdate(ServiceTemplateDto postData) throws MeveoApiException, BusinessException {
         if (serviceTemplateService.findByCode(postData.getCode()) == null) {
             return create(postData);
         } else {

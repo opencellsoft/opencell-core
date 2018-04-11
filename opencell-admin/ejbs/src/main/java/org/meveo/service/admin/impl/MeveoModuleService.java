@@ -206,12 +206,12 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
         }
 
         for (MeveoModuleItem item : module.getModuleItems()) {
-            
+
             // check if moduleItem is linked to other module
-            if (isChildOfOtherModule(item.getItemCode())) {
+            if (isChildOfOtherModule(item.getItemClass(), item.getItemCode())) {
                 continue;
             }
-            
+
             loadModuleItem(item);
             BusinessEntity itemEntity = item.getItemEntity();
             if (itemEntity == null) {
@@ -259,9 +259,10 @@ public class MeveoModuleService extends GenericModuleService<MeveoModule> {
             return update(module);
         }
     }
-    
-    public boolean isChildOfOtherModule(String moduleItemCode) {
+
+    public boolean isChildOfOtherModule(String moduleItemClass, String moduleItemCode) {
         QueryBuilder qb = new QueryBuilder(MeveoModuleItem.class, "i", null);
+        qb.addCriterion("itemClass", "=", moduleItemClass, false);
         qb.addCriterion("itemCode", "=", moduleItemCode, true);
         return qb.count(getEntityManager()) > 1 ? true : false;
     }

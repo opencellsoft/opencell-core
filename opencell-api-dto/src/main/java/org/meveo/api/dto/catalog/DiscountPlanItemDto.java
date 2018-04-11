@@ -10,9 +10,11 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.IEnableDto;
 import org.meveo.model.catalog.DiscountPlanItem;
 
 /**
+ * Discount plan item
  * 
  * @author Tyshan Shi(tyshan@manaty.net)
  * @since Aug 1, 2016 9:34:34 PM
@@ -22,23 +24,59 @@ import org.meveo.model.catalog.DiscountPlanItem;
  */
 @XmlRootElement(name = "DiscountPlanItem")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DiscountPlanItemDto extends BaseDto {
+public class DiscountPlanItemDto extends BaseDto implements IEnableDto {
 
     private static final long serialVersionUID = -4512584223794507921L;
 
+    /**
+     * Code
+     */
     @NotNull
     @XmlAttribute(required = true)
     private String code;
+
+    /**
+     * Discount plan code
+     */
     @NotNull
     @XmlElement(required = true)
     private String discountPlanCode;
+
+    /**
+     * Invoice category code
+     */
     private String invoiceCategoryCode;
+
+    /**
+     * Invoice sub category code
+     */
     private String invoiceSubCategoryCode;
+
+    /**
+     * Discount percent
+     */
     private BigDecimal percent;
+
+    /**
+     * Accounting code
+     */
     @Deprecated // until further analysis
     private String accountingCode;
+
+    /**
+     * EL expression to determine if discount plan item applies
+     */
     private String expressionEl;
+
+    /**
+     * EL expression to determine discount percentage
+     */
     private String discountPercentEl;
+
+    /**
+     * Is entity disabled. Value is ignored in Update action - use enable/disable API instead.
+     */
+    private Boolean disabled;
 
     public DiscountPlanItemDto() {
     }
@@ -52,6 +90,7 @@ public class DiscountPlanItemDto extends BaseDto {
         this.accountingCode = discountPlanItem.getAccountingCode();
         this.expressionEl = discountPlanItem.getExpressionEl();
         this.discountPercentEl = discountPlanItem.getDiscountPercentEl();
+        this.disabled = discountPlanItem.isDisabled();
     }
 
     public String getCode() {
@@ -113,7 +152,8 @@ public class DiscountPlanItemDto extends BaseDto {
     @Override
     public String toString() {
         return "DiscountPlanItemDto [code=" + code + ", discountPlanCode=" + discountPlanCode + ", invoiceCategoryCode=" + invoiceCategoryCode + ", invoiceSubCategoryCode="
-                + invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + "]";
+                + invoiceSubCategoryCode + ", percent=" + percent + ", accountingCode=" + accountingCode + ", expressionEl=" + expressionEl + ", discountPercentEl="
+                + discountPercentEl + ", disabled=" + disabled + "]";
     }
 
     public String getDiscountPercentEl() {
@@ -124,4 +164,11 @@ public class DiscountPlanItemDto extends BaseDto {
         this.discountPercentEl = discountPercentEl;
     }
 
+    public void setDisabled(Boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    public Boolean isDisabled() {
+        return disabled;
+    }
 }

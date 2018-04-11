@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.meveo.api.dto.BaseDto;
+import org.meveo.api.dto.IEnableDto;
 import org.meveo.api.dto.account.BankCoordinatesDto;
 import org.meveo.commons.utils.StringUtils;
 import org.meveo.model.payments.CardPaymentMethod;
@@ -31,7 +32,7 @@ import org.meveo.security.MeveoUser;
  */
 @XmlRootElement(name = "PaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PaymentMethodDto extends BaseDto {
+public class PaymentMethodDto extends BaseDto implements IEnableDto {
 
     private static final long serialVersionUID = 4815935377652350103L;
 
@@ -43,41 +44,50 @@ public class PaymentMethodDto extends BaseDto {
     private PaymentMethodEnum paymentMethodType;
 
     /**
-     * entity id.
+     * Entity id.
      */
     private Long id;
+
     /**
-     * is disabled.
+     * Is payment method disabled.
      */
-    private boolean disabled = false;
+    private Boolean disabled;
+
     /**
-     * alias.
+     * Alias.
      */
     private String alias;
+
     /**
-     * is preferred.
+     * Is it a preferred payment method
      */
     private boolean preferred;
+
     /**
-     * customerAccountCode.
+     * Customer account code.
      */
     private String customerAccountCode;
+
     /**
      * Additional info1.
      */
     private String info1;
+
     /**
      * Additional info2.
      */
     private String info2;
+
     /**
      * Additional info3.
      */
     private String info3;
+
     /**
      * Additional info4.
      */
     private String info4;
+
     /**
      * Additional info5.
      */
@@ -87,12 +97,14 @@ public class PaymentMethodDto extends BaseDto {
      * Bank account information.
      */
     private BankCoordinatesDto bankCoordinates;
+
     /**
-     * mandateIdentification for SEPA.
+     * Mandate identification for SEPA.
      */
     private String mandateIdentification;
+
     /**
-     * mandateDate for SEPA.
+     * Mandate date for SEPA.
      */
     private Date mandateDate;
 
@@ -135,7 +147,7 @@ public class PaymentMethodDto extends BaseDto {
      * User identifier.
      */
     private String userId;
-    
+
     /**
      * Customer code, used only on dtp validation.
      */
@@ -177,7 +189,7 @@ public class PaymentMethodDto extends BaseDto {
      *
      * @param paymentMethod the paymentMethod entity.
      */
-    public PaymentMethodDto(PaymentMethod paymentMethod) {               
+    public PaymentMethodDto(PaymentMethod paymentMethod) {
         this.id = paymentMethod.getId();
         this.disabled = paymentMethod.isDisabled();
         this.alias = paymentMethod.getAlias();
@@ -197,8 +209,8 @@ public class PaymentMethodDto extends BaseDto {
             this.mandateDate = ((DDPaymentMethod) paymentMethod).getMandateDate();
             this.mandateIdentification = ((DDPaymentMethod) paymentMethod).getMandateIdentification();
             this.bankCoordinates = new BankCoordinatesDto(((DDPaymentMethod) paymentMethod).getBankCoordinates());
-        }        
-        if (paymentMethod instanceof CardPaymentMethod) {           
+        }
+        if (paymentMethod instanceof CardPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.CARD);
             this.cardNumber = ((CardPaymentMethod) paymentMethod).getHiddenCardNumber();
             this.owner = ((CardPaymentMethod) paymentMethod).getOwner();
@@ -207,7 +219,7 @@ public class PaymentMethodDto extends BaseDto {
             this.yearExpiration = ((CardPaymentMethod) paymentMethod).getYearExpiration();
             this.issueNumber = ((CardPaymentMethod) paymentMethod).getIssueNumber();
             this.tokenId = ((CardPaymentMethod) paymentMethod).getTokenId();
-        }       
+        }
         if (paymentMethod instanceof CheckPaymentMethod) {
             this.setPaymentMethodType(PaymentMethodEnum.CHECK);
         }
@@ -252,23 +264,24 @@ public class PaymentMethodDto extends BaseDto {
      */
     public final PaymentMethod fromDto(CustomerAccount customerAccount, MeveoUser currentUser) {
         PaymentMethod pmEntity = null;
+        boolean disabledBool = isDisabled()!=null? isDisabled():false;
         switch (getPaymentMethodType()) {
         case CARD:
-            pmEntity = new CardPaymentMethod(customerAccount, isDisabled(), getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
+            pmEntity = new CardPaymentMethod(customerAccount, disabledBool, getAlias(), getCardNumber(), getOwner(), isPreferred(), getIssueNumber(), getYearExpiration(),
                 getMonthExpiration(), getCardType());
             break;
 
         case DIRECTDEBIT:
-            pmEntity = new DDPaymentMethod(customerAccount, isDisabled(), getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
+            pmEntity = new DDPaymentMethod(customerAccount, disabledBool, getAlias(), isPreferred(), getMandateDate(), getMandateIdentification(),
                 getBankCoordinates() != null ? getBankCoordinates().fromDto() : null);
             break;
 
         case CHECK:
-            pmEntity = new CheckPaymentMethod(isDisabled(), alias, preferred, customerAccount);
+            pmEntity = new CheckPaymentMethod(disabledBool, alias, preferred, customerAccount);
             break;
 
         case WIRETRANSFER:
-            pmEntity = new WirePaymentMethod(isDisabled(), alias, preferred, customerAccount);
+            pmEntity = new WirePaymentMethod(disabledBool, alias, preferred, customerAccount);
             break;
         default:
             break;
@@ -402,14 +415,14 @@ public class PaymentMethodDto extends BaseDto {
     /**
      * @return the disabled
      */
-    public boolean isDisabled() {
+    public Boolean isDisabled() {
         return disabled;
     }
 
     /**
      * @param disabled the disabled to set
      */
-    public void setDisabled(boolean disabled) {
+    public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 
@@ -681,9 +694,7 @@ public class PaymentMethodDto extends BaseDto {
     public void setUserId(String userId) {
         this.userId = userId;
     }
-    
-    
-    
+
     /**
      * @return the customerCode
      */

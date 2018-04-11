@@ -67,7 +67,9 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
         ProductChargeTemplate chargeTemplate = new ProductChargeTemplate();
         chargeTemplate.setCode(postData.getCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
+        if (postData.isDisabled() != null) {
+            chargeTemplate.setDisabled(postData.isDisabled());
+        }
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());
@@ -146,7 +148,6 @@ public class ProductChargeTemplateApi extends BaseCrudApi<ProductChargeTemplate,
 
         chargeTemplate.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
         chargeTemplate.setDescription(postData.getDescription());
-        chargeTemplate.setDisabled(postData.isDisabled());
         chargeTemplate.setAmountEditable(postData.getAmountEditable());
         chargeTemplate.setUnitMultiplicator(postData.getUnitMultiplicator());
         chargeTemplate.setRatingUnitDescription(postData.getRatingUnitDescription());

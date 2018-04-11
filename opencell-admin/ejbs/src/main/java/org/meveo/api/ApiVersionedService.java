@@ -59,4 +59,17 @@ public interface ApiVersionedService<E extends IEntity, T extends BaseDto> {
      */
     public E createOrUpdate(T dtoData) throws MeveoApiException, BusinessException;
 
+    /**
+     * Enable or disable entity
+     * 
+     * @param code Entity code
+     * @param validFrom Entity validity range - from date
+     * @param validTo Entity validity range - to date
+     * @param enable Should entity be enabled
+     * @throws EntityDoesNotExistsException Entity does not exist
+     * @throws MissingParameterException Missing parameters
+     * @throws BusinessException A general business exception
+     */
+    public void enableOrDisable(String code, Date validFrom, Date validTo, boolean enable) throws EntityDoesNotExistsException, MissingParameterException, BusinessException;
+
 }

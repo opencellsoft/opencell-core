@@ -177,9 +177,12 @@ public class ScriptInstanceApi extends BaseCrudApi<ScriptInstance, ScriptInstanc
      */
     public ScriptInstance scriptInstanceFromDTO(ScriptInstanceDto dto, ScriptInstance scriptInstanceToUpdate) throws EntityDoesNotExistsException {
 
-        ScriptInstance scriptInstance = new ScriptInstance();
-        if (scriptInstanceToUpdate != null) {
-            scriptInstance = scriptInstanceToUpdate;
+        ScriptInstance scriptInstance = scriptInstanceToUpdate;
+        if (scriptInstanceToUpdate == null) {
+            scriptInstance = new ScriptInstance();
+            if (dto.isDisabled() != null) {
+                scriptInstance.setDisabled(dto.isDisabled());
+            }
         }
         scriptInstance.setCode(dto.getCode());
         scriptInstance.setDescription(dto.getDescription());

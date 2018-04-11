@@ -53,7 +53,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
     @Inject
     private TradingCurrencyService tradingCurrencyService;
 
-    /** The  country service. */
+    /** The country service. */
     @Inject
     private CountryService countryService;
 
@@ -63,7 +63,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      * @param paymentGatewayDto the payment gateway dto
      * @return the long
      * @throws MeveoApiException meveo api exception when error happened.
-     * @throws BusinessException  business exception when error happened.
+     * @throws BusinessException business exception when error happened.
      */
     public Long create(PaymentGatewayDto paymentGatewayDto) throws MeveoApiException, BusinessException {
         if (paymentGatewayDto == null) {
@@ -128,6 +128,10 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
         paymentGateway.setCountry(country);
         paymentGateway.setTradingCurrency(tradingCurrency);
 
+        if (paymentGatewayDto.isDisabled() != null) {
+            paymentGateway.setDisabled(paymentGatewayDto.isDisabled());
+        }
+
         try {
             populateCustomFields(paymentGatewayDto.getCustomFields(), paymentGateway, true, true);
         } catch (MissingParameterException | InvalidParameterException e) {
@@ -147,7 +151,7 @@ public class PaymentGatewayApi extends BaseCrudApi<PaymentGateway, PaymentGatewa
      *
      * @param paymentGatewayDto the payment gateway dto
      * @throws BusinessException the business exception
-     * @throws MeveoApiException  MeveoApiException
+     * @throws MeveoApiException MeveoApiException
      */
     public void update(PaymentGatewayDto paymentGatewayDto) throws BusinessException, MeveoApiException {
         if (paymentGatewayDto == null) {

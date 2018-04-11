@@ -92,13 +92,13 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
         webHook.setParams(postData.getScriptParams());
         webHook.setElFilter(postData.getElFilter());
         webHook.setCounterTemplate(counterTemplate);
-        
+
         if (!StringUtils.isBlank(postData.getHttpProtocol())) {
             webHook.setHttpProtocol(postData.getHttpProtocol());
         } else {
             webHook.setHttpProtocol(HttpProtocol.HTTP);
         }
-        
+
         webHook.setHost(postData.getHost());
         webHook.setPort(postData.getPort());
         webHook.setPage(postData.getPage());
@@ -112,12 +112,17 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
             webHook.getWebhookParams().putAll(postData.getParams());
         }
 
+        if (postData.isDisabled() != null) {
+            webHook.setDisabled(postData.isDisabled());
+        }
         webHookService.create(webHook);
 
         return webHook;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -140,7 +145,7 @@ public class WebHookApi extends BaseCrudApi<WebHook, WebHookDto> {
 
         return result;
     }
-    
+
     public WebHook update(WebHookDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {

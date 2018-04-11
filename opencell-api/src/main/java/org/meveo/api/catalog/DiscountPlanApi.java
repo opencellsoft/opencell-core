@@ -7,7 +7,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.catalog.DiscountPlanDto;
 import org.meveo.api.dto.catalog.DiscountPlansDto;
 import org.meveo.api.exception.EntityAlreadyExistsException;
@@ -23,7 +23,7 @@ import org.meveo.service.catalog.impl.DiscountPlanService;
  *
  */
 @Stateless
-public class DiscountPlanApi extends BaseApi {
+public class DiscountPlanApi extends BaseCrudApi<DiscountPlan, DiscountPlanDto> {
 
     @Inject
     private DiscountPlanService discountPlanService;
@@ -32,14 +32,14 @@ public class DiscountPlanApi extends BaseApi {
      * creates a discount plan
      * 
      * @param postData posted data to API
-
+     * 
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception
+     * @throws BusinessException business exception
      */
-    public void create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
+    public DiscountPlan create(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
         handleMissingParametersAndValidate(postData);
         if (discountPlanService.findByCode(postData.getCode()) != null) {
@@ -49,34 +49,39 @@ public class DiscountPlanApi extends BaseApi {
         DiscountPlan discountPlan = new DiscountPlan();
         discountPlan.setCode(postData.getCode());
         discountPlan.setDescription(postData.getDescription());
+        if (postData.isDisabled() != null) {
+            discountPlan.setDisabled(postData.isDisabled());
+        }
 
         discountPlanService.create(discountPlan);
+        return discountPlan;
     }
 
     /**
      * updates the description of an existing discount plan.
      * 
      * @param postData posted data to API
-
+     * 
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception
+     * @throws BusinessException business exception
      */
-    public void update(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
+    public DiscountPlan update(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
         handleMissingParametersAndValidate(postData);
-        
+
         DiscountPlan discountPlan = discountPlanService.findByCode(postData.getCode());
 
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, postData.getCode());
         }
         discountPlan.setDescription(postData.getDescription());
-        discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode())?postData.getCode():postData.getUpdatedCode());
+        discountPlan.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
 
-        discountPlanService.update(discountPlan);
+        discountPlan = discountPlanService.update(discountPlan);
+        return discountPlan;
     }
 
     /**
@@ -93,15 +98,12 @@ public class DiscountPlanApi extends BaseApi {
             handleMissingParameters();
         }
 
-        DiscountPlanDto discountPlanDto = new DiscountPlanDto();
-
         DiscountPlan discountPlan = discountPlanService.findByCode(discountPlanCode);
         if (discountPlan == null) {
             throw new EntityDoesNotExistsException(DiscountPlan.class, discountPlanCode);
         }
 
-        discountPlanDto.setCode(discountPlan.getCode());
-        discountPlanDto.setDescription(discountPlan.getDescription());
+        DiscountPlanDto discountPlanDto = new DiscountPlanDto(discountPlan);
 
         return discountPlanDto;
     }
@@ -111,7 +113,7 @@ public class DiscountPlanApi extends BaseApi {
      * 
      * @param discountPlanCode discount plan code
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception 
+     * @throws BusinessException business exception
      */
     public void remove(String discountPlanCode) throws MeveoApiException, BusinessException {
 
@@ -132,20 +134,20 @@ public class DiscountPlanApi extends BaseApi {
      * creates if the the discount plan code is not existing, updates if exists.
      * 
      * @param postData posted data to API
-
+     * 
      * @throws MeveoApiException meveo api exception
-     * @throws BusinessException  business exception
+     * @throws BusinessException business exception
      */
-    public void createOrUpdate(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
+    public DiscountPlan createOrUpdate(DiscountPlanDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
             handleMissingParameters();
         }
         if (discountPlanService.findByCode(postData.getCode()) == null) {
-            create(postData);
+            return create(postData);
         } else {
-            update(postData);
+            return update(postData);
         }
     }
 
@@ -164,10 +166,7 @@ public class DiscountPlanApi extends BaseApi {
             discountPlansDto = new DiscountPlansDto();
             List<DiscountPlanDto> discountPlanDtos = new ArrayList<DiscountPlanDto>();
             for (DiscountPlan dp : discountPlans) {
-                DiscountPlanDto dpd = new DiscountPlanDto();
-                dpd.setCode(dp.getCode());
-                dpd.setDescription(dp.getDescription());
-                discountPlanDtos.add(dpd);
+                discountPlanDtos.add(new DiscountPlanDto(dp));
             }
             discountPlansDto.setDiscountPlan(discountPlanDtos);
         }

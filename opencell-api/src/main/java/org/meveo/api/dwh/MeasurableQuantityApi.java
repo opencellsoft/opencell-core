@@ -31,16 +31,16 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     @Inject
     private MeasurableQuantityService measurableQuantityService;
-    
+
     @Inject
     private MeasuredValueService mvService;
 
     public MeasurableQuantity create(MeasurableQuantityDto postData) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("code");            
+            missingParameters.add("code");
         }
-        
+
         handleMissingParametersAndValidate(postData);
 
         if (measurableQuantityService.findByCode(postData.getCode()) != null) {
@@ -55,9 +55,9 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     public MeasurableQuantity update(MeasurableQuantityDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
-            missingParameters.add("measurableQuantityCode");            
+            missingParameters.add("measurableQuantityCode");
         }
-        
+
         handleMissingParametersAndValidate(postData);
 
         MeasurableQuantity measurableQuantity = measurableQuantityService.findByCode(postData.getCode());
@@ -72,7 +72,9 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.meveo.api.ApiService#find(java.lang.String)
      */
     @Override
@@ -92,7 +94,7 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
         return result;
     }
-    
+
     public void remove(String code) throws MeveoApiException, BusinessException {
 
         if (StringUtils.isBlank(code)) {
@@ -140,9 +142,12 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
     private MeasurableQuantity fromDTO(MeasurableQuantityDto dto, MeasurableQuantity mqToUpdate) {
 
-        MeasurableQuantity mq = new MeasurableQuantity();
-        if (mqToUpdate != null) {
-            mq = mqToUpdate;
+        MeasurableQuantity mq = mqToUpdate;
+        if (mqToUpdate == null) {
+            mq = new MeasurableQuantity();
+            if (dto.isDisabled() != null) {
+                mq.setDisabled(dto.isDisabled());
+            }
         }
 
         mq.setCode(StringUtils.isBlank(dto.getUpdatedCode()) ? dto.getCode() : dto.getUpdatedCode());
@@ -160,34 +165,33 @@ public class MeasurableQuantityApi extends BaseCrudApi<MeasurableQuantity, Measu
 
         return mq;
     }
-    
-	public List<MeasuredValueDto> findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode)
-			throws MeveoApiException {
 
-		if (StringUtils.isBlank(mqCode)) {
-			missingParameters.add("mqCode");
-		}
+    public List<MeasuredValueDto> findMVByDateAndPeriod(String code, Date fromDate, Date toDate, MeasurementPeriodEnum period, String mqCode) throws MeveoApiException {
 
-		handleMissingParameters();
+        if (StringUtils.isBlank(mqCode)) {
+            missingParameters.add("mqCode");
+        }
 
-		MeasurableQuantity mq = measurableQuantityService.findByCode(mqCode);
-		if (mq == null) {
-			throw new EntityDoesNotExistsException(MeasurableQuantity.class, mqCode);
-		}
+        handleMissingParameters();
 
-		List<MeasuredValueDto> result = new ArrayList<>();
+        MeasurableQuantity mq = measurableQuantityService.findByCode(mqCode);
+        if (mq == null) {
+            throw new EntityDoesNotExistsException(MeasurableQuantity.class, mqCode);
+        }
 
-		if(period == null){
-			period = mq.getMeasurementPeriod();
-		}
-		List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, fromDate, toDate, period, mq);
-		if (measuredValues != null) {
-			for (MeasuredValue mv : measuredValues) {
-				result.add(new MeasuredValueDto(mv));
-			}
-		}
+        List<MeasuredValueDto> result = new ArrayList<>();
 
-		return result;
-	}
-	
+        if (period == null) {
+            period = mq.getMeasurementPeriod();
+        }
+        List<MeasuredValue> measuredValues = mvService.getByDateAndPeriod(code, fromDate, toDate, period, mq);
+        if (measuredValues != null) {
+            for (MeasuredValue mv : measuredValues) {
+                result.add(new MeasuredValueDto(mv));
+            }
+        }
+
+        return result;
+    }
+
 }

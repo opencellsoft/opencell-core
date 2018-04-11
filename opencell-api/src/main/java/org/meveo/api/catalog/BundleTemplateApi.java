@@ -154,6 +154,11 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
+        if (postData.isDisabled() != null) {
+            bundleTemplate.setDisabled(postData.isDisabled());
+        }
+
         try {
             saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {
@@ -238,6 +243,7 @@ public class BundleTemplateApi extends ProductOfferingApi<BundleTemplate, Bundle
         bundleTemplate.setName(postData.getName());
         bundleTemplate.setValidity(new DatePeriod(postData.getValidFrom(), postData.getValidTo()));
         bundleTemplate.setLifeCycleStatus(postData.getLifeCycleStatus());
+
         try {
             saveImage(bundleTemplate, postData.getImagePath(), postData.getImageBase64());
         } catch (IOException e1) {

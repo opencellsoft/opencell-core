@@ -15,7 +15,7 @@ import org.meveo.model.payments.CreditCardTypeEnum;
  */
 @XmlRootElement(name = "CardPaymentMethod")
 @XmlAccessorType(XmlAccessType.FIELD)
-@Deprecated // Use PaymentMthodDto
+@Deprecated // Use PaymentMethodDto
 public class CardPaymentMethodDto extends PaymentMethodDto {
 
     private static final long serialVersionUID = 1937059617391182742L;
@@ -35,18 +35,6 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
 
     public CardPaymentMethodDto(CardPaymentMethod paymentMethod) {
         super(paymentMethod);
-        setCardNumber(paymentMethod.getHiddenCardNumber());
-        setCardType(paymentMethod.getCardType());
-        setMonthExpiration(paymentMethod.getMonthExpiration());
-        setOwner(paymentMethod.getOwner());
-        setTokenId(paymentMethod.getTokenId());
-        setYearExpiration(paymentMethod.getYearExpiration());
-        setInfo1(paymentMethod.getInfo1());
-        setInfo2(paymentMethod.getInfo2());
-        setInfo3(paymentMethod.getInfo3());
-        setInfo4(paymentMethod.getInfo4());
-        setInfo5(paymentMethod.getInfo5());
-        setUserId(paymentMethod.getUserId());
     }
 
     public CardPaymentMethodDto(PaymentMethodDto paymentMethod) {
@@ -70,6 +58,7 @@ public class CardPaymentMethodDto extends PaymentMethodDto {
         setInfo4(paymentMethod.getInfo4());
         setInfo5(paymentMethod.getInfo5());
         setUserId(paymentMethod.getUserId());
+        setDisabled(paymentMethod.isDisabled());
     }
 
     public CardPaymentMethod fromDto() {

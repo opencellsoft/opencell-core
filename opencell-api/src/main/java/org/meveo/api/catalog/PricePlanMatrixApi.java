@@ -95,6 +95,9 @@ public class PricePlanMatrixApi extends BaseCrudApi<PricePlanMatrix, PricePlanMa
         PricePlanMatrix pricePlanMatrix = new PricePlanMatrix();
         pricePlanMatrix.setCode(postData.getCode());
         pricePlanMatrix.setEventCode(postData.getEventCode());
+        if (postData.isDisabled() != null) {
+            pricePlanMatrix.setDisabled(postData.isDisabled());
+        }
 
         if (!StringUtils.isBlank(postData.getSeller())) {
             Seller seller = sellerService.findByCode(postData.getSeller());

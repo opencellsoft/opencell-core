@@ -387,7 +387,7 @@ public class Subscription extends BusinessCFEntity {
         } else {
             setNotifyOfRenewalDate(null);
         }
-    }
+    }   
 
     public void updateRenewalRule(SubscriptionRenewal newRenewalRule) {
         if (getSubscribedTillDate() != null && isRenewed()) {
@@ -396,4 +396,12 @@ public class Subscription extends BusinessCFEntity {
 
     }
 
+    /**
+     * Is subscription active
+     * 
+     * @return True if Status is ACTIVE
+     */
+    public boolean isActive() {
+        return SubscriptionStatusEnum.ACTIVE == status;
+    }
 }

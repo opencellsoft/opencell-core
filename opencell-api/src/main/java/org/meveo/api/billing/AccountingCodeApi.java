@@ -8,7 +8,7 @@ import javax.inject.Inject;
 
 import org.meveo.admin.exception.BusinessException;
 import org.meveo.admin.util.pagination.PaginationConfiguration;
-import org.meveo.api.BaseApi;
+import org.meveo.api.BaseCrudApi;
 import org.meveo.api.dto.billing.AccountingCodeDto;
 import org.meveo.api.dto.response.PagingAndFiltering;
 import org.meveo.api.dto.response.billing.AccountingCodeListResponse;
@@ -30,12 +30,12 @@ import org.meveo.service.billing.impl.AccountingCodeService;
  * @lastModifiedVersion 5.0
  **/
 @Stateless
-public class AccountingCodeApi extends BaseApi {
+public class AccountingCodeApi extends BaseCrudApi<AccountingCode, AccountingCodeDto> {
 
     @Inject
     private AccountingCodeService accountingCodeService;
 
-    public void create(AccountingCodeDto postData) throws BusinessException, MeveoApiException {
+    public AccountingCode create(AccountingCodeDto postData) throws BusinessException, MeveoApiException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -52,11 +52,13 @@ public class AccountingCodeApi extends BaseApi {
             throw new EntityAlreadyExistsException(AccountingCode.class, postData.getCode());
         }
 
-        AccountingCode accountingCode = toAccountingCode(postData, null);
+        AccountingCode accountingCode = convertFromDto(postData, null);
         accountingCodeService.create(accountingCode);
+
+        return accountingCode;
     }
 
-    public void update(AccountingCodeDto postData) throws MeveoApiException, BusinessException {
+    public AccountingCode update(AccountingCodeDto postData) throws MeveoApiException, BusinessException {
         if (StringUtils.isBlank(postData.getCode())) {
             missingParameters.add("code");
         }
@@ -74,15 +76,18 @@ public class AccountingCodeApi extends BaseApi {
             throw new EntityDoesNotExistsException(AccountingCode.class, postData.getCode());
         }
 
-        toAccountingCode(postData, accountingCode);
-        accountingCodeService.update(accountingCode);
+        convertFromDto(postData, accountingCode);
+        accountingCode = accountingCodeService.update(accountingCode);
+
+        return accountingCode;
     }
 
-    public void createOrUpdate(AccountingCodeDto postData) throws MeveoApiException, BusinessException {
+    @Override
+    public AccountingCode createOrUpdate(AccountingCodeDto postData) throws MeveoApiException, BusinessException {
         if (accountingCodeService.findByCode(postData.getCode()) != null) {
-            update(postData);
+            return update(postData);
         } else {
-            create(postData);
+            return create(postData);
         }
     }
 
@@ -95,7 +100,7 @@ public class AccountingCodeApi extends BaseApi {
             throw new EntityDoesNotExistsException(AccountingCode.class, accountingCode);
         }
 
-        return fromAccountingCode(ac, null);
+        return new AccountingCodeDto(ac);
     }
 
     public AccountingCodeListResponse list(PagingAndFiltering pagingAndFiltering) throws InvalidParameterException {
@@ -111,7 +116,7 @@ public class AccountingCodeApi extends BaseApi {
         if (totalCount > 0) {
             List<AccountingCode> accountingCodes = accountingCodeService.list(paginationConfiguration);
             if (accountingCodes != null) {
-                result.setAccountingCodes(accountingCodes.stream().map(p -> fromAccountingCode(p, null)).collect(Collectors.toList()));
+                result.setAccountingCodes(accountingCodes.stream().map(p -> new AccountingCodeDto(p)).collect(Collectors.toList()));
             }
         }
 
@@ -132,38 +137,24 @@ public class AccountingCodeApi extends BaseApi {
         accountingCodeService.remove(ac);
     }
 
-    public static AccountingCode toAccountingCode(AccountingCodeDto source, AccountingCode target) {
-        if (target == null) {
-            target = new AccountingCode();
-            target.setCode(source.getCode());
+    public AccountingCode convertFromDto(AccountingCodeDto dto, AccountingCode accountingCodeToUpdate) {
+
+        AccountingCode accountingCode = accountingCodeToUpdate;
+        if (accountingCode == null) {
+            accountingCode = new AccountingCode();
+            accountingCode.setCode(dto.getCode());
+            if (dto.isDisabled() != null) {
+                accountingCode.setDisabled(dto.isDisabled());
+            }
         }
 
-        target.setChartOfAccountTypeEnum(source.getChartOfAccountTypeEnum());
-        target.setChartOfAccountViewTypeEnum(source.getChartOfAccountViewTypeEnum());
-        target.setDescription(source.getDescription());
-        target.setNotes(source.getNotes());
-        target.setReportingAccount(source.getReportingAccount());
-        target.setDisabled(source.isDisabled());
-        target.setMigrated(source.isMigrated());
+        accountingCode.setChartOfAccountTypeEnum(dto.getChartOfAccountTypeEnum());
+        accountingCode.setChartOfAccountViewTypeEnum(dto.getChartOfAccountViewTypeEnum());
+        accountingCode.setDescription(dto.getDescription());
+        accountingCode.setNotes(dto.getNotes());
+        accountingCode.setReportingAccount(dto.getReportingAccount());
+        accountingCode.setMigrated(dto.isMigrated());
 
-        return target;
+        return accountingCode;
     }
-
-    public static AccountingCodeDto fromAccountingCode(AccountingCode source, AccountingCodeDto target) {
-        if (target == null) {
-            target = new AccountingCodeDto();
-        }
-
-        target.setCode(source.getCode());
-        target.setChartOfAccountTypeEnum(source.getChartOfAccountTypeEnum());
-        target.setChartOfAccountViewTypeEnum(source.getChartOfAccountViewTypeEnum());
-        target.setDescription(source.getDescription());
-        target.setNotes(source.getNotes());
-        target.setReportingAccount(source.getReportingAccount());
-        target.setDisabled(source.isDisabled());
-        target.setMigrated(source.isMigrated());
-
-        return target;
-    }
-
 }

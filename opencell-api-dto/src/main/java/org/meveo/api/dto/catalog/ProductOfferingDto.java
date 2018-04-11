@@ -13,8 +13,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.meveo.api.dto.BusinessDto;
 import org.meveo.api.dto.CustomFieldsDto;
+import org.meveo.api.dto.EnableBusinessDto;
 import org.meveo.api.dto.LanguageDescriptionDto;
 import org.meveo.model.admin.Seller;
 import org.meveo.model.catalog.Channel;
@@ -25,7 +25,7 @@ import org.meveo.model.catalog.ProductOffering;
 
 @XmlRootElement(name = "ProductOffering")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProductOfferingDto extends BusinessDto {
+public class ProductOfferingDto extends EnableBusinessDto {
 
     private static final long serialVersionUID = 4599063410509766484L;
 
@@ -48,7 +48,7 @@ public class ProductOfferingDto extends BusinessDto {
 
     @XmlElementWrapper(name = "digitalResources")
     @XmlElement(name = "digitalResource")
-    protected List<DigitalResourcesDto> attachments;
+    protected List<DigitalResourceDto> attachments;
 
     protected String modelCode;
 
@@ -63,14 +63,12 @@ public class ProductOfferingDto extends BusinessDto {
     protected String imagePath;
     protected String imageBase64;
 
-    protected boolean disabled = false;
-
     protected List<LanguageDescriptionDto> languageDescriptions;
 
     protected String longDescription;
 
     protected List<LanguageDescriptionDto> longDescriptionsTranslated;
-    
+
     private String globalRatingScriptInstance;
 
     @XmlElementWrapper(name = "sellers")
@@ -97,13 +95,13 @@ public class ProductOfferingDto extends BusinessDto {
 
         if (asLink) {
             this.setDescription(null);
+            this.setDisabled(null);
             return;
         }
         this.setDescription(productOffering.getDescription());
         this.setName(productOffering.getName());
         this.setLifeCycleStatus(productOffering.getLifeCycleStatus());
         this.imagePath = productOffering.getImagePath();
-        this.disabled = productOffering.isDisabled();
 
         List<OfferTemplateCategory> offerTemplateCategories = productOffering.getOfferTemplateCategories();
         if (offerTemplateCategories != null && !offerTemplateCategories.isEmpty()) {
@@ -114,9 +112,9 @@ public class ProductOfferingDto extends BusinessDto {
         }
         List<DigitalResource> digitalResources = productOffering.getAttachments();
         if (digitalResources != null && !digitalResources.isEmpty()) {
-            this.setAttachments(new ArrayList<DigitalResourcesDto>());
+            this.setAttachments(new ArrayList<DigitalResourceDto>());
             for (DigitalResource digitalResource : digitalResources) {
-                this.getAttachments().add(new DigitalResourcesDto(digitalResource));
+                this.getAttachments().add(new DigitalResourceDto(digitalResource));
             }
         }
 
@@ -130,9 +128,9 @@ public class ProductOfferingDto extends BusinessDto {
         setLongDescription(productOffering.getLongDescription());
         setLongDescriptionsTranslated(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(productOffering.getLongDescriptionI18n()));
 
-        if(productOffering.getGlobalRatingScriptInstance() != null) {
+        if (productOffering.getGlobalRatingScriptInstance() != null) {
             setGlobalRatingScriptInstance(productOffering.getGlobalRatingScriptInstance().getCode());
-        }        
+        }
 
         if (productOffering.getSellers() != null && !productOffering.getSellers().isEmpty()) {
             this.sellers = new ArrayList<>();
@@ -141,8 +139,8 @@ public class ProductOfferingDto extends BusinessDto {
             }
             Collections.sort(this.sellers);
         }
-        
-        if(productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
+
+        if (productOffering.getChannels() != null && !productOffering.getChannels().isEmpty()) {
             setChannels(productOffering.getChannels().stream().map(p -> {
                 return new ChannelDto(p);
             }).collect(Collectors.toList()));
@@ -167,11 +165,11 @@ public class ProductOfferingDto extends BusinessDto {
         this.offerTemplateCategories = offerTemplateCategories;
     }
 
-    public List<DigitalResourcesDto> getAttachments() {
+    public List<DigitalResourceDto> getAttachments() {
         return attachments;
     }
 
-    public void setAttachments(List<DigitalResourcesDto> attachments) {
+    public void setAttachments(List<DigitalResourceDto> attachments) {
         this.attachments = attachments;
     }
 
@@ -231,14 +229,6 @@ public class ProductOfferingDto extends BusinessDto {
         this.imageBase64 = imageBase64;
     }
 
-    public boolean isDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(boolean disabled) {
-        this.disabled = disabled;
-    }
-
     public List<ChannelDto> getChannels() {
         return channels;
     }
@@ -284,7 +274,7 @@ public class ProductOfferingDto extends BusinessDto {
     public void setGlobalRatingScriptInstance(String globalRatingScriptInstance) {
         this.globalRatingScriptInstance = globalRatingScriptInstance;
     }
-    
+
     public List<String> getSellers() {
         return sellers;
     }
