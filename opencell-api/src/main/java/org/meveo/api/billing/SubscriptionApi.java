@@ -186,8 +186,6 @@ public class SubscriptionApi extends BaseApi {
         subscription.setDescription(postData.getDescription());
         subscription.setUserAccount(userAccount);
         subscription.setOffer(offerTemplate);
-        subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
-        subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
 
         subscription.setSubscriptionDate(postData.getSubscriptionDate());
         subscription.setTerminationDate(postData.getTerminationDate());
@@ -267,8 +265,6 @@ public class SubscriptionApi extends BaseApi {
                 throw new InvalidParameterException("Cannot subscribe to disabled offer");
             }
             subscription.setOffer(offerTemplate);
-            subscription.setMinimumAmountEl(offerTemplate.getMinimumAmountEl());
-            subscription.setMinimumLabelEl(offerTemplate.getMinimumLabelEl());
         }
 
         subscription.setCode(StringUtils.isBlank(postData.getUpdatedCode()) ? postData.getCode() : postData.getUpdatedCode());
@@ -278,10 +274,8 @@ public class SubscriptionApi extends BaseApi {
         subscription.setTerminationDate(postData.getTerminationDate());
         subscription.setEndAgreementDate(postData.getEndAgreementDate());
         subscription.setSubscriptionRenewal(subscriptionRenewalFromDto(subscription.getSubscriptionRenewal(), postData.getRenewalRule(), subscription.isRenewed()));
-        if(!StringUtils.isBlank(postData.getMinimumAmountEl())) {
-            subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
-            subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
-        }
+        subscription.setMinimumAmountEl(postData.getMinimumAmountEl());
+        subscription.setMinimumLabelEl(postData.getMinimumLabelEl());
 
         // populate customFields
         try {
@@ -561,9 +555,6 @@ public class SubscriptionApi extends BaseApi {
             serviceInstance.setRateUntilDate(serviceToInstantiateDto.getRateUntilDate());
             serviceInstance.setQuantity(serviceToInstantiateDto.getQuantity());
             serviceInstance.setOrderNumber(instantiateServicesDto.getOrderNumber());
-            serviceInstance.setMinimumAmountEl(serviceTemplate.getMinimumAmountEl());
-            serviceInstance.setMinimumLabelEl(serviceTemplate.getMinimumLabelEl());
-
 
             if (serviceToInstantiateDto.getSubscriptionDate() == null) {
                 Calendar calendar = Calendar.getInstance();
