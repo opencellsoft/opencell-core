@@ -106,4 +106,13 @@ public class GenericNotificationService extends BusinessService<Notification> {
         return getEntityManager().createNamedQuery("Notification.getActiveNotificationsByEventAndClasses", Notification.class).setParameter("eventTypeFilter", eventType)
             .setParameter("classNameFilter", classNames).getResultList();
     }
+
+    /**
+     * Get a list of notifications to populate a cache
+     * 
+     * @return A list of active notifications
+     */
+    public List<Notification> getNotificationsForCache() {
+        return getEntityManager().createNamedQuery("Notification.getNotificationsForCache", Notification.class).getResultList();
+    }
 }

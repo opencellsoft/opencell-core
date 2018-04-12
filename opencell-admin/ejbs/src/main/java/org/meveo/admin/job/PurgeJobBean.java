@@ -17,6 +17,8 @@ import org.meveo.model.shared.DateUtils;
 import org.meveo.service.billing.impl.CounterInstanceService;
 import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.job.JobExecutionService;
+import org.meveo.service.notification.InboundRequestService;
+import org.meveo.service.notification.NotificationHistoryService;
 import org.slf4j.Logger;
 
 @Stateless
@@ -31,10 +33,16 @@ public class PurgeJobBean implements Serializable {
     private JobExecutionService jobExecutionService;
 
     @Inject
-    protected CustomFieldInstanceService customFieldInstanceService;
+    private CustomFieldInstanceService customFieldInstanceService;
 
     @Inject
-    protected Logger log;
+    private InboundRequestService inboundRequestService;
+
+    @Inject
+    private NotificationHistoryService notificationHistoryService;
+
+    @Inject
+    private Logger log;
 
     @Interceptors({ JobLoggingInterceptor.class, PerformanceInterceptor.class })
     @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
@@ -42,18 +50,18 @@ public class PurgeJobBean implements Serializable {
 
         try {
             // Purge job execution history
-            String jobname = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName");
+            String jobCode = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_jobName");
             Long nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_jobExecHistory_nbDays");
-            if (jobname != null || nbDays != null) {
+            if (nbDays != null) {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
-                long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobname, date);
+                long nbItemsToProcess = jobExecutionService.countJobExecutionHistoryToDelete(jobCode, date);
                 if (nbItemsToProcess > 0) {
-                    result.setNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
-                    int nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobname, date);
+                    result.setNbItemsToProcess(nbItemsToProcess);
+                    long nbSuccess = jobExecutionService.deleteJobExecutionHistory(jobCode, date);
                     result.setNbItemsCorrectlyProcessed(nbSuccess);
                     result.setNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
-                        result.setReport("Purged " + nbSuccess + " from " + jobname);
+                        result.setReport("Purged " + nbSuccess + (jobCode != null ? " " + jobCode : "") + " job history records");
                     }
                 }
             }
@@ -64,12 +72,45 @@ public class PurgeJobBean implements Serializable {
                 Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
                 long nbItemsToProcess = counterInstanceService.countCounterPeriodsToDelete(date);
                 if (nbItemsToProcess > 0) {
-                    result.addNbItemsToProcess(nbItemsToProcess); // it might well happen we dont know in advance how many items we have to process,in that case comment this method
+                    result.addNbItemsToProcess(nbItemsToProcess);
                     long nbSuccess = counterInstanceService.deleteCounterPeriods(date);
                     result.addNbItemsCorrectlyProcessed(nbSuccess);
                     result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
                     if (nbSuccess > 0) {
-                        result.addReport("Purged " + nbSuccess + " counter periods");
+                        result.addReport("Purged " + nbSuccess + " counter period records");
+                    }
+                }
+            }
+
+            // Purge notification history
+            String notificationCode = (String) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_notificationHistory_notifCode");
+            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_notificationHistory_nbDays");
+            if (nbDays != null) {
+                Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
+                long nbItemsToProcess = notificationHistoryService.countHistoryToDelete(notificationCode, date);
+                if (nbItemsToProcess > 0) {
+                    result.addNbItemsToProcess(nbItemsToProcess);
+                    long nbSuccess = notificationHistoryService.deleteHistory(notificationCode, date);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    if (nbSuccess > 0) {
+                        result.addReport("Purged " + nbSuccess + (notificationCode != null ? " " + notificationCode : "") + " notification history records");
+                    }
+                }
+            }
+
+            // Purge inbound requests
+            nbDays = (Long) customFieldInstanceService.getCFValue(jobInstance, "PurgeJob_inboundRequests_nbDays");
+            if (nbDays != null) {
+                Date date = DateUtils.addDaysToDate(new Date(), nbDays.intValue() * (-1));
+                long nbItemsToProcess = inboundRequestService.countRequestsToDelete(date);
+                if (nbItemsToProcess > 0) {
+                    result.addNbItemsToProcess(nbItemsToProcess);
+                    long nbSuccess = inboundRequestService.deleteRequests(date);
+                    result.addNbItemsCorrectlyProcessed(nbSuccess);
+                    result.addNbItemsProcessedWithError(nbItemsToProcess - nbSuccess);
+                    if (nbSuccess > 0) {
+                        result.addReport("Purged " + nbSuccess + " inbound request records");
                     }
                 }
             }

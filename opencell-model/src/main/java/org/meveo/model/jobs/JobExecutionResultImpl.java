@@ -12,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -29,6 +31,11 @@ import org.meveo.model.NotifiableEntity;
 @NotifiableEntity
 @GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
         @Parameter(name = "sequence_name", value = "job_execution_seq"), })
+@NamedQueries({ @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDate", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date"),
+    @NamedQuery(name = "JobExecutionResult.purgeHistoryByDate", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date"),
+    @NamedQuery(name = "JobExecutionResult.countHistoryToPurgeByDateAndJobInstance", query = "select count(*) FROM JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance"),
+    @NamedQuery(name = "JobExecutionResult.purgeHistoryByDateAndJobInstance", query = "delete JobExecutionResultImpl hist WHERE hist.startDate<=:date and hist.jobInstance=:jobInstance") })
+
 public class JobExecutionResultImpl extends BaseEntity {
     private static final long serialVersionUID = 430457580612075457L;
 

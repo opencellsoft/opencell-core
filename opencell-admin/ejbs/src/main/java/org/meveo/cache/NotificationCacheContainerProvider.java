@@ -28,7 +28,7 @@ import org.meveo.model.notification.Notification;
 import org.meveo.model.notification.NotificationEventTypeEnum;
 import org.meveo.security.CurrentUser;
 import org.meveo.security.MeveoUser;
-import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.GenericNotificationService;
 import org.slf4j.Logger;
 
 /**
@@ -48,7 +48,7 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
     protected Logger log;
 
     @EJB
-    private NotificationService notificationService;
+    private GenericNotificationService notificationService;
 
     private ParamBean paramBean = ParamBeanFactory.getAppScopeInstance();
 
@@ -178,7 +178,9 @@ public class NotificationCacheContainerProvider implements Serializable { // Cac
         }
 
         removeNotificationFromCache(notif);
-        addNotificationToCache(notif);
+        if (notif.isActive()) {
+            addNotificationToCache(notif);
+        }
     }
 
     /**

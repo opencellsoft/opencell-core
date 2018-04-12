@@ -27,7 +27,7 @@ import org.meveo.model.scripts.ScriptInstance;
 import org.meveo.service.catalog.impl.CounterTemplateService;
 import org.meveo.service.notification.InboundRequestService;
 import org.meveo.service.notification.NotificationHistoryService;
-import org.meveo.service.notification.NotificationService;
+import org.meveo.service.notification.ScriptNotificationService;
 import org.meveo.service.script.ScriptInstanceService;
 
 /**
@@ -39,7 +39,7 @@ import org.meveo.service.script.ScriptInstanceService;
 public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> {
 
     @Inject
-    private NotificationService notificationService;
+    private ScriptNotificationService notificationService;
 
     @Inject
     private CounterTemplateService counterTemplateService;
