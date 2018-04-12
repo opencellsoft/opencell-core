@@ -21,6 +21,7 @@ import org.meveo.api.dto.catalog.BpmProductDto;
 import org.meveo.api.dto.catalog.BsmServiceDto;
 import org.meveo.api.dto.catalog.ProductChargeTemplateDto;
 import org.meveo.api.dto.catalog.ProductTemplateDto;
+import org.meveo.api.rest.IBaseRs;
 import org.meveo.api.serialize.RestDateParam;
 
 /**
@@ -32,7 +33,7 @@ import org.meveo.api.serialize.RestDateParam;
 @Consumes({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 @Produces({ MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML })
 
-public interface CatalogRs {
+public interface CatalogRs extends IBaseRs {
 
     /**
      * Get a list of categories
