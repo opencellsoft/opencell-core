@@ -17,7 +17,7 @@
 
         <hftl:searchPanel label="#{messages['menu.emailNotifications']}" columns="3" backingBean="#{emailNotificationListBean}">
             <hftl:searchField label="#{messages['entity.code']}" field="code" />
-            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{emailNotificationBean}"
+            <hftl:searchField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" size="50" autocompleteBean="#{emailNotificationListBean}"
                 autocompleteMethod="autocompleteClassNames" isAutocomplete="true" />
             <hftl:searchField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" />
             <hftl:searchField label="#{messages['entity.emailNotification.subject']}" field="subject" newLine="true"/>

@@ -30,7 +30,6 @@ import javax.ejb.Stateless;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TemporalType;
@@ -390,42 +389,30 @@ public class CounterInstanceService extends PersistenceService<CounterInstance> 
     }
 
     /**
-     * Count counter periods which end date is older then a given date.
+     * Count counter periods which end date is older than a given date.
      * 
      * @param date Date to check
-     * @return A number of counter periods which end date is older then a given date
+     * @return A number of counter periods which end date is older than a given date
      */
     public long countCounterPeriodsToDelete(Date date) {
-        long result = 0;
-        QueryBuilder qb = new QueryBuilder(CounterPeriod.class, "cp");
-        qb.addCriterion("cp.periodEndDate", "<", date, false);
-        result = qb.count(getEntityManager());
-
+        long result = getEntityManager().createNamedQuery("CounterPeriod.countPeriodsToPurgeByDate", Long.class).setParameter("date", date).getSingleResult();
         return result;
     }
 
     /**
-     * Remove counter periods which end date is older then a given date.
+     * Remove counter periods which end date is older than a given date.
      * 
      * @param date Date to check
      * @return A number of counter periods that were removed
      */
-    @SuppressWarnings("unchecked")
     @JpaAmpNewTx
     @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public long deleteCounterPeriods(Date date) {
-        log.trace("Removing counter periods which end date is older then a {} date", date);
-        long itemsDeleted = 0;
-        QueryBuilder qb = new QueryBuilder(CounterPeriod.class, "cp");
-        qb.addCriterion("cp.periodEndDate", "<", date, false);
-        EntityManager em = getEntityManager();
-        List<CounterPeriod> periods = qb.find(em);
-        for (CounterPeriod counterPeriod : periods) {
-            em.remove(counterPeriod);
-            itemsDeleted++;
-        }
+        log.debug("Removing counter periods which end date is older than a {} date", date);
 
-        log.info("Removed {} counter periods which end date is older then a {} date", itemsDeleted, date);
+        long itemsDeleted = getEntityManager().createNamedQuery("CounterPeriod.purgePeriodsByDate").setParameter("date", date).executeUpdate();
+
+        log.info("Removed {} counter periods which end date is older than a {} date", itemsDeleted, date);
 
         return itemsDeleted;
     }

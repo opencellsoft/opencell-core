@@ -23,7 +23,7 @@ import javax.inject.Named;
 
 @Named
 @ConversationScoped
-public class NotificationListBean extends NotificationBean {
+public class ScriptNotificationListBean extends ScriptNotificationBean {
 
     private static final long serialVersionUID = -3037867704912788045L;
 }

@@ -33,7 +33,7 @@
             <hftl:formField label="#{messages['entity.code']}" field="code" required="true" />
             <p:separator></p:separator>
             <hftl:formField label="#{messages['entity.notification.classNameFilter']}" field="classNameFilter" required="true" size="60"
-                maxlength="255" autocompleteBean="#{notificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
+                maxlength="255" autocompleteBean="#{instantMessagingNotificationBean}" autocompleteMethod="autocompleteClassNames" isAutocomplete="true"/>
             <hftl:formField label="#{messages['entity.notification.eventTypeFilter']}" field="eventTypeFilter" required="true" />
             <hftl:formField label="#{messages['entity.notification.elFilter']}" field="elFilter" textArea="true" rows="1" maxlength="2000" />
             <hftl:formField label="#{messages['entity.notification.elAction']}" field="elAction" textArea="true" rows="1" maxlength="2000" />
