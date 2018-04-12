@@ -13,9 +13,9 @@ import org.meveo.model.ExportIdentifier;
 @CustomFieldEntity(cftCodePrefix = "ADDDETAILS")
 @ExportIdentifier({ "code" })
 //@DiscriminatorValue(value = "")
-@Table(name = "crm_additionDetails")
+@Table(name = "crm_addition_details")
 public class AdditionalDetails {
-	@Column(name = "companyname", length = 50)
+	@Column(name = "company_name", length = 50)
 	@Size(max = 50)
 	private String companyName;
 	
@@ -23,13 +23,13 @@ public class AdditionalDetails {
 	@Size(max = 50)
 	private String position;
 	
-	@Column(name = "websiteurl", length = 255)
+	@Column(name = "website_url", length = 255)
 	@Size(max = 255)
 	private String websiteUrl;
 	
-	@Column(name = "instantmessaging", length = 255)
-	@Size(max = 255)
-	private String instantMessaging;
+	@Column(name = "instant_messengers", length = 2000)
+	@Size(max = 500)
+	private String instantMessengers;
 
 	public String getCompanyName() {
 		return companyName;
@@ -55,11 +55,11 @@ public class AdditionalDetails {
 		this.websiteUrl = websiteUrl;
 	}
 
-	public String getInstantMessaging() {
-		return instantMessaging;
+	public String getInstantMessengers() {
+		return instantMessengers;
 	}
 
-	public void setInstantMessaging(String instantMessaging) {
-		this.instantMessaging = instantMessaging;
+	public void setInstantMessengers(String instantMessengers) {
+		this.instantMessengers = instantMessengers;
 	}
 }

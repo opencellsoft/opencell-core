@@ -1,8 +1,18 @@
-package org.meveo.model.intcrm;
+package org.meveo.model.communication;
 
 import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.CustomFieldEntity;
+import org.meveo.model.ExportIdentifier;
+
+@Entity
+@CustomFieldEntity(cftCodePrefix = "ADDDETAILS")
+@ExportIdentifier({ "code" })
+//@DiscriminatorValue(value = "")
+@Table(name = "crm_communication_entity")
 public class CommunicationEntity {
 	@Column(name = "name", length = 50)
 	@Size(max = 50)

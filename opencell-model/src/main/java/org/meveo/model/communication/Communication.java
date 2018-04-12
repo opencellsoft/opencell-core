@@ -1,4 +1,4 @@
-package org.meveo.model.intcrm;
+package org.meveo.model.communication;
 
 import java.util.List;
 

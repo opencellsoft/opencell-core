@@ -634,5 +634,69 @@
 	            columnNames="payment_method,country_id,trading_currency_id"
 	            constraintName="uk_payment_gateway"
 	            tableName="ar_payment_gateway"/>	           
-	</changeSet>       
+	</changeSet>
+
+     <changeSet author="FranckValot" id="#3148_20180411 - Add new fields for crm">
+        <createTable tableName="crm_additional_details">
+            <column name="id" type="bigint"/>
+            <column name="company_name" type="varchar(50)"/>
+            <column name="position" type="varchar(50)"/>
+            <column name="website_url" type="varchar(255)"/>
+            <column name="instant_messengers" type="varchar(2000)"/>
+        </createTable>
+        <addPrimaryKey columnNames="crm_additional_details_id" constraintName="crm_additional_details_pkey" tableName="crm_additional_details" />
+        
+        <addColumn tableName="com_contact">
+            <column name="description" type="varchar(255)"/>
+            <column name="assistant_name" type="varchar(50)"/>
+            <column name="assistant_phone" type="varchar(15)"/>
+            <column name="imported_from" type="varchar(50)"/>
+            <column name="imported_by" type="varchar(50)"/>
+            <column name="social_identifier" type="varchar(2000)"/>
+            <column name="is_vip" type="${type.boolean}" defaultValueNumeric="0">
+            <column name="is_Suspect" type="${type.boolean}" defaultValueNumeric="1">
+            <column name="agreed_ua" type="${type.boolean}" defaultValueNumeric="0">
+        </addColumn>
+
+        <createTable tableName="crm_adressbook">
+            <column name="id" type="bigint"/>
+            <column name="name" type="varchar(50)"/>
+        </createTable>
+        <addPrimaryKey columnNames="crm_adressbook_id" constraintName="crm_adressbook_pkey" tableName="crm_adressbook" />
+
+        <createTable tableName="com_contact_crm_adressbook">
+            <column name="crm_adressbook_id" type="bigint"/>
+            <column name="com_contact_id" type="bigint"/>
+        </createTable>
+        <addPrimaryKey columnNames="crm_adressbook_id, com_contact_id" constraintName="com_contact_crm_adressbook_pkey" tableName="com_contact_crm_adressbook" />
+
+        <createTable tableName="crm_contact_group">
+            <column name="id" type="bigint"/>
+            <column name="name" type="varchar(50)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="type" type="varchar(50)"/>
+        </createTable>
+        <addPrimaryKey columnNames="crm_contact_group_id" constraintName="crm_contact_group_pkey" tableName="crm_contact_group" />
+
+        <createTable tableName="crm_contact_group_com_contact">
+            <column name="crm_contact_group_id" type="bigint"/>
+            <column name="com_contact_id" type="bigint"/>
+        </createTable>
+        <addPrimaryKey columnNames="crm_contact_group_id, com_contact_id" constraintName="crm_contact_group_com_contact_pkey" tableName="crm_contact_group_com_contact" />
+
+        <createTable tableName="com_communication_entity">
+            <column name="id" type="bigint"/>
+            <column name="name" type="varchar(50)"/>
+            <column name="description" type="varchar(255)"/>
+            <column name="type" type="varchar(50)"/>
+        </createTable>
+        <addPrimaryKey columnNames="com_communication_entity_id" constraintName="com_communication_entity_pkey" tableName="com_communication_entity" />
+
+        <addColumn tableName="crm_customer">
+            <column name="crm_additional_details_id" type="bigint"/>
+        </addColumn>
+        <addPrimaryKey columnNames="crm_additional_details_id" constraintName="crm_additional_details_pkey" tableName="crm_customer" />
+
+    </changeSet<name />
+
 </databaseChangeLog> 

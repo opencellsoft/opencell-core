@@ -49,40 +49,40 @@ public class Contact extends BaseEntity {
 
 	private static final long serialVersionUID = 3772773449495155646L;
 
-	@Column(name = "description", length = 512)
-	@Size(max = 512)
+	@Column(name = "description", length = 255)
+	@Size(max = 255)
 	private String description;
 
-	@Column(name = "assistantname", length = 50)
+	@Column(name = "assistant_name", length = 50)
 	@Size(max = 50)
 	private String assistantName;
 
-	@Column(name = "assistantphone", length = 255)
-	@Size(max = 255)
+	@Column(name = "assistant_phone", length = 15)
+	@Size(max = 15)
 	private String assistantPhone;
 
-	@Column(name = "importedfrom", length = 50)
+	@Column(name = "imported_from", length = 50)
 	@Size(max = 50)
 	private String importedFrom;
 
-	@Column(name = "importedby", length = 50)
+	@Column(name = "imported_by", length = 50)
 	@Size(max = 50)
 	private String importedBy;
 
-	@Column(name = "socialidentifier", length = 1000)
-	@Size(max = 1000)
+	@Column(name = "social_identifier", length = 2000)
+	@Size(max = 2000)
 	private String socialIdentifier;
 
-	@Column(name = "isvip", columnDefinition = "tinyint default false")
+	@Column(name = "is_vip", columnDefinition = "tinyint default false")
 	private boolean isVip;
 
-	@Column(name = "issuspect", columnDefinition = "tinyint default false")
+	@Column(name = "is_suspect", columnDefinition = "tinyint default yes")
 	private boolean isSuspect;
 
-	@Column(name = "agreedua", columnDefinition = "tinyint default false")
+	@Column(name = "agreed_ua", columnDefinition = "tinyint default false")
 	private boolean agreedToUA;
 
-	@OneToMany(mappedBy = "crm_contact", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "com_contact", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
 	private List<ContactGroup> contactGroups = new ArrayList<>();
 
 	// It is provider resposibility to create contacts with unique codes

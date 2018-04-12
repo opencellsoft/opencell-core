@@ -33,6 +33,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -64,6 +65,10 @@ public class CustomerAccount extends AccountEntity {
 
 	private static final long serialVersionUID = 1L;
 
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "crm_adressbook_id")
+	private AdressBook adressbook;
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_currency_id")
 	private TradingCurrency tradingCurrency;
