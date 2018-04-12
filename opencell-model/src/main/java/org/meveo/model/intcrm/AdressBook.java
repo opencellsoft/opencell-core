@@ -14,6 +14,7 @@ import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.communication.Message;
 import org.meveo.model.communication.contact.Contact;
 
 @Entity
@@ -29,6 +30,6 @@ public class AdressBook {
     @OneToMany(mappedBy = "crm_adressbook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private Set<Contact> contacts = new HashSet<Contact>();
 
-    @OneToMany(mappedBy = "crm_adressbook", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "crm_adressbook")
 	private List<ContactGroup> groups;
 }

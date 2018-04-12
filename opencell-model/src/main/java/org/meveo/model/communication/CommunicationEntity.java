@@ -9,10 +9,10 @@ import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 
 @Entity
-@CustomFieldEntity(cftCodePrefix = "ADDDETAILS")
+@CustomFieldEntity(cftCodePrefix = "COMENT")
 @ExportIdentifier({ "code" })
 //@DiscriminatorValue(value = "")
-@Table(name = "crm_communication_entity")
+@Table(name = "com_communication_entity")
 public class CommunicationEntity {
 	@Column(name = "name", length = 50)
 	@Size(max = 50)

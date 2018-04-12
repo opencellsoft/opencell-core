@@ -6,12 +6,16 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.communication.Campaign;
 import org.meveo.model.communication.contact.Contact;
 
 
@@ -34,4 +38,7 @@ public class ContactGroup {
     @OneToMany(mappedBy = "crm_contact_group", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<Contact> contacts = new ArrayList<>();
     
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "bi_campaign_group", joinColumns = @JoinColumn(name = "crm_group_id"), inverseJoinColumns = @JoinColumn(name = "com_campaign_id"))
+    private List<Campaign> campaigns;
 }

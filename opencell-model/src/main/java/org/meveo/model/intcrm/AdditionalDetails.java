@@ -13,7 +13,7 @@ import org.meveo.model.ExportIdentifier;
 @CustomFieldEntity(cftCodePrefix = "ADDDETAILS")
 @ExportIdentifier({ "code" })
 //@DiscriminatorValue(value = "")
-@Table(name = "crm_addition_details")
+@Table(name = "crm_additional_details")
 public class AdditionalDetails {
 	@Column(name = "company_name", length = 50)
 	@Size(max = 50)

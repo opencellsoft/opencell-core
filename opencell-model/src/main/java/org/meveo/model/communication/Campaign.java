@@ -25,6 +25,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -37,15 +41,22 @@ import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.meveo.model.BusinessEntity;
 import org.meveo.model.ExportIdentifier;
+import org.meveo.model.crm.Email;
+import org.meveo.model.intcrm.ContactGroup;
 
 @Entity
-@ExportIdentifier({ "code"})
-@Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code"}))
-@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {@Parameter(name = "sequence_name", value = "com_campaign_seq"), })
+@ExportIdentifier({ "code" })
+@Table(name = "com_campaign", uniqueConstraints = @UniqueConstraint(columnNames = { "code" }))
+@GenericGenerator(name = "ID_GENERATOR", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
+		@Parameter(name = "sequence_name", value = "com_campaign_seq"), })
 public class Campaign extends BusinessEntity {
 
 	private static final long serialVersionUID = -5865150907978275819L;
-
+	
+	@ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "bi_campaign_group", joinColumns = @JoinColumn(name = "com_campaign_id"), inverseJoinColumns = @JoinColumn(name = "crm_group_id"))
+    private List<ContactGroup> contactGroups;
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "schedule_date")
 	private Date scheduleDate;
@@ -73,8 +84,8 @@ public class Campaign extends BusinessEntity {
 	@Size(max = 255)
 	private String subMedia;
 
-	@Type(type="numeric_boolean")
-    @Column(name = "use_any_media")
+	@Type(type = "numeric_boolean")
+	@Column(name = "use_any_media")
 	private Boolean useAnyMedia;
 
 	@Enumerated(EnumType.STRING)
@@ -163,5 +174,5 @@ public class Campaign extends BusinessEntity {
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
-	
+
 }

@@ -49,6 +49,7 @@ import org.meveo.model.billing.BillingAccount;
 import org.meveo.model.billing.TradingCurrency;
 import org.meveo.model.billing.TradingLanguage;
 import org.meveo.model.crm.Customer;
+import org.meveo.model.intcrm.AdressBook;
 import org.meveo.model.shared.ContactInformation;
 
 /**
