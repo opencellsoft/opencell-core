@@ -167,6 +167,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
     @Inject
     private ServiceSingleton serviceSingleton;
+    
+    @Inject
+    private BillingCycleService billingCycleService;
 
     @Inject
     @CurrentUser
@@ -407,6 +410,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
         EntityManager em = getEntityManager();
         try {
             BillingCycle billingCycle = billingRun == null ? billingAccount.getBillingCycle() : billingRun.getBillingCycle();
+            billingCycle = billingCycleService.refreshOrRetrieve(billingCycle);
             if (billingCycle == null) {
                 throw new BusinessException("Cant find the billing cycle");
             }
@@ -469,6 +473,17 @@ public class InvoiceService extends PersistenceService<Invoice> {
             }
 
             create(invoice);
+            
+            StringBuffer num1 = new StringBuffer("000000000");
+            num1.append(invoice.getId() + "");
+            String invoiceNumber = num1.substring(num1.length() - 9);
+            int key = 0;
+
+            for (int i = 0; i < invoiceNumber.length(); i++) {
+                key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
+            }
+
+            invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
 
             // Note that rated transactions get updated in
             // ratedTransactionservice in case of Filter or orderNumber not empty

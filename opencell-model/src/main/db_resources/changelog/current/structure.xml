@@ -688,4 +688,23 @@
         </createTable>
         <sql>insert into ${db.schema.adapted}billing_finance_segment_seq values(1)</sql>
     </changeSet>
+    
+    <changeSet id="#2741_20170816" author="EdwardLegaspi">
+    	<addColumn tableName="billing_invoice_sub_cat">
+    		<column name="tax_script_instance_id" type="bigint"></column>
+    	</addColumn>
+    	<addColumn tableName="billing_invoice_type">
+    		<column name="tax_script_instance_id" type="bigint"></column>
+    	</addColumn>
+    </changeSet>
+    
+     <changeSet id="#2741_20170816 Convert InvoiceType to BusinessCFEntity" author="EdwardLegaspi">
+     	<addColumn tableName="billing_invoice_type">
+     		<column name="uuid" type="varchar(60)"></column>
+     		<column name="cf_values" type="${type.json}"/>   
+     	</addColumn>
+     	<sql><![CDATA[update billing_invoice_type set uuid=concat('InvoiceType-',code)]]></sql>
+     	<addNotNullConstraint tableName="billing_invoice_type" columnName="uuid"/>
+     </changeSet>
+     
 </databaseChangeLog> 

@@ -39,7 +39,18 @@
             selection="#{invoiceSubCategoryBean.invoiceSubcategoryCountry.tax}" searchField1Label="#{messages['tax.code']}" searchField1="code" searchField2Label="#{messages['tax.description']}"
             searchField2="description" column1Label="#{messages['tax.code']}" column1="code" column2Label="#{messages['tax.description']}" column2="description" />
 
-        <h:form id="crumbmenuForm">
+		<hftl:entityPopup id="taxScriptPopup"
+			header="#{messages['scriptInstance.popup.header']}"
+			backingBean="#{scriptInstanceBean}"
+			selection="#{invoiceSubCategoryBean.entity.taxScript}"
+			searchField1Label="#{messages['businessEntity.code']}"
+			searchField1="code" column1Label="#{messages['businessEntity.code']}"
+			column1="code"
+			column2Label="#{messages['businessEntity.description']}"
+			column2="description" eventBackingBean="#{invoiceSubCategoryBean}"
+			updateField=":tabView:formPanel:taxScriptSelectId :tabView:formPanel:taxScriptSelectId_text"></hftl:entityPopup>
+
+		<h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
                 <p:menuitem value="#{messages['menu.configuration']}" disabled="true" />
                 <p:menuitem outcome="invoiceSubCategories" value="#{messages['invoiceSubCategory.title']}" />
@@ -63,7 +74,12 @@
                         <hftl:formField label="#{messages['invoiceSubCategory.accountingCode']}" field="accountingCode" listBean="#{accountingCodeListBean}" valueLabelField="code" listenerUpdate="@this" />
 
                         <hftl:formLanguageFields field="description" />
-                    </hftl:formPanel>
+
+						<hftl:formField id="taxScriptSelectId"
+							label="#{messages['invoiceSubCategory.taxScript']}"
+							field="taxScript" valueLabelField="code" required="false"
+							popup="true" popupId="taxScriptPopup" showResetButton="true" />
+					</hftl:formPanel>
 
                 </p:tab>
 
