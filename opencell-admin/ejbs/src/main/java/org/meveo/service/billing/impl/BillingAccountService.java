@@ -48,6 +48,7 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.InstanceStatusEnum;
 import org.meveo.model.billing.Invoice;
 import org.meveo.model.billing.InvoiceSubCategory;
+import org.meveo.model.billing.OneShotChargeInstance;
 import org.meveo.model.billing.RatedTransaction;
 import org.meveo.model.billing.RatedTransactionMinAmountTypeEnum;
 import org.meveo.model.billing.RatedTransactionStatusEnum;
@@ -526,7 +527,7 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                         if(serviceInstance.getStatus().equals(InstanceStatusEnum.ACTIVE)) {
                         	
                         	Map<Date, Map<String, BigDecimal>> serviceAmountMap = new HashMap<Date, Map<String, BigDecimal>>();
-                            
+                        	
                             List<RecurringChargeInstance> recurringChargeInstanceList = serviceInstance.getRecurringChargeInstances();
                             for(RecurringChargeInstance recurringChargeInstance : recurringChargeInstanceList) {
                                 List<Object[]> amountsList = computeChargeInvoiceAmount(recurringChargeInstance, new Date(0), lastTransactionDate, billingAccount);
@@ -575,6 +576,61 @@ public class BillingAccountService extends AccountService<BillingAccount> {
                                 }
                             }
                             
+                            List<OneShotChargeInstance> subscriptionChargeInstanceList = serviceInstance.getSubscriptionChargeInstances();
+                            for(OneShotChargeInstance subscriptionChargeInstance : subscriptionChargeInstanceList) {
+                                List<Object[]> amountsList = computeChargeInvoiceAmount(subscriptionChargeInstance, new Date(0), lastTransactionDate, billingAccount);
+                                
+                                for(Object[] amounts : amountsList) {
+                                    BigDecimal chargeAmountWithoutTax = (BigDecimal) amounts[0];
+                                    BigDecimal chargeAmountWithTax = (BigDecimal) amounts[1];
+                                    BigDecimal chargeAmountTax = (BigDecimal) amounts[2];
+                                    Date chargeUsageDate = (Date) amounts[3];
+                                    
+                                    if(chargeAmountWithoutTax != null) {
+                                        if(serviceAmountMap.get(chargeUsageDate) != null) {
+                                            Map<String, BigDecimal> serviceAmount = serviceAmountMap.get(chargeUsageDate);
+                                            serviceAmount.put("serviceAmountWithoutTax", serviceAmount.get("serviceAmountWithoutTax").add(chargeAmountWithoutTax));
+                                            serviceAmount.put("serviceAmountWithTax", serviceAmount.get("serviceAmountWithTax").add(chargeAmountWithTax));
+                                            serviceAmount.put("serviceAmountTax", serviceAmount.get("serviceAmountTax").add(chargeAmountTax));
+                                            serviceAmountMap.put(chargeUsageDate, serviceAmount);
+                                        } else {
+                                            Map<String, BigDecimal> serviceAmount = new HashMap<String, BigDecimal>();
+                                            serviceAmount.put("serviceAmountWithoutTax", chargeAmountWithoutTax);
+                                            serviceAmount.put("serviceAmountWithTax", chargeAmountWithTax);
+                                            serviceAmount.put("serviceAmountTax", chargeAmountTax);
+                                            serviceAmountMap.put(chargeUsageDate, serviceAmount);
+                                        }
+                                    }
+                                }
+                            }
+                            
+                            List<OneShotChargeInstance> terminationChargeInstanceList = serviceInstance.getTerminationChargeInstances();
+                            for(OneShotChargeInstance terminationChargeInstance : terminationChargeInstanceList) {
+                                List<Object[]> amountsList = computeChargeInvoiceAmount(terminationChargeInstance, new Date(0), lastTransactionDate, billingAccount);
+                                
+                                for(Object[] amounts : amountsList) {
+                                    BigDecimal chargeAmountWithoutTax = (BigDecimal) amounts[0];
+                                    BigDecimal chargeAmountWithTax = (BigDecimal) amounts[1];
+                                    BigDecimal chargeAmountTax = (BigDecimal) amounts[2];
+                                    Date chargeUsageDate = (Date) amounts[3];
+                                    
+                                    if(chargeAmountWithoutTax != null) {
+                                        if(serviceAmountMap.get(chargeUsageDate) != null) {
+                                            Map<String, BigDecimal> serviceAmount = serviceAmountMap.get(chargeUsageDate);
+                                            serviceAmount.put("serviceAmountWithoutTax", serviceAmount.get("serviceAmountWithoutTax").add(chargeAmountWithoutTax));
+                                            serviceAmount.put("serviceAmountWithTax", serviceAmount.get("serviceAmountWithTax").add(chargeAmountWithTax));
+                                            serviceAmount.put("serviceAmountTax", serviceAmount.get("serviceAmountTax").add(chargeAmountTax));
+                                            serviceAmountMap.put(chargeUsageDate, serviceAmount);
+                                        } else {
+                                            Map<String, BigDecimal> serviceAmount = new HashMap<String, BigDecimal>();
+                                            serviceAmount.put("serviceAmountWithoutTax", chargeAmountWithoutTax);
+                                            serviceAmount.put("serviceAmountWithTax", chargeAmountWithTax);
+                                            serviceAmount.put("serviceAmountTax", chargeAmountTax);
+                                            serviceAmountMap.put(chargeUsageDate, serviceAmount);
+                                        }
+                                    }
+                                }
+                            }
                                
                             for (Map.Entry<Date, Map<String, BigDecimal>> entry : serviceAmountMap.entrySet()) {
                             	
