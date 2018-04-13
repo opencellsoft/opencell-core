@@ -57,6 +57,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
      * Create notification
      * v5.0: Add script disable and check for ScriptInstanceCode
      * 
+     * @param postData The notification dto
+     * @return The notification entity
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException Business exception
+     * 
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */
@@ -149,6 +154,11 @@ public class NotificationApi extends BaseCrudApi<Notification, NotificationDto> 
      * Update notification
      * v5.0: Add script disable and check for ScriptInstanceCode
      * 
+     * @param postData The notification dto
+     * @return The notification entity
+     * @throws MeveoApiException Meveo api exception
+     * @throws BusinessException Business exception
+     *  
      * @author akadid abdelmounaim
      * @lastModifiedVersion 5.0
      */

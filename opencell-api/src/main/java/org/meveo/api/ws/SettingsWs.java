@@ -138,7 +138,7 @@ public interface SettingsWs extends IBaseWs {
     
     /**
      * Creates a user in keycloak and core.
-     * @param postData
+     * @param postData The user dto
      * @return ActionStatus
      */
     @WebMethod
@@ -146,7 +146,7 @@ public interface SettingsWs extends IBaseWs {
     
     /**
      * Updates a user in keycloak and core given a username.
-     * @param postData
+     * @param postData The user dto
      * @return ActionStatus
      */
     @WebMethod
@@ -796,7 +796,7 @@ public interface SettingsWs extends IBaseWs {
     /**
      * createOrUpdate userHierarchyLevel by dto
      * 
-     * @param userHierarchyLevelDto
+     * @param userHierarchyLevelDto The user hierarchy level dto
      * @return action status.
      */
     @WebMethod
