@@ -80,8 +80,16 @@ public class Customer extends AccountEntity {
     
     //OneToOne
     private AdditionalDetails additionalDetails;
+    
+    public AdditionalDetails getAdditionalDetails() {
+		return additionalDetails;
+	}
 
-    public Customer() {
+	public void setAdditionalDetails(AdditionalDetails additionalDetails) {
+		this.additionalDetails = additionalDetails;
+	}
+
+	public Customer() {
         accountType = ACCOUNT_TYPE;
     }
 

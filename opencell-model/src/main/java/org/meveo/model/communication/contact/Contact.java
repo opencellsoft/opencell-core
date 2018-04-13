@@ -95,6 +95,14 @@ public class Contact extends BaseEntity {
 
 	@OneToMany(mappedBy = "contact", fetch = FetchType.LAZY)
 	private List<Message> messages;
+	
+	public boolean isAgreedToUA() {
+		return agreedToUA;
+	}
+
+	public void setAgreedToUA(boolean agreedToUA) {
+		this.agreedToUA = agreedToUA;
+	}
 
 	public String getDescription() {
 		return description;

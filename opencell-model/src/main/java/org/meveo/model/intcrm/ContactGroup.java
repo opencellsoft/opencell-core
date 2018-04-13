@@ -13,7 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
-import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.Campaign;
 import org.meveo.model.communication.contact.Contact;
@@ -41,4 +40,44 @@ public class ContactGroup {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "bi_campaign_group", joinColumns = @JoinColumn(name = "crm_group_id"), inverseJoinColumns = @JoinColumn(name = "com_campaign_id"))
     private List<Campaign> campaigns;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public List<Contact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(List<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
+	public List<Campaign> getCampaigns() {
+		return campaigns;
+	}
+
+	public void setCampaigns(List<Campaign> campaigns) {
+		this.campaigns = campaigns;
+	}
 }

@@ -94,6 +94,14 @@ public class Campaign extends BusinessEntity {
 
 	@OneToMany(mappedBy = "campaign")
 	private List<Message> messages;
+	
+	public List<ContactGroup> getContactGroups() {
+		return contactGroups;
+	}
+
+	public void setContactGroups(List<ContactGroup> contactGroups) {
+		this.contactGroups = contactGroups;
+	}
 
 	public Date getScheduleDate() {
 		return scheduleDate;

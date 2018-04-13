@@ -32,4 +32,28 @@ public class AdressBook {
 
     @OneToMany(mappedBy = "crm_adressbook")
 	private List<ContactGroup> groups;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Set<Contact> getContacts() {
+		return contacts;
+	}
+
+	public void setContacts(Set<Contact> contacts) {
+		this.contacts = contacts;
+	}
+
+	public List<ContactGroup> getGroups() {
+		return groups;
+	}
+
+	public void setGroups(List<ContactGroup> groups) {
+		this.groups = groups;
+	}
 }

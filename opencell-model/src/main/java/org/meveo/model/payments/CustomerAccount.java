@@ -127,6 +127,14 @@ public class CustomerAccount extends AccountEntity {
 	public CustomerAccount() {
 		accountType = ACCOUNT_TYPE;
 	}
+	
+	public AdressBook getAdressbook() {
+		return adressbook;
+	}
+
+	public void setAdressbook(AdressBook adressbook) {
+		this.adressbook = adressbook;
+	}
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "trading_language_id")
