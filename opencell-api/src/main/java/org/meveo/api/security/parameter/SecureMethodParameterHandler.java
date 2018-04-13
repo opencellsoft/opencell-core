@@ -42,8 +42,8 @@ public class SecureMethodParameterHandler {
 	 * @param parameter the {@link SecureMethodParameter} describing which parameter is going to be evaluated and what parser to use to extract the data.
 	 * @param values The array of parameters that was passed into the method.
 	 * @param resultClass The class of the value that will be extracted from the parameter.
-	 * @return
-	 * @throws MeveoApiException
+	 * @return The parameter value
+	 * @throws MeveoApiException Meveo api exception
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(SecureMethodParameter parameter, Object[] values, Class<T> resultClass) throws MeveoApiException {
