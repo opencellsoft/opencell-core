@@ -397,7 +397,9 @@ public class InvoiceService extends PersistenceService<Invoice> {
             lastTransactionDate = billingRun.getLastTransactionDate();
             invoiceDate = billingRun.getInvoiceDate();
         }
-
+        
+        lastTransactionDate = DateUtils.setDateToEndOfDay(lastTransactionDate);
+        
         BillingAccount billingAccount = billingAccountService.findById(billingAccountId, true);
         BigDecimal invoicingThreshold = billingAccount.getInvoicingThreshold() == null ? billingAccount.getBillingCycle().getInvoicingThreshold()
                 : billingAccount.getInvoicingThreshold();
