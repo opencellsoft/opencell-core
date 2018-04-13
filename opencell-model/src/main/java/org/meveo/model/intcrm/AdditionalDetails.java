@@ -1,11 +1,17 @@
 package org.meveo.model.intcrm;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -14,7 +20,7 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "code" })
 //@DiscriminatorValue(value = "")
 @Table(name = "crm_additional_details")
-public class AdditionalDetails {
+public class AdditionalDetails extends BaseEntity{
 	@Column(name = "company_name", length = 50)
 	@Size(max = 50)
 	private String companyName;

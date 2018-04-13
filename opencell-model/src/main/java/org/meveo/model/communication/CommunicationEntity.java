@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 
@@ -13,7 +14,7 @@ import org.meveo.model.ExportIdentifier;
 @ExportIdentifier({ "code" })
 //@DiscriminatorValue(value = "")
 @Table(name = "com_communication_entity")
-public class CommunicationEntity {
+public class CommunicationEntity extends BaseEntity {
 	@Column(name = "name", length = 50)
 	@Size(max = 50)
 	private String name;

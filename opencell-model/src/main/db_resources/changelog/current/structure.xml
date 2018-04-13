@@ -638,13 +638,15 @@
 
      <changeSet author="FranckValot" id="#3148_20180411 - Add new fields for crm">
         <createTable tableName="crm_additional_details">
-            <column name="crm_additional_details_id" type="bigint"/>
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_additional_details_pkey" />
+            </column>
+            <column name="version" type="int4" />
             <column name="company_name" type="varchar(50)"/>
             <column name="position" type="varchar(50)"/>
             <column name="website_url" type="varchar(255)"/>
             <column name="instant_messengers" type="varchar(2000)"/>
         </createTable>
-        <addPrimaryKey columnNames="crm_additional_details_id" constraintName="crm_additional_details_pkey" tableName="crm_additional_details" />
         
         <addColumn tableName="com_contact">
             <column name="description" type="varchar(255)"/>
@@ -659,10 +661,12 @@
         </addColumn>
 
         <createTable tableName="crm_adressbook">
-            <column name="crm_adressbook_id" type="bigint"/>
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_adressbook_pkey" />
+            </column>
+            <column name="version" type="int4" />
             <column name="name" type="varchar(50)"/>
         </createTable>
-        <addPrimaryKey columnNames="crm_adressbook_id" constraintName="crm_adressbook_pkey" tableName="crm_adressbook" />
 
         <createTable tableName="com_contact_crm_adressbook">
             <column name="crm_adressbook_id" type="bigint"/>
@@ -671,12 +675,14 @@
         <addPrimaryKey columnNames="crm_adressbook_id, com_contact_id" constraintName="com_contact_crm_adressbook_pkey" tableName="com_contact_crm_adressbook" />
 
         <createTable tableName="crm_contact_group">
-            <column name="crm_contact_group_id" type="bigint"/>
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="crm_contact_group_pkey" />
+            </column>
+            <column name="version" type="int4" />
             <column name="name" type="varchar(50)"/>
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
         </createTable>
-        <addPrimaryKey columnNames="crm_contact_group_id" constraintName="crm_contact_group_pkey" tableName="crm_contact_group" />
 
         <createTable tableName="crm_contact_group_com_contact">
             <column name="crm_contact_group_id" type="bigint"/>
@@ -685,27 +691,25 @@
         <addPrimaryKey columnNames="crm_contact_group_id, com_contact_id" constraintName="crm_contact_group_com_contact_pkey" tableName="crm_contact_group_com_contact" />
 
         <createTable tableName="com_communication_entity">
-            <column name="com_communication_entity_id" type="bigint"/>
+            <column name="id" type="bigint" autoIncrement="${id.auto}">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="com_communication_entity_pkey" />
+            </column>
+            <column name="version" type="int4" />
             <column name="name" type="varchar(50)"/>
             <column name="description" type="varchar(255)"/>
             <column name="type" type="varchar(50)"/>
         </createTable>
-        <addPrimaryKey columnNames="com_communication_entity_id" constraintName="com_communication_entity_pkey" tableName="com_communication_entity" />
 
         <addColumn tableName="crm_customer">
             <column name="crm_additional_details_id" type="bigint"/>
             <column name="crm_adressbook_id" type="bigint"/>
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="crm_additional_details_id" baseTableName="crm_customer" constraintName="fk_customer_additional_details" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="crm_additional_details_id" referencedTableName="crm_additional_details" />
-
+        
         <addColumn tableName="ar_customer_account">
-            <column name="crm_adressbook_id" type="bigint"/>
+            <column name="crm_adressbook_id" type="bigint" />
         </addColumn>
-        <addForeignKeyConstraint baseColumnNames="crm_adressbook_id" baseTableName="ar_customer_account" constraintName="fk_adressbook_customer_account" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION"
-            onUpdate="NO ACTION" referencedColumnNames="crm_adressbook_id" referencedTableName="crm_adressbook" />
 
-        <createTable tableName="bi_campaign_group">
+        <createTable tableName="com_campaign_crm_group">
             <column name="com_campaign_id" type="bigint">
                 <constraints nullable="false" />
             </column>
@@ -713,7 +717,7 @@
                 <constraints nullable="false" />
             </column>
         </createTable>
-        <addPrimaryKey columnNames="com_campaign_id, crm_group_id" constraintName="bi_campaign_group_pkey" tableName="bi_campaign_group" />
+        <addPrimaryKey columnNames="com_campaign_id, crm_group_id" constraintName="com_campaign_crm_group_pkey" tableName="com_campaign_crm_group" />
     </changeSet>
 
 </databaseChangeLog> 

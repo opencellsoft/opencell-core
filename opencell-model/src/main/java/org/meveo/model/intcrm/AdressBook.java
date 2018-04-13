@@ -4,14 +4,20 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.CustomFieldEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.Message;
@@ -22,7 +28,8 @@ import org.meveo.model.communication.contact.Contact;
 @ExportIdentifier({ "code" })
 //@DiscriminatorValue(value = "")
 @Table(name = "crm_adressbook")
-public class AdressBook {
+public class AdressBook extends BaseEntity {
+	
 	@Column(name = "name", length = 5)
 	@Size(max = 50)
 	private String name;

@@ -2,10 +2,16 @@ package org.meveo.model.intcrm;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -13,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
+import org.meveo.model.BaseEntity;
 import org.meveo.model.ExportIdentifier;
 import org.meveo.model.communication.Campaign;
 import org.meveo.model.communication.contact.Contact;
@@ -21,7 +28,9 @@ import org.meveo.model.communication.contact.Contact;
 @Entity
 @ExportIdentifier({ "code" })
 @Table(name = "crm_contact_group")
-public class ContactGroup {
+public class ContactGroup extends BaseEntity{
+
+	
 	@Column(name = "name", length = 50)
 	@Size(max = 50)
 	private String name;
