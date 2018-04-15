@@ -11,6 +11,8 @@ import org.meveo.model.catalog.OfferTemplateCategory;
 
 /**
  * The Class OfferTemplateCategoryDto.
+ * 
+ * @author anasseh
  */
 @XmlRootElement(name = "OfferCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -133,18 +135,6 @@ public class OfferTemplateCategoryDto extends BusinessDto {
      */
     public void setOfferTemplateCategoryCode(String offerTemplateCategoryCode) {
         this.offerTemplateCategoryCode = offerTemplateCategoryCode;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
-                + ", id=" + id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath="
-                + imagePath + "]";
     }
 
     /**
@@ -271,5 +261,12 @@ public class OfferTemplateCategoryDto extends BusinessDto {
      */
     public void setImageBase64(String imageBase64) {
         this.imageBase64 = imageBase64;
+    }
+    
+    @Override
+    public String toString() {
+        return "OfferTemplateCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", name=" + name + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode
+                + ", id=" + id + ", href=" + href + ", version=" + version + ", lastModified=" + lastModified + ", active=" + active + ", parentId=" + parentId + ", imagePath="
+                + imagePath + "]";
     }
 }

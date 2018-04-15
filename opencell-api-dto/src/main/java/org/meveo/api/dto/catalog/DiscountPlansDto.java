@@ -36,11 +36,7 @@ public class DiscountPlansDto implements Serializable {
         this.discountPlan = discountPlan;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return "DiscountPlansDto [discountPlan=" + discountPlan + "]";

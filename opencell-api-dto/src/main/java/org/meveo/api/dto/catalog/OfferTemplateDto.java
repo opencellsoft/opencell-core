@@ -89,32 +89,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
         this.disabled = disabled;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode="
-                + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields
-                + ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ProductOfferingDto#getCustomFields()
-     */
+   
     public CustomFieldsDto getCustomFields() {
         return customFields;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ProductOfferingDto#setCustomFields(org.meveo.api.dto.CustomFieldsDto)
-     */
+   
     public void setCustomFields(CustomFieldsDto customFields) {
         this.customFields = customFields;
     }
@@ -217,5 +197,12 @@ public class OfferTemplateDto extends ProductOfferingDto {
      */
     public void setRenewalRule(SubscriptionRenewalDto renewalRule) {
         this.renewalRule = renewalRule;
+    }
+    
+    @Override
+    public String toString() {
+        return "OfferTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", longDescription=" + longDescription + ", disabled=" + disabled + ", bomCode="
+                + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + ", offerServiceTemplates=" + offerServiceTemplates + ", customFields=" + customFields
+                + ", validFrom=" + validFrom + ", validTo=" + validTo + "]";
     }
 }

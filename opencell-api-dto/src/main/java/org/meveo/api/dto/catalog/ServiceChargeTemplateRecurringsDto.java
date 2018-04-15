@@ -41,11 +41,6 @@ public class ServiceChargeTemplateRecurringsDto implements Serializable {
         this.serviceChargeTemplateRecurring = serviceChargeTemplateRecurring;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "ServiceChargeTemplateRecurringsDto [serviceChargeTemplateRecurring=" + serviceChargeTemplateRecurring + "]";

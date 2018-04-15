@@ -118,15 +118,6 @@ public class ServiceConfigurationDto implements Serializable {
         this.customFields = customFields;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "ServiceConfigurationDto [code=" + code + ", description=" + description + ", customFields=" + customFields + "]";
-    }
 
     /**
      * Checks if is mandatory.
@@ -200,4 +191,8 @@ public class ServiceConfigurationDto implements Serializable {
         this.cfValues = cfValues;
     }
 
+    @Override
+    public String toString() {
+        return "ServiceConfigurationDto [code=" + code + ", description=" + description + ", customFields=" + customFields + "]";
+    }
 }

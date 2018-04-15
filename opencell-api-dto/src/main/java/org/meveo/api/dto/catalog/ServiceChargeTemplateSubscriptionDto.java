@@ -14,11 +14,7 @@ public class ServiceChargeTemplateSubscriptionDto extends BaseServiceChargeTempl
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 6508584475693802506L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.BaseServiceChargeTemplateDto#toString()
-     */
+
     @Override
     public String toString() {
         return "ServiceChargeTemplateSubscriptionDto [getCode()=" + getCode() + ", getWallets()=" + getWallets() + "]";

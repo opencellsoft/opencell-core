@@ -25,6 +25,8 @@ import org.meveo.model.catalog.ProductOffering;
 
 /**
  * The Class ProductOfferingDto.
+ * 
+ * @author anasseh
  */
 @XmlRootElement(name = "ProductOffering")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -36,11 +36,6 @@ public class ProductChargeTemplateDto extends ChargeTemplateDto implements Seria
         super(productChargeTemplate, customFieldInstances);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
-     */
     @Override
     public String toString() {
         return "ProductChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + getInvoiceSubCategory() + ", disabled="

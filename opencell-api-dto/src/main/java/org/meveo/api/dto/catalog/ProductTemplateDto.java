@@ -19,6 +19,8 @@ import org.meveo.model.catalog.WalletTemplate;
 
 /**
  * The Class ProductTemplateDto.
+ * 
+ * @author anasseh
  */
 @XmlRootElement(name = "ProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

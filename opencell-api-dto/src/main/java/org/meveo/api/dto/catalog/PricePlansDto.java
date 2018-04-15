@@ -38,11 +38,6 @@ public class PricePlansDto implements Serializable {
         this.pricePlanMatrix = pricePlanMatrix;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "PricePlansDto [pricePlanMatrix=" + pricePlanMatrix + "]";

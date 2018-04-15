@@ -39,14 +39,9 @@ public class WalletsDto implements Serializable {
         this.wallet = wallet;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
+
     @Override
     public String toString() {
         return "WalletsDto [wallet=" + wallet + "]";
     }
-
 }

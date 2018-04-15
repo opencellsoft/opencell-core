@@ -56,23 +56,23 @@ public class OfferTemplate4_1Dto implements Serializable {
     /**
      * Instantiates a new offer template 4 1 dto.
      *
-     * @param e the e
+     * @param offerTemplate the OfferTemplate entity
      * @param customFieldInstances the custom field instances
      */
-    public OfferTemplate4_1Dto(OfferTemplate e, CustomFieldsDto customFieldInstances) {
-        code = e.getCode();
-        description = e.getDescription();
-        disabled = e.isDisabled();
-        if (e.getBusinessOfferModel() != null) {
-            bomCode = e.getBusinessOfferModel().getCode();
+    public OfferTemplate4_1Dto(OfferTemplate offerTemplate, CustomFieldsDto customFieldInstances) {
+        code = offerTemplate.getCode();
+        description = offerTemplate.getDescription();
+        disabled = offerTemplate.isDisabled();
+        if (offerTemplate.getBusinessOfferModel() != null) {
+            bomCode = offerTemplate.getBusinessOfferModel().getCode();
         }
 
-        if (e.getOfferTemplateCategories() != null) {
-            offerTemplateCategoryCode = e.getOfferTemplateCategories().get(0).getCode();
+        if (offerTemplate.getOfferTemplateCategories() != null) {
+            offerTemplateCategoryCode = offerTemplate.getOfferTemplateCategories().get(0).getCode();
         }
 
-        if (e.getOfferServiceTemplates() != null && e.getOfferServiceTemplates().size() > 0) {
-            for (OfferServiceTemplate st : e.getOfferServiceTemplates()) {
+        if (offerTemplate.getOfferServiceTemplates() != null && offerTemplate.getOfferServiceTemplates().size() > 0) {
+            for (OfferServiceTemplate st : offerTemplate.getOfferServiceTemplates()) {
                 serviceTemplates.getServiceTemplate().add(new ServiceTemplateDto(st.getServiceTemplate()));
             }
         }
@@ -132,17 +132,6 @@ public class OfferTemplate4_1Dto implements Serializable {
      */
     public void setDisabled(boolean disabled) {
         this.disabled = disabled;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled + ", serviceTemplates=" + serviceTemplates + ", customFields="
-                + customFields + ", bomCode=" + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + "]";
     }
 
     /**
@@ -217,4 +206,9 @@ public class OfferTemplate4_1Dto implements Serializable {
         this.offerTemplateCategoryCode = offerTemplateCategoryCode;
     }
 
+    @Override
+    public String toString() {
+        return "OfferTemplateDto [code=" + code + ", description=" + description + ", disabled=" + disabled + ", serviceTemplates=" + serviceTemplates + ", customFields="
+                + customFields + ", bomCode=" + bomCode + ", offerTemplateCategoryCode=" + offerTemplateCategoryCode + "]";
+    }
 }

@@ -44,14 +44,14 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
     /**
      * Instantiates a new one shot charge template dto.
      *
-     * @param e the e
+     * @param oneShotChargeTemplate the OneShotChargeTemplate entity
      * @param customFieldInstances the custom field instances
      */
-    public OneShotChargeTemplateDto(OneShotChargeTemplate e, CustomFieldsDto customFieldInstances) {
-        super(e, customFieldInstances);
-        oneShotChargeTemplateType = e.getOneShotChargeTemplateType();
-        immediateInvoicing = e.getImmediateInvoicing();
-        setFilterExpression(e.getFilterExpression());
+    public OneShotChargeTemplateDto(OneShotChargeTemplate oneShotChargeTemplate, CustomFieldsDto customFieldInstances) {
+        super(oneShotChargeTemplate, customFieldInstances);
+        oneShotChargeTemplateType = oneShotChargeTemplate.getOneShotChargeTemplateType();
+        immediateInvoicing = oneShotChargeTemplate.getImmediateInvoicing();
+        setFilterExpression(oneShotChargeTemplate.getFilterExpression());
     }
 
     /**
@@ -72,18 +72,6 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
         this.immediateInvoicing = immediateInvoicing;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
-     */
-    @Override
-    public String toString() {
-        return "OneShotChargeTemplateDto [oneShotChargeTemplateType=" + oneShotChargeTemplateType + ", immediateInvoicing=" + immediateInvoicing + ", getCode()=" + getCode()
-                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
-                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
-                + getClass() + ", hashCode()=" + hashCode() + "]";
-    }
 
     /**
      * Gets the one shot charge template type.
@@ -120,5 +108,12 @@ public class OneShotChargeTemplateDto extends ChargeTemplateDto {
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
     }
-
+    
+    @Override
+    public String toString() {
+        return "OneShotChargeTemplateDto [oneShotChargeTemplateType=" + oneShotChargeTemplateType + ", immediateInvoicing=" + immediateInvoicing + ", getCode()=" + getCode()
+                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
+                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
+                + getClass() + ", hashCode()=" + hashCode() + "]";
+    }
 }

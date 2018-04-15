@@ -47,16 +47,16 @@ public class OfferServiceTemplateDto implements Serializable {
     /**
      * Instantiates a new offer service template dto.
      *
-     * @param e the e
+     * @param offerServiceTemplate the OfferServiceTemplate entity
      * @param customFields the custom fields
      */
-    public OfferServiceTemplateDto(OfferServiceTemplate e, CustomFieldsDto customFields) {
-        if (e.getServiceTemplate() != null) {
-            serviceTemplate = new ServiceTemplateDto(e.getServiceTemplate(), customFields);
+    public OfferServiceTemplateDto(OfferServiceTemplate offerServiceTemplate, CustomFieldsDto customFields) {
+        if (offerServiceTemplate.getServiceTemplate() != null) {
+            serviceTemplate = new ServiceTemplateDto(offerServiceTemplate.getServiceTemplate(), customFields);
         }
-        mandatory = e.isMandatory();
-        if (e.getIncompatibleServices() != null) {
-            for (ServiceTemplate st : e.getIncompatibleServices()) {
+        mandatory = offerServiceTemplate.isMandatory();
+        if (offerServiceTemplate.getIncompatibleServices() != null) {
+            for (ServiceTemplate st : offerServiceTemplate.getIncompatibleServices()) {
                 incompatibleServices.add(new ServiceTemplateDto(st));
             }
         }
@@ -89,16 +89,6 @@ public class OfferServiceTemplateDto implements Serializable {
         this.incompatibleServices = incompatibleServices;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "OfferServiceTemplateDto [serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices + "]";
-    }
-
     /**
      * Gets the service template.
      *
@@ -124,5 +114,10 @@ public class OfferServiceTemplateDto implements Serializable {
      */
     public Boolean getMandatory() {
         return mandatory;
+    }
+    
+    @Override
+    public String toString() {
+        return "OfferServiceTemplateDto [serviceTemplate=" + serviceTemplate + ", mandatory=" + mandatory + ", incompatibleServices=" + incompatibleServices + "]";
     }
 }

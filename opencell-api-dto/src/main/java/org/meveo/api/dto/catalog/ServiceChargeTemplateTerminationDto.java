@@ -14,11 +14,6 @@ public class ServiceChargeTemplateTerminationDto extends BaseServiceChargeTempla
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -191541706032220541L;
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.BaseServiceChargeTemplateDto#toString()
-     */
     @Override
     public String toString() {
         return "ServiceChargeTemplateTerminationDto [getCode()=" + getCode() + ", getWallets()=" + getWallets() + "]";

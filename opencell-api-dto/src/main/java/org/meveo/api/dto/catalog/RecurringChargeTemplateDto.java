@@ -181,20 +181,7 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         this.calendar = calendar;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
-     */
-    @Override
-    public String toString() {
-        return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata
-                + ", terminationProrata=" + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", getCode()=" + getCode()
-                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
-                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
-                + getClass() + ", hashCode()=" + hashCode() + "]";
-    }
-
+   
     /**
      * Gets the filter expression.
      *
@@ -213,4 +200,12 @@ public class RecurringChargeTemplateDto extends ChargeTemplateDto {
         this.filterExpression = filterExpression;
     }
 
+    @Override
+    public String toString() {
+        return "RecurringChargeTemplateDto [calendar=" + calendar + ", durationTermInMonth=" + durationTermInMonth + ", subscriptionProrata=" + subscriptionProrata
+                + ", terminationProrata=" + terminationProrata + ", applyInAdvance=" + applyInAdvance + ", shareLevel=" + shareLevel + ", getCode()=" + getCode()
+                + ", getDescription()=" + getDescription() + ", getLanguageDescriptions()=" + getLanguageDescriptions() + ", toString()=" + super.toString()
+                + ", getAmountEditable()=" + getAmountEditable() + ", getInvoiceSubCategory()=" + getInvoiceSubCategory() + ", isDisabled()=" + isDisabled() + ", getClass()="
+                + getClass() + ", hashCode()=" + hashCode() + "]";
+    }
 }

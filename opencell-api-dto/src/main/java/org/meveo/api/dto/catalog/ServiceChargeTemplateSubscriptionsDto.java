@@ -41,11 +41,6 @@ public class ServiceChargeTemplateSubscriptionsDto implements Serializable {
         this.serviceChargeTemplateSubscription = serviceChargeTemplateSubscription;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "ServiceChargeTemplateSubscriptionsDto [serviceChargeTemplateSubscription=" + serviceChargeTemplateSubscription + "]";

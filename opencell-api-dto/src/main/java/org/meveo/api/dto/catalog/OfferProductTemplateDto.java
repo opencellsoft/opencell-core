@@ -8,6 +8,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * The Class OfferProductTemplateDto.
+ * 
+ * @author anasseh
  */
 @XmlRootElement(name = "OfferProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)

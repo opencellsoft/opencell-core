@@ -41,11 +41,6 @@ public class ServiceChargeTemplateTerminationsDto implements Serializable {
         this.serviceChargeTemplateTermination = serviceChargeTemplateTermination;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "ServiceChargeTemplateTerminationsDto [serviceChargeTemplateTermination=" + serviceChargeTemplateTermination + "]";

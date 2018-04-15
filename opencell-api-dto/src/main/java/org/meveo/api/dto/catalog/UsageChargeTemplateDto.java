@@ -57,17 +57,17 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
     /**
      * Instantiates a new usage charge template dto.
      *
-     * @param e the e
+     * @param usageChargeTemplate the UsageChargeTemplate entity
      * @param customFieldInstances the custom field instances
      */
-    public UsageChargeTemplateDto(UsageChargeTemplate e, CustomFieldsDto customFieldInstances) {
-        super(e, customFieldInstances);
-        filterParam1 = e.getFilterParam1();
-        filterParam2 = e.getFilterParam2();
-        filterParam3 = e.getFilterParam3();
-        filterParam4 = e.getFilterParam4();
-        setFilterExpression(e.getFilterExpression());
-        priority = e.getPriority();
+    public UsageChargeTemplateDto(UsageChargeTemplate usageChargeTemplate, CustomFieldsDto customFieldInstances) {
+        super(usageChargeTemplate, customFieldInstances);
+        filterParam1 = usageChargeTemplate.getFilterParam1();
+        filterParam2 = usageChargeTemplate.getFilterParam2();
+        filterParam3 = usageChargeTemplate.getFilterParam3();
+        filterParam4 = usageChargeTemplate.getFilterParam4();
+        setFilterExpression(usageChargeTemplate.getFilterExpression());
+        priority = usageChargeTemplate.getPriority();
     }
 
     /**
@@ -160,16 +160,6 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
         this.priority = priority;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
-     */
-    @Override
-    public String toString() {
-        return "UsageChargeTemplateDto [filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4
-                + ", filterExpression=" + getFilterExpression() + ", priority=" + priority + "]";
-    }
 
     /**
      * Gets the filter expression.
@@ -187,5 +177,11 @@ public class UsageChargeTemplateDto extends ChargeTemplateDto {
      */
     public void setFilterExpression(String filterExpression) {
         this.filterExpression = filterExpression;
+    }
+    
+    @Override
+    public String toString() {
+        return "UsageChargeTemplateDto [filterParam1=" + filterParam1 + ", filterParam2=" + filterParam2 + ", filterParam3=" + filterParam3 + ", filterParam4=" + filterParam4
+                + ", filterExpression=" + getFilterExpression() + ", priority=" + priority + "]";
     }
 }

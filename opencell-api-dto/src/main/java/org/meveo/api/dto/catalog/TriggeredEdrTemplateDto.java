@@ -55,19 +55,19 @@ public class TriggeredEdrTemplateDto extends BusinessDto {
     /**
      * Instantiates a new triggered edr template dto.
      *
-     * @param e the e
+     * @param triggeredEDRTemplate the TriggeredEDRTemplate entity
      */
-    public TriggeredEdrTemplateDto(TriggeredEDRTemplate e) {
-        super(e);
+    public TriggeredEdrTemplateDto(TriggeredEDRTemplate triggeredEDRTemplate) {
+        super(triggeredEDRTemplate);
 
-        subscriptionEl = e.getSubscriptionEl();
-        meveoInstanceCode = e.getMeveoInstance() == null ? null : e.getMeveoInstance().getCode();
-        conditionEl = e.getConditionEl();
-        quantityEl = e.getQuantityEl();
-        param1El = e.getParam1El();
-        param2El = e.getParam2El();
-        param3El = e.getParam3El();
-        param4El = e.getParam4El();
+        subscriptionEl = triggeredEDRTemplate.getSubscriptionEl();
+        meveoInstanceCode = triggeredEDRTemplate.getMeveoInstance() == null ? null : triggeredEDRTemplate.getMeveoInstance().getCode();
+        conditionEl = triggeredEDRTemplate.getConditionEl();
+        quantityEl = triggeredEDRTemplate.getQuantityEl();
+        param1El = triggeredEDRTemplate.getParam1El();
+        param2El = triggeredEDRTemplate.getParam2El();
+        param3El = triggeredEDRTemplate.getParam3El();
+        param4El = triggeredEDRTemplate.getParam4El();
     }
 
     /**
@@ -214,15 +214,9 @@ public class TriggeredEdrTemplateDto extends BusinessDto {
         this.param4El = param4El;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "TriggeredEdrTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", subscriptionEl=" + subscriptionEl + ", conditionEl=" + conditionEl
                 + ", quantityEl=" + quantityEl + ", param1El=" + param1El + ", param2El=" + param2El + ", param3El=" + param3El + ", param4El=" + param4El + "]";
     }
-
 }

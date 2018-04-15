@@ -145,4 +145,11 @@ public class OneShotChargeTemplateWithPriceDto {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "OneShotChargeTemplateWithPriceDto [chargeCode=" + chargeCode + ", description=" + description + ", unitPriceWithoutTax=" + unitPriceWithoutTax + ", taxPercent="
+                + taxPercent + ", taxCode=" + taxCode + ", taxDescription=" + taxDescription + "]";
+    }
+ 
 }

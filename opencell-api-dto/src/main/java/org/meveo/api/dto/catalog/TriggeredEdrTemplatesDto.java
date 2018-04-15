@@ -29,8 +29,9 @@ public class TriggeredEdrTemplatesDto implements Serializable {
      * @return the triggered edr
      */
     public List<TriggeredEdrTemplateDto> getTriggeredEdr() {
-        if (triggeredEdr == null)
+        if (triggeredEdr == null) {
             triggeredEdr = new ArrayList<TriggeredEdrTemplateDto>();
+        }
         return triggeredEdr;
     }
 
@@ -43,14 +44,8 @@ public class TriggeredEdrTemplatesDto implements Serializable {
         this.triggeredEdr = triggeredEdr;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "TriggeredEdrTemplatesDto [triggeredEdr=" + triggeredEdr + ", toString()=" + super.toString() + "]";
     }
-
 }
