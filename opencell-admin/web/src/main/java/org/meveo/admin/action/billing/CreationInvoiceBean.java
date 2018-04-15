@@ -246,12 +246,6 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 		addDetailedInvoiceLines(selectedInvoiceSubCategory);
 	}
 	
-	
-	public boolean hasCF() throws BusinessException {
-	    return customFieldDataEntryBean.getGroupedFieldTemplates(entity).getChildren().size() > 0;
-	}
-
-	
 	private void addDetailedInvoiceLines(InvoiceSubCategory selectInvoiceSubCat) {
 		try {
 			if (entity.getBillingAccount() == null) {

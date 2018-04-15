@@ -153,15 +153,8 @@
 									disabled="#{creationInvoiceBean.entity.linkedInvoices.size() lt 1}"
 									value="#{messages['action.invoice.importFromLinkedInvoices']}"
 									action="#{creationInvoiceBean.importFromLinkedInvoices}"
-									process=":formId:tabView @this" rendered="#{!creationInvoiceBean.hasCF()}"
-									update=":formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" >
-								</p:commandButton>
-								<p:commandButton
-									disabled="#{creationInvoiceBean.entity.linkedInvoices.size() lt 1}"
-									value="#{messages['action.invoice.importFromLinkedInvoices']}"
-									action="#{creationInvoiceBean.importFromLinkedInvoices}"
-									process=":formId:tabView @this" rendered="#{creationInvoiceBean.hasCF()}"
-									update=":formId:tabView:cfTab :formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" >
+									process=":formId:tabView @this"
+									update=":formId:tabView :formId:tabView:aggregatedInvoicePanel :formId:tabView:detailedInvoicePanel :formId:tabView:invoiceSummary :formId:messages" >
 								</p:commandButton>
 								
 								<h:outputText value="&#160;" />
