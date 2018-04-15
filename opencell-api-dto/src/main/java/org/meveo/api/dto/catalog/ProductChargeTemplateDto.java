@@ -9,26 +9,44 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.CustomFieldsDto;
 import org.meveo.model.catalog.ProductChargeTemplate;
 
+/**
+ * The Class ProductChargeTemplateDto.
+ */
 @XmlRootElement(name = "ProductChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductChargeTemplateDto extends ChargeTemplateDto implements Serializable {
 
-	private static final long serialVersionUID = -8453142818864003969L;
-	
-	public ProductChargeTemplateDto() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public ProductChargeTemplateDto(ProductChargeTemplate productChargeTemplate, CustomFieldsDto customFieldInstances) {
-		super(productChargeTemplate, customFieldInstances);
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -8453142818864003969L;
 
-	@Override
-	public String toString() {
-		return "ProductChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + getInvoiceSubCategory() + ", disabled="
-				+ isDisabled() + ", amountEditable=" + getAmountEditable() + ", languageDescriptions=" + getLanguageDescriptions() + ", inputUnitDescription="
-				+ getInputUnitDescription() + ", ratingUnitDescription=" + getRatingUnitDescription() + ", unitMultiplicator=" + getUnitMultiplicator() + ", unitNbDecimal="
-				+ getUnitNbDecimal() + ", customFields=" + getCustomFields() + ", triggeredEdrs=" + getTriggeredEdrs() + ",roundingModeDtoEnum=" + getRoundingModeDtoEnum() + "]";
-	}
+    /**
+     * Instantiates a new product charge template dto.
+     */
+    public ProductChargeTemplateDto() {
+        // TODO Auto-generated constructor stub
+    }
+
+    /**
+     * Instantiates a new product charge template dto.
+     *
+     * @param productChargeTemplate the product charge template
+     * @param customFieldInstances the custom field instances
+     */
+    public ProductChargeTemplateDto(ProductChargeTemplate productChargeTemplate, CustomFieldsDto customFieldInstances) {
+        super(productChargeTemplate, customFieldInstances);
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.meveo.api.dto.catalog.ChargeTemplateDto#toString()
+     */
+    @Override
+    public String toString() {
+        return "ProductChargeTemplateDto [code=" + getCode() + ", description=" + getDescription() + ", invoiceSubCategory=" + getInvoiceSubCategory() + ", disabled="
+                + isDisabled() + ", amountEditable=" + getAmountEditable() + ", languageDescriptions=" + getLanguageDescriptions() + ", inputUnitDescription="
+                + getInputUnitDescription() + ", ratingUnitDescription=" + getRatingUnitDescription() + ", unitMultiplicator=" + getUnitMultiplicator() + ", unitNbDecimal="
+                + getUnitNbDecimal() + ", customFields=" + getCustomFields() + ", triggeredEdrs=" + getTriggeredEdrs() + ",roundingModeDtoEnum=" + getRoundingModeDtoEnum() + "]";
+    }
 
 }

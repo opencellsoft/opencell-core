@@ -12,42 +12,65 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.api.dto.BaseDto;
 
 /**
+ * The Class OperationServicesRequestDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "OperationServicesRequestDto")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OperationServicesRequestDto extends BaseDto {
 
-	private static final long serialVersionUID = 1150993171011072506L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1150993171011072506L;
 
-	@XmlElement(required = true)
-	private String subscriptionCode;
+    /** The subscription code. */
+    @XmlElement(required = true)
+    private String subscriptionCode;
 
-	@XmlElementWrapper(name="ListServiceToUpdate")
-    @XmlElement(name="serviceToUpdate")
-	private List<ServiceToUpdateDto> servicesToUpdate = new ArrayList<ServiceToUpdateDto>();
+    /** The services to update. */
+    @XmlElementWrapper(name = "ListServiceToUpdate")
+    @XmlElement(name = "serviceToUpdate")
+    private List<ServiceToUpdateDto> servicesToUpdate = new ArrayList<ServiceToUpdateDto>();
 
-	public String getSubscriptionCode() {
-		return subscriptionCode;
-	}
+    /**
+     * Gets the subscription code.
+     *
+     * @return the subscription code
+     */
+    public String getSubscriptionCode() {
+        return subscriptionCode;
+    }
 
-	public void setSubscriptionCode(String subscriptionCode) {
-		this.subscriptionCode = subscriptionCode;
-	}
+    /**
+     * Sets the subscription code.
+     *
+     * @param subscriptionCode the new subscription code
+     */
+    public void setSubscriptionCode(String subscriptionCode) {
+        this.subscriptionCode = subscriptionCode;
+    }
 
-	public List<ServiceToUpdateDto> getServicesToUpdate() {
-		return servicesToUpdate;
-	}
+    /**
+     * Gets the services to update.
+     *
+     * @return the services to update
+     */
+    public List<ServiceToUpdateDto> getServicesToUpdate() {
+        return servicesToUpdate;
+    }
 
-	public void setServicesToUpdate(List<ServiceToUpdateDto> servicesToUpdate) {
-		this.servicesToUpdate = servicesToUpdate;
-	}
+    /**
+     * Sets the services to update.
+     *
+     * @param servicesToUpdate the new services to update
+     */
+    public void setServicesToUpdate(List<ServiceToUpdateDto> servicesToUpdate) {
+        this.servicesToUpdate = servicesToUpdate;
+    }
 
-	@Override
-	public String toString() {
-		return "OperationServicesRequestDto [subscriptionCode=" + subscriptionCode + ", servicesToUpdate=" + servicesToUpdate + "]";
-	}
-
-	
+    @Override
+    public String toString() {
+        return "OperationServicesRequestDto [subscriptionCode=" + subscriptionCode + ", servicesToUpdate=" + servicesToUpdate + "]";
+    }
 
 }

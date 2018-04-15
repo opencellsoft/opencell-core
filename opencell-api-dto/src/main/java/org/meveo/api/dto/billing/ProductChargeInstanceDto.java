@@ -6,17 +6,25 @@ import org.meveo.model.billing.ChargeInstance;
 import org.meveo.model.billing.ProductChargeInstance;
 
 /**
+ * The Class ProductChargeInstanceDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 public class ProductChargeInstanceDto extends ChargeInstanceDto {
 
-	protected BigDecimal quantity = BigDecimal.ONE;
+    /** The quantity. */
+    protected BigDecimal quantity = BigDecimal.ONE;
 
-	public ProductChargeInstanceDto(ProductChargeInstance e) {
-		super((ChargeInstance) e);
-		if (e != null) {
-			quantity = e.getQuantity();
-		}
-	}
+    /**
+     * Instantiates a new product charge instance dto.
+     *
+     * @param productChargeInstance the ProductChargeInstance entity
+     */
+    public ProductChargeInstanceDto(ProductChargeInstance productChargeInstance) {
+        super((ChargeInstance) productChargeInstance);
+        if (productChargeInstance != null) {
+            quantity = productChargeInstance.getQuantity();
+        }
+    }
 
 }

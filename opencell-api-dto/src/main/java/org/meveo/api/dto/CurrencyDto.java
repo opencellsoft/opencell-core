@@ -9,53 +9,94 @@ import org.meveo.model.admin.Currency;
 import org.meveo.model.billing.TradingCurrency;
 
 /**
+ * The Class CurrencyDto.
+ *
  * @author Edward P. Legaspi
- * 
- *  @deprecated will be renammed to  TradingCurrencyDto
- **/
+ * @deprecated will be renammed to TradingCurrencyDto
+ */
 @XmlRootElement(name = "Currency")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CurrencyDto extends BaseDto {
 
-	private static final long serialVersionUID = 9143645109603442839L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 9143645109603442839L;
 
-	@XmlAttribute(required = true)
-	private String code;
+    /** The code. */
+    @XmlAttribute(required = true)
+    private String code;
 
-	private String description;
+    /** The description. */
+    private String description;
 
-	public CurrencyDto() {
+    /**
+     * Instantiates a new currency dto.
+     */
+    public CurrencyDto() {
 
-	}
+    }
 
-	public CurrencyDto(TradingCurrency e) {
-		code = e.getCurrencyCode();
-		description = e.getPrDescription();
-	}
-	public CurrencyDto(Currency e) {
-		code = e.getCurrencyCode();
-		description = e.getDescriptionEn();
-	}
+    /**
+     * Instantiates a new currency dto.
+     *
+     * @param tradingCurrency the trading currency
+     */
+    public CurrencyDto(TradingCurrency tradingCurrency) {
+        code = tradingCurrency.getCurrencyCode();
+        description = tradingCurrency.getPrDescription();
+    }
 
-	public String getCode() {
-		return code;
-	}
+    /**
+     * Instantiates a new currency dto.
+     *
+     * @param currency the currency
+     */
+    public CurrencyDto(Currency currency) {
+        code = currency.getCurrencyCode();
+        description = currency.getDescriptionEn();
+    }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
+    public String getCode() {
+        return code;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
+    public void setCode(String code) {
+        this.code = code;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	@Override
-	public String toString() {
-		return "CurrencyDto [code=" + code + ", description=" + description + "]";
-	}
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "CurrencyDto [code=" + code + ", description=" + description + "]";
+    }
 
 }

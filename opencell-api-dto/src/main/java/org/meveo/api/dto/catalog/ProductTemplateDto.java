@@ -17,73 +17,125 @@ import org.meveo.model.catalog.BusinessProductModel;
 import org.meveo.model.catalog.ProductTemplate;
 import org.meveo.model.catalog.WalletTemplate;
 
+/**
+ * The Class ProductTemplateDto.
+ */
 @XmlRootElement(name = "ProductTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ProductTemplateDto extends ProductOfferingDto implements Serializable {
 
-	private static final long serialVersionUID = 1866373944715745993L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1866373944715745993L;
 
-	@XmlElementWrapper(name = "productChargeTemplates")
-	@XmlElement(name = "productChargeTemplate", required = true)
-	private List<ProductChargeTemplateDto> productChargeTemplates;
+    /** The product charge templates. */
+    @XmlElementWrapper(name = "productChargeTemplates")
+    @XmlElement(name = "productChargeTemplate", required = true)
+    private List<ProductChargeTemplateDto> productChargeTemplates;
 
-	private BusinessProductModelDto businessProductModel;
+    /** The business product model. */
+    private BusinessProductModelDto businessProductModel;
 
-	@XmlElementWrapper(name = "walletTemplates")
-	@XmlElement(name = "walletTemplate")
-	private List<WalletTemplateDto> walletTemplates;
+    /** The wallet templates. */
+    @XmlElementWrapper(name = "walletTemplates")
+    @XmlElement(name = "walletTemplate")
+    private List<WalletTemplateDto> walletTemplates;
 
-	public ProductTemplateDto() {
-	}
+    /**
+     * Instantiates a new product template dto.
+     */
+    public ProductTemplateDto() {
+    }
 
-	public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
-		super(productTemplate, customFieldsDto, asLink);
+    /**
+     * Instantiates a new product template dto.
+     *
+     * @param productTemplate the product template
+     * @param customFieldsDto the custom fields dto
+     * @param asLink the as link
+     */
+    public ProductTemplateDto(ProductTemplate productTemplate, CustomFieldsDto customFieldsDto, boolean asLink) {
+        super(productTemplate, customFieldsDto, asLink);
 
-		if (asLink){
-		    return;
-		}
-		
-		BusinessProductModel businessProductModel = productTemplate.getBusinessProductModel();
-		BusinessProductModelDto businessProductModelDto = null;
-		if (businessProductModel != null) {
-			businessProductModelDto = new BusinessProductModelDto(businessProductModel);
-		}
-		this.setBusinessProductModel(businessProductModelDto);
-		List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
-		if (walletTemplates != null && !walletTemplates.isEmpty()) {
-			WalletTemplateDto walletDto = null;
-			this.setWalletTemplates(new ArrayList<WalletTemplateDto>());
-			for (WalletTemplate walletTemplate : walletTemplates) {
-				walletDto = new WalletTemplateDto(walletTemplate);
-				this.getWalletTemplates().add(walletDto);
-			}
-		}
-	}
+        if (asLink) {
+            return;
+        }
 
-	public List<ProductChargeTemplateDto> getProductChargeTemplates() {
-		return productChargeTemplates;
-	}
-	
-	public void setProductChargeTemplates(List<ProductChargeTemplateDto> productChargeTemplates) {
-		this.productChargeTemplates = productChargeTemplates;
-	}
+        BusinessProductModel businessProductModel = productTemplate.getBusinessProductModel();
+        BusinessProductModelDto businessProductModelDto = null;
+        if (businessProductModel != null) {
+            businessProductModelDto = new BusinessProductModelDto(businessProductModel);
+        }
+        this.setBusinessProductModel(businessProductModelDto);
+        List<WalletTemplate> walletTemplates = productTemplate.getWalletTemplates();
+        if (walletTemplates != null && !walletTemplates.isEmpty()) {
+            WalletTemplateDto walletDto = null;
+            this.setWalletTemplates(new ArrayList<WalletTemplateDto>());
+            for (WalletTemplate walletTemplate : walletTemplates) {
+                walletDto = new WalletTemplateDto(walletTemplate);
+                this.getWalletTemplates().add(walletDto);
+            }
+        }
+    }
 
-	public BusinessProductModelDto getBusinessProductModel() {
-		return businessProductModel;
-	}
+    /**
+     * Gets the product charge templates.
+     *
+     * @return the product charge templates
+     */
+    public List<ProductChargeTemplateDto> getProductChargeTemplates() {
+        return productChargeTemplates;
+    }
 
-	public void setBusinessProductModel(BusinessProductModelDto businessProductModel) {
-		this.businessProductModel = businessProductModel;
-	}
+    /**
+     * Sets the product charge templates.
+     *
+     * @param productChargeTemplates the new product charge templates
+     */
+    public void setProductChargeTemplates(List<ProductChargeTemplateDto> productChargeTemplates) {
+        this.productChargeTemplates = productChargeTemplates;
+    }
 
-	public List<WalletTemplateDto> getWalletTemplates() {
-		return walletTemplates;
-	}
+    /**
+     * Gets the business product model.
+     *
+     * @return the business product model
+     */
+    public BusinessProductModelDto getBusinessProductModel() {
+        return businessProductModel;
+    }
 
-	public void setWalletTemplates(List<WalletTemplateDto> walletTemplates) {
-		this.walletTemplates = walletTemplates;
-	}
+    /**
+     * Sets the business product model.
+     *
+     * @param businessProductModel the new business product model
+     */
+    public void setBusinessProductModel(BusinessProductModelDto businessProductModel) {
+        this.businessProductModel = businessProductModel;
+    }
 
+    /**
+     * Gets the wallet templates.
+     *
+     * @return the wallet templates
+     */
+    public List<WalletTemplateDto> getWalletTemplates() {
+        return walletTemplates;
+    }
+
+    /**
+     * Sets the wallet templates.
+     *
+     * @param walletTemplates the new wallet templates
+     */
+    public void setWalletTemplates(List<WalletTemplateDto> walletTemplates) {
+        this.walletTemplates = walletTemplates;
+    }
+
+    /**
+     * Checks if is code only.
+     *
+     * @return true, if is code only
+     */
     public boolean isCodeOnly() {
         return StringUtils.isBlank(getDescription()) && (productChargeTemplates == null || productChargeTemplates.isEmpty()) && (customFields == null || customFields.isEmpty());
     }

@@ -8,28 +8,47 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class ServiceChargeTemplateUsagesDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ServiceChargeTemplateUsagesDto implements Serializable {
 
-	private static final long serialVersionUID = -5175410607345470193L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -5175410607345470193L;
 
-	private List<ServiceUsageChargeTemplateDto> serviceChargeTemplateUsage;
+    /** The service charge template usage. */
+    private List<ServiceUsageChargeTemplateDto> serviceChargeTemplateUsage;
 
-	public List<ServiceUsageChargeTemplateDto> getServiceChargeTemplateUsage() {
-		if (serviceChargeTemplateUsage == null)
-			serviceChargeTemplateUsage = new ArrayList<ServiceUsageChargeTemplateDto>();
-		return serviceChargeTemplateUsage;
-	}
+    /**
+     * Gets the service charge template usage.
+     *
+     * @return the service charge template usage
+     */
+    public List<ServiceUsageChargeTemplateDto> getServiceChargeTemplateUsage() {
+        if (serviceChargeTemplateUsage == null)
+            serviceChargeTemplateUsage = new ArrayList<ServiceUsageChargeTemplateDto>();
+        return serviceChargeTemplateUsage;
+    }
 
-	public void setServiceChargeTemplateUsage(List<ServiceUsageChargeTemplateDto> serviceChargeTemplateUsage) {
-		this.serviceChargeTemplateUsage = serviceChargeTemplateUsage;
-	}
+    /**
+     * Sets the service charge template usage.
+     *
+     * @param serviceChargeTemplateUsage the new service charge template usage
+     */
+    public void setServiceChargeTemplateUsage(List<ServiceUsageChargeTemplateDto> serviceChargeTemplateUsage) {
+        this.serviceChargeTemplateUsage = serviceChargeTemplateUsage;
+    }
 
-	@Override
-	public String toString() {
-		return "ServiceChargeTemplateUsagesDto [serviceChargeTemplateUsage=" + serviceChargeTemplateUsage + "]";
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ServiceChargeTemplateUsagesDto [serviceChargeTemplateUsage=" + serviceChargeTemplateUsage + "]";
+    }
 
 }

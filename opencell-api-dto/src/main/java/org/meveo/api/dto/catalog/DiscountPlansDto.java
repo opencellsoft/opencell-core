@@ -6,23 +6,43 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
+/**
+ * The Class DiscountPlansDto.
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DiscountPlansDto implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private List<DiscountPlanDto> discountPlan;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	public List<DiscountPlanDto> getDiscountPlan() {
-		return discountPlan;
-	}
+    /** The discount plan. */
+    private List<DiscountPlanDto> discountPlan;
 
-	public void setDiscountPlan(List<DiscountPlanDto> discountPlan) {
-		this.discountPlan = discountPlan;
-	}
+    /**
+     * Gets the discount plan.
+     *
+     * @return the discount plan
+     */
+    public List<DiscountPlanDto> getDiscountPlan() {
+        return discountPlan;
+    }
 
-	@Override
-	public String toString() {
-		return "DiscountPlansDto [discountPlan=" + discountPlan + "]";
-	}
+    /**
+     * Sets the discount plan.
+     *
+     * @param discountPlan the new discount plan
+     */
+    public void setDiscountPlan(List<DiscountPlanDto> discountPlan) {
+        this.discountPlan = discountPlan;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "DiscountPlansDto [discountPlan=" + discountPlan + "]";
+    }
 }

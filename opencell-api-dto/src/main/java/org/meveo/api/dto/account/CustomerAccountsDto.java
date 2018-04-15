@@ -7,28 +7,41 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 
 /**
+ * The Class CustomerAccountsDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CustomerAccountsDto {
 
-	private List<CustomerAccountDto> customerAccount;
+    /** The customer account. */
+    private List<CustomerAccountDto> customerAccount;
 
-	public List<CustomerAccountDto> getCustomerAccount() {
-		if (customerAccount == null) {
-			customerAccount = new ArrayList<CustomerAccountDto>();
-		}
+    /**
+     * Gets the customer account.
+     *
+     * @return the customer account
+     */
+    public List<CustomerAccountDto> getCustomerAccount() {
+        if (customerAccount == null) {
+            customerAccount = new ArrayList<CustomerAccountDto>();
+        }
 
-		return customerAccount;
-	}
+        return customerAccount;
+    }
 
-	public void setCustomerAccount(List<CustomerAccountDto> customerAccount) {
-		this.customerAccount = customerAccount;
-	}
+    /**
+     * Sets the customer account.
+     *
+     * @param customerAccount the new customer account
+     */
+    public void setCustomerAccount(List<CustomerAccountDto> customerAccount) {
+        this.customerAccount = customerAccount;
+    }
 
-	@Override
-	public String toString() {
-		return "CustomerAccountsDto [customerAccount=" + customerAccount + "]";
-	}
+    @Override
+    public String toString() {
+        return "CustomerAccountsDto [customerAccount=" + customerAccount + "]";
+    }
 
 }

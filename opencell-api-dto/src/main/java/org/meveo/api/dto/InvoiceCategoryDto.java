@@ -9,56 +9,85 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.billing.InvoiceCategory;
 
 /**
+ * The Class InvoiceCategoryDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "InvoiceCategory")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InvoiceCategoryDto extends BusinessDto {
 
-	private static final long serialVersionUID = 5166093858617578774L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 5166093858617578774L;
 
-	private List<LanguageDescriptionDto> languageDescriptions;
-	
-	private CustomFieldsDto customFields;
+    /** The language descriptions. */
+    private List<LanguageDescriptionDto> languageDescriptions;
 
-	public InvoiceCategoryDto() {
+    /** The custom fields. */
+    private CustomFieldsDto customFields;
 
-	}
+    /**
+     * Instantiates a new invoice category dto.
+     */
+    public InvoiceCategoryDto() {
 
-	public InvoiceCategoryDto(InvoiceCategory invoiceCategory, CustomFieldsDto customFieldInstances) {
-		super(invoiceCategory);
+    }
+
+    /**
+     * Instantiates a new invoice category dto.
+     *
+     * @param invoiceCategory the invoice category
+     * @param customFieldInstances the custom field instances
+     */
+    public InvoiceCategoryDto(InvoiceCategory invoiceCategory, CustomFieldsDto customFieldInstances) {
+        super(invoiceCategory);
         customFields = customFieldInstances;
         setLanguageDescriptions(LanguageDescriptionDto.convertMultiLanguageFromMapOfValues(invoiceCategory.getDescriptionI18n()));
-	}
+    }
 
-	public List<LanguageDescriptionDto> getLanguageDescriptions() {
-		return languageDescriptions;
-	}
+    /**
+     * Gets the language descriptions.
+     *
+     * @return the language descriptions
+     */
+    public List<LanguageDescriptionDto> getLanguageDescriptions() {
+        return languageDescriptions;
+    }
 
-	public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
-		this.languageDescriptions = languageDescriptions;
-	}
+    /**
+     * Sets the language descriptions.
+     *
+     * @param languageDescriptions the new language descriptions
+     */
+    public void setLanguageDescriptions(List<LanguageDescriptionDto> languageDescriptions) {
+        this.languageDescriptions = languageDescriptions;
+    }
 
-	/**
-	 * @return the customFields
-	 */
-	public CustomFieldsDto getCustomFields() {
-		return customFields;
-	}
+    /**
+     * Gets the custom fields.
+     *
+     * @return the customFields
+     */
+    public CustomFieldsDto getCustomFields() {
+        return customFields;
+    }
 
-	/**
-	 * @param customFields the customFields to set
-	 */
-	public void setCustomFields(CustomFieldsDto customFields) {
-		this.customFields = customFields;
-	}
+    /**
+     * Sets the custom fields.
+     *
+     * @param customFields the customFields to set
+     */
+    public void setCustomFields(CustomFieldsDto customFields) {
+        this.customFields = customFields;
+    }
 
-
-	@Override
-	public String toString() {
-		return "InvoiceCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields + "]";
-	}
-
-
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "InvoiceCategoryDto [code=" + getCode() + ", description=" + getDescription() + ", languageDescriptions=" + languageDescriptions + ", customFields=" + customFields
+                + "]";
+    }
 
 }
