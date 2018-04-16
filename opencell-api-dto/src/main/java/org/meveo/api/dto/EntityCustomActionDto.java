@@ -11,54 +11,41 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.meveo.model.crm.custom.EntityCustomAction;
 
 /**
- * Custom action
- * 
+ * Custom action.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "EntityCustomAction")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EntityCustomActionDto extends BaseDto {
 
+    /** The Constant serialVersionUID. */
     private static final long serialVersionUID = -2916923287316823939L;
 
-    /**
-     * Code
-     */
+    /** Code. */
     @XmlAttribute(required = true)
     private String code;
 
-    /**
-     * Description
-     */
+    /** Description. */
     @XmlAttribute()
     private String description;
 
-    /**
-     * Entity action applies to
-     */
+    /** Entity action applies to. */
     @XmlAttribute(required = false)
     protected String appliesTo;
 
-    /**
-     * EL expression when action button should be visible
-     */
+    /** EL expression when action button should be visible. */
     @XmlElement(required = false)
     private String applicableOnEl;
 
-    /**
-     * Button label
-     */
+    /** Button label. */
     @XmlElement(required = false)
     private String label;
 
-    /**
-     * Button label translations
-     */
+    /** Button label translations. */
     protected List<LanguageDescriptionDto> labelsTranslated;
 
-    /**
-     * Script to execute
-     */
+    /** Script to execute. */
     private ScriptInstanceDto script;
 
     /**
@@ -72,10 +59,18 @@ public class EntityCustomActionDto extends BaseDto {
      */
     private String guiPosition;
 
+    /**
+     * Instantiates a new entity custom action dto.
+     */
     public EntityCustomActionDto() {
         super();
     }
 
+    /**
+     * Instantiates a new entity custom action dto.
+     *
+     * @param action the action
+     */
     public EntityCustomActionDto(EntityCustomAction action) {
         this.code = action.getCode();
         this.description = action.getDescription();
@@ -89,72 +84,155 @@ public class EntityCustomActionDto extends BaseDto {
         this.setScript(new ScriptInstanceDto(action.getScript()));
     }
 
+    /**
+     * Gets the code.
+     *
+     * @return the code
+     */
     public String getCode() {
         return code;
     }
 
+    /**
+     * Sets the code.
+     *
+     * @param code the new code
+     */
     public void setCode(String code) {
         this.code = code;
     }
 
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Gets the applies to.
+     *
+     * @return the applies to
+     */
     public String getAppliesTo() {
         return appliesTo;
     }
 
+    /**
+     * Sets the applies to.
+     *
+     * @param appliesTo the new applies to
+     */
     public void setAppliesTo(String appliesTo) {
         this.appliesTo = appliesTo;
     }
 
+    /**
+     * Gets the applicable on el.
+     *
+     * @return the applicable on el
+     */
     public String getApplicableOnEl() {
         return applicableOnEl;
     }
 
+    /**
+     * Sets the applicable on el.
+     *
+     * @param applicableOnEl the new applicable on el
+     */
     public void setApplicableOnEl(String applicableOnEl) {
         this.applicableOnEl = applicableOnEl;
     }
 
+    /**
+     * Gets the label.
+     *
+     * @return the label
+     */
     public String getLabel() {
         return label;
     }
 
+    /**
+     * Sets the label.
+     *
+     * @param label the new label
+     */
     public void setLabel(String label) {
         this.label = label;
     }
 
+    /**
+     * Gets the script.
+     *
+     * @return the script
+     */
     public ScriptInstanceDto getScript() {
         return script;
     }
 
+    /**
+     * Sets the script.
+     *
+     * @param script the new script
+     */
     public void setScript(ScriptInstanceDto script) {
         this.script = script;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
         return String.format("EntityCustomActionDto [code=%s, description=%s, appliesTo=%s, applicableOnEl=%s, label=%s, script=%s]", code, description, appliesTo, applicableOnEl,
             label, script);
     }
 
+    /**
+     * Gets the gui position.
+     *
+     * @return the gui position
+     */
     public String getGuiPosition() {
         return guiPosition;
     }
 
+    /**
+     * Sets the gui position.
+     *
+     * @param guiPosition the new gui position
+     */
     public void setGuiPosition(String guiPosition) {
         this.guiPosition = guiPosition;
     }
 
+    /**
+     * Gets the labels translated.
+     *
+     * @return the labels translated
+     */
     public List<LanguageDescriptionDto> getLabelsTranslated() {
         return labelsTranslated;
     }
 
+    /**
+     * Sets the labels translated.
+     *
+     * @param labelsTranslated the new labels translated
+     */
     public void setLabelsTranslated(List<LanguageDescriptionDto> labelsTranslated) {
         this.labelsTranslated = labelsTranslated;
     }

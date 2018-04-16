@@ -3,6 +3,9 @@ package org.meveo.api.dto;
 import java.util.Date;
 
 /**
+ * Contain the entity creation and modification dates.
+ * 
+ * 
  * @author Edward P. Legaspi
  * 
  */

@@ -7,149 +7,331 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class OfferPricePlanDto.
+ *
  * @author Edward P. Legaspi
  * @since Oct 11, 2013
- **/
+ */
 @XmlRootElement(name = "OfferPricePlan")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OfferPricePlanDto extends BaseDto {
 
-	private static final long serialVersionUID = -3592282981490299021L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = -3592282981490299021L;
 
-	private String offerId;
-	private String organizationId;
-	private String taxId;
-	private Boolean subscriptionProrata;
-	private Boolean terminationProrata;
-	private Boolean applyInAdvance;
-	private String param1;
-	private String param2;
-	private String param3;
-	private String billingPeriod;
-	private List<RecurringChargeDto> recurringCharges;
-	private String usageUnit;
-	private List<UsageChargeDto> usageCharges;
-	private List<SubscriptionFeeDto> subscriptionFees;
-	private List<TerminationFeeDto> terminationFees;
+    /** The offer id. */
+    private String offerId;
 
-	public String getOfferId() {
-		return offerId;
-	}
+    /** The organization id. */
+    private String organizationId;
 
-	public void setOfferId(String offerId) {
-		this.offerId = offerId;
-	}
+    /** The tax id. */
+    private String taxId;
 
-	public String getOrganizationId() {
-		return organizationId;
-	}
+    /** The subscription prorata. */
+    private Boolean subscriptionProrata;
 
-	public void setOrganizationId(String organizationId) {
-		this.organizationId = organizationId;
-	}
+    /** The termination prorata. */
+    private Boolean terminationProrata;
 
-	public String getTaxId() {
-		return taxId;
-	}
+    /** The apply in advance. */
+    private Boolean applyInAdvance;
 
-	public void setTaxId(String taxId) {
-		this.taxId = taxId;
-	}
+    /** The param 1. */
+    private String param1;
 
-	public Boolean getSubscriptionProrata() {
-		return subscriptionProrata;
-	}
+    /** The param 2. */
+    private String param2;
 
-	public void setSubscriptionProrata(Boolean subscriptionProrata) {
-		this.subscriptionProrata = subscriptionProrata;
-	}
+    /** The param 3. */
+    private String param3;
 
-	public Boolean getTerminationProrata() {
-		return terminationProrata;
-	}
+    /** The billing period. */
+    private String billingPeriod;
 
-	public void setTerminationProrata(Boolean terminationProrata) {
-		this.terminationProrata = terminationProrata;
-	}
+    /** The recurring charges. */
+    private List<RecurringChargeDto> recurringCharges;
 
-	public Boolean getApplyInAdvance() {
-		return applyInAdvance;
-	}
+    /** The usage unit. */
+    private String usageUnit;
 
-	public void setApplyInAdvance(Boolean applyInAdvance) {
-		this.applyInAdvance = applyInAdvance;
-	}
+    /** The usage charges. */
+    private List<UsageChargeDto> usageCharges;
 
-	public String getParam1() {
-		return param1;
-	}
+    /** The subscription fees. */
+    private List<SubscriptionFeeDto> subscriptionFees;
 
-	public void setParam1(String param1) {
-		this.param1 = param1;
-	}
+    /** The termination fees. */
+    private List<TerminationFeeDto> terminationFees;
 
-	public String getParam2() {
-		return param2;
-	}
+    /**
+     * Gets the offer id.
+     *
+     * @return the offer id
+     */
+    public String getOfferId() {
+        return offerId;
+    }
 
-	public void setParam2(String param2) {
-		this.param2 = param2;
-	}
+    /**
+     * Sets the offer id.
+     *
+     * @param offerId the new offer id
+     */
+    public void setOfferId(String offerId) {
+        this.offerId = offerId;
+    }
 
-	public String getParam3() {
-		return param3;
-	}
+    /**
+     * Gets the organization id.
+     *
+     * @return the organization id
+     */
+    public String getOrganizationId() {
+        return organizationId;
+    }
 
-	public void setParam3(String param3) {
-		this.param3 = param3;
-	}
+    /**
+     * Sets the organization id.
+     *
+     * @param organizationId the new organization id
+     */
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
+    }
 
-	public String getBillingPeriod() {
-		return billingPeriod;
-	}
+    /**
+     * Gets the tax id.
+     *
+     * @return the tax id
+     */
+    public String getTaxId() {
+        return taxId;
+    }
 
-	public void setBillingPeriod(String billingPeriod) {
-		this.billingPeriod = billingPeriod;
-	}
+    /**
+     * Sets the tax id.
+     *
+     * @param taxId the new tax id
+     */
+    public void setTaxId(String taxId) {
+        this.taxId = taxId;
+    }
 
-	public List<RecurringChargeDto> getRecurringCharges() {
-		return recurringCharges;
-	}
+    /**
+     * Gets the subscription prorata.
+     *
+     * @return the subscription prorata
+     */
+    public Boolean getSubscriptionProrata() {
+        return subscriptionProrata;
+    }
 
-	public void setRecurringCharges(List<RecurringChargeDto> recurringCharges) {
-		this.recurringCharges = recurringCharges;
-	}
+    /**
+     * Sets the subscription prorata.
+     *
+     * @param subscriptionProrata the new subscription prorata
+     */
+    public void setSubscriptionProrata(Boolean subscriptionProrata) {
+        this.subscriptionProrata = subscriptionProrata;
+    }
 
-	public String getUsageUnit() {
-		return usageUnit;
-	}
+    /**
+     * Gets the termination prorata.
+     *
+     * @return the termination prorata
+     */
+    public Boolean getTerminationProrata() {
+        return terminationProrata;
+    }
 
-	public void setUsageUnit(String usageUnit) {
-		this.usageUnit = usageUnit;
-	}
+    /**
+     * Sets the termination prorata.
+     *
+     * @param terminationProrata the new termination prorata
+     */
+    public void setTerminationProrata(Boolean terminationProrata) {
+        this.terminationProrata = terminationProrata;
+    }
 
-	public List<UsageChargeDto> getUsageCharges() {
-		return usageCharges;
-	}
+    /**
+     * Gets the apply in advance.
+     *
+     * @return the apply in advance
+     */
+    public Boolean getApplyInAdvance() {
+        return applyInAdvance;
+    }
 
-	public void setUsageCharges(List<UsageChargeDto> usageCharges) {
-		this.usageCharges = usageCharges;
-	}
+    /**
+     * Sets the apply in advance.
+     *
+     * @param applyInAdvance the new apply in advance
+     */
+    public void setApplyInAdvance(Boolean applyInAdvance) {
+        this.applyInAdvance = applyInAdvance;
+    }
 
-	public List<SubscriptionFeeDto> getSubscriptionFees() {
-		return subscriptionFees;
-	}
+    /**
+     * Gets the param 1.
+     *
+     * @return the param 1
+     */
+    public String getParam1() {
+        return param1;
+    }
 
-	public void setSubscriptionFees(List<SubscriptionFeeDto> subscriptionFees) {
-		this.subscriptionFees = subscriptionFees;
-	}
+    /**
+     * Sets the param 1.
+     *
+     * @param param1 the new param 1
+     */
+    public void setParam1(String param1) {
+        this.param1 = param1;
+    }
 
-	public List<TerminationFeeDto> getTerminationFees() {
-		return terminationFees;
-	}
+    /**
+     * Gets the param 2.
+     *
+     * @return the param 2
+     */
+    public String getParam2() {
+        return param2;
+    }
 
-	public void setTerminationFees(List<TerminationFeeDto> terminationFees) {
-		this.terminationFees = terminationFees;
-	}
+    /**
+     * Sets the param 2.
+     *
+     * @param param2 the new param 2
+     */
+    public void setParam2(String param2) {
+        this.param2 = param2;
+    }
+
+    /**
+     * Gets the param 3.
+     *
+     * @return the param 3
+     */
+    public String getParam3() {
+        return param3;
+    }
+
+    /**
+     * Sets the param 3.
+     *
+     * @param param3 the new param 3
+     */
+    public void setParam3(String param3) {
+        this.param3 = param3;
+    }
+
+    /**
+     * Gets the billing period.
+     *
+     * @return the billing period
+     */
+    public String getBillingPeriod() {
+        return billingPeriod;
+    }
+
+    /**
+     * Sets the billing period.
+     *
+     * @param billingPeriod the new billing period
+     */
+    public void setBillingPeriod(String billingPeriod) {
+        this.billingPeriod = billingPeriod;
+    }
+
+    /**
+     * Gets the recurring charges.
+     *
+     * @return the recurring charges
+     */
+    public List<RecurringChargeDto> getRecurringCharges() {
+        return recurringCharges;
+    }
+
+    /**
+     * Sets the recurring charges.
+     *
+     * @param recurringCharges the new recurring charges
+     */
+    public void setRecurringCharges(List<RecurringChargeDto> recurringCharges) {
+        this.recurringCharges = recurringCharges;
+    }
+
+    /**
+     * Gets the usage unit.
+     *
+     * @return the usage unit
+     */
+    public String getUsageUnit() {
+        return usageUnit;
+    }
+
+    /**
+     * Sets the usage unit.
+     *
+     * @param usageUnit the new usage unit
+     */
+    public void setUsageUnit(String usageUnit) {
+        this.usageUnit = usageUnit;
+    }
+
+    /**
+     * Gets the usage charges.
+     *
+     * @return the usage charges
+     */
+    public List<UsageChargeDto> getUsageCharges() {
+        return usageCharges;
+    }
+
+    /**
+     * Sets the usage charges.
+     *
+     * @param usageCharges the new usage charges
+     */
+    public void setUsageCharges(List<UsageChargeDto> usageCharges) {
+        this.usageCharges = usageCharges;
+    }
+
+    /**
+     * Gets the subscription fees.
+     *
+     * @return the subscription fees
+     */
+    public List<SubscriptionFeeDto> getSubscriptionFees() {
+        return subscriptionFees;
+    }
+
+    /**
+     * Sets the subscription fees.
+     *
+     * @param subscriptionFees the new subscription fees
+     */
+    public void setSubscriptionFees(List<SubscriptionFeeDto> subscriptionFees) {
+        this.subscriptionFees = subscriptionFees;
+    }
+
+    /**
+     * Gets the termination fees.
+     *
+     * @return the termination fees
+     */
+    public List<TerminationFeeDto> getTerminationFees() {
+        return terminationFees;
+    }
+
+    /**
+     * Sets the termination fees.
+     *
+     * @param terminationFees the new termination fees
+     */
+    public void setTerminationFees(List<TerminationFeeDto> terminationFees) {
+        this.terminationFees = terminationFees;
+    }
 
 }

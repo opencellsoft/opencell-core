@@ -5,67 +5,151 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * The Class OneShotChargeTemplateWithPriceDto.
+ *
  * @author Edward P. Legaspi
- **/
+ */
 @XmlRootElement(name = "OneShotChargeTemplate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class OneShotChargeTemplateWithPriceDto {
-	private String chargeCode;
-	private String description;
-	private Double unitPriceWithoutTax;
-	private Double taxPercent;
-	private String taxCode;
-	private String taxDescription;
 
-	public OneShotChargeTemplateWithPriceDto() {
+    /** The charge code. */
+    private String chargeCode;
 
-	}
+    /** The description. */
+    private String description;
 
-	public String getChargeCode() {
-		return chargeCode;
-	}
+    /** The unit price without tax. */
+    private Double unitPriceWithoutTax;
 
-	public void setChargeCode(String chargeCode) {
-		this.chargeCode = chargeCode;
-	}
+    /** The tax percent. */
+    private Double taxPercent;
 
-	public Double getUnitPriceWithoutTax() {
-		return unitPriceWithoutTax;
-	}
+    /** The tax code. */
+    private String taxCode;
 
-	public void setUnitPriceWithoutTax(Double unitPriceWithoutTax) {
-		this.unitPriceWithoutTax = unitPriceWithoutTax;
-	}
+    /** The tax description. */
+    private String taxDescription;
 
-	public Double getTaxPercent() {
-		return taxPercent;
-	}
+    /**
+     * Instantiates a new one shot charge template with price dto.
+     */
+    public OneShotChargeTemplateWithPriceDto() {
 
-	public void setTaxPercent(Double taxPercent) {
-		this.taxPercent = taxPercent;
-	}
+    }
 
-	public String getTaxCode() {
-		return taxCode;
-	}
+    /**
+     * Gets the charge code.
+     *
+     * @return the charge code
+     */
+    public String getChargeCode() {
+        return chargeCode;
+    }
 
-	public void setTaxCode(String taxCode) {
-		this.taxCode = taxCode;
-	}
+    /**
+     * Sets the charge code.
+     *
+     * @param chargeCode the new charge code
+     */
+    public void setChargeCode(String chargeCode) {
+        this.chargeCode = chargeCode;
+    }
 
-	public String getTaxDescription() {
-		return taxDescription;
-	}
+    /**
+     * Gets the unit price without tax.
+     *
+     * @return the unit price without tax
+     */
+    public Double getUnitPriceWithoutTax() {
+        return unitPriceWithoutTax;
+    }
 
-	public void setTaxDescription(String taxDescription) {
-		this.taxDescription = taxDescription;
-	}
+    /**
+     * Sets the unit price without tax.
+     *
+     * @param unitPriceWithoutTax the new unit price without tax
+     */
+    public void setUnitPriceWithoutTax(Double unitPriceWithoutTax) {
+        this.unitPriceWithoutTax = unitPriceWithoutTax;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * Gets the tax percent.
+     *
+     * @return the tax percent
+     */
+    public Double getTaxPercent() {
+        return taxPercent;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * Sets the tax percent.
+     *
+     * @param taxPercent the new tax percent
+     */
+    public void setTaxPercent(Double taxPercent) {
+        this.taxPercent = taxPercent;
+    }
+
+    /**
+     * Gets the tax code.
+     *
+     * @return the tax code
+     */
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    /**
+     * Sets the tax code.
+     *
+     * @param taxCode the new tax code
+     */
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    /**
+     * Gets the tax description.
+     *
+     * @return the tax description
+     */
+    public String getTaxDescription() {
+        return taxDescription;
+    }
+
+    /**
+     * Sets the tax description.
+     *
+     * @param taxDescription the new tax description
+     */
+    public void setTaxDescription(String taxDescription) {
+        this.taxDescription = taxDescription;
+    }
+
+    /**
+     * Gets the description.
+     *
+     * @return the description
+     */
+    public String getDescription() {
+        return description;
+    }
+
+    /**
+     * Sets the description.
+     *
+     * @param description the new description
+     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    @Override
+    public String toString() {
+        return "OneShotChargeTemplateWithPriceDto [chargeCode=" + chargeCode + ", description=" + description + ", unitPriceWithoutTax=" + unitPriceWithoutTax + ", taxPercent="
+                + taxPercent + ", taxCode=" + taxCode + ", taxDescription=" + taxDescription + "]";
+    }
+ 
 }

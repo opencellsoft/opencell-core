@@ -21,14 +21,14 @@ public @interface SecuredBusinessEntityMethod {
     /**
      * Contains an array of {@link SecureMethodParameter} annotations that describe how the method parameters are going to be validated.
      * 
-     * @return
+     * @return Array off secure method parameter
      */
     SecureMethodParameter[] validate() default {};
 
     /**
      * The result filter class that will be used to filter the results for entities that should be accessible to the user.
      * 
-     * @return
+     * @return The secure method result filter
      */
     Class<? extends SecureMethodResultFilter> resultFilter() default NullFilter.class;
 }

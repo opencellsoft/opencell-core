@@ -245,7 +245,7 @@ public class CreationInvoiceBean extends CustomFieldBean<Invoice> {
 	public void addDetailInvoiceLine() throws BusinessException {
 		addDetailedInvoiceLines(selectedInvoiceSubCategory);
 	}
-
+	
 	private void addDetailedInvoiceLines(InvoiceSubCategory selectInvoiceSubCat) {
 		try {
 			if (entity.getBillingAccount() == null) {

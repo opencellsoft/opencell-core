@@ -1,5 +1,9 @@
 package org.meveo.api.dto;
 
+
+/**
+ * The Enum CalendarTypeEnum.
+ */
 public enum CalendarTypeEnum {
 
     /**
@@ -13,12 +17,14 @@ public enum CalendarTypeEnum {
     DAILY,
 
     /**
-     * A period of X months, days, hours, minutes, seconds. See CalendarPeriodUnitEnum for unit definition
+     * A period of X months, days, hours, minutes, seconds. 
+     * See CalendarPeriodUnitEnum for unit definition.
      */
     PERIOD,
 
     /**
-     * A range of time, month/day or weekdays E.g. 08:00-14:00, 15:00-17:00 or 01/01-02/01, 02/01-03/01 or Monday-Friday
+     * A range of time, month/day or weekdays 
+     * E.g. 08:00-14:00, 15:00-17:00 or 01/01-02/01, 02/01-03/01 or Monday-Friday
      */
     INTERVAL,
 
@@ -32,6 +38,11 @@ public enum CalendarTypeEnum {
      */
     UNION;
 
+    /**
+     * Checks if is join.
+     *
+     * @return true, if is join
+     */
     public boolean isJoin() {
         return this == INTERSECT || this == UNION;
     }

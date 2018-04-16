@@ -395,9 +395,9 @@ public abstract class PersistenceService<E extends IEntity> extends BaseService 
     }
 
     private boolean validateCode(ISearchable entity) throws BusinessException {
-        if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
-            throw new BusinessException("Invalid characters found in entity code.");
-        }
+       // if (!StringUtils.isMatch(entity.getCode(), ParamBeanFactory.getAppScopeInstance().getProperty("meveo.code.pattern", StringUtils.CODE_REGEX))) {
+         //   throw new BusinessException("Invalid characters found in entity code.");
+       // }
 
         return true;
     }
