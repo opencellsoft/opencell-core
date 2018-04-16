@@ -474,16 +474,7 @@ public class InvoiceService extends PersistenceService<Invoice> {
 
             create(invoice);
             
-            StringBuffer num1 = new StringBuffer("000000000");
-            num1.append(invoice.getId() + "");
-            String invoiceNumber = num1.substring(num1.length() - 9);
-            int key = 0;
-
-            for (int i = 0; i < invoiceNumber.length(); i++) {
-                key = key + Integer.parseInt(invoiceNumber.substring(i, i + 1));
-            }
-
-            invoice.setTemporaryInvoiceNumber(invoiceNumber + "-" + key % 10);
+            invoice.assignTemporaryInvoiceNumber();
 
             // Note that rated transactions get updated in
             // ratedTransactionservice in case of Filter or orderNumber not empty
@@ -522,8 +513,6 @@ public class InvoiceService extends PersistenceService<Invoice> {
                 }
                 invoice.setOrders(orders);
             }
-
-            invoice.assignTemporaryInvoiceNumber();
 
             Long endDate = System.currentTimeMillis();
             log.info("createAgregatesAndInvoice BR_ID=" + (billingRun == null ? "null" : billingRun.getId()) + ", BA_ID=" + billingAccount.getId() + ", Time en ms="

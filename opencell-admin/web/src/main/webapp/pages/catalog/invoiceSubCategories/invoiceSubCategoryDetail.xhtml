@@ -48,7 +48,7 @@
 			column1="code"
 			column2Label="#{messages['businessEntity.description']}"
 			column2="description" eventBackingBean="#{invoiceSubCategoryBean}"
-			updateField=":tabView:formPanel:taxScriptSelectId :tabView:formPanel:taxScriptSelectId_text"></hftl:entityPopup>
+			updateField=":#{p:component('taxScriptSelectId')} :#{p:component('taxScriptSelectId_text')}"></hftl:entityPopup>
 
 		<h:form id="crumbmenuForm">
             <p:breadCrumb homeDisplay="text" id="crumbmenu">
@@ -75,10 +75,7 @@
 
                         <hftl:formLanguageFields field="description" />
 
-						<hftl:formField id="taxScriptSelectId"
-							label="#{messages['invoiceSubCategory.taxScript']}"
-							field="taxScript" valueLabelField="code" required="false"
-							popup="true" popupId="taxScriptPopup" showResetButton="true" />
+						<hftl:formField id="taxScriptSelectId" label="#{messages['invoiceSubCategory.taxScript']}" field="taxScript" valueLabelField="code" required="false" popup="true" popupId="taxScriptPopup" showResetButton="true" />
 					</hftl:formPanel>
 
                 </p:tab>

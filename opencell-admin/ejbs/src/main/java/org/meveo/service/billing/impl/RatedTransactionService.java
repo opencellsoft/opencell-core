@@ -72,6 +72,7 @@ import org.meveo.service.api.dto.ConsumptionDTO;
 import org.meveo.service.base.PersistenceService;
 import org.meveo.service.base.ValueExpressionWrapper;
 import org.meveo.service.catalog.impl.InvoiceSubCategoryService;
+import org.meveo.service.crm.impl.CustomFieldInstanceService;
 import org.meveo.service.filter.FilterService;
 import org.meveo.service.payments.impl.CustomerAccountService;
 import org.meveo.service.script.billing.TaxScriptService;
@@ -102,6 +103,9 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
     
     @Inject
     private TaxScriptService taxScriptService;
+    
+    @Inject
+    private CustomFieldInstanceService customFieldInstanceService;
 
     /** constants. */
     private final BigDecimal HUNDRED = new BigDecimal("100");
@@ -302,7 +306,8 @@ public class RatedTransactionService extends PersistenceService<RatedTransaction
         //TODO[Edward] If !isExonerated then check if there is a tax script inside invoice.invoiceType.
         // Create a new boolean calculateTax=!isExonerated and invoice.invoiceType.taxScript is null.
         // DONE
-        boolean calculateTax = !isExonerated && invoice.getInvoiceType().getTaxScript() == null;
+        String calculateExternalTax = (String) customFieldInstanceService.getCFValue(appProvider, "OPENCELL_ENABLE_TAX_CALCULATION");
+        boolean calculateTax = calculateExternalTax.equals("YES") && !isExonerated && invoice.getInvoiceType().getTaxScript() == null;
         
         if (ratedTransactionFilter != null) {
             ratedTransactions = (List<RatedTransaction>) filterService.filteredListAsObjects(ratedTransactionFilter);

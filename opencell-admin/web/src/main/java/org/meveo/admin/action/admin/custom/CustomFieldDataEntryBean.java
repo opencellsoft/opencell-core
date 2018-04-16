@@ -116,6 +116,9 @@ public class CustomFieldDataEntryBean implements Serializable {
 
     @Inject
     protected Messages messages;
+    
+    @Inject
+    private EntityCustomActionService entityCustomActionService;
 
     /** Logger. */
     private Logger log = LoggerFactory.getLogger(this.getClass());
@@ -869,13 +872,14 @@ public class CustomFieldDataEntryBean implements Serializable {
             Map<String, Object> context = CustomScriptService.parseParameters(encodedParameters);
             context.put(Script.CONTEXT_ACTION, action.getCode());
 
+            action = entityCustomActionService.refreshOrRetrieve(action);
             Map<String, Object> result = scriptInstanceService.execute((IEntity) entity, action.getScript().getCode(), context);
 
             // Display a message accordingly on what is set in result
             if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
                 messages.info(new BundleKey("messages", (String) result.get(Script.RESULT_GUI_MESSAGE_KEY)));
 
-            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE_KEY)) {
+            } else if (result.containsKey(Script.RESULT_GUI_MESSAGE)) {
                 messages.info((String) result.get(Script.RESULT_GUI_MESSAGE));
 
             } else {
